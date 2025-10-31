@@ -1,0 +1,35 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Carousel from '../../components/Carousel.astro';
+
+const slides = [
+  {
+    title: 'Design systems that scale',
+    description: 'Create a durable design system for your product teams.',
+    image:
+      'https://images.unsplash.com/photo-1514790193030-c89d266d5a9d?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    title: 'Inclusive experiences',
+    description: 'Reach every user with accessible, delightful interfaces.',
+    image:
+      'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    title: 'Performance first',
+    description: 'Ship fast, energy-efficient interfaces that delight.',
+    image:
+      'https://images.unsplash.com/photo-1474631245212-32dc3c8310c6?auto=format&fit=crop&w=1200&q=80',
+  },
+];
+---
+
+<DocsLayout
+  title="Carousel"
+  description="Responsive carousel with autoplay and pagination controls."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Carousel slides={slides} autoplay interval={7000} />
+  </section>
+</DocsLayout>

@@ -1,0 +1,29 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import SidebarNav from '../../components/SidebarNav.astro';
+
+const items = [
+  { label: 'Dashboard', href: '#', icon: '🏠' },
+  { label: 'Projects', href: '#', icon: '📁', badge: '3' },
+  {
+    label: 'Settings',
+    icon: '⚙️',
+    children: [
+      { label: 'Profile', href: '#' },
+      { label: 'Security', href: '#' },
+    ],
+  },
+];
+---
+
+<DocsLayout
+  title="SidebarNav"
+  description="Collapsible sidebar with nested sections and badges."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <div class="bg-gray-900 rounded-lg overflow-hidden" style="height: 400px;">
+      <SidebarNav items={items} title="Navigation" />
+    </div>
+  </section>
+</DocsLayout>

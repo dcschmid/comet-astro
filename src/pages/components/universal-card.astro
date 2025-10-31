@@ -1,0 +1,55 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import UniversalCard from '../../components/UniversalCard.astro';
+const uMeta = ['5 min read'];
+const uActions = [{ href: '#', label: 'Read' }];
+---
+
+<DocsLayout
+  title="UniversalCard"
+  description="Flexible card for knowledge, playlists, sections, etc. Supports vertical, horizontal and compact layouts."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>variant?: 'vertical'|'horizontal'|'compact'</code></li>
+      <li>
+        <code>href?: string</code>, <code>target?: ...</code>, <code
+          >rel?: string</code
+        >
+      </li>
+      <li>
+        <code>imageSrc?: string</code>, <code>imageAlt?: string</code>, <code
+          >imageRounded?: boolean</code
+        >, <code>imageAspect?: '16:9'|'4:3'|'1:1'|'3:2'</code>
+      </li>
+      <li>
+        <code>eyebrow?: string</code>, <code>title?: string</code>, <code
+          >subtitle?: string</code
+        >, <code>description?: string</code>
+      </li>
+      <li>
+        <code>badges?: &#123;label,variant&#125;[]</code>, <code
+          >tags?: string[]</code
+        >, <code>meta?: string[]</code>
+      </li>
+      <li>
+        <code>actions?: &#123;href,label,variant?,target?,rel?&#125;[]</code>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <UniversalCard
+      variant="vertical"
+      href="#"
+      imageSrc="https://picsum.photos/seed/u1/800/450"
+      eyebrow="Knowledge"
+      title="The Evolution of Rock"
+      description="A short intro to key eras and sounds."
+      meta={uMeta}
+      actions={uActions}
+    />
+  </section>
+</DocsLayout>

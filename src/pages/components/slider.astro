@@ -1,0 +1,34 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Slider from '../../components/Slider.astro';
+---
+
+<DocsLayout
+  title="Slider"
+  description="Custom range input with label, ticks, and value display options."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <Slider name="volume" label="Volume" value={50} />
+      <Slider
+        name="brightness"
+        label="Brightness"
+        min={0}
+        max={100}
+        value={75}
+        showMinMax
+      />
+      <Slider
+        name="zoom"
+        label="Zoom"
+        min={10}
+        max={200}
+        step={10}
+        value={100}
+        showValue
+        showMinMax
+      />
+    </div>
+  </section>
+</DocsLayout>

@@ -1,0 +1,33 @@
+---
+/**
+ * LoadingState - centered spinner with optional text and skeleton rows
+ */
+import LoadingSpinner from './LoadingSpinner.astro';
+import Skeleton from './Skeleton.astro';
+
+interface Props {
+  label?: string;
+  skeletonRows?: number;
+  className?: string;
+}
+
+const {
+  label = 'Loading…',
+  skeletonRows = 0,
+  className = '',
+} = Astro.props as Props;
+---
+
+<div
+  class={`flex flex-col items-center justify-center gap-4 py-12 text-slate-600 dark:text-slate-300 ${className}`.trim()}
+  role="status"
+  aria-live="polite"
+>
+  <LoadingSpinner label={label} />
+  <div class="text-sm font-medium">{label}</div>
+  {
+    Array.from({ length: skeletonRows }).map(() => (
+      <Skeleton width="min(720px, 92%)" height="16px" />
+    ))
+  }
+</div>

@@ -1,0 +1,29 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Accordion from '../../components/Accordion.astro';
+const accItems = [
+  { id: 'a', title: 'A', content: '<p>A content</p>' },
+  { id: 'b', title: 'B', content: '<p>B content</p>' },
+];
+const accOpen = ['a'];
+---
+
+<DocsLayout
+  title="Accordion"
+  description="Disclosure/accordion with single or multiple open sections."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>items: &#123;id,title,content?&#125;[]</code></li>
+      <li><code>multiple?: boolean</code> – allow multiple panels open</li>
+      <li><code>openIds?: string[]</code> – initially open ids</li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Example</h2>
+    <Accordion items={accItems} openIds={accOpen} />
+  </section>
+</DocsLayout>

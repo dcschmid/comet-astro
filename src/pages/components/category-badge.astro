@@ -1,0 +1,27 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CategoryBadge from '../../components/CategoryBadge.astro';
+
+const categories = [
+  { label: 'Design', color: 'purple' },
+  { label: 'Development', color: 'blue' },
+  { label: 'Marketing', color: 'amber' },
+  { label: 'Product', color: 'emerald' },
+];
+---
+
+<DocsLayout
+  title="CategoryBadge"
+  description="Rounded metadata badges with tone presets."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="flex flex-wrap items-center gap-3">
+      {
+        categories.map((cat) => (
+          <CategoryBadge label={cat.label} tone={cat.color} />
+        ))
+      }
+    </div>
+  </section>
+</DocsLayout>

@@ -1,0 +1,42 @@
+---
+interface Props {
+  author?: string;
+  source?: string;
+  variant?: 'default' | 'accent' | 'bordered';
+  className?: string;
+}
+
+const { author, source, variant = 'default', className = '' } = Astro.props;
+
+const variantClasses = {
+  default:
+    'border-l-4 border-slate-300 pl-5 italic text-slate-700 dark:border-slate-600 dark:text-slate-200',
+  accent:
+    'border-l-4 border-blue-500 pl-5 rounded-r-xl bg-blue-50 text-slate-800 shadow-sm dark:border-blue-400 dark:bg-blue-950 dark:text-blue-100',
+  bordered:
+    'rounded-xl border-2 border-slate-200 bg-white/90 p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/80',
+};
+---
+
+<blockquote class={`${variantClasses[variant]} ${className}`}>
+  <div class="mb-2 text-lg leading-relaxed">
+    <slot />
+  </div>
+  {
+    (author || source) && (
+      <footer class="mt-3 text-sm not-italic text-slate-600 dark:text-slate-300">
+        {author && (
+          <cite class="font-semibold text-slate-700 dark:text-slate-100">
+            {author}
+          </cite>
+        )}
+        {source && (
+          <span>
+            {author ? ', ' : ''}
+            {source}
+          </span>
+        )}
+      </footer>
+    )
+  }
+</blockquote>

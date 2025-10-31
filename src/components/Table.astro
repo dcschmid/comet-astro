@@ -1,0 +1,104 @@
+---
+interface Column {
+  key: string;
+  label: string;
+  sortable?: boolean;
+  align?: 'left' | 'center' | 'right';
+}
+
+interface Props {
+  columns: Column[];
+  data: Record<string, any>[];
+  striped?: boolean;
+  hoverable?: boolean;
+  bordered?: boolean;
+  compact?: boolean;
+  caption?: string;
+  className?: string;
+}
+
+const {
+  columns,
+  data,
+  striped = false,
+  hoverable = true,
+  bordered = false,
+  compact = false,
+  caption,
+  className = '',
+} = Astro.props;
+
+const tableClasses = [
+  'w-full text-left text-sm text-slate-900 dark:text-slate-100',
+  striped &&
+    '[&_tbody_tr:nth-child(odd)]:bg-slate-50 dark:[&_tbody_tr:nth-child(odd)]:bg-slate-900/60',
+  hoverable &&
+    '[&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-blue-50 dark:[&_tbody_tr:hover]:bg-slate-800/60',
+  bordered &&
+    '[&_tbody_td]:border-t [&_tbody_td]:border-slate-200 dark:[&_tbody_td]:border-slate-700',
+  compact
+    ? '[&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-2'
+    : '[&_th]:px-4 [&_th]:py-3 [&_td]:px-4 [&_td]:py-3',
+]
+  .filter(Boolean)
+  .join(' ');
+
+const getAlignment = (align?: string) => {
+  if (align === 'center') return 'text-center';
+  if (align === 'right') return 'text-right';
+  return 'text-left';
+};
+---
+
+<div
+  class={`overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 ${className}`.trim()}
+>
+  <table class={tableClasses}>
+    {
+      caption && (
+        <caption class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-300">
+          {caption}
+        </caption>
+      )
+    }
+    <thead
+      class="bg-slate-100 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-900 dark:text-slate-200"
+    >
+      <tr class="divide-x divide-slate-200 dark:divide-slate-800">
+        {
+          columns.map((col) => (
+            <th scope="col" class={`${getAlignment(col.align)} align-middle`}>
+              {col.sortable ? (
+                <button class="inline-flex items-center gap-1 rounded-md px-1 py-0.5 text-slate-700 transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 dark:text-slate-200 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900">
+                  {col.label}
+                  <span class="text-xs opacity-60" aria-hidden="true">
+                    ↕
+                  </span>
+                </button>
+              ) : (
+                col.label
+              )}
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody
+      class="divide-y divide-slate-200 text-sm text-slate-700 dark:divide-slate-800 dark:text-slate-200"
+    >
+      {
+        data.map((row) => (
+          <tr class="align-top">
+            {columns.map((col) => (
+              <td
+                class={`${getAlignment(col.align)} align-top`}
+                data-column={col.key}
+                set:html={row[col.key]}
+              />
+            ))}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

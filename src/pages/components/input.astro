@@ -1,0 +1,57 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Input from '../../components/Input.astro';
+---
+
+<DocsLayout
+  title="Input"
+  description="Text input field with validation states and sizes."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300 text-sm space-y-1">
+      <li><code>name: string</code> – input name (required)</li>
+      <li>
+        <code
+          >type?: 'text'|'email'|'password'|'number'|'tel'|'url'|'search'</code
+        >
+      </li>
+      <li><code>label?: string</code> – label text</li>
+      <li><code>placeholder?: string</code></li>
+      <li><code>value?: string|number</code></li>
+      <li><code>required?: boolean</code></li>
+      <li><code>disabled?: boolean</code></li>
+      <li><code>error?: string</code> – error message</li>
+      <li><code>helperText?: string</code> – helper text</li>
+      <li><code>size?: 'sm'|'md'|'lg'</code></li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <Input name="text" label="Name" placeholder="Enter your name" />
+      <Input
+        name="email"
+        type="email"
+        label="Email"
+        placeholder="you@example.com"
+        required
+      />
+      <Input
+        name="password"
+        type="password"
+        label="Password"
+        helperText="Min 8 characters"
+      />
+      <Input
+        name="error"
+        label="With Error"
+        error="This field is required"
+        value="invalid"
+      />
+      <Input name="disabled" label="Disabled" disabled value="Cannot edit" />
+    </div>
+  </section>
+</DocsLayout>

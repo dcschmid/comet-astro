@@ -1,0 +1,126 @@
+---
+/**
+ * Accordion - collapsible sections (Disclosure)
+ */
+interface Item {
+  id: string;
+  title: string;
+  content?: string;
+}
+
+interface Props {
+  items: Item[];
+  multiple?: boolean;
+  openIds?: string[];
+  className?: string;
+}
+
+const {
+  items = [],
+  multiple = false,
+  openIds = [],
+  className = '',
+} = Astro.props as Props;
+---
+
+<div
+  class={`space-y-3 ${className}`}
+  data-multiple={multiple}
+  data-open={openIds.join(',')}
+>
+  {
+    items.map((it) => (
+      <section class="rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+        <h3>
+          <button
+            class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-slate-900 transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-50 dark:hover:bg-slate-800"
+            data-acc-trigger
+            data-id={it.id}
+            aria-expanded={openIds.includes(it.id)}
+            aria-controls={`acc-panel-${it.id}`}
+          >
+            <span>{it.title}</span>
+            <span
+              aria-hidden="true"
+              class={`text-xl transition-transform ${openIds.includes(it.id) ? 'rotate-180' : ''}`}
+              data-acc-icon
+            >
+              ▾
+            </span>
+          </button>
+        </h3>
+        <div
+          id={`acc-panel-${it.id}`}
+          data-acc-panel
+          data-id={it.id}
+          class={openIds.includes(it.id) ? '' : 'hidden'}
+        >
+          <div class="px-4 pb-4 text-sm text-slate-600 dark:text-slate-300">
+            {it.content ? <div set:html={it.content} /> : null}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<script is:inline>
+  (function () {
+    const root = document.currentScript?.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+    const multiple = root.getAttribute('data-multiple') === 'true';
+
+    const getOpen = () => {
+      const raw = root.getAttribute('data-open') || '';
+      return new Set(raw.split(',').filter(Boolean));
+    };
+
+    const setOpen = (openSet) => {
+      root.setAttribute('data-open', Array.from(openSet).join(','));
+    };
+
+    const syncUI = (openSet) => {
+      const panels = root.querySelectorAll('[data-acc-panel]');
+      panels.forEach((panel) => {
+        if (!(panel instanceof HTMLElement)) return;
+        const id = panel.getAttribute('data-id');
+        const isOpen = id ? openSet.has(id) : false;
+        panel.classList.toggle('hidden', !isOpen);
+      });
+
+      const triggers = root.querySelectorAll('[data-acc-trigger]');
+      triggers.forEach((trigger) => {
+        if (!(trigger instanceof HTMLElement)) return;
+        const id = trigger.getAttribute('data-id');
+        const isOpen = id ? openSet.has(id) : false;
+        trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        const icon = trigger.querySelector('[data-acc-icon]');
+        if (icon instanceof HTMLElement) {
+          icon.classList.toggle('rotate-180', isOpen);
+        }
+      });
+    };
+
+    root.addEventListener('click', (event) => {
+      const target =
+        event.target instanceof HTMLElement
+          ? event.target.closest('[data-acc-trigger]')
+          : null;
+      if (!(target instanceof HTMLElement)) return;
+      const id = target.getAttribute('data-id');
+      if (!id) return;
+      const openSet = getOpen();
+      if (openSet.has(id)) {
+        openSet.delete(id);
+      } else {
+        if (!multiple) openSet.clear();
+        openSet.add(id);
+      }
+      setOpen(openSet);
+      syncUI(openSet);
+    });
+
+    // initial sync to ensure classes reflect provided openIds
+    syncUI(getOpen());
+  })();
+</script>

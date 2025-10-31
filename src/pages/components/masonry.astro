@@ -1,0 +1,60 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Masonry from '../../components/Masonry.astro';
+import Card from '../../components/Card.astro';
+import CategoryBadge from '../../components/CategoryBadge.astro';
+
+const items = [
+  {
+    title: 'Async Collaboration',
+    excerpt: 'Discover strategies for remote teamwork.',
+    length: '5 min read',
+  },
+  {
+    title: 'Accessibility Checklist',
+    excerpt: 'Use this list before every design review.',
+    length: '7 min read',
+  },
+  {
+    title: 'Motion Guidelines',
+    excerpt: 'Subtle animations that feel alive.',
+    length: '4 min read',
+  },
+  {
+    title: 'Dark Mode Patterns',
+    excerpt: 'Design inclusive, low-light experiences.',
+    length: '6 min read',
+  },
+  {
+    title: 'Content System',
+    excerpt: 'Scale your editorial efforts with ease.',
+    length: '8 min read',
+  },
+  {
+    title: 'Onboarding Flows',
+    excerpt: 'First impressions that convert.',
+    length: '9 min read',
+  },
+];
+---
+
+<DocsLayout
+  title="Masonry"
+  description="Responsive multi-column layout that reflows cards automatically."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Masonry columns={{ base: 1, md: 2, lg: 3 }} gap="1.75rem">
+      {
+        items.map((item) => (
+          <Card class="p-4 space-y-2">
+            <CategoryBadge label="Article" tone="purple" />
+            <h3 class="text-lg font-semibold text-white">{item.title}</h3>
+            <p class="text-sm text-gray-400">{item.excerpt}</p>
+            <span class="text-xs font-medium text-gray-500">{item.length}</span>
+          </Card>
+        ))
+      }
+    </Masonry>
+  </section>
+</DocsLayout>

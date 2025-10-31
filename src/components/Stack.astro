@@ -1,0 +1,54 @@
+---
+interface Props {
+  direction?: 'vertical' | 'horizontal';
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  align?: 'start' | 'center' | 'end' | 'stretch';
+  justify?: 'start' | 'center' | 'end' | 'between' | 'around';
+  wrap?: boolean;
+  className?: string;
+}
+
+const {
+  direction = 'vertical',
+  gap = 'md',
+  align = 'stretch',
+  justify = 'start',
+  wrap = false,
+  className = '',
+} = Astro.props;
+
+const directionClass = direction === 'vertical' ? 'flex-col' : 'flex-row';
+
+const gapClasses = {
+  none: 'gap-0',
+  xs: 'gap-1',
+  sm: 'gap-2',
+  md: 'gap-4',
+  lg: 'gap-6',
+  xl: 'gap-8',
+  '2xl': 'gap-12',
+};
+
+const alignClasses = {
+  start: 'items-start',
+  center: 'items-center',
+  end: 'items-end',
+  stretch: 'items-stretch',
+};
+
+const justifyClasses = {
+  start: 'justify-start',
+  center: 'justify-center',
+  end: 'justify-end',
+  between: 'justify-between',
+  around: 'justify-around',
+};
+
+const wrapClass = wrap ? 'flex-wrap' : '';
+---
+
+<div
+  class={`flex ${directionClass} ${gapClasses[gap]} ${alignClasses[align]} ${justifyClasses[justify]} ${wrapClass} ${className}`}
+>
+  <slot />
+</div>

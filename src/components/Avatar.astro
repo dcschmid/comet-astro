@@ -1,0 +1,89 @@
+---
+interface Props {
+  src?: string;
+  alt?: string;
+  name?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  variant?: 'circle' | 'square' | 'rounded';
+  status?: 'online' | 'offline' | 'busy' | 'away';
+  className?: string;
+}
+
+const {
+  src,
+  alt = '',
+  name = '',
+  size = 'md',
+  variant = 'circle',
+  status,
+  className = '',
+} = Astro.props;
+
+const sizeClasses = {
+  xs: 'w-6 h-6 text-xs',
+  sm: 'w-8 h-8 text-sm',
+  md: 'w-10 h-10 text-base',
+  lg: 'w-12 h-12 text-lg',
+  xl: 'w-16 h-16 text-xl',
+  '2xl': 'w-24 h-24 text-2xl',
+};
+
+const variantClasses = {
+  circle: 'rounded-full',
+  square: 'rounded-none',
+  rounded: 'rounded-lg',
+};
+
+const statusColors = {
+  online: 'bg-emerald-500 dark:bg-emerald-400',
+  offline: 'bg-slate-400 dark:bg-slate-500',
+  busy: 'bg-rose-500 dark:bg-rose-400',
+  away: 'bg-amber-400 dark:bg-amber-300',
+};
+
+const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+const initials = name ? getInitials(name) : '?';
+const avatarLabel = name ? `Avatar for ${name}` : alt || 'User avatar';
+---
+
+<div class={`relative inline-block ${className}`}>
+  <div
+    class={`${sizeClasses[size]} ${variantClasses[variant]} flex items-center justify-center overflow-hidden font-semibold text-white shadow-inner ring-1 ring-slate-200/60 dark:ring-white/10`}
+    role={!src ? 'img' : undefined}
+    aria-label={!src ? avatarLabel : undefined}
+    title={name || alt || undefined}
+  >
+    {
+      src ? (
+        <img
+          src={src}
+          alt={alt || name}
+          class="h-full w-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <span class="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 text-white">
+          {initials}
+        </span>
+      )
+    }
+  </div>
+  {
+    status && (
+      <span
+        class={`absolute bottom-0 right-0 block rounded-full border-2 border-white shadow-sm ${statusColors[status]} dark:border-slate-900 ${
+          ['xs', 'sm'].includes(size) ? 'h-2.5 w-2.5' : 'h-3.5 w-3.5'
+        }`}
+        aria-label={`Status: ${status}`}
+      />
+    )
+  }
+</div>

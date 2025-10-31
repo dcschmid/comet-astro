@@ -1,0 +1,62 @@
+---
+interface Props {
+  value: number;
+  max?: number;
+  variant?: 'default' | 'success' | 'warning' | 'error' | 'gradient';
+  size?: 'sm' | 'md' | 'lg';
+  showLabel?: boolean;
+  label?: string;
+  className?: string;
+}
+
+const {
+  value,
+  max = 100,
+  variant = 'default',
+  size = 'md',
+  showLabel = false,
+  label,
+  className = '',
+} = Astro.props;
+
+const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
+
+const sizeClasses = {
+  sm: 'h-1',
+  md: 'h-2',
+  lg: 'h-3',
+};
+
+const variantClasses = {
+  default: 'bg-blue-600 dark:bg-blue-500',
+  success: 'bg-emerald-600 dark:bg-emerald-500',
+  warning: 'bg-amber-600 dark:bg-amber-500',
+  error: 'bg-rose-600 dark:bg-rose-500',
+  gradient:
+    'bg-gradient-to-r from-blue-600 via-purple-600 to-rose-600 dark:from-blue-500 dark:via-purple-500 dark:to-rose-500',
+};
+---
+
+<div class={`w-full ${className}`.trim()}>
+  {
+    (showLabel || label) && (
+      <div class="mb-1 flex items-baseline justify-between text-sm font-semibold text-slate-800 dark:text-slate-200">
+        <span>{label || `${Math.round(percentage)}%`}</span>
+        {label && showLabel && <span>{Math.round(percentage)}%</span>}
+      </div>
+    )
+  }
+  <div
+    class={`w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700 ${sizeClasses[size]}`}
+  >
+    <div
+      class={`${sizeClasses[size]} ${variantClasses[variant]} rounded-full transition-all duration-300 ease-out`}
+      style={`width: ${percentage}%`}
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin="0"
+      aria-valuemax={max}
+    >
+    </div>
+  </div>
+</div>

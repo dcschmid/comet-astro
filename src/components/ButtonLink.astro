@@ -1,0 +1,95 @@
+---
+/**
+ * Generic, accessible anchor-style button.
+ */
+
+type ButtonVariant = 'primary' | 'secondary';
+
+interface Props {
+  href: string;
+  label?: string; // visible text when no slot is provided
+  ariaLabel?: string;
+  className?: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  rel?: string;
+  variant?: ButtonVariant;
+  externalLabel?: string; // sr-only text appended for external links
+}
+
+const props = Astro.props as Props & Record<string, unknown>;
+const {
+  href,
+  label,
+  ariaLabel,
+  className = '',
+  target = '_self',
+  rel,
+  variant = 'primary',
+  externalLabel = 'opens in new window',
+} = props;
+
+const isExternal = target === '_blank';
+const finalRel = isExternal ? `noopener noreferrer ${rel || ''}`.trim() : rel;
+
+const baseClasses = [
+  'inline-flex items-center justify-center gap-2 rounded-lg',
+  'min-h-[44px] min-w-[44px] px-4 py-3 text-base',
+  'font-semibold no-underline transition-all duration-200',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+].join(' ');
+
+const variantClasses: Record<ButtonVariant, string> = {
+  primary: [
+    'border border-blue-600 bg-blue-600 text-white shadow',
+    'hover:-translate-y-0.5 hover:bg-blue-500 hover:shadow-lg',
+    'focus-visible:ring-blue-500 focus-visible:ring-offset-white',
+    'active:translate-y-0',
+    'dark:border-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-slate-900',
+  ].join(' '),
+  secondary: [
+    'border border-slate-300 bg-white text-slate-900 shadow-sm',
+    'hover:-translate-y-0.5 hover:bg-slate-100',
+    'focus-visible:ring-slate-400 focus-visible:ring-offset-white',
+    'active:translate-y-0',
+    'dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900',
+  ].join(' '),
+};
+
+const classes = [baseClasses, variantClasses[variant], className]
+  .filter(Boolean)
+  .join(' ');
+
+const forwardedAttrs = (() => {
+  const rest: Record<string, unknown> = { ...props };
+  for (const key of [
+    'href',
+    'label',
+    'ariaLabel',
+    'className',
+    'target',
+    'rel',
+    'variant',
+    'externalLabel',
+  ]) {
+    delete (rest as Record<string, unknown>)[key];
+  }
+  return rest;
+})();
+
+const resolvedAriaLabel =
+  ariaLabel || (typeof label === 'string' ? undefined : undefined);
+---
+
+<a
+  href={href}
+  class={classes}
+  aria-label={resolvedAriaLabel}
+  target={target}
+  rel={finalRel}
+  {...forwardedAttrs}
+>
+  <slot name="iconLeft" />
+  {typeof label === 'string' ? label : <slot />}
+  {isExternal && <span class="sr-only"> ({externalLabel})</span>}
+  <slot name="iconRight" />
+</a>

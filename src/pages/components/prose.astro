@@ -1,0 +1,34 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Prose from '../../components/Prose.astro';
+---
+
+<DocsLayout
+  title="Prose"
+  description="Typography wrapper for rendered content or raw HTML with size variants."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>className?: string</code> – extra classes</li>
+      <li>
+        <code>html?: string</code> – optional raw HTML (otherwise uses slot)
+      </li>
+      <li>
+        <code>size?: 'sm'|'md'|'lg'|'xl'</code> – prose size (default: lg)
+      </li>
+      <li><code>invert?: boolean</code> – invert colors (default: false)</li>
+      <li>
+        <code>fullWidth?: boolean</code> – disable max-width (default: false)
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <Prose>
+      <h3>Heading</h3>
+      <p>This content is styled using Tailwind Typography classes.</p>
+    </Prose>
+  </section>
+</DocsLayout>

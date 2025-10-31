@@ -1,0 +1,46 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Container from '../../components/Container.astro';
+---
+
+<DocsLayout
+  title="Container"
+  description="Max-width content wrapper with responsive padding."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li>
+        <code>size?: 'sm'|'md'|'lg'|'xl'|'full'</code> – max-width (default: 'lg')
+      </li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <div class="bg-gray-900 p-4 rounded">
+        <Container size="sm">
+          <div class="bg-purple-500/20 p-4 rounded text-center">
+            Small container (max-w-2xl)
+          </div>
+        </Container>
+      </div>
+      <div class="bg-gray-900 p-4 rounded">
+        <Container size="md">
+          <div class="bg-purple-500/20 p-4 rounded text-center">
+            Medium container (max-w-4xl)
+          </div>
+        </Container>
+      </div>
+      <div class="bg-gray-900 p-4 rounded">
+        <Container size="lg">
+          <div class="bg-purple-500/20 p-4 rounded text-center">
+            Large container (max-w-6xl)
+          </div>
+        </Container>
+      </div>
+    </div>
+  </section>
+</DocsLayout>

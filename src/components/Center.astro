@@ -1,0 +1,28 @@
+---
+interface Props {
+  axis?: 'horizontal' | 'vertical' | 'both';
+  inline?: boolean;
+  className?: string;
+}
+
+const { axis = 'both', inline = false, className = '' } = Astro.props;
+
+const getClasses = () => {
+  if (axis === 'both') {
+    return 'flex items-center justify-center';
+  }
+  if (axis === 'horizontal') {
+    return 'flex justify-center';
+  }
+  if (axis === 'vertical') {
+    return 'flex items-center';
+  }
+  return '';
+};
+
+const displayClass = inline ? 'inline-flex' : 'flex';
+---
+
+<div class={`${displayClass} ${getClasses()} ${className}`}>
+  <slot />
+</div>

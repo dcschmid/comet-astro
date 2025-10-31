@@ -1,0 +1,42 @@
+---
+interface Props {
+  videoId: string;
+  title?: string;
+  lang?: string;
+  caption?: string;
+  className?: string;
+}
+
+const {
+  videoId,
+  title = 'TikTok video player',
+  lang = 'en',
+  caption,
+  className = '',
+} = Astro.props;
+
+const iframeSrc = `https://www.tiktok.com/embed/v2/${encodeURIComponent(
+  videoId
+)}?lang=${encodeURIComponent(lang)}`;
+---
+
+<div
+  class={`relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 ${className}`.trim()}
+>
+  <div class="aspect-[9/16]">
+    <iframe
+      class="h-full w-full border-0"
+      src={iframeSrc}
+      title={title}
+      allow="encrypted-media; clipboard-write"
+      allowfullscreen
+      loading="lazy"></iframe>
+  </div>
+  {
+    caption && (
+      <div class="border-t border-slate-200 p-3 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+        {caption}
+      </div>
+    )
+  }
+</div>

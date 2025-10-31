@@ -1,0 +1,61 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Divider from '../../components/Divider.astro';
+---
+
+<DocsLayout
+  title="Divider"
+  description="Visual separator for content sections."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li>
+        <code>orientation?: 'horizontal'|'vertical'</code> – direction (default:
+        'horizontal')
+      </li>
+      <li>
+        <code>variant?: 'solid'|'dashed'|'dotted'|'gradient'</code> – style (default:
+        'solid')
+      </li>
+      <li>
+        <code>spacing?: 'none'|'sm'|'md'|'lg'</code> – margin spacing (default: 'md')
+      </li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Solid (default)</h3>
+        <p>Content above</p>
+        <Divider />
+        <p>Content below</p>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Dashed</h3>
+        <p>Content above</p>
+        <Divider variant="dashed" />
+        <p>Content below</p>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Gradient</h3>
+        <p>Content above</p>
+        <Divider variant="gradient" spacing="lg" />
+        <p>Content below</p>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Vertical</h3>
+        <div class="flex items-center gap-4" style="height: 100px;">
+          <span>Left</span>
+          <Divider orientation="vertical" />
+          <span>Middle</span>
+          <Divider orientation="vertical" />
+          <span>Right</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</DocsLayout>

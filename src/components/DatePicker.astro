@@ -1,0 +1,415 @@
+---
+/**
+ * DatePicker - calendar-based date selection component
+ */
+interface Props {
+  value?: string;
+  min?: string;
+  max?: string;
+  label?: string;
+  placeholder?: string;
+  firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  className?: string;
+  inputName?: string;
+  showTodayShortcut?: boolean;
+}
+
+const {
+  value,
+  min,
+  max,
+  label = 'Select date',
+  placeholder = 'Choose a date',
+  firstDayOfWeek = 1,
+  className = '',
+  inputName,
+  showTodayShortcut = true,
+} = Astro.props as Props;
+
+const id = `date-picker-${Math.random().toString(36).slice(2, 10)}`;
+const minAttr = min ?? '';
+const maxAttr = max ?? '';
+const firstDayAttr = String(firstDayOfWeek);
+---
+
+<div
+  id={id}
+  data-date-picker
+  class={`relative space-y-2 ${className}`.trim()}
+  data-date-min={minAttr}
+  data-date-max={maxAttr}
+  data-date-first-day={firstDayAttr}
+>
+  {
+    label && (
+      <label
+        for={`${id}-input`}
+        class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+      >
+        {label}
+      </label>
+    )
+  }
+  <div class="relative">
+    <input type="hidden" value={value} name={inputName} data-date-value />
+    <button
+      id={`${id}-input`}
+      type="button"
+      class="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-left text-sm font-medium text-slate-900 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+      data-date-toggle
+    >
+      <span
+        data-date-display
+        class="truncate text-slate-500 dark:text-slate-300">{placeholder}</span
+      >
+      <span class="text-slate-500 dark:text-slate-300" aria-hidden="true"
+        >📅</span
+      >
+    </button>
+    <div
+      class="absolute z-40 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-900 shadow-2xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+      data-date-panel
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-label="Calendar"
+    >
+      <div
+        class="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100"
+      >
+        <div>
+          <div data-date-month class="font-semibold"></div>
+          <div
+            data-date-year
+            class="text-xs font-medium text-slate-500 dark:text-slate-400"
+          >
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="rounded-full border border-slate-200 bg-white p-2 text-slate-700 transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            data-date-prev
+            aria-label="Previous month">‹</button
+          >
+          <button
+            type="button"
+            class="rounded-full border border-slate-200 bg-white p-2 text-slate-700 transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            data-date-next
+            aria-label="Next month">›</button
+          >
+        </div>
+      </div>
+      <div class="px-3 pb-3">
+        <div
+          class="grid grid-cols-7 gap-1 px-1 pb-2 text-center text-xs font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-300"
+          data-date-weekdays
+        >
+        </div>
+        <div class="grid grid-cols-7 gap-1" data-date-grid></div>
+      </div>
+      {
+        showTodayShortcut && (
+          <div class="border-t border-slate-200 px-4 py-2 text-right dark:border-slate-700">
+            <button
+              type="button"
+              class="text-xs font-semibold text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-blue-300"
+              data-date-today
+            >
+              Today
+            </button>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function setupDatePicker() {
+    const root = document.getElementById('${id}');
+    if (!(root instanceof HTMLElement)) return;
+
+    const panel = root.querySelector('[data-date-panel]');
+    const toggle = root.querySelector('[data-date-toggle]');
+    const display = root.querySelector('[data-date-display]');
+    const hidden = root.querySelector('[data-date-value]');
+    const monthLabel = root.querySelector('[data-date-month]');
+    const yearLabel = root.querySelector('[data-date-year]');
+    const grid = root.querySelector('[data-date-grid]');
+    const weekdaysRow = root.querySelector('[data-date-weekdays]');
+    const prevBtn = root.querySelector('[data-date-prev]');
+    const nextBtn = root.querySelector('[data-date-next]');
+    const todayBtn = root.querySelector('[data-date-today]');
+
+    if (
+      !(panel instanceof HTMLElement) ||
+      !(toggle instanceof HTMLElement) ||
+      !(display instanceof HTMLElement) ||
+      !(hidden instanceof HTMLInputElement) ||
+      !(monthLabel instanceof HTMLElement) ||
+      !(yearLabel instanceof HTMLElement) ||
+      !(grid instanceof HTMLElement) ||
+      !(weekdaysRow instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const minDateValue = root.dataset.dateMin || null;
+    const maxDateValue = root.dataset.dateMax || null;
+    const firstDayDataset = Number(root.dataset.dateFirstDay);
+    const firstDayOfWeekValue = Number.isInteger(firstDayDataset)
+      ? firstDayDataset
+      : 1;
+
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    function parseDate(value) {
+      if (!value) return null;
+      const [year, month, day] = value.split('-').map(Number);
+      if (!year || !month || !day) return null;
+      const date = new Date(year, month - 1, day);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const minBound = parseDate(minDateValue);
+    const maxBound = parseDate(maxDateValue);
+
+    const fmtISO = (date) => {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
+    const fmtDisplay = (date) =>
+      `${weekdayNames[date.getDay()]}, ${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+    const startOfDay = (date) => {
+      const copy = new Date(date);
+      copy.setHours(0, 0, 0, 0);
+      return copy;
+    };
+
+    const withinRange = (date) => {
+      const time = startOfDay(date).getTime();
+      const min = minBound ? startOfDay(minBound).getTime() : -Infinity;
+      const max = maxBound ? startOfDay(maxBound).getTime() : Infinity;
+      return time >= min && time <= max;
+    };
+
+    let selected = parseDate(hidden.value);
+    let currentView = selected ? new Date(selected) : new Date();
+    currentView.setDate(1);
+
+    const renderWeekdays = () => {
+      const order = [...weekdayNames];
+      const offset = ((firstDayOfWeekValue % 7) + 7) % 7;
+      const rotated = order.slice(offset).concat(order.slice(0, offset));
+      weekdaysRow.innerHTML = rotated
+        .map((name) => `<span>${name}</span>`)
+        .join('');
+    };
+
+    const render = () => {
+      const viewYear = currentView.getFullYear();
+      const viewMonth = currentView.getMonth();
+      monthLabel.textContent = monthNames[viewMonth];
+      yearLabel.textContent = String(viewYear);
+
+      const firstDay = new Date(viewYear, viewMonth, 1);
+      const startOffset = (firstDay.getDay() - firstDayOfWeekValue + 7) % 7;
+      const startDate = new Date(firstDay);
+      startDate.setDate(firstDay.getDate() - startOffset);
+
+      const today = startOfDay(new Date());
+
+      const cells = [];
+      for (let i = 0; i < 42; i += 1) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+        const iso = fmtISO(date);
+        const isCurrentMonth = date.getMonth() === viewMonth;
+        const isSelected = selected
+          ? date.getTime() === selected.getTime()
+          : false;
+        const isToday = date.getTime() === today.getTime();
+        const disabled = !withinRange(date);
+
+        const interactionClass = disabled
+          ? 'cursor-not-allowed text-slate-400 opacity-70 dark:text-slate-600'
+          : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500';
+        const hoverClass = disabled
+          ? ''
+          : isSelected
+            ? 'hover:bg-blue-900 dark:hover:bg-white'
+            : 'hover:bg-blue-100 dark:hover:bg-blue-500/20';
+
+        const classes = [
+          'grid place-items-center rounded-lg px-0 py-2 text-sm font-medium transition',
+          interactionClass,
+          hoverClass,
+          isCurrentMonth
+            ? 'text-slate-800 dark:text-slate-100'
+            : 'text-slate-500 dark:text-slate-500',
+          isSelected
+            ? 'bg-blue-900 text-white dark:bg-white dark:text-slate-900'
+            : '',
+          isToday && !isSelected
+            ? 'border border-blue-500 dark:border-white/70'
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' ');
+
+        cells.push(`
+          <button
+            type="button"
+            class="${classes}"
+            data-date-cell="${iso}"
+            ${disabled ? 'disabled aria-disabled="true"' : ''}
+            aria-pressed="${isSelected}"
+            ${isToday ? 'aria-current="date"' : ''}
+          >
+            <span>${date.getDate()}</span>
+          </button>
+        `);
+      }
+
+      grid.innerHTML = cells.join('');
+    };
+
+    const open = () => {
+      panel.hidden = false;
+      panel.setAttribute('aria-hidden', 'false');
+      panel.classList.remove('opacity-0');
+      document.addEventListener('click', handleOutsideClick);
+    };
+
+    const close = () => {
+      panel.hidden = true;
+      panel.setAttribute('aria-hidden', 'true');
+      document.removeEventListener('click', handleOutsideClick);
+    };
+
+    const handleOutsideClick = (event) => {
+      if (!(event.target instanceof Node)) return;
+      if (!root.contains(event.target)) {
+        close();
+      }
+    };
+
+    const selectDate = (date, emit = true) => {
+      if (!withinRange(date)) return;
+      selected = new Date(date);
+      hidden.value = fmtISO(selected);
+      display.textContent = fmtDisplay(selected);
+      display.classList.remove('text-slate-500', 'dark:text-slate-300');
+      display.classList.add('text-slate-900', 'dark:text-slate-100');
+      currentView = new Date(date);
+      currentView.setDate(1);
+      render();
+      if (emit) {
+        root.dispatchEvent(
+          new CustomEvent('date-picker:change', {
+            bubbles: true,
+            detail: {
+              value: hidden.value,
+              date: new Date(selected),
+            },
+          })
+        );
+      }
+      close();
+    };
+
+    toggle.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (panel.hidden) {
+        open();
+      } else {
+        close();
+      }
+    });
+
+    if (prevBtn instanceof HTMLElement) {
+      prevBtn.addEventListener('click', () => {
+        currentView.setMonth(currentView.getMonth() - 1);
+        render();
+      });
+    }
+
+    if (nextBtn instanceof HTMLElement) {
+      nextBtn.addEventListener('click', () => {
+        currentView.setMonth(currentView.getMonth() + 1);
+        render();
+      });
+    }
+
+    if (todayBtn instanceof HTMLElement) {
+      todayBtn.addEventListener('click', () => {
+        const today = startOfDay(new Date());
+        if (!withinRange(today)) return;
+        selectDate(today);
+      });
+    }
+
+    grid.addEventListener('click', (event) => {
+      const target =
+        event.target instanceof HTMLElement
+          ? event.target.closest('[data-date-cell]')
+          : null;
+      if (!(target instanceof HTMLElement)) return;
+      const iso = target.getAttribute('data-date-cell');
+      if (!iso) return;
+      const date = parseDate(iso);
+      if (!date) return;
+      selectDate(date);
+    });
+
+    root.addEventListener('date-picker:set', (event) => {
+      const detail = event && 'detail' in event ? event.detail : null;
+      const dateValue =
+        detail && typeof detail.value === 'string' ? detail.value : null;
+      const date = parseDate(dateValue);
+      if (!date) return;
+      selectDate(date);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (panel.hidden) return;
+      if (event.key === 'Escape') {
+        close();
+      }
+    });
+
+    renderWeekdays();
+    if (hidden.value) {
+      const initial = parseDate(hidden.value);
+      if (initial) {
+        display.textContent = fmtDisplay(initial);
+        display.classList.remove('text-slate-500', 'dark:text-slate-300');
+        display.classList.add('text-slate-900', 'dark:text-slate-100');
+        selected = initial;
+        currentView = new Date(initial);
+        currentView.setDate(1);
+      }
+    }
+
+    render();
+  })();
+</script>

@@ -1,0 +1,269 @@
+---
+interface Props {
+  src: string;
+  title?: string;
+  artist?: string;
+  cover?: string;
+  autoplay?: boolean;
+  loop?: boolean;
+  variant?: 'compact' | 'full';
+  className?: string;
+}
+
+const {
+  src,
+  title,
+  artist,
+  cover,
+  autoplay = false,
+  loop = false,
+  variant = 'full',
+  className = '',
+} = Astro.props;
+---
+
+<div
+  class={`rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-lg ${variant === 'compact' ? 'p-4' : 'p-6'} dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${className}`}
+  data-audio-player
+>
+  {
+    variant === 'full' && (cover || title || artist) && (
+      <div class="mb-5 flex items-center gap-4">
+        {cover && (
+          <img
+            src={cover}
+            alt={title ? `${title} cover art` : 'Album cover'}
+            class="h-16 w-16 rounded-xl object-cover shadow-sm"
+          />
+        )}
+        <div class="min-w-0 flex-1">
+          {title && (
+            <p class="truncate text-lg font-semibold text-slate-900 dark:text-slate-100">
+              {title}
+            </p>
+          )}
+          {artist && (
+            <p class="truncate text-sm font-medium text-slate-600 dark:text-slate-300">
+              {artist}
+            </p>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  <audio src={src} preload="metadata" loop={loop} autoplay={autoplay} data-audio
+  ></audio>
+
+  <div class="flex flex-col gap-4">
+    <div class="flex items-center gap-4">
+      <button
+        type="button"
+        class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+        data-play-pause
+        aria-label="Play/Pause"
+      >
+        <span data-play-icon>▶</span>
+        <span data-pause-icon class="hidden">⏸</span>
+      </button>
+
+      <div class="flex flex-1 items-center gap-3">
+        <span
+          class="text-xs font-semibold text-slate-600 tabular-nums dark:text-slate-300"
+          data-current-time>0:00</span
+        >
+        <input
+          type="range"
+          min="0"
+          value="0"
+          step="0.1"
+          aria-label="Seek position"
+          class="h-1.5 flex-1 appearance-none rounded-full bg-slate-200 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:bg-slate-700"
+          data-seek
+        />
+        <span
+          class="text-xs font-semibold text-slate-600 tabular-nums dark:text-slate-300"
+          data-duration>0:00</span
+        >
+      </div>
+
+      <button
+        type="button"
+        class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-transparent text-slate-600 transition hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-300 dark:hover:text-blue-300"
+        data-mute
+        aria-label="Mute audio"
+        aria-pressed="false"
+      >
+        <span data-volume-icon>🔊</span>
+        <span data-mute-icon class="hidden">🔇</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const players = document.querySelectorAll('[data-audio-player]');
+
+    const formatTime = (seconds) => {
+      if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${String(mins)}:${String(secs).padStart(2, '0')}`;
+    };
+
+    const updateSeekVisual = (input) => {
+      const max = Number(input.max) || 0;
+      const value = Number(input.value) || 0;
+      const percent = max > 0 ? (value / max) * 100 : 0;
+      const gradient = `linear-gradient(90deg, rgb(37 99 235) 0%, rgb(37 99 235) ${percent}%, rgb(226 232 240) ${percent}%, rgb(226 232 240) 100%)`;
+      input.style.background = gradient;
+    };
+
+    players.forEach((player) => {
+      if (!(player instanceof HTMLElement)) return;
+      const audio = player.querySelector('[data-audio]');
+      if (!(audio instanceof HTMLAudioElement)) return;
+
+      const playPauseBtn = player.querySelector('[data-play-pause]');
+      const playIcon = player.querySelector('[data-play-icon]');
+      const pauseIcon = player.querySelector('[data-pause-icon]');
+      const muteBtn = player.querySelector('[data-mute]');
+      const volumeIcon = player.querySelector('[data-volume-icon]');
+      const muteIcon = player.querySelector('[data-mute-icon]');
+      const currentTimeEl = player.querySelector('[data-current-time]');
+      const durationEl = player.querySelector('[data-duration]');
+      const seekInput = player.querySelector('[data-seek]');
+
+      if (seekInput instanceof HTMLInputElement) {
+        updateSeekVisual(seekInput);
+      }
+
+      playPauseBtn?.addEventListener('click', () => {
+        if (audio.paused) {
+          audio.play().catch(() => {
+            /* ignore */
+          });
+        } else {
+          audio.pause();
+        }
+      });
+
+      audio.addEventListener('play', () => {
+        playIcon?.classList.add('hidden');
+        pauseIcon?.classList.remove('hidden');
+        if (playPauseBtn instanceof HTMLElement) {
+          playPauseBtn.setAttribute('aria-label', 'Pause');
+        }
+      });
+
+      audio.addEventListener('pause', () => {
+        playIcon?.classList.remove('hidden');
+        pauseIcon?.classList.add('hidden');
+        if (playPauseBtn instanceof HTMLElement) {
+          playPauseBtn.setAttribute('aria-label', 'Play');
+        }
+      });
+
+      muteBtn?.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        if (volumeIcon instanceof HTMLElement)
+          volumeIcon.classList.toggle('hidden', audio.muted);
+        if (muteIcon instanceof HTMLElement)
+          muteIcon.classList.toggle('hidden', !audio.muted);
+        if (muteBtn instanceof HTMLElement) {
+          muteBtn.setAttribute('aria-pressed', audio.muted ? 'true' : 'false');
+          muteBtn.setAttribute(
+            'aria-label',
+            audio.muted ? 'Unmute audio' : 'Mute audio'
+          );
+        }
+      });
+
+      audio.addEventListener('loadedmetadata', () => {
+        if (durationEl instanceof HTMLElement) {
+          durationEl.textContent = formatTime(audio.duration);
+        }
+        if (seekInput instanceof HTMLInputElement) {
+          seekInput.max = Number.isFinite(audio.duration)
+            ? String(audio.duration)
+            : '0';
+          updateSeekVisual(seekInput);
+        }
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        if (currentTimeEl instanceof HTMLElement) {
+          currentTimeEl.textContent = formatTime(audio.currentTime);
+        }
+        if (
+          seekInput instanceof HTMLInputElement &&
+          Number.isFinite(audio.duration) &&
+          audio.duration > 0
+        ) {
+          seekInput.value = String(audio.currentTime);
+          updateSeekVisual(seekInput);
+        }
+      });
+
+      seekInput?.addEventListener('input', () => {
+        if (!(seekInput instanceof HTMLInputElement)) return;
+        const next = Number(seekInput.value);
+        if (Number.isFinite(next) && audio.duration > 0) {
+          audio.currentTime = Math.min(Math.max(next, 0), audio.duration);
+        }
+        updateSeekVisual(seekInput);
+      });
+
+      seekInput?.addEventListener('change', () => {
+        if (!(seekInput instanceof HTMLInputElement)) return;
+        const next = Number(seekInput.value);
+        if (Number.isFinite(next) && audio.duration > 0) {
+          audio.currentTime = Math.min(Math.max(next, 0), audio.duration);
+        }
+      });
+    });
+  });
+</script>
+
+<style is:inline>
+  [data-audio-player] [data-seek] {
+    --seek-fill: rgb(37 99 235);
+    --seek-bg: rgb(226 232 240);
+    background: linear-gradient(
+      90deg,
+      var(--seek-fill) 0%,
+      var(--seek-fill) 0%,
+      var(--seek-bg) 0%,
+      var(--seek-bg) 100%
+    );
+  }
+
+  :where(.dark) [data-audio-player] [data-seek] {
+    --seek-bg: rgb(30 41 59);
+  }
+
+  [data-audio-player] [data-seek]::-webkit-slider-thumb,
+  [data-audio-player] [data-seek]::-moz-range-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 999px;
+    background: var(--seek-fill);
+    border: 2px solid white;
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.3);
+  }
+
+  :where(.dark) [data-audio-player] [data-seek]::-webkit-slider-thumb,
+  :where(.dark) [data-audio-player] [data-seek]::-moz-range-thumb {
+    border-color: rgb(15 23 42);
+  }
+
+  [data-audio-player] [data-seek]::-webkit-slider-runnable-track,
+  [data-audio-player] [data-seek]::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: transparent;
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Drawer from '../../components/Drawer.astro';
+
+const leftId = 'demo-drawer-left';
+const rightId = 'demo-drawer-right';
+---
+
+<DocsLayout
+  title="Drawer"
+  description="Slide-in panel that anchors to the left or right edge of the viewport."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="flex gap-4">
+      <button
+        data-drawer-trigger={leftId}
+        class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+        type="button"
+      >
+        Open Left Drawer
+      </button>
+      <button
+        data-drawer-trigger={rightId}
+        class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+        type="button"
+      >
+        Open Right Drawer
+      </button>
+    </div>
+    <Drawer id={leftId} title="Left Drawer" position="left">
+      <p class="text-gray-300">Content from the left side.</p>
+    </Drawer>
+    <Drawer id={rightId} title="Right Drawer" position="right">
+      <p class="text-gray-300">Content from the right side.</p>
+    </Drawer>
+  </section>
+</DocsLayout>

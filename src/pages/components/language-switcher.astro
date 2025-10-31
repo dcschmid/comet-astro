@@ -1,0 +1,20 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
+
+const languages = [
+  { code: 'en', label: 'EN', href: '?lang=en' },
+  { code: 'de', label: 'DE', href: '?lang=de' },
+  { code: 'fr', label: 'FR', href: '?lang=fr' },
+];
+---
+
+<DocsLayout
+  title="LanguageSwitcher"
+  description="Link-based language switcher showing the current locale."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <LanguageSwitcher current="en" languages={languages} />
+  </section>
+</DocsLayout>

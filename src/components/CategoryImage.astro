@@ -1,0 +1,99 @@
+---
+interface Props {
+  category?: string;
+  title?: string;
+  description?: string;
+  href?: string;
+  image?: string;
+  alt?: string;
+  height?: number | string;
+  rounded?: boolean;
+  className?: string;
+}
+
+const {
+  category,
+  title,
+  description,
+  href,
+  image,
+  alt,
+  height = '14rem',
+  rounded = true,
+  className = '',
+} = Astro.props as Props;
+
+const displayTitle = title ?? category ?? 'Category';
+const displayCategory = category ?? '';
+
+const key = displayTitle.trim().toLowerCase();
+const gradient = key.includes('rock')
+  ? 'from-purple-700 to-rose-500'
+  : key.includes('pop')
+    ? 'from-blue-700 to-sky-500'
+    : key.includes('jazz')
+      ? 'from-amber-600 to-orange-500'
+      : key.includes('hip') || key.includes('rap')
+        ? 'from-emerald-600 to-teal-500'
+        : key.includes('classical')
+          ? 'from-indigo-700 to-blue-500'
+          : 'from-slate-800 to-slate-950';
+
+const containerClasses = [
+  'relative block overflow-hidden border border-slate-800/40 bg-slate-900 shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30',
+  rounded ? 'rounded-2xl' : 'rounded-lg',
+  className,
+]
+  .filter(Boolean)
+  .join(' ')
+  .trim();
+
+const mediaClasses = [
+  'h-full w-full object-cover transition duration-700',
+  image ? 'scale-100 group-hover:scale-105' : '',
+].join(' ');
+
+const Tag = href ? 'a' : 'div';
+const resolvedAlt = alt ?? `${displayTitle} preview`;
+---
+
+<Tag href={href} class={containerClasses}>
+  <div class="group relative h-full" style={`height:${height}`}>
+    {
+      image ? (
+        <img
+          src={image}
+          alt={resolvedAlt}
+          class={mediaClasses}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div
+          class={`flex h-full w-full items-center justify-center bg-gradient-to-br ${gradient}`}
+          role="img"
+          aria-label={resolvedAlt}
+        >
+          <span class="text-lg font-semibold uppercase tracking-wide text-white/80 drop-shadow">
+            {displayTitle}
+          </span>
+        </div>
+      )
+    }
+    <div
+      class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"
+    >
+    </div>
+    <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-5">
+      {
+        displayCategory && (
+          <span class="text-xs font-semibold uppercase tracking-wide text-white/70">
+            {displayCategory}
+          </span>
+        )
+      }
+      <span class="text-lg font-semibold text-white">{displayTitle}</span>
+      {description && <span class="text-sm text-white/80">{description}</span>}
+    </div>
+  </div>
+</Tag>

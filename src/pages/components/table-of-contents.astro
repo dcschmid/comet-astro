@@ -1,0 +1,28 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+const tocItems = [
+  { id: 'intro', label: 'Introduction' },
+  { id: 'api', label: 'API', level: 2 },
+];
+---
+
+<DocsLayout
+  title="TableOfContents"
+  description="TOC for in-page headings with optional active highlighting."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>title?: string</code></li>
+      <li><code>items: &#123;id,label,level?&#125;[]</code></li>
+      <li><code>activeId?: string</code></li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Example</h2>
+    <TableOfContents title="On this page" items={tocItems} />
+  </section>
+</DocsLayout>

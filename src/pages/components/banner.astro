@@ -1,0 +1,30 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Banner from '../../components/Banner.astro';
+---
+
+<DocsLayout
+  title="Banner"
+  description="Prominent announcement bar with optional action and dismiss control."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Usage</h2>
+    <p class="text-gray-400 text-sm">
+      Banners draw attention to high-priority messages or feature launches. They
+      support gradient variants, custom icons, sticky positioning, and
+      dismissible behavior.
+    </p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Banner
+      title="New feature launch"
+      description="Discover the redesigned analytics dashboard with flexible filters."
+      action={{ href: '#', label: 'Explore' }}
+      icon="🚀"
+      dismissible
+      sticky
+    />
+  </section>
+</DocsLayout>

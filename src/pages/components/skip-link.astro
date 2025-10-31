@@ -1,0 +1,25 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import SkipLink from '../../components/SkipLink.astro';
+import Paragraph from '../../components/Paragraph.astro';
+---
+
+<DocsLayout
+  title="SkipLink"
+  description="Keyboard-accessible jump link to skip repetitive navigation."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <div
+      class="relative overflow-hidden rounded-xl border border-gray-800 bg-gray-900 p-6"
+    >
+      <SkipLink targetId="demo-main" />
+      <Paragraph size="sm" muted>
+        Press <kbd class="rounded bg-gray-800 px-2 py-1 text-xs text-gray-200"
+          >Tab</kbd
+        >
+        to reveal the skip link.
+      </Paragraph>
+    </div>
+  </section>
+</DocsLayout>

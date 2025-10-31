@@ -1,0 +1,40 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Tooltip from '../../components/Tooltip.astro';
+import ButtonLink from '../../components/ButtonLink.astro';
+---
+
+<DocsLayout
+  title="Tooltip"
+  description="Accessible hover/focus tooltip with directional positioning."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="flex gap-4">
+      <Tooltip content="Top tooltip" position="top">
+        <ButtonLink
+          href="#"
+          label="Hover me (top)"
+          variant="secondary"
+          size="sm"
+        />
+      </Tooltip>
+      <Tooltip content="Right tooltip" position="right">
+        <ButtonLink
+          href="#"
+          label="Hover me (right)"
+          variant="secondary"
+          size="sm"
+        />
+      </Tooltip>
+      <Tooltip content="Bottom tooltip" position="bottom">
+        <ButtonLink
+          href="#"
+          label="Hover me (bottom)"
+          variant="secondary"
+          size="sm"
+        />
+      </Tooltip>
+    </div>
+  </section>
+</DocsLayout>

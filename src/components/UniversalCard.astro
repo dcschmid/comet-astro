@@ -1,0 +1,243 @@
+---
+import { cn } from '../utils/cn';
+import ButtonLink from './ButtonLink.astro';
+import Badge from './Badge.astro';
+
+/**
+ * UniversalCard - flexible card component to cover Knowledge/Playlist/Section/etc.
+ */
+
+type Variant = 'vertical' | 'horizontal' | 'compact';
+
+type Action = {
+  href: string;
+  label: string;
+  variant?: 'primary' | 'secondary';
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  rel?: string;
+};
+
+type BadgeItem = {
+  label: string;
+  variant?: 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
+};
+
+interface Props {
+  // Layout
+  variant?: Variant;
+  class?: string;
+
+  // Link target for main area (media + title)
+  href?: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  rel?: string;
+
+  // Media
+  imageSrc?: string;
+  imageAlt?: string;
+  imageRounded?: boolean;
+  imageAspect?: '16:9' | '4:3' | '1:1' | '3:2';
+
+  // Text
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+
+  // Badges/Tags and Meta
+  badges?: BadgeItem[];
+  tags?: string[];
+  meta?: string[]; // e.g., ['10 tracks', '3 min read']
+
+  // Actions
+  actions?: Action[];
+}
+
+const props = Astro.props as Props;
+const {
+  variant = 'vertical',
+  class: className,
+  href,
+  target = '_self',
+  rel,
+  imageSrc,
+  imageAlt = '',
+  imageRounded = true,
+  imageAspect = '16:9',
+  eyebrow,
+  title,
+  subtitle,
+  description,
+  badges = [],
+  tags = [],
+  meta = [],
+  actions = [],
+} = props;
+
+const base =
+  'overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950';
+const layout =
+  variant === 'horizontal'
+    ? 'flex flex-row gap-4 p-4'
+    : variant === 'compact'
+      ? 'p-4'
+      : 'p-0';
+
+const aspectMap: Record<NonNullable<Props['imageAspect']>, string> = {
+  '16:9': 'aspect-[16/9]',
+  '4:3': 'aspect-[4/3]',
+  '1:1': 'aspect-square',
+  '3:2': 'aspect-[3/2]',
+};
+
+const relFinal =
+  href && target === '_blank' ? `noopener noreferrer ${rel || ''}`.trim() : rel;
+---
+
+<article class={cn(base, layout, className)}>
+  {
+    variant === 'horizontal' && (
+      <div class="w-40 flex-shrink-0">
+        <slot name="media">
+          {imageSrc && (
+            <a href={href} target={target} rel={relFinal} class="block">
+              <div
+                class={cn(
+                  'relative w-full overflow-hidden bg-neutral-200 dark:bg-neutral-800',
+                  aspectMap[imageAspect],
+                  imageRounded && 'rounded-xl'
+                )}
+              >
+                <img
+                  src={imageSrc}
+                  alt={imageAlt}
+                  class="absolute inset-0 h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </a>
+          )}
+        </slot>
+      </div>
+    )
+  }
+
+  {
+    variant !== 'horizontal' && imageSrc && (
+      <slot name="media">
+        <a href={href} target={target} rel={relFinal} class="block">
+          <div
+            class={cn(
+              'relative w-full overflow-hidden bg-neutral-200 dark:bg-neutral-800',
+              aspectMap[imageAspect],
+              imageRounded && 'rounded-b-none rounded-t-2xl',
+              variant === 'compact' && 'hidden'
+            )}
+          >
+            <img
+              src={imageSrc}
+              alt={imageAlt}
+              class="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </a>
+      </slot>
+    )
+  }
+
+  <div class={cn(variant === 'vertical' ? 'p-4' : '', 'min-w-0 flex-1')}>
+    <!-- Eyebrow / Badges Row -->
+    {
+      (eyebrow || badges.length || tags.length) && (
+        <div class="mb-1 flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+          {eyebrow && <span class="uppercase tracking-wide">{eyebrow}</span>}
+          {badges.map((b) => (
+            <Badge label={b.label} variant={b.variant || 'neutral'} />
+          ))}
+          {tags.map((t) => (
+            <span class="rounded-full bg-slate-200 px-2 py-0.5 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+              {t}
+            </span>
+          ))}
+        </div>
+      )
+    }
+
+    <!-- Title / Subtitle -->
+    <header class="mb-2">
+      <slot name="title">
+        {
+          title ? (
+            href ? (
+              <h3 class="text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100">
+                <a
+                  href={href}
+                  target={target}
+                  rel={relFinal}
+                  class="no-underline text-inherit transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900"
+                >
+                  {title}
+                </a>
+              </h3>
+            ) : (
+              <h3 class="text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100">
+                {title}
+              </h3>
+            )
+          ) : null
+        }
+      </slot>
+      {
+        subtitle && (
+          <div class="text-sm text-slate-700 dark:text-slate-300">
+            {subtitle}
+          </div>
+        )
+      }
+    </header>
+
+    <!-- Description / Content -->
+    <div
+      class="prose prose-sm max-w-none text-slate-700 prose-headings:text-slate-900 prose-a:text-blue-700 prose-strong:text-slate-900 dark:text-slate-200 dark:prose-headings:text-slate-100 dark:prose-a:text-blue-300 dark:prose-strong:text-slate-100"
+    >
+      <slot>
+        {description && <p class="m-0">{description}</p>}
+      </slot>
+    </div>
+
+    <!-- Meta -->
+    {
+      meta.length > 0 && (
+        <ul class="mt-3 flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600 dark:text-slate-400">
+          {meta.map((m) => (
+            <li>{m}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <!-- Actions -->
+    {
+      actions.length > 0 && (
+        <div class="mt-4 flex flex-wrap gap-2">
+          <slot name="actions">
+            {actions.map((a) => (
+              <ButtonLink
+                href={a.href}
+                label={a.label}
+                variant={(a.variant || 'primary') as any}
+                target={a.target || '_self'}
+                rel={a.rel}
+              />
+            ))}
+          </slot>
+        </div>
+      )
+    }
+
+    <slot name="footer" />
+  </div>
+</article>

@@ -1,0 +1,21 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import SpotifyEmbed from '../../components/SpotifyEmbed.astro';
+---
+
+<DocsLayout
+  title="SpotifyEmbed"
+  description="Responsive Spotify iframe for tracks, albums, playlists, and podcasts."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <p class="text-gray-400 text-sm">
+      Pass the Spotify URI and declare the <code>type</code> to render the correct
+      embed layout.
+    </p>
+    <div class="grid gap-4 md:grid-cols-2">
+      <SpotifyEmbed uri="spotify:track:11dFghVXANMlKmJXsNCbNl" type="track" />
+      <SpotifyEmbed uri="spotify:album:1ATL5GLyefJaxhQzSPVrLX" type="album" />
+    </div>
+  </section>
+</DocsLayout>

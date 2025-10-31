@@ -1,0 +1,149 @@
+---
+/**
+ * Banner - top-of-page announcement bar
+ */
+type Variant = 'default' | 'success' | 'warning' | 'danger';
+
+interface Action {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  variant?: Variant;
+  dismissible?: boolean;
+  action?: Action;
+  icon?: string;
+  sticky?: boolean;
+  className?: string;
+}
+
+const {
+  title,
+  description,
+  variant = 'default',
+  dismissible = false,
+  action,
+  icon,
+  sticky = false,
+  className = '',
+} = Astro.props as Props;
+
+const styles: Record<
+  Variant,
+  { wrap: string; text: string; border: string; accent: string }
+> = {
+  default: {
+    wrap: 'bg-gradient-to-r from-indigo-900/80 via-slate-900 to-indigo-900/70',
+    text: 'text-indigo-100',
+    border: 'border-indigo-500/40',
+    accent: 'text-indigo-200',
+  },
+  success: {
+    wrap: 'bg-gradient-to-r from-emerald-900/80 via-slate-900 to-emerald-900/70',
+    text: 'text-emerald-100',
+    border: 'border-emerald-500/40',
+    accent: 'text-emerald-200',
+  },
+  warning: {
+    wrap: 'bg-gradient-to-r from-amber-900/80 via-slate-900 to-amber-900/70',
+    text: 'text-amber-50',
+    border: 'border-amber-500/40',
+    accent: 'text-amber-200',
+  },
+  danger: {
+    wrap: 'bg-gradient-to-r from-rose-900/80 via-slate-900 to-rose-900/70',
+    text: 'text-rose-100',
+    border: 'border-rose-500/40',
+    accent: 'text-rose-200',
+  },
+};
+
+const id = `banner-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<section
+  id={id}
+  class={`${sticky ? 'sticky top-0 z-40' : ''} ${styles[variant].wrap} border-b ${styles[variant].border} shadow-lg shadow-black/30 backdrop-blur ${className}`}
+  data-banner
+  role="status"
+>
+  <div class="mx-auto flex max-w-5xl items-center gap-4 px-6 py-4">
+    <span class={`text-2xl ${styles[variant].accent}`} aria-hidden="true">
+      {
+        icon ||
+          (variant === 'success'
+            ? '✅'
+            : variant === 'warning'
+              ? '⚠️'
+              : variant === 'danger'
+                ? '⛔'
+                : '🔔')
+      }
+    </span>
+    <div class="flex-1 space-y-1">
+      {
+        title && (
+          <h2 class={`text-base font-semibold ${styles[variant].text}`}>
+            {title}
+          </h2>
+        )
+      }
+      {
+        description && (
+          <p class={`text-sm ${styles[variant].text}`}>{description}</p>
+        )
+      }
+      <slot />
+    </div>
+    {
+      action && (
+        <a
+          href={action.href}
+          class={`inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/40 ${sticky ? '' : 'shadow'}`}
+        >
+          {action.label}
+          <span aria-hidden="true">→</span>
+        </a>
+      )
+    }
+    {
+      dismissible && (
+        <button
+          type="button"
+          class="ml-2 rounded-full border border-white/30 bg-white/10 p-2 text-xs text-white hover:bg-white/20 focus:outline-none focus:ring focus:ring-white/40"
+          data-banner-close
+          aria-label="Close banner"
+        >
+          ×
+        </button>
+      )
+    }
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const script = document.currentScript;
+    if (!(script instanceof HTMLScriptElement)) return;
+    const root = script.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+    const closeButton = root.querySelector('[data-banner-close]');
+    if (!(closeButton instanceof HTMLElement)) return;
+    closeButton.addEventListener('click', () => {
+      root.style.animation = 'fadeOut 220ms ease forwards';
+      window.setTimeout(() => root.remove(), 240);
+    });
+  })();
+</script>
+
+<style is:inline>
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+</style>

@@ -1,0 +1,35 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Layout from '../../components/Layout.astro';
+import Paragraph from '../../components/Paragraph.astro';
+---
+
+<DocsLayout
+  title="Layout"
+  description="Page frame with header, footer, and containerized main slot."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Layout class="border border-gray-800 rounded-2xl overflow-hidden">
+      <div
+        slot="header"
+        class="bg-gray-900/80 px-6 py-4 text-sm font-semibold text-white"
+      >
+        Acme · Dashboard
+      </div>
+      <section id="demo-main" class="space-y-3 py-8">
+        <h3 class="text-xl font-bold text-white">Team insights</h3>
+        <Paragraph size="sm">
+          Capture a high-level overview of active projects, new messages, and
+          priority alerts.
+        </Paragraph>
+      </section>
+      <footer
+        slot="footer"
+        class="bg-gray-900/80 px-6 py-4 text-xs text-gray-400"
+      >
+        © {new Date().getFullYear()} Acme Inc. All rights reserved.
+      </footer>
+    </Layout>
+  </section>
+</DocsLayout>

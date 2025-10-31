@@ -1,0 +1,142 @@
+---
+interface Props {
+  value: number;
+  max?: number;
+  readonly?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  showValue?: boolean;
+  name?: string;
+  className?: string;
+}
+
+const {
+  value,
+  max = 5,
+  readonly = true,
+  size = 'md',
+  showValue = false,
+  name = 'rating',
+  className = '',
+} = Astro.props;
+
+const sizeClasses = {
+  sm: 'text-base',
+  md: 'text-xl',
+  lg: 'text-3xl',
+};
+
+const stars = Array.from({ length: max }, (_, i) => i + 1);
+
+const escapeAttribute = (val: string | number) =>
+  String(val).replace(/"/g, '&quot;');
+
+const filledClass = 'text-amber-700 dark:text-amber-400';
+const emptyClass = 'text-slate-500 dark:text-slate-400';
+const hoverClass = 'hover:text-amber-600 dark:hover:text-amber-300';
+
+const readonlyStarsHtml = stars
+  .map((star) => {
+    const filled = star <= value;
+    const halfFilled = star === Math.ceil(value) && value % 1 !== 0;
+    const visualFilled = filled || halfFilled;
+    const classes = visualFilled ? filledClass : emptyClass;
+    const halfAttr = halfFilled ? ' data-half="true"' : '';
+    return `<span class="leading-none ${classes}" aria-hidden="true"${halfAttr}>★</span>`;
+  })
+  .join('');
+
+const interactiveStarsHtml = stars
+  .map((star) => {
+    const filled = star <= value;
+    const halfFilled = star === Math.ceil(value) && value % 1 !== 0;
+    const visualFilled = filled || halfFilled;
+    const classes = visualFilled
+      ? `${filledClass} ${hoverClass}`
+      : `${emptyClass} ${hoverClass}`;
+    const checkedAttr = star === Math.round(value) ? ' checked' : '';
+    return `<label class="cursor-pointer transition-transform hover:scale-105 focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 focus-within:ring-offset-white dark:focus-within:ring-offset-slate-900"><input type="radio" name="${escapeAttribute(name)}" value="${star}" class="sr-only" aria-label="Rate ${star} out of ${max}"${checkedAttr} /><span class="transition-colors ${classes}" data-rating-star="${star}">★</span></label>`;
+  })
+  .join('');
+---
+
+<div class={`inline-flex items-center gap-2 ${className}`}>
+  <div
+    class={`inline-flex gap-0.5 ${sizeClasses[size]}`}
+    role={readonly ? 'img' : 'radiogroup'}
+    aria-label={`Rating: ${value} out of ${max} stars`}
+    data-rating
+    data-readonly={readonly}
+  >
+    {
+      readonly ? (
+        <Fragment set:html={readonlyStarsHtml} />
+      ) : (
+        <Fragment set:html={interactiveStarsHtml} />
+      )
+    }
+  </div>
+
+  {
+    showValue && (
+      <span class="text-sm font-semibold text-slate-800 tabular-nums dark:text-slate-200">
+        {value.toFixed(1)} / {max}
+      </span>
+    )
+  }
+</div>
+
+<script is:inline>
+  (() => {
+    const highlightStars = (stars, activeCount) => {
+      stars.forEach((element, index) => {
+        if (index < activeCount) {
+          element.classList.add('text-amber-700', 'dark:text-amber-400');
+          element.classList.remove('text-slate-500', 'dark:text-slate-400');
+        } else {
+          element.classList.remove('text-amber-700', 'dark:text-amber-400');
+          element.classList.add('text-slate-500', 'dark:text-slate-400');
+        }
+      });
+    };
+
+    const initRatings = () => {
+      const ratings = Array.from(
+        document.querySelectorAll('[data-rating]:not([data-readonly="true"])')
+      );
+
+      ratings.forEach((rating) => {
+        if (!(rating instanceof HTMLElement)) return;
+        const stars = Array.from(
+          rating.querySelectorAll('[data-rating-star]')
+        ).filter((element) => element instanceof HTMLElement);
+        if (!stars.length) return;
+
+        stars.forEach((star) => {
+          star.addEventListener('mouseenter', () => {
+            const raw = star.getAttribute('data-rating-star') || '0';
+            const starValue = Number.parseInt(raw, 10);
+            highlightStars(stars, Number.isNaN(starValue) ? 0 : starValue);
+          });
+        });
+
+        rating.addEventListener('mouseleave', () => {
+          const checkedInput = rating.querySelector('input:checked');
+          const rawValue =
+            checkedInput instanceof HTMLInputElement
+              ? checkedInput.value
+              : null;
+          const ratingValue = Number.parseInt(rawValue || '0', 10);
+          highlightStars(stars, Number.isNaN(ratingValue) ? 0 : ratingValue);
+        });
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initRatings, {
+        once: true,
+      });
+    } else {
+      initRatings();
+    }
+  })();
+</script>

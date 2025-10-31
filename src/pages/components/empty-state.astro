@@ -1,0 +1,32 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import Paragraph from '../../components/Paragraph.astro';
+---
+
+<DocsLayout
+  title="EmptyState"
+  description="Versatile placeholder for views without content, supporting actions and guidance."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">When to use</h2>
+    <p class="text-gray-400 text-sm">
+      Pair an icon, concise copy, and clear next steps to orient users when
+      there is nothing to display yet.
+    </p>
+  </section>
+
+  <section>
+    <EmptyState
+      icon="🗂️"
+      title="No projects yet"
+      description="Start by creating your first project and invite your teammates."
+      primaryAction={{ href: '#', label: 'Create project' }}
+      secondaryAction={{ href: '#', label: 'View docs' }}
+    >
+      <Paragraph size="sm" muted>
+        Tip: You can import existing data from CSV or Notion.
+      </Paragraph>
+    </EmptyState>
+  </section>
+</DocsLayout>

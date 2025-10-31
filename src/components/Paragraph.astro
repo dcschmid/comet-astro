@@ -1,0 +1,52 @@
+---
+/**
+ * Paragraph - simple text wrapper with sizing and alignment
+ */
+interface Props {
+  text?: string;
+  as?: 'p' | 'span' | 'div';
+  size?: 'sm' | 'base' | 'lg' | 'xl';
+  align?: 'left' | 'center' | 'right' | 'justify';
+  muted?: boolean;
+  className?: string;
+}
+
+const {
+  text,
+  as = 'p',
+  size = 'base',
+  align = 'left',
+  muted = false,
+  className = '',
+} = Astro.props as Props;
+
+const Tag = as;
+
+const sizeMap: Record<NonNullable<Props['size']>, string> = {
+  sm: 'text-sm md:text-base',
+  base: 'text-base md:text-lg',
+  lg: 'text-lg md:text-xl',
+  xl: 'text-xl md:text-2xl',
+};
+
+const alignMap: Record<NonNullable<Props['align']>, string> = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+  justify: 'text-justify',
+};
+
+const classes = [
+  'leading-relaxed',
+  muted
+    ? 'text-slate-600 dark:text-slate-400'
+    : 'text-slate-800 dark:text-slate-200',
+  sizeMap[size],
+  alignMap[align],
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes}>{typeof text === 'string' ? text : <slot />}</Tag>

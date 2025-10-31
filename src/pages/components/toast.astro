@@ -1,0 +1,23 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Toast from '../../components/Toast.astro';
+---
+
+<DocsLayout
+  title="Toast"
+  description="Stackable notification with status variants and auto-dismiss support."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-2 relative" style="min-height: 320px;">
+      <Toast variant="info" title="Info">This is an info message</Toast>
+      <Toast variant="success" title="Success">
+        Operation completed successfully
+      </Toast>
+      <Toast variant="warning" title="Warning">
+        Please review before continuing
+      </Toast>
+      <Toast variant="error" title="Error">Something went wrong</Toast>
+    </div>
+  </section>
+</DocsLayout>

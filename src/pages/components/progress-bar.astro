@@ -1,0 +1,24 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ProgressBar from '../../components/ProgressBar.astro';
+---
+
+<DocsLayout
+  title="ProgressBar"
+  description="Visually communicate task completion with optional labels and variants."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <ProgressBar value={30} showLabel />
+      <ProgressBar
+        value={65}
+        variant="success"
+        label="Uploading..."
+        showLabel
+      />
+      <ProgressBar value={85} variant="gradient" size="lg" />
+      <ProgressBar value={100} variant="success" label="Complete" />
+    </div>
+  </section>
+</DocsLayout>

@@ -1,0 +1,21 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import OptimizedImage from '../../components/OptimizedImage.astro';
+---
+
+<DocsLayout
+  title="OptimizedImage"
+  description="Responsive image component with eager/lazy loading and blur placeholder."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <OptimizedImage
+      src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=800&q=80"
+      alt="Laptop on desk"
+      rounded
+      width={800}
+      height={450}
+      className="w-full max-w-xl"
+    />
+  </section>
+</DocsLayout>

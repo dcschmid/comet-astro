@@ -1,0 +1,184 @@
+---
+interface NavItem {
+  label: string;
+  href?: string;
+  icon?: string;
+  children?: NavItem[];
+  badge?: string;
+}
+
+interface Props {
+  items: NavItem[];
+  title?: string;
+  collapsible?: boolean;
+  defaultOpen?: boolean;
+  className?: string;
+}
+
+const {
+  items,
+  title,
+  collapsible = true,
+  defaultOpen = true,
+  className = '',
+} = Astro.props as Props;
+
+const navId = `sidebar-nav-${Math.random().toString(36).slice(2, 9)}`;
+const headingId = title ? `${navId}-heading` : undefined;
+const ariaLabel = title || 'Sidebar navigation';
+---
+
+<nav
+  id={navId}
+  class={`w-full max-w-xs rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 ${className}`.trim()}
+  data-sidebar-root
+  data-open={defaultOpen}
+  aria-labelledby={headingId}
+  aria-label={headingId ? undefined : ariaLabel}
+>
+  <div
+    class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-slate-800"
+  >
+    {
+      title ? (
+        <h2
+          id={headingId}
+          class="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200"
+        >
+          {title}
+        </h2>
+      ) : (
+        <span class="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+          Navigation
+        </span>
+      )
+    }
+    {
+      collapsible && (
+        <button
+          type="button"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-base font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+          data-sidebar-toggle
+          aria-controls={`${navId}-content`}
+          aria-expanded={defaultOpen ? 'true' : 'false'}
+        >
+          ☰
+        </button>
+      )
+    }
+  </div>
+
+  <ul
+    id={`${navId}-content`}
+    class={`space-y-1 px-3 py-4 ${defaultOpen ? '' : 'hidden'}`}
+    data-sidebar-content
+  >
+    {
+      items.map((item, index) => {
+        const groupId = `${navId}-group-${index}`;
+        const hasChildren =
+          Array.isArray(item.children) && item.children.length > 0;
+        return (
+          <li>
+            {hasChildren ? (
+              <div data-nav-group>
+                <button
+                  type="button"
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-200 dark:focus-visible:ring-offset-slate-900"
+                  data-nav-group-toggle
+                  aria-expanded="false"
+                  aria-controls={groupId}
+                >
+                  <span class="flex items-center gap-2">
+                    {item.icon && <span aria-hidden="true">{item.icon}</span>}
+                    <span>{item.label}</span>
+                  </span>
+                  <span aria-hidden="true" class="text-xs">
+                    ▸
+                  </span>
+                </button>
+                <ul
+                  id={groupId}
+                  class="ml-3 mt-1 hidden space-y-1 border-l border-slate-100 pl-3 dark:border-slate-800"
+                  data-nav-group-content
+                >
+                  {item.children?.map((child) => (
+                    <li>
+                      <a
+                        href={child.href}
+                        class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-blue-200 dark:focus-visible:ring-offset-slate-900"
+                      >
+                        {child.icon && (
+                          <span aria-hidden="true">{child.icon}</span>
+                        )}
+                        <span>{child.label}</span>
+                        {child.badge && (
+                          <span class="ml-auto rounded-full bg-blue-600 px-2 py-0.5 text-xs font-semibold text-white dark:bg-blue-500 dark:text-slate-900">
+                            {child.badge}
+                          </span>
+                        )}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <a
+                href={item.href}
+                class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-200 dark:focus-visible:ring-offset-slate-900"
+              >
+                {item.icon && <span aria-hidden="true">{item.icon}</span>}
+                <span>{item.label}</span>
+                {item.badge && (
+                  <span class="ml-auto rounded-full bg-blue-600 px-2 py-0.5 text-xs font-semibold text-white dark:bg-blue-500 dark:text-slate-900">
+                    {item.badge}
+                  </span>
+                )}
+              </a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+
+<script is:inline>
+  (function () {
+    const root = document.currentScript?.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+    const toggle = root.querySelector('[data-sidebar-toggle]');
+    const content = root.querySelector('[data-sidebar-content]');
+
+    if (toggle instanceof HTMLElement && content instanceof HTMLElement) {
+      toggle.addEventListener('click', () => {
+        const isOpen = root.getAttribute('data-open') === 'true';
+        const nextState = !isOpen;
+        root.setAttribute('data-open', String(nextState));
+        toggle.setAttribute('aria-expanded', String(nextState));
+        content.classList.toggle('hidden', !nextState);
+      });
+    }
+
+    const groups = root.querySelectorAll('[data-nav-group]');
+    groups.forEach((group) => {
+      if (!(group instanceof HTMLElement)) return;
+      const groupToggle = group.querySelector('[data-nav-group-toggle]');
+      const groupContent = group.querySelector('[data-nav-group-content]');
+      if (
+        !(groupToggle instanceof HTMLElement) ||
+        !(groupContent instanceof HTMLElement)
+      )
+        return;
+      groupToggle.addEventListener('click', () => {
+        const expanded = groupToggle.getAttribute('aria-expanded') === 'true';
+        groupToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        groupContent.classList.toggle('hidden', expanded);
+        const indicator = groupToggle.querySelector('span:last-child');
+        if (indicator instanceof HTMLElement) {
+          indicator.textContent = expanded ? '▸' : '▾';
+        }
+      });
+    });
+  })();
+</script>

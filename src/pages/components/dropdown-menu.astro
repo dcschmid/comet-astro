@@ -1,0 +1,28 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import DropdownMenu from '../../components/DropdownMenu.astro';
+
+const items = [
+  { label: 'Profile', href: '#', icon: '👤' },
+  { label: 'Settings', href: '#', icon: '⚙️' },
+  { divider: true },
+  { label: 'Logout', href: '#', icon: '🚪' },
+];
+---
+
+<DocsLayout
+  title="DropdownMenu"
+  description="Accessible menu triggered by buttons or custom elements."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="flex gap-4">
+      <DropdownMenu items={items}>
+        <span slot="trigger">Actions ▼</span>
+      </DropdownMenu>
+      <DropdownMenu items={items} align="right">
+        <span slot="trigger">Right Aligned ▼</span>
+      </DropdownMenu>
+    </div>
+  </section>
+</DocsLayout>

@@ -1,0 +1,69 @@
+---
+interface Props {
+  direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
+  wrap?: boolean | 'reverse';
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
+  align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline';
+  inline?: boolean;
+  className?: string;
+}
+
+const {
+  direction = 'row',
+  wrap = false,
+  gap = 'none',
+  justify = 'start',
+  align = 'stretch',
+  inline = false,
+  className = '',
+} = Astro.props;
+
+const directionClasses = {
+  row: 'flex-row',
+  column: 'flex-col',
+  'row-reverse': 'flex-row-reverse',
+  'column-reverse': 'flex-col-reverse',
+};
+
+const wrapClasses = {
+  false: '',
+  true: 'flex-wrap',
+  reverse: 'flex-wrap-reverse',
+};
+
+const gapClasses = {
+  none: 'gap-0',
+  xs: 'gap-1',
+  sm: 'gap-2',
+  md: 'gap-4',
+  lg: 'gap-6',
+  xl: 'gap-8',
+  '2xl': 'gap-12',
+};
+
+const justifyClasses = {
+  start: 'justify-start',
+  center: 'justify-center',
+  end: 'justify-end',
+  between: 'justify-between',
+  around: 'justify-around',
+  evenly: 'justify-evenly',
+};
+
+const alignClasses = {
+  start: 'items-start',
+  center: 'items-center',
+  end: 'items-end',
+  stretch: 'items-stretch',
+  baseline: 'items-baseline',
+};
+
+const displayClass = inline ? 'inline-flex' : 'flex';
+---
+
+<div
+  class={`${displayClass} ${directionClasses[direction]} ${wrapClasses[wrap as keyof typeof wrapClasses]} ${gapClasses[gap]} ${justifyClasses[justify]} ${alignClasses[align]} ${className}`}
+>
+  <slot />
+</div>

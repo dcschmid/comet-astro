@@ -1,0 +1,362 @@
+---
+/**
+ * Autocomplete - searchable input with suggestion list
+ */
+interface Option {
+  value: string;
+  label: string;
+  description?: string;
+  keywords?: string[];
+}
+
+interface Props {
+  options: Option[];
+  placeholder?: string;
+  label?: string;
+  ariaLabel?: string;
+  emptyStateText?: string;
+  maxVisibleOptions?: number;
+  className?: string;
+  inputName?: string;
+}
+
+const {
+  options = [],
+  placeholder = 'Search…',
+  label,
+  ariaLabel,
+  emptyStateText = 'No results found.',
+  maxVisibleOptions = 8,
+  className = '',
+  inputName,
+} = Astro.props as Props;
+
+const id = `autocomplete-${Math.random().toString(36).slice(2, 10)}`;
+const encodedOptions = encodeURIComponent(JSON.stringify(options));
+const maxVisibleAttr = String(maxVisibleOptions);
+---
+
+<div
+  id={id}
+  class={`relative text-slate-900 dark:text-slate-100 ${className}`.trim()}
+  data-autocomplete-root
+  data-autocomplete-options={encodedOptions}
+  data-autocomplete-max-visible={maxVisibleAttr}
+>
+  {
+    label && (
+      <label
+        for={`${id}-input`}
+        class="mb-1 block text-sm font-semibold text-slate-800 dark:text-slate-200"
+      >
+        {label}
+      </label>
+    )
+  }
+  <div class="relative">
+    <input
+      id={`${id}-input`}
+      name={inputName}
+      type="text"
+      class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-400"
+      placeholder={placeholder}
+      aria-label={ariaLabel}
+      data-autocomplete-input
+      autocomplete="off"
+      role="combobox"
+      aria-autocomplete="list"
+      aria-expanded="false"
+      aria-controls={`${id}-panel`}
+    />
+    <button
+      type="button"
+      class="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full border border-transparent p-1 text-slate-500 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-300 dark:hover:bg-slate-800"
+      data-autocomplete-clear
+      aria-label="Clear input"
+    >
+      ×
+    </button>
+  </div>
+  <div
+    class="absolute z-40 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-900 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+    data-autocomplete-panel
+    hidden
+    id={`${id}-panel`}
+    role="listbox"
+  >
+    <ul
+      class="max-h-72 overflow-y-auto scroll-py-2 divide-y divide-slate-200 dark:divide-slate-700"
+      data-autocomplete-list
+    >
+    </ul>
+    <div
+      class="p-3 text-xs font-medium text-slate-600 dark:text-slate-300"
+      data-autocomplete-empty
+      hidden
+    >
+      {emptyStateText}
+    </div>
+  </div>
+  <input type="hidden" data-autocomplete-value />
+</div>
+
+<script is:inline>
+  (function setupAutocomplete() {
+    const root = document.getElementById('${id}');
+    if (!(root instanceof HTMLElement)) return;
+
+    const input = root.querySelector('[data-autocomplete-input]');
+    const panel = root.querySelector('[data-autocomplete-panel]');
+    const list = root.querySelector('[data-autocomplete-list]');
+    const empty = root.querySelector('[data-autocomplete-empty]');
+    const hidden = root.querySelector('[data-autocomplete-value]');
+    const clearButton = root.querySelector('[data-autocomplete-clear]');
+
+    if (
+      !(input instanceof HTMLInputElement) ||
+      !(panel instanceof HTMLElement) ||
+      !(list instanceof HTMLElement) ||
+      !(hidden instanceof HTMLInputElement)
+    )
+      return;
+
+    const serializedOptions = root.dataset.autocompleteOptions;
+    let optionsData = [];
+    try {
+      optionsData = serializedOptions
+        ? JSON.parse(decodeURIComponent(serializedOptions))
+        : [];
+    } catch {
+      optionsData = [];
+    }
+    const parsedMaxVisible = Number(root.dataset.autocompleteMaxVisible);
+    const maxVisible =
+      Number.isFinite(parsedMaxVisible) && parsedMaxVisible > 0
+        ? parsedMaxVisible
+        : 8;
+    const optionIdPrefix = root.id || 'autocomplete';
+
+    const escapeHTML = (value) =>
+      value.replace(/[&<>"']/g, (char) => {
+        switch (char) {
+          case '&':
+            return '&amp;';
+          case '<':
+            return '&lt;';
+          case '>':
+            return '&gt;';
+          case '"':
+            return '&quot;';
+          case "'":
+            return '&#39;';
+          default:
+            return char;
+        }
+      });
+
+    let filtered = optionsData.slice();
+    let activeIndex = -1;
+
+    const focusOption = (index) => {
+      const items = Array.from(
+        list.querySelectorAll('[data-autocomplete-option]')
+      );
+      items.forEach((item, itemIndex) => {
+        const isActive = itemIndex === index;
+        item.classList.toggle('bg-blue-100', isActive);
+        item.classList.toggle('dark:bg-blue-500/20', isActive);
+        item.setAttribute('aria-selected', String(isActive));
+        item.setAttribute('tabindex', isActive ? '0' : '-1');
+        if (isActive) {
+          input.setAttribute('aria-activedescendant', item.id);
+        }
+      });
+      activeIndex = index;
+      if (index === -1) {
+        input.removeAttribute('aria-activedescendant');
+      }
+    };
+
+    const closePanel = () => {
+      panel.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      panel.setAttribute('aria-hidden', 'true');
+      activeIndex = -1;
+      input.removeAttribute('aria-activedescendant');
+    };
+
+    const openPanel = () => {
+      panel.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      panel.setAttribute('aria-hidden', 'false');
+    };
+
+    const selectOption = (index) => {
+      const option = filtered[index];
+      if (!option) return;
+      input.value = option.label;
+      hidden.value = option.value;
+      root.dispatchEvent(
+        new CustomEvent('autocomplete:select', {
+          bubbles: true,
+          detail: option,
+        })
+      );
+      closePanel();
+    };
+
+    const render = () => {
+      if (filtered.length === 0) {
+        list.innerHTML = '';
+        if (empty) {
+          empty.hidden = false;
+          openPanel();
+        } else {
+          closePanel();
+        }
+        return;
+      }
+
+      if (empty) {
+        empty.hidden = true;
+      }
+      list.innerHTML = filtered
+        .slice(0, maxVisible)
+        .map(
+          (option, index) => `
+            <li
+              id="${optionIdPrefix}-option-${index}"
+              class="cursor-pointer px-4 py-3 text-sm text-slate-800 transition hover:bg-blue-100 dark:text-slate-100 dark:hover:bg-blue-500/20"
+              data-autocomplete-option="${escapeHTML(option.value)}"
+              role="option"
+              tabindex="-1"
+            >
+              <div class="font-medium truncate">${escapeHTML(option.label)}</div>
+              ${option.description ? `<div class="mt-1 text-xs text-slate-600 dark:text-slate-300 truncate">${escapeHTML(option.description)}</div>` : ''}
+            </li>
+          `
+        )
+        .join('');
+      focusOption(-1);
+    };
+
+    const filterOptions = (value) => {
+      const query = value.trim().toLowerCase();
+      if (!query) {
+        filtered = optionsData.slice();
+        render();
+        closePanel();
+        hidden.value = '';
+        root.dispatchEvent(
+          new CustomEvent('autocomplete:clear', { bubbles: true })
+        );
+        return;
+      }
+
+      filtered = optionsData.filter((option) => {
+        const haystack = [
+          option.label,
+          option.value,
+          option.description ?? '',
+          ...(option.keywords ?? []),
+        ]
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(query);
+      });
+
+      render();
+      openPanel();
+      focusOption(-1);
+    };
+
+    input.addEventListener('input', (event) => {
+      const target =
+        event.target instanceof HTMLInputElement ? event.target : input;
+      filterOptions(target.value);
+    });
+
+    input.addEventListener('focus', () => {
+      if (filtered.length > 0) {
+        openPanel();
+      }
+    });
+
+    input.addEventListener('keydown', (event) => {
+      if (panel.hidden) return;
+
+      const items = Array.from(
+        list.querySelectorAll('[data-autocomplete-option]')
+      );
+      if (items.length === 0) return;
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        const nextIndex = (activeIndex + 1) % items.length;
+        focusOption(nextIndex);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        const prevIndex = (activeIndex - 1 + items.length) % items.length;
+        focusOption(prevIndex);
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        if (activeIndex >= 0) {
+          selectOption(activeIndex);
+        }
+      } else if (event.key === 'Escape') {
+        closePanel();
+      }
+    });
+
+    list.addEventListener('mousemove', (event) => {
+      const target =
+        event.target instanceof HTMLElement
+          ? event.target.closest('[data-autocomplete-option]')
+          : null;
+      if (!(target instanceof HTMLElement)) return;
+      const items = Array.from(
+        list.querySelectorAll('[data-autocomplete-option]')
+      );
+      const index = items.indexOf(target);
+      focusOption(index);
+    });
+
+    list.addEventListener('click', (event) => {
+      const target =
+        event.target instanceof HTMLElement
+          ? event.target.closest('[data-autocomplete-option]')
+          : null;
+      if (!(target instanceof HTMLElement)) return;
+      const items = Array.from(
+        list.querySelectorAll('[data-autocomplete-option]')
+      );
+      const index = items.indexOf(target);
+      selectOption(index);
+      input.focus();
+    });
+
+    if (clearButton instanceof HTMLElement) {
+      clearButton.addEventListener('click', () => {
+        input.value = '';
+        hidden.value = '';
+        filtered = optionsData.slice();
+        render();
+        closePanel();
+        input.focus();
+        root.dispatchEvent(
+          new CustomEvent('autocomplete:clear', { bubbles: true })
+        );
+        input.removeAttribute('aria-activedescendant');
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      if (event.target instanceof Node && root.contains(event.target)) return;
+      closePanel();
+    });
+
+    filtered = optionsData.slice();
+    render();
+    panel.setAttribute('aria-hidden', panel.hidden ? 'true' : 'false');
+  })();
+</script>

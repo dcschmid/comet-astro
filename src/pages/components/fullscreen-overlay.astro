@@ -1,0 +1,44 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import FullscreenOverlay from '../../components/FullscreenOverlay.astro';
+import Button from '../../components/Button.astro';
+import Paragraph from '../../components/Paragraph.astro';
+
+const triggerId = 'overlay-doc-trigger';
+const closeId = 'overlay-doc-close';
+---
+
+<DocsLayout
+  title="FullscreenOverlay"
+  description="Edge-to-edge overlay for onboarding, confirmations, or feature tours."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Button id={triggerId} variant="secondary">Show overlay</Button>
+    <FullscreenOverlay title="Join the beta" closable>
+      <Paragraph size="sm">
+        Gain early access to experimentation features and share insights with
+        the product team.
+      </Paragraph>
+      <div slot="actions" class="flex gap-2">
+        <Button variant="secondary" id={closeId}>Maybe later</Button>
+        <Button variant="primary">Request access</Button>
+      </div>
+    </FullscreenOverlay>
+  </section>
+</DocsLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('overlay-doc-trigger');
+    const close = document.getElementById('overlay-doc-close');
+    if (!trigger) return;
+
+    trigger.addEventListener('click', () => {
+      if (window.CometOverlay?.open) window.CometOverlay.open();
+    });
+    close?.addEventListener('click', () => {
+      if (window.CometOverlay?.close) window.CometOverlay.close();
+    });
+  });
+</script>

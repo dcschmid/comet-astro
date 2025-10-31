@@ -1,0 +1,30 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Navbar from '../../components/Navbar.astro';
+import ButtonLink from '../../components/ButtonLink.astro';
+const navItems = [
+  { href: '#', label: 'Home' },
+  { href: '#', label: 'Docs' },
+];
+---
+
+<DocsLayout
+  title="Navbar"
+  description="Responsive top navigation with a mobile toggle and actions slot."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>items?: &#123;href,label,external?&#125;[]</code></li>
+      <li><code>brand?: string</code></li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Example</h2>
+    <Navbar brand="Comet" items={navItems}>
+      <ButtonLink slot="actions" href="#" label="GitHub" variant="secondary" />
+    </Navbar>
+  </section>
+</DocsLayout>

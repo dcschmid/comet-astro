@@ -1,0 +1,19 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Rating from '../../components/Rating.astro';
+---
+
+<DocsLayout
+  title="Rating"
+  description="Star rating display with optional interactive mode."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-3">
+      <Rating value={4.5} showValue />
+      <Rating value={3} size="lg" />
+      <Rating value={5} size="sm" showValue />
+      <Rating value={2} readonly={false} name="interactive-rating" />
+    </div>
+  </section>
+</DocsLayout>

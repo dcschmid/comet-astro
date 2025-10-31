@@ -1,0 +1,33 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import MediaListItem from '../../components/MediaListItem.astro';
+---
+
+<DocsLayout
+  title="MediaListItem"
+  description="List row combining thumbnail, metadata, and action links."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-3">
+      <MediaListItem
+        imageSrc="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=160&q=80"
+        title="Crafting team rituals"
+        subtitle="Workshop · 42 min watch"
+        href="#"
+        meta={['By Leslie Alexander', 'Updated 2 days ago']}
+        actions={[
+          { href: '#', label: 'Watch' },
+          { href: '#', label: 'Share' },
+        ]}
+      />
+      <MediaListItem
+        title="Design ops weekly"
+        subtitle="Newsletter • Issue 18"
+        href="#"
+        meta={['32k readers', 'Sent every Friday']}
+        actions={[{ href: '#', label: 'Subscribe' }]}
+      />
+    </div>
+  </section>
+</DocsLayout>

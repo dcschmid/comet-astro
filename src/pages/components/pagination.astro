@@ -1,0 +1,18 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Pagination from '../../components/Pagination.astro';
+---
+
+<DocsLayout
+  title="Pagination"
+  description="Page navigator with condensed layout and configurable window."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <Pagination currentPage={1} totalPages={10} />
+      <Pagination currentPage={5} totalPages={20} maxVisible={5} />
+      <Pagination currentPage={15} totalPages={20} />
+    </div>
+  </section>
+</DocsLayout>

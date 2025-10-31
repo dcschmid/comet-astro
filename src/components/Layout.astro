@@ -1,0 +1,22 @@
+---
+import { cn } from '../utils/cn';
+
+export interface Props {
+  class?: string;
+  container?: boolean;
+}
+
+const { class: className, container = true } = Astro.props as Props;
+---
+
+<div class={cn('min-h-screen flex flex-col', className)}>
+  <header class="w-full">
+    <slot name="header" />
+  </header>
+  <main class={cn(container ? 'container mx-auto px-4 flex-1' : 'flex-1')}>
+    <slot />
+  </main>
+  <footer class="w-full">
+    <slot name="footer" />
+  </footer>
+</div>

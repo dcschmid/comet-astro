@@ -1,0 +1,37 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Footer from '../../components/Footer.astro';
+const legalLinks = [{ href: '/imprint', label: 'Imprint' }];
+const externalLinks = [
+  { href: 'https://github.com', label: 'GitHub', external: true },
+];
+---
+
+<DocsLayout
+  title="Footer"
+  description="Responsive site footer with legal and external links."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>brand?: string</code>, <code>year?: number</code></li>
+      <li><code>legalLinks?: &#123;href,label,ariaLabel?&#125;[]</code></li>
+      <li>
+        <code
+          >externalLinks?: &#123;href,label,external?,ariaLabel?&#125;[]</code
+        >
+      </li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Example</h2>
+    <Footer
+      brand="Comet Astro"
+      year={2025}
+      legalLinks={legalLinks}
+      externalLinks={externalLinks}
+    />
+  </section>
+</DocsLayout>

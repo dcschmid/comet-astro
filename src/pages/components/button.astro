@@ -1,0 +1,30 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Button from '../../components/Button.astro';
+---
+
+<DocsLayout
+  title="Button"
+  description="Button component with variants, sizes, and loading state."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Variants</h2>
+    <div class="flex flex-wrap gap-3">
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="outline">Outline</Button>
+      <Button variant="ghost">Ghost</Button>
+      <Button variant="destructive">Destructive</Button>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Sizes &amp; Loading</h2>
+    <div class="flex flex-wrap gap-3 items-center">
+      <Button size="sm">Small</Button>
+      <Button size="md">Medium</Button>
+      <Button size="lg">Large</Button>
+      <Button loading>Loading…</Button>
+    </div>
+  </section>
+</DocsLayout>

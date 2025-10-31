@@ -1,0 +1,24 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Stepper from '../../components/Stepper.astro';
+
+const steps = [
+  { label: 'Account', description: 'Create your account' },
+  { label: 'Profile', description: 'Add your details' },
+  { label: 'Verify', description: 'Confirm email' },
+  { label: 'Complete', description: 'All done!' },
+];
+---
+
+<DocsLayout
+  title="Stepper"
+  description="Horizontal or vertical stepper to indicate multi-step progress."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-6">
+      <Stepper steps={steps} currentStep={2} />
+      <Stepper steps={steps} currentStep={3} orientation="vertical" />
+    </div>
+  </section>
+</DocsLayout>

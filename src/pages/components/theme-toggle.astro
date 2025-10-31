@@ -1,0 +1,19 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ThemeToggle from '../../components/ThemeToggle.astro';
+import Paragraph from '../../components/Paragraph.astro';
+---
+
+<DocsLayout
+  title="ThemeToggle"
+  description="Client-side toggle to switch between light, dark, or system themes."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <ThemeToggle />
+    <Paragraph size="sm" muted>
+      User selections persist across sessions. When set to <em>Auto</em>, the
+      toggle adapts to operating-system changes.
+    </Paragraph>
+  </section>
+</DocsLayout>

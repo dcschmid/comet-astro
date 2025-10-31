@@ -1,0 +1,112 @@
+---
+/**
+ * BackToTop - minimal, accessible scroll-to-top button
+ */
+interface Props {
+  ariaLabel?: string;
+  className?: string;
+  scrollThreshold?: number; // px before showing button
+  forceVisible?: boolean; // always visible (useful for docs/stories)
+}
+
+const {
+  ariaLabel = 'Back to top',
+  className = '',
+  scrollThreshold = 300,
+  forceVisible = false,
+} = Astro.props as Props;
+---
+
+<button
+  id="comet-back-to-top"
+  class={`pointer-events-none fixed bottom-5 right-5 z-30 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-blue-600 bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-xl opacity-0 transition-all duration-300 hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-slate-900 ${className}`.trim()}
+  aria-label={ariaLabel}
+  type="button"
+  data-threshold={scrollThreshold}
+  data-force-visible={forceVisible}
+  data-visible={forceVisible ? 'true' : 'false'}
+>
+  <slot name="icon">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 5l-7 7m7-7l7 7M12 5v14"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+  </slot>
+  <span class="sr-only">{ariaLabel}</span>
+</button>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById('comet-back-to-top');
+    if (!btn) return;
+
+    const forceVisible = btn.getAttribute('data-force-visible') === 'true';
+    const thresholdAttr = btn.getAttribute('data-threshold');
+    const threshold = Number(thresholdAttr) || 300;
+
+    let isVisible = forceVisible;
+
+    const applyVisibility = (visible) => {
+      if (visible === isVisible) return;
+      isVisible = visible;
+      btn.dataset.visible = visible ? 'true' : 'false';
+      if (visible) {
+        btn.classList.remove(
+          'opacity-0',
+          'pointer-events-none',
+          'translate-y-4'
+        );
+        btn.classList.add(
+          'opacity-100',
+          'pointer-events-auto',
+          'translate-y-0'
+        );
+      } else {
+        btn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        btn.classList.remove(
+          'opacity-100',
+          'pointer-events-auto',
+          'translate-y-0'
+        );
+      }
+    };
+
+    if (!forceVisible) {
+      btn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+    } else {
+      btn.classList.add('opacity-100', 'pointer-events-auto');
+    }
+
+    const onScroll = () => {
+      if (forceVisible) return;
+      const show = (window.scrollY || window.pageYOffset) > threshold;
+      applyVisibility(show);
+    };
+
+    function onClick() {
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {
+        window.scrollTo(0, 0);
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    btn.addEventListener('click', onClick, { passive: true });
+
+    // initial state
+    if (!forceVisible) {
+      onScroll();
+    }
+  })();
+</script>

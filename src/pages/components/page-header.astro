@@ -1,0 +1,31 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Paragraph from '../../components/Paragraph.astro';
+---
+
+<DocsLayout
+  title="PageHeader"
+  description="Headline block with subtitle, action slots, and supporting content."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Overview</h2>
+    <p class="text-gray-400 text-sm">
+      Compose titles, subtitles, and optional actions for hero sections or
+      resource pages. Use the slots to attach CTAs or secondary metadata.
+    </p>
+  </section>
+
+  <section>
+    <PageHeader
+      eyebrow="Release notes"
+      title="Comet 1.4 is live"
+      subtitle="Fresh components, improved defaults, and smoother navigation."
+    >
+      <Paragraph size="sm">
+        Explore the changelog to learn what shipped, what changed, and how to
+        migrate.
+      </Paragraph>
+    </PageHeader>
+  </section>
+</DocsLayout>

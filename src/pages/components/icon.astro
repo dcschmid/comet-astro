@@ -1,0 +1,29 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<DocsLayout
+  title="Icon"
+  description="SVG icon sprite with size props and utility classes."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Icons</h2>
+    <div class="flex flex-wrap items-center gap-4">
+      <Icon name="home" />
+      <Icon name="user" size="lg" />
+      <Icon name="search" size="xl" className="text-purple-400" />
+      <Icon name="heart" size="2xl" className="text-pink-500" />
+      <Icon name="star" size="2xl" className="text-yellow-500" />
+      <Icon name="check" className="text-green-500" />
+      <Icon name="x" className="text-red-500" />
+      <Icon name="settings" />
+      <Icon name="arrow-right" />
+      <Icon name="external" size="sm" />
+    </div>
+    <div class="mt-3 text-xs text-gray-500">
+      Available: home, user, search, heart, star, check, x, settings, menu,
+      arrow-* (up, down, left, right), info, external
+    </div>
+  </section>
+</DocsLayout>

@@ -1,0 +1,62 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Modal from '../../components/Modal.astro';
+import Button from '../../components/Button.astro';
+import Paragraph from '../../components/Paragraph.astro';
+
+const triggerId = 'modal-doc-trigger';
+const closeId = 'modal-doc-close';
+---
+
+<DocsLayout
+  title="Modal"
+  description="Accessible dialog with focus trap, aria labelling, and scroll locking."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Button id={triggerId} variant="primary">Open modal</Button>
+    <Modal title="Product Update" closeLabel="Close">
+      <Paragraph size="sm">
+        We refreshed the dashboard with improved metrics and automated alerts.
+        Review the changes and share your feedback.
+      </Paragraph>
+      <div slot="footer" class="flex justify-end gap-2">
+        <Button variant="ghost" id={closeId}>Dismiss</Button>
+        <Button variant="primary">View changelog</Button>
+      </div>
+    </Modal>
+  </section>
+</DocsLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('modal-doc-trigger');
+    const close = document.getElementById('modal-doc-close');
+    const root = document.querySelector('[data-modal-root]');
+    if (!trigger || !root) return;
+
+    const registry = window.__cometModalRegistry;
+    const entry = root.id && registry ? registry.get(root.id) : null;
+
+    const open = () => {
+      if (entry) {
+        entry.open();
+      } else {
+        root.classList.remove('hidden');
+        root.setAttribute('data-open', 'true');
+      }
+    };
+
+    const closeModal = () => {
+      if (entry) {
+        entry.close();
+      } else {
+        root.classList.add('hidden');
+        root.setAttribute('data-open', 'false');
+      }
+    };
+
+    trigger.addEventListener('click', open);
+    close?.addEventListener('click', closeModal);
+  });
+</script>

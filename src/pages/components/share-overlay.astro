@@ -1,0 +1,34 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ShareOverlay from '../../components/ShareOverlay.astro';
+import Button from '../../components/Button.astro';
+
+const triggerId = 'share-doc-trigger';
+---
+
+<DocsLayout
+  title="ShareOverlay"
+  description="Share sheet with social links and copy-to-clipboard action."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Button id={triggerId} variant="secondary">Open share sheet</Button>
+    <ShareOverlay
+      title="Share this article"
+      url="https://example.com/articles/a11y"
+    />
+  </section>
+</DocsLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('share-doc-trigger');
+    if (!trigger) return;
+    trigger.addEventListener('click', () => {
+      const registry = window.__cometShareOverlayRegistry;
+      if (!registry) return;
+      const entry = Array.from(registry.values())[0];
+      entry?.open();
+    });
+  });
+</script>

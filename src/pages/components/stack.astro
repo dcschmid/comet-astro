@@ -1,0 +1,61 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Stack from '../../components/Stack.astro';
+---
+
+<DocsLayout
+  title="Stack"
+  description="Flexbox utility for spacing elements vertically or horizontally."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li>
+        <code>direction?: 'vertical'|'horizontal'</code> – layout direction (default:
+        'vertical')
+      </li>
+      <li>
+        <code>gap?: 'none'|'xs'|'sm'|'md'|'lg'|'xl'|'2xl'</code> – spacing (default:
+        'md')
+      </li>
+      <li>
+        <code>align?: 'start'|'center'|'end'|'stretch'</code> – cross-axis alignment
+      </li>
+      <li>
+        <code>justify?: 'start'|'center'|'end'|'between'|'around'</code> – main-axis
+        alignment
+      </li>
+      <li><code>wrap?: boolean</code> – allow wrapping</li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Vertical Stack</h3>
+        <Stack direction="vertical" gap="md">
+          <div class="bg-purple-500/20 p-4 rounded">Item 1</div>
+          <div class="bg-purple-500/20 p-4 rounded">Item 2</div>
+          <div class="bg-purple-500/20 p-4 rounded">Item 3</div>
+        </Stack>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Horizontal Stack (Centered)</h3>
+        <Stack direction="horizontal" gap="lg" justify="center" align="center">
+          <div class="bg-blue-500/20 p-4 rounded">Item 1</div>
+          <div class="bg-blue-500/20 p-4 rounded">Item 2</div>
+          <div class="bg-blue-500/20 p-4 rounded">Item 3</div>
+        </Stack>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Space Between</h3>
+        <Stack direction="horizontal" justify="between" align="center">
+          <div class="bg-pink-500/20 p-4 rounded">Left</div>
+          <div class="bg-pink-500/20 p-4 rounded">Right</div>
+        </Stack>
+      </div>
+    </div>
+  </section>
+</DocsLayout>

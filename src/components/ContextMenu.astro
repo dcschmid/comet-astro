@@ -1,0 +1,203 @@
+---
+interface MenuItem {
+  label: string;
+  action?: string;
+  icon?: string;
+  divider?: boolean;
+  disabled?: boolean;
+  danger?: boolean;
+}
+
+interface Props {
+  items: MenuItem[];
+  targetId: string;
+  className?: string;
+}
+
+const { items, targetId, className = '' } = Astro.props;
+---
+
+<div
+  class={`fixed z-50 w-60 rounded-xl border border-slate-200 bg-white py-1 shadow-2xl ring-1 ring-black/5 transition duration-150 ease-out invisible opacity-0 dark:border-slate-700 dark:bg-slate-900 ${className}`}
+  data-context-menu
+  data-context-target={targetId}
+  role="menu"
+  aria-hidden="true"
+>
+  {
+    items.map((item) =>
+      item.divider ? (
+        <hr class="my-1 border-slate-200 dark:border-slate-700" />
+      ) : (
+        <button
+          type="button"
+          class={`flex w-full items-center gap-3 px-4 py-2 text-sm text-left font-semibold transition ${
+            item.disabled
+              ? 'cursor-not-allowed text-slate-400 dark:text-slate-600'
+              : item.danger
+                ? 'text-rose-600 hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/20'
+                : 'text-slate-600 hover:bg-blue-50 hover:text-blue-700 dark:text-slate-200 dark:hover:bg-blue-500/20'
+          }`}
+          data-context-action={item.action}
+          disabled={item.disabled}
+          role="menuitem"
+          tabIndex={-1}
+        >
+          {item.icon && <span class="text-lg">{item.icon}</span>}
+          {item.label}
+        </button>
+      )
+    )
+  }
+</div>
+
+<script is:inline>
+  (function () {
+    const menus = Array.from(
+      document.querySelectorAll('[data-context-menu]')
+    ).filter((el) => el instanceof HTMLElement);
+    if (!menus.length) return;
+
+    let openMenu = null;
+
+    const hideMenu = (menu) => {
+      if (!menu) return;
+      menu.classList.add('opacity-0');
+      menu.setAttribute('aria-hidden', 'true');
+      window.setTimeout(() => {
+        menu.classList.add('invisible');
+      }, 120);
+      menu.querySelectorAll('[data-context-action]').forEach((item) => {
+        if (item instanceof HTMLElement) {
+          item.tabIndex = -1;
+          item.setAttribute('aria-selected', 'false');
+        }
+      });
+      openMenu = null;
+    };
+
+    const hideAllMenus = () => {
+      menus.forEach((menu) => hideMenu(menu));
+    };
+
+    const positionMenu = (menu, x, y) => {
+      const { innerWidth, innerHeight } = window;
+      const width = menu.offsetWidth;
+      const height = menu.offsetHeight;
+      const left = Math.min(x, innerWidth - width - 8);
+      const top = Math.min(y, innerHeight - height - 8);
+      menu.style.left = `${left}px`;
+      menu.style.top = `${top}px`;
+    };
+
+    const focusFirstItem = (menu) => {
+      const candidates = Array.from(
+        menu.querySelectorAll('[data-context-action]')
+      ).filter(
+        (el) => el instanceof HTMLElement && !el.hasAttribute('disabled')
+      );
+      if (!candidates.length) return;
+      const first = candidates[0];
+      first.tabIndex = 0;
+      first.setAttribute('aria-selected', 'true');
+      first.focus({ preventScroll: true });
+    };
+
+    menus.forEach((menu) => {
+      const targetId = menu.getAttribute('data-context-target');
+      if (!targetId) return;
+      const target = document.getElementById(targetId);
+      if (!(target instanceof HTMLElement)) return;
+
+      target.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+        hideAllMenus();
+        menu.classList.remove('invisible');
+        requestAnimationFrame(() => {
+          menu.classList.remove('opacity-0');
+        });
+        menu.setAttribute('aria-hidden', 'false');
+        positionMenu(menu, event.pageX, event.pageY);
+        openMenu = menu;
+        focusFirstItem(menu);
+      });
+
+      menu.addEventListener('click', (event) => {
+        const button =
+          event.target instanceof HTMLElement
+            ? event.target.closest('[data-context-action]')
+            : null;
+        if (!(button instanceof HTMLElement) || button.hasAttribute('disabled'))
+          return;
+        const action = button.getAttribute('data-context-action');
+        if (action) {
+          target.dispatchEvent(
+            new CustomEvent('contextaction', { detail: { action } })
+          );
+        }
+        hideMenu(menu);
+      });
+
+      menu.addEventListener('keydown', (event) => {
+        const items = Array.from(
+          menu.querySelectorAll('[data-context-action]')
+        ).filter(
+          (el) => el instanceof HTMLElement && !el.hasAttribute('disabled')
+        );
+        if (!items.length) return;
+        const currentIndex = items.findIndex(
+          (el) => el === document.activeElement
+        );
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          const next = items[(currentIndex + 1) % items.length];
+          items.forEach((el) => el.setAttribute('aria-selected', 'false'));
+          next.tabIndex = 0;
+          next.focus({ preventScroll: true });
+          next.setAttribute('aria-selected', 'true');
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          const prev = items[(currentIndex - 1 + items.length) % items.length];
+          items.forEach((el) => el.setAttribute('aria-selected', 'false'));
+          prev.tabIndex = 0;
+          prev.focus({ preventScroll: true });
+          prev.setAttribute('aria-selected', 'true');
+        } else if (event.key === 'Home') {
+          event.preventDefault();
+          const first = items[0];
+          items.forEach((el) => el.setAttribute('aria-selected', 'false'));
+          first.tabIndex = 0;
+          first.focus({ preventScroll: true });
+          first.setAttribute('aria-selected', 'true');
+        } else if (event.key === 'End') {
+          event.preventDefault();
+          const last = items[items.length - 1];
+          items.forEach((el) => el.setAttribute('aria-selected', 'false'));
+          last.tabIndex = 0;
+          last.focus({ preventScroll: true });
+          last.setAttribute('aria-selected', 'true');
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          hideMenu(menu);
+        } else if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.click();
+          }
+        }
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (openMenu && !openMenu.contains(event.target as Node)) {
+        hideMenu(openMenu);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        hideMenu(openMenu);
+      }
+    });
+  })();
+</script>

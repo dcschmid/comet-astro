@@ -1,0 +1,285 @@
+---
+/**
+ * Lightbox - image gallery with overlay viewer
+ */
+interface LightboxImage {
+  src: string;
+  alt?: string;
+  thumbnail?: string;
+  caption?: string;
+}
+
+interface Props {
+  images?: LightboxImage[];
+  showCaptions?: boolean;
+  className?: string;
+  overlayClassName?: string;
+  thumbnailsClassName?: string;
+}
+
+const {
+  images = [],
+  showCaptions = true,
+  className = '',
+  overlayClassName = '',
+  thumbnailsClassName = '',
+} = Astro.props as Props;
+
+const id = `lightbox-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<div id={id} data-lightbox-root class={`lightbox ${className}`}>
+  {
+    images.length > 0 ? (
+      <div
+        class={`grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 ${thumbnailsClassName}`}
+      >
+        {images.map((image, index) => (
+          <button
+            type="button"
+            class="group relative overflow-hidden rounded-lg border border-slate-200 bg-white text-left text-slate-900 shadow-sm transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            data-lightbox-trigger={index}
+            data-lightbox-src={image.src}
+            data-lightbox-alt={image.alt || `Image ${index + 1}`}
+            data-lightbox-caption={image.caption || ''}
+          >
+            <img
+              src={image.thumbnail || image.src}
+              alt={image.alt || `Image ${index + 1}`}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              class="h-36 w-full object-cover transition duration-300 group-hover:scale-105 md:h-48"
+            />
+            {showCaptions && image.caption && (
+              <span class="absolute inset-x-0 bottom-0 bg-black/60 px-3 py-2 text-xs text-white backdrop-blur">
+                {image.caption}
+              </span>
+            )}
+            <span
+              class="pointer-events-none absolute inset-0 bg-blue-200/20 opacity-0 transition group-hover:opacity-100 dark:bg-blue-500/20"
+              aria-hidden="true"
+            />
+            <span class="sr-only">View image {index + 1}</span>
+          </button>
+        ))}
+      </div>
+    ) : (
+      <div data-lightbox-slot>
+        <slot />
+      </div>
+    )
+  }
+
+  <div
+    class={`fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm ${overlayClassName}`}
+    data-lightbox-overlay
+    aria-hidden="true"
+  >
+    <div
+      class="relative flex max-h-[90vh] max-w-5xl flex-col gap-4 px-4 text-white"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Image viewer"
+    >
+      <div class="relative flex items-center justify-center">
+        <button
+          type="button"
+          class="absolute left-0 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-3 text-2xl text-white transition hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+          data-lightbox-prev
+          aria-label="Previous image"
+        >
+          ‹
+        </button>
+        <img
+          data-lightbox-image
+          alt=""
+          class="max-h-[75vh] w-auto max-w-full rounded-xl border border-white/30 object-contain"
+        />
+        <button
+          type="button"
+          class="absolute right-0 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-3 text-2xl text-white transition hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+          data-lightbox-next
+          aria-label="Next image"
+        >
+          ›
+        </button>
+      </div>
+      <div
+        class="flex items-center justify-between gap-4 text-sm text-white/80"
+        data-lightbox-meta
+        hidden
+      >
+        <p data-lightbox-caption class="flex-1"></p>
+        <span data-lightbox-counter></span>
+      </div>
+      <button
+        type="button"
+        class="absolute right-4 top-4 rounded-full bg-white/20 p-2 text-xl text-white transition hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+        data-lightbox-close
+        aria-label="Close lightbox"
+      >
+        ×
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function setupLightbox() {
+    const root = document.getElementById('${id}');
+    if (!(root instanceof HTMLElement)) return;
+
+    const overlay = root.querySelector('[data-lightbox-overlay]');
+    if (!(overlay instanceof HTMLElement)) return;
+    const imageElement = overlay.querySelector('[data-lightbox-image]');
+    if (!(imageElement instanceof HTMLImageElement)) return;
+    const captionElement = overlay.querySelector('[data-lightbox-caption]');
+    const counterElement = overlay.querySelector('[data-lightbox-counter]');
+    const meta = overlay.querySelector('[data-lightbox-meta]');
+
+    const triggers = Array.from(
+      root.querySelectorAll('[data-lightbox-trigger]')
+    );
+
+    if (triggers.length === 0) {
+      const fallbackTriggers = Array.from(
+        root.querySelectorAll('[data-lightbox-item]')
+      );
+      fallbackTriggers.forEach((el, index) => {
+        if (el instanceof HTMLElement) {
+          el.setAttribute('data-lightbox-trigger', String(index));
+          triggers.push(el);
+        }
+      });
+    }
+
+    const parsedTriggers = triggers.filter((el) => el instanceof HTMLElement);
+    if (parsedTriggers.length === 0) return;
+
+    const images = parsedTriggers
+      .map((trigger) => {
+        const dataset = trigger.dataset;
+        const img = trigger.querySelector('img');
+        const imageEl = img instanceof HTMLImageElement ? img : null;
+        const src =
+          dataset.lightboxSrc ||
+          dataset.src ||
+          imageEl?.dataset.full ||
+          imageEl?.src ||
+          '';
+        return {
+          src,
+          alt: dataset.lightboxAlt || imageEl?.alt || '',
+          caption: dataset.lightboxCaption || dataset.caption || '',
+        };
+      })
+      .filter((item) => item.src);
+
+    if (images.length === 0) return;
+
+    let currentIndex = 0;
+    let lastFocused = null;
+
+    const update = () => {
+      const current = images[currentIndex];
+      if (!current) return;
+      imageElement.src = current.src;
+      imageElement.alt = current.alt || `Image ${currentIndex + 1}`;
+      if (captionElement instanceof HTMLElement) {
+        captionElement.textContent = current.caption || '';
+      }
+      if (counterElement instanceof HTMLElement) {
+        counterElement.textContent = `${currentIndex + 1} / ${images.length}`;
+      }
+      if (meta instanceof HTMLElement) {
+        meta.hidden = !(current.caption || images.length > 1);
+      }
+    };
+
+    const open = (index) => {
+      currentIndex = Math.max(0, Math.min(images.length - 1, index));
+      update();
+      overlay.classList.remove('hidden');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      lastFocused =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+      const closeButton = overlay.querySelector('[data-lightbox-close]');
+      if (closeButton instanceof HTMLElement) {
+        closeButton.focus();
+      }
+    };
+
+    const close = () => {
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastFocused instanceof HTMLElement) {
+        lastFocused.focus();
+      }
+    };
+
+    const next = () => {
+      currentIndex = (currentIndex + 1) % images.length;
+      update();
+    };
+
+    const prev = () => {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      update();
+    };
+
+    parsedTriggers.forEach((trigger, index) => {
+      trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        const dataIndex = Number.parseInt(
+          trigger.getAttribute('data-lightbox-trigger') || String(index),
+          10
+        );
+        open(Number.isNaN(dataIndex) ? index : dataIndex);
+      });
+    });
+
+    const closeButton = overlay.querySelector('[data-lightbox-close]');
+    if (closeButton instanceof HTMLElement)
+      closeButton.addEventListener('click', close);
+    const nextButton = overlay.querySelector('[data-lightbox-next]');
+    if (nextButton instanceof HTMLElement)
+      nextButton.addEventListener('click', next);
+    const prevButton = overlay.querySelector('[data-lightbox-prev]');
+    if (prevButton instanceof HTMLElement)
+      prevButton.addEventListener('click', prev);
+
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) {
+        close();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (overlay.classList.contains('hidden')) return;
+      if (event.key === 'Escape') close();
+      if (event.key === 'ArrowRight') next();
+      if (event.key === 'ArrowLeft') prev();
+    });
+
+    overlay.addEventListener(
+      'wheel',
+      (event) => {
+        if (overlay.classList.contains('hidden')) return;
+        if (event.deltaY > 0) next();
+        if (event.deltaY < 0) prev();
+      },
+      { passive: true }
+    );
+
+    const preload = (index) => {
+      const nextIndex = (index + 1) % images.length;
+      const img = new Image();
+      img.src = images[nextIndex].src;
+    };
+
+    overlay.addEventListener('transitionend', () => preload(currentIndex));
+  })();
+</script>

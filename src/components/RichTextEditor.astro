@@ -1,0 +1,331 @@
+---
+/**
+ * RichTextEditor - WYSIWYG editor built on contenteditable
+ */
+interface Props {
+  value?: string;
+  placeholder?: string;
+  label?: string;
+  helpText?: string;
+  readOnly?: boolean;
+  className?: string;
+  toolbar?: Array<
+    | 'bold'
+    | 'italic'
+    | 'underline'
+    | 'strike'
+    | 'code'
+    | 'quote'
+    | 'link'
+    | 'ordered-list'
+    | 'unordered-list'
+    | 'clear'
+    | 'undo'
+    | 'redo'
+  >;
+  name?: string;
+}
+
+const {
+  value = '',
+  placeholder = 'Start typing…',
+  label,
+  helpText,
+  readOnly = false,
+  className = '',
+  toolbar = [
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'quote',
+    'code',
+    'link',
+    'ordered-list',
+    'unordered-list',
+    'undo',
+    'redo',
+    'clear',
+  ],
+  name,
+} = Astro.props as Props;
+
+const id = `rich-text-${Math.random().toString(36).slice(2, 10)}`;
+const helpId = helpText ? `${id}-help` : undefined;
+const toolbarButtonBase =
+  'rounded-md px-2 py-1 text-slate-800 transition hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-100 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-900';
+---
+
+<div
+  id={id}
+  class={`space-y-3 text-slate-900 dark:text-slate-100 ${className}`.trim()}
+  data-rich-text-root
+>
+  {
+    label && (
+      <label
+        class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+        for={`${id}-content`}
+      >
+        {label}
+      </label>
+    )
+  }
+  {
+    !readOnly && (
+      <div
+        class="flex flex-wrap items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-sm text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+        data-rich-text-toolbar
+      >
+        {toolbar.includes('bold') && (
+          <button
+            type="button"
+            class={`${toolbarButtonBase} font-semibold`}
+            data-rich-text-action="bold"
+            aria-label="Bold"
+          >
+            B
+          </button>
+        )}
+        {toolbar.includes('italic') && (
+          <button
+            type="button"
+            class={`${toolbarButtonBase} italic`}
+            data-rich-text-action="italic"
+            aria-label="Italic"
+          >
+            I
+          </button>
+        )}
+        {toolbar.includes('underline') && (
+          <button
+            type="button"
+            class={`${toolbarButtonBase} underline`}
+            data-rich-text-action="underline"
+            aria-label="Underline"
+          >
+            U
+          </button>
+        )}
+        {toolbar.includes('strike') && (
+          <button
+            type="button"
+            class={`${toolbarButtonBase} line-through`}
+            data-rich-text-action="strikeThrough"
+            aria-label="Strikethrough"
+          >
+            S
+          </button>
+        )}
+        {toolbar.includes('quote') && (
+          <button
+            type="button"
+            class={toolbarButtonBase}
+            data-rich-text-action="formatBlock"
+            data-arg="blockquote"
+            aria-label="Quote"
+          >
+            ❝
+          </button>
+        )}
+        {toolbar.includes('code') && (
+          <button
+            type="button"
+            class={`${toolbarButtonBase} font-mono text-xs`}
+            data-rich-text-action="formatBlock"
+            data-arg="pre"
+            aria-label="Code"
+          >
+            {'</>'}
+          </button>
+        )}
+        {toolbar.includes('link') && (
+          <button
+            type="button"
+            class={toolbarButtonBase}
+            data-rich-text-action="link"
+            aria-label="Insert link"
+          >
+            🔗
+          </button>
+        )}
+        {toolbar.includes('ordered-list') && (
+          <button
+            type="button"
+            class={toolbarButtonBase}
+            data-rich-text-action="insertOrderedList"
+            aria-label="Numbered list"
+          >
+            1.
+          </button>
+        )}
+        {toolbar.includes('unordered-list') && (
+          <button
+            type="button"
+            class={toolbarButtonBase}
+            data-rich-text-action="insertUnorderedList"
+            aria-label="Bullet list"
+          >
+            •
+          </button>
+        )}
+        {toolbar.includes('undo') && (
+          <button
+            type="button"
+            class={toolbarButtonBase}
+            data-rich-text-action="undo"
+            aria-label="Undo"
+          >
+            ↺
+          </button>
+        )}
+        {toolbar.includes('redo') && (
+          <button
+            type="button"
+            class={toolbarButtonBase}
+            data-rich-text-action="redo"
+            aria-label="Redo"
+          >
+            ↻
+          </button>
+        )}
+        {toolbar.includes('clear') && (
+          <button
+            type="button"
+            class={`${toolbarButtonBase} text-xs`}
+            data-rich-text-action="clear"
+            aria-label="Clear formatting"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+    )
+  }
+  <div
+    id={`${id}-content`}
+    class="min-h-[180px] rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-relaxed text-slate-900 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+    data-rich-text-editor
+    data-placeholder={placeholder}
+    contenteditable={!readOnly}
+    role="textbox"
+    aria-multiline="true"
+    aria-label={placeholder}
+    aria-describedby={helpId}
+    aria-readonly={readOnly ? 'true' : 'false'}
+  >
+    {value ? <Fragment set:html={value} /> : ''}
+  </div>
+  <textarea name={name ?? undefined} hidden data-rich-text-input
+    >{value}</textarea
+  >
+  {
+    helpText && (
+      <p id={helpId} class="text-xs text-slate-700 dark:text-slate-300">
+        {helpText}
+      </p>
+    )
+  }
+</div>
+
+<style is:inline>
+  [data-rich-text-editor][contenteditable='true']:empty::before,
+  [data-rich-text-editor][data-empty='true']::before {
+    content: attr(data-placeholder);
+    color: rgba(51, 65, 85, 0.7);
+    pointer-events: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    [data-rich-text-editor][contenteditable='true']:empty::before,
+    [data-rich-text-editor][data-empty='true']::before {
+      color: rgba(148, 163, 184, 0.75);
+    }
+  }
+</style>
+
+<script is:inline>
+  (function setupRichTextEditor() {
+    const root = document.getElementById('${id}');
+    if (!(root instanceof HTMLElement)) return;
+
+    const editor = root.querySelector('[data-rich-text-editor]');
+    const input = root.querySelector('[data-rich-text-input]');
+    const toolbar = root.querySelector('[data-rich-text-toolbar]');
+
+    if (
+      !(editor instanceof HTMLElement) ||
+      !(input instanceof HTMLTextAreaElement)
+    )
+      return;
+
+    const updateEmptyState = () => {
+      const text = editor.innerText.trim();
+      editor.setAttribute('data-empty', String(text.length === 0));
+    };
+
+    const sync = (emit = true) => {
+      const html = editor.innerHTML.trim();
+      input.value = html;
+      if (emit) {
+        root.dispatchEvent(
+          new CustomEvent('rich-text:change', {
+            bubbles: true,
+            detail: { value: html },
+          })
+        );
+      }
+      updateEmptyState();
+    };
+
+    const exec = (command, value) => {
+      if (command === 'clear') {
+        document.execCommand('removeFormat');
+        document.execCommand('unlink');
+        return;
+      }
+      if (command === 'link') {
+        const url = window.prompt('Enter URL');
+        if (url) {
+          document.execCommand('createLink', false, url);
+        }
+        return;
+      }
+      const formatValue = command === 'formatBlock' && !value ? 'p' : value;
+      document.execCommand(command, false, formatValue);
+    };
+
+    if (toolbar instanceof HTMLElement) {
+      toolbar.addEventListener('click', (event) => {
+        const target =
+          event.target instanceof HTMLElement
+            ? event.target.closest('[data-rich-text-action]')
+            : null;
+        if (!(target instanceof HTMLElement)) return;
+        const action = target.getAttribute('data-rich-text-action');
+        if (!action) return;
+        const arg = target.getAttribute('data-arg') || undefined;
+        exec(action, arg);
+        editor.focus();
+        sync();
+      });
+    }
+
+    editor.addEventListener('input', () => sync());
+    editor.addEventListener('blur', () => sync());
+
+    root.addEventListener('rich-text:set', (event) => {
+      const detail = event && 'detail' in event ? event.detail : null;
+      const value =
+        detail && typeof detail.value === 'string' ? detail.value : '';
+      editor.innerHTML = value || '';
+      sync(false);
+    });
+
+    // Observe mutations caused by external scripts formatting content
+    const observer = new MutationObserver(() => sync(false));
+    observer.observe(editor, { childList: true, subtree: true });
+
+    updateEmptyState();
+  })();
+</script>

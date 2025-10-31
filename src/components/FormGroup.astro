@@ -1,0 +1,83 @@
+---
+/**
+ * FormGroup - layout wrapper for form controls with label, description and error messaging
+ */
+interface Props {
+  label?: string;
+  description?: string;
+  error?: string;
+  required?: boolean;
+  optionalText?: string;
+  layout?: 'vertical' | 'horizontal';
+  labelFor?: string;
+  className?: string;
+  labelClassName?: string;
+  helpText?: string;
+}
+
+const {
+  label,
+  description,
+  error,
+  required = false,
+  optionalText = 'Optional',
+  layout = 'vertical',
+  labelFor,
+  className = '',
+  labelClassName = '',
+  helpText,
+} = Astro.props as Props;
+---
+
+<div
+  class={`form-group ${layout === 'horizontal' ? 'md:flex md:items-start md:gap-6' : 'space-y-2'} text-slate-900 dark:text-slate-100 ${className}`}
+  data-form-group
+  data-has-error={Boolean(error)}
+>
+  {
+    label && (
+      <div class={`${layout === 'horizontal' ? 'md:w-48' : ''} space-y-1`}>
+        <label
+          class={`block text-sm font-semibold text-slate-800 dark:text-slate-200 ${labelClassName}`}
+          for={labelFor}
+        >
+          {label}
+          {required && (
+            <span class="ml-1 text-red-600 dark:text-red-300">*</span>
+          )}
+          {!required && optionalText && (
+            <span class="ml-2 text-xs font-normal uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {optionalText}
+            </span>
+          )}
+        </label>
+        {description && (
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            {description}
+          </p>
+        )}
+      </div>
+    )
+  }
+  <div class={`${layout === 'horizontal' ? 'md:flex-1' : 'space-y-2'}`}>
+    <div class="space-y-2">
+      <slot />
+      {
+        helpText && (
+          <p class="text-xs text-slate-600 dark:text-slate-300">{helpText}</p>
+        )
+      }
+      {
+        error && (
+          <p
+            class="text-xs font-semibold text-red-600 dark:text-red-300"
+            role="alert"
+            aria-live="assertive"
+          >
+            {error}
+          </p>
+        )
+      }
+    </div>
+  </div>
+</div>

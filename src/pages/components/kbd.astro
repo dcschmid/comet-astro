@@ -1,0 +1,21 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import KBD from '../../components/KBD.astro';
+---
+
+<DocsLayout
+  title="KBD"
+  description="Inline keyboard shortcut badge with size variants."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-2 text-gray-300">
+      <p>Save: <KBD keys={['Ctrl', 'S']} /></p>
+      <p>Copy: <KBD keys={['Ctrl', 'C']} /></p>
+      <p>Paste: <KBD keys={['Ctrl', 'V']} /></p>
+      <p>
+        Press <KBD size="sm">Enter</KBD> to submit
+      </p>
+    </div>
+  </section>
+</DocsLayout>

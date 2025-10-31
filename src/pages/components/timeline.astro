@@ -1,0 +1,43 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Timeline from '../../components/Timeline.astro';
+
+const events = [
+  {
+    date: '2025-01-15',
+    title: 'Project Started',
+    description: 'Initial kickoff meeting',
+    variant: 'success',
+    icon: '🚀',
+  },
+  {
+    date: '2025-02-01',
+    title: 'Design Phase',
+    description: 'Created mockups and wireframes',
+  },
+  {
+    date: '2025-03-10',
+    title: 'Development',
+    description: 'Started implementation',
+    variant: 'default',
+    icon: '💻',
+  },
+  {
+    date: '2025-04-20',
+    title: 'Testing',
+    description: 'QA and bug fixes',
+    variant: 'warning',
+    icon: '🧪',
+  },
+];
+---
+
+<DocsLayout
+  title="Timeline"
+  description="Chronological event display with icons and status variants."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Timeline events={events} />
+  </section>
+</DocsLayout>

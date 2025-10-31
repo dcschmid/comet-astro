@@ -1,0 +1,110 @@
+---
+/**
+ * Generic SEO component for meta tags and JSON-LD
+ */
+interface Breadcrumb {
+  name: string;
+  url: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  keywords?: string | string[];
+  image?: string;
+  type?: 'website' | 'article';
+  canonical?: string;
+  noIndex?: boolean;
+  noFollow?: boolean;
+  siteName?: string;
+  language?: string;
+  breadcrumbs?: Breadcrumb[];
+}
+
+const {
+  title,
+  description = '',
+  keywords = [],
+  image = undefined,
+  type = 'website',
+  canonical,
+  noIndex = false,
+  noFollow = false,
+  siteName = 'Site',
+  language = 'en',
+  breadcrumbs = [],
+} = Astro.props as Props;
+
+const canonicalURL = canonical
+  ? new URL(canonical, Astro.site || Astro.url).toString()
+  : new URL(Astro.url.pathname, Astro.site || Astro.url).toString();
+const imageURL = image
+  ? new URL(image, Astro.site || Astro.url).toString()
+  : undefined;
+const pageTitle = `${title} | ${siteName}`;
+
+const breadcrumbSchema =
+  Array.isArray(breadcrumbs) && breadcrumbs.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.name,
+          item: b.url,
+        })),
+      }
+    : undefined;
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'Article' : 'WebSite',
+  name: siteName,
+  headline: title,
+  url: canonicalURL,
+  description,
+  image: imageURL,
+  inLanguage: language,
+};
+---
+
+<title>{pageTitle}</title>
+<meta name="title" content={pageTitle} />
+{description && <meta name="description" content={description} />}
+{
+  keywords && (
+    <meta
+      name="keywords"
+      content={Array.isArray(keywords) ? keywords.join(', ') : keywords}
+    />
+  )
+}
+<meta
+  name="robots"
+  content={`${noIndex ? 'noindex' : 'index'}, ${noFollow ? 'nofollow' : 'follow'}`}
+/>
+<meta name="language" content={language} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={pageTitle} />
+{description && <meta property="og:description" content={description} />}
+{imageURL && <meta property="og:image" content={imageURL} />}
+<meta property="og:site_name" content={siteName} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+{description && <meta name="twitter:description" content={description} />}
+{imageURL && <meta name="twitter:image" content={imageURL} />}
+
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify(
+    breadcrumbSchema ? [websiteSchema, breadcrumbSchema] : websiteSchema
+  )}
+/>

@@ -1,0 +1,31 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Confetti from '../../components/Confetti.astro';
+import PageHeader from '../../components/PageHeader.astro';
+---
+
+<DocsLayout
+  title="Confetti"
+  description="Celebratory particle burst that can be triggered by hover or click."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Usage</h2>
+    <p class="text-gray-400 text-sm">
+      Wrap an area of your UI with a celebratory effect. Configure the
+      <code>trigger</code> prop to activate on <code>hover</code>,
+      <code>click</code>, or programmatically.
+    </p>
+  </section>
+
+  <section>
+    <div
+      class="relative overflow-hidden rounded-2xl border border-gray-800 bg-gray-900 p-6"
+    >
+      <PageHeader
+        title="Milestone unlocked"
+        subtitle="Ship a celebratory confetti effect when the user reaches key goals."
+      />
+      <Confetti trigger="hover" />
+    </div>
+  </section>
+</DocsLayout>

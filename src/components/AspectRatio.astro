@@ -1,0 +1,28 @@
+---
+interface Props {
+  ratio?: '1/1' | '4/3' | '16/9' | '21/9' | '3/2' | '2/3' | number;
+  className?: string;
+}
+
+const { ratio = '16/9', className = '' } = Astro.props;
+
+const ratioClasses: Record<string, string> = {
+  '1/1': 'aspect-square',
+  '4/3': 'aspect-[4/3]',
+  '16/9': 'aspect-video',
+  '21/9': 'aspect-[21/9]',
+  '3/2': 'aspect-[3/2]',
+  '2/3': 'aspect-[2/3]',
+};
+
+const ratioClass =
+  typeof ratio === 'string'
+    ? ratioClasses[ratio] || 'aspect-video'
+    : `aspect-[${ratio}]`;
+---
+
+<div class={`relative ${ratioClass} ${className}`}>
+  <div class="absolute inset-0">
+    <slot />
+  </div>
+</div>

@@ -1,0 +1,46 @@
+---
+interface Props {
+  videoId: string;
+  title?: string;
+  aspectRatio?: '16/9' | '4/3' | '1/1';
+  autoplay?: boolean;
+  controls?: boolean;
+  privacyMode?: boolean;
+  className?: string;
+}
+
+const {
+  videoId,
+  title = 'YouTube video player',
+  aspectRatio = '16/9',
+  autoplay = false,
+  controls = true,
+  privacyMode = true,
+  className = '',
+} = Astro.props;
+
+const ratioClasses = {
+  '16/9': 'aspect-video',
+  '4/3': 'aspect-[4/3]',
+  '1/1': 'aspect-square',
+};
+
+const domain = privacyMode ? 'youtube-nocookie.com' : 'youtube.com';
+const params = new URLSearchParams({
+  ...(autoplay && { autoplay: '1' }),
+  ...(controls && { controls: '1' }),
+});
+
+const src = `https://www.${domain}/embed/${videoId}?${params.toString()}`;
+---
+
+<div
+  class={`relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 ${ratioClasses[aspectRatio]} ${className}`.trim()}
+>
+  <iframe
+    src={src}
+    title={title}
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+    class="absolute inset-0 h-full w-full border-0"></iframe>
+</div>

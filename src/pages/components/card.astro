@@ -1,0 +1,55 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Card from '../../components/Card.astro';
+import CategoryBadge from '../../components/CategoryBadge.astro';
+import Button from '../../components/Button.astro';
+import OptimizedImage from '../../components/OptimizedImage.astro';
+---
+
+<DocsLayout
+  title="Card"
+  description="Flexible surface for dashboard metrics or marketing teasers."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="grid gap-4 md:grid-cols-3">
+      <Card class="p-5 space-y-3">
+        <CategoryBadge label="Case study" />
+        <h3 class="text-lg font-semibold text-white">
+          Scaling customer onboarding
+        </h3>
+        <p class="text-sm text-gray-400">
+          How we designed a guided onboarding flow that reduced time-to-value by
+          42%.
+        </p>
+        <Button variant="ghost" size="sm">Read story</Button>
+      </Card>
+      <Card class="p-5 space-y-3">
+        <CategoryBadge label="Guide" tone="emerald" />
+        <h3 class="text-lg font-semibold text-white">
+          Inclusive design playbook
+        </h3>
+        <p class="text-sm text-gray-400">
+          Learn how to run accessibility-first workshops with your team.
+        </p>
+      </Card>
+      <Card class="p-0 overflow-hidden">
+        <OptimizedImage
+          src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=800&q=80"
+          alt="Laptop on desk"
+          rounded
+          className="w-full"
+        />
+        <div class="p-5 space-y-2">
+          <CategoryBadge label="Webinar" tone="blue" />
+          <h3 class="text-lg font-semibold text-white">
+            Design tokens at scale
+          </h3>
+          <p class="text-sm text-gray-400">
+            Join our upcoming live session with the design systems team.
+          </p>
+        </div>
+      </Card>
+    </div>
+  </section>
+</DocsLayout>

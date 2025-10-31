@@ -1,0 +1,32 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Lightbox from '../../components/Lightbox.astro';
+
+const images = [
+  {
+    src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80',
+    caption: 'Dawn skyline',
+    alt: 'City skyline at dawn',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=800&q=80',
+    caption: 'Mountain lake',
+    alt: 'Calm lake surrounded by mountains',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
+    caption: 'Team brainstorm',
+    alt: 'People collaborating around table',
+  },
+];
+---
+
+<DocsLayout
+  title="Lightbox"
+  description="Gallery overlay with keyboard controls and caption support."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Lightbox images={images} />
+  </section>
+</DocsLayout>

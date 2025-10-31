@@ -1,0 +1,208 @@
+---
+/**
+ * ColorPicker - enhanced color input with preview and presets
+ */
+interface Props {
+  value?: string;
+  label?: string;
+  presets?: string[];
+  showInput?: boolean;
+  className?: string;
+  inputName?: string;
+}
+
+const {
+  value = '#6366f1',
+  label = 'Choose color',
+  presets = [
+    '#6366f1',
+    '#ef4444',
+    '#f97316',
+    '#22d3ee',
+    '#84cc16',
+    '#f784d9',
+    '#facc15',
+    '#a855f7',
+  ],
+  showInput = true,
+  className = '',
+  inputName,
+} = Astro.props as Props;
+
+const id = `color-picker-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<div
+  id={id}
+  class={`space-y-4 text-slate-900 dark:text-slate-100 ${className}`}
+  data-color-picker
+>
+  <div class="flex items-center justify-between gap-4">
+    {
+      label && (
+        <label
+          for={`${id}-native`}
+          class="text-sm font-semibold text-slate-800 dark:text-slate-200"
+        >
+          {label}
+        </label>
+      )
+    }
+    <div class="flex items-center gap-2">
+      <span
+        class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+        data-color-value-display
+        aria-live="polite">{value.toUpperCase()}</span
+      >
+      <span
+        class="block h-6 w-6 rounded-full border border-slate-300 shadow-inner dark:border-white/30"
+        data-color-preview
+        style={`background:${value}`}
+        aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <input
+      id={`${id}-native`}
+      type="color"
+      value={value}
+      name={inputName}
+      class="h-12 w-12 cursor-pointer appearance-none rounded-xl border border-slate-300 bg-white p-0 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+      data-color-input
+      aria-label={label}
+    />
+    {
+      showInput && (
+        <input
+          type="text"
+          value={value.toUpperCase()}
+          maxlength={7}
+          class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-500 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-400"
+          pattern="^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+          data-color-text
+        />
+      )
+    }
+  </div>
+
+  {
+    presets.length > 0 && (
+      <div
+        class="flex flex-wrap gap-2"
+        role="listbox"
+        aria-label={`${label} presets`}
+      >
+        {presets.map((preset) => (
+          <button
+            type="button"
+            class="h-9 w-9 rounded-full border border-slate-300 shadow-inner transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 focus-visible:ring-offset-white dark:border-white/30 dark:focus-visible:ring-offset-slate-900"
+            style={`background:${preset}`}
+            data-color-preset={preset}
+            aria-label={`Use color ${preset}`}
+            aria-pressed={
+              preset.toLowerCase() === value.toLowerCase() ? 'true' : 'false'
+            }
+          />
+        ))}
+      </div>
+    )
+  }
+</div>
+
+<script is:inline>
+  (function setupColorPicker() {
+    const root = document.getElementById('${id}');
+    if (!(root instanceof HTMLElement)) return;
+
+    const input = root.querySelector('[data-color-input]');
+    const textInput = root.querySelector('[data-color-text]');
+    const preview = root.querySelector('[data-color-preview]');
+    const display = root.querySelector('[data-color-value-display]');
+    const presetButtons = Array.from(
+      root.querySelectorAll('[data-color-preset]')
+    ).filter((btn) => btn instanceof HTMLElement);
+
+    if (
+      !(input instanceof HTMLInputElement) ||
+      !(preview instanceof HTMLElement) ||
+      !(display instanceof HTMLElement)
+    )
+      return;
+    const textField = textInput instanceof HTMLInputElement ? textInput : null;
+
+    const normalize = (value) => {
+      if (!value) return null;
+      const hex = value.trim().toLowerCase();
+      if (!hex.startsWith('#')) return null;
+      if (!/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(hex)) return null;
+      return hex.length === 4
+        ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`
+        : hex;
+    };
+
+    const update = (value, emit = true) => {
+      input.value = value;
+      if (textField) textField.value = value.toUpperCase();
+      preview.style.background = value;
+      display.textContent = value.toUpperCase();
+      presetButtons.forEach((button) => {
+        if (!(button instanceof HTMLElement)) return;
+        const presetValue = normalize(button.getAttribute('data-color-preset'));
+        button.setAttribute(
+          'aria-pressed',
+          presetValue === value ? 'true' : 'false'
+        );
+      });
+      if (emit) {
+        root.dispatchEvent(
+          new CustomEvent('color-picker:change', {
+            bubbles: true,
+            detail: { value },
+          })
+        );
+      }
+    };
+
+    input.addEventListener('input', (event) => {
+      const nextValue =
+        event.target instanceof HTMLInputElement
+          ? event.target.value
+          : input.value;
+      update(nextValue);
+    });
+
+    textField?.addEventListener('input', (event) => {
+      const source =
+        event.target instanceof HTMLInputElement ? event.target.value : '';
+      const nextValue = normalize(source);
+      if (!nextValue) return;
+      update(nextValue);
+    });
+
+    root.addEventListener('click', (event) => {
+      const target =
+        event.target instanceof HTMLElement
+          ? event.target.closest('[data-color-preset]')
+          : null;
+      if (!(target instanceof HTMLElement)) return;
+      const preset = target.getAttribute('data-color-preset');
+      if (!preset) return;
+      const normalized = normalize(preset);
+      if (!normalized) return;
+      update(normalized);
+    });
+
+    root.addEventListener('color-picker:set', (event) => {
+      const detail = event && 'detail' in event ? event.detail : null;
+      const next =
+        detail && typeof detail.value === 'string'
+          ? normalize(detail.value)
+          : null;
+      if (next) update(next);
+    });
+
+    const initial = normalize(input.value);
+    if (initial) update(initial, false);
+  })();
+</script>

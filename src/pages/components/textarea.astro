@@ -1,0 +1,50 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Textarea from '../../components/Textarea.astro';
+---
+
+<DocsLayout
+  title="Textarea"
+  description="Multi-line text input with character counter."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300 text-sm space-y-1">
+      <li><code>name: string</code> – textarea name (required)</li>
+      <li><code>label?: string</code></li>
+      <li><code>placeholder?: string</code></li>
+      <li><code>value?: string</code></li>
+      <li><code>rows?: number</code> – default: 4</li>
+      <li><code>required?: boolean</code></li>
+      <li><code>disabled?: boolean</code></li>
+      <li><code>error?: string</code></li>
+      <li><code>helperText?: string</code></li>
+      <li><code>maxLength?: number</code> – shows character counter</li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <Textarea
+        name="bio"
+        label="Bio"
+        placeholder="Tell us about yourself"
+        rows={3}
+      />
+      <Textarea
+        name="message"
+        label="Message"
+        maxLength={200}
+        helperText="Max 200 characters"
+      />
+      <Textarea
+        name="disabled"
+        label="Disabled"
+        disabled
+        value="Cannot edit this text"
+      />
+    </div>
+  </section>
+</DocsLayout>

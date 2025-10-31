@@ -1,0 +1,46 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Autocomplete from '../../components/Autocomplete.astro';
+
+const options = [
+  {
+    value: 'astro',
+    label: 'Astro',
+    description: 'The web framework for content-driven sites',
+    keywords: ['framework', 'islands'],
+  },
+  {
+    value: 'react',
+    label: 'React',
+    description: 'Library for building user interfaces',
+    keywords: ['ui', 'spa'],
+  },
+  {
+    value: 'vue',
+    label: 'Vue',
+    description: 'Progressive framework for building UIs',
+    keywords: ['framework'],
+  },
+  {
+    value: 'svelte',
+    label: 'Svelte',
+    description: 'Cybernetically enhanced web apps',
+    keywords: ['compiler'],
+  },
+];
+---
+
+<DocsLayout
+  title="Autocomplete"
+  description="Search-as-you-type combobox with keyboard navigation."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Autocomplete
+      options={options}
+      label="Framework"
+      placeholder="Search frameworks…"
+      maxVisibleOptions={6}
+    />
+  </section>
+</DocsLayout>

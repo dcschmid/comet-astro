@@ -1,0 +1,24 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Embed from '../../components/Embed.astro';
+---
+
+<DocsLayout
+  title="Embed"
+  description="Generic iframe wrapper with aspect ratio and sizing controls."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <p class="text-gray-400 text-sm">
+      Use <code>aspectRatio</code> or provide a fixed <code>height</code> to adapt
+      embeds that don’t support responsive layouts.
+    </p>
+    <Embed
+      src="https://codepen.io/team/codepen/embed/preview/PNaGbb?height=400"
+      title="CodePen Example"
+      aspectRatio="none"
+      height={400}
+      className="mt-3"
+    />
+  </section>
+</DocsLayout>

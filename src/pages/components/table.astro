@@ -1,0 +1,44 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Table from '../../components/Table.astro';
+
+const columns = [
+  { key: 'name', label: 'Name', sortable: true },
+  { key: 'role', label: 'Role' },
+  { key: 'status', label: 'Status', align: 'center' },
+];
+
+const rows = [
+  {
+    name: 'John Doe',
+    role: 'Developer',
+    status: '<span class="text-green-400">●</span>',
+  },
+  {
+    name: 'Jane Smith',
+    role: 'Designer',
+    status: '<span class="text-green-400">●</span>',
+  },
+  {
+    name: 'Bob Wilson',
+    role: 'Manager',
+    status: '<span class="text-gray-400">●</span>',
+  },
+];
+---
+
+<DocsLayout
+  title="Table"
+  description="Responsive data grid with zebra stripes, hover states, and caption support."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Demo</h2>
+    <Table
+      columns={columns}
+      data={rows}
+      striped
+      hoverable
+      caption="Team members"
+    />
+  </section>
+</DocsLayout>

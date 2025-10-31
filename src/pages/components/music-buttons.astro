@@ -1,0 +1,29 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import MusicButtons from '../../components/MusicButtons.astro';
+const musicLinks = [
+  { platform: 'Spotify', href: 'https://open.spotify.com/' },
+  { platform: 'Apple', href: 'https://music.apple.com/' },
+  { platform: 'YouTube', href: 'https://music.youtube.com/' },
+];
+---
+
+<DocsLayout
+  title="MusicButtons"
+  description="Renders platform buttons linking to music services with branded styling."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>links: &#123;platform, href, label?&#125;[]</code></li>
+      <li><code>layout?: 'row'|'column'|'wrap'</code> – layout direction</li>
+      <li><code>size?: 'sm'|'md'</code> – button size</li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <MusicButtons layout="wrap" links={musicLinks} />
+  </section>
+</DocsLayout>

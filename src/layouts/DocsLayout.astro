@@ -1,0 +1,305 @@
+---
+import '../styles/tailwind.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import {
+  componentCatalog,
+  componentCategories,
+} from '../data/component-catalog';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+
+const navGroups = componentCategories
+  .map((category) => ({
+    ...category,
+    items: componentCatalog
+      .filter((component) => component.category === category.id)
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  }))
+  .filter((group) => group.items.length > 0);
+
+const currentSlug = Astro.url.pathname
+  .replace(/\/$/, '')
+  .replace(/^\/components\//, '');
+
+const navId = `docs-nav-${Math.random().toString(36).slice(2, 8)}`;
+const overlayId = `${navId}-overlay`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} – Comet Astro</title>
+    {description && <meta name="description" content={description} />}
+    <script is:inline>
+      (function () {
+        const storageKey = 'comet-theme';
+        const root = document.documentElement;
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const subscribers = new Set();
+
+        const apply = (mode) => {
+          const resolved =
+            mode === 'system' ? (media.matches ? 'dark' : 'light') : mode;
+          root.classList.toggle('dark', resolved === 'dark');
+          root.dataset.themeMode = mode;
+          root.dataset.themeResolved = resolved;
+        };
+
+        const readStorage = () => {
+          try {
+            return localStorage.getItem(storageKey);
+          } catch {
+            return null;
+          }
+        };
+
+        let currentMode = ['light', 'dark'].includes(readStorage() || '')
+          ? readStorage()
+          : 'system';
+        apply(currentMode);
+
+        const notify = (mode) => {
+          subscribers.forEach((fn) => {
+            try {
+              fn(mode);
+            } catch {
+              // ignore subscriber errors
+            }
+          });
+        };
+
+        const onMediaChange = () => {
+          if (currentMode === 'system') {
+            apply('system');
+            notify('system');
+          }
+        };
+
+        if (typeof media.addEventListener === 'function') {
+          media.addEventListener('change', onMediaChange);
+        } else if (typeof media.addListener === 'function') {
+          media.addListener(onMediaChange);
+        }
+
+        const setMode = (mode) => {
+          if (mode !== 'light' && mode !== 'dark') {
+            mode = 'system';
+          }
+          currentMode = mode;
+          try {
+            if (mode === 'system') {
+              localStorage.removeItem(storageKey);
+            } else {
+              localStorage.setItem(storageKey, mode);
+            }
+          } catch (error) {
+            console.warn('Unable to persist theme preference', error);
+          }
+          apply(mode);
+          notify(mode);
+        };
+
+        const controller = {
+          getMode: () => currentMode,
+          setMode,
+          subscribe: (fn) => {
+            if (typeof fn !== 'function') return () => {};
+            subscribers.add(fn);
+            try {
+              fn(currentMode);
+            } catch (error) {
+              console.warn('Theme subscriber threw an error', error);
+            }
+            return () => subscribers.delete(fn);
+          },
+        };
+
+        window.__cometTheme = controller;
+      })();
+    </script>
+  </head>
+  <body
+    class="min-h-screen bg-slate-50 text-slate-900 transition-colors dark:bg-gray-950 dark:text-gray-100"
+  >
+    <div class="relative flex min-h-screen flex-col lg:flex-row">
+      <div
+        id={overlayId}
+        data-docs-nav-overlay={navId}
+        class="fixed inset-0 z-30 hidden bg-slate-950/40 backdrop-blur-sm opacity-0 transition-opacity duration-200 data-[open='true']:block data-[open='true']:opacity-100 lg:hidden"
+      >
+      </div>
+      <!-- Sidebar -->
+      <aside
+        id={navId}
+        data-docs-nav
+        class="fixed inset-y-0 left-0 z-40 hidden w-72 max-w-full overflow-y-auto border-r border-slate-200 bg-white/95 p-6 shadow-xl transition-all duration-200 -translate-x-full opacity-0 data-[open='true']:block data-[open='true']:-translate-x-0 data-[open='true']:opacity-100 dark:border-gray-800 dark:bg-gray-900/95 lg:static lg:block lg:w-64 lg:translate-x-0 lg:opacity-100 lg:border-r lg:bg-white/85 lg:p-6 lg:shadow-none"
+      >
+        <div class="mb-6 flex items-center justify-between gap-2">
+          <a
+            href="/"
+            class="text-xl font-bold text-slate-900 transition hover:text-purple-500 dark:text-white dark:hover:text-purple-300"
+            >← Comet Astro</a
+          >
+          <div class="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              type="button"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-500 transition hover:border-purple-400 hover:text-purple-500 dark:border-gray-700 dark:text-gray-300 dark:hover:border-purple-400 dark:hover:text-purple-200 lg:hidden"
+              data-docs-nav-close={navId}
+              aria-label="Navigation schließen"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+        <nav class="space-y-6">
+          {
+            navGroups.map((group) => (
+              <div>
+                <div class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-gray-400">
+                  {group.id}
+                </div>
+                <ul class="space-y-1">
+                  {group.items.map((item) => {
+                    const active = item.slug === currentSlug;
+                    return (
+                      <li>
+                        <a
+                          href={`/components/${item.slug}`}
+                          aria-current={active ? 'page' : undefined}
+                          class={`block rounded-md px-3 py-2 text-sm no-underline transition ${
+                            active
+                              ? 'bg-purple-600/10 text-purple-500 dark:bg-purple-500/10 dark:text-purple-200'
+                              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
+                          }`}
+                        >
+                          {item.name}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))
+          }
+        </nav>
+      </aside>
+
+      <!-- Main content -->
+      <main
+        class="flex-1 bg-white/60 p-6 pb-12 backdrop-blur supports-[backdrop-filter]:bg-white/40 dark:bg-gray-950/60 sm:p-8"
+      >
+        <div class="mx-auto w-full max-w-5xl space-y-6">
+          <div class="mb-6 flex items-center justify-between gap-3 lg:hidden">
+            <button
+              type="button"
+              data-docs-nav-toggle={navId}
+              class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-purple-400 hover:text-purple-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:border-purple-400 dark:hover:text-purple-200"
+              aria-controls={navId}
+              aria-expanded="false"
+            >
+              <span class="text-base">☰</span>
+              Komponenten
+            </button>
+            <div class="shrink-0">
+              <ThemeToggle />
+            </div>
+          </div>
+
+          <header class="mb-8 space-y-2">
+            <h1
+              class="text-3xl font-extrabold text-slate-900 md:text-4xl dark:text-white"
+            >
+              {title}
+            </h1>
+            {
+              description && (
+                <p class="text-base text-slate-600 md:text-lg dark:text-gray-400">
+                  {description}
+                </p>
+              )
+            }
+          </header>
+          <slot />
+        </div>
+      </main>
+    </div>
+
+    <script is:inline>
+      (() => {
+        const navId = '${navId}';
+        const nav = document.getElementById(navId);
+        if (!nav) return;
+        const overlay = document.querySelector(
+          `[data-docs-nav-overlay="${navId}"]`
+        );
+        const toggles = Array.from(
+          document.querySelectorAll(`[data-docs-nav-toggle="${navId}"]`)
+        );
+        const closeButtons = Array.from(
+          document.querySelectorAll(`[data-docs-nav-close="${navId}"]`)
+        );
+        const media = window.matchMedia('(min-width: 1024px)');
+
+        const setOpen = (open) => {
+          if (open) {
+            nav.setAttribute('data-open', 'true');
+            overlay?.setAttribute('data-open', 'true');
+            if (!media.matches) {
+              document.body.classList.add('overflow-hidden');
+            }
+            toggles.forEach((button) =>
+              button.setAttribute('aria-expanded', 'true')
+            );
+            const firstLink = nav.querySelector('a');
+            if (firstLink instanceof HTMLElement) {
+              firstLink.focus();
+            }
+          } else {
+            nav.removeAttribute('data-open');
+            overlay?.removeAttribute('data-open');
+            document.body.classList.remove('overflow-hidden');
+            toggles.forEach((button) =>
+              button.setAttribute('aria-expanded', 'false')
+            );
+          }
+        };
+
+        const openNav = () => setOpen(true);
+        const closeNav = () => setOpen(false);
+
+        toggles.forEach((button) => {
+          button.addEventListener('click', openNav);
+        });
+        closeButtons.forEach((button) => {
+          button.addEventListener('click', closeNav);
+        });
+        overlay?.addEventListener('click', closeNav);
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            closeNav();
+          }
+        });
+
+        const onMediaChange = (event) => {
+          if (event.matches) {
+            closeNav();
+          }
+        };
+        if (typeof media.addEventListener === 'function') {
+          media.addEventListener('change', onMediaChange);
+        } else if (typeof media.addListener === 'function') {
+          media.addListener(onMediaChange);
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Paragraph from '../../components/Paragraph.astro';
+---
+
+<DocsLayout
+  title="Paragraph"
+  description="Typography helper with size, weight, and muted variants."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Variants</h2>
+    <div class="space-y-3">
+      <Paragraph size="lg">Large paragraph for lead copy.</Paragraph>
+      <Paragraph>
+        Default body text keeps things readable across themes with sensible
+        spacing and color.
+      </Paragraph>
+      <Paragraph size="sm" muted>
+        Muted small text is perfect for hints, helper text, or secondary
+        descriptions.
+      </Paragraph>
+    </div>
+  </section>
+</DocsLayout>

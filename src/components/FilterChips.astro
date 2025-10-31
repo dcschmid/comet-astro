@@ -1,0 +1,135 @@
+---
+/**
+ * FilterChips - selectable chip list (multi-select)
+ */
+interface Chip {
+  id: string;
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Chip[];
+  selected?: string[];
+  multi?: boolean;
+  className?: string;
+}
+
+const {
+  items = [],
+  selected = [],
+  multi = true,
+  className = '',
+} = Astro.props as Props;
+
+const activeClasses = [
+  'bg-blue-600',
+  'text-white',
+  'border-blue-600',
+  'shadow-sm',
+  'dark:bg-blue-500',
+  'dark:border-blue-500',
+];
+const inactiveClasses = [
+  'bg-white',
+  'text-slate-700',
+  'border-slate-300',
+  'hover:bg-slate-100',
+  'dark:bg-slate-900',
+  'dark:text-slate-100',
+  'dark:border-slate-600',
+  'dark:hover:bg-slate-800',
+];
+---
+
+<div
+  class={`flex flex-wrap gap-2 ${className}`.trim()}
+  data-multi={multi}
+  data-selected={selected.join(',')}
+  data-active-classes={activeClasses.join(' ')}
+  data-inactive-classes={inactiveClasses.join(' ')}
+>
+  {
+    items.map((chip) => {
+      const isActive = selected.includes(chip.id);
+      return (
+        <a
+          href={chip.href || '#'}
+          data-id={chip.id}
+          role="button"
+          aria-pressed={isActive}
+          class:list={[
+            'inline-flex items-center rounded-full border px-3 py-1 text-sm font-semibold no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900',
+            ...(isActive ? activeClasses : inactiveClasses),
+          ]}
+        >
+          {chip.label}
+        </a>
+      );
+    })
+  }
+</div>
+
+<script is:inline>
+  (function () {
+    const root = document.currentScript?.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+    const multi = root.getAttribute('data-multi') === 'true';
+    const activeClasses = (root.getAttribute('data-active-classes') || '')
+      .split(' ')
+      .filter(Boolean);
+    const inactiveClasses = (root.getAttribute('data-inactive-classes') || '')
+      .split(' ')
+      .filter(Boolean);
+
+    const getSelected = () =>
+      new Set(
+        (root.getAttribute('data-selected') || '').split(',').filter(Boolean)
+      );
+    const setSelected = (ids) => {
+      root.setAttribute('data-selected', Array.from(ids).join(','));
+      root.dispatchEvent(
+        new CustomEvent('change', { detail: { selected: Array.from(ids) } })
+      );
+    };
+
+    const applyStyles = (selectedSet) => {
+      root.querySelectorAll('a[data-id]').forEach((el) => {
+        if (!(el instanceof HTMLElement)) return;
+        const id = el.getAttribute('data-id');
+        const isActive = id ? selectedSet.has(id) : false;
+        el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        el.classList.remove(...activeClasses, ...inactiveClasses);
+        el.classList.add(...(isActive ? activeClasses : inactiveClasses));
+      });
+    };
+
+    applyStyles(getSelected());
+
+    root.addEventListener('click', (event) => {
+      const anchor =
+        event.target instanceof HTMLElement
+          ? event.target.closest('a[data-id]')
+          : null;
+      if (!(anchor instanceof HTMLElement)) return;
+      event.preventDefault();
+      const id = anchor.getAttribute('data-id');
+      if (!id) return;
+
+      const selectedSet = getSelected();
+      if (multi) {
+        if (selectedSet.has(id)) {
+          selectedSet.delete(id);
+        } else {
+          selectedSet.add(id);
+        }
+      } else {
+        selectedSet.clear();
+        selectedSet.add(id);
+      }
+
+      setSelected(selectedSet);
+      applyStyles(selectedSet);
+    });
+  })();
+</script>

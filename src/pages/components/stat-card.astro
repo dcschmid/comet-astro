@@ -1,0 +1,31 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import StatCard from '../../components/StatCard.astro';
+---
+
+<DocsLayout
+  title="StatCard"
+  description="Highlight KPIs with optional icons, deltas, and gradient variant."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <StatCard
+        label="Total Users"
+        value="12,543"
+        icon="👥"
+        trend={12.5}
+        trendLabel="vs last month"
+      />
+      <StatCard
+        label="Revenue"
+        value="$45,231"
+        icon="💰"
+        trend={-3.2}
+        trendLabel="vs last month"
+        variant="gradient"
+      />
+      <StatCard label="Active Now" value="328" icon="⚡" />
+    </div>
+  </section>
+</DocsLayout>

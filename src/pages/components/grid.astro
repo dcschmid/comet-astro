@@ -1,0 +1,54 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Grid from '../../components/Grid.astro';
+---
+
+<DocsLayout
+  title="Grid"
+  description="Responsive grid layout system with auto columns."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li>
+        <code>cols?: 1|2|3|4|5|6|'auto'</code> – number of columns (default: 3)
+      </li>
+      <li>
+        <code>gap?: 'none'|'sm'|'md'|'lg'|'xl'</code> – spacing between items (default:
+        'md')
+      </li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">3 Columns (default)</h3>
+        <Grid cols={3}>
+          <div class="bg-purple-500/20 p-4 rounded text-center">1</div>
+          <div class="bg-purple-500/20 p-4 rounded text-center">2</div>
+          <div class="bg-purple-500/20 p-4 rounded text-center">3</div>
+        </Grid>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">4 Columns</h3>
+        <Grid cols={4} gap="lg">
+          <div class="bg-blue-500/20 p-4 rounded text-center">1</div>
+          <div class="bg-blue-500/20 p-4 rounded text-center">2</div>
+          <div class="bg-blue-500/20 p-4 rounded text-center">3</div>
+          <div class="bg-blue-500/20 p-4 rounded text-center">4</div>
+        </Grid>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Auto-fit</h3>
+        <Grid cols="auto" gap="sm">
+          <div class="bg-pink-500/20 p-4 rounded text-center">Auto</div>
+          <div class="bg-pink-500/20 p-4 rounded text-center">Auto</div>
+          <div class="bg-pink-500/20 p-4 rounded text-center">Auto</div>
+        </Grid>
+      </div>
+    </div>
+  </section>
+</DocsLayout>

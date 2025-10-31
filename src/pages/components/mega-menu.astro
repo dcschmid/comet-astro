@@ -1,0 +1,43 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import MegaMenu from '../../components/MegaMenu.astro';
+
+const columns = [
+  {
+    title: 'Products',
+    items: [
+      {
+        label: 'Component A',
+        href: '#',
+        description: 'Description A',
+        icon: '🎨',
+      },
+      {
+        label: 'Component B',
+        href: '#',
+        description: 'Description B',
+        icon: '🔧',
+      },
+    ],
+  },
+  {
+    title: 'Resources',
+    items: [
+      { label: 'Docs', href: '#', description: 'Documentation', icon: '📚' },
+      { label: 'Blog', href: '#', description: 'Latest updates', icon: '📝' },
+    ],
+  },
+];
+---
+
+<DocsLayout
+  title="MegaMenu"
+  description="Multi-column dropdown navigation for product-level menus."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <div class="bg-gray-900 p-4 rounded-lg inline-flex">
+      <MegaMenu trigger="Products" columns={columns} />
+    </div>
+  </section>
+</DocsLayout>

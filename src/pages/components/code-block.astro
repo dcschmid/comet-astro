@@ -1,0 +1,28 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const exampleCode = `function greet(name) {
+  console.log(\`Hello, \${name}!\`);
+}
+
+greet('World');`;
+---
+
+<DocsLayout
+  title="CodeBlock"
+  description="Syntax-highlighted code with copy-to-clipboard support."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <CodeBlock code={exampleCode} language="javascript" title="example.js" />
+      <CodeBlock
+        code={exampleCode}
+        language="javascript"
+        showLineNumbers
+        highlightLines={[2, 5]}
+      />
+    </div>
+  </section>
+</DocsLayout>

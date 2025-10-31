@@ -1,0 +1,37 @@
+---
+interface Props {
+  keys?: string[];
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+const { keys = [], size = 'md', className = '' } = Astro.props;
+
+const sizeClasses = {
+  sm: 'text-xs px-1.5 py-0.5 min-w-[1.5rem]',
+  md: 'text-sm px-2 py-1 min-w-[2rem]',
+  lg: 'text-base px-2.5 py-1.5 min-w-[2.5rem]',
+};
+
+const baseClasses =
+  'inline-flex items-center justify-center rounded border font-mono font-semibold bg-slate-100 border-slate-300 text-slate-700 shadow-sm dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100';
+---
+
+{
+  keys.length > 0 ? (
+    <span class={`inline-flex items-center gap-1 ${className}`}>
+      {keys.map((key, i) => (
+        <>
+          <kbd class={`${baseClasses} ${sizeClasses[size]}`}>{key}</kbd>
+          {i < keys.length - 1 && (
+            <span class="text-xs text-slate-500 dark:text-slate-400">+</span>
+          )}
+        </>
+      ))}
+    </span>
+  ) : (
+    <kbd class={`${baseClasses} ${sizeClasses[size]} ${className}`}>
+      <slot />
+    </kbd>
+  )
+}

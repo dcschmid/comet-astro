@@ -1,0 +1,98 @@
+---
+/**
+ * MediaListItem - list row with optional thumbnail, title, subtitle, meta and actions
+ */
+interface Action {
+  href: string;
+  label: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+}
+
+interface Props {
+  imageSrc?: string;
+  imageAlt?: string;
+  href?: string;
+  title: string;
+  subtitle?: string;
+  meta?: string[];
+  actions?: Action[];
+  className?: string;
+}
+
+const {
+  imageSrc,
+  imageAlt = '',
+  href,
+  title,
+  subtitle,
+  meta = [],
+  actions = [],
+  className = '',
+} = Astro.props as Props;
+---
+
+<div
+  class={`flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-3 text-slate-800 shadow-sm transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${className}`.trim()}
+>
+  {
+    imageSrc && (
+      <a href={href || '#'} class="block flex-shrink-0">
+        <img
+          src={imageSrc}
+          alt={imageAlt || title}
+          class="h-14 w-14 rounded-lg object-cover shadow-sm"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+    )
+  }
+  <div class="min-w-0 flex-1">
+    <div class="truncate font-semibold text-slate-900 dark:text-slate-100">
+      {
+        href ? (
+          <a
+            href={href}
+            class="no-underline transition hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900"
+          >
+            {title}
+          </a>
+        ) : (
+          title
+        )
+      }
+    </div>
+    {
+      subtitle && (
+        <div class="truncate text-sm text-slate-600 dark:text-slate-300">
+          {subtitle}
+        </div>
+      )
+    }
+    {
+      meta.length > 0 && (
+        <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+          {meta.map((m) => (
+            <span>{m}</span>
+          ))}
+        </div>
+      )
+    }
+  </div>
+  {
+    actions.length > 0 && (
+      <div class="ml-2 flex flex-shrink-0 flex-wrap gap-2">
+        {actions.map((a) => (
+          <a
+            href={a.href}
+            target={a.target || '_self'}
+            rel={a.target === '_blank' ? 'noopener noreferrer' : undefined}
+            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 no-underline transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-900"
+          >
+            {a.label}
+          </a>
+        ))}
+      </div>
+    )
+  }
+</div>

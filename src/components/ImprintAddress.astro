@@ -1,0 +1,113 @@
+---
+/**
+ * ImprintAddress - legal address/contact block
+ */
+interface Props {
+  name: string;
+  street?: string;
+  postalCode?: string;
+  city?: string;
+  country?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  vatId?: string;
+  register?: string; // e.g., Amtsgericht/Handelsregister-Nr
+  className?: string;
+}
+
+const {
+  name,
+  street,
+  postalCode,
+  city,
+  country,
+  email,
+  phone,
+  website,
+  vatId,
+  register,
+  className = '',
+} = Astro.props as Props;
+---
+
+<address
+  class={`space-y-2 not-italic text-sm text-slate-700 dark:text-slate-200 ${className}`.trim()}
+  itemscope
+  itemtype="https://schema.org/Organization"
+>
+  <div
+    itemprop="name"
+    class="text-lg font-semibold text-slate-900 dark:text-slate-100"
+  >
+    {name}
+  </div>
+  {
+    (street || postalCode || city) && (
+      <div
+        itemprop="address"
+        itemscope
+        itemtype="https://schema.org/PostalAddress"
+      >
+        {street && <div itemprop="streetAddress">{street}</div>}
+        {(postalCode || city) && (
+          <div>
+            <span itemprop="postalCode">{postalCode}</span>{' '}
+            <span itemprop="addressLocality">{city}</span>
+          </div>
+        )}
+        {country && <div itemprop="addressCountry">{country}</div>}
+      </div>
+    )
+  }
+  <div class="mt-3 flex flex-col gap-1 text-sm">
+    {
+      email && (
+        <a
+          href={`mailto:${email}`}
+          itemprop="email"
+          class="text-blue-600 no-underline transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-blue-300 dark:hover:text-blue-200"
+        >
+          {email}
+        </a>
+      )
+    }
+    {
+      phone && (
+        <a
+          href={`tel:${phone}`}
+          itemprop="telephone"
+          class="text-blue-600 no-underline transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-blue-300 dark:hover:text-blue-200"
+        >
+          {phone}
+        </a>
+      )
+    }
+    {
+      website && (
+        <a
+          href={website}
+          target="_blank"
+          rel="noopener noreferrer"
+          itemprop="url"
+          class="text-blue-600 no-underline transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-blue-300 dark:hover:text-blue-200"
+        >
+          {website}
+          <span class="sr-only"> (opens in new window)</span>
+        </a>
+      )
+    }
+    {
+      vatId && (
+        <div class="text-slate-600 dark:text-slate-300">VAT-ID: {vatId}</div>
+      )
+    }
+    {
+      register && (
+        <div class="text-slate-600 dark:text-slate-300">
+          Register: {register}
+        </div>
+      )
+    }
+  </div>
+</address>

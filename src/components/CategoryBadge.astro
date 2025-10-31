@@ -1,0 +1,64 @@
+---
+interface Props {
+  category?: string;
+  label?: string;
+  tone?: 'purple' | 'blue' | 'emerald' | 'amber' | 'rose' | 'sky' | 'indigo';
+  className?: string;
+}
+
+const { category, label, tone, className = '' } = Astro.props as Props;
+
+const display = label ?? category ?? '';
+const normalizedDisplay = typeof display === 'string' ? display.trim() : '';
+const normalizedCategory =
+  typeof category === 'string' ? category.trim().toLowerCase() : '';
+const normalizedTone =
+  typeof tone === 'string' ? tone.trim().toLowerCase() : '';
+
+const toneStyles: Record<string, string> = {
+  purple:
+    'border-purple-600 bg-purple-600 text-white dark:border-purple-500 dark:bg-purple-500',
+  blue: 'border-blue-600 bg-blue-600 text-white dark:border-blue-500 dark:bg-blue-500',
+  emerald:
+    'border-emerald-600 bg-emerald-600 text-white dark:border-emerald-500 dark:bg-emerald-500',
+  amber:
+    'border-amber-500 bg-amber-400 text-slate-900 dark:border-amber-400 dark:bg-amber-300 dark:text-slate-900',
+  rose: 'border-rose-500 bg-rose-500 text-white dark:border-rose-400 dark:bg-rose-400',
+  sky: 'border-sky-600 bg-sky-600 text-white dark:border-sky-500 dark:bg-sky-500',
+  indigo:
+    'border-indigo-600 bg-indigo-600 text-white dark:border-indigo-500 dark:bg-indigo-500',
+};
+
+const heuristicColor = () => {
+  const key = normalizedCategory || normalizedDisplay.toLowerCase();
+  if (!key) {
+    return 'border-slate-400 bg-slate-200 text-slate-900 dark:border-slate-500 dark:bg-slate-700 dark:text-slate-100';
+  }
+  if (key.includes('rock')) {
+    return toneStyles.purple;
+  }
+  if (key.includes('pop')) {
+    return toneStyles.sky;
+  }
+  if (key.includes('jazz')) {
+    return toneStyles.amber;
+  }
+  if (key.includes('hip') || key.includes('rap')) {
+    return toneStyles.emerald;
+  }
+  if (key.includes('classical')) {
+    return toneStyles.indigo;
+  }
+  return 'border-slate-400 bg-slate-200 text-slate-900 dark:border-slate-500 dark:bg-slate-700 dark:text-slate-100';
+};
+
+const color =
+  (normalizedTone && toneStyles[normalizedTone]) || heuristicColor();
+const text = normalizedDisplay || 'Category';
+---
+
+<span
+  class={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide ${color} ${className}`.trim()}
+>
+  {text}
+</span>

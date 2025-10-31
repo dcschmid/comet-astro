@@ -1,0 +1,35 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import MediaCard from '../../components/MediaCard.astro';
+const mcActions = [{ href: '#', label: 'Open' }];
+---
+
+<DocsLayout
+  title="MediaCard"
+  description="Card with optional image, title, description and action links."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li>
+        <code>image?: string</code>, <code>title: string</code>, <code
+          >description?: string</code
+        >
+      </li>
+      <li><code>href?: string</code> – wrap title as link</li>
+      <li><code>actions?: &#123;href,label,target?&#125;[]</code></li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <MediaCard
+      image="https://picsum.photos/seed/mc/800/450"
+      title="Sample Media"
+      description="A short description for the media card."
+      href="#"
+      actions={mcActions}
+    />
+  </section>
+</DocsLayout>

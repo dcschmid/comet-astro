@@ -1,0 +1,27 @@
+---
+interface Props {
+  url: string; // Full Apple Music URL
+  height?: number;
+  className?: string;
+}
+
+const { url, height = 450, className = '' } = Astro.props;
+
+// Convert Apple Music URL to embed URL
+const embedUrl = url.replace('music.apple.com', 'embed.music.apple.com');
+---
+
+<div
+  class={`rounded-xl border border-slate-200 bg-white shadow-sm transition dark:border-slate-700 dark:bg-slate-900 ${className}`}
+  style={`height: ${height}px`}
+>
+  <iframe
+    src={embedUrl}
+    width="100%"
+    height={height}
+    title="Apple Music player"
+    allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
+    sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+    loading="lazy"
+    class="h-full w-full border-0"></iframe>
+</div>

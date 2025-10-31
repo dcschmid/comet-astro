@@ -1,0 +1,31 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import SearchPanel from '../../components/SearchPanel.astro';
+import Button from '../../components/Button.astro';
+
+const triggerId = 'search-panel-doc-trigger';
+---
+
+<DocsLayout
+  title="SearchPanel"
+  description="Full-screen search and command surface with keyboard shortcuts."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Button id={triggerId} variant="ghost">Open search</Button>
+    <SearchPanel placeholder="Search docs, teams, or settings…" />
+  </section>
+</DocsLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('search-panel-doc-trigger');
+    if (!trigger) return;
+    trigger.addEventListener('click', () => {
+      const registry = window.__cometSearchPanelRegistry;
+      if (!registry) return;
+      const entry = Array.from(registry.values())[0];
+      entry?.open();
+    });
+  });
+</script>

@@ -1,0 +1,33 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Headline from '../../components/Headline.astro';
+---
+
+<DocsLayout
+  title="Headline"
+  description="Accessible heading component with size and alignment variants."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>title?: string</code> – text content (or use slot)</li>
+      <li>
+        <code>level?: 'h1'|'h2'|'h3'|'h4'|'h5'|'h6'</code> – heading level (default:
+        h1)
+      </li>
+      <li>
+        <code>textSize?: 'sm'|'base'|'lg'|'xl'|'2xl'|'3xl'</code> – size preset
+      </li>
+      <li><code>textAlign?: 'left'|'center'|'right'</code> – text alignment</li>
+      <li><code>className?: string</code> – extra classes</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <Headline level="h1" textSize="2xl">Main title</Headline>
+    <Headline level="h2" textSize="xl" textAlign="center"
+      >Centered subtitle</Headline
+    >
+  </section>
+</DocsLayout>

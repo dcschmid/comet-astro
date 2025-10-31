@@ -1,0 +1,108 @@
+---
+interface Props {
+  variant?: 'info' | 'success' | 'warning' | 'error';
+  title?: string;
+  duration?: number;
+  dismissible?: boolean;
+  className?: string;
+}
+
+const {
+  variant = 'info',
+  title,
+  duration = 5000,
+  dismissible = true,
+  className = '',
+} = Astro.props;
+
+const variantStyles = {
+  info: 'border-blue-600 bg-white text-slate-900 dark:border-blue-400 dark:bg-slate-950 dark:text-slate-100',
+  success:
+    'border-emerald-600 bg-white text-slate-900 dark:border-emerald-400 dark:bg-slate-950 dark:text-slate-100',
+  warning:
+    'border-amber-600 bg-white text-slate-900 dark:border-amber-400 dark:bg-slate-950 dark:text-slate-100',
+  error:
+    'border-rose-600 bg-white text-slate-900 dark:border-rose-400 dark:bg-slate-950 dark:text-slate-100',
+};
+
+const icons = {
+  info: 'ℹ️',
+  success: '✅',
+  warning: '⚠️',
+  error: '❌',
+};
+---
+
+<div
+  class={`fixed bottom-4 right-4 max-w-sm rounded-xl border-l-4 px-4 py-3 text-sm shadow-xl backdrop-blur-sm ${variantStyles[variant]} ${className}`.trim()}
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  data-toast
+  data-duration={duration}
+>
+  <div class="flex items-start gap-3">
+    <span class="text-xl" aria-hidden="true">{icons[variant]}</span>
+    <div class="flex-1">
+      {title && <p class="mb-1 text-sm font-semibold">{title}</p>}
+      <div class="leading-relaxed">
+        <slot />
+      </div>
+    </div>
+    {
+      dismissible && (
+        <button
+          type="button"
+          class="ml-2 inline-flex h-7 w-7 items-center justify-center rounded-md border border-transparent text-base text-current transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+          aria-label="Close"
+          data-toast-close
+        >
+          ✕
+        </button>
+      )
+    }
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const toasts = Array.from(document.querySelectorAll('[data-toast]'));
+    if (!toasts.length) return;
+
+    toasts.forEach((toast) => {
+      if (!(toast instanceof HTMLElement)) return;
+      const duration = Number.parseInt(
+        toast.getAttribute('data-duration') || '5000',
+        10
+      );
+      const closeBtn = toast.querySelector('[data-toast-close]');
+
+      const dismiss = () => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        toast.setAttribute('aria-hidden', 'true');
+        window.setTimeout(() => {
+          toast.remove();
+        }, 300);
+      };
+
+      if (closeBtn instanceof HTMLElement) {
+        closeBtn.addEventListener('click', (event) => {
+          event.preventDefault();
+          dismiss();
+        });
+      }
+
+      if (duration > 0) {
+        window.setTimeout(dismiss, duration);
+      }
+    });
+  })();
+</script>
+
+<style>
+  [data-toast] {
+    transition:
+      opacity 300ms,
+      transform 300ms;
+  }
+</style>

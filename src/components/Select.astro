@@ -1,0 +1,117 @@
+---
+interface Option {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+interface Props {
+  name: string;
+  options: Option[];
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  required?: boolean;
+  disabled?: boolean;
+  error?: string;
+  helperText?: string;
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+  id?: string;
+}
+
+const {
+  name,
+  options,
+  label,
+  placeholder,
+  value,
+  required = false,
+  disabled = false,
+  error,
+  helperText,
+  size = 'md',
+  className = '',
+  id = name,
+} = Astro.props;
+
+const selectId = id || `${name}-${Math.random().toString(36).slice(2, 9)}`;
+const sizeClasses = {
+  sm: 'px-3 py-1.5 text-sm',
+  md: 'px-4 py-2 text-base',
+  lg: 'px-5 py-3 text-lg',
+};
+
+const baseClasses =
+  'w-full rounded-lg border bg-white pr-10 text-slate-900 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-offset-slate-900 appearance-none';
+const stateClasses = error
+  ? 'border-rose-500 bg-rose-50 focus-visible:ring-rose-500 dark:border-rose-500 dark:bg-rose-950 dark:focus-visible:ring-rose-400'
+  : 'border-slate-300 focus-visible:ring-blue-600 dark:border-slate-600 dark:focus-visible:ring-blue-500';
+const disabledClasses = disabled ? 'cursor-not-allowed opacity-60' : '';
+const helperId = error || helperText ? `${selectId}-help` : undefined;
+---
+
+<div class={`space-y-1.5 ${className}`.trim()}>
+  {
+    label && (
+      <label
+        for={selectId}
+        class="block text-sm font-medium text-slate-800 dark:text-slate-200"
+      >
+        {label}
+        {required && (
+          <span
+            class="ml-1 text-rose-600 dark:text-rose-400"
+            aria-hidden="true"
+          >
+            *
+          </span>
+        )}
+      </label>
+    )
+  }
+  <div class="relative">
+    <select
+      id={selectId}
+      name={name}
+      required={required}
+      disabled={disabled}
+      aria-invalid={error ? 'true' : 'false'}
+      aria-describedby={helperId}
+      class={`${baseClasses} ${sizeClasses[size]} ${stateClasses} ${disabledClasses}`.trim()}
+    >
+      {
+        placeholder && (
+          <option value="" disabled selected={!value}>
+            {placeholder}
+          </option>
+        )
+      }
+      {
+        options.map((option) => (
+          <option
+            value={option.value}
+            selected={value === option.value}
+            disabled={option.disabled}
+          >
+            {option.label}
+          </option>
+        ))
+      }
+    </select>
+    <span
+      class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-500 dark:text-slate-300"
+      aria-hidden="true">▾</span
+    >
+  </div>
+  {
+    (error || helperText) && (
+      <p
+        id={helperId}
+        class={`text-xs ${error ? 'text-rose-600 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}
+      >
+        {error || helperText}
+      </p>
+    )
+  }
+</div>

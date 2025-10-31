@@ -1,0 +1,94 @@
+---
+/**
+ * Masonry - responsive masonry layout using CSS columns
+ */
+interface Breakpoints {
+  base?: number;
+  sm?: number;
+  md?: number;
+  lg?: number;
+  xl?: number;
+}
+
+const clampColumns = (value: number) => Math.max(1, Math.round(value));
+
+interface Props {
+  columns?: number | Breakpoints;
+  gap?: string;
+  className?: string;
+}
+
+const { columns = 1, gap = '1.5rem', className = '' } = Astro.props as Props;
+
+const columnConfig: Required<Breakpoints> = {
+  base: clampColumns(
+    typeof columns === 'number' ? columns : (columns.base ?? 1)
+  ),
+  sm: clampColumns(
+    typeof columns === 'number' ? columns : (columns.sm ?? columns.base ?? 2)
+  ),
+  md: clampColumns(
+    typeof columns === 'number'
+      ? columns
+      : (columns.md ?? columns.sm ?? columns.base ?? 2)
+  ),
+  lg: clampColumns(
+    typeof columns === 'number'
+      ? columns
+      : (columns.lg ?? columns.md ?? columns.sm ?? columns.base ?? 3)
+  ),
+  xl: clampColumns(
+    typeof columns === 'number'
+      ? columns
+      : (columns.xl ??
+          columns.lg ??
+          columns.md ??
+          columns.sm ??
+          columns.base ??
+          4)
+  ),
+};
+
+const id = `masonry-${Math.random().toString(36).slice(2, 9)}`;
+const styleContent = `
+  #${id} {
+    column-count: ${columnConfig.base};
+    column-gap: ${gap};
+  }
+
+  #${id} > * {
+    break-inside: avoid;
+    margin-bottom: ${gap};
+  }
+
+  @media (min-width: 640px) {
+    #${id} {
+      column-count: ${columnConfig.sm};
+    }
+  }
+
+  @media (min-width: 768px) {
+    #${id} {
+      column-count: ${columnConfig.md};
+    }
+  }
+
+  @media (min-width: 1024px) {
+    #${id} {
+      column-count: ${columnConfig.lg};
+    }
+  }
+
+  @media (min-width: 1280px) {
+    #${id} {
+      column-count: ${columnConfig.xl};
+    }
+  }
+`;
+---
+
+<style is:inline set:html={styleContent}></style>
+
+<div id={id} class={`masonry-columns ${className}`}>
+  <slot />
+</div>

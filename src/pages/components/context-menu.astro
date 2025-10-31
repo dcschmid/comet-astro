@@ -1,0 +1,36 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ContextMenu from '../../components/ContextMenu.astro';
+
+const items = [
+  { label: 'Copy', action: 'copy', icon: '📋' },
+  { label: 'Paste', action: 'paste', icon: '📄' },
+  { divider: true },
+  { label: 'Delete', action: 'delete', icon: '🗑️', danger: true },
+];
+---
+
+<DocsLayout
+  title="ContextMenu"
+  description="Custom right-click context menu with keyboard support."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <div
+      id="context-target"
+      class="bg-gray-900 p-8 rounded-lg border-2 border-dashed border-gray-700 text-center cursor-pointer hover:border-purple-500 transition-colors"
+    >
+      <p class="text-gray-400">Right-click here to open context menu</p>
+    </div>
+    <ContextMenu targetId="context-target" items={items} />
+  </section>
+</DocsLayout>
+
+<script>
+  document
+    .getElementById('context-target')
+    ?.addEventListener('contextaction', (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      console.info('Context action triggered:', detail.action);
+    });
+</script>

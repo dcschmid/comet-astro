@@ -1,0 +1,24 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ScrollToTop from '../../components/ScrollToTop.astro';
+---
+
+<DocsLayout
+  title="ScrollToTop"
+  description="Scroll back to the top after traversing long pages."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Usage</h2>
+    <div class="bg-gray-900 p-4 rounded-lg space-y-2">
+      <p class="text-gray-400">
+        The button appears in the bottom-right corner once the page is scrolled
+        beyond the threshold.
+      </p>
+      <p class="text-xs text-gray-500">
+        Scroll down to see it in action. Adjust the <code>threshold</code> prop to
+        control when it shows.
+      </p>
+    </div>
+    <ScrollToTop />
+  </section>
+</DocsLayout>

@@ -1,0 +1,45 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CommandMenu from '../../components/CommandMenu.astro';
+
+const commands = [
+  {
+    id: 'home',
+    label: 'Go to Home',
+    icon: '🏠',
+    action: '/',
+    keywords: ['home', 'start'],
+  },
+  {
+    id: 'settings',
+    label: 'Open Settings',
+    icon: '⚙️',
+    action: '/settings',
+    keywords: ['settings', 'config'],
+  },
+  {
+    id: 'search',
+    label: 'Search',
+    icon: '🔍',
+    action: '/search',
+    description: 'Search everything',
+    keywords: ['find', 'search'],
+  },
+];
+---
+
+<DocsLayout
+  title="CommandMenu"
+  description="CMD+K / Ctrl+K command palette with keyboard navigation."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <div class="bg-gray-900 p-4 rounded-lg">
+      <p class="text-gray-400 text-sm">
+        Press <kbd class="px-2 py-1 bg-gray-800 rounded text-xs">Ctrl+K</kbd> to
+        open the command menu
+      </p>
+    </div>
+    <CommandMenu commands={commands} />
+  </section>
+</DocsLayout>

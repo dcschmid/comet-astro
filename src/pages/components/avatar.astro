@@ -1,0 +1,39 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Avatar from '../../components/Avatar.astro';
+---
+
+<DocsLayout
+  title="Avatar"
+  description="User avatars with size, status, and shape variations plus initials fallback."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Sizes</h2>
+    <div class="flex items-center gap-3">
+      <Avatar size="xs" name="John Doe" />
+      <Avatar size="sm" name="Jane Smith" />
+      <Avatar size="md" name="Bob Wilson" />
+      <Avatar size="lg" name="Alice Brown" />
+      <Avatar size="xl" name="Charlie Davis" />
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Status</h2>
+    <div class="flex items-center gap-3">
+      <Avatar name="John Doe" status="online" />
+      <Avatar name="Jane Smith" status="busy" />
+      <Avatar name="Bob Wilson" status="away" />
+      <Avatar name="Alice Brown" status="offline" />
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Shapes</h2>
+    <div class="flex items-center gap-3">
+      <Avatar name="User" variant="circle" />
+      <Avatar name="User" variant="rounded" />
+      <Avatar name="User" variant="square" />
+    </div>
+  </section>
+</DocsLayout>

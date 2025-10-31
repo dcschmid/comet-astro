@@ -1,0 +1,30 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Flex from '../../components/Flex.astro';
+---
+
+<DocsLayout
+  title="Flex"
+  description="Utility component for building flexbox layouts with sensible defaults."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4 bg-gray-900 p-4 rounded-lg">
+      <Flex justify="between" align="center" gap="md">
+        <div class="bg-purple-500/20 p-4 rounded">Item 1</div>
+        <div class="bg-purple-500/20 p-4 rounded">Item 2</div>
+        <div class="bg-purple-500/20 p-4 rounded">Item 3</div>
+      </Flex>
+      <Flex direction="column" gap="sm">
+        <div class="bg-blue-500/20 p-4 rounded">Vertical 1</div>
+        <div class="bg-blue-500/20 p-4 rounded">Vertical 2</div>
+      </Flex>
+      <Flex wrap justify="center" gap="lg">
+        <div class="bg-pink-500/20 p-4 rounded">Wrap 1</div>
+        <div class="bg-pink-500/20 p-4 rounded">Wrap 2</div>
+        <div class="bg-pink-500/20 p-4 rounded">Wrap 3</div>
+        <div class="bg-pink-500/20 p-4 rounded">Wrap 4</div>
+      </Flex>
+    </div>
+  </section>
+</DocsLayout>

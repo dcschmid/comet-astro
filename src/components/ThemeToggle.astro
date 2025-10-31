@@ -1,0 +1,130 @@
+---
+const modes = [
+  { value: 'light', label: 'Light', icon: '☀️' },
+  { value: 'dark', label: 'Dark', icon: '🌙' },
+  { value: 'system', label: 'Auto', icon: '🖥️' },
+];
+---
+
+<div
+  class="inline-flex rounded-full border border-slate-300 bg-white/90 p-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200"
+  role="radiogroup"
+  aria-label="Theme"
+  data-theme-toggle
+>
+  {
+    modes.map((mode) => (
+      <button
+        type="button"
+        class="flex min-w-[64px] items-center justify-center gap-1 rounded-full px-2.5 py-1.5 text-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white data-[active='true']:bg-blue-600 data-[active='true']:text-white dark:focus-visible:ring-offset-slate-900 dark:data-[active='true']:bg-blue-500 dark:data-[active='true']:text-slate-900"
+        data-theme-option={mode.value}
+        role="radio"
+        aria-checked="false"
+      >
+        <span aria-hidden="true">{mode.icon}</span>
+        <span>{mode.label}</span>
+      </button>
+    ))
+  }
+</div>
+
+<script is:inline>
+  (function () {
+    const scriptEl = document.currentScript;
+    if (!scriptEl) return;
+    const root = scriptEl.previousElementSibling;
+    if (
+      !(root instanceof HTMLElement) ||
+      !root.hasAttribute('data-theme-toggle')
+    )
+      return;
+
+    const buttons = Array.from(
+      root.querySelectorAll('[data-theme-option]')
+    ).filter((el) => el instanceof HTMLElement);
+    if (!buttons.length) return;
+
+    const controller = window.__cometTheme;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const applyState = (mode) => {
+      buttons.forEach((button) => {
+        const isActive = button.dataset.themeOption === mode;
+        button.dataset.active = isActive ? 'true' : 'false';
+        button.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        button.tabIndex = isActive ? 0 : -1;
+      });
+    };
+
+    const resolveMode = () => {
+      if (controller && typeof controller.getMode === 'function') {
+        return controller.getMode();
+      }
+      try {
+        const stored = localStorage.getItem('comet-theme');
+        if (stored === 'light' || stored === 'dark') return stored;
+      } catch {
+        /* ignore persistence errors */
+      }
+      return media.matches ? 'dark' : 'light';
+    };
+
+    let currentMode = resolveMode();
+    applyState(currentMode);
+
+    const setMode = (mode) => {
+      if (controller && typeof controller.setMode === 'function') {
+        controller.setMode(mode);
+      } else {
+        try {
+          if (mode === 'system') {
+            localStorage.removeItem('comet-theme');
+          } else {
+            localStorage.setItem('comet-theme', mode);
+          }
+        } catch {
+          /* ignore persistence errors */
+        }
+        const resolved =
+          mode === 'system' ? (media.matches ? 'dark' : 'light') : mode;
+        document.documentElement.classList.toggle('dark', resolved === 'dark');
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.dataset.themeResolved = resolved;
+      }
+      currentMode = mode;
+      applyState(mode);
+    };
+
+    root.addEventListener('click', (event) => {
+      const target =
+        event.target instanceof HTMLElement
+          ? event.target.closest('[data-theme-option]')
+          : null;
+      if (!(target instanceof HTMLElement)) return;
+      const mode = target.dataset.themeOption;
+      if (!mode || mode === currentMode) return;
+      event.preventDefault();
+      setMode(mode);
+    });
+
+    root.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const target =
+        event.target instanceof HTMLElement
+          ? event.target.closest('[data-theme-option]')
+          : null;
+      if (!(target instanceof HTMLElement)) return;
+      const mode = target.dataset.themeOption;
+      if (!mode || mode === currentMode) return;
+      event.preventDefault();
+      setMode(mode);
+    });
+
+    if (controller && typeof controller.subscribe === 'function') {
+      controller.subscribe((mode) => {
+        currentMode = mode;
+        applyState(mode);
+      });
+    }
+  })();
+</script>

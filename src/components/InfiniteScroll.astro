@@ -1,0 +1,140 @@
+---
+/**
+ * InfiniteScroll - utility wrapper that emits an event when more content should be loaded
+ */
+interface Props {
+  eventName?: string;
+  threshold?: number;
+  rootMargin?: string;
+  disabled?: boolean;
+  loading?: boolean;
+  loaderText?: string;
+  className?: string;
+}
+
+const {
+  eventName = 'infinite-scroll:load',
+  threshold = 0.25,
+  rootMargin = '0px 0px 120px 0px',
+  disabled = false,
+  loading = false,
+  loaderText = 'Loading more…',
+  className = '',
+} = Astro.props as Props;
+
+const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<div
+  id={id}
+  data-infinite-scroll
+  data-event={eventName}
+  data-threshold={threshold}
+  data-margin={rootMargin}
+  data-disabled={disabled}
+  class={`relative ${className}`}
+>
+  <div data-infinite-content>
+    <slot />
+  </div>
+
+  <div
+    class="flex items-center justify-center py-6 text-sm text-slate-600 dark:text-slate-300"
+    data-infinite-loader
+    hidden={!loading}
+    role="status"
+    aria-live="polite"
+  >
+    <span class="flex items-center gap-2 font-medium">
+      <span
+        class="h-2 w-2 animate-pulse rounded-full bg-blue-500 dark:bg-blue-400"
+        aria-hidden="true"></span>
+      <span>{loaderText}</span>
+    </span>
+  </div>
+
+  <div
+    aria-hidden="true"
+    data-infinite-sentinel
+    class="absolute bottom-0 left-0 right-0 h-1"
+  >
+  </div>
+</div>
+
+<script is:inline>
+  (function setupInfiniteScroll() {
+    const root = document.getElementById('${id}');
+    if (!(root instanceof HTMLElement)) return;
+
+    const sentinel = root.querySelector('[data-infinite-sentinel]');
+    if (!(sentinel instanceof HTMLElement)) return;
+
+    const loader = root.querySelector('[data-infinite-loader]');
+
+    const eventName = root.dataset.event || 'infinite-scroll:load';
+    let disabled = root.dataset.disabled === 'true';
+    const threshold =
+      Number.parseFloat(root.dataset.threshold || '0.25') || 0.25;
+    const rootMargin = root.dataset.margin || '0px';
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (disabled) return;
+        const entry = entries.find((item) => item.isIntersecting);
+        if (!entry) return;
+
+        const detail = {
+          pause: () => {
+            disabled = true;
+          },
+          resume: () => {
+            disabled = false;
+          },
+          loading: (state) => {
+            if (!(loader instanceof HTMLElement)) return;
+            loader.hidden = !state;
+            loader.setAttribute('aria-hidden', state ? 'false' : 'true');
+            root.setAttribute('aria-busy', state ? 'true' : 'false');
+          },
+          done: () => {
+            disabled = true;
+            observer.disconnect();
+            if (loader instanceof HTMLElement) {
+              loader.hidden = true;
+              loader.setAttribute('aria-hidden', 'true');
+            }
+            root.setAttribute('aria-busy', 'false');
+          },
+        };
+
+        root.dispatchEvent(
+          new CustomEvent(eventName, { bubbles: true, detail })
+        );
+      },
+      { threshold, rootMargin }
+    );
+
+    observer.observe(sentinel);
+
+    root.addEventListener('infinite-scroll:disable', () => {
+      disabled = true;
+      root.setAttribute('aria-busy', 'false');
+    });
+
+    root.addEventListener('infinite-scroll:enable', () => {
+      disabled = false;
+    });
+
+    root.addEventListener('infinite-scroll:destroy', () => {
+      observer.disconnect();
+      root.setAttribute('aria-busy', 'false');
+    });
+
+    if (loader instanceof HTMLElement && !loader.hidden) {
+      loader.setAttribute('aria-hidden', 'false');
+      root.setAttribute('aria-busy', 'true');
+    } else {
+      root.setAttribute('aria-busy', 'false');
+    }
+  })();
+</script>

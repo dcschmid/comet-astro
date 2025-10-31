@@ -1,0 +1,103 @@
+---
+interface Step {
+  label: string;
+  description?: string;
+}
+
+interface Props {
+  steps: Step[];
+  currentStep: number;
+  orientation?: 'horizontal' | 'vertical';
+  className?: string;
+}
+
+const {
+  steps,
+  currentStep = 1,
+  orientation = 'horizontal',
+  className = '',
+} = Astro.props as Props;
+
+const getStepStatus = (index: number) => {
+  const stepNumber = index + 1;
+  if (stepNumber < currentStep) return 'completed';
+  if (stepNumber === currentStep) return 'active';
+  return 'upcoming';
+};
+
+const baseCircle =
+  'flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold transition';
+const circleClasses: Record<string, string> = {
+  completed:
+    'border-blue-600 bg-blue-600 text-white shadow-sm dark:border-blue-500 dark:bg-blue-500 dark:text-slate-900',
+  active:
+    'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-500/20 dark:text-blue-100',
+  upcoming:
+    'border-slate-300 bg-white text-slate-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-400',
+};
+const labelClasses: Record<string, string> = {
+  completed: 'text-slate-700 dark:text-slate-200',
+  active: 'text-slate-900 dark:text-slate-100',
+  upcoming: 'text-slate-600 dark:text-slate-400',
+};
+const descriptionClasses =
+  'mt-1 text-xs text-slate-600 dark:text-slate-400 max-w-xs leading-snug';
+const connectorClasses = {
+  completed: 'bg-blue-600 dark:bg-blue-500',
+  upcoming: 'bg-slate-200 dark:bg-slate-700',
+};
+---
+
+<nav
+  class={`${orientation === 'horizontal' ? 'flex flex-col gap-4 sm:flex-row sm:items-start' : 'flex flex-col'} ${className}`.trim()}
+  aria-label="Progress"
+>
+  {
+    steps.map((step, index) => {
+      const status = getStepStatus(index);
+      const stepNumber = index + 1;
+      const isLast = index === steps.length - 1;
+
+      const textWrapperClass =
+        orientation === 'horizontal'
+          ? 'mt-2 block text-center sm:mt-0 sm:text-left'
+          : 'block';
+
+      return (
+        <div
+          class={`${orientation === 'horizontal' ? 'relative flex flex-1 items-start' : 'relative flex items-start pb-8'}`}
+        >
+          <div class="flex items-start gap-3">
+            <div
+              class={`${baseCircle} ${circleClasses[status]}`}
+              aria-current={status === 'active' ? 'step' : undefined}
+            >
+              {status === 'completed' ? '✓' : stepNumber}
+            </div>
+            <div class={textWrapperClass}>
+              <p class={`text-sm font-semibold ${labelClasses[status]}`}>
+                {step.label}
+              </p>
+              {step.description && (
+                <p class={descriptionClasses}>{step.description}</p>
+              )}
+            </div>
+          </div>
+
+          {!isLast &&
+            (orientation === 'horizontal' ? (
+              <div
+                class={`hidden h-0.5 flex-1 self-center sm:mx-4 sm:block ${connectorClasses[status === 'completed' ? 'completed' : 'upcoming']}`}
+                aria-hidden="true"
+              />
+            ) : (
+              <div
+                class={`absolute left-5 top-12 bottom-0 w-0.5 ${connectorClasses[status === 'completed' ? 'completed' : 'upcoming']}`}
+                aria-hidden="true"
+              />
+            ))}
+        </div>
+      );
+    })
+  }
+</nav>

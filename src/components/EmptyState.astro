@@ -1,0 +1,90 @@
+---
+/**
+ * EmptyState - generic placeholder with actions
+ */
+interface Action {
+  href: string;
+  label: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  primary?: Action;
+  secondary?: Action;
+  className?: string;
+}
+
+const {
+  title,
+  description,
+  primary,
+  secondary,
+  className = '',
+} = Astro.props as Props;
+---
+
+<section
+  class={`rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-800 shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${className}`.trim()}
+>
+  <div
+    class="mx-auto.mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white shadow-sm"
+  >
+    <slot name="icon">
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </slot>
+  </div>
+  <h3 class="mb-2 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+    {title}
+  </h3>
+  {
+    description && (
+      <p class="mx-auto mb-6 max-w-prose text-slate-600 dark:text-slate-300">
+        {description}
+      </p>
+    )
+  }
+
+  <div class="flex flex-wrap items-center justify-center gap-3">
+    {
+      primary && (
+        <a
+          href={primary.href}
+          target={primary.target || '_self'}
+          rel={primary.target === '_blank' ? 'noopener noreferrer' : undefined}
+          class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-semibold text-white no-underline shadow-sm transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-slate-900"
+        >
+          {primary.label}
+        </a>
+      )
+    }
+    {
+      secondary && (
+        <a
+          href={secondary.href}
+          target={secondary.target || '_self'}
+          rel={
+            secondary.target === '_blank' ? 'noopener noreferrer' : undefined
+          }
+          class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 no-underline shadow-sm transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+        >
+          {secondary.label}
+        </a>
+      )
+    }
+  </div>
+</section>

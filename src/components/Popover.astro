@@ -1,0 +1,223 @@
+---
+/**
+ * Popover - floating content container with configurable trigger and placement
+ */
+type Placement =
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+  | 'top-start'
+  | 'top-end'
+  | 'bottom-start'
+  | 'bottom-end';
+type TriggerMode = 'click' | 'hover' | 'focus';
+
+interface Props {
+  placement?: Placement;
+  trigger?: TriggerMode;
+  offset?: number;
+  defaultOpen?: boolean;
+  className?: string;
+  contentClassName?: string;
+}
+
+const {
+  placement = 'bottom',
+  trigger = 'click',
+  offset = 12,
+  defaultOpen = false,
+  className = '',
+  contentClassName = '',
+} = Astro.props as Props;
+
+const id = `popover-${Math.random().toString(36).slice(2, 10)}`;
+const placementAttr = placement;
+const triggerAttr = trigger;
+const offsetAttr = String(offset);
+const defaultOpenAttr = defaultOpen ? 'true' : 'false';
+---
+
+<div
+  id={id}
+  class={`relative inline-flex text-slate-900 dark:text-slate-100 ${className}`.trim()}
+  data-popover-root
+  data-popover-placement={placementAttr}
+  data-popover-trigger-mode={triggerAttr}
+  data-popover-offset={offsetAttr}
+  data-popover-open={defaultOpenAttr}
+>
+  <div data-popover-trigger>
+    <slot name="trigger">
+      <button
+        type="button"
+        class="rounded-full border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-900"
+      >
+        Open popover
+      </button>
+    </slot>
+  </div>
+  <div
+    class={`absolute z-50 min-w-[200px] rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-900 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${contentClassName}`.trim()}
+    data-popover-content
+    hidden={!defaultOpen}
+    role="dialog"
+    tabindex="-1"
+    aria-hidden={defaultOpen ? 'false' : 'true'}
+  >
+    <slot />
+  </div>
+</div>
+
+<script is:inline>
+  (function setupPopover() {
+    const root = document.getElementById('${id}');
+    if (!(root instanceof HTMLElement)) return;
+
+    const triggerEl = root.querySelector('[data-popover-trigger]');
+    const contentEl = root.querySelector('[data-popover-content]');
+    if (
+      !(triggerEl instanceof HTMLElement) ||
+      !(contentEl instanceof HTMLElement)
+    )
+      return;
+
+    const placement = root.dataset.popoverPlacement || 'bottom';
+    const triggerMode = root.dataset.popoverTriggerMode || 'click';
+    const offset = Number(root.dataset.popoverOffset) || 12;
+    let isOpen = root.dataset.popoverOpen === 'true';
+    let lastFocused = null;
+
+    const position = () => {
+      const triggerRect = triggerEl.getBoundingClientRect();
+      const contentRect = contentEl.getBoundingClientRect();
+      const rootRect = root.getBoundingClientRect();
+
+      let top = 0;
+      let left = 0;
+
+      const baseTop = triggerRect.top - rootRect.top;
+      const baseLeft = triggerRect.left - rootRect.left;
+
+      switch (placement) {
+        case 'top':
+          top = baseTop - contentRect.height - offset;
+          left = baseLeft + triggerRect.width / 2 - contentRect.width / 2;
+          break;
+        case 'bottom':
+          top = baseTop + triggerRect.height + offset;
+          left = baseLeft + triggerRect.width / 2 - contentRect.width / 2;
+          break;
+        case 'left':
+          top = baseTop + triggerRect.height / 2 - contentRect.height / 2;
+          left = baseLeft - contentRect.width - offset;
+          break;
+        case 'right':
+          top = baseTop + triggerRect.height / 2 - contentRect.height / 2;
+          left = baseLeft + triggerRect.width + offset;
+          break;
+        case 'top-start':
+          top = baseTop - contentRect.height - offset;
+          left = baseLeft;
+          break;
+        case 'top-end':
+          top = baseTop - contentRect.height - offset;
+          left = baseLeft + triggerRect.width - contentRect.width;
+          break;
+        case 'bottom-start':
+          top = baseTop + triggerRect.height + offset;
+          left = baseLeft;
+          break;
+        case 'bottom-end':
+          top = baseTop + triggerRect.height + offset;
+          left = baseLeft + triggerRect.width - contentRect.width;
+          break;
+        default:
+          top = baseTop + triggerRect.height + offset;
+          left = baseLeft + triggerRect.width / 2 - contentRect.width / 2;
+      }
+
+      contentEl.style.top = `${Math.round(top)}px`;
+      contentEl.style.left = `${Math.round(left)}px`;
+    };
+
+    const open = (force = false) => {
+      if (isOpen && !force) return;
+      isOpen = true;
+      contentEl.hidden = false;
+      contentEl.setAttribute('aria-hidden', 'false');
+      position();
+      window.addEventListener('scroll', position, true);
+      window.addEventListener('resize', position);
+      document.addEventListener('click', handleOutsideClick);
+      if (triggerMode !== 'hover') {
+        lastFocused =
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        contentEl.focus({ preventScroll: true });
+      }
+      root.dispatchEvent(new CustomEvent('popover:open', { bubbles: true }));
+    };
+
+    const close = () => {
+      if (!isOpen) return;
+      isOpen = false;
+      contentEl.hidden = true;
+      contentEl.setAttribute('aria-hidden', 'true');
+      window.removeEventListener('scroll', position, true);
+      window.removeEventListener('resize', position);
+      document.removeEventListener('click', handleOutsideClick);
+      if (triggerMode !== 'hover' && lastFocused instanceof HTMLElement) {
+        lastFocused.focus({ preventScroll: true });
+      }
+      root.dispatchEvent(new CustomEvent('popover:close', { bubbles: true }));
+    };
+
+    const toggle = () => (isOpen ? close() : open());
+
+    const handleOutsideClick = (event) => {
+      if (event.target instanceof Node && !root.contains(event.target)) {
+        close();
+      }
+    };
+
+    if (triggerMode === 'click') {
+      triggerEl.addEventListener('click', (event) => {
+        event.preventDefault();
+        toggle();
+      });
+    } else if (triggerMode === 'focus') {
+      triggerEl.addEventListener('focusin', open);
+      triggerEl.addEventListener('focusout', close);
+    } else if (triggerMode === 'hover') {
+      let timeout = null;
+      const start = () => {
+        if (timeout) window.clearTimeout(timeout);
+        open();
+      };
+      const stop = () => {
+        if (timeout) window.clearTimeout(timeout);
+        timeout = window.setTimeout(close, 120);
+      };
+      triggerEl.addEventListener('mouseenter', start);
+      triggerEl.addEventListener('mouseleave', stop);
+      contentEl.addEventListener('mouseenter', start);
+      contentEl.addEventListener('mouseleave', stop);
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        close();
+      }
+    });
+
+    root.addEventListener('popover:open', open);
+    root.addEventListener('popover:close', close);
+    root.addEventListener('popover:toggle', toggle);
+
+    if (isOpen) {
+      open(true);
+    }
+  })();
+</script>

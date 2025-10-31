@@ -1,0 +1,36 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import SEO from '../../components/SEO.astro';
+---
+
+<DocsLayout
+  title="SEO"
+  description="Page-level meta tags and JSON-LD structured data helper."
+>
+  <section>
+    <h2 class="text-xl font-bold">Core Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li>
+        <code>title: string</code>, <code>description?: string</code>, <code
+          >keywords?: string|string[]</code
+        >
+      </li>
+      <li>
+        <code>image?: string</code>, <code>type?: 'website'|'article'</code>, <code
+          >canonical?: string</code
+        >
+      </li>
+      <li>
+        <code>noIndex?: boolean</code>, <code>noFollow?: boolean</code>, <code
+          >language?: string</code
+        >
+      </li>
+      <li><code>breadcrumbs?: &#123;name,url&#125;[]</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Example</h2>
+    <SEO title="Docs" description="Component docs" type="website" />
+  </section>
+</DocsLayout>

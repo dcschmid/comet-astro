@@ -1,0 +1,57 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Select from '../../components/Select.astro';
+
+const countries = [
+  { value: 'de', label: 'Germany' },
+  { value: 'us', label: 'United States' },
+  { value: 'uk', label: 'United Kingdom' },
+  { value: 'fr', label: 'France' },
+];
+---
+
+<DocsLayout title="Select" description="Dropdown select with custom styling.">
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300 text-sm space-y-1">
+      <li><code>name: string</code> – select name (required)</li>
+      <li>
+        <code>options: &#123;value,label,disabled?&#125;[]</code> – options array
+        (required)
+      </li>
+      <li><code>label?: string</code></li>
+      <li><code>placeholder?: string</code></li>
+      <li><code>value?: string</code> – selected value</li>
+      <li><code>required?: boolean</code></li>
+      <li><code>disabled?: boolean</code></li>
+      <li><code>error?: string</code></li>
+      <li><code>helperText?: string</code></li>
+      <li><code>size?: 'sm'|'md'|'lg'</code></li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <Select
+        name="country"
+        label="Country"
+        options={countries}
+        placeholder="Select a country"
+      />
+      <Select
+        name="country-selected"
+        label="With Selection"
+        options={countries}
+        value="de"
+      />
+      <Select
+        name="country-required"
+        label="Required"
+        options={countries}
+        required
+      />
+    </div>
+  </section>
+</DocsLayout>

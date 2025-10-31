@@ -1,0 +1,25 @@
+---
+/**
+ * Skeleton - animated placeholder block
+ */
+interface Props {
+  width?: string;
+  height?: string;
+  rounded?: string;
+  className?: string;
+}
+
+const {
+  width = '100%',
+  height = '1rem',
+  rounded = '0.5rem',
+  className = '',
+} = Astro.props as Props;
+---
+
+<div
+  aria-hidden="true"
+  class={`animate-pulse bg-slate-200 dark:bg-slate-700 ${className}`.trim()}
+  style={`width:${width};height:${height};border-radius:${rounded};`}
+>
+</div>

@@ -1,0 +1,24 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Chip from '../../components/Chip.astro';
+---
+
+<DocsLayout
+  title="Chip"
+  description="Compact tag component with variants, sizes, and removable state."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="flex flex-wrap gap-2">
+      <Chip>Default</Chip>
+      <Chip variant="primary">Primary</Chip>
+      <Chip variant="success">Success</Chip>
+      <Chip variant="warning">Warning</Chip>
+      <Chip variant="error">Error</Chip>
+      <Chip size="sm">Small</Chip>
+      <Chip size="lg">Large</Chip>
+      <Chip removable>Removable</Chip>
+      <Chip href="#" variant="primary">Link</Chip>
+    </div>
+  </section>
+</DocsLayout>

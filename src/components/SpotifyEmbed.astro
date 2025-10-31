@@ -1,0 +1,45 @@
+---
+interface Props {
+  uri: string; // spotify:track:xxx or spotify:album:xxx or spotify:playlist:xxx
+  type?: 'track' | 'album' | 'playlist' | 'show' | 'episode';
+  height?: number;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  uri,
+  type = 'track',
+  height,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+// Extract ID from Spotify URI
+const id = uri.split(':').pop();
+
+const defaultHeights: Record<string, number> = {
+  track: compact ? 80 : 152,
+  album: 352,
+  playlist: 352,
+  show: 232,
+  episode: 232,
+};
+
+const embedHeight = height || defaultHeights[type] || 352;
+const src = `https://open.spotify.com/embed/${type}/${id}`;
+---
+
+<div
+  class={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 ${className}`.trim()}
+  style={`height: ${embedHeight}px`}
+>
+  <iframe
+    src={src}
+    width="100%"
+    height={embedHeight}
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+    loading="lazy"
+    class="h-full w-full border-0"
+    title={`Spotify ${type} player`}></iframe>
+</div>

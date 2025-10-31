@@ -1,0 +1,200 @@
+---
+/**
+ * Modal - accessible dialog with backdrop
+ */
+interface Props {
+  open?: boolean;
+  title?: string;
+  closeLabel?: string;
+  className?: string;
+}
+
+const {
+  open = false,
+  title,
+  closeLabel = 'Close',
+  className = '',
+} = Astro.props as Props;
+const hasFooter = Astro.slots.has('footer');
+
+const modalId = `comet-modal-${Math.random().toString(36).slice(2, 9)}`;
+const titleId = title ? `${modalId}-title` : undefined;
+---
+
+<div
+  id={modalId}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby={titleId}
+  class={`fixed inset-0 z-50 ${open ? '' : 'hidden'} flex items-start justify-center px-4 py-8 sm:py-12`.trim()}
+  data-open={open}
+  data-modal-root
+>
+  <div
+    class="absolute inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity"
+    data-modal-backdrop
+  >
+  </div>
+  <div
+    class={`relative z-10 mt-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 text-slate-900 shadow-2xl outline-none transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 sm:mt-0 ${className}`.trim()}
+    data-modal-dialog
+    role="document"
+    tabindex="-1"
+  >
+    <header class="mb-4 flex items-start justify-between gap-4">
+      {
+        title && (
+          <h2
+            id={titleId}
+            class="text-xl font-semibold text-slate-900 dark:text-slate-100"
+          >
+            {title}
+          </h2>
+        )
+      }
+      <button
+        type="button"
+        class="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-sm font-semibold text-slate-900 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+        data-modal-close
+        aria-label={closeLabel}
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+    <div
+      class="max-h-[65vh] overflow-auto pr-1 text-sm text-slate-700 dark:text-slate-200"
+    >
+      <slot />
+    </div>
+    {
+      hasFooter && (
+        <footer class="mt-6 border-t border-slate-200 pt-4 text-sm text-slate-700 dark:border-slate-700 dark:text-slate-200">
+          <slot name="footer" />
+        </footer>
+      )
+    }
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const root = document.currentScript?.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+    const win = window;
+    if (typeof win.__cometModalLockCount !== 'number') {
+      win.__cometModalLockCount = 0;
+    }
+    if (typeof win.__cometModalOriginalOverflow !== 'string') {
+      win.__cometModalOriginalOverflow = document.body.style.overflow || '';
+    }
+    const dialog = root.querySelector('[data-modal-dialog]');
+    const backdrop = root.querySelector('[data-modal-backdrop]');
+    const closeButtons = root.querySelectorAll('[data-modal-close]');
+    if (!(dialog instanceof HTMLElement)) return;
+
+    const focusableSelectors = [
+      'a[href]',
+      'area[href]',
+      'button:not([disabled])',
+      'input:not([disabled]):not([type="hidden"])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+
+    let returnFocus = null;
+
+    const getFocusable = () => {
+      return Array.from(dialog.querySelectorAll(focusableSelectors)).filter(
+        (el) => el instanceof HTMLElement && el.offsetParent !== null
+      );
+    };
+
+    const setOpenState = (isOpen) => {
+      const wasOpen = root.getAttribute('data-open') === 'true';
+      if (wasOpen === isOpen) {
+        root.classList.toggle('hidden', !isOpen);
+        return;
+      }
+      root.setAttribute('data-open', String(isOpen));
+      root.classList.toggle('hidden', !isOpen);
+      if (isOpen) {
+        win.__cometModalLockCount += 1;
+        if (win.__cometModalLockCount === 1) {
+          document.body.style.overflow = 'hidden';
+        }
+        returnFocus =
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        const focusables = getFocusable();
+        if (focusables.length) {
+          focusables[0].focus({ preventScroll: true });
+        } else {
+          dialog.focus({ preventScroll: true });
+        }
+      } else {
+        win.__cometModalLockCount = Math.max(0, win.__cometModalLockCount - 1);
+        if (win.__cometModalLockCount === 0) {
+          document.body.style.overflow = win.__cometModalOriginalOverflow || '';
+        }
+        if (returnFocus) {
+          returnFocus.focus({ preventScroll: true });
+        }
+      }
+    };
+
+    const handleKeydown = (event) => {
+      if (root.getAttribute('data-open') !== 'true') return;
+      if (event.key === 'Escape') {
+        event.stopPropagation();
+        setOpenState(false);
+        return;
+      }
+      if (event.key === 'Tab') {
+        const focusables = getFocusable();
+        if (!focusables.length) {
+          event.preventDefault();
+          dialog.focus({ preventScroll: true });
+          return;
+        }
+        const currentIndex = focusables.indexOf(document.activeElement);
+        let nextIndex = currentIndex;
+        if (event.shiftKey) {
+          nextIndex =
+            currentIndex <= 0 ? focusables.length - 1 : currentIndex - 1;
+        } else {
+          nextIndex =
+            currentIndex === focusables.length - 1 ? 0 : currentIndex + 1;
+        }
+        event.preventDefault();
+        focusables[nextIndex].focus({ preventScroll: true });
+      }
+    };
+
+    const close = () => setOpenState(false);
+    const openModal = () => setOpenState(true);
+
+    closeButtons.forEach((btn) => {
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+        close();
+      });
+    });
+
+    backdrop?.addEventListener('click', close);
+    root.addEventListener('keydown', handleKeydown);
+
+    if (!win.__cometModalRegistry) {
+      win.__cometModalRegistry = new Map();
+    }
+    win.__cometModalRegistry.set(root.id || 'comet-modal', {
+      open: openModal,
+      close,
+    });
+
+    if (root.getAttribute('data-open') === 'true') {
+      setOpenState(true);
+    }
+  })();
+</script>

@@ -1,0 +1,26 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import DataList from '../../components/DataList.astro';
+
+const items = [
+  { term: 'Name', description: 'John Doe' },
+  { term: 'Email', description: 'john@example.com' },
+  { term: 'Role', description: 'Developer' },
+  {
+    term: 'Skills',
+    description: ['JavaScript', 'TypeScript', 'React', 'Astro'],
+  },
+];
+---
+
+<DocsLayout
+  title="DataList"
+  description="Semantic definition list with default, horizontal, and striped variants."
+>
+  <section class="space-y-6">
+    <h2 class="text-xl font-bold">Variants</h2>
+    <DataList items={items} variant="default" divider />
+    <DataList items={items} variant="horizontal" />
+    <DataList items={items} variant="striped" />
+  </section>
+</DocsLayout>

@@ -1,0 +1,78 @@
+---
+/**
+ * MusicButtons - render platform buttons linking to music services
+ */
+interface PlatformLink {
+  platform: string;
+  href: string;
+  label?: string;
+}
+
+interface Props {
+  links: PlatformLink[];
+  layout?: 'row' | 'column' | 'wrap';
+  size?: 'sm' | 'md';
+  className?: string;
+}
+
+const {
+  links = [],
+  layout = 'row',
+  size = 'md',
+  className = '',
+} = Astro.props as Props;
+
+const baseBtn =
+  'inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border px-3 py-2 font-semibold no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900';
+const sizeCls = size === 'sm' ? 'text-sm' : 'text-base';
+const platformPalette: Record<string, string> = {
+  spotify:
+    'border-emerald-600 bg-emerald-50 text-emerald-900 hover:bg-emerald-100 dark:border-emerald-400 dark:bg-emerald-950 dark:text-emerald-100 dark:hover:bg-emerald-900',
+  applemusic:
+    'border-neutral-700 bg-neutral-900 text-neutral-50 hover:bg-neutral-800 dark:border-neutral-400 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800',
+  apple:
+    'border-neutral-700 bg-neutral-900 text-neutral-50 hover:bg-neutral-800 dark:border-neutral-400 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800',
+  ytmusic:
+    'border-rose-700 bg-rose-50 text-rose-900 hover:bg-rose-100 dark:border-rose-400 dark:bg-rose-950 dark:text-rose-50 dark:hover:bg-rose-900',
+  youtube:
+    'border-rose-700 bg-rose-50 text-rose-900 hover:bg-rose-100 dark:border-rose-400 dark:bg-rose-950 dark:text-rose-50 dark:hover:bg-rose-900',
+  deezer:
+    'border-slate-700 bg-slate-950 text-slate-100 hover:bg-slate-900 dark:border-slate-500 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800',
+  tidal:
+    'border-slate-800 bg-slate-900 text-slate-100 hover:bg-slate-800 dark:border-slate-500 dark:bg-slate-900 dark:hover:bg-slate-800',
+  soundcloud:
+    'border-amber-700 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:border-amber-400 dark:bg-amber-950 dark:text-amber-50 dark:hover:bg-amber-900',
+  bandcamp:
+    'border-cyan-700 bg-cyan-50 text-cyan-900 hover:bg-cyan-100 dark:border-cyan-400 dark:bg-cyan-950 dark:text-cyan-50 dark:hover:bg-cyan-900',
+};
+const platformCls = (platform: string) => {
+  const key = platform.toLowerCase();
+  return (
+    platformPalette[key] ||
+    'border-slate-300 bg-white text-slate-900 hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800'
+  );
+};
+const layoutCls =
+  layout === 'column'
+    ? 'flex flex-col gap-2'
+    : layout === 'wrap'
+      ? 'flex flex-wrap gap-2'
+      : 'flex flex-row gap-2';
+---
+
+<nav class={`${layoutCls} ${className}`.trim()} aria-label="Music platforms">
+  {
+    links.map((l) => (
+      <a
+        href={l.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-platform={l.platform}
+        class={`${baseBtn} ${sizeCls} ${platformCls(l.platform)}`}
+      >
+        {l.label || l.platform}
+        <span class="sr-only"> (opens in new window)</span>
+      </a>
+    ))
+  }
+</nav>

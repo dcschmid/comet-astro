@@ -1,0 +1,44 @@
+---
+interface Props {
+  orientation?: 'horizontal' | 'vertical';
+  variant?: 'solid' | 'dashed' | 'dotted' | 'gradient';
+  spacing?: 'none' | 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+const {
+  orientation = 'horizontal',
+  variant = 'solid',
+  spacing = 'md',
+  className = '',
+} = Astro.props;
+
+const orientationClasses =
+  orientation === 'horizontal' ? 'h-px w-full' : 'inline-block h-full w-px';
+
+const variantClasses = {
+  solid: 'bg-slate-300 dark:bg-slate-700',
+  dashed: 'border-slate-300 border-dashed dark:border-slate-700',
+  dotted: 'border-slate-300 border-dotted dark:border-slate-700',
+  gradient:
+    'bg-gradient-to-r from-transparent via-slate-300 to-transparent dark:via-slate-700',
+};
+
+const spacingClasses = {
+  none: orientation === 'horizontal' ? 'my-0' : 'mx-0',
+  sm: orientation === 'horizontal' ? 'my-2' : 'mx-2',
+  md: orientation === 'horizontal' ? 'my-4' : 'mx-4',
+  lg: orientation === 'horizontal' ? 'my-6' : 'mx-6',
+};
+
+const borderClass = ['dashed', 'dotted'].includes(variant)
+  ? orientation === 'horizontal'
+    ? 'border-t'
+    : 'border-l'
+  : '';
+---
+
+<hr
+  class={`${orientationClasses} ${variantClasses[variant]} ${spacingClasses[spacing]} ${borderClass} ${className}`}
+  aria-hidden="true"
+/>

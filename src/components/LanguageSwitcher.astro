@@ -1,0 +1,45 @@
+---
+/**
+ * LanguageSwitcher - simple language picker with links
+ */
+interface Lang {
+  code: string;
+  label: string;
+  href: string;
+}
+
+interface Props {
+  current?: string;
+  languages: Lang[];
+  className?: string;
+}
+
+const { current, languages = [], className = '' } = Astro.props as Props;
+---
+
+<nav
+  aria-label="Language"
+  class={`inline-flex items-center gap-2 ${className}`.trim()}
+>
+  {
+    languages.map((language) => {
+      const isActive = current === language.code;
+      return (
+        <a
+          href={language.href}
+          lang={language.code}
+          hreflang={language.code}
+          aria-current={isActive ? 'true' : undefined}
+          class:list={[
+            'inline-flex min-h-[32px] items-center rounded-lg border px-3 py-1 text-sm font-semibold no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900',
+            isActive
+              ? 'border-blue-600 bg-blue-600 text-white shadow-sm dark:border-blue-500 dark:bg-blue-500'
+              : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800',
+          ]}
+        >
+          {language.label}
+        </a>
+      );
+    })
+  }
+</nav>

@@ -1,0 +1,70 @@
+---
+interface Props {
+  threshold?: number;
+  position?: 'bottom-right' | 'bottom-left' | 'bottom-center';
+  smooth?: boolean;
+  className?: string;
+}
+
+const {
+  threshold = 300,
+  position = 'bottom-right',
+  smooth = true,
+  className = '',
+} = Astro.props;
+
+const positionClasses = {
+  'bottom-right': 'bottom-8 right-8',
+  'bottom-left': 'bottom-8 left-8',
+  'bottom-center': 'bottom-8 left-1/2 -translate-x-1/2',
+};
+---
+
+<button
+  type="button"
+  class={`fixed ${positionClasses[position]} z-50 flex h-12 w-12 items-center justify-center rounded-full border border-blue-500 bg-blue-600 text-xl font-bold text-white shadow-lg transition-all opacity-0 invisible focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 dark:border-blue-400 dark:bg-blue-500 dark:text-slate-900 dark:focus-visible:ring-offset-blue-500 ${className}`.trim()}
+  data-scroll-top
+  data-threshold={threshold}
+  data-smooth={smooth}
+  aria-label="Scroll to top"
+  aria-hidden="true"
+  tabindex="-1"
+>
+  ↑
+</button>
+
+<script is:inline>
+  (function () {
+    const button = document.currentScript?.previousElementSibling;
+    if (!(button instanceof HTMLElement)) return;
+
+    const threshold = parseInt(button.getAttribute('data-threshold') || '300');
+    const smooth = button.getAttribute('data-smooth') === 'true';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const setVisibility = (visible) => {
+      button.classList.toggle('opacity-0', !visible);
+      button.classList.toggle('invisible', !visible);
+      button.setAttribute('aria-hidden', visible ? 'false' : 'true');
+      button.tabIndex = visible ? 0 : -1;
+    };
+
+    const checkScroll = () => {
+      if (window.scrollY > threshold) {
+        setVisibility(true);
+      } else {
+        setVisibility(false);
+      }
+    };
+
+    button.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: smooth && !reduceMotion.matches ? 'smooth' : 'auto',
+      });
+    });
+
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
+  })();
+</script>

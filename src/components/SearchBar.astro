@@ -1,0 +1,51 @@
+---
+/**
+ * SearchBar - accessible search form
+ */
+interface Props {
+  value?: string;
+  placeholder?: string;
+  action?: string;
+  name?: string;
+  method?: 'get' | 'post';
+  submitLabel?: string;
+  className?: string;
+}
+
+const {
+  value = '',
+  placeholder = 'Search…',
+  action = '#',
+  name = 'q',
+  method = 'get',
+  submitLabel = 'Search',
+  className = '',
+} = Astro.props as Props;
+
+const inputId = `search-input-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<form
+  role="search"
+  method={method}
+  action={action}
+  class={`flex items-stretch gap-2 ${className}`.trim()}
+>
+  <label class="sr-only" for={inputId}>{submitLabel}</label>
+  <input
+    id={inputId}
+    type="search"
+    name={name}
+    value={value}
+    placeholder={placeholder}
+    class="min-h-[44px] flex-1 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 placeholder:text-slate-500 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus-visible:ring-offset-slate-900"
+    enterkeyhint="search"
+    autocomplete="search"
+  />
+  <button
+    type="submit"
+    class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-4 font-semibold text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 dark:border-blue-500 dark:bg-blue-500 dark:text-slate-900 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-blue-500"
+  >
+    {submitLabel}
+  </button>
+</form>

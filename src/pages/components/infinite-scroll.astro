@@ -1,0 +1,75 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import InfiniteScroll from '../../components/InfiniteScroll.astro';
+import Card from '../../components/Card.astro';
+import CategoryBadge from '../../components/CategoryBadge.astro';
+---
+
+<DocsLayout
+  title="InfiniteScroll"
+  description="Progressively load additional content as users approach the bottom."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <InfiniteScroll
+      className="rounded-xl border border-gray-800 bg-gray-900 p-4"
+      loading
+      loaderText="Loading more stories…"
+    >
+      <div id="infinite-demo-items" class="space-y-3">
+        {
+          Array.from({ length: 5 }).map((_, index) => (
+            <Card class="p-4 space-y-2" data-seed={index}>
+              <CategoryBadge label="Story" />
+              <h3 class="text-white text-lg">
+                Editorial highlight {index + 1}
+              </h3>
+              <p class="text-sm text-gray-400">
+                Explore how teams coordinate large-scale launches with detailed
+                playbooks.
+              </p>
+            </Card>
+          ))
+        }
+      </div>
+    </InfiniteScroll>
+  </section>
+</DocsLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('infinite-demo-items');
+    if (!container) return;
+    let page = 1;
+
+    const template = (index) => `
+      <div class="p-4 space-y-2 rounded-lg border border-gray-800 bg-gray-950">
+        <span class="inline-flex items-center gap-1 rounded-full border border-purple-500/40 bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-200">Story</span>
+        <h3 class="text-white text-lg">Editorial highlight ${index}</h3>
+        <p class="text-sm text-gray-400">Fresh insights gathered from community AMA sessions and workshops.</p>
+      </div>
+    `;
+
+    const root = container.closest('[data-infinite-scroll]');
+    if (!root) return;
+
+    root.addEventListener('infinite-scroll:load', (event) => {
+      const detail = event.detail;
+      if (!detail) return;
+      detail.loading(true);
+      window.setTimeout(() => {
+        page += 1;
+        const fragment = document.createElement('div');
+        fragment.innerHTML = Array.from({ length: 3 })
+          .map((_, idx) => template(page * 3 + idx))
+          .join('');
+        container.append(...fragment.children);
+        if (page >= 3) {
+          detail.done();
+        } else {
+          detail.loading(false);
+        }
+      }, 900);
+    });
+  });
+</script>

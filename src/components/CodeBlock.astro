@@ -1,0 +1,106 @@
+---
+interface Props {
+  code?: string;
+  language?: string;
+  title?: string;
+  showLineNumbers?: boolean;
+  highlightLines?: number[];
+  className?: string;
+}
+
+const {
+  code,
+  language = 'plaintext',
+  title,
+  showLineNumbers = false,
+  highlightLines = [],
+  className = '',
+} = Astro.props;
+
+const lines = code?.split('\n') || [];
+---
+
+<div
+  class={`rounded-xl border border-slate-200 bg-slate-950 text-slate-100 shadow-sm dark:border-slate-800 ${className}`}
+>
+  {
+    title && (
+      <div class="flex items-center justify-between border-b border-slate-800 bg-slate-900/70 px-4 py-2">
+        <span class="text-sm font-semibold text-slate-200">{title}</span>
+        {language && (
+          <span class="text-xs uppercase tracking-wide text-slate-400">
+            {language}
+          </span>
+        )}
+      </div>
+    )
+  }
+  <div class="relative">
+    <button
+      type="button"
+      class="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-xs font-semibold text-slate-100 transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+      data-copy-button
+      aria-live="polite"
+    >
+      Copy
+    </button>
+    <pre
+      class="p-4 overflow-x-auto text-sm"><code class={`language-${language}`}>{
+      showLineNumbers 
+        ? lines.map((line, i) => {
+            const lineNum = i + 1;
+            const isHighlighted = highlightLines.includes(lineNum);
+            return `<span class="block ${isHighlighted ? 'bg-blue-500/20 -mx-4 px-4 rounded-md' : ''}"><span class="inline-block w-8 select-none text-slate-500">${lineNum}</span>${line}</span>`;
+          }).join('\n')
+        : code
+    }</code></pre>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const container = document.currentScript?.previousElementSibling;
+    if (!(container instanceof HTMLElement)) return;
+    const button = container.querySelector('[data-copy-button]');
+    const codeElement = container.querySelector('code');
+    if (
+      !(button instanceof HTMLElement) ||
+      !(codeElement instanceof HTMLElement)
+    )
+      return;
+
+    button.addEventListener('click', async () => {
+      const text = codeElement.textContent || '';
+      try {
+        await navigator.clipboard.writeText(text);
+        button.setAttribute('data-state', 'copied');
+        button.textContent = 'Copied!';
+        window.setTimeout(() => {
+          button.removeAttribute('data-state');
+          button.textContent = 'Copy';
+        }, 2000);
+      } catch {
+        button.textContent = 'Error';
+        window.setTimeout(() => {
+          button.textContent = 'Copy';
+        }, 2000);
+      }
+    });
+  })();
+</script>
+
+<style>
+  pre {
+    tab-size: 2;
+  }
+  code {
+    font-family:
+      'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace;
+    color: rgb(226 232 240);
+    font-weight: 450;
+  }
+
+  :where(.dark) code {
+    color: rgb(226 232 240);
+  }
+</style>

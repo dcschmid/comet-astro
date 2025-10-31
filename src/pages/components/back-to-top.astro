@@ -1,0 +1,21 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import BackToTop from '../../components/BackToTop.astro';
+import Paragraph from '../../components/Paragraph.astro';
+---
+
+<DocsLayout
+  title="BackToTop"
+  description="Floating button that appears after scrolling to return to the top."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <BackToTop forceVisible ariaLabel="Back to top example" />
+    <Paragraph size="sm" muted>
+      The button is forced visible for demonstration purposes. Remove <code
+        >forceVisible</code
+      >
+      to reveal it only after scrolling past the threshold.
+    </Paragraph>
+  </section>
+</DocsLayout>

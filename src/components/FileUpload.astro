@@ -1,0 +1,356 @@
+---
+/**
+ * FileUpload - drag & drop upload area with file list preview
+ */
+interface Props {
+  label?: string;
+  description?: string;
+  accept?: string;
+  multiple?: boolean;
+  maxFileSizeMb?: number;
+  showFileList?: boolean;
+  helpText?: string;
+  className?: string;
+  inputName?: string;
+}
+
+const {
+  label = 'Upload files',
+  description = 'Drag & drop files here, or click to browse.',
+  accept = '',
+  multiple = true,
+  maxFileSizeMb = 10,
+  showFileList = true,
+  helpText = '',
+  className = '',
+  inputName,
+} = Astro.props as Props;
+
+const id = `file-upload-${Math.random().toString(36).slice(2, 10)}`;
+const descriptionId = `${id}-description`;
+const helpId = helpText ? `${id}-help` : undefined;
+const errorId = `${id}-error`;
+---
+
+<div
+  id={id}
+  data-file-upload
+  data-multiple={multiple}
+  data-max-size={maxFileSizeMb}
+  data-show-list={showFileList}
+  class={`space-y-3 ${className}`}
+  aria-live="polite"
+>
+  <label
+    data-file-dropzone
+    class="relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center transition hover:border-blue-500 hover:bg-white focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-500/60 dark:border-slate-600 dark:bg-slate-900/70 dark:hover:border-blue-400 dark:hover:bg-slate-900"
+    aria-describedby={`${descriptionId}${helpId ? ` ${helpId}` : ''}`}
+    data-base-describedby={`${descriptionId}${helpId ? ` ${helpId}` : ''}`}
+  >
+    <input
+      type="file"
+      class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+      accept={accept}
+      multiple={multiple}
+      name={inputName}
+      data-file-input
+    />
+    <div
+      class="pointer-events-none flex flex-col items-center gap-3 text-slate-700 dark:text-slate-200"
+    >
+      <div
+        class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-xl text-blue-700 dark:bg-blue-500/20 dark:text-blue-200"
+        aria-hidden="true"
+      >
+        ⬆
+      </div>
+      <div class="text-slate-700 dark:text-slate-200">
+        <p class="text-lg font-semibold text-slate-900 dark:text-white">
+          {label}
+        </p>
+        <p
+          class="mt-1 text-sm text-slate-600 dark:text-slate-300"
+          id={descriptionId}
+        >
+          {description}
+        </p>
+        {
+          maxFileSizeMb && (
+            <p class="mt-2 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              Max size {maxFileSizeMb} MB
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </label>
+
+  {
+    helpText && (
+      <p class="text-xs text-slate-600 dark:text-slate-300" id={helpId}>
+        {helpText}
+      </p>
+    )
+  }
+
+  <div
+    class="hidden rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200"
+    data-file-empty
+  >
+    No files selected yet.
+  </div>
+
+  <ul
+    class="divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm dark:divide-slate-800 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50"
+    data-file-list
+    hidden={!showFileList}
+    role="list"
+  >
+  </ul>
+
+  <p
+    class="hidden text-sm font-medium text-amber-600 dark:text-amber-300"
+    data-file-error
+    id={errorId}
+    role="alert"
+  >
+  </p>
+</div>
+
+<script is:inline>
+  (function setupFileUpload() {
+    const root = document.getElementById('${id}');
+    if (!(root instanceof HTMLElement)) return;
+
+    const input = root.querySelector('[data-file-input]');
+    if (!(input instanceof HTMLInputElement)) return;
+
+    const dropzone = root.querySelector('[data-file-dropzone]');
+    const fileList = root.querySelector('[data-file-list]');
+    const emptyState = root.querySelector('[data-file-empty]');
+    const errorEl = root.querySelector('[data-file-error]');
+
+    const maxSizeMb = Number.parseFloat(root.dataset.maxSize || '0');
+    const showList = root.dataset.showList === 'true';
+    const allowMultiple = root.dataset.multiple !== 'false';
+    const errorIdentifier =
+      errorEl instanceof HTMLElement ? errorEl.id || '' : '';
+
+    const formatBytes = (bytes) => {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+      const power = Math.min(
+        units.length - 1,
+        Math.floor(Math.log(bytes) / Math.log(1024))
+      );
+      return `${(bytes / Math.pow(1024, power)).toFixed(power === 0 ? 0 : 1)} ${units[power]}`;
+    };
+
+    const escapeHTML = (value) =>
+      String(value).replace(/[&<>"']/g, (char) => {
+        switch (char) {
+          case '&':
+            return '&amp;';
+          case '<':
+            return '&lt;';
+          case '>':
+            return '&gt;';
+          case '"':
+            return '&quot;';
+          case "'":
+            return '&#39;';
+          default:
+            return char;
+        }
+      });
+
+    const renderList = (files) => {
+      if (!(fileList instanceof HTMLElement)) return;
+      if (files.length === 0) {
+        fileList.innerHTML = '';
+        fileList.hidden = !showList;
+        if (emptyState instanceof HTMLElement)
+          emptyState.classList.remove('hidden');
+        return;
+      }
+
+      fileList.hidden = !showList;
+      fileList.innerHTML = files
+        .map(
+          (file, index) => `
+            <li class="flex items-center justify-between gap-3 px-4 py-3 text-sm text-slate-800 dark:text-slate-100">
+              <div class="min-w-0">
+                <p class="truncate font-semibold text-slate-900 dark:text-white">${escapeHTML(file.name)}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">${formatBytes(file.size)}</p>
+              </div>
+              <button type="button" class="inline-flex items-center gap-1 rounded-full border border-transparent px-2 py-1 text-xs font-semibold text-red-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:text-red-300 dark:hover:bg-red-500/10" data-file-remove="${index}">
+                <span aria-hidden="true">✕</span>
+                <span>Remove</span>
+                <span class="sr-only"> ${escapeHTML(file.name)}</span>
+              </button>
+            </li>
+          `
+        )
+        .join('');
+      if (emptyState instanceof HTMLElement) emptyState.classList.add('hidden');
+    };
+
+    let selectedFiles = [];
+
+    const emitChange = () => {
+      root.dispatchEvent(
+        new CustomEvent('file-upload:change', {
+          bubbles: true,
+          detail: { files: selectedFiles.slice(), input },
+        })
+      );
+    };
+
+    const baseDescribedBy =
+      dropzone instanceof HTMLElement
+        ? dropzone.getAttribute('data-base-describedby') || ''
+        : '';
+    const setDescribedBy = (hasError) => {
+      if (!(dropzone instanceof HTMLElement)) return;
+      const ids = [
+        baseDescribedBy.trim(),
+        hasError ? errorIdentifier : null,
+      ].filter(Boolean);
+      if (ids.length > 0) {
+        dropzone.setAttribute('aria-describedby', ids.join(' '));
+      } else {
+        dropzone.removeAttribute('aria-describedby');
+      }
+    };
+
+    const setError = (message) => {
+      if (!(errorEl instanceof HTMLElement)) return;
+      if (!message) {
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+        errorEl.setAttribute('aria-hidden', 'true');
+        setDescribedBy(false);
+      } else {
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+        errorEl.setAttribute('aria-hidden', 'false');
+        setDescribedBy(true);
+      }
+    };
+
+    const handleFiles = (files) => {
+      const incoming = Array.from(files);
+      const maxSize = maxSizeMb > 0 ? maxSizeMb * 1024 * 1024 : Infinity;
+      const filtered = [];
+      let rejected = 0;
+
+      incoming.forEach((file) => {
+        if (file.size > maxSize) {
+          rejected += 1;
+          return;
+        }
+        filtered.push(file);
+      });
+
+      if (!allowMultiple) {
+        selectedFiles = filtered.slice(0, 1);
+      } else {
+        selectedFiles = selectedFiles.concat(filtered);
+      }
+
+      renderList(selectedFiles);
+      emitChange();
+
+      if (rejected > 0) {
+        setError(
+          `Skipped ${rejected} file${rejected === 1 ? '' : 's'} exceeding ${maxSizeMb} MB.`
+        );
+      } else {
+        setError(null);
+      }
+    };
+
+    input.addEventListener('change', () => {
+      if (!input.files) return;
+      selectedFiles = [];
+      handleFiles(input.files);
+    });
+
+    if (dropzone instanceof HTMLElement) {
+      dropzone.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+        dropzone.classList.add(
+          'border-blue-500',
+          'bg-blue-50',
+          'dark:bg-slate-800'
+        );
+      });
+
+      dropzone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+      });
+
+      dropzone.addEventListener('dragleave', (event) => {
+        if (event.target === dropzone) {
+          dropzone.classList.remove(
+            'border-blue-500',
+            'bg-blue-50',
+            'dark:bg-slate-800'
+          );
+        }
+      });
+
+      dropzone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropzone.classList.remove(
+          'border-blue-500',
+          'bg-blue-50',
+          'dark:bg-slate-800'
+        );
+        const dt = event.dataTransfer;
+        if (!dt || !dt.files || dt.files.length === 0) return;
+        selectedFiles = [];
+        handleFiles(dt.files);
+        input.files = dt.files;
+      });
+    }
+
+    if (fileList instanceof HTMLElement) {
+      fileList.addEventListener('click', (event) => {
+        const target =
+          event.target instanceof HTMLElement ? event.target : null;
+        if (!target) return;
+        const indexAttr = target.getAttribute('data-file-remove');
+        if (!indexAttr) return;
+        const index = Number.parseInt(indexAttr, 10);
+        if (Number.isNaN(index)) return;
+        selectedFiles.splice(index, 1);
+        renderList(selectedFiles);
+        emitChange();
+        if (selectedFiles.length === 0 && emptyState instanceof HTMLElement) {
+          emptyState.classList.remove('hidden');
+        }
+      });
+    }
+
+    root.addEventListener('file-upload:clear', () => {
+      selectedFiles = [];
+      renderList(selectedFiles);
+      input.value = '';
+      emitChange();
+    });
+
+    root.addEventListener('file-upload:set-error', (event) => {
+      const detail = event && 'detail' in event ? event.detail : null;
+      setError(
+        detail && typeof detail.message === 'string' ? detail.message : null
+      );
+    });
+
+    if (emptyState instanceof HTMLElement) {
+      emptyState.classList.toggle('hidden', selectedFiles.length > 0);
+    }
+    setDescribedBy(false);
+    renderList(selectedFiles);
+  })();
+</script>

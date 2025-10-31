@@ -1,0 +1,30 @@
+---
+/**
+ * Badge - small label indicator
+ */
+interface Props {
+  label: string;
+  variant?: 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
+  className?: string;
+}
+
+const { label, variant = 'neutral', className = '' } = Astro.props as Props;
+
+const base =
+  'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold tracking-wide';
+const variantMap: Record<NonNullable<Props['variant']>, string> = {
+  neutral:
+    'border border-slate-300 bg-slate-100 text-slate-800 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100',
+  primary:
+    'border border-blue-500 bg-blue-600 text-white shadow-sm dark:border-blue-400 dark:bg-blue-500',
+  success:
+    'border border-emerald-500 bg-emerald-600 text-white shadow-sm dark:border-emerald-400 dark:bg-emerald-500',
+  warning:
+    'border border-amber-500 bg-amber-400 text-slate-900 shadow-sm dark:border-amber-300 dark:bg-amber-300 dark:text-slate-900',
+  danger:
+    'border border-rose-500 bg-rose-600 text-white shadow-sm dark:border-rose-400 dark:bg-rose-500',
+};
+---
+
+<span class={`${base} ${variantMap[variant]} ${className}`.trim()}>{label}</span
+>

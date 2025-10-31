@@ -1,0 +1,17 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import FormGroup from '../../components/FormGroup.astro';
+import Input from '../../components/Input.astro';
+---
+
+<DocsLayout
+  title="FormGroup"
+  description="Bundle labels, hints, and validation states around inputs."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <FormGroup label="Workspace name" hint="Use 3-32 characters" required>
+      <Input name="workspace" placeholder="Acme Inc." required />
+    </FormGroup>
+  </section>
+</DocsLayout>

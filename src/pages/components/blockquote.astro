@@ -1,0 +1,29 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Blockquote from '../../components/Blockquote.astro';
+---
+
+<DocsLayout
+  title="Blockquote"
+  description="Stylized quotations with optional author, source, and variants."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="space-y-4">
+      <Blockquote author="Albert Einstein">
+        Imagination is more important than knowledge.
+      </Blockquote>
+      <Blockquote
+        author="Steve Jobs"
+        source="Stanford Commencement 2005"
+        variant="accent"
+      >
+        Stay hungry, stay foolish.
+      </Blockquote>
+      <Blockquote variant="bordered">
+        Design is not just what it looks like and feels like. Design is how it
+        works.
+      </Blockquote>
+    </div>
+  </section>
+</DocsLayout>

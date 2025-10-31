@@ -1,0 +1,21 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const items = [
+  { label: 'Home', href: '#' },
+  { label: 'Library', href: '#' },
+  { label: 'Design system', href: '#' },
+  { label: 'Navigation patterns', current: true },
+];
+---
+
+<DocsLayout
+  title="Breadcrumbs"
+  description="Hierarchical navigation trail with current-page indicator."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <Breadcrumbs items={items} />
+  </section>
+</DocsLayout>

@@ -1,0 +1,27 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Tabs from '../../components/Tabs.astro';
+const demoTabs = [
+  { id: 'a', label: 'A', content: '<p>Pane A</p>' },
+  { id: 'b', label: 'B', content: '<p>Pane B</p>' },
+];
+---
+
+<DocsLayout
+  title="Tabs"
+  description="Accessible tabbed interface with keyboard-friendly behaviour."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>tabs: &#123;id,label,content?&#125;[]</code></li>
+      <li><code>activeId?: string</code></li>
+      <li><code>className?: string</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Example</h2>
+    <Tabs tabs={demoTabs} activeId="a" />
+  </section>
+</DocsLayout>

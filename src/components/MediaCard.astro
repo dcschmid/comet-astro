@@ -1,0 +1,85 @@
+---
+/**
+ * MediaCard - image + title + description + actions
+ */
+interface Action {
+  href: string;
+  label: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+}
+
+interface Props {
+  image?: string;
+  title: string;
+  description?: string;
+  href?: string;
+  actions?: Action[];
+  className?: string;
+}
+
+const {
+  image,
+  title,
+  description,
+  href,
+  actions = [],
+  className = '',
+} = Astro.props as Props;
+---
+
+<article
+  class={`overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-800 shadow-lg transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${className}`.trim()}
+>
+  {
+    image && (
+      <a href={href || '#'} class="block">
+        <img
+          src={image}
+          alt={title}
+          class="h-48 w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+    )
+  }
+  <div class="p-4">
+    <h3 class="mb-1 text-lg font-semibold text-slate-900 dark:text-slate-100">
+      {
+        href ? (
+          <a
+            href={href}
+            class="no-underline transition hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900"
+          >
+            {title}
+          </a>
+        ) : (
+          title
+        )
+      }
+    </h3>
+    {
+      description && (
+        <p class="mb-4 text-sm text-slate-600 dark:text-slate-300">
+          {description}
+        </p>
+      )
+    }
+    {
+      actions.length > 0 && (
+        <div class="flex flex-wrap gap-2">
+          {actions.map((a) => (
+            <a
+              href={a.href}
+              target={a.target || '_self'}
+              rel={a.target === '_blank' ? 'noopener noreferrer' : undefined}
+              class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 no-underline transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100.dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-900"
+            >
+              {a.label}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</article>

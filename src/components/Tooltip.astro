@@ -1,0 +1,90 @@
+---
+interface Props {
+  content: string;
+  position?: 'top' | 'bottom' | 'left' | 'right';
+  className?: string;
+}
+
+const { content, position = 'top', className = '' } = Astro.props;
+
+const positionClasses = {
+  top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+  bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
+  left: 'right-full top-1/2 -translate-y-1/2 mr-2',
+  right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+};
+
+const arrowClasses = {
+  top: 'top-full left-1/2 -translate-x-1/2 border-t-slate-900 dark:border-t-slate-200 border-x-transparent border-b-transparent',
+  bottom:
+    'bottom-full left-1/2 -translate-x-1/2 border-b-slate-900 dark:border-b-slate-200 border-x-transparent border-t-transparent',
+  left: 'left-full top-1/2 -translate-y-1/2 border-l-slate-900 dark:border-l-slate-200 border-y-transparent border-r-transparent',
+  right:
+    'right-full top-1/2 -translate-y-1/2 border-r-slate-900 dark:border-r-slate-200 border-y-transparent border-l-transparent',
+};
+
+const tooltipId = `tooltip-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div
+  class={`relative inline-block group ${className}`.trim()}
+  data-tooltip-root
+>
+  <slot />
+  <div
+    id={tooltipId}
+    class={`absolute ${positionClasses[position]} z-50 max-w-xs rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white shadow-lg opacity-0 invisible transition-opacity duration-150 whitespace-nowrap pointer-events-none group-hover:visible group-hover:opacity-100 group-focus-visible:visible group-focus-visible:opacity-100 dark:bg-slate-200 dark:text-slate-900`}
+    role="tooltip"
+    data-tooltip
+  >
+    {content}
+    <div
+      class={`absolute ${arrowClasses[position]} border-4`}
+      aria-hidden="true"
+    >
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const root = document.currentScript?.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+    const tooltip = root.querySelector('[data-tooltip]');
+    if (!(tooltip instanceof HTMLElement)) return;
+
+    const selector = [
+      'a[href]',
+      'button',
+      'input',
+      'textarea',
+      'select',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+
+    const focusable = root.querySelector(selector);
+    const target =
+      focusable instanceof HTMLElement
+        ? focusable
+        : root.firstElementChild instanceof HTMLElement
+          ? root.firstElementChild
+          : null;
+    if (!target) return;
+
+    if (!target.getAttribute('aria-describedby')) {
+      target.setAttribute('aria-describedby', tooltip.id);
+    }
+
+    target.addEventListener('focus', () => {
+      tooltip.classList.remove('invisible');
+      tooltip.classList.remove('opacity-0');
+      tooltip.classList.add('opacity-100');
+    });
+
+    target.addEventListener('blur', () => {
+      tooltip.classList.add('invisible');
+      tooltip.classList.add('opacity-0');
+      tooltip.classList.remove('opacity-100');
+    });
+  })();
+</script>

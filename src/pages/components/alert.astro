@@ -1,0 +1,45 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Alert from '../../components/Alert.astro';
+---
+
+<DocsLayout
+  title="Alert"
+  description="Status messaging component with variants and optional dismiss button."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Context</h2>
+    <p class="text-gray-400 text-sm">
+      Use alerts to provide contextual feedback. Pick a variant that matches the
+      message type and toggle <code>dismissible</code> when users should be able
+      to hide the message.
+    </p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      <Alert
+        variant="info"
+        title="Heads up"
+        message="We have updated our privacy policy."
+      />
+      <Alert
+        variant="success"
+        title="Success"
+        message="Your profile is now complete."
+      />
+      <Alert
+        variant="warning"
+        title="Action suggested"
+        message="Double-check your billing details."
+      />
+      <Alert
+        variant="error"
+        title="Error"
+        message="Something went wrong while saving."
+        dismissible
+      />
+    </div>
+  </section>
+</DocsLayout>

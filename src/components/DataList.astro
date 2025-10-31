@@ -1,0 +1,63 @@
+---
+interface Item {
+  term: string;
+  description: string | string[];
+}
+
+interface Props {
+  items: Item[];
+  variant?: 'default' | 'horizontal' | 'striped';
+  divider?: boolean;
+  className?: string;
+}
+
+const {
+  items,
+  variant = 'default',
+  divider = false,
+  className = '',
+} = Astro.props;
+
+const isHorizontal = variant === 'horizontal';
+const isStriped = variant === 'striped';
+---
+
+<dl
+  class={`${
+    isHorizontal ? 'grid grid-cols-[auto_1fr] gap-x-6 gap-y-3' : 'space-y-4'
+  } text-sm text-slate-700 dark:text-slate-200 ${className}`}
+>
+  {
+    items.map((item, index) => (
+      <div
+        class={`${isHorizontal ? 'contents' : ''} ${
+          isStriped && index % 2 === 0
+            ? 'rounded-xl border border-slate-200 bg-slate-100/80 px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-900/60'
+            : ''
+        }`}
+      >
+        <dt
+          class={`text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${
+            !isHorizontal ? 'mb-1 block' : ''
+          }`}
+        >
+          {item.term}
+        </dt>
+        <dd class="text-slate-700 dark:text-slate-200">
+          {Array.isArray(item.description) ? (
+            <ul class="list-disc pl-5 space-y-1">
+              {item.description.map((desc) => (
+                <li>{desc}</li>
+              ))}
+            </ul>
+          ) : (
+            item.description
+          )}
+        </dd>
+        {divider && !isHorizontal && index < items.length - 1 && (
+          <hr class="my-4 border-slate-200 dark:border-slate-700" />
+        )}
+      </div>
+    ))
+  }
+</dl>

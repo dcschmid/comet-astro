@@ -1,0 +1,22 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import MapEmbed from '../../components/MapEmbed.astro';
+---
+
+<DocsLayout
+  title="MapEmbed"
+  description="Google Maps iframe helper that accepts address, coordinates, or place IDs."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <div
+      class="rounded-xl border border-gray-800 bg-gray-900 p-4 text-sm text-gray-400"
+    >
+      <p>
+        Set <code>YOUR_API_KEY</code> inside <code>MapEmbed.astro</code> to enable
+        live map tiles.
+      </p>
+    </div>
+    <MapEmbed address="Eiffel Tower, Paris" zoom={14} className="mt-3" />
+  </section>
+</DocsLayout>

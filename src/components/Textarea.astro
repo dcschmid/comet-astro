@@ -1,0 +1,90 @@
+---
+interface Props {
+  name: string;
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  rows?: number;
+  required?: boolean;
+  disabled?: boolean;
+  error?: string;
+  helperText?: string;
+  maxLength?: number;
+  className?: string;
+  id?: string;
+}
+
+const {
+  name,
+  label,
+  placeholder,
+  value = '',
+  rows = 4,
+  required = false,
+  disabled = false,
+  error,
+  helperText,
+  maxLength,
+  className = '',
+  id = name,
+} = Astro.props as Props;
+
+const textareaId = id || `${name}-${Math.random().toString(36).slice(2, 9)}`;
+const helperId = error || helperText ? `${textareaId}-help` : undefined;
+---
+
+<div class={`space-y-1.5 ${className}`.trim()}>
+  {
+    label && (
+      <label
+        for={textareaId}
+        class="block text-sm font-medium text-slate-800 dark:text-slate-200"
+      >
+        {label}
+        {required && (
+          <span
+            class="ml-1 text-rose-600 dark:text-rose-400"
+            aria-hidden="true"
+          >
+            *
+          </span>
+        )}
+      </label>
+    )
+  }
+  <textarea
+    id={textareaId}
+    name={name}
+    placeholder={placeholder}
+    rows={rows}
+    required={required}
+    disabled={disabled}
+    maxlength={maxLength}
+    aria-invalid={error ? 'true' : 'false'}
+    aria-describedby={helperId}
+    class={`w-full resize-y rounded-lg border bg-white px-4 py-2 text-base text-slate-900 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-offset-slate-900 ${
+      error
+        ? 'border-rose-500 focus-visible:ring-rose-500 dark:border-rose-500'
+        : 'border-slate-300'
+    } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}>{value}</textarea
+  >
+  <div class="flex items-center justify-between">
+    {
+      (error || helperText) && (
+        <p
+          id={helperId}
+          class={`text-xs ${error ? 'text-rose-600 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}
+        >
+          {error || helperText}
+        </p>
+      )
+    }
+    {
+      maxLength && (
+        <p class="ml-auto text-xs font-medium text-slate-600 dark:text-slate-400">
+          {value.length}/{maxLength}
+        </p>
+      )
+    }
+  </div>
+</div>

@@ -1,0 +1,294 @@
+---
+interface MenuItem {
+  label: string;
+  href: string;
+  description?: string;
+  icon?: string;
+}
+
+interface Column {
+  title: string;
+  items: MenuItem[];
+}
+
+interface Props {
+  trigger: string;
+  columns: Column[];
+  className?: string;
+}
+
+const { trigger, columns, className = '' } = Astro.props;
+
+const panelId = `mega-menu-panel-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<div
+  class={`relative inline-block text-slate-900 dark:text-slate-100 ${className}`.trim()}
+  data-mega-menu
+>
+  <button
+    type="button"
+    class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+    data-mega-trigger
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls={panelId}
+  >
+    {trigger}
+    <span class="text-xs" aria-hidden="true">▼</span>
+  </button>
+
+  <div
+    id={panelId}
+    class="absolute left-0 z-50 mt-2 w-screen max-w-4xl rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-2xl ring-1 ring-black/5 opacity-0 invisible pointer-events-none transition duration-150 ease-out dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+    data-mega-panel
+    role="menu"
+    aria-hidden="true"
+    hidden
+  >
+    <div
+      class={`grid gap-6 p-6 ${columns.length === 2 ? 'grid-cols-2' : columns.length === 3 ? 'grid-cols-3' : 'grid-cols-4'} max-[640px]:grid-cols-1`}
+    >
+      {
+        columns.map((column) => (
+          <div>
+            <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+              {column.title}
+            </h3>
+            <ul class="space-y-2">
+              {column.items.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="group flex items-start gap-3 rounded-xl border border-transparent p-3 transition hover:border-blue-200 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:border-blue-400/40 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-900"
+                    role="menuitem"
+                    tabIndex={-1}
+                  >
+                    {item.icon && (
+                      <span
+                        class="flex-shrink-0 text-lg text-blue-700 dark:text-blue-300"
+                        aria-hidden="true"
+                      >
+                        {item.icon}
+                      </span>
+                    )}
+                    <div>
+                      <div class="text-sm font-semibold text-slate-900 group-hover:text-blue-800 dark:text-slate-100 dark:group-hover:text-blue-100">
+                        {item.label}
+                      </div>
+                      {item.description && (
+                        <p class="mt-0.5 text-xs text-slate-600 dark:text-slate-300">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const win = window;
+    if (!win.__cometMegaMenus) {
+      win.__cometMegaMenus = new Set();
+    }
+    const registry = win.__cometMegaMenus;
+
+    const getItems = (panel) =>
+      Array.from(panel.querySelectorAll('[role="menuitem"]')).filter(
+        (el) => el instanceof HTMLElement
+      );
+
+    const setTabStops = (panel, activeIndex = 0) => {
+      const items = getItems(panel);
+      items.forEach((item, index) => {
+        item.tabIndex = index === activeIndex ? 0 : -1;
+      });
+    };
+
+    const closeMenu = (menu) => {
+      const trigger = menu.querySelector('[data-mega-trigger]');
+      const panel = menu.querySelector('[data-mega-panel]');
+      if (!(trigger instanceof HTMLElement) || !(panel instanceof HTMLElement))
+        return;
+      panel.classList.add('opacity-0', 'invisible', 'pointer-events-none');
+      panel.setAttribute('aria-hidden', 'true');
+      panel.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+      getItems(panel).forEach((item) => {
+        item.tabIndex = -1;
+      });
+    };
+
+    const closeAll = () => {
+      registry.forEach((menu) => {
+        if (!(menu instanceof HTMLElement) || !document.body.contains(menu)) {
+          registry.delete(menu);
+          return;
+        }
+        closeMenu(menu);
+      });
+    };
+
+    const openMenu = (menu, focusFirst) => {
+      const trigger = menu.querySelector('[data-mega-trigger]');
+      const panel = menu.querySelector('[data-mega-panel]');
+      if (!(trigger instanceof HTMLElement) || !(panel instanceof HTMLElement))
+        return;
+      closeAll();
+      panel.hidden = false;
+      panel.setAttribute('aria-hidden', 'false');
+      panel.classList.remove('invisible');
+      requestAnimationFrame(() => {
+        panel.classList.remove('opacity-0', 'pointer-events-none');
+      });
+      trigger.setAttribute('aria-expanded', 'true');
+      setTabStops(panel, 0);
+      if (focusFirst) {
+        const firstItem = panel.querySelector('[role="menuitem"]');
+        if (firstItem instanceof HTMLElement) {
+          firstItem.focus({ preventScroll: true });
+        }
+      }
+    };
+
+    const pointerCoarse = window.matchMedia('(pointer: coarse)');
+
+    const initMenu = (menu) => {
+      if (registry.has(menu)) return;
+      registry.add(menu);
+      const trigger = menu.querySelector('[data-mega-trigger]');
+      const panel = menu.querySelector('[data-mega-panel]');
+      if (!(trigger instanceof HTMLElement) || !(panel instanceof HTMLElement))
+        return;
+
+      trigger.addEventListener(
+        'click',
+        (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+          if (isOpen) {
+            closeMenu(menu);
+          } else {
+            openMenu(menu, false);
+          }
+        },
+        { passive: false }
+      );
+
+      trigger.addEventListener('keydown', (event) => {
+        if (
+          event.key === 'ArrowDown' ||
+          event.key === 'Enter' ||
+          event.key === ' '
+        ) {
+          event.preventDefault();
+          openMenu(menu, true);
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          openMenu(menu, true);
+          const items = getItems(panel);
+          if (items.length) {
+            const last = items[items.length - 1];
+            last.tabIndex = 0;
+            last.focus({ preventScroll: true });
+          }
+        }
+      });
+
+      if (!pointerCoarse.matches) {
+        trigger.addEventListener('mouseenter', () => openMenu(menu, false));
+        panel.addEventListener('mouseenter', () => openMenu(menu, false));
+        menu.addEventListener('mouseleave', () => {
+          if (pointerCoarse.matches) return;
+          closeMenu(menu);
+        });
+      }
+
+      panel.addEventListener('keydown', (event) => {
+        const items = getItems(panel);
+        if (!items.length) return;
+        const currentIndex = items.findIndex(
+          (el) => el === document.activeElement
+        );
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          const nextIndex = (currentIndex + 1) % items.length;
+          setTabStops(panel, nextIndex);
+          items[nextIndex].focus({ preventScroll: true });
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          const prevIndex = (currentIndex - 1 + items.length) % items.length;
+          setTabStops(panel, prevIndex);
+          items[prevIndex].focus({ preventScroll: true });
+        } else if (event.key === 'Home') {
+          event.preventDefault();
+          setTabStops(panel, 0);
+          items[0].focus({ preventScroll: true });
+        } else if (event.key === 'End') {
+          event.preventDefault();
+          const lastIndex = items.length - 1;
+          setTabStops(panel, lastIndex);
+          items[lastIndex].focus({ preventScroll: true });
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          closeMenu(menu);
+          trigger.focus({ preventScroll: true });
+        } else if (event.key === 'Tab') {
+          closeMenu(menu);
+        }
+      });
+
+      panel.addEventListener('click', (event) => {
+        const item =
+          event.target instanceof HTMLElement
+            ? event.target.closest('[role="menuitem"]')
+            : null;
+        if (!(item instanceof HTMLElement)) return;
+        closeAll();
+      });
+
+      panel.addEventListener('focusout', (event) => {
+        const next = event.relatedTarget;
+        if (next instanceof HTMLElement && menu.contains(next)) return;
+        closeMenu(menu);
+      });
+    };
+
+    const menus = Array.from(
+      document.querySelectorAll('[data-mega-menu]')
+    ).filter((el) => el instanceof HTMLElement);
+    menus.forEach(initMenu);
+
+    if (!win.__cometMegaMenuBound) {
+      win.__cometMegaMenuBound = true;
+      document.addEventListener('click', (event) => {
+        const target = event.target instanceof Node ? event.target : null;
+        if (!target) return;
+        let inside = false;
+        registry.forEach((menu) => {
+          if (!document.body.contains(menu)) {
+            registry.delete(menu);
+            return;
+          }
+          if (menu.contains(target)) inside = true;
+        });
+        if (!inside) closeAll();
+      });
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeAll();
+        }
+      });
+      window.addEventListener('resize', closeAll);
+    }
+  })();
+</script>

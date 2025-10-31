@@ -1,0 +1,60 @@
+---
+/**
+ * LoadingSpinner - accessible SVG spinner
+ */
+interface Props {
+  label?: string;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'neutral';
+  className?: string;
+}
+
+const {
+  label = 'Loading…',
+  size = 'md',
+  variant = 'primary',
+  className = '',
+} = Astro.props as Props;
+
+const sizeMap: Record<NonNullable<Props['size']>, number> = {
+  sm: 20,
+  md: 28,
+  lg: 36,
+};
+const colorRing =
+  variant === 'primary'
+    ? 'text-blue-600 dark:text-blue-400'
+    : 'text-slate-500 dark:text-slate-400';
+const colorPath =
+  variant === 'primary'
+    ? 'text-blue-200 dark:text-blue-200/60'
+    : 'text-slate-300 dark:text-slate-600';
+---
+
+<div
+  role="status"
+  aria-live="polite"
+  class={`inline-flex items-center gap-2 ${className}`.trim()}
+>
+  <svg
+    class={`animate-spin ${colorRing}`}
+    width={sizeMap[size]}
+    height={sizeMap[size]}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle
+      class={`opacity-25 ${colorPath}`}
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      stroke-width="4"></circle>
+    <path
+      class="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+  </svg>
+  <span class="sr-only">{label}</span>
+</div>

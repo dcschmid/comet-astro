@@ -1,0 +1,14 @@
+---
+interface Props {
+  as?: 'span' | 'div' | 'p';
+  className?: string;
+}
+
+const { as: Tag = 'span', className = '' } = Astro.props;
+---
+
+<Tag
+  class={`sr-only absolute -m-px h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 focus:not-sr-only focus:static focus:h-auto focus:w-auto focus:p-0 focus:overflow-visible ${className}`.trim()}
+>
+  <slot />
+</Tag>

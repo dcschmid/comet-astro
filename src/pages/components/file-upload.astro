@@ -1,0 +1,19 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import FileUpload from '../../components/FileUpload.astro';
+---
+
+<DocsLayout
+  title="FileUpload"
+  description="Drag-and-drop uploader with progress display and validation."
+>
+  <section class="space-y-4">
+    <h2 class="text-xl font-bold">Example</h2>
+    <FileUpload
+      headline="Upload assets"
+      description="Drag files here or click to browse. Up to 10 files, 50MB each."
+      accept={['image/*', 'application/pdf']}
+      maxFiles={5}
+    />
+  </section>
+</DocsLayout>

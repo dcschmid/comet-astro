@@ -1,0 +1,81 @@
+---
+/**
+ * OptimizedImage (generic) - responsive <img> wrapper with srcset/sizes
+ */
+interface Props {
+  src: string;
+  alt: string;
+  width?: number | string;
+  height?: number | string;
+  sizes?: string; // e.g. "(min-width: 1024px) 800px, 100vw"
+  srcset?: string; // provide your own srcset if available
+  loading?: 'eager' | 'lazy';
+  decoding?: 'async' | 'sync' | 'auto';
+  fetchPriority?: 'high' | 'low' | 'auto';
+  rounded?: boolean;
+  className?: string;
+  figure?: boolean;
+  caption?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  sizes = '100vw',
+  srcset,
+  loading = 'lazy',
+  decoding = 'async',
+  fetchPriority = 'auto',
+  rounded = false,
+  className = '',
+  figure = false,
+  caption,
+} = Astro.props as Props;
+
+const widthAttr =
+  typeof width === 'number' || typeof width === 'string' ? width : undefined;
+const heightAttr =
+  typeof height === 'number' || typeof height === 'string' ? height : undefined;
+
+const imageClass =
+  `h-auto max-w-full ${rounded ? 'rounded-xl' : ''} ${className}`.trim();
+---
+
+{
+  figure ? (
+    <figure class="inline-flex flex-col items-center text-center">
+      <img
+        src={src}
+        alt={alt}
+        width={widthAttr}
+        height={heightAttr}
+        loading={loading}
+        decoding={decoding}
+        fetchpriority={fetchPriority}
+        sizes={sizes}
+        srcset={srcset}
+        class={imageClass}
+      />
+      {caption && (
+        <figcaption class="mt-2 text-sm text-slate-700 dark:text-slate-200">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  ) : (
+    <img
+      src={src}
+      alt={alt}
+      width={widthAttr}
+      height={heightAttr}
+      loading={loading}
+      decoding={decoding}
+      fetchpriority={fetchPriority}
+      sizes={sizes}
+      srcset={srcset}
+      class={imageClass}
+    />
+  )
+}

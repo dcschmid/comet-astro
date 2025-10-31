@@ -1,0 +1,178 @@
+---
+/**
+ * SearchPanel - full-screen search overlay with input and results slot
+ */
+interface Props {
+  open?: boolean;
+  placeholder?: string;
+}
+
+const { open = false, placeholder = 'Search…' } = Astro.props as Props;
+
+const panelId = `comet-search-panel-${Math.random().toString(36).slice(2, 9)}`;
+const inputId = `${panelId}-input`;
+const resultsId = `${panelId}-results`;
+---
+
+<div
+  id={panelId}
+  class={`fixed inset-0 z-50 ${open ? '' : 'hidden'} flex items-start justify-center px-4 py-8 sm:py-12`.trim()}
+  data-search-panel
+  data-open={open}
+  role="dialog"
+  aria-modal="true"
+  aria-label="Site search"
+>
+  <div
+    class="absolute inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity"
+    data-search-backdrop
+  >
+  </div>
+  <div
+    class="relative z-10 w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 text-slate-900 shadow-2xl dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+  >
+    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <input
+        type="search"
+        id={inputId}
+        placeholder={placeholder}
+        class="min-h-[48px] flex-1 rounded-lg border border-slate-300 bg-white px-4 text-base text-slate-900 placeholder:text-slate-500 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus-visible:ring-offset-slate-900"
+        data-search-input
+        enterkeyhint="search"
+        autocomplete="search"
+      />
+      <button
+        type="button"
+        class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+        data-search-close
+      >
+        Close
+      </button>
+    </div>
+    <div
+      id={resultsId}
+      class="max-h-[60vh] space-y-2 overflow-auto pr-1"
+      role="list"
+    >
+      <slot />
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const root = document.getElementById('${panelId}');
+    if (!(root instanceof HTMLElement)) return;
+    const input = root.querySelector('[data-search-input]');
+    const closeButtons = root.querySelectorAll('[data-search-close]');
+    const backdrop = root.querySelector('[data-search-backdrop]');
+
+    if (!(input instanceof HTMLElement)) return;
+    const win = window;
+    if (typeof win.__cometModalLockCount !== 'number') {
+      win.__cometModalLockCount = 0;
+    }
+    if (typeof win.__cometModalOriginalOverflow !== 'string') {
+      win.__cometModalOriginalOverflow = document.body.style.overflow || '';
+    }
+
+    const focusableSelectors = [
+      'a[href]',
+      'area[href]',
+      'button:not([disabled])',
+      'input:not([disabled]):not([type="hidden"])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+
+    let returnFocus = null;
+
+    const getFocusable = () =>
+      Array.from(root.querySelectorAll(focusableSelectors)).filter(
+        (el) => el instanceof HTMLElement && el.offsetParent !== null
+      );
+
+    const setOpen = (isOpen) => {
+      const wasOpen = root.getAttribute('data-open') === 'true';
+      if (wasOpen === isOpen) {
+        root.classList.toggle('hidden', !isOpen);
+        return;
+      }
+      root.setAttribute('data-open', String(isOpen));
+      root.classList.toggle('hidden', !isOpen);
+
+      if (isOpen) {
+        win.__cometModalLockCount += 1;
+        if (win.__cometModalLockCount === 1) {
+          document.body.style.overflow = 'hidden';
+        }
+        returnFocus =
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        input.focus({ preventScroll: true });
+      } else {
+        win.__cometModalLockCount = Math.max(0, win.__cometModalLockCount - 1);
+        if (win.__cometModalLockCount === 0) {
+          document.body.style.overflow = win.__cometModalOriginalOverflow || '';
+        }
+        if (returnFocus instanceof HTMLElement) {
+          returnFocus.focus({ preventScroll: true });
+        }
+      }
+    };
+
+    const handleKeydown = (event) => {
+      if (root.getAttribute('data-open') !== 'true') return;
+      if (event.key === 'Escape') {
+        event.stopPropagation();
+        setOpen(false);
+        return;
+      }
+      if (event.key === 'Tab') {
+        const focusables = getFocusable();
+        if (!focusables.length) return;
+        const activeElement =
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        const currentIndex = activeElement
+          ? focusables.indexOf(activeElement)
+          : -1;
+        let nextIndex = currentIndex;
+        if (event.shiftKey) {
+          nextIndex =
+            currentIndex <= 0 ? focusables.length - 1 : currentIndex - 1;
+        } else {
+          nextIndex =
+            currentIndex === focusables.length - 1 ? 0 : currentIndex + 1;
+        }
+        event.preventDefault();
+        focusables[nextIndex].focus({ preventScroll: true });
+      }
+    };
+
+    closeButtons.forEach((btn) => {
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+        setOpen(false);
+      });
+    });
+
+    backdrop?.addEventListener('click', () => setOpen(false));
+    root.addEventListener('keydown', handleKeydown);
+
+    if (!win.__cometSearchPanelRegistry) {
+      win.__cometSearchPanelRegistry = new Map();
+    }
+    win.__cometSearchPanelRegistry.set(root.id, {
+      open: () => setOpen(true),
+      close: () => setOpen(false),
+    });
+
+    if (root.getAttribute('data-open') === 'true') {
+      setOpen(true);
+    }
+  })();
+</script>

@@ -1,0 +1,35 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ButtonLink from '../../components/ButtonLink.astro';
+---
+
+<DocsLayout
+  title="ButtonLink"
+  description="Accessible anchor-styled button with primary/secondary variants and external label."
+>
+  <section>
+    <h2 class="text-xl font-bold">Props</h2>
+    <ul class="list-disc pl-6 text-gray-300">
+      <li><code>href: string</code> – destination URL</li>
+      <li><code>label?: string</code> – visible text (or use slot)</li>
+      <li><code>ariaLabel?: string</code> – accessibility label</li>
+      <li>
+        <code>target?: '_blank'|'_self'|'_parent'|'_top'</code> – link target
+      </li>
+      <li>
+        <code>rel?: string</code> – rel attribute (auto adds noopener for _blank)
+      </li>
+      <li><code>variant?: 'primary'|'secondary'</code> – visual style</li>
+      <li><code>className?: string</code> – extra classes</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold">Examples</h2>
+    <div class="flex gap-3">
+      <ButtonLink href="#" label="Primary" />
+      <ButtonLink href="#" label="Secondary" variant="secondary" />
+      <ButtonLink href="https://example.com" label="External" target="_blank" />
+    </div>
+  </section>
+</DocsLayout>

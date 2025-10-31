@@ -1,0 +1,95 @@
+---
+/**
+ * Alert - status message
+ */
+interface Props {
+  title?: string;
+  message?: string;
+  variant?: 'info' | 'success' | 'warning' | 'error';
+  dismissible?: boolean;
+  className?: string;
+}
+
+const {
+  title,
+  message,
+  variant = 'info',
+  dismissible = false,
+  className = '',
+} = Astro.props as Props;
+
+const styles: Record<
+  NonNullable<Props['variant']>,
+  { wrap: string; icon: string }
+> = {
+  info: {
+    wrap: 'border border-blue-300 bg-blue-50 text-blue-900 shadow-sm dark:border-blue-400/60 dark:bg-blue-950 dark:text-blue-50',
+    icon: 'text-blue-700 dark:text-blue-200',
+  },
+  success: {
+    wrap: 'border border-emerald-300 bg-emerald-50 text-emerald-900 shadow-sm dark:border-emerald-400/60 dark:bg-emerald-950 dark:text-emerald-50',
+    icon: 'text-emerald-700 dark:text-emerald-200',
+  },
+  warning: {
+    wrap: 'border border-amber-300 bg-amber-50 text-amber-900 shadow-sm dark:border-amber-400/70 dark:bg-amber-950 dark:text-amber-50',
+    icon: 'text-amber-700 dark:text-amber-200',
+  },
+  error: {
+    wrap: 'border border-rose-300 bg-rose-50 text-rose-900 shadow-sm dark:border-rose-400/70 dark:bg-rose-950 dark:text-rose-50',
+    icon: 'text-rose-700 dark:text-rose-200',
+  },
+};
+---
+
+<div
+  class={`relative rounded-xl px-4 py-4 ${styles[variant].wrap} ${className}`.trim()}
+  role="status"
+  aria-live="polite"
+>
+  <div class="flex gap-3">
+    <div class={`mt-0.5 text-lg ${styles[variant].icon}`} aria-hidden="true">
+      ⚑
+    </div>
+    <div class="min-w-0 space-y-1">
+      {title && <div class="font-semibold text-base">{title}</div>}
+      {
+        message && (
+          <div class="text-sm font-medium text-slate-700 dark:text-slate-200">
+            {message}
+          </div>
+        )
+      }
+      <slot />
+    </div>
+    {
+      dismissible && (
+        <button
+          type="button"
+          class="absolute right-2 top-2 inline-flex items-center justify-center rounded-md border border-transparent px-2 py-1 text-base font-semibold text-current transition hover:border-current hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:ring-current dark:focus-visible:ring-offset-slate-900"
+          data-close
+          aria-label="Dismiss alert"
+        >
+          ×
+        </button>
+      )
+    }
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const script = document.currentScript;
+    if (!(script instanceof HTMLScriptElement)) return;
+    const root = script.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+    const btn = root.querySelector('[data-close]');
+    if (!(btn instanceof HTMLElement)) return;
+    btn.addEventListener(
+      'click',
+      () => {
+        root.setAttribute('hidden', 'true');
+      },
+      { passive: true }
+    );
+  })();
+</script>

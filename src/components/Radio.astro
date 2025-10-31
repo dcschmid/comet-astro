@@ -1,0 +1,62 @@
+---
+interface Props {
+  name: string;
+  value: string;
+  label?: string;
+  checked?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  className?: string;
+  id?: string;
+}
+
+const {
+  name,
+  value,
+  label,
+  checked = false,
+  disabled = false,
+  required = false,
+  className = '',
+  id = `${name}-${value}`,
+} = Astro.props;
+
+const baseClasses =
+  'h-5 w-5 rounded-full border-2 border-slate-400 bg-white text-blue-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white accent-blue-600 dark:border-slate-500 dark:bg-slate-900 dark:text-blue-400 dark:focus-visible:ring-offset-slate-900 dark:accent-blue-400';
+const interactiveClasses = disabled
+  ? 'cursor-not-allowed opacity-60'
+  : 'cursor-pointer';
+---
+
+<div
+  class={`flex items-start gap-2 text-slate-900 dark:text-slate-100 ${className}`.trim()}
+>
+  <input
+    type="radio"
+    id={id}
+    name={name}
+    value={value}
+    checked={checked}
+    disabled={disabled}
+    required={required}
+    class={`${baseClasses} ${interactiveClasses} mt-0.5`}
+  />
+  {
+    label && (
+      <label
+        for={id}
+        class={`text-sm leading-tight ${disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'} text-slate-800 dark:text-slate-200`}
+      >
+        {label}
+        {required && (
+          <span
+            class="ml-1 text-rose-600 dark:text-rose-400"
+            aria-hidden="true"
+          >
+            *
+          </span>
+        )}
+      </label>
+    )
+  }
+</div>
