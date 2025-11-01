@@ -1,45 +1,235 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Alert from '../../components/Alert.astro';
+
+const variantExamples = [
+  {
+    variant: 'info',
+    title: 'Heads up',
+    message:
+      'We refreshed our privacy policy. Review the highlights in 3 minutes.',
+  },
+  {
+    variant: 'success',
+    title: 'All saved',
+    message: 'Your profile updates are live and visible to teammates.',
+  },
+  {
+    variant: 'warning',
+    title: 'Action suggested',
+    message: 'Double-check your billing details before the next cycle.',
+  },
+  {
+    variant: 'error',
+    title: 'Sync failed',
+    message: 'We could not reach the API. Try again in a few minutes.',
+  },
+];
+
+const usageSnippet = `---
+import { Alert } from 'comet-astro';
+
+---
+
+<Alert
+  variant="success"
+  title="Profile updated"
+  message="Changes are live for everyone on your team."
+  dismissible
+  dismissLabel="Hide success message"
+/>`;
+
+const tintedClassName = [
+  'border-slate-700',
+  'bg-slate-950/80',
+  'text-slate-100',
+  '[&_[data-close]]:text-slate-200',
+  '[&_[data-close]]:hover:bg-slate-700/40',
+  '[&_[data-close]]:focus-visible:ring-slate-200',
+].join(' ');
 ---
 
 <DocsLayout
   title="Alert"
-  description="Status messaging component with variants and optional dismiss button."
+  description="Accessible status messaging with semantic variants, optional dismissal, and brandable styling hooks."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Context</h2>
-    <p class="text-gray-400 text-sm">
-      Use alerts to provide contextual feedback. Pick a variant that matches the
-      message type and toggle <code>dismissible</code> when users should be able
-      to hide the message.
+    <p class="text-base text-slate-100">
+      Alerts sit inline with the surrounding layout to acknowledge actions,
+      surface warnings, or call out critical failures. Each variant ships with
+      AAA-friendly contrast in light and dark themes, announces itself with the
+      correct live region, and respects reduced-motion preferences.
+    </p>
+    <p class="text-base text-slate-200">
+      Reach for alerts when in-context feedback keeps people moving. For broader
+      announcements that appear across many screens, pair alerts with a banner
+      or toast pattern instead.
     </p>
   </section>
 
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="grid gap-4 md:grid-cols-2">
-      <Alert
-        variant="info"
-        title="Heads up"
-        message="We have updated our privacy policy."
-      />
-      <Alert
-        variant="success"
-        title="Success"
-        message="Your profile is now complete."
-      />
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional heading rendered above the message copy. Keep it short so
+          screen readers announce the important words first.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          message?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Primary text content. Supports plain strings; use the default slot for
+          additional rich content such as links.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          One of <code>info</code>, <code>success</code>, <code>warning</code>,
+          or <code>error</code>. Variants control the icon, accent color, and
+          announced urgency.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          dismissible?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Adds a close button that hides the alert client-side. Useful for
+          persistent notifications or inline reminders that users can opt out
+          of.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          dismissLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label for the dismiss button. Defaults to <code
+            >"Dismiss alert"</code
+          >; customise it to localise the action or describe the message
+          context.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Extra classes merged onto the wrapper. Use arbitrary selectors to
+          retheme the close button or tweak spacing without reimplementing the
+          alert logic.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component from the package entry-point, pass the variant that
+      matches the tone of the message, and set <code>dismissible</code> when the
+      alert is optional. Provide a custom
+      <code>dismissLabel</code> when you need to localise the control.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Contextual messaging
+        </h3>
+        <p class="text-base text-slate-200">
+          Pick the variant that matches the message urgency. Warnings and errors
+          announce using an assertive live region so assistive tech can
+          interrupt other output.
+        </p>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2">
+        {
+          variantExamples.map((props) => (
+            <Alert {...props} key={props.variant} />
+          ))
+        }
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Dismissible reminder
+        </h3>
+        <p class="text-base text-slate-200">
+          Toggle <code>dismissible</code> for alerts that can safely disappear without
+          a page reload. The component toggles <code>hidden</code> and <code
+            >aria-hidden</code
+          > so repeat announcements stop once dismissed.
+        </p>
+      </div>
       <Alert
         variant="warning"
-        title="Action suggested"
-        message="Double-check your billing details."
-      />
-      <Alert
-        variant="error"
-        title="Error"
-        message="Something went wrong while saving."
+        title="Trial ending soon"
+        message="Upgrade your workspace to keep scheduled automations running."
         dismissible
+        dismissLabel="Hide trial reminder"
       />
-    </div>
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Custom surface styling
+        </h3>
+        <p class="text-base text-slate-200">
+          Use <code>className</code> with arbitrary variants to match your brand
+          palette or a darker surface while keeping the accessibility wiring intact.
+        </p>
+      </div>
+      <Alert
+        variant="info"
+        title="Maintenance window"
+        message="Dashboards will be read-only on Saturday 22:00–23:00 CET."
+        className={tintedClassName}
+      />
+    </article>
   </section>
 </DocsLayout>

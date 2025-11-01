@@ -1,6 +1,6 @@
 ---
 interface Props {
-  ratio?: '1/1' | '4/3' | '16/9' | '21/9' | '3/2' | '2/3' | number;
+  ratio?: '1/1' | '4/3' | '16/9' | '21/9' | '3/2' | '2/3' | number | string;
   className?: string;
 }
 
@@ -15,13 +15,42 @@ const ratioClasses: Record<string, string> = {
   '2/3': 'aspect-[2/3]',
 };
 
-const ratioClass =
-  typeof ratio === 'string'
-    ? ratioClasses[ratio] || 'aspect-video'
-    : `aspect-[${ratio}]`;
+const parseRatioValue = (value: Props['ratio']): number | null => {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    if (ratioClasses[trimmed]) return null;
+    if (trimmed.includes('/')) {
+      const [numerator, denominator] = trimmed.split('/').map(Number);
+      if (Number.isFinite(numerator) && Number.isFinite(denominator) && denominator !== 0) {
+        return numerator / denominator;
+      }
+      return null;
+    }
+    const numeric = Number(trimmed);
+    return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+  }
+  return null;
+};
+
+const trimmedRatio = typeof ratio === 'string' ? ratio.trim() : ratio;
+const tailwindClass =
+  typeof trimmedRatio === 'string' && ratioClasses[trimmedRatio]
+    ? ratioClasses[trimmedRatio]
+    : undefined;
+const numericRatio = tailwindClass ? null : parseRatioValue(trimmedRatio);
+const fallbackClass = ratioClasses['16/9'];
+const containerClass = ['relative', tailwindClass ?? (numericRatio ? '' : fallbackClass), className]
+  .filter(Boolean)
+  .join(' ');
+const aspectStyle =
+  tailwindClass || numericRatio === null ? undefined : `aspect-ratio: ${numericRatio};`;
 ---
 
-<div class={`relative ${ratioClass} ${className}`}>
+<div class={containerClass} style={aspectStyle}>
   <div class="absolute inset-0">
     <slot />
   </div>

@@ -1,27 +1,89 @@
 ---
 interface Props {
-  url: string; // Full Apple Music URL
-  height?: number;
+  url: string; // Full Apple Music or Podcasts URL
+  title?: string;
+  allowFullscreen?: boolean;
   className?: string;
 }
 
-const { url, height = 450, className = '' } = Astro.props;
+const {
+  url,
+  title = 'Apple media player',
+  allowFullscreen = true,
+  className = '',
+} = Astro.props as Props;
 
-// Convert Apple Music URL to embed URL
-const embedUrl = url.replace('music.apple.com', 'embed.music.apple.com');
+const embedUrl = (() => {
+  try {
+    const target = new URL(url);
+    if (target.hostname.startsWith('embed.')) return target.toString();
+    if (target.hostname.endsWith('music.apple.com')) {
+      target.hostname = 'embed.music.apple.com';
+      return target.toString();
+    }
+    if (target.hostname.endsWith('podcasts.apple.com')) {
+      target.hostname = 'embed.podcasts.apple.com';
+      return target.toString();
+    }
+    return target.toString();
+  } catch {
+    return url;
+  }
+})();
+
+const wrapperClass = className.trim();
+const defaults = (() => {
+  try {
+    const target = new URL(embedUrl);
+    const isPodcasts = target.hostname.includes('podcasts.apple.com');
+    const hasTrackParam = target.searchParams.has('i');
+    const isTrackPath =
+      target.pathname.includes('/song/') ||
+      target.pathname.includes('/track/') ||
+      target.pathname.includes('/episode/');
+    if (isPodcasts) {
+      return { width: '100%', height: '450' };
+    }
+    if (hasTrackParam || isTrackPath) {
+      return { width: '100%', height: '175' };
+    }
+    return { width: '100%', height: '450' };
+  } catch {
+    return { width: '100%', height: '450' };
+  }
+})();
+const finalWidth = defaults.width;
+const finalHeight = defaults.height;
 ---
 
-<div
-  class={`rounded-xl border border-slate-200 bg-white shadow-sm transition dark:border-slate-700 dark:bg-slate-900 ${className}`}
-  style={`height: ${height}px`}
->
-  <iframe
-    src={embedUrl}
-    width="100%"
-    height={height}
-    title="Apple Music player"
-    allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
-    sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
-    loading="lazy"
-    class="h-full w-full border-0"></iframe>
-</div>
+{
+  wrapperClass ? (
+    <div class={wrapperClass}>
+      <iframe
+        src={embedUrl}
+        width={finalWidth}
+        height={finalHeight}
+        title={title}
+        allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
+        sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+        loading="lazy"
+        allowfullscreen={allowFullscreen ? 'true' : undefined}
+        referrerpolicy="strict-origin-when-cross-origin"
+        class="border-0"
+      />
+    </div>
+  ) : (
+    <iframe
+      src={embedUrl}
+      width={finalWidth}
+      height={finalHeight}
+      title={title}
+      allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
+      sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+      loading="lazy"
+      allowfullscreen={allowFullscreen ? 'true' : undefined}
+      referrerpolicy="strict-origin-when-cross-origin"
+      class="border-0"
+    />
+  )
+}

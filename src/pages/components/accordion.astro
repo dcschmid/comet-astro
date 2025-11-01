@@ -1,29 +1,218 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Accordion from '../../components/Accordion.astro';
-const accItems = [
-  { id: 'a', title: 'A', content: '<p>A content</p>' },
-  { id: 'b', title: 'B', content: '<p>B content</p>' },
+
+const overviewItems = [
+  {
+    id: 'accessibility',
+    title: 'Accessible by default',
+    content:
+      '<p>Panels are announced with <strong>aria-expanded</strong> and <strong>aria-hidden</strong> so screen readers stay in sync.</p>',
+  },
+  {
+    id: 'keyboard',
+    title: 'Keyboard support',
+    content:
+      '<p>Each trigger is focusable and supports <strong>Space</strong> or <strong>Enter</strong> to toggle the content region.</p>',
+  },
 ];
-const accOpen = ['a'];
+
+const multiItems = [
+  {
+    id: 'shipping',
+    title: 'Shipping times',
+    content:
+      '<p>Most orders ship within 2 business days with tracked delivery.</p>',
+  },
+  {
+    id: 'returns',
+    title: 'Return policy',
+    content:
+      '<p>Returns are free within 30 days. Refunds are processed in 3–5 days.</p>',
+  },
+  {
+    id: 'support',
+    title: 'Support hours',
+    content:
+      '<p>Our team is available Monday through Friday from 8:00–18:00 (CET).</p>',
+  },
+];
+
+const brandItems = [
+  {
+    id: 'vision',
+    title: 'Our vision',
+    content:
+      '<p>Empower teams to build inclusive interfaces without starting from scratch.</p>',
+  },
+  {
+    id: 'values',
+    title: 'Brand values',
+    content:
+      '<p>Accessibility, reliability, and delightful defaults. Every detail is designed for AAA contrast.</p>',
+  },
+];
+
+const brandClassName = [
+  'space-y-4',
+  '[&_section]:border-amber-500',
+  '[&_section]:bg-slate-950',
+  '[&_section]:shadow-lg',
+  '[&_[data-acc-trigger]]:bg-transparent',
+  '[&_[data-acc-trigger]]:text-amber-100',
+  '[&_[data-acc-trigger]]:hover:bg-slate-900',
+  '[&_[data-acc-trigger]]:focus-visible:ring-amber-300',
+  '[&_[data-acc-icon]]:text-amber-200',
+].join(' ');
+
+const usageSnippet = `---
+import { Accordion } from 'comet-astro';
+
+const items = [
+  { id: 'faq-1', title: 'Shipping', content: '<p>We ship worldwide from Germany.</p>' },
+  { id: 'faq-2', title: 'Returns', content: '<p>Unopened items can be returned within 30 days.</p>' },
+];
+
+---
+
+<Accordion items={items} multiple />`;
 ---
 
 <DocsLayout
   title="Accordion"
   description="Disclosure/accordion with single or multiple open sections."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>items: &#123;id,title,content?&#125;[]</code></li>
-      <li><code>multiple?: boolean</code> – allow multiple panels open</li>
-      <li><code>openIds?: string[]</code> – initially open ids</li>
-      <li><code>className?: string</code></li>
-    </ul>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      The accordion lets people expand inline sections without losing their
+      place on the page. Each trigger meets the WCAG target size guidelines,
+      announces its expanded state, and keeps reduced-motion preferences in
+      mind.
+    </p>
+    <p class="text-base text-slate-200">
+      Use it for FAQs, onboarding checklists, or any grouped content where only
+      a few answers need to be visible at once.
+    </p>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Example</h2>
-    <Accordion items={accItems} openIds={accOpen} />
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          items
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of sections to render. Each item needs a stable <code>id</code>,
+          a short
+          <code>title</code>, and optional HTML string in <code>content</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          multiple?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Allow more than one panel to stay open. Default is <code>false</code> (only
+          one at a time).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          openIds?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of item IDs that should be open on first render. Helpful when
+          restoring scroll position or server-rendering expanded content.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Merge additional Tailwind utilities onto the wrapper. Use this to
+          adjust spacing or theme nested elements with arbitrary selector
+          variants.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component from the package entry-point and supply an array of
+      items. Content accepts HTML strings, so you can pass rich text generated
+      from a CMS.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Single-open accordion (default)
+        </h3>
+        <p class="text-base text-slate-200">
+          Only one panel stays open at a time. Great for compact FAQ lists where
+          people expect one answer per click.
+        </p>
+      </div>
+      <Accordion items={overviewItems} openIds={['accessibility']} />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Allow multiple panels
+        </h3>
+        <p class="text-base text-slate-200">
+          Set <code>multiple</code> when readers may want to compare answers or keep
+          a checklist of steps open simultaneously.
+        </p>
+      </div>
+      <Accordion
+        items={multiItems}
+        multiple
+        openIds={['shipping', 'returns']}
+      />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Custom brand styling
+        </h3>
+        <p class="text-base text-slate-200">
+          Use <code>className</code> together with Tailwind&apos;s arbitrary selector
+          syntax to restyle internal sections while keeping the accessibility and
+          focus management behavior.
+        </p>
+      </div>
+      <Accordion items={brandItems} className={brandClassName} />
+    </article>
   </section>
 </DocsLayout>

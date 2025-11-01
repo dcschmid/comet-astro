@@ -34,14 +34,18 @@ const {
 const id = `autocomplete-${Math.random().toString(36).slice(2, 10)}`;
 const encodedOptions = encodeURIComponent(JSON.stringify(options));
 const maxVisibleAttr = String(maxVisibleOptions);
+const statusId = `${id}-status`;
+const describedBy = statusId;
+const encodedEmpty = encodeURIComponent(emptyStateText);
 ---
 
 <div
   id={id}
-  class={`relative text-slate-900 dark:text-slate-100 ${className}`.trim()}
+  class={`relative space-y-3 text-slate-900 dark:text-slate-100 ${className}`.trim()}
   data-autocomplete-root
   data-autocomplete-options={encodedOptions}
   data-autocomplete-max-visible={maxVisibleAttr}
+  data-autocomplete-empty-text={encodedEmpty}
 >
   {
     label && (
@@ -58,39 +62,55 @@ const maxVisibleAttr = String(maxVisibleOptions);
       id={`${id}-input`}
       name={inputName}
       type="text"
-      class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-400"
+      class="peer w-full rounded-xl border border-slate-300/90 bg-white px-4 py-3 text-sm font-medium text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-400 dark:focus-visible:ring-offset-slate-950"
       placeholder={placeholder}
       aria-label={ariaLabel}
+      aria-describedby={describedBy || undefined}
       data-autocomplete-input
       autocomplete="off"
       role="combobox"
       aria-autocomplete="list"
       aria-expanded="false"
       aria-controls={`${id}-panel`}
+      aria-haspopup="listbox"
+      spellcheck="false"
+      enterkeyhint="search"
     />
     <button
       type="button"
-      class="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full border border-transparent p-1 text-slate-500 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-300 dark:hover:bg-slate-800"
+      class="absolute right-2.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-transparent text-slate-500 transition hover:border-blue-500 hover:bg-blue-500/10 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:text-slate-300 dark:hover:bg-blue-500/20 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-950"
       data-autocomplete-clear
       aria-label="Clear input"
+      hidden
     >
       ×
     </button>
   </div>
   <div
-    class="absolute z-40 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-900 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+    id={statusId}
+    class="sr-only"
+    aria-live="polite"
+    data-autocomplete-status
+  >
+    {options.length
+      ? `${options.length} options available.`
+      : 'No options available.'}
+  </div>
+  <div
+    class="absolute left-0 top-full z-40 mt-2 w-full translate-y-2 overflow-hidden rounded-xl border border-slate-200/75 bg-white/95 text-slate-900 shadow-xl backdrop-blur supports-backdrop-filter:bg-white/80 dark:border-slate-700/70 dark:bg-slate-950/95 dark:text-slate-100"
     data-autocomplete-panel
     hidden
     id={`${id}-panel`}
     role="listbox"
+    aria-hidden="true"
   >
     <ul
-      class="max-h-72 overflow-y-auto scroll-py-2 divide-y divide-slate-200 dark:divide-slate-700"
+      class="max-h-72 overflow-y-auto scroll-py-2 divide-y divide-slate-200/80 dark:divide-slate-700/60"
       data-autocomplete-list
     >
     </ul>
     <div
-      class="p-3 text-xs font-medium text-slate-600 dark:text-slate-300"
+      class="p-4 text-sm font-medium text-slate-500 dark:text-slate-300"
       data-autocomplete-empty
       hidden
     >
@@ -100,10 +120,21 @@ const maxVisibleAttr = String(maxVisibleOptions);
   <input type="hidden" data-autocomplete-value />
 </div>
 
-<script is:inline>
+<script is:inline data-autocomplete-root={id}>
   (function setupAutocomplete() {
-    const root = document.getElementById('${id}');
+    const script = document.currentScript;
+    const rootId = script?.getAttribute('data-autocomplete-root');
+    const previous =
+      script instanceof HTMLElement ? script.previousElementSibling : null;
+    const fallbackRoot =
+      previous instanceof HTMLElement
+        ? previous.closest('[data-autocomplete-root]')
+        : null;
+    const root = rootId ? document.getElementById(rootId) : fallbackRoot;
     if (!(root instanceof HTMLElement)) return;
+    const emptyStateMessage = root.dataset.autocompleteEmptyText
+      ? decodeURIComponent(root.dataset.autocompleteEmptyText)
+      : 'No results found.';
 
     const input = root.querySelector('[data-autocomplete-input]');
     const panel = root.querySelector('[data-autocomplete-panel]');
@@ -111,6 +142,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
     const empty = root.querySelector('[data-autocomplete-empty]');
     const hidden = root.querySelector('[data-autocomplete-value]');
     const clearButton = root.querySelector('[data-autocomplete-clear]');
+    const status = root.querySelector('[data-autocomplete-status]');
 
     if (
       !(input instanceof HTMLInputElement) ||
@@ -135,6 +167,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
         ? parsedMaxVisible
         : 8;
     const optionIdPrefix = root.id || 'autocomplete';
+    let currentQuery = '';
 
     const escapeHTML = (value) =>
       value.replace(/[&<>"']/g, (char) => {
@@ -154,6 +187,40 @@ const maxVisibleAttr = String(maxVisibleOptions);
         }
       });
 
+    const escapeRegex = (value) =>
+      value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const highlight = (text) => {
+      if (!currentQuery) return escapeHTML(text);
+      const pattern = new RegExp(escapeRegex(currentQuery), 'i');
+      if (!pattern.test(text)) {
+        return escapeHTML(text);
+      }
+      const globalPattern = new RegExp(escapeRegex(currentQuery), 'gi');
+      return text
+        .replace(globalPattern, (match) => `\0${match}\0`)
+        .split('\0')
+        .map((segment, index) => {
+          if (segment === '') return '';
+          if (index % 2 === 1) {
+            return `<span class="rounded bg-blue-500/20 px-1 text-blue-700 dark:bg-blue-400/20 dark:text-blue-100">${escapeHTML(segment)}</span>`;
+          }
+          return escapeHTML(segment);
+        })
+        .join('');
+    };
+
+    const updateClearButton = () => {
+      if (!(clearButton instanceof HTMLElement)) return;
+      clearButton.hidden = input.value.length === 0;
+    };
+
+    const announce = (message) => {
+      if (status instanceof HTMLElement) {
+        status.textContent = message;
+      }
+    };
+
     let filtered = optionsData.slice();
     let activeIndex = -1;
 
@@ -163,8 +230,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
       );
       items.forEach((item, itemIndex) => {
         const isActive = itemIndex === index;
-        item.classList.toggle('bg-blue-100', isActive);
-        item.classList.toggle('dark:bg-blue-500/20', isActive);
+        item.dataset.active = isActive ? 'true' : 'false';
         item.setAttribute('aria-selected', String(isActive));
         item.setAttribute('tabindex', isActive ? '0' : '-1');
         if (isActive) {
@@ -196,6 +262,8 @@ const maxVisibleAttr = String(maxVisibleOptions);
       if (!option) return;
       input.value = option.label;
       hidden.value = option.value;
+      updateClearButton();
+      announce(`${option.label} selected.`);
       root.dispatchEvent(
         new CustomEvent('autocomplete:select', {
           bubbles: true,
@@ -208,6 +276,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
     const render = () => {
       if (filtered.length === 0) {
         list.innerHTML = '';
+        announce(emptyStateMessage);
         if (empty) {
           empty.hidden = false;
           openPanel();
@@ -220,19 +289,32 @@ const maxVisibleAttr = String(maxVisibleOptions);
       if (empty) {
         empty.hidden = true;
       }
+      announce(
+        filtered.length === 1
+          ? '1 option available.'
+          : `${filtered.length} options available.`
+      );
       list.innerHTML = filtered
         .slice(0, maxVisible)
         .map(
           (option, index) => `
             <li
               id="${optionIdPrefix}-option-${index}"
-              class="cursor-pointer px-4 py-3 text-sm text-slate-800 transition hover:bg-blue-100 dark:text-slate-100 dark:hover:bg-blue-500/20"
+              class="group cursor-pointer px-4 py-3 text-sm leading-5 text-slate-800 transition-colors hover:bg-blue-600/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:text-slate-100 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-950 data-[active='true']:bg-blue-600/15 dark:data-[active='true']:bg-blue-500/30"
               data-autocomplete-option="${escapeHTML(option.value)}"
               role="option"
               tabindex="-1"
             >
-              <div class="font-medium truncate">${escapeHTML(option.label)}</div>
-              ${option.description ? `<div class="mt-1 text-xs text-slate-600 dark:text-slate-300 truncate">${escapeHTML(option.description)}</div>` : ''}
+              <div class="min-w-0 space-y-1">
+                <div class="truncate font-semibold text-slate-900 dark:text-slate-50">
+                  ${highlight(option.label)}
+                </div>
+                ${
+                  option.description
+                    ? `<div class="truncate text-xs text-slate-600 dark:text-slate-300">${highlight(option.description)}</div>`
+                    : ''
+                }
+              </div>
             </li>
           `
         )
@@ -242,6 +324,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
 
     const filterOptions = (value) => {
       const query = value.trim().toLowerCase();
+      currentQuery = query;
       if (!query) {
         filtered = optionsData.slice();
         render();
@@ -250,6 +333,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
         root.dispatchEvent(
           new CustomEvent('autocomplete:clear', { bubbles: true })
         );
+        resetToDefaultAnnouncement();
         return;
       }
 
@@ -270,10 +354,19 @@ const maxVisibleAttr = String(maxVisibleOptions);
       focusOption(-1);
     };
 
+    const resetToDefaultAnnouncement = () => {
+      announce(
+        optionsData.length
+          ? `${optionsData.length} options available.`
+          : 'No options available.'
+      );
+    };
+
     input.addEventListener('input', (event) => {
       const target =
         event.target instanceof HTMLInputElement ? event.target : input;
       filterOptions(target.value);
+      updateClearButton();
     });
 
     input.addEventListener('focus', () => {
@@ -347,6 +440,9 @@ const maxVisibleAttr = String(maxVisibleOptions);
           new CustomEvent('autocomplete:clear', { bubbles: true })
         );
         input.removeAttribute('aria-activedescendant');
+        currentQuery = '';
+        updateClearButton();
+        resetToDefaultAnnouncement();
       });
     }
 
@@ -358,5 +454,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
     filtered = optionsData.slice();
     render();
     panel.setAttribute('aria-hidden', panel.hidden ? 'true' : 'false');
+    updateClearButton();
+    resetToDefaultAnnouncement();
   })();
 </script>

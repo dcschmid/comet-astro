@@ -24,16 +24,17 @@ const {
 ---
 
 <div
-  class={`space-y-3 ${className}`}
+  class={`space-y-4 sm:space-y-5 ${className}`}
   data-multiple={multiple}
   data-open={openIds.join(',')}
 >
   {
     items.map((it) => (
-      <section class="rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+      <section class="rounded-xl border border-slate-300 bg-slate-50 text-slate-900 shadow-sm transition-colors focus-within:border-slate-400 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus-within:border-slate-500">
         <h3>
           <button
-            class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-slate-900 transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-50 dark:hover:bg-slate-800"
+            id={`acc-trigger-${it.id}`}
+            class="flex w-full min-h-12 items-center justify-between gap-3 rounded-lg px-4 py-3 text-left text-base font-medium text-slate-900 transition-colors motion-reduce:transition-none hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:text-slate-50 dark:hover:bg-slate-800 dark:focus-visible:ring-slate-100 dark:focus-visible:ring-offset-slate-950 sm:px-6 sm:py-4 sm:text-lg"
             data-acc-trigger
             data-id={it.id}
             aria-expanded={openIds.includes(it.id)}
@@ -42,7 +43,7 @@ const {
             <span>{it.title}</span>
             <span
               aria-hidden="true"
-              class={`text-xl transition-transform ${openIds.includes(it.id) ? 'rotate-180' : ''}`}
+              class={`text-xl text-slate-600 transition-transform motion-reduce:rotate-0 motion-reduce:transition-none dark:text-slate-300 ${openIds.includes(it.id) ? 'rotate-180' : ''}`}
               data-acc-icon
             >
               ▾
@@ -53,9 +54,13 @@ const {
           id={`acc-panel-${it.id}`}
           data-acc-panel
           data-id={it.id}
+          role="region"
+          aria-labelledby={`acc-trigger-${it.id}`}
+          aria-hidden={openIds.includes(it.id) ? 'false' : 'true'}
+          hidden={!openIds.includes(it.id)}
           class={openIds.includes(it.id) ? '' : 'hidden'}
         >
-          <div class="px-4 pb-4 text-sm text-slate-600 dark:text-slate-300">
+          <div class="px-4 pt-4 pb-5 text-base text-slate-700 dark:text-slate-200 sm:px-6 sm:pt-5 sm:pb-6">
             {it.content ? <div set:html={it.content} /> : null}
           </div>
         </div>
@@ -86,6 +91,8 @@ const {
         const id = panel.getAttribute('data-id');
         const isOpen = id ? openSet.has(id) : false;
         panel.classList.toggle('hidden', !isOpen);
+        panel.toggleAttribute('hidden', !isOpen);
+        panel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
       });
 
       const triggers = root.querySelectorAll('[data-acc-trigger]');
@@ -94,10 +101,20 @@ const {
         const id = trigger.getAttribute('data-id');
         const isOpen = id ? openSet.has(id) : false;
         trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        const panelId = id ? `acc-panel-${id}` : '';
+        if (panelId) {
+          if (isOpen) {
+            trigger.setAttribute('aria-describedby', panelId);
+          } else {
+            trigger.removeAttribute('aria-describedby');
+          }
+        }
         const icon = trigger.querySelector('[data-acc-icon]');
         if (icon instanceof HTMLElement) {
           icon.classList.toggle('rotate-180', isOpen);
         }
+        trigger.classList.toggle('bg-slate-100', isOpen);
+        trigger.classList.toggle('dark:bg-slate-800', isOpen);
       });
     };
 

@@ -2,45 +2,221 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Autocomplete from '../../components/Autocomplete.astro';
 
-const options = [
+const frameworkOptions = [
   {
     value: 'astro',
     label: 'Astro',
-    description: 'The web framework for content-driven sites',
-    keywords: ['framework', 'islands'],
+    description: 'Content-focused web framework with islands architecture.',
+    keywords: ['static', 'content', 'islands'],
   },
   {
-    value: 'react',
-    label: 'React',
-    description: 'Library for building user interfaces',
-    keywords: ['ui', 'spa'],
+    value: 'nextjs',
+    label: 'Next.js',
+    description: 'React framework for hybrid static & server rendering.',
+    keywords: ['react', 'ssr', 'hybrid'],
   },
   {
-    value: 'vue',
-    label: 'Vue',
-    description: 'Progressive framework for building UIs',
-    keywords: ['framework'],
+    value: 'sveltekit',
+    label: 'SvelteKit',
+    description: 'Full-stack framework built on top of Svelte.',
+    keywords: ['svelte', 'ssg'],
   },
   {
-    value: 'svelte',
-    label: 'Svelte',
-    description: 'Cybernetically enhanced web apps',
-    keywords: ['compiler'],
+    value: 'nuxt',
+    label: 'Nuxt',
+    description: 'The intuitive Vue framework for building web apps.',
+    keywords: ['vue', 'ssr'],
+  },
+  {
+    value: 'remix',
+    label: 'Remix',
+    description: 'Focus on progressive enhancement and web fundamentals.',
+    keywords: ['react', 'router'],
   },
 ];
+
+const cityOptions = [
+  { value: 'berlin', label: 'Berlin', description: 'Germany', keywords: ['de', 'capital'] },
+  { value: 'lisbon', label: 'Lisbon', description: 'Portugal', keywords: ['pt', 'sunny'] },
+  { value: 'oslo', label: 'Oslo', description: 'Norway', keywords: ['no', 'northern lights'] },
+  { value: 'vienna', label: 'Vienna', description: 'Austria', keywords: ['at', 'coffee'] },
+  { value: 'stockholm', label: 'Stockholm', description: 'Sweden', keywords: ['se', 'design'] },
+  { value: 'zurich', label: 'Zürich', description: 'Switzerland', keywords: ['ch', 'finance'] },
+];
+
+const commandOptions = [
+  { value: 'new', label: 'Create Project', description: 'Scaffold a new workspace.', keywords: ['create', 'init'] },
+  { value: 'build', label: 'Build Assets', description: 'Generate production bundles.', keywords: ['deploy'] },
+  { value: 'preview', label: 'Preview', description: 'Run the production preview server.', keywords: ['serve'] },
+  { value: 'format', label: 'Format Code', description: 'Apply Prettier to the codebase.', keywords: ['prettier'] },
+  { value: 'test', label: 'Run Tests', description: 'Execute unit and integration tests.', keywords: ['ci'] },
+];
+
+const usageSnippet = `---
+import { Autocomplete } from 'comet-astro';
+
+const languages = [
+  { value: 'ts', label: 'TypeScript', description: 'Typed superset of JavaScript.' },
+  { value: 'rs', label: 'Rust', description: 'Memory-safe systems language.' },
+  { value: 'py', label: 'Python', description: 'Batteries-included scripting language.' },
+];
+
+---
+
+<Autocomplete
+  options={languages}
+  label="Languages"
+  placeholder="Search languages…"
+  maxVisibleOptions={5}
+  inputName="language"
+/>`;
+
+const eventSnippet = `// Listen for selection events
+document.addEventListener('autocomplete:select', (event) => {
+  const option = event.detail;
+  console.log('Selected option', option);
+});`;
 ---
 
 <DocsLayout
   title="Autocomplete"
-  description="Search-as-you-type combobox with keyboard navigation."
+  description="Accessible combobox with filtered results, keyboard navigation, and clear feedback."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Autocomplete
-      options={options}
-      label="Framework"
-      placeholder="Search frameworks…"
-      maxVisibleOptions={6}
-    />
+    <p class="text-base text-slate-100">
+      The autocomplete component enhances a text input with a searchable listbox. It keeps labels and
+      controls accessible, exposes clear focus outlines, and announces result counts via a live region to
+      satisfy WCAG AA/AAA guidance.
+    </p>
+    <p class="text-base text-slate-200">
+      Provide an array of structured options and the component handles filtering, highlighting, keyboard
+      navigation, and selection events. Results scale to mobile widths and stay readable in dark mode.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">options</dt>
+        <dd class="text-sm text-slate-200">
+          Array of option objects with <code>value</code>, <code>label</code>, and optional
+          <code>description</code> or <code>keywords</code>. Keywords are searched but never displayed.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">placeholder?</dt>
+        <dd class="text-sm text-slate-200">
+          Placeholder for the input control. Defaults to <code>"Search…"</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">label?</dt>
+        <dd class="text-sm text-slate-200">
+          Visible label above the input. Provide either <code>label</code> or <code>ariaLabel</code> to
+          maintain accessible naming.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">ariaLabel?</dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label applied directly to the input when no visible label is used.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">emptyStateText?</dt>
+        <dd class="text-sm text-slate-200">
+          Message shown when no options match. Defaults to <code>"No results found."</code>
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">maxVisibleOptions?</dt>
+        <dd class="text-sm text-slate-200">
+          Cap the number of rendered suggestions to prevent extremely long lists. Defaults to
+          <code>8</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">className?</dt>
+        <dd class="text-sm text-slate-200">
+          Extra Tailwind classes merged onto the root wrapper to control layout width or surrounding
+          spacing.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">inputName?</dt>
+        <dd class="text-sm text-slate-200">
+          Forwarded to the native input for form submissions.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Pass the option data, label, and placeholder text. The component emits <code>autocomplete:select</code>
+      and <code>autocomplete:clear</code> events so you can hook into user actions.
+    </p>
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-js">{eventSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">Framework explorer</h3>
+        <p class="text-base text-slate-200">
+          A labelled autocomplete with descriptions and keyword search. Results highlight the matched query
+          to keep context obvious.
+        </p>
+      </div>
+      <Autocomplete
+        options={frameworkOptions}
+        label="Framework"
+        placeholder="Search frameworks…"
+        maxVisibleOptions={6}
+        className="max-w-lg"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">City picker with placeholder label</h3>
+        <p class="text-base text-slate-200">
+          Use <code>ariaLabel</code> instead of a visible label when the layout is dense—accessibility is
+          preserved and the status region still announces results.
+        </p>
+      </div>
+      <Autocomplete
+        options={cityOptions}
+        ariaLabel="Select a city"
+        placeholder="Search cities…"
+        className="max-w-md"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">Command palette</h3>
+        <p class="text-base text-slate-200">
+          Limit visible results and listen for <code>autocomplete:select</code> to trigger keyboard-driven
+          workflows like command bars.
+        </p>
+      </div>
+      <Autocomplete
+        options={commandOptions}
+        label="Command"
+        placeholder="Type a command…"
+        maxVisibleOptions={4}
+        className="max-w-lg"
+      />
+    </article>
   </section>
 </DocsLayout>
