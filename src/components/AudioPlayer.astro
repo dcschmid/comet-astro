@@ -39,7 +39,9 @@ const controlsLayout =
     : 'flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5';
 const controlsOffset = hasWideCover || shouldShowMetadata ? 'mt-4 sm:mt-5' : '';
 const hasTranscript = Boolean(captionsSrc);
-const transcriptSrcAttr = hasTranscript ? encodeURIComponent(captionsSrc!) : undefined;
+const transcriptSrcAttr = hasTranscript
+  ? encodeURIComponent(captionsSrc!)
+  : undefined;
 const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
@@ -76,15 +78,13 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
               : 'flex items-center gap-5 sm:gap-6'
           }
         >
-          {
-            cover && !hasWideCover && (
-              <img
-                src={cover}
-                alt={title ? `${title} cover art` : 'Album cover'}
-                class="h-24 w-24 flex-shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-28 sm:w-28"
-              />
-            )
-          }
+          {cover && !hasWideCover && (
+            <img
+              src={cover}
+              alt={title ? `${title} cover art` : 'Album cover'}
+              class="h-24 w-24 flex-shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-28 sm:w-28"
+            />
+          )}
 
           <div class="min-w-0 flex-1 space-y-1">
             {title && (
@@ -108,13 +108,11 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
       loop={loop}
       autoplay={autoplay}
       data-audio
-      aria-label={title ? `Audio player for ${title}` : 'Audio player'}
-    ></audio>
+      aria-label={title ? `Audio player for ${title}` : 'Audio player'}></audio>
 
     <div class={`${controlsLayout} ${controlsOffset}`.trim()}>
       {
-        variant === 'compact' &&
-        cover && (
+        variant === 'compact' && cover && (
           <img
             src={cover}
             alt={title ? `${title} cover art` : 'Album cover'}
@@ -132,7 +130,9 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
         <span data-pause-icon class="hidden">⏸</span>
       </button>
 
-      <div class="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+      <div
+        class="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
+      >
         <span
           class="text-xs font-semibold uppercase tracking-wide text-slate-600 tabular-nums dark:text-slate-300"
           data-current-time>0:00</span
@@ -177,7 +177,11 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
             aria-controls={`${playerId}-transcript`}
           >
             <span data-transcript-toggle-label>{captionsLabel}</span>
-            <span aria-hidden="true" class="text-lg transition-transform" data-transcript-toggle-icon>
+            <span
+              aria-hidden="true"
+              class="text-lg transition-transform"
+              data-transcript-toggle-icon
+            >
               ▾
             </span>
           </button>
@@ -202,7 +206,7 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
             <ol
               class="hidden max-h-60 space-y-2 overflow-y-auto px-4 py-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
               data-transcript-list
-            ></ol>
+            />
           </div>
         </div>
       )
@@ -224,12 +228,16 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
     const updateSeekVisual = (input, audio) => {
       const max = Number(input.max) || 0;
       const value = Number(input.value) || 0;
-      const percent = max > 0 ? Math.min(Math.max((value / max) * 100, 0), 100) : 0;
+      const percent =
+        max > 0 ? Math.min(Math.max((value / max) * 100, 0), 100) : 0;
       input.style.setProperty('--seek-percent', `${percent}%`);
       if (audio instanceof HTMLAudioElement) {
         const seconds = Number.isFinite(value) ? value : audio.currentTime;
         const resolvedSeconds = Number.isFinite(seconds) ? seconds : 0;
-        input.setAttribute('aria-valuenow', String(Math.floor(resolvedSeconds)));
+        input.setAttribute(
+          'aria-valuenow',
+          String(Math.floor(resolvedSeconds))
+        );
         input.setAttribute('aria-valuetext', formatTime(resolvedSeconds));
         input.setAttribute('aria-valuemax', input.max || '0');
       }
@@ -314,10 +322,16 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
       const transcriptToggle = player.querySelector('[data-transcript-toggle]');
       const transcriptPanel = player.querySelector('[data-transcript-panel]');
       const transcriptList = player.querySelector('[data-transcript-list]');
-      const transcriptLoading = player.querySelector('[data-transcript-loading]');
+      const transcriptLoading = player.querySelector(
+        '[data-transcript-loading]'
+      );
       const transcriptError = player.querySelector('[data-transcript-error]');
-      const transcriptToggleLabel = player.querySelector('[data-transcript-toggle-label]');
-      const transcriptToggleIcon = player.querySelector('[data-transcript-toggle-icon]');
+      const transcriptToggleLabel = player.querySelector(
+        '[data-transcript-toggle-label]'
+      );
+      const transcriptToggleIcon = player.querySelector(
+        '[data-transcript-toggle-icon]'
+      );
 
       if (transcriptToggleLabel instanceof HTMLElement) {
         transcriptToggleLabel.textContent = transcriptLabel;
@@ -425,7 +439,10 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
 
         const setTranscriptExpanded = (expanded) => {
           transcriptPanel.classList.toggle('hidden', !expanded);
-          transcriptToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+          transcriptToggle.setAttribute(
+            'aria-expanded',
+            expanded ? 'true' : 'false'
+          );
           transcriptToggleIcon?.classList.toggle('rotate-180', expanded);
         };
 
@@ -506,7 +523,7 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
             transcriptLoaded = true;
             renderTranscript();
             updateActiveCue(audio.currentTime);
-          } catch (error) {
+          } catch {
             if (transcriptError instanceof HTMLElement) {
               transcriptError.textContent = 'Unable to load transcript.';
               transcriptError.classList.remove('hidden');
@@ -562,47 +579,8 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
     });
   });
 
-  const parseTime = (value) => {
-    const parts = value.split(':').map((segment) => segment.trim());
-    if (parts.length === 3) {
-      const [hours, minutes, seconds] = parts;
-      return Number(hours) * 3600 + Number(minutes) * 60 + parseFloat(seconds.replace(',', '.'));
-    }
-    if (parts.length === 2) {
-      const [minutes, seconds] = parts;
-      return Number(minutes) * 60 + parseFloat(seconds.replace(',', '.'));
-    }
-    return Number(value) || 0;
-  };
-
-  const parseVtt = (text) => {
-    const sanitized = text.replace(/\r/g, '');
-    const chunks = sanitized.split(/\n\n+/);
-    const cues = [];
-    chunks.forEach((chunk) => {
-      const lines = chunk.trim().split('\n').filter(Boolean);
-      if (!lines.length) return;
-      const header = lines[0];
-      let timingIndex = 0;
-      if (header.startsWith('WEBVTT')) return;
-      if (!header.includes('-->') && lines.length > 1) {
-        timingIndex = 1;
-      }
-      const timingLine = lines[timingIndex];
-      if (!timingLine || !timingLine.includes('-->')) return;
-      const [rawStart, rawEnd] = timingLine.split('-->').map((segment) =>
-        segment.trim().split(' ')[0]
-      );
-      const textLines = lines.slice(timingIndex + 1);
-      const cueText = textLines.join(' ').trim();
-      cues.push({
-        start: parseTime(rawStart),
-        end: parseTime(rawEnd),
-        text: cueText,
-      });
-    });
-    return cues.sort((a, b) => a.start - b.start);
-  };
+  // parseTime and parseVtt are defined above inside the inline script where they're used.
+  // No duplicated definitions required here.
 </script>
 
 <style is:inline>
@@ -656,7 +634,9 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
   }
 
   [data-audio-player] [data-transcript-entry] {
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   [data-audio-player] [data-transcript-entry][data-active='true'] {
@@ -668,7 +648,9 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
     color: rgb(30 64 175);
   }
 
-  :where(.dark) [data-audio-player] [data-transcript-entry][data-active='true'] {
+  :where(.dark)
+    [data-audio-player]
+    [data-transcript-entry][data-active='true'] {
     background: linear-gradient(
       90deg,
       rgba(96, 165, 250, 0.18) 0%,
