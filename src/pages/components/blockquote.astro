@@ -1,6 +1,19 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Blockquote from '../../components/Blockquote.astro';
+
+const usageSnippet = `---
+import { Blockquote } from 'comet-astro';
+
+---
+
+<Blockquote
+  author="Ada Lovelace"
+  source="Notes on the Analytical Engine, 1843"
+  variant="accent"
+>
+  That brain of mine is something more than merely mortal.
+</Blockquote>`;
 ---
 
 <DocsLayout
@@ -8,22 +21,128 @@ import Blockquote from '../../components/Blockquote.astro';
   description="Stylized quotations with optional author, source, and variants."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
+    <p class="text-base text-slate-100">
+      Blockquotes spotlight testimony or citations while keeping long-form copy
+      legible. Each variant maintains AAA contrast in both themes, pairing
+      subtle italics with generous spacing.
+    </p>
+    <p class="text-base text-slate-200">
+      Pair quotes with attribution metadata so readers immediately know who said
+      what. When the source is omitted, the footer adapts automatically,
+      preventing stray punctuation.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          author?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display name for the quoted speaker. Rendered within a semantic <code
+            >cite</code
+          > element.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          source?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Source or publication reference. Automatically prefixed with a comma
+          when an author is supplied.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual treatment: <code>default</code> for subtle, <code>accent</code>
+          for emphasis, or <code>bordered</code> for card-style framing.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional utility classes for layout tweaks—margins, max-widths, or
+          typographic overrides.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, provide your quote through the default slot, and set
+      metadata props as needed. All variants respond to theme changes, so the
+      default palette remains AAA-compliant without additional classes.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
     <div class="space-y-4">
-      <Blockquote author="Albert Einstein">
-        Imagination is more important than knowledge.
+      <Blockquote author="Grace Hopper">
+        The most dangerous phrase in the language is, “We’ve always done it this
+        way.”
       </Blockquote>
       <Blockquote
-        author="Steve Jobs"
-        source="Stanford Commencement 2005"
+        author="Octavia Butler"
+        source="Parable of the Talents, 1998"
         variant="accent"
       >
-        Stay hungry, stay foolish.
+        Choose your leaders with wisdom and forethought.
       </Blockquote>
-      <Blockquote variant="bordered">
-        Design is not just what it looks like and feels like. Design is how it
-        works.
+      <Blockquote
+        variant="bordered"
+        author="Frank Chimero"
+        source="The Shape of Design"
+      >
+        People ignore design that ignores people.
       </Blockquote>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Italic styles remain modest to preserve legibility, and line height stays
+      generous across screen sizes. Author attributions live inside <code
+        >cite</code
+      >, while the wrapper retains semantic <code>blockquote</code> markup so assistive
+      tech understands the structure.
+    </p>
+    <p class="text-base text-slate-200">
+      Add descriptive sources when available—notes like “Interview, 2024” or
+      “Conference keynote” help readers anchor the quote. For extended
+      commentary, continue within the slot so the quote and follow-up copy stay
+      grouped visually and semantically.
+    </p>
   </section>
 </DocsLayout>

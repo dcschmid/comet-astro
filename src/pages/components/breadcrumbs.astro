@@ -2,20 +2,160 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 
-const items = [
+const trail = [
   { label: 'Home', href: '#' },
-  { label: 'Library', href: '#' },
-  { label: 'Design system', href: '#' },
-  { label: 'Navigation patterns', current: true },
+  { label: 'Docs', href: '#' },
+  { label: 'Components', href: '#' },
+  { label: 'Breadcrumbs', current: true },
 ];
+
+const compactTrail = [
+  { label: 'Dashboard', href: '#' },
+  { label: 'Projects', href: '#' },
+  { label: 'Campaign A', current: true },
+];
+
+const overflowTrail = [
+  { label: 'Home', href: '#' },
+  { label: 'Enterprise', href: '#' },
+  { label: 'Onboarding', href: '#' },
+  { label: 'Documentation', href: '#' },
+  { label: 'Navigation', href: '#' },
+  { label: 'Breadcrumbs', current: true },
+];
+
+const usageSnippet = `---
+import { Breadcrumbs } from 'comet-astro';
+
+const trail = [
+  { label: 'Home', href: '/' },
+  { label: 'Docs', href: '/docs' },
+  { label: 'Components', href: '/docs/components' },
+  { label: 'Breadcrumbs', current: true },
+];
+
+---
+
+<Breadcrumbs ariaLabel="Breadcrumb trail" items={trail} />`;
 ---
 
 <DocsLayout
   title="Breadcrumbs"
-  description="Hierarchical navigation trail with current-page indicator."
+  description="AAA-compliant navigation trail with responsive overflow handling and clear current-page indicators."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Breadcrumbs items={items} />
+    <p class="text-base text-slate-100">
+      Breadcrumbs provide secondary navigation so visitors can trace their path
+      through nested content. This component keeps text contrast above AAA
+      thresholds in light and dark themes while delivering focusable,
+      keyboard-friendly links.
+    </p>
+    <p class="text-base text-slate-200">
+      Pass an ordered list of crumbs and the component automatically handles
+      separators, the current-page state, and horizontal scrolling on narrow
+      screens.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          items
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of breadcrumb objects. Provide <code>label</code>, optionally <code
+            >href</code
+          >, and set <code>current</code> on the terminal item.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom label for the navigation landmark. Defaults to <code
+            >"Breadcrumb"</code
+          >; tailor it when multiple trails appear on a page.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Extra utilities merged onto the root <code>nav</code>. Useful for
+          external spacing or custom max-width constraints.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Supply an ordered list of crumbs; links receive focus rings with offset
+      backgrounds for easy scanning. Mark the final crumb with <code
+        >current</code
+      > so assistive technologies announce it as the active page.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <article class="space-y-3">
+      <h3 class="text-lg font-semibold text-slate-100">Standard trail</h3>
+      <Breadcrumbs items={trail} />
+    </article>
+
+    <article class="space-y-3">
+      <h3 class="text-lg font-semibold text-slate-100">Compact hierarchy</h3>
+      <Breadcrumbs items={compactTrail} />
+    </article>
+
+    <article class="space-y-3">
+      <h3 class="text-lg font-semibold text-slate-100">
+        Long paths with scroll
+      </h3>
+      <p class="text-sm text-slate-300">
+        The container supports horizontal scrolling on smaller screens so
+        extended paths stay usable without wrapping controls uncomfortably.
+      </p>
+      <Breadcrumbs items={overflowTrail} />
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      All interactive crumbs retain at least a 9:1 contrast ratio against the
+      background and expose focus rings with matching offsets. Separators rely
+      on readable characters instead of icons to stay perceivable under high
+      contrast mode.
+    </p>
+    <p class="text-base text-slate-200">
+      Keep labels short and descriptive, and avoid marking more than one item as
+      current. When you embed multiple breadcrumb trails on a single page,
+      customise <code>ariaLabel</code> so screen reader users can quickly differentiate
+      them.
+    </p>
   </section>
 </DocsLayout>

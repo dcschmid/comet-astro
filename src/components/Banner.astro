@@ -33,35 +33,64 @@ const {
 
 const styles: Record<
   Variant,
-  { wrap: string; text: string; border: string; accent: string }
+  {
+    wrap: string;
+    text: string;
+    border: string;
+    accent: string;
+    ring: string;
+    cta: string;
+    dismiss: string;
+  }
 > = {
   default: {
-    wrap: 'bg-gradient-to-r from-indigo-900/80 via-slate-900 to-indigo-900/70',
-    text: 'text-indigo-100',
-    border: 'border-indigo-500/40',
-    accent: 'text-indigo-200',
+    wrap: 'bg-slate-900 text-slate-100 dark:bg-slate-950 dark:text-slate-100',
+    text: 'text-slate-100 dark:text-slate-100',
+    border: 'border-slate-500/60 dark:border-slate-400/60',
+    accent: 'text-slate-200 dark:text-slate-200',
+    ring: 'focus-visible:ring-slate-100/70 focus-visible:ring-offset-slate-900 dark:focus-visible:ring-slate-200/70 dark:focus-visible:ring-offset-slate-950',
+    cta: 'text-slate-950 hover:bg-slate-100 dark:hover:bg-slate-200',
+    dismiss:
+      'border-slate-300/70 text-slate-100 hover:bg-slate-800/70 dark:border-slate-200/60',
   },
   success: {
-    wrap: 'bg-gradient-to-r from-emerald-900/80 via-slate-900 to-emerald-900/70',
-    text: 'text-emerald-100',
-    border: 'border-emerald-500/40',
+    wrap: 'bg-emerald-950 text-emerald-50',
+    text: 'text-emerald-50',
+    border: 'border-emerald-700/60',
     accent: 'text-emerald-200',
+    ring: 'focus-visible:ring-emerald-200/70 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-emerald-100/80 dark:focus-visible:ring-offset-emerald-950',
+    cta: 'text-emerald-950 hover:bg-emerald-50 dark:hover:bg-emerald-100',
+    dismiss:
+      'border-emerald-300/70 text-emerald-100 hover:bg-emerald-900/40 dark:border-emerald-200/60',
   },
   warning: {
-    wrap: 'bg-gradient-to-r from-amber-900/80 via-slate-900 to-amber-900/70',
+    wrap: 'bg-amber-950 text-amber-50',
     text: 'text-amber-50',
-    border: 'border-amber-500/40',
+    border: 'border-amber-700/70',
     accent: 'text-amber-200',
+    ring: 'focus-visible:ring-amber-200/70 focus-visible:ring-offset-amber-950 dark:focus-visible:ring-amber-100/80 dark:focus-visible:ring-offset-amber-950',
+    cta: 'text-amber-950 hover:bg-amber-50 dark:hover:bg-amber-100',
+    dismiss:
+      'border-amber-300/70 text-amber-100 hover:bg-amber-900/40 dark:border-amber-200/60',
   },
   danger: {
-    wrap: 'bg-gradient-to-r from-rose-900/80 via-slate-900 to-rose-900/70',
-    text: 'text-rose-100',
-    border: 'border-rose-500/40',
+    wrap: 'bg-rose-950 text-rose-50',
+    text: 'text-rose-50',
+    border: 'border-rose-700/70',
     accent: 'text-rose-200',
+    ring: 'focus-visible:ring-rose-200/70 focus-visible:ring-offset-rose-950 dark:focus-visible:ring-rose-100/80 dark:focus-visible:ring-offset-rose-950',
+    cta: 'text-rose-950 hover:bg-rose-50 dark:hover:bg-rose-100',
+    dismiss:
+      'border-rose-300/70 text-rose-100 hover:bg-rose-900/40 dark:border-rose-200/60',
   },
 };
 
 const id = `banner-${Math.random().toString(36).slice(2, 10)}`;
+
+const ctaBase =
+  'inline-flex items-center gap-2 rounded-full border border-transparent bg-white px-4 py-2 text-sm font-semibold text-center shadow-sm transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 dark:bg-white';
+const dismissBase =
+  'ml-2 inline-flex h-9 w-9 items-center justify-center rounded-full border bg-transparent p-2 text-base leading-none transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2';
 ---
 
 <section
@@ -102,7 +131,7 @@ const id = `banner-${Math.random().toString(36).slice(2, 10)}`;
       action && (
         <a
           href={action.href}
-          class={`inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/40 ${sticky ? '' : 'shadow'}`}
+          class={`${ctaBase} ${styles[variant].cta} ${styles[variant].ring}`}
         >
           {action.label}
           <span aria-hidden="true">→</span>
@@ -113,7 +142,7 @@ const id = `banner-${Math.random().toString(36).slice(2, 10)}`;
       dismissible && (
         <button
           type="button"
-          class="ml-2 rounded-full border border-white/30 bg-white/10 p-2 text-xs text-white hover:bg-white/20 focus:outline-none focus:ring focus:ring-white/40"
+          class={`${dismissBase} ${styles[variant].dismiss} ${styles[variant].ring}`}
           data-banner-close
           aria-label="Close banner"
         >
@@ -132,7 +161,14 @@ const id = `banner-${Math.random().toString(36).slice(2, 10)}`;
     if (!(root instanceof HTMLElement)) return;
     const closeButton = root.querySelector('[data-banner-close]');
     if (!(closeButton instanceof HTMLElement)) return;
+    const prefersReducedMotion = window.matchMedia?.(
+      '(prefers-reduced-motion: reduce)'
+    );
     closeButton.addEventListener('click', () => {
+      if (prefersReducedMotion?.matches) {
+        root.remove();
+        return;
+      }
       root.style.animation = 'fadeOut 220ms ease forwards';
       window.setTimeout(() => root.remove(), 240);
     });

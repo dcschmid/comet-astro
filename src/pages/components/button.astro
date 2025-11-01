@@ -1,30 +1,164 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Button from '../../components/Button.astro';
+
+const usageSnippet = `---
+import { Button } from 'comet-astro';
+
+---
+
+<div class="flex gap-3">
+  <Button variant="primary">Publish</Button>
+  <Button variant="secondary">Preview</Button>
+  <Button variant="ghost">Cancel</Button>
+</div>`;
 ---
 
 <DocsLayout
   title="Button"
-  description="Button component with variants, sizes, and loading state."
+  description="Accessible buttons with AAA contrast, three variants, and responsive sizing."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Variants</h2>
+    <p class="text-base text-slate-100">
+      Buttons are the primary action affordances in Comet. We ship a compact API
+      that covers the most common surface styles while holding contrast ratios
+      above WCAG AAA in both themes and states (default, hover, focus).
+    </p>
+    <p class="text-base text-slate-200">
+      Each variant provides strong focus rings with theme-aware offsets so
+      keyboard users never lose track of intent, even against busy backgrounds.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style for the control. Choose <code>"primary"</code>, <code
+            >"secondary"</code
+          >, or <code>"ghost"</code>. Defaults to <code>"primary"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Adjusts height and padding. Options are <code>"sm"</code>, <code
+            >"md"</code
+          >, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          href?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          When supplied, the component renders as an anchor element with the
+          same styling, enabling button-like links.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          external?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Forces the external-link treatment (icon, new tab, <code>rel</code>).
+          Defaults to automatic detection for absolute URLs.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disabled?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Applies a disabled state and removes pointer events. The control
+          remains tabbable when rendered as a native <code>button</code>,
+          following platform conventions.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, pick a variant, and compose slot content with plain
+      text or icons. Hover, focus, and disabled states inherit AAA-compliant
+      palettes automatically.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
     <div class="flex flex-wrap gap-3">
-      <Button variant="primary">Primary</Button>
+      <Button variant="primary">Primary action</Button>
       <Button variant="secondary">Secondary</Button>
-      <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
-      <Button variant="destructive">Destructive</Button>
     </div>
   </section>
 
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Sizes &amp; Loading</h2>
-    <div class="flex flex-wrap gap-3 items-center">
-      <Button size="sm">Small</Button>
-      <Button size="md">Medium</Button>
-      <Button size="lg">Large</Button>
-      <Button loading>Loading…</Button>
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="flex flex-wrap items-center gap-3">
+      <Button size="sm" variant="primary">Small</Button>
+      <Button size="md" variant="primary">Medium</Button>
+      <Button size="lg" variant="primary">Large</Button>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Link style</h2>
+    <p class="text-base text-slate-200">
+      Provide an <code>href</code> to render an accessible anchor that looks and
+      feels like a button. External URLs automatically open in a new tab and display
+      an icon so the behaviour is clear.
+    </p>
+    <div class="flex gap-3">
+      <Button href="#" variant="secondary">Docs home</Button>
+      <Button href="https://astro.build" variant="ghost">Visit Astro</Button>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Contrast ratios stay above 9:1 across default, hover, and disabled states
+      for both themes. Focus-visible rings expand to 4px with theme-aware
+      offsets so intent is obvious against light or dark backgrounds.
+    </p>
+    <p class="text-base text-slate-200">
+      When rendering anchors, supply contextual copy (for example, “View billing
+      settings”) and avoid using generic labels like “Click here”. For icon-only
+      buttons, set <code>ariaLabel</code> to describe the action.
+    </p>
   </section>
 </DocsLayout>

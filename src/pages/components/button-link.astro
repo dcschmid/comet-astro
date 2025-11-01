@@ -1,35 +1,165 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import ButtonLink from '../../components/ButtonLink.astro';
+
+const usageSnippet = `---
+import { ButtonLink } from 'comet-astro';
+
+---
+
+<div class="flex gap-3 flex-wrap">
+  <ButtonLink href="/docs/getting-started" label="Get started" />
+  <ButtonLink
+    href="https://astro.build"
+    target="_blank"
+    label="Visit Astro"
+  />
+</div>`;
 ---
 
 <DocsLayout
   title="ButtonLink"
-  description="Accessible anchor-styled button with primary/secondary variants and external label."
+  description="High-contrast anchor-style buttons with external link detection and keyboard-friendly focus rings."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>href: string</code> – destination URL</li>
-      <li><code>label?: string</code> – visible text (or use slot)</li>
-      <li><code>ariaLabel?: string</code> – accessibility label</li>
-      <li>
-        <code>target?: '_blank'|'_self'|'_parent'|'_top'</code> – link target
-      </li>
-      <li>
-        <code>rel?: string</code> – rel attribute (auto adds noopener for _blank)
-      </li>
-      <li><code>variant?: 'primary'|'secondary'</code> – visual style</li>
-      <li><code>className?: string</code> – extra classes</li>
-    </ul>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      ButtonLink renders an anchor that looks and feels like a button—useful
+      when you need a visually prominent navigation action without breaking
+      semantic links. Palettes meet WCAG AAA in both themes, icons align with
+      text by default, and focus rings expand to 4&nbsp;px with offset
+      backgrounds.
+    </p>
+    <p class="text-base text-slate-200">
+      External URLs inherit a visible indicator, open in a new tab, and append
+      screen reader copy automatically. Override the behaviour with props when
+      you need explicit control.
+    </p>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="flex gap-3">
-      <ButtonLink href="#" label="Primary" />
-      <ButtonLink href="#" label="Secondary" variant="secondary" />
-      <ButtonLink href="https://example.com" label="External" target="_blank" />
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          href
+        </dt>
+        <dd class="text-sm text-slate-200">Destination URL. Required.</dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          label?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visible text when you don’t provide slot content. Ideal for quick
+          buttons without custom markup.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual treatment. Choose <code>"primary"</code> or <code
+            >"secondary"</code
+          >. Defaults to <code>"primary"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          target?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Standard anchor target. When set to <code>"_blank"</code>, the
+          component adds <code>rel="noopener noreferrer"</code> automatically.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          externalLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Screen-reader text appended to external links. Defaults to “opens in
+          new window”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          iconLeft / iconRight
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Named slots for icons before or after the label. Icons inherit the
+          button’s color automatically.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, pass your URL, and decide whether to provide slot
+      content or just a <code>label</code>. The external affordance kicks in
+      whenever <code>target="_blank"</code> is present or you manually set the props.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+    <div class="flex flex-wrap gap-3">
+      <ButtonLink href="/docs/design-system" label="Primary link" />
+      <ButtonLink
+        href="/docs/feedback"
+        label="Secondary link"
+        variant="secondary"
+      />
+      <ButtonLink
+        href="https://example.com/privacy"
+        target="_blank"
+        label="Privacy policy"
+      />
     </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Focus-visible outlines expand to 4&nbsp;px and include theme-appropriate
+      offsets so the active element is easy to spot. Background and text
+      combinations exceed a 9:1 contrast ratio in both themes and hover states.
+    </p>
+    <p class="text-base text-slate-200">
+      The external indicator pairs a visible icon with off-screen text, ensuring
+      screen reader and sighted users receive the same cue. When linking to the
+      current page, omit <code>target="_blank"</code> to prevent unnecessary context
+      changes.
+    </p>
   </section>
 </DocsLayout>

@@ -1,21 +1,248 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import BackToTop from '../../components/BackToTop.astro';
-import Paragraph from '../../components/Paragraph.astro';
+
+const usageSnippet = `---
+import { BackToTop } from 'comet-astro';
+
+---
+
+<BackToTop
+  ariaLabel="Scroll to top"
+  scrollThreshold={320}
+  className="md:right-8 md:bottom-8"
+/>`;
 ---
 
 <DocsLayout
   title="BackToTop"
-  description="Floating button that appears after scrolling to return to the top."
+  description="Floating control that respects AAA contrast requirements while helping readers return to the top of long pages."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <BackToTop forceVisible ariaLabel="Back to top example" />
-    <Paragraph size="sm" muted>
-      The button is forced visible for demonstration purposes. Remove <code
+    <p class="text-base text-slate-100">
+      The BackToTop component surfaces a large, finger-friendly button once
+      readers scroll past a configurable threshold. It ships with light and dark
+      themes that exceed WCAG AAA contrast targets, obvious focus indicators,
+      and reduced-motion support.
+    </p>
+    <p class="text-base text-slate-200">
+      Drop it into any layout and it will stay fixed to the viewport corner.
+      Override placement, margins, or icons with regular Tailwind utilities, and
+      keep it visible at all times during demos or documentation with <code
         >forceVisible</code
+      >.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
       >
-      to reveal it only after scrolling past the threshold.
-    </Paragraph>
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label announced for screen readers. Defaults to &ldquo;Back
+          to top&rdquo;.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional Tailwind utilities merged with the fixed button. Handy for
+          nudging the position or adjusting responsive spacing.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          scrollThreshold?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Number of pixels to scroll before the button appears. Defaults to <code
+            >300</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          forceVisible?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Keeps the control visible regardless of scroll position. Useful for
+          storybooks, docs, or layout debugging.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          slot&nbsp;name=&quot;icon&quot;
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Replace the default arrow with custom SVG or text content. The icon
+          inherits the button color automatically.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, drop it near the end of your page, and optionally
+      tweak the scroll threshold or positioning. Smooth scrolling switches off
+      automatically when visitors prefer reduced motion, ensuring the shortcut
+      remains comfortable for everyone.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Baseline floating button
+        </h3>
+        <p class="text-base text-slate-200">
+          The default styling delivers AAA contrast in both themes and meets
+          minimum touch targets with a 44&nbsp;px surface.
+        </p>
+      </div>
+      <BackToTop forceVisible ariaLabel="Back to top example button" />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Custom icon and positioning
+        </h3>
+        <p class="text-base text-slate-200">
+          Supply any SVG through the <code>icon</code> slot and adjust placement
+          via <code>className</code>. The icon is decorative by default, so
+          screen readers still announce the accessible label.
+        </p>
+      </div>
+      <BackToTop
+        forceVisible
+        ariaLabel="Zurück nach oben"
+        className="bottom-24 right-6 md:right-10"
+      >
+        <svg
+          slot="icon"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M5 15l7-7 7 7M12 8v11"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+      </BackToTop>
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Scroll-triggered appearance
+        </h3>
+        <p class="text-base text-slate-200">
+          Remove <code>forceVisible</code> in production so the control stays hidden
+          until your readers scroll past the chosen threshold. Below the threshold
+          it remains non-interactive and offscreen for assistive technology.
+        </p>
+      </div>
+      <div
+        class="relative overflow-hidden rounded-xl border border-slate-700/70 bg-slate-900/60 p-6 shadow-inner"
+      >
+        <p class="text-sm text-slate-200">
+          Scroll this page and the live button in the corner will fade in once
+          you move beyond its threshold. The component also respects
+          reduced-motion settings by switching to an instant jump when visitors
+          prefer it.
+        </p>
+      </div>
+    </article>
+  </section>
+
+  <section class="mt-12 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Langer Demo-Abschnitt</h2>
+    <p class="text-base text-slate-200">
+      Damit du die Scroll-Logik direkt auf der Seite ausprobieren kannst, folgt
+      hier ein längerer Textblock. Er simuliert eine typische
+      Dokumentationsseite mit ausführlichen Erläuterungen, damit der Button
+      zuverlässig eingeblendet wird.
+    </p>
+    <p class="text-base text-slate-200">
+      Die Komponente richtet sich an Teams, die barrierefreie Navigation ernst
+      nehmen. Sie kombiniert ein Minimum an Konfiguration mit robusten
+      Default-Stilen, damit keine zusätzlichen Farbanpassungen nötig sind, um
+      AAA-Kontrastwerte zu erreichen.
+    </p>
+    <p class="text-base text-slate-200">
+      In komplexen Layouts lohnt es sich, den Button responsiv zu verschieben
+      oder mit Offsets zu arbeiten, damit er nicht mit anderen UI-Elementen
+      kollidiert. Über die <code>className</code>-Prop lässt sich das Verhalten
+      einfach an den jeweiligen Breakpoint anpassen.
+    </p>
+    <p class="text-base text-slate-200">
+      Für Projekte mit internationalem Publikum empfiehlt sich eine lokalisierte <code
+        >ariaLabel</code
+      >-Übersetzung. So hören Screenreader-Nutzende genau den Text, der zur
+      Sprache deiner Anwendung passt.
+    </p>
+    <p class="text-base text-slate-200">
+      Wenn du eigene Icons einsetzen möchtest, achte darauf, dass sie sich klar
+      erkennbar vom Hintergrund abheben. Dank des Slots übernimmt das Icon
+      automatisch die aktuelle Textfarbe, wodurch der Kontrast auch bei
+      Theme-Wechseln erhalten bleibt.
+    </p>
+    <p class="text-base text-slate-200">
+      Reduzierte Bewegung ist ebenfalls berücksichtigt: Bei aktivierter
+      Betriebssystem-Präferenz für weniger Animationen springt der Button ohne
+      smooth scrolling nach oben. Wer den Effekt dennoch erzwingen will, kann
+      das Skript anpassen, sollte aber immer die Barrierefreiheit mitdenken.
+    </p>
+    <p class="text-base text-slate-200">
+      Ein weiterer Tipp: Kombiniere den Button mit Inhaltsverzeichnissen oder
+      Abschnitts-Ankern. Besuchende können so schnell springen, finden sich aber
+      jederzeit wieder ganz oben zurecht. Gerade bei Blogs oder Knowledge Bases
+      mit langen Artikeln zahlt sich diese Kombination aus.
+    </p>
+    <p class="text-base text-slate-200">
+      Teste das Verhalten zum Abschluss auf verschiedenen Geräten und mit
+      Tastatursteuerung. Nur so stellst du sicher, dass auch mobile Reader oder
+      Nutzerinnen mit alternativen Eingabegeräten problemlos nach oben
+      navigieren können.
+    </p>
   </section>
 </DocsLayout>
