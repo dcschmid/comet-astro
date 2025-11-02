@@ -3,20 +3,316 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import ShareOverlay from '../../components/ShareOverlay.astro';
 import Button from '../../components/Button.astro';
 
+const usageSnippet = `---
+import { ShareOverlay } from 'comet-astro';
+
+---
+
+<ShareOverlay
+  title="Amazing Article"
+  description="Learn about web accessibility and inclusive design"
+  url="https://example.com/articles/accessibility"
+  open={false}
+/>`;
+
+const customTargetsSnippet = `---
+import { ShareOverlay } from 'comet-astro';
+
+const customTargets = [
+  {
+    name: "WhatsApp",
+    href: "https://wa.me/?text=Check%20this%20out%3A%20https%3A//example.com",
+    icon: "whatsapp",
+    label: "Share on WhatsApp"
+  },
+  {
+    name: "Telegram",
+    href: "https://t.me/share/url?url=https%3A//example.com&text=Amazing%20content",
+    icon: "telegram", 
+    label: "Share on Telegram"
+  }
+];
+---
+
+<ShareOverlay
+  title="Share this content"
+  customTargets={customTargets}
+  showDefaultTargets={true}
+/>`;
+
+const triggerSnippet = `---
+import { ShareOverlay, Button } from 'comet-astro';
+
+---
+
+<Button data-share-trigger="my-share-overlay">
+  Share this page
+</Button>
+
+<ShareOverlay
+  id="my-share-overlay"
+  title="My Awesome Page"
+  description="Check out this amazing content"
+/>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const triggers = document.querySelectorAll('[data-share-trigger]');
+    
+    triggers.forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const overlayId = trigger.getAttribute('data-share-trigger');
+        const registry = window.__cometShareOverlayRegistry;
+        
+        if (registry && registry.has(overlayId)) {
+          registry.get(overlayId).open();
+        }
+      });
+    });
+  });
+</script>`;
+
 const triggerId = 'share-doc-trigger';
+const overlayId = 'share-doc-overlay';
 ---
 
 <DocsLayout
   title="ShareOverlay"
-  description="Share sheet with social links and copy-to-clipboard action."
+  description="Accessible share dialog with WCAG AAA compliance, social media integration, and copy-to-clipboard functionality."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Button id={triggerId} variant="secondary">Open share sheet</Button>
+    <p class="text-base text-slate-100">
+      The ShareOverlay component provides a comprehensive sharing solution with
+      built-in accessibility features, social media integration, and
+      copy-to-clipboard functionality. It maintains WCAG AAA contrast ratios and
+      includes proper keyboard navigation and screen reader support.
+    </p>
+    <p class="text-base text-slate-200">
+      Features include focus trapping, escape key handling, backdrop click to
+      close, and automatic URL selection for easy copying. The component works
+      seamlessly across desktop and mobile devices with responsive design.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          url?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          URL to share. Defaults to the current page URL if not provided. Used
+          in social media share links and clipboard copy.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Title for sharing. Used in social media posts and as fallback for meta
+          descriptions. Automatically URL-encoded.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          description?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Description text for sharing. Used in email shares and LinkedIn posts
+          to provide additional context.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          open?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether the overlay is initially open. Defaults to <code>false</code>.
+          Can be controlled programmatically via the registry API.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          customTargets?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of additional share targets with <code>name</code>, <code
+            >href</code
+          >,
+          <code>icon</code>, and <code>label</code> properties for custom platforms.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showDefaultTargets?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to display default share targets (X/Twitter, Facebook,
+          LinkedIn, Email). Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          id?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom ID for the overlay. Used for programmatic control via the
+          global registry. Auto-generated if not provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the dialog container for custom
+          styling or positioning adjustments.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and provide sharing information. The overlay starts
+      hidden and can be opened programmatically via the global registry or
+      trigger buttons.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Demo</h2>
+    <p class="text-base text-slate-200">
+      Click the button below to open the share overlay with proper focus
+      management and keyboard navigation. The URL will be automatically selected
+      for easy copying.
+    </p>
+    <div class="flex gap-3">
+      <Button id={triggerId} variant="secondary">Open Share Dialog</Button>
+    </div>
+
     <ShareOverlay
-      title="Share this article"
-      url="https://example.com/articles/a11y"
+      id={overlayId}
+      title="ShareOverlay Component Documentation"
+      description="Learn how to use the accessible ShareOverlay component with WCAG AAA compliance"
+      url={Astro.url.toString()}
     />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Custom Share Targets</h2>
+    <p class="text-base text-slate-200">
+      Add custom sharing platforms alongside the default options. Each target
+      requires a name, href, icon identifier, and accessible label.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{customTargetsSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Programmatic Control</h2>
+    <p class="text-base text-slate-200">
+      Control the overlay state programmatically using the global registry. Each
+      overlay registers itself with open, close, and toggle methods.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{triggerSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      The component maintains WCAG AAA contrast ratios (9:1) in both light and
+      dark themes with 2px focus rings and proper offset spacing. All
+      interactive elements include appropriate ARIA labels and role attributes.
+    </p>
+    <p class="text-base text-slate-200">
+      Focus is properly trapped within the dialog with Tab and Shift+Tab
+      navigation. Escape key closes the overlay, and clicking the backdrop
+      dismisses it. The component announces state changes to screen readers with
+      live regions.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Features</h2>
+    <ul class="space-y-2 text-slate-200">
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Copy-to-clipboard with visual and screen reader feedback
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Social media sharing (X/Twitter, Facebook, LinkedIn, Email)
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Custom share targets with icon support
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Focus trapping and keyboard navigation
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Responsive design for mobile and desktop
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Body scroll locking when open
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        WCAG AAA contrast compliance
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Automatic URL encoding for sharing
+      </li>
+    </ul>
   </section>
 </DocsLayout>
 
@@ -24,11 +320,15 @@ const triggerId = 'share-doc-trigger';
   document.addEventListener('DOMContentLoaded', () => {
     const trigger = document.getElementById('share-doc-trigger');
     if (!trigger) return;
+
     trigger.addEventListener('click', () => {
       const registry = window.__cometShareOverlayRegistry;
       if (!registry) return;
-      const entry = Array.from(registry.values())[0];
-      entry?.open();
+
+      const overlay = registry.get('share-doc-overlay');
+      if (overlay) {
+        overlay.open();
+      }
     });
   });
 </script>

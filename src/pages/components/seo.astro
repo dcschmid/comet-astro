@@ -1,36 +1,349 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import SEO from '../../components/SEO.astro';
+
+const usageSnippet = `---
+import { SEO } from 'comet-astro';
+
+---
+
+<SEO
+  title="About Us"
+  description="Learn more about our company, mission, and values."
+  keywords={["company", "about", "mission", "values"]}
+  type="website"
+  image="/og-about.jpg"
+  imageAlt="Our team working together"
+/>`;
+
+const breadcrumbsSnippet = `---
+import { SEO } from 'comet-astro';
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Products", url: "/products" },
+  { name: "Smartphones", url: "/products/smartphones" }
+];
+---
+
+<SEO
+  title="Smartphones"
+  description="Discover our latest smartphone collection."
+  breadcrumbs={breadcrumbs}
+  showBreadcrumbs={true}
+  type="website"
+/>`;
+
+const articleSnippet = `---
+import { SEO } from 'comet-astro';
+
+---
+
+<SEO
+  title="How to Build Better Websites"
+  description="A comprehensive guide to modern web development."
+  type="article"
+  article={{
+    publishedTime: "2024-01-15T10:00:00Z",
+    modifiedTime: "2024-01-20T14:30:00Z",
+    author: ["John Doe", "Jane Smith"],
+    section: "Web Development",
+    tags: ["html", "css", "javascript", "accessibility"]
+  }}
+  image="/article-hero.jpg"
+  imageAlt="Code editor showing HTML markup"
+/>`;
 ---
 
 <DocsLayout
   title="SEO"
-  description="Page-level meta tags and JSON-LD structured data helper."
+  description="Comprehensive SEO component with WCAG AAA compliance, structured data, and optional visual breadcrumbs."
 >
-  <section>
-    <h2 class="text-xl font-bold">Core Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li>
-        <code>title: string</code>, <code>description?: string</code>, <code
-          >keywords?: string|string[]</code
-        >
-      </li>
-      <li>
-        <code>image?: string</code>, <code>type?: 'website'|'article'</code>, <code
-          >canonical?: string</code
-        >
-      </li>
-      <li>
-        <code>noIndex?: boolean</code>, <code>noFollow?: boolean</code>, <code
-          >language?: string</code
-        >
-      </li>
-      <li><code>breadcrumbs?: &#123;name,url&#125;[]</code></li>
-    </ul>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      The SEO component manages all aspects of search engine optimization
+      including meta tags, Open Graph data, Twitter Cards, and structured data
+      (JSON-LD). It ensures WCAG AAA compliance with optional visual breadcrumbs
+      and proper accessibility attributes.
+    </p>
+    <p class="text-base text-slate-200">
+      Built for both website and article content types, it handles complex
+      scenarios like article metadata, social media integration, and
+      comprehensive structured data while maintaining clean, semantic HTML
+      output.
+    </p>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Example</h2>
-    <SEO title="Docs" description="Component docs" type="website" />
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Page title that will be combined with the site name. Used for <code
+            >&lt;title&gt;</code
+          >, Open Graph, and Twitter Card meta tags.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          description?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Meta description for search engines and social media previews.
+          Recommended length: 150-160 characters.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          keywords?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of keywords or comma-separated string. Used for meta keywords
+          and structured data.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          type?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Content type for Open Graph and structured data. Options: <code
+            >"website"</code
+          >,
+          <code>"article"</code>, <code>"profile"</code>, <code>"book"</code>.
+          Defaults to <code>"website"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          image?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Featured image URL for social media previews. Automatically converted
+          to absolute URL if relative.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          imageAlt?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Alt text for the featured image. Required for accessibility when image
+          is provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          breadcrumbs?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of breadcrumb objects with <code>name</code> and <code>url</code
+          >
+          properties. Generates structured data and optional visual navigation.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showBreadcrumbs?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to render visual breadcrumb navigation with WCAG AAA compliant
+          styling. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          article?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Article-specific metadata object with <code>publishedTime</code>,
+          <code>modifiedTime</code>, <code>author</code>, <code>section</code>,
+          and <code>tags</code> properties.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          openGraph?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Open Graph specific overrides for title, description, image, type,
+          locale, and site name.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          twitterCard?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Twitter Card specific settings including card type, site handle,
+          creator, and custom content.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          structuredData?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional structured data to merge with the automatically generated
+          schema. Useful for custom schema types and properties.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and provide essential SEO information. The component
+      automatically handles URL resolution, structured data generation, and
+      accessibility attributes.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Visual Breadcrumbs</h2>
+    <p class="text-base text-slate-200">
+      Enable visual breadcrumb navigation with WCAG AAA compliant styling.
+      Breadcrumbs provide both structured data for search engines and accessible
+      navigation for users.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{breadcrumbsSnippet}</code>
+    </pre>
+
+    <!-- Demo breadcrumbs -->
+    <div class="rounded-lg border border-slate-700/70 bg-slate-900/40 p-6">
+      <SEO
+        title="Demo Page"
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Components', url: '/components' },
+          { name: 'SEO', url: '/components/seo' },
+        ]}
+        showBreadcrumbs={true}
+        class="!mb-0"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Article Content</h2>
+    <p class="text-base text-slate-200">
+      For article pages, provide additional metadata to enhance search engine
+      understanding and social media previews. The component automatically
+      generates Article schema and appropriate Open Graph tags.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{articleSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Visual breadcrumbs maintain WCAG AAA contrast ratios (9:1) in both light
+      and dark themes. Focus indicators use 2px ring width with appropriate
+      offset for clear visibility against all backgrounds.
+    </p>
+    <p class="text-base text-slate-200">
+      The component includes proper ARIA labels, semantic navigation markup, and
+      structured data that screen readers can parse. All image tags include alt
+      text requirements and proper role attributes.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">SEO Features</h2>
+    <ul class="space-y-2 text-slate-200">
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Complete meta tag generation (title, description, keywords, robots)
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Open Graph and Twitter Card support with image optimization
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Structured data (JSON-LD) for websites and articles
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Canonical URL handling with automatic resolution
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Breadcrumb structured data and visual navigation
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Article metadata with author, publish date, and tags
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Language and locale specification
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-green-400 mt-1">✓</span>
+        Custom structured data merging
+      </li>
+    </ul>
   </section>
 </DocsLayout>

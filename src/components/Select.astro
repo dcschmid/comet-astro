@@ -1,4 +1,9 @@
 ---
+import { cn } from '../utils/cn';
+
+/**
+ * Select - Accessible dropdown select with WCAG AAA compliance
+ */
 interface Option {
   value: string;
   label: string;
@@ -6,18 +11,36 @@ interface Option {
 }
 
 interface Props {
+  /** Select name attribute */
   name: string;
+  /** Array of options */
   options: Option[];
+  /** Label for the select */
   label?: string;
+  /** Placeholder text */
   placeholder?: string;
+  /** Selected value */
   value?: string;
+  /** Whether the select is required */
   required?: boolean;
+  /** Whether the select is disabled */
   disabled?: boolean;
-  error?: string;
-  helperText?: string;
+  /** Error message */
+  error?: boolean | string;
+  /** Help text displayed below the select */
+  helpText?: string;
+  /** Visual variant of the select */
+  variant?: 'default' | 'minimal' | 'outlined' | 'filled';
+  /** Size of the select */
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
+  /** Whether to allow multiple selections */
+  multiple?: boolean;
+  /** Custom ID for the select */
   id?: string;
+  /** Custom aria-label */
+  ariaLabel?: string;
+  /** Additional CSS classes */
+  class?: string;
 }
 
 const {
@@ -28,60 +51,163 @@ const {
   value,
   required = false,
   disabled = false,
-  error,
-  helperText,
+  error = false,
+  helpText,
+  variant = 'default',
   size = 'md',
-  className = '',
-  id = name,
+  multiple = false,
+  id: propId,
+  ariaLabel,
+  class: className = '',
 } = Astro.props;
 
-const selectId = id || `${name}-${Math.random().toString(36).slice(2, 9)}`;
+const selectId = propId || `select-${Math.random().toString(36).slice(2, 9)}`;
+const helpId = helpText ? `${selectId}-help` : undefined;
+const errorId = error ? `${selectId}-error` : undefined;
+const finalAriaDescribedBy =
+  [helpId, errorId].filter(Boolean).join(' ') || undefined;
+
+// Size configurations
 const sizeClasses = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-5 py-3 text-lg',
+  sm: {
+    select: 'min-h-[36px] px-3 py-1.5 text-sm',
+    selectSingle: 'pr-8',
+    icon: 'w-4 h-4 right-2',
+    label: 'text-sm',
+    help: 'text-xs',
+  },
+  md: {
+    select: 'min-h-[44px] px-4 py-2.5 text-base',
+    selectSingle: 'pr-10',
+    icon: 'w-5 h-5 right-3',
+    label: 'text-sm',
+    help: 'text-xs',
+  },
+  lg: {
+    select: 'min-h-[52px] px-5 py-3.5 text-lg',
+    selectSingle: 'pr-12',
+    icon: 'w-6 h-6 right-4',
+    label: 'text-base',
+    help: 'text-sm',
+  },
 };
 
-const baseClasses =
-  'w-full rounded-lg border bg-white pr-10 text-slate-900 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-offset-slate-900 appearance-none';
-const stateClasses = error
-  ? 'border-rose-500 bg-rose-50 focus-visible:ring-rose-500 dark:border-rose-500 dark:bg-rose-950 dark:focus-visible:ring-rose-400'
-  : 'border-slate-300 focus-visible:ring-blue-600 dark:border-slate-600 dark:focus-visible:ring-blue-500';
-const disabledClasses = disabled ? 'cursor-not-allowed opacity-60' : '';
-const helperId = error || helperText ? `${selectId}-help` : undefined;
+// Variant styles with WCAG AAA compliance
+const variantClasses = {
+  default: {
+    select: cn(
+      'bg-white dark:bg-gray-900',
+      'border border-gray-300 dark:border-gray-600',
+      'text-gray-900 dark:text-gray-100',
+      'focus:border-blue-600 dark:focus:border-blue-400',
+      'focus:ring-blue-600 dark:focus:ring-blue-400',
+      'hover:border-gray-400 dark:hover:border-gray-500',
+      'shadow-sm hover:shadow-md transition-shadow'
+    ),
+    icon: 'text-gray-500 dark:text-gray-400',
+  },
+  minimal: {
+    select: cn(
+      'bg-gray-50 dark:bg-gray-800',
+      'border border-gray-200 dark:border-gray-600',
+      'text-gray-900 dark:text-gray-100',
+      'focus:border-blue-500 dark:focus:border-blue-400',
+      'focus:ring-blue-500 dark:focus:ring-blue-400',
+      'hover:bg-gray-100 dark:hover:bg-gray-700'
+    ),
+    icon: 'text-gray-500 dark:text-gray-400',
+  },
+  outlined: {
+    select: cn(
+      'bg-white dark:bg-gray-900',
+      'border-2 border-gray-300 dark:border-gray-600',
+      'text-gray-900 dark:text-gray-100',
+      'focus:border-blue-600 dark:focus:border-blue-400',
+      'focus:ring-blue-600 dark:focus:ring-blue-400',
+      'hover:border-gray-400 dark:hover:border-gray-500'
+    ),
+    icon: 'text-gray-600 dark:text-gray-300',
+  },
+  filled: {
+    select: cn(
+      'bg-gray-100 dark:bg-gray-800',
+      'border border-transparent',
+      'text-gray-900 dark:text-gray-100',
+      'focus:border-blue-500 dark:focus:border-blue-400',
+      'focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400',
+      'hover:bg-gray-200 dark:hover:bg-gray-700'
+    ),
+    icon: 'text-gray-600 dark:text-gray-300',
+  },
+};
+
+const selectClasses = cn(
+  'w-full rounded-lg transition-all duration-200',
+  'focus:outline-none focus:ring-2 focus:ring-offset-2',
+  'focus:ring-offset-white dark:focus:ring-offset-gray-900',
+  'disabled:opacity-50 disabled:cursor-not-allowed',
+  'placeholder:text-gray-500 dark:placeholder:text-gray-400',
+  'font-medium block',
+  sizeClasses[size].select,
+  !multiple && sizeClasses[size].selectSingle,
+  variantClasses[variant].select,
+  error &&
+    'border-red-500 dark:border-red-400 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500 dark:focus:ring-red-400',
+  disabled && 'cursor-not-allowed',
+  // Multi-select specific styling
+  multiple && 'min-h-[120px] overflow-y-auto py-2'
+);
+
+const iconClasses = cn(
+  'absolute inset-y-0 flex items-center pointer-events-none',
+  sizeClasses[size].icon,
+  variantClasses[variant].icon
+);
+
+const labelClasses = cn(
+  'block font-medium text-gray-900 dark:text-gray-100 mb-2',
+  sizeClasses[size].label,
+  disabled && 'opacity-50',
+  required &&
+    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
+);
+
+const helpClasses = cn(
+  'mt-2 text-gray-600 dark:text-gray-300',
+  sizeClasses[size].help,
+  error && 'text-red-600 dark:text-red-300'
+);
 ---
 
-<div class={`space-y-1.5 ${className}`.trim()}>
+<div class={cn('space-y-2', className)}>
   {
     label && (
-      <label
-        for={selectId}
-        class="block text-sm font-medium text-slate-800 dark:text-slate-200"
-      >
+      <label for={selectId} class={labelClasses}>
         {label}
-        {required && (
-          <span
-            class="ml-1 text-rose-600 dark:text-rose-400"
-            aria-hidden="true"
-          >
-            *
-          </span>
-        )}
       </label>
     )
   }
+
   <div class="relative">
     <select
       id={selectId}
       name={name}
       required={required}
       disabled={disabled}
+      multiple={multiple}
+      {...multiple && {
+        size: Math.min(options.length + (placeholder ? 1 : 0), 6),
+      }}
+      aria-label={ariaLabel || label || placeholder}
+      aria-describedby={finalAriaDescribedBy}
+      aria-required={required ? 'true' : 'false'}
       aria-invalid={error ? 'true' : 'false'}
-      aria-describedby={helperId}
-      class={`${baseClasses} ${sizeClasses[size]} ${stateClasses} ${disabledClasses}`.trim()}
+      class={selectClasses}
+      style={!multiple ? 'background-image: none;' : undefined}
+      data-testid="select"
     >
       {
-        placeholder && (
+        placeholder && !multiple && (
           <option value="" disabled selected={!value}>
             {placeholder}
           </option>
@@ -91,7 +217,13 @@ const helperId = error || helperText ? `${selectId}-help` : undefined;
         options.map((option) => (
           <option
             value={option.value}
-            selected={value === option.value}
+            selected={
+              multiple
+                ? Array.isArray(value)
+                  ? value.includes(option.value)
+                  : false
+                : value === option.value
+            }
             disabled={option.disabled}
           >
             {option.label}
@@ -99,19 +231,58 @@ const helperId = error || helperText ? `${selectId}-help` : undefined;
         ))
       }
     </select>
-    <span
-      class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-500 dark:text-slate-300"
-      aria-hidden="true">▾</span
-    >
+
+    {
+      !multiple && (
+        <div class={iconClasses}>
+          <svg
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            class="pointer-events-none"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </div>
+      )
+    }
   </div>
-  {
-    (error || helperText) && (
-      <p
-        id={helperId}
-        class={`text-xs ${error ? 'text-rose-600 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}
-      >
-        {error || helperText}
-      </p>
-    )
-  }
+
+  <div class="space-y-1">
+    {
+      helpText && (
+        <p id={helpId} class={helpClasses}>
+          {helpText}
+        </p>
+      )
+    }
+    {
+      error && (
+        <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
+          {typeof error === 'string' ? error : 'Please check your selection.'}
+        </p>
+      )
+    }
+  </div>
 </div>
+
+<style>
+  select:not([multiple]) {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none;
+  }
+
+  /* Remove Firefox focus outline since we use our own */
+  select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+  }
+</style>

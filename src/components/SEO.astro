@@ -1,31 +1,91 @@
 ---
+import { cn } from '../utils/cn';
+
 /**
- * Generic SEO component for meta tags and JSON-LD
+ * SEO - Comprehensive SEO component with WCAG AAA compliance
+ * Manages meta tags, structured data, and optional visual elements
  */
+
 interface Breadcrumb {
   name: string;
   url: string;
 }
 
-interface Props {
-  title: string;
+interface OpenGraph {
+  title?: string;
   description?: string;
-  keywords?: string | string[];
   image?: string;
-  type?: 'website' | 'article';
-  canonical?: string;
-  noIndex?: boolean;
-  noFollow?: boolean;
+  imageAlt?: string;
+  type?: 'website' | 'article' | 'profile' | 'book';
+  locale?: string;
   siteName?: string;
+}
+
+interface TwitterCard {
+  card?: 'summary' | 'summary_large_image' | 'app' | 'player';
+  site?: string;
+  creator?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+}
+
+interface ArticleMeta {
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string[];
+  section?: string;
+  tags?: string[];
+}
+
+interface Props {
+  /** Page title (will be combined with site name) */
+  title: string;
+  /** Meta description for the page */
+  description?: string;
+  /** Keywords for the page */
+  keywords?: string | string[];
+  /** Featured image URL */
+  image?: string;
+  /** Alt text for the featured image */
+  imageAlt?: string;
+  /** Page type for Open Graph */
+  type?: 'website' | 'article' | 'profile' | 'book';
+  /** Canonical URL for the page */
+  canonical?: string;
+  /** Prevent search engine indexing */
+  noIndex?: boolean;
+  /** Prevent following links */
+  noFollow?: boolean;
+  /** Site name */
+  siteName?: string;
+  /** Page language */
   language?: string;
+  /** Breadcrumb navigation */
   breadcrumbs?: Breadcrumb[];
+  /** Whether to show visual breadcrumbs */
+  showBreadcrumbs?: boolean;
+  /** Open Graph specific overrides */
+  openGraph?: OpenGraph;
+  /** Twitter Card specific settings */
+  twitterCard?: TwitterCard;
+  /** Article-specific metadata */
+  article?: ArticleMeta;
+  /** Additional meta tags */
+  additionalMeta?: Array<{ name?: string; property?: string; content: string }>;
+  /** JSON-LD structured data */
+  structuredData?: Record<string, any>;
+  /** Custom CSS classes for visual elements */
+  class?: string;
 }
 
 const {
   title,
   description = '',
   keywords = [],
-  image = undefined,
+  image,
+  imageAlt = '',
   type = 'website',
   canonical,
   noIndex = false,
@@ -33,29 +93,60 @@ const {
   siteName = 'Site',
   language = 'en',
   breadcrumbs = [],
-} = Astro.props as Props;
+  showBreadcrumbs = false,
+  openGraph = {},
+  twitterCard = {},
+  article = {},
+  additionalMeta = [],
+  structuredData = {},
+  class: className = '',
+} = Astro.props;
 
+// URL construction with proper fallbacks
 const canonicalURL = canonical
   ? new URL(canonical, Astro.site || Astro.url).toString()
   : new URL(Astro.url.pathname, Astro.site || Astro.url).toString();
+
 const imageURL = image
   ? new URL(image, Astro.site || Astro.url).toString()
   : undefined;
-const pageTitle = `${title} | ${siteName}`;
 
+// Title construction
+const pageTitle = `${title} | ${siteName}`;
+const ogTitle = openGraph.title || pageTitle;
+const twitterTitle = twitterCard.title || ogTitle;
+
+// Description handling
+const metaDescription = description;
+const ogDescription = openGraph.description || description;
+const twitterDescription = twitterCard.description || ogDescription;
+
+// Image handling with accessibility
+const ogImage = openGraph.image || imageURL;
+const ogImageAlt = openGraph.imageAlt || imageAlt || title;
+const twitterImage = twitterCard.image || ogImage;
+const twitterImageAlt = twitterCard.imageAlt || ogImageAlt;
+
+// Keywords processing
+const keywordString = Array.isArray(keywords) ? keywords.join(', ') : keywords;
+
+// Robots meta content
+const robotsContent = `${noIndex ? 'noindex' : 'index'}, ${noFollow ? 'nofollow' : 'follow'}`;
+
+// Structured data schemas
 const breadcrumbSchema =
-  Array.isArray(breadcrumbs) && breadcrumbs.length
+  breadcrumbs.length > 0
     ? {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
-        itemListElement: breadcrumbs.map((b, i) => ({
+        itemListElement: breadcrumbs.map((breadcrumb, index) => ({
           '@type': 'ListItem',
-          position: i + 1,
-          name: b.name,
-          item: b.url,
+          position: index + 1,
+          name: breadcrumb.name,
+          item: new URL(breadcrumb.url, Astro.site || Astro.url).toString(),
         })),
       }
-    : undefined;
+    : null;
 
 const websiteSchema = {
   '@context': 'https://schema.org',
@@ -63,48 +154,181 @@ const websiteSchema = {
   name: siteName,
   headline: title,
   url: canonicalURL,
-  description,
-  image: imageURL,
+  description: metaDescription,
+  image: ogImage,
   inLanguage: language,
+  ...(type === 'article' &&
+    article.publishedTime && {
+      datePublished: article.publishedTime,
+      dateModified: article.modifiedTime || article.publishedTime,
+      author: article.author
+        ? article.author.map((name) => ({ '@type': 'Person', name }))
+        : undefined,
+      articleSection: article.section,
+      keywords: article.tags?.join(', '),
+    }),
+  ...structuredData,
 };
+
+const allSchemas = [websiteSchema, breadcrumbSchema].filter(Boolean);
+
+// Visual breadcrumbs styling with WCAG AAA compliance
+const breadcrumbClasses = cn(
+  'flex flex-wrap items-center gap-2 text-sm',
+  'text-gray-700 dark:text-gray-300',
+  'mb-4 p-3 rounded-lg',
+  'bg-gray-50 dark:bg-gray-800',
+  'border border-gray-200 dark:border-gray-700',
+  className
+);
+
+const breadcrumbLinkClasses = cn(
+  'text-blue-700 dark:text-blue-300',
+  'hover:text-blue-800 dark:hover:text-blue-200',
+  'underline decoration-blue-700 dark:decoration-blue-300',
+  'underline-offset-2 decoration-2',
+  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
+  'focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-800',
+  'rounded-sm px-1 py-0.5',
+  'transition-colors duration-200'
+);
+
+const breadcrumbSeparatorClasses = cn(
+  'text-gray-500 dark:text-gray-400',
+  'select-none'
+);
+
+const breadcrumbCurrentClasses = cn(
+  'text-gray-900 dark:text-gray-100',
+  'font-medium'
+);
 ---
 
+<!-- Basic Meta Tags -->
 <title>{pageTitle}</title>
 <meta name="title" content={pageTitle} />
-{description && <meta name="description" content={description} />}
-{
-  keywords && (
-    <meta
-      name="keywords"
-      content={Array.isArray(keywords) ? keywords.join(', ') : keywords}
-    />
-  )
-}
-<meta
-  name="robots"
-  content={`${noIndex ? 'noindex' : 'index'}, ${noFollow ? 'nofollow' : 'follow'}`}
-/>
+{metaDescription && <meta name="description" content={metaDescription} />}
+{keywordString && <meta name="keywords" content={keywordString} />}
+<meta name="robots" content={robotsContent} />
 <meta name="language" content={language} />
 <link rel="canonical" href={canonicalURL} />
 
-<!-- Open Graph -->
-<meta property="og:type" content={type} />
+<!-- Open Graph Meta Tags -->
+<meta property="og:type" content={openGraph.type || type} />
 <meta property="og:url" content={canonicalURL} />
-<meta property="og:title" content={pageTitle} />
-{description && <meta property="og:description" content={description} />}
-{imageURL && <meta property="og:image" content={imageURL} />}
-<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={ogTitle} />
+{ogDescription && <meta property="og:description" content={ogDescription} />}
+{ogImage && <meta property="og:image" content={ogImage} />}
+{ogImage && <meta property="og:image:alt" content={ogImageAlt} />}
+<meta property="og:site_name" content={openGraph.siteName || siteName} />
+{openGraph.locale && <meta property="og:locale" content={openGraph.locale} />}
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={pageTitle} />
-{description && <meta name="twitter:description" content={description} />}
-{imageURL && <meta name="twitter:image" content={imageURL} />}
+<!-- Article-specific Open Graph -->
+{
+  type === 'article' && article.publishedTime && (
+    <meta property="article:published_time" content={article.publishedTime} />
+  )
+}
+{
+  type === 'article' && article.modifiedTime && (
+    <meta property="article:modified_time" content={article.modifiedTime} />
+  )
+}
+{
+  type === 'article' &&
+    article.author &&
+    article.author.map((author) => (
+      <meta property="article:author" content={author} />
+    ))
+}
+{
+  type === 'article' && article.section && (
+    <meta property="article:section" content={article.section} />
+  )
+}
+{
+  type === 'article' &&
+    article.tags &&
+    article.tags.map((tag) => <meta property="article:tag" content={tag} />)
+}
 
-<script
-  is:inline
-  type="application/ld+json"
-  set:html={JSON.stringify(
-    breadcrumbSchema ? [websiteSchema, breadcrumbSchema] : websiteSchema
-  )}
-/>
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content={twitterCard.card || 'summary_large_image'} />
+{twitterCard.site && <meta name="twitter:site" content={twitterCard.site} />}
+{
+  twitterCard.creator && (
+    <meta name="twitter:creator" content={twitterCard.creator} />
+  )
+}
+<meta name="twitter:title" content={twitterTitle} />
+{
+  twitterDescription && (
+    <meta name="twitter:description" content={twitterDescription} />
+  )
+}
+{twitterImage && <meta name="twitter:image" content={twitterImage} />}
+{twitterImage && <meta name="twitter:image:alt" content={twitterImageAlt} />}
+
+<!-- Additional Meta Tags -->
+{
+  additionalMeta.map((meta) =>
+    meta.name ? (
+      <meta name={meta.name} content={meta.content} />
+    ) : (
+      <meta property={meta.property} content={meta.content} />
+    )
+  )
+}
+
+<!-- Structured Data -->
+{
+  allSchemas.length > 0 && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(
+        allSchemas.length === 1 ? allSchemas[0] : allSchemas
+      )}
+    />
+  )
+}
+
+<!-- Visual Breadcrumbs (if enabled) -->
+{
+  showBreadcrumbs && breadcrumbs.length > 0 && (
+    <nav aria-label="Breadcrumb" class={breadcrumbClasses}>
+      <ol class="flex flex-wrap items-center gap-2" role="list">
+        {breadcrumbs.map((breadcrumb, index) => (
+          <li class="flex items-center gap-2">
+            {index < breadcrumbs.length - 1 ? (
+              <>
+                <a
+                  href={breadcrumb.url}
+                  class={breadcrumbLinkClasses}
+                  aria-describedby={`breadcrumb-${index + 1}`}
+                >
+                  {breadcrumb.name}
+                </a>
+                <span class={breadcrumbSeparatorClasses} aria-hidden="true">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06L7.28 12.78a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z" />
+                  </svg>
+                </span>
+              </>
+            ) : (
+              <span class={breadcrumbCurrentClasses} aria-current="page">
+                {breadcrumb.name}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

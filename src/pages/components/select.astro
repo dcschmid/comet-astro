@@ -1,57 +1,894 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Select from '../../components/Select.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 const countries = [
   { value: 'de', label: 'Germany' },
   { value: 'us', label: 'United States' },
   { value: 'uk', label: 'United Kingdom' },
   { value: 'fr', label: 'France' },
+  { value: 'es', label: 'Spain' },
+  { value: 'it', label: 'Italy' },
+];
+
+const frameworks = [
+  { value: 'astro', label: 'Astro' },
+  { value: 'react', label: 'React' },
+  { value: 'vue', label: 'Vue.js' },
+  { value: 'svelte', label: 'Svelte' },
+  { value: 'angular', label: 'Angular', disabled: true },
+];
+
+const priorities = [
+  { value: 'low', label: 'Low Priority' },
+  { value: 'medium', label: 'Medium Priority' },
+  { value: 'high', label: 'High Priority' },
+  { value: 'urgent', label: 'Urgent' },
 ];
 ---
 
-<DocsLayout title="Select" description="Dropdown select with custom styling.">
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300 text-sm space-y-1">
-      <li><code>name: string</code> – select name (required)</li>
-      <li>
-        <code>options: &#123;value,label,disabled?&#125;[]</code> – options array
-        (required)
-      </li>
-      <li><code>label?: string</code></li>
-      <li><code>placeholder?: string</code></li>
-      <li><code>value?: string</code> – selected value</li>
-      <li><code>required?: boolean</code></li>
-      <li><code>disabled?: boolean</code></li>
-      <li><code>error?: string</code></li>
-      <li><code>helperText?: string</code></li>
-      <li><code>size?: 'sm'|'md'|'lg'</code></li>
-      <li><code>className?: string</code></li>
-    </ul>
-  </section>
+<DocsLayout
+  title="Select"
+  description="Accessible dropdown select with WCAG AAA compliance, multiple variants, multi-select support, and comprehensive form integration."
+>
+  <div class="space-y-12">
+    <!-- Basic Example -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Basic Example
+      </h2>
+      <div class="not-prose space-y-4">
+        <Select
+          name="country"
+          label="Select Country"
+          options={countries}
+          placeholder="Choose a country..."
+          helpText="Select your country for shipping and tax calculations"
+        />
+      </div>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-4">
-      <Select
-        name="country"
-        label="Country"
-        options={countries}
-        placeholder="Select a country"
+      <CodeBlock
+        code={`<Select
+  name="country"
+  label="Select Country"
+  options={countries}
+  placeholder="Choose a country..."
+  helpText="Select your country for shipping and tax calculations"
+/>`}
+        language="astro"
       />
-      <Select
-        name="country-selected"
-        label="With Selection"
-        options={countries}
-        value="de"
+    </section>
+
+    <!-- Variants -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Variants
+      </h2>
+
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Default
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="variant-default"
+              variant="default"
+              label="Default Select"
+              options={countries}
+              placeholder="Select option..."
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Minimal
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="variant-minimal"
+              variant="minimal"
+              label="Minimal Select"
+              options={countries}
+              placeholder="Select option..."
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Outlined
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="variant-outlined"
+              variant="outlined"
+              label="Outlined Select"
+              options={countries}
+              placeholder="Select option..."
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Filled
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="variant-filled"
+              variant="filled"
+              label="Filled Select"
+              options={countries}
+              placeholder="Select option..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<Select variant="default" />
+
+<!-- Minimal variant -->
+<Select variant="minimal" />
+
+<!-- Outlined variant -->
+<Select variant="outlined" />
+
+<!-- Filled variant -->
+<Select variant="filled" />`}
+        language="astro"
       />
-      <Select
-        name="country-required"
-        label="Required"
-        options={countries}
-        required
+    </section>
+
+    <!-- Sizes -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Sizes</h2>
+
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Small
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="size-small"
+              size="sm"
+              label="Small Select"
+              options={priorities}
+              placeholder="Compact selection..."
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Medium (Default)
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="size-medium"
+              size="md"
+              label="Medium Select"
+              options={priorities}
+              placeholder="Standard selection..."
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Large
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="size-large"
+              size="lg"
+              label="Large Select"
+              options={priorities}
+              placeholder="Prominent selection..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<Select size="sm" />
+
+<!-- Medium size (default) -->
+<Select size="md" />
+
+<!-- Large size -->
+<Select size="lg" />`}
+        language="astro"
       />
-    </div>
-  </section>
+    </section>
+
+    <!-- States -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        States
+      </h2>
+
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Required
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="state-required"
+              required={true}
+              label="Required Selection"
+              options={frameworks}
+              placeholder="Please select a framework..."
+              helpText="This field is required to continue"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Error
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="state-error"
+              error="Please select a valid framework"
+              label="Framework Selection"
+              options={frameworks}
+              value="invalid"
+              helpText="Choose your preferred development framework"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Disabled
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="state-disabled"
+              disabled={true}
+              label="Disabled Select"
+              options={frameworks}
+              value="astro"
+              helpText="This selection is currently disabled"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            With Selected Value
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="state-selected"
+              label="Pre-selected Framework"
+              options={frameworks}
+              value="astro"
+              helpText="Astro is pre-selected as the default framework"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Required state -->
+<Select required={true} />
+
+<!-- Error state -->
+<Select error="Please select a valid option" />
+
+<!-- Disabled state -->
+<Select disabled={true} />
+
+<!-- With selected value -->
+<Select value="option1" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Multi-Select -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Multi-Select
+      </h2>
+
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Multiple Selection
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="multi-frameworks"
+              multiple={true}
+              label="Select Multiple Frameworks"
+              options={frameworks}
+              helpText="Hold Ctrl/Cmd to select multiple options"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Multi-Select with Pre-selection
+          </h3>
+          <div class="not-prose">
+            <Select
+              name="multi-countries"
+              multiple={true}
+              label="Select Countries"
+              options={countries}
+              value={['de', 'us']}
+              helpText="Germany and United States are pre-selected"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Multiple selection -->
+<Select 
+  multiple={true}
+  name="frameworks"
+  options={frameworks}
+  helpText="Hold Ctrl/Cmd to select multiple options"
+/>
+
+<!-- With pre-selected values -->
+<Select 
+  multiple={true}
+  value={['option1', 'option2']}
+  options={options}
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Options with Disabled Items -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Options with Disabled Items
+      </h2>
+
+      <div class="not-prose space-y-4">
+        <Select
+          name="frameworks-disabled"
+          label="Framework Selection"
+          options={frameworks}
+          placeholder="Select a framework..."
+          helpText="Some options may be temporarily unavailable"
+        />
+      </div>
+
+      <CodeBlock
+        code={`const frameworks = [
+  { value: 'astro', label: 'Astro' },
+  { value: 'react', label: 'React' },
+  { value: 'vue', label: 'Vue.js' },
+  { value: 'svelte', label: 'Svelte' },
+  { value: 'angular', label: 'Angular', disabled: true }, // Disabled option
+];
+
+<Select
+  name="frameworks"
+  options={frameworks}
+  placeholder="Select a framework..."
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Props Reference
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table
+          class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+        >
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-700">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+              >
+                Prop
+              </th>
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+              >
+                Type
+              </th>
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+              >
+                Default
+              </th>
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+              >
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                name
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                string
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                -
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Select name attribute (required)
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                options
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Option[]
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                -
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Array of options (required)
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                label
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                string
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                -
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Label for the select
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                placeholder
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                string
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                -
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Placeholder text
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                value
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                string | string[]
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                -
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Selected value(s)
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                variant
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                'default' | 'minimal' | 'outlined' | 'filled'
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                'default'
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                size
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                'sm' | 'md' | 'lg'
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                'md'
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Size of the select
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                multiple
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                boolean
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                false
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Allow multiple selections
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                required
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                boolean
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                false
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Whether the select is required
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                disabled
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                boolean
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                false
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Whether the select is disabled
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                error
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                boolean | string
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                false
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Shows error state with optional message
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300"
+              >
+                helpText
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                string
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                -
+              </td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300"
+              >
+                Help text displayed below the select
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <CodeBlock
+        code={`interface Option {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+interface Props {
+  name: string;
+  options: Option[];
+  label?: string;
+  placeholder?: string;
+  value?: string | string[];
+  required?: boolean;
+  disabled?: boolean;
+  error?: boolean | string;
+  helpText?: string;
+  variant?: 'default' | 'minimal' | 'outlined' | 'filled';
+  size?: 'sm' | 'md' | 'lg';
+  multiple?: boolean;
+  id?: string;
+  ariaLabel?: string;
+  class?: string;
+}`}
+        language="typescript"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Accessibility
+      </h2>
+
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>WCAG AAA Compliance</h3>
+        <ul>
+          <li>
+            <strong>Contrast:</strong> All color combinations meet WCAG AAA standards
+            (7:1 contrast ratio)
+          </li>
+          <li>
+            <strong>Focus Management:</strong> Clear focus indicators with proper
+            keyboard navigation
+          </li>
+          <li>
+            <strong>Screen Reader Support:</strong> Proper labels, roles, and ARIA
+            attributes
+          </li>
+          <li>
+            <strong>Error Identification:</strong> Clear error states with descriptive
+            messages
+          </li>
+        </ul>
+
+        <h3>Keyboard Navigation</h3>
+        <ul>
+          <li><strong>Tab:</strong> Navigate to the select element</li>
+          <li><strong>Space/Enter:</strong> Open the dropdown</li>
+          <li><strong>Arrow Up/Down:</strong> Navigate through options</li>
+          <li><strong>Escape:</strong> Close dropdown without selection</li>
+          <li><strong>Enter:</strong> Select the highlighted option</li>
+          <li>
+            <strong>Type ahead:</strong> Jump to options by typing first letter
+          </li>
+        </ul>
+
+        <h3>Multi-Select Navigation</h3>
+        <ul>
+          <li><strong>Ctrl/Cmd + Click:</strong> Toggle individual options</li>
+          <li><strong>Shift + Click:</strong> Select range of options</li>
+          <li><strong>Ctrl/Cmd + A:</strong> Select all options</li>
+          <li>
+            <strong>Arrow keys:</strong> Navigate while maintaining selection
+          </li>
+        </ul>
+
+        <h3>Screen Reader Features</h3>
+        <ul>
+          <li>Select properly identified with label and description</li>
+          <li>Options announced with value and status</li>
+          <li>Error messages announced immediately</li>
+          <li>Required status communicated clearly</li>
+          <li>Disabled options identified as unavailable</li>
+          <li>Multi-select mode announced and explained</li>
+        </ul>
+
+        <h3>ARIA Attributes</h3>
+        <ul>
+          <li><code>aria-label</code> for clear identification</li>
+          <li>
+            <code>aria-describedby</code> linking help text and error messages
+          </li>
+          <li><code>aria-required</code> for required fields</li>
+          <li><code>aria-invalid</code> for error states</li>
+          <li><code>aria-expanded</code> for dropdown state (if custom)</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Accessible Select example -->
+<Select
+  name="country"
+  label="Select Your Country"
+  options={countries}
+  placeholder="Choose a country..."
+  helpText="Required for shipping and tax calculations"
+  required={true}
+  ariaLabel="Country selection for shipping"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Best Practices -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Best Practices
+      </h2>
+
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>Do's</h3>
+        <ul>
+          <li>Always provide clear, descriptive labels</li>
+          <li>
+            Use placeholder text to give context about expected selections
+          </li>
+          <li>Provide helpful context with help text when needed</li>
+          <li>Group related options logically</li>
+          <li>Use appropriate variants that match your design system</li>
+          <li>Consider multi-select for categories or tags</li>
+          <li>Test keyboard navigation and screen reader compatibility</li>
+          <li>Keep option lists manageable in length</li>
+        </ul>
+
+        <h3>Don'ts</h3>
+        <ul>
+          <li>
+            Don't use selects for very long lists (consider search/filter
+            instead)
+          </li>
+          <li>Don't forget to handle empty states and validation</li>
+          <li>
+            Don't make critical functionality depend only on select choices
+          </li>
+          <li>Don't use overly technical or unclear option labels</li>
+          <li>Don't ignore error states and validation feedback</li>
+          <li>
+            Don't overuse multi-select where single selection makes more sense
+          </li>
+        </ul>
+
+        <h3>UX Guidelines</h3>
+        <ul>
+          <li>
+            Order options logically (alphabetical, by frequency, or by
+            importance)
+          </li>
+          <li>Provide smart defaults when possible</li>
+          <li>Consider search functionality for long option lists</li>
+          <li>Use clear, concise option labels</li>
+          <li>Group related options with optgroups when appropriate</li>
+          <li>Provide feedback for actions and state changes</li>
+          <li>Consider mobile experience and touch targets</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Good: Clear, accessible select -->
+<Select
+  name="priority"
+  label="Task Priority"
+  options={priorities}
+  placeholder="Select priority level..."
+  helpText="Choose the urgency level for this task"
+  required={true}
+  variant="default"
+  size="md"
+/>
+
+<!-- Good: Multi-select for categories -->
+<Select
+  name="categories"
+  label="Select Categories"
+  options={categories}
+  multiple={true}
+  helpText="Hold Ctrl/Cmd to select multiple categories"
+/>
+
+<!-- Avoid: Unclear or missing labels -->
+<Select name="items" options={items} />
+
+<!-- Avoid: Too many options without grouping -->
+<Select 
+  name="location" 
+  options={allWorldCities} // 10,000+ options
+/>`}
+        language="astro"
+      />
+    </section>
+  </div>
 </DocsLayout>
