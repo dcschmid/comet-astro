@@ -2,28 +2,517 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import SidebarNav from '../../components/SidebarNav.astro';
 
-const items = [
-  { label: 'Dashboard', href: '#', icon: '🏠' },
-  { label: 'Projects', href: '#', icon: '📁', badge: '3' },
+// Basic example items
+const basicItems = [
+  { label: 'Dashboard', href: '/dashboard', icon: '🏠', active: true },
+  { label: 'Projects', href: '/projects', icon: '📁', badge: '3' },
   {
     label: 'Settings',
     icon: '⚙️',
     children: [
-      { label: 'Profile', href: '#' },
-      { label: 'Security', href: '#' },
+      { label: 'Profile', href: '/settings/profile' },
+      { label: 'Security', href: '/settings/security' },
+    ],
+  },
+];
+
+// Admin dashboard example
+const adminItems = [
+  {
+    label: 'Analytics',
+    href: '/admin/analytics',
+    icon: '📈',
+    active: true,
+    badge: 'Live',
+  },
+  {
+    label: 'User Management',
+    href: '/admin/users',
+    icon: '👤',
+    children: [
+      { label: 'All Users', href: '/admin/users' },
+      { label: 'Roles & Permissions', href: '/admin/users/roles' },
+      { label: 'Invitations', href: '/admin/users/invites', badge: '2' },
+    ],
+  },
+  {
+    label: 'Content',
+    href: '/admin/content',
+    icon: '📝',
+    children: [
+      { label: 'Posts', href: '/admin/content/posts' },
+      { label: 'Pages', href: '/admin/content/pages' },
+      { label: 'Media Library', href: '/admin/content/media' },
+    ],
+  },
+  {
+    label: 'System',
+    href: '/admin/system',
+    icon: '🔧',
+    children: [
+      { label: 'Database', href: '/admin/system/database' },
+      { label: 'Logs', href: '/admin/system/logs', badge: '!' },
+      { label: 'Backups', href: '/admin/system/backups' },
+    ],
+  },
+];
+
+// E-commerce example
+const ecommerceItems = [
+  { label: 'Orders', href: '/orders', icon: '🛒', badge: '12', active: true },
+  {
+    label: 'Products',
+    href: '/products',
+    icon: '📦',
+    children: [
+      { label: 'All Products', href: '/products' },
+      { label: 'Categories', href: '/products/categories' },
+      { label: 'Inventory', href: '/products/inventory', badge: 'Low' },
+    ],
+  },
+  { label: 'Customers', href: '/customers', icon: '🤝' },
+  {
+    label: 'Marketing',
+    href: '/marketing',
+    icon: '📢',
+    children: [
+      { label: 'Campaigns', href: '/marketing/campaigns' },
+      { label: 'Coupons', href: '/marketing/coupons' },
+      { label: 'Analytics', href: '/marketing/analytics' },
+    ],
+  },
+];
+
+// Disabled states example
+const disabledItems = [
+  { label: 'Available Feature', href: '/available', icon: '✅', active: true },
+  {
+    label: 'Coming Soon',
+    href: '/coming-soon',
+    icon: '🚧',
+    disabled: true,
+    badge: 'Soon',
+  },
+  {
+    label: 'Premium Feature',
+    href: '/premium',
+    icon: '⭐',
+    disabled: true,
+    badge: 'Pro',
+  },
+  {
+    label: 'Beta Features',
+    href: '/beta',
+    icon: '🧪',
+    children: [
+      { label: 'AI Assistant', href: '/beta/ai', badge: 'Beta' },
+      { label: 'Advanced Analytics', href: '/beta/analytics', disabled: true },
+      { label: 'API v2', href: '/beta/api', badge: 'New' },
+    ],
+  },
+];
+
+// Text-only navigation
+const textOnlyItems = [
+  { label: 'Getting Started', href: '/start', active: true },
+  {
+    label: 'Components',
+    href: '/components',
+    children: [
+      { label: 'Buttons', href: '/components/buttons' },
+      { label: 'Forms', href: '/components/forms' },
+      { label: 'Navigation', href: '/components/nav' },
+    ],
+  },
+  { label: 'Examples', href: '/examples' },
+  { label: 'API Reference', href: '/api' },
+];
+
+const usageSnippet = `---
+import { SidebarNav } from 'comet-astro';
+
+const navItems = [
+  {
+    label: "Dashboard",
+    href: "/dashboard", 
+    icon: "🏠",
+    active: true,
+  },
+  {
+    label: "Projects",
+    href: "/projects",
+    icon: "📁",
+    badge: "3",
+    children: [
+      { label: "Active Projects", href: "/projects/active" },
+      { label: "Archived Projects", href: "/projects/archived" }
     ],
   },
 ];
 ---
 
+<SidebarNav
+  title="Navigation"
+  items={navItems}
+  variant="default"
+  size="md"
+  collapsible={true}
+  defaultOpen={true}
+/>`;
+---
+
 <DocsLayout
   title="SidebarNav"
-  description="Collapsible sidebar with nested sections and badges."
+  description="Collapsible sidebar with nested sections and badges, WCAG AAA compliant with full keyboard navigation."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <div class="bg-gray-900 rounded-lg overflow-hidden" style="height: 400px;">
-      <SidebarNav items={items} title="Navigation" />
+    <p class="text-base text-slate-100">
+      SidebarNav provides a responsive navigation sidebar with collapsible
+      sections and keyboard navigation support. Built with WCAG AAA compliance
+      in mind, featuring 9:1 contrast ratios and comprehensive accessibility
+      features.
+    </p>
+    <p class="text-base text-slate-200">
+      Each variant provides strong focus rings with theme-aware offsets so
+      keyboard users never lose track of intent. Supports nested navigation
+      groups with expand/collapse functionality and mobile-responsive overlay
+      behavior.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Example</h2>
+    <div
+      class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+    >
+      <div class="h-80 w-64">
+        <SidebarNav
+          title="Navigation"
+          items={basicItems}
+          variant="default"
+          size="md"
+          defaultOpen={true}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, configure your navigation items with optional nested
+      structure, and customize the appearance with variants and sizes. Hover,
+      focus, and interactive states provide AAA-compliant contrast
+      automatically.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          items
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of navigation items with optional nested children. Each item can
+          have
+          <code>label</code>, <code>href</code>, <code>icon</code>, <code
+            >active</code
+          >, and <code>children</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style variant. Choose <code>"default"</code>, <code
+            >"minimal"</code
+          >, or <code>"bordered"</code>. Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant for spacing and typography. Choose <code>"sm"</code>, <code
+            >"md"</code
+          >, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          collapsible?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether the sidebar can be collapsed. Defaults to <code>true</code>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <!-- Default Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Default</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="h-48 w-full">
+            <SidebarNav
+              title="Default"
+              items={basicItems.slice(0, 3)}
+              variant="default"
+              size="sm"
+              defaultOpen={true}
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Minimal Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Minimal</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="h-48 w-full">
+            <SidebarNav
+              title="Minimal"
+              items={basicItems.slice(0, 3)}
+              variant="minimal"
+              size="sm"
+              defaultOpen={true}
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Bordered Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Bordered</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="h-48 w-full">
+            <SidebarNav
+              title="Bordered"
+              items={basicItems.slice(0, 3)}
+              variant="bordered"
+              size="sm"
+              defaultOpen={true}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Real-World Examples</h2>
+
+    <!-- Admin Dashboard -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Admin Dashboard</h3>
+      <p class="text-sm text-slate-300">
+        Perfect for administrative interfaces with system management, user
+        controls, and monitoring features.
+      </p>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <div class="h-72 w-full">
+            <SidebarNav
+              title="Admin Panel"
+              items={adminItems}
+              variant="bordered"
+              size="md"
+              defaultOpen={true}
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-md font-medium text-slate-200">
+            Features showcased:
+          </h4>
+          <ul class="space-y-1 text-sm text-slate-300">
+            <li>• Live status badges ("Live", "!")</li>
+            <li>• System administration sections</li>
+            <li>• Alert indicators for logs</li>
+            <li>• Nested category organization</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- E-commerce -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">E-commerce Platform</h3>
+      <p class="text-sm text-slate-300">
+        Ideal for online store management with orders, products, customers, and
+        marketing tools.
+      </p>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <div class="h-72 w-full">
+            <SidebarNav
+              title="Store Management"
+              items={ecommerceItems}
+              variant="default"
+              size="md"
+              defaultOpen={true}
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-md font-medium text-slate-200">
+            Features showcased:
+          </h4>
+          <ul class="space-y-1 text-sm text-slate-300">
+            <li>• Order count badges ("12")</li>
+            <li>• Inventory warnings ("Low")</li>
+            <li>• Business-focused navigation</li>
+            <li>• Marketing and analytics sections</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Feature States</h2>
+    <p class="text-base text-slate-200">
+      Demonstrate disabled states, premium features, and beta functionality with
+      proper accessibility.
+    </p>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="h-72 w-full">
+          <SidebarNav
+            title="Platform Features"
+            items={disabledItems}
+            variant="minimal"
+            size="md"
+            defaultOpen={true}
+          />
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-md font-medium text-slate-200">Features showcased:</h4>
+        <ul class="space-y-1 text-sm text-slate-300">
+          <li>• Disabled item states</li>
+          <li>• Premium feature indicators ("Pro")</li>
+          <li>• Beta/experimental badges</li>
+          <li>• Mixed availability in nested items</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Without Icons</h2>
+    <p class="text-base text-slate-200">
+      Clean, text-only navigation for minimal interfaces or when icons might be
+      distracting.
+    </p>
+    <div
+      class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+    >
+      <div class="h-64 w-64">
+        <SidebarNav
+          title="Documentation"
+          items={textOnlyItems}
+          showIcons={false}
+          variant="minimal"
+          size="md"
+          defaultOpen={true}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Contrast ratios stay above 9:1 across all states and variants in both
+      light and dark themes. Focus-visible rings expand to 4px with theme-aware
+      offsets so keyboard navigation intent is obvious against any background.
+    </p>
+    <p class="text-base text-slate-200">
+      Full keyboard navigation support includes arrow key navigation within the
+      sidebar, Enter/Space for activation, and proper ARIA labeling for screen
+      readers. State changes are announced to assistive technologies with live
+      regions.
+    </p>
+    <div class="mt-6 space-y-3">
+      <h3 class="text-lg font-medium text-slate-100">Keyboard shortcuts</h3>
+      <dl class="grid gap-3 sm:grid-cols-2">
+        <div class="flex items-center gap-3">
+          <kbd class="bg-slate-800 px-2 py-1 rounded text-xs font-mono">Tab</kbd
+          >
+          <span class="text-sm text-slate-200"
+            >Navigate between focusable elements</span
+          >
+        </div>
+        <div class="flex items-center gap-3">
+          <kbd class="bg-slate-800 px-2 py-1 rounded text-xs font-mono">↑ ↓</kbd
+          >
+          <span class="text-sm text-slate-200"
+            >Navigate within sidebar items</span
+          >
+        </div>
+        <div class="flex items-center gap-3">
+          <kbd class="bg-slate-800 px-2 py-1 rounded text-xs font-mono">← →</kbd
+          >
+          <span class="text-sm text-slate-200">Collapse/expand groups</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <kbd class="bg-slate-800 px-2 py-1 rounded text-xs font-mono"
+            >Enter</kbd
+          >
+          <span class="text-sm text-slate-200">Activate buttons and links</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <kbd class="bg-slate-800 px-2 py-1 rounded text-xs font-mono"
+            >Home</kbd
+          >
+          <span class="text-sm text-slate-200">Jump to first item</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <kbd class="bg-slate-800 px-2 py-1 rounded text-xs font-mono">End</kbd
+          >
+          <span class="text-sm text-slate-200">Jump to last item</span>
+        </div>
+      </dl>
     </div>
   </section>
 </DocsLayout>
