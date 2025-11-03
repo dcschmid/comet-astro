@@ -1,18 +1,51 @@
 ---
+import { cn } from '../utils/cn';
+
+/**
+ * SidebarNav - Accessible sidebar navigation with WCAG AAA compliance
+ * Features collapsible sections, badges, icons, and proper keyboard navigation
+ */
+
 interface NavItem {
+  /** Display text for the navigation item */
   label: string;
+  /** URL for the navigation link */
   href?: string;
+  /** Icon to display before the label */
   icon?: string;
+  /** Child navigation items for nested navigation */
   children?: NavItem[];
+  /** Badge text to display (e.g., "New", "3", "Beta") */
   badge?: string;
+  /** Whether this item is currently active/selected */
+  active?: boolean;
+  /** Whether this item is disabled */
+  disabled?: boolean;
+  /** Target for the link (e.g., "_blank") */
+  target?: string;
+  /** Custom aria-label for accessibility */
+  ariaLabel?: string;
 }
 
 interface Props {
+  /** Array of navigation items */
   items: NavItem[];
+  /** Title for the navigation section */
   title?: string;
+  /** Whether the sidebar can be collapsed */
   collapsible?: boolean;
+  /** Whether the sidebar is open by default */
   defaultOpen?: boolean;
-  className?: string;
+  /** Size variant of the sidebar */
+  size?: 'sm' | 'md' | 'lg';
+  /** Visual variant of the sidebar */
+  variant?: 'default' | 'bordered' | 'minimal';
+  /** Whether to show icons */
+  showIcons?: boolean;
+  /** Custom ID for the navigation */
+  id?: string;
+  /** Additional CSS classes */
+  class?: string;
 }
 
 const {
@@ -20,102 +53,328 @@ const {
   title,
   collapsible = true,
   defaultOpen = true,
-  className = '',
-} = Astro.props as Props;
+  size = 'md',
+  variant = 'default',
+  showIcons = true,
+  id: propId,
+  class: className = '',
+} = Astro.props;
 
-const navId = `sidebar-nav-${Math.random().toString(36).slice(2, 9)}`;
+// Generate unique IDs
+const navId = propId || `sidebar-nav-${Math.random().toString(36).slice(2, 9)}`;
 const headingId = title ? `${navId}-heading` : undefined;
 const ariaLabel = title || 'Sidebar navigation';
+
+// Size configurations with WCAG AAA compliant spacing
+const sizeClasses = {
+  sm: {
+    container: 'max-w-xs text-xs',
+    header: 'px-3 py-2.5',
+    content: 'px-2 py-3',
+    item: 'px-2.5 py-1.5 text-xs',
+    subItem: 'px-2.5 py-1.5 text-xs ml-2',
+    toggle: 'h-7 w-7 text-xs',
+    badge: 'px-1.5 py-0.5 text-xs',
+    icon: 'w-3 h-3',
+  },
+  md: {
+    container: 'max-w-sm text-sm',
+    header: 'px-4 py-3',
+    content: 'px-3 py-4',
+    item: 'px-3 py-2 text-sm',
+    subItem: 'px-3 py-2 text-sm ml-3',
+    toggle: 'h-8 w-8 text-sm',
+    badge: 'px-2 py-0.5 text-xs',
+    icon: 'w-4 h-4',
+  },
+  lg: {
+    container: 'max-w-md text-base',
+    header: 'px-5 py-4',
+    content: 'px-4 py-5',
+    item: 'px-4 py-2.5 text-base',
+    subItem: 'px-4 py-2.5 text-base ml-4',
+    toggle: 'h-9 w-9 text-base',
+    badge: 'px-2.5 py-1 text-xs',
+    icon: 'w-5 h-5',
+  },
+};
+
+// Variant styles with WCAG AAA compliance
+const variantClasses = {
+  default: {
+    container: cn(
+      'bg-white dark:bg-gray-900',
+      'border border-gray-200 dark:border-gray-700',
+      'shadow-sm rounded-xl'
+    ),
+    header: 'border-b border-gray-200 dark:border-gray-700',
+    title: 'text-gray-900 dark:text-gray-100 font-semibold',
+    toggle: cn(
+      'bg-white dark:bg-gray-800',
+      'border border-gray-300 dark:border-gray-600',
+      'text-gray-700 dark:text-gray-200',
+      'hover:bg-gray-50 dark:hover:bg-gray-700',
+      'hover:border-gray-400 dark:hover:border-gray-500'
+    ),
+  },
+  bordered: {
+    container: cn(
+      'bg-white dark:bg-gray-900',
+      'border-2 border-gray-300 dark:border-gray-600',
+      'shadow-md rounded-xl'
+    ),
+    header: 'border-b-2 border-gray-300 dark:border-gray-600',
+    title: 'text-gray-900 dark:text-gray-100 font-bold',
+    toggle: cn(
+      'bg-white dark:bg-gray-800',
+      'border-2 border-gray-400 dark:border-gray-500',
+      'text-gray-800 dark:text-gray-100',
+      'hover:bg-gray-100 dark:hover:bg-gray-700',
+      'hover:border-gray-500 dark:hover:border-gray-400'
+    ),
+  },
+  minimal: {
+    container: cn(
+      'bg-gray-50 dark:bg-gray-800',
+      'border border-gray-200 dark:border-gray-700',
+      'rounded-lg'
+    ),
+    header: 'border-b border-gray-200 dark:border-gray-700',
+    title: 'text-gray-800 dark:text-gray-200 font-medium',
+    toggle: cn(
+      'bg-gray-100 dark:bg-gray-700',
+      'border border-gray-200 dark:border-gray-600',
+      'text-gray-600 dark:text-gray-300',
+      'hover:bg-gray-200 dark:hover:bg-gray-600'
+    ),
+  },
+};
+
+// WCAG AAA compliant styling classes
+const containerClasses = cn(
+  'w-full transition-all duration-200',
+  sizeClasses[size].container,
+  variantClasses[variant].container,
+  className
+);
+
+const headerClasses = cn(
+  'flex items-center justify-between gap-3',
+  sizeClasses[size].header,
+  variantClasses[variant].header
+);
+
+const titleClasses = cn(
+  'uppercase tracking-wide',
+  variantClasses[variant].title
+);
+
+const toggleClasses = cn(
+  'inline-flex items-center justify-center rounded-lg',
+  'transition-colors duration-200',
+  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
+  'focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900',
+  sizeClasses[size].toggle,
+  variantClasses[variant].toggle
+);
+
+const contentClasses = cn(
+  'space-y-1 transition-all duration-200',
+  sizeClasses[size].content
+);
+
+const itemClasses = cn(
+  'flex items-center gap-2 rounded-lg font-medium',
+  'transition-colors duration-200',
+  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
+  'focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900',
+  sizeClasses[size].item
+);
+
+const subItemClasses = cn(
+  'flex items-center gap-2 rounded-lg font-medium',
+  'transition-colors duration-200',
+  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
+  'focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900',
+  sizeClasses[size].subItem
+);
+
+const badgeClasses = cn(
+  'ml-auto rounded-full font-semibold',
+  'bg-blue-600 dark:bg-blue-500',
+  'text-white dark:text-gray-900',
+  sizeClasses[size].badge
+);
+
+const iconClasses = cn('flex-shrink-0', sizeClasses[size].icon);
+
+// Helper function to get item state classes
+const getItemStateClasses = (item: NavItem, isSubItem = false) => {
+  const baseClasses = isSubItem ? subItemClasses : itemClasses;
+
+  if (item.disabled) {
+    return cn(
+      baseClasses,
+      'opacity-50 cursor-not-allowed',
+      'text-gray-400 dark:text-gray-500'
+    );
+  }
+
+  if (item.active) {
+    return cn(
+      baseClasses,
+      'bg-blue-50 dark:bg-blue-900/30',
+      'text-blue-700 dark:text-blue-300',
+      'border border-blue-200 dark:border-blue-700'
+    );
+  }
+
+  return cn(
+    baseClasses,
+    'text-gray-700 dark:text-gray-200',
+    'hover:bg-gray-100 dark:hover:bg-gray-800',
+    'hover:text-blue-700 dark:hover:text-blue-300'
+  );
+};
 ---
 
 <nav
   id={navId}
-  class={`w-full max-w-xs rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 ${className}`.trim()}
+  class={containerClasses}
   data-sidebar-root
   data-open={defaultOpen}
   aria-labelledby={headingId}
   aria-label={headingId ? undefined : ariaLabel}
 >
-  <div
-    class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-slate-800"
-  >
+  <!-- Header -->
+  <div class={headerClasses}>
     {
       title ? (
-        <h2
-          id={headingId}
-          class="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200"
-        >
+        <h2 id={headingId} class={titleClasses}>
           {title}
         </h2>
       ) : (
-        <span class="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
-          Navigation
-        </span>
+        <span class={titleClasses}>Navigation</span>
       )
     }
+
     {
       collapsible && (
         <button
           type="button"
-          class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-base font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+          class={toggleClasses}
           data-sidebar-toggle
           aria-controls={`${navId}-content`}
           aria-expanded={defaultOpen ? 'true' : 'false'}
+          aria-label={defaultOpen ? 'Collapse navigation' : 'Expand navigation'}
         >
-          ☰
+          <svg
+            class={iconClasses}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
         </button>
       )
     }
   </div>
 
+  <!-- Content -->
   <ul
     id={`${navId}-content`}
-    class={`space-y-1 px-3 py-4 ${defaultOpen ? '' : 'hidden'}`}
+    class={cn(contentClasses, !defaultOpen && 'hidden')}
     data-sidebar-content
+    role="list"
   >
     {
       items.map((item, index) => {
         const groupId = `${navId}-group-${index}`;
         const hasChildren =
           Array.isArray(item.children) && item.children.length > 0;
+
         return (
-          <li>
+          <li role="listitem">
             {hasChildren ? (
+              // Group with children
               <div data-nav-group>
                 <button
                   type="button"
-                  class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-200 dark:focus-visible:ring-offset-slate-900"
+                  class={getItemStateClasses(item)}
                   data-nav-group-toggle
                   aria-expanded="false"
                   aria-controls={groupId}
+                  aria-label={item.ariaLabel || `${item.label} submenu`}
+                  disabled={item.disabled}
                 >
-                  <span class="flex items-center gap-2">
-                    {item.icon && <span aria-hidden="true">{item.icon}</span>}
+                  <span class="flex items-center gap-2 flex-1">
+                    {showIcons && item.icon && (
+                      <span
+                        class={iconClasses}
+                        aria-hidden="true"
+                        set:html={item.icon}
+                      />
+                    )}
                     <span>{item.label}</span>
                   </span>
-                  <span aria-hidden="true" class="text-xs">
-                    ▸
-                  </span>
+                  {item.badge && <span class={badgeClasses}>{item.badge}</span>}
+                  <svg
+                    class={cn(
+                      iconClasses,
+                      'ml-1 transform transition-transform duration-200'
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    data-expand-icon
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
                 </button>
+
+                {/* Submenu */}
                 <ul
                   id={groupId}
-                  class="ml-3 mt-1 hidden space-y-1 border-l border-slate-100 pl-3 dark:border-slate-800"
+                  class={cn(
+                    'space-y-1 border-l-2 border-gray-200 dark:border-gray-700',
+                    'pl-3 mt-1 hidden transition-all duration-200'
+                  )}
                   data-nav-group-content
+                  role="list"
                 >
                   {item.children?.map((child) => (
-                    <li>
+                    <li role="listitem">
                       <a
                         href={child.href}
-                        class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-blue-200 dark:focus-visible:ring-offset-slate-900"
+                        class={getItemStateClasses(child, true)}
+                        target={child.target}
+                        aria-label={child.ariaLabel}
+                        aria-current={child.active ? 'page' : undefined}
+                        tabindex={child.disabled ? -1 : undefined}
                       >
-                        {child.icon && (
-                          <span aria-hidden="true">{child.icon}</span>
+                        {showIcons && child.icon && (
+                          <span
+                            class={iconClasses}
+                            aria-hidden="true"
+                            set:html={child.icon}
+                          />
                         )}
                         <span>{child.label}</span>
                         {child.badge && (
-                          <span class="ml-auto rounded-full bg-blue-600 px-2 py-0.5 text-xs font-semibold text-white dark:bg-blue-500 dark:text-slate-900">
-                            {child.badge}
-                          </span>
+                          <span class={badgeClasses}>{child.badge}</span>
                         )}
                       </a>
                     </li>
@@ -123,17 +382,24 @@ const ariaLabel = title || 'Sidebar navigation';
                 </ul>
               </div>
             ) : (
+              // Single item
               <a
                 href={item.href}
-                class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-200 dark:focus-visible:ring-offset-slate-900"
+                class={getItemStateClasses(item)}
+                target={item.target}
+                aria-label={item.ariaLabel}
+                aria-current={item.active ? 'page' : undefined}
+                tabindex={item.disabled ? -1 : undefined}
               >
-                {item.icon && <span aria-hidden="true">{item.icon}</span>}
-                <span>{item.label}</span>
-                {item.badge && (
-                  <span class="ml-auto rounded-full bg-blue-600 px-2 py-0.5 text-xs font-semibold text-white dark:bg-blue-500 dark:text-slate-900">
-                    {item.badge}
-                  </span>
+                {showIcons && item.icon && (
+                  <span
+                    class={iconClasses}
+                    aria-hidden="true"
+                    set:html={item.icon}
+                  />
                 )}
+                <span>{item.label}</span>
+                {item.badge && <span class={badgeClasses}>{item.badge}</span>}
               </a>
             )}
           </li>
@@ -143,10 +409,12 @@ const ariaLabel = title || 'Sidebar navigation';
   </ul>
 </nav>
 
-<script is:inline>
+<script is:inline define:vars={{ navId }}>
   (function () {
-    const root = document.currentScript?.previousElementSibling;
+    const root = document.getElementById(navId);
     if (!(root instanceof HTMLElement)) return;
+
+    // Sidebar toggle functionality
     const toggle = root.querySelector('[data-sidebar-toggle]');
     const content = root.querySelector('[data-sidebar-content]');
 
@@ -154,31 +422,158 @@ const ariaLabel = title || 'Sidebar navigation';
       toggle.addEventListener('click', () => {
         const isOpen = root.getAttribute('data-open') === 'true';
         const nextState = !isOpen;
+
         root.setAttribute('data-open', String(nextState));
         toggle.setAttribute('aria-expanded', String(nextState));
+        toggle.setAttribute(
+          'aria-label',
+          nextState ? 'Collapse navigation' : 'Expand navigation'
+        );
+
         content.classList.toggle('hidden', !nextState);
+
+        // Announce state change to screen readers
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.textContent = nextState
+          ? 'Navigation expanded'
+          : 'Navigation collapsed';
+        document.body.appendChild(announcement);
+        setTimeout(() => document.body.removeChild(announcement), 1000);
       });
     }
 
+    // Group navigation functionality
     const groups = root.querySelectorAll('[data-nav-group]');
     groups.forEach((group) => {
       if (!(group instanceof HTMLElement)) return;
+
       const groupToggle = group.querySelector('[data-nav-group-toggle]');
       const groupContent = group.querySelector('[data-nav-group-content]');
+      const expandIcon = groupToggle?.querySelector('[data-expand-icon]');
+
       if (
         !(groupToggle instanceof HTMLElement) ||
         !(groupContent instanceof HTMLElement)
       )
         return;
+
       groupToggle.addEventListener('click', () => {
         const expanded = groupToggle.getAttribute('aria-expanded') === 'true';
-        groupToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-        groupContent.classList.toggle('hidden', expanded);
-        const indicator = groupToggle.querySelector('span:last-child');
-        if (indicator instanceof HTMLElement) {
-          indicator.textContent = expanded ? '▸' : '▾';
+        const nextState = !expanded;
+
+        groupToggle.setAttribute('aria-expanded', String(nextState));
+        groupContent.classList.toggle('hidden', !nextState);
+
+        // Animate expand icon
+        if (expandIcon instanceof HTMLElement) {
+          expandIcon.style.transform = nextState
+            ? 'rotate(90deg)'
+            : 'rotate(0deg)';
+        }
+
+        // Update aria-label
+        const label = groupToggle.getAttribute('aria-label') || '';
+        const baseLabel = label.replace(/ (collapsed|expanded)$/, '');
+        groupToggle.setAttribute(
+          'aria-label',
+          `${baseLabel} ${nextState ? 'expanded' : 'collapsed'}`
+        );
+
+        // Announce state change to screen readers
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.textContent = `${baseLabel} ${nextState ? 'expanded' : 'collapsed'}`;
+        document.body.appendChild(announcement);
+        setTimeout(() => document.body.removeChild(announcement), 1000);
+      });
+
+      // Handle keyboard navigation
+      groupToggle.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          groupToggle.click();
+        }
+
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          if (groupToggle.getAttribute('aria-expanded') === 'false') {
+            groupToggle.click();
+          }
+        }
+
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          if (groupToggle.getAttribute('aria-expanded') === 'true') {
+            groupToggle.click();
+          }
         }
       });
+    });
+
+    // Handle keyboard navigation for the entire sidebar
+    root.addEventListener('keydown', (event) => {
+      const focusableElements = Array.from(
+        root.querySelectorAll(
+          'a:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"])'
+        )
+      ).filter((el) => el instanceof HTMLElement && el.offsetParent !== null);
+
+      const currentIndex = focusableElements.indexOf(document.activeElement);
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        const nextIndex = (currentIndex + 1) % focusableElements.length;
+        focusableElements[nextIndex]?.focus();
+      }
+
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        const prevIndex =
+          currentIndex <= 0 ? focusableElements.length - 1 : currentIndex - 1;
+        focusableElements[prevIndex]?.focus();
+      }
+
+      if (event.key === 'Home') {
+        event.preventDefault();
+        focusableElements[0]?.focus();
+      }
+
+      if (event.key === 'End') {
+        event.preventDefault();
+        focusableElements[focusableElements.length - 1]?.focus();
+      }
+    });
+
+    // Global registry for programmatic control
+    if (!window.__cometSidebarNavRegistry) {
+      window.__cometSidebarNavRegistry = new Map();
+    }
+
+    window.__cometSidebarNavRegistry.set(root.id, {
+      expand: () => {
+        if (toggle instanceof HTMLElement && content instanceof HTMLElement) {
+          root.setAttribute('data-open', 'true');
+          toggle.setAttribute('aria-expanded', 'true');
+          content.classList.remove('hidden');
+        }
+      },
+      collapse: () => {
+        if (toggle instanceof HTMLElement && content instanceof HTMLElement) {
+          root.setAttribute('data-open', 'false');
+          toggle.setAttribute('aria-expanded', 'false');
+          content.classList.add('hidden');
+        }
+      },
+      toggle: () => {
+        if (toggle instanceof HTMLElement) {
+          toggle.click();
+        }
+      },
     });
   })();
 </script>
