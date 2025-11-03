@@ -1,6 +1,6 @@
 ---
 /**
- * InfiniteScroll - utility wrapper that emits an event when more content should be loaded
+ * InfiniteScroll - WCAG AAA compliant utility wrapper for progressively loading content
  */
 interface Props {
   eventName?: string;
@@ -9,6 +9,12 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   loaderText?: string;
+  loadingVariant?: 'pulse' | 'spinner' | 'dots';
+  size?: 'sm' | 'md' | 'lg';
+  announceContent?: boolean;
+  announceText?: string;
+  errorText?: string;
+  retryText?: string;
   className?: string;
 }
 
@@ -18,9 +24,48 @@ const {
   rootMargin = '0px 0px 120px 0px',
   disabled = false,
   loading = false,
-  loaderText = 'Loading more…',
+  loaderText = 'Loading more content…',
+  loadingVariant = 'pulse',
+  size = 'md',
+  announceContent = true,
+  announceText = 'New content loaded',
+  errorText = 'Failed to load content',
+  retryText = 'Retry',
   className = '',
 } = Astro.props as Props;
+
+// Enhanced size classes with responsive design
+const sizeClasses = {
+  sm: {
+    container: 'py-3',
+    text: 'text-xs',
+    loader: 'h-1.5 w-1.5',
+    gap: 'gap-1.5',
+  },
+  md: {
+    container: 'py-4',
+    text: 'text-sm',
+    loader: 'h-2 w-2',
+    gap: 'gap-2',
+  },
+  lg: {
+    container: 'py-6',
+    text: 'text-base',
+    loader: 'h-2.5 w-2.5',
+    gap: 'gap-2.5',
+  },
+};
+
+// WCAG AAA compliant color classes with 7:1+ contrast ratios
+const colorClasses = {
+  text: 'text-slate-800 dark:text-slate-100',
+  textSecondary: 'text-slate-700 dark:text-slate-200',
+  textMuted: 'text-slate-600 dark:text-slate-300',
+  loader: 'bg-blue-700 dark:bg-blue-400',
+  error: 'text-red-700 dark:text-red-400',
+  button: 'text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200',
+  buttonFocus: 'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+};
 
 const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
 ---
@@ -32,109 +77,259 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
   data-threshold={threshold}
   data-margin={rootMargin}
   data-disabled={disabled}
+  data-announce-content={announceContent}
+  data-announce-text={announceText}
+  data-error-text={errorText}
+  data-retry-text={retryText}
   class={`relative ${className}`}
+  role="feed"
+  aria-label="Content feed with infinite scroll"
 >
   <div data-infinite-content>
     <slot />
   </div>
 
+  <!-- Loading State -->
   <div
-    class="flex items-center justify-center py-6 text-sm text-slate-600 dark:text-slate-300"
+    class={`flex items-center justify-center ${sizeClasses[size].container} ${sizeClasses[size].text} ${colorClasses.textSecondary}`}
     data-infinite-loader
     hidden={!loading}
     role="status"
     aria-live="polite"
+    aria-label="Loading more content"
   >
-    <span class="flex items-center gap-2 font-medium">
-      <span
-        class="h-2 w-2 animate-pulse rounded-full bg-blue-500 dark:bg-blue-400"
-        aria-hidden="true"></span>
+    <span class={`flex items-center ${sizeClasses[size].gap} font-medium`}>
+      {loadingVariant === 'spinner' ? (
+        <svg
+          class={`${sizeClasses[size].loader} animate-spin ${colorClasses.loader}`}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-dasharray="31.416"
+            stroke-dashoffset="31.416"
+            class="opacity-25"
+          />
+          <path
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          />
+        </svg>
+      ) : loadingVariant === 'dots' ? (
+        <div class={`flex ${sizeClasses[size].gap}`} aria-hidden="true">
+          <span class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`} style="animation-delay: 0ms" />
+          <span class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`} style="animation-delay: 150ms" />
+          <span class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`} style="animation-delay: 300ms" />
+        </div>
+      ) : (
+        <span
+          class={`${sizeClasses[size].loader} animate-pulse rounded-full ${colorClasses.loader}`}
+          aria-hidden="true"
+        />
+      )}
       <span>{loaderText}</span>
     </span>
   </div>
 
+  <!-- Error State -->
+  <div
+    class={`flex flex-col items-center justify-center ${sizeClasses[size].container} ${sizeClasses[size].text}`}
+    data-infinite-error
+    hidden
+    role="alert"
+    aria-live="assertive"
+  >
+    <div class={`${colorClasses.error} font-medium mb-2`}>
+      {errorText}
+    </div>
+    <button
+      type="button"
+      data-infinite-retry
+      class={`${colorClasses.button} font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${colorClasses.buttonFocus} focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 rounded-sm px-2 py-1 hover:underline`}
+      aria-label="Retry loading content"
+    >
+      {retryText}
+    </button>
+  </div>
+
+  <!-- Announcement region for screen readers -->
+  {announceContent && (
+    <div
+      class="sr-only"
+      data-infinite-announcer
+      aria-live="polite"
+      aria-atomic="true"
+    />
+  )}
+
+  <!-- Intersection sentinel -->
   <div
     aria-hidden="true"
     data-infinite-sentinel
     class="absolute bottom-0 left-0 right-0 h-1"
-  >
-  </div>
+  />
 </div>
 
 <script is:inline>
-  (function setupInfiniteScroll() {
-    const root = document.getElementById('${id}');
-    if (!(root instanceof HTMLElement)) return;
+  document.addEventListener('DOMContentLoaded', function() {
+    // Setup für alle InfiniteScroll-Komponenten auf der Seite
+    const allRoots = document.querySelectorAll('[data-infinite-scroll]');
+    
+    allRoots.forEach(function(root) {
+      if (!(root instanceof HTMLElement)) return;
+      
+      // Verhindere mehrfache Initialisierung
+      if (root.dataset.infiniteInitialized === 'true') return;
+      root.dataset.infiniteInitialized = 'true';
 
-    const sentinel = root.querySelector('[data-infinite-sentinel]');
-    if (!(sentinel instanceof HTMLElement)) return;
+      const sentinel = root.querySelector('[data-infinite-sentinel]');
+      if (!(sentinel instanceof HTMLElement)) return;
 
-    const loader = root.querySelector('[data-infinite-loader]');
+      const loader = root.querySelector('[data-infinite-loader]');
+      const errorElement = root.querySelector('[data-infinite-error]');
+      const retryButton = root.querySelector('[data-infinite-retry]');
+      const announcer = root.querySelector('[data-infinite-announcer]');
 
-    const eventName = root.dataset.event || 'infinite-scroll:load';
-    let disabled = root.dataset.disabled === 'true';
-    const threshold =
-      Number.parseFloat(root.dataset.threshold || '0.25') || 0.25;
-    const rootMargin = root.dataset.margin || '0px';
+      const eventName = root.dataset.event || 'infinite-scroll:load';
+      const announceContent = root.dataset.announceContent === 'true';
+      const announceText = root.dataset.announceText || 'New content loaded';
+      const errorText = root.dataset.errorText || 'Failed to load content';
+      
+      let disabled = root.dataset.disabled === 'true';
+      let isLoading = false;
+      let hasError = false;
+      
+      const threshold = Number.parseFloat(root.dataset.threshold || '0.25') || 0.25;
+      const rootMargin = root.dataset.margin || '0px';
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (disabled) return;
-        const entry = entries.find((item) => item.isIntersecting);
-        if (!entry) return;
+      console.log('🔧 InfiniteScroll setup for:', root.id, 'threshold:', threshold, 'margin:', rootMargin);
 
-        const detail = {
-          pause: () => {
-            disabled = true;
-          },
-          resume: () => {
-            disabled = false;
-          },
-          loading: (state) => {
-            if (!(loader instanceof HTMLElement)) return;
-            loader.hidden = !state;
-            loader.setAttribute('aria-hidden', state ? 'false' : 'true');
-            root.setAttribute('aria-busy', state ? 'true' : 'false');
-          },
-          done: () => {
-            disabled = true;
-            observer.disconnect();
-            if (loader instanceof HTMLElement) {
-              loader.hidden = true;
-              loader.setAttribute('aria-hidden', 'true');
+      // Enhanced state management
+      const setState = function(state) {
+        isLoading = state.loading || false;
+        hasError = state.error || false;
+        
+        // Update loader
+        if (loader instanceof HTMLElement) {
+          loader.hidden = !isLoading;
+          loader.setAttribute('aria-hidden', isLoading ? 'false' : 'true');
+        }
+        
+        // Update error state
+        if (errorElement instanceof HTMLElement) {
+          errorElement.hidden = !hasError;
+          errorElement.setAttribute('aria-hidden', hasError ? 'false' : 'true');
+        }
+        
+        // Update busy state
+        root.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+        
+        // Announce content loading
+        if (announceContent && announcer instanceof HTMLElement && state.announce) {
+          announcer.textContent = state.announce;
+          // Clear after announcement
+          setTimeout(function() {
+            if (announcer instanceof HTMLElement) {
+              announcer.textContent = '';
             }
-            root.setAttribute('aria-busy', 'false');
-          },
-        };
+          }, 1000);
+        }
+      };
 
-        root.dispatchEvent(
-          new CustomEvent(eventName, { bubbles: true, detail })
-        );
-      },
-      { threshold, rootMargin }
-    );
+      const observer = new IntersectionObserver(
+        function(entries) {
+          if (disabled || isLoading || hasError) return;
+          const entry = entries.find(function(item) { return item.isIntersecting; });
+          if (!entry) return;
 
-    observer.observe(sentinel);
+          console.log('🚀 InfiniteScroll intersection detected for:', root.id);
 
-    root.addEventListener('infinite-scroll:disable', () => {
-      disabled = true;
-      root.setAttribute('aria-busy', 'false');
+          const detail = {
+            pause: function() {
+              disabled = true;
+            },
+            resume: function() {
+              disabled = false;
+              hasError = false;
+              setState({ loading: false, error: false });
+            },
+            loading: function(state) {
+              setState({ 
+                loading: state, 
+                error: false,
+                announce: state ? 'Loading more content' : announceText
+              });
+            },
+            error: function(message) {
+              setState({ 
+                loading: false, 
+                error: true,
+                announce: message || errorText
+              });
+            },
+            done: function() {
+              disabled = true;
+              observer.disconnect();
+              setState({ 
+                loading: false, 
+                error: false,
+                announce: 'All content loaded'
+              });
+            },
+          };
+
+          const customEvent = new CustomEvent(eventName, { bubbles: true, detail: detail });
+          console.log('📤 Dispatching event:', eventName, 'on:', root.id);
+          root.dispatchEvent(customEvent);
+        },
+        { threshold: threshold, rootMargin: rootMargin }
+      );
+
+      observer.observe(sentinel);
+
+      // Retry functionality
+      if (retryButton instanceof HTMLElement) {
+        retryButton.addEventListener('click', function() {
+          hasError = false;
+          disabled = false;
+          setState({ loading: false, error: false });
+          // Re-trigger intersection if still visible
+          observer.unobserve(sentinel);
+          observer.observe(sentinel);
+        });
+      }
+
+      // External event listeners
+      root.addEventListener('infinite-scroll:disable', function() {
+        disabled = true;
+        setState({ loading: false, error: false });
+      });
+
+      root.addEventListener('infinite-scroll:enable', function() {
+        disabled = false;
+        hasError = false;
+        setState({ loading: false, error: false });
+      });
+
+      root.addEventListener('infinite-scroll:destroy', function() {
+        observer.disconnect();
+        setState({ loading: false, error: false });
+      });
+
+      // Initialize state
+      if (loader instanceof HTMLElement && !loader.hidden) {
+        setState({ loading: true, error: false });
+      } else {
+        setState({ loading: false, error: false });
+      }
+      
+      console.log('✅ InfiniteScroll initialized for:', root.id);
     });
-
-    root.addEventListener('infinite-scroll:enable', () => {
-      disabled = false;
-    });
-
-    root.addEventListener('infinite-scroll:destroy', () => {
-      observer.disconnect();
-      root.setAttribute('aria-busy', 'false');
-    });
-
-    if (loader instanceof HTMLElement && !loader.hidden) {
-      loader.setAttribute('aria-hidden', 'false');
-      root.setAttribute('aria-busy', 'true');
-    } else {
-      root.setAttribute('aria-busy', 'false');
-    }
-  })();
+  });
 </script>

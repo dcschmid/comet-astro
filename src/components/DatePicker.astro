@@ -44,7 +44,7 @@ const firstDayAttr = String(firstDayOfWeek);
     label && (
       <label
         for={`${id}-input`}
-        class="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+        class="block text-sm font-semibold text-slate-900 dark:text-slate-100"
       >
         {label}
       </label>
@@ -55,19 +55,21 @@ const firstDayAttr = String(firstDayOfWeek);
     <button
       id={`${id}-input`}
       type="button"
-      class="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-left text-sm font-medium text-slate-900 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+      class="flex w-full items-center justify-between gap-3 rounded-lg border border-slate-300/80 bg-white px-4 py-3 text-left text-sm font-medium text-slate-900 shadow-sm transition-colors duration-200 hover:border-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-600/80 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-900"
       data-date-toggle
+      aria-haspopup="dialog"
+      aria-expanded="false"
     >
       <span
         data-date-display
-        class="truncate text-slate-500 dark:text-slate-300">{placeholder}</span
+        class="truncate text-slate-600 dark:text-slate-300">{placeholder}</span
       >
-      <span class="text-slate-500 dark:text-slate-300" aria-hidden="true"
+      <span class="shrink-0 text-slate-600 dark:text-slate-300" aria-hidden="true"
         >📅</span
       >
     </button>
     <div
-      class="absolute z-40 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-900 shadow-2xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+      class="absolute z-40 mt-2 w-full min-w-80 max-w-sm overflow-hidden rounded-lg border border-slate-300/80 bg-white text-slate-900 shadow-2xl ring-1 ring-black/10 dark:border-slate-600/80 dark:bg-slate-800 dark:text-slate-100 dark:ring-white/10"
       data-date-panel
       hidden
       role="dialog"
@@ -75,45 +77,90 @@ const firstDayAttr = String(firstDayOfWeek);
       aria-label="Calendar"
     >
       <div
-        class="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100"
+        class="flex items-center justify-between border-b border-slate-300/60 px-4 py-3 text-sm font-semibold text-slate-900 dark:border-slate-600/60 dark:text-slate-100"
       >
-        <div>
-          <div data-date-month class="font-semibold"></div>
-          <div
-            data-date-year
-            class="text-xs font-medium text-slate-500 dark:text-slate-400"
-          >
-          </div>
-        </div>
-        <div class="flex gap-2">
+        <div class="flex-1">
           <button
             type="button"
-            class="rounded-full border border-slate-200 bg-white p-2 text-slate-700 transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            data-date-month
+            class="font-semibold hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 dark:hover:text-blue-400 dark:focus-visible:ring-blue-400"
+            aria-label="Select month"
+          ></button>
+          <button
+            type="button"
+            data-date-year
+            class="block text-xs font-medium text-slate-700 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 dark:text-slate-200 dark:hover:text-blue-400 dark:focus-visible:ring-blue-400"
+            aria-label="Select year"
+          ></button>
+        </div>
+        <div class="flex gap-1">
+          <button
+            type="button"
+            class="rounded-md border border-slate-300/80 bg-white p-1 text-slate-800 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/80 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+            data-date-prev-year
+            aria-label="Previous year">«</button
+          >
+          <button
+            type="button"
+            class="rounded-md border border-slate-300/80 bg-white p-1 text-slate-800 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/80 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
             data-date-prev
             aria-label="Previous month">‹</button
           >
           <button
             type="button"
-            class="rounded-full border border-slate-200 bg-white p-2 text-slate-700 transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            class="rounded-md border border-slate-300/80 bg-white p-1 text-slate-800 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/80 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
             data-date-next
             aria-label="Next month">›</button
+          >
+          <button
+            type="button"
+            class="rounded-md border border-slate-300/80 bg-white p-1 text-slate-800 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/80 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+            data-date-next-year
+            aria-label="Next year">»</button
           >
         </div>
       </div>
       <div class="px-3 pb-3">
         <div
-          class="grid grid-cols-7 gap-1 px-1 pb-2 text-center text-xs font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-300"
+          class="grid grid-cols-7 gap-1 px-1 pb-2 text-center text-xs font-semibold uppercase tracking-widest text-slate-700 dark:text-slate-200"
           data-date-weekdays
         >
         </div>
         <div class="grid grid-cols-7 gap-1" data-date-grid></div>
       </div>
+      
+      <!-- Month Picker -->
+      <div
+        class="absolute inset-0 hidden bg-white dark:bg-slate-800"
+        data-month-picker
+        role="dialog"
+        aria-label="Select month"
+      >
+        <div class="border-b border-slate-300/60 px-4 py-3 text-sm font-semibold text-slate-900 dark:border-slate-600/60 dark:text-slate-100">
+          <span data-month-picker-year></span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 p-4" data-month-grid></div>
+      </div>
+      
+      <!-- Year Picker -->
+      <div
+        class="absolute inset-0 hidden bg-white dark:bg-slate-800"
+        data-year-picker
+        role="dialog"
+        aria-label="Select year"
+      >
+        <div class="border-b border-slate-300/60 px-4 py-3 text-sm font-semibold text-slate-900 dark:border-slate-600/60 dark:text-slate-100">
+          Select Year
+        </div>
+        <div class="grid grid-cols-4 gap-1 p-4" data-year-grid></div>
+      </div>
+
       {
         showTodayShortcut && (
-          <div class="border-t border-slate-200 px-4 py-2 text-right dark:border-slate-700">
+          <div class="border-t border-slate-300/60 px-4 py-2 text-right dark:border-slate-600/60">
             <button
               type="button"
-              class="text-xs font-semibold text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-blue-300"
+              class="text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-blue-300 dark:hover:text-blue-200 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
               data-date-today
             >
               Today
@@ -127,8 +174,9 @@ const firstDayAttr = String(firstDayOfWeek);
 
 <script is:inline>
   (function setupDatePicker() {
-    const root = document.getElementById('${id}');
-    if (!(root instanceof HTMLElement)) return;
+    document.querySelectorAll('[data-date-picker]').forEach(root => {
+      if (root.dataset.datePickerSetup) return;
+      root.dataset.datePickerSetup = 'true';
 
     const panel = root.querySelector('[data-date-panel]');
     const toggle = root.querySelector('[data-date-toggle]');
@@ -140,7 +188,14 @@ const firstDayAttr = String(firstDayOfWeek);
     const weekdaysRow = root.querySelector('[data-date-weekdays]');
     const prevBtn = root.querySelector('[data-date-prev]');
     const nextBtn = root.querySelector('[data-date-next]');
+    const prevYearBtn = root.querySelector('[data-date-prev-year]');
+    const nextYearBtn = root.querySelector('[data-date-next-year]');
     const todayBtn = root.querySelector('[data-date-today]');
+    const monthPicker = root.querySelector('[data-month-picker]');
+    const yearPicker = root.querySelector('[data-year-picker]');
+    const monthGrid = root.querySelector('[data-month-grid]');
+    const yearGrid = root.querySelector('[data-year-grid]');
+    const monthPickerYear = root.querySelector('[data-month-picker-year]');
 
     if (
       !(panel instanceof HTMLElement) ||
@@ -179,10 +234,24 @@ const firstDayAttr = String(firstDayOfWeek);
     const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     function parseDate(value) {
-      if (!value) return null;
-      const [year, month, day] = value.split('-').map(Number);
+      if (!value || typeof value !== 'string') return null;
+      const parts = value.split('-');
+      if (parts.length !== 3) return null;
+      
+      const [year, month, day] = parts.map(Number);
       if (!year || !month || !day) return null;
+      if (year < 1000 || year > 9999) return null;
+      if (month < 1 || month > 12) return null;
+      if (day < 1 || day > 31) return null;
+      
       const date = new Date(year, month - 1, day);
+      // Verify the date components match (catches invalid dates like Feb 30)
+      if (date.getFullYear() !== year || 
+          date.getMonth() !== month - 1 || 
+          date.getDate() !== day) {
+        return null;
+      }
+      
       return Number.isNaN(date.getTime()) ? null : date;
     }
 
@@ -212,9 +281,20 @@ const firstDayAttr = String(firstDayOfWeek);
       return time >= min && time <= max;
     };
 
+    const canNavigateToMonth = (year, month) => {
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      
+      // Check if any day in this month is within range
+      if (minBound && startOfDay(lastDay) < startOfDay(minBound)) return false;
+      if (maxBound && startOfDay(firstDay) > startOfDay(maxBound)) return false;
+      return true;
+    };
+
     let selected = parseDate(hidden.value);
     let currentView = selected ? new Date(selected) : new Date();
     currentView.setDate(1);
+    let viewMode = 'calendar'; // 'calendar', 'month', 'year'
 
     const renderWeekdays = () => {
       const order = [...weekdayNames];
@@ -223,6 +303,97 @@ const firstDayAttr = String(firstDayOfWeek);
       weekdaysRow.innerHTML = rotated
         .map((name) => `<span>${name}</span>`)
         .join('');
+    };
+
+    const renderMonthPicker = () => {
+      if (!monthPicker || !monthGrid || !monthPickerYear) return;
+      
+      const currentYear = currentView.getFullYear();
+      monthPickerYear.textContent = String(currentYear);
+      
+      const months = monthNames.map((name, index) => {
+        const isDisabled = !canNavigateToMonth(currentYear, index);
+        const isCurrent = index === currentView.getMonth();
+        
+        return `<button
+          type="button"
+          class="rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            isDisabled 
+              ? 'cursor-not-allowed text-slate-400 dark:text-slate-600' 
+              : isCurrent
+                ? 'bg-blue-600 text-white dark:bg-blue-500'
+                : 'text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-slate-700'
+          }"
+          data-month="${index}"
+          ${isDisabled ? 'disabled' : ''}
+        >${name.slice(0, 3)}</button>`;
+      }).join('');
+      
+      monthGrid.innerHTML = months;
+    };
+
+    const renderYearPicker = () => {
+      if (!yearPicker || !yearGrid) return;
+      
+      const currentYear = currentView.getFullYear();
+      const startYear = Math.floor(currentYear / 20) * 20;
+      const years = [];
+      
+      // Add navigation arrows for year ranges
+      years.push(`<button
+        type="button"
+        class="rounded-md px-2 py-2 text-sm font-medium transition-colors text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-slate-700 col-span-2"
+        data-year-prev-range
+      >‹ ${startYear - 20}-${startYear - 1}</button>`);
+      
+      years.push(`<button
+        type="button"
+        class="rounded-md px-2 py-2 text-sm font-medium transition-colors text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-slate-700 col-span-2"
+        data-year-next-range
+      >${startYear + 20}-${startYear + 39} ›</button>`);
+      
+      for (let i = 0; i < 20; i++) {
+        const year = startYear + i;
+        const hasValidDays = canNavigateToMonth(year, 0) || 
+                           canNavigateToMonth(year, 6) || 
+                           canNavigateToMonth(year, 11);
+        const isCurrent = year === currentYear;
+        
+        years.push(`<button
+          type="button"
+          class="rounded-md px-2 py-2 text-sm font-medium transition-colors ${
+            !hasValidDays 
+              ? 'cursor-not-allowed text-slate-400 dark:text-slate-600'
+              : isCurrent
+                ? 'bg-blue-600 text-white dark:bg-blue-500'
+                : 'text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-slate-700'
+          }"
+          data-year="${year}"
+          ${!hasValidDays ? 'disabled' : ''}
+        >${year}</button>`);
+      }
+      
+      yearGrid.innerHTML = years.join('');
+    };
+
+    const showView = (mode) => {
+      viewMode = mode;
+      if (mode === 'calendar') {
+        grid.parentElement.style.display = 'block';
+        if (monthPicker) monthPicker.style.display = 'none';
+        if (yearPicker) yearPicker.style.display = 'none';
+        render();
+      } else if (mode === 'month') {
+        grid.parentElement.style.display = 'none';
+        if (monthPicker) monthPicker.style.display = 'block';
+        if (yearPicker) yearPicker.style.display = 'none';
+        renderMonthPicker();
+      } else if (mode === 'year') {
+        grid.parentElement.style.display = 'none';
+        if (monthPicker) monthPicker.style.display = 'none';
+        if (yearPicker) yearPicker.style.display = 'block';
+        renderYearPicker();
+      }
     };
 
     const render = () => {
@@ -245,32 +416,32 @@ const firstDayAttr = String(firstDayOfWeek);
         const iso = fmtISO(date);
         const isCurrentMonth = date.getMonth() === viewMonth;
         const isSelected = selected
-          ? date.getTime() === selected.getTime()
+          ? startOfDay(date).getTime() === startOfDay(selected).getTime()
           : false;
-        const isToday = date.getTime() === today.getTime();
+        const isToday = startOfDay(date).getTime() === today.getTime();
         const disabled = !withinRange(date);
 
         const interactionClass = disabled
           ? 'cursor-not-allowed text-slate-400 opacity-70 dark:text-slate-600'
-          : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500';
+          : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1';
         const hoverClass = disabled
           ? ''
           : isSelected
-            ? 'hover:bg-blue-900 dark:hover:bg-white'
-            : 'hover:bg-blue-100 dark:hover:bg-blue-500/20';
+            ? 'hover:bg-blue-800 dark:hover:bg-blue-100'
+            : 'hover:bg-blue-50 dark:hover:bg-blue-500/20';
 
         const classes = [
-          'grid place-items-center rounded-lg px-0 py-2 text-sm font-medium transition',
+          'grid place-items-center rounded-md px-0 py-2 text-sm font-medium transition-colors',
           interactionClass,
           hoverClass,
           isCurrentMonth
-            ? 'text-slate-800 dark:text-slate-100'
-            : 'text-slate-500 dark:text-slate-500',
+            ? 'text-slate-900 dark:text-slate-100'
+            : 'text-slate-500 dark:text-slate-400',
           isSelected
-            ? 'bg-blue-900 text-white dark:bg-white dark:text-slate-900'
+            ? 'bg-blue-700 text-white dark:bg-blue-200 dark:text-slate-900'
             : '',
           isToday && !isSelected
-            ? 'border border-blue-500 dark:border-white/70'
+            ? 'ring-2 ring-blue-600 dark:ring-blue-400'
             : '',
         ]
           .filter(Boolean)
@@ -318,7 +489,7 @@ const firstDayAttr = String(firstDayOfWeek);
       selected = new Date(date);
       hidden.value = fmtISO(selected);
       display.textContent = fmtDisplay(selected);
-      display.classList.remove('text-slate-500', 'dark:text-slate-300');
+      display.classList.remove('text-slate-600', 'dark:text-slate-300');
       display.classList.add('text-slate-900', 'dark:text-slate-100');
       currentView = new Date(date);
       currentView.setDate(1);
@@ -349,14 +520,86 @@ const firstDayAttr = String(firstDayOfWeek);
     if (prevBtn instanceof HTMLElement) {
       prevBtn.addEventListener('click', () => {
         currentView.setMonth(currentView.getMonth() - 1);
-        render();
+        if (viewMode === 'calendar') render();
       });
     }
 
     if (nextBtn instanceof HTMLElement) {
       nextBtn.addEventListener('click', () => {
         currentView.setMonth(currentView.getMonth() + 1);
-        render();
+        if (viewMode === 'calendar') render();
+      });
+    }
+
+    if (prevYearBtn instanceof HTMLElement) {
+      prevYearBtn.addEventListener('click', () => {
+        currentView.setFullYear(currentView.getFullYear() - 1);
+        if (viewMode === 'calendar') render();
+        else if (viewMode === 'month') renderMonthPicker();
+        else if (viewMode === 'year') renderYearPicker();
+      });
+    }
+
+    if (nextYearBtn instanceof HTMLElement) {
+      nextYearBtn.addEventListener('click', () => {
+        currentView.setFullYear(currentView.getFullYear() + 1);
+        if (viewMode === 'calendar') render();
+        else if (viewMode === 'month') renderMonthPicker();
+        else if (viewMode === 'year') renderYearPicker();
+      });
+    }
+
+    // Month/Year label click handlers
+    monthLabel.addEventListener('click', () => {
+      showView('month');
+    });
+
+    yearLabel.addEventListener('click', () => {
+      showView('year');
+    });
+
+    // Month picker click handler
+    if (monthGrid) {
+      monthGrid.addEventListener('click', (event) => {
+        const target = event.target instanceof HTMLElement 
+          ? event.target.closest('[data-month]') 
+          : null;
+        if (!(target instanceof HTMLElement)) return;
+        
+        const monthIndex = parseInt(target.getAttribute('data-month') || '0');
+        currentView.setMonth(monthIndex);
+        showView('calendar');
+      });
+    }
+
+    // Year picker click handler
+    if (yearGrid) {
+      yearGrid.addEventListener('click', (event) => {
+        const target = event.target instanceof HTMLElement 
+          ? event.target.closest('[data-year]') 
+          : null;
+        if (target instanceof HTMLElement) {
+          const year = parseInt(target.getAttribute('data-year') || '0');
+          currentView.setFullYear(year);
+          showView('calendar');
+          return;
+        }
+        
+        // Handle year range navigation
+        const prevRange = event.target instanceof HTMLElement 
+          ? event.target.closest('[data-year-prev-range]') 
+          : null;
+        const nextRange = event.target instanceof HTMLElement 
+          ? event.target.closest('[data-year-next-range]') 
+          : null;
+          
+        if (prevRange instanceof HTMLElement) {
+          currentView.setFullYear(currentView.getFullYear() - 20);
+          renderYearPicker();
+        } else if (nextRange instanceof HTMLElement) {
+          currentView.setFullYear(currentView.getFullYear() + 20);
+          renderYearPicker();
+        }
       });
     }
 
@@ -393,7 +636,11 @@ const firstDayAttr = String(firstDayOfWeek);
     document.addEventListener('keydown', (event) => {
       if (panel.hidden) return;
       if (event.key === 'Escape') {
-        close();
+        if (viewMode !== 'calendar') {
+          showView('calendar');
+        } else {
+          close();
+        }
       }
     });
 
@@ -402,7 +649,7 @@ const firstDayAttr = String(firstDayOfWeek);
       const initial = parseDate(hidden.value);
       if (initial) {
         display.textContent = fmtDisplay(initial);
-        display.classList.remove('text-slate-500', 'dark:text-slate-300');
+        display.classList.remove('text-slate-600', 'dark:text-slate-300');
         display.classList.add('text-slate-900', 'dark:text-slate-100');
         selected = initial;
         currentView = new Date(initial);
@@ -411,5 +658,6 @@ const firstDayAttr = String(firstDayOfWeek);
     }
 
     render();
+    }); // End forEach
   })();
 </script>

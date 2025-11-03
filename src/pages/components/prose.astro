@@ -1,34 +1,646 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Prose from '../../components/Prose.astro';
+import Button from '../../components/Button.astro';
+import Badge from '../../components/Badge.astro';
+import Card from '../../components/Card.astro';
 ---
 
 <DocsLayout
   title="Prose"
-  description="Typography wrapper for rendered content or raw HTML with size variants."
+  description="Accessible typography component with WCAG AAA compliance, multiple variants, and responsive design for rendering rich content and documentation."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>className?: string</code> – extra classes</li>
-      <li>
-        <code>html?: string</code> – optional raw HTML (otherwise uses slot)
-      </li>
-      <li>
-        <code>size?: 'sm'|'md'|'lg'|'xl'</code> – prose size (default: lg)
-      </li>
-      <li><code>invert?: boolean</code> – invert colors (default: false)</li>
-      <li>
-        <code>fullWidth?: boolean</code> – disable max-width (default: false)
-      </li>
-    </ul>
-  </section>
+  <div class="space-y-10">
+    <!-- Overview -->
+    <section id="overview" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Overview</h2>
+        <div class="prose prose-lg max-w-none dark:prose-invert">
+          <p>The Prose component provides beautiful, accessible typography for rendering rich content, documentation, and article layouts. Built on Tailwind Typography with enhanced WCAG AAA compliance and multiple visual variants.</p>
+          
+          <p>Perfect for blog posts, documentation pages, markdown content, and any text-heavy interfaces that require consistent, readable typography with optimal accessibility features.</p>
+        </div>
+      </div>
+      
+      <!-- Basic Usage -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Basic Usage</h3>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Prose>
+              <h3>Sample Article</h3>
+              <p>This is a paragraph of text styled with the default prose variant. The typography is optimized for readability with proper spacing, contrast, and accessibility features.</p>
+              <ul>
+                <li>First list item with proper spacing</li>
+                <li>Second item with consistent styling</li>
+                <li>Third item demonstrating list formatting</li>
+              </ul>
+              <blockquote>
+                "A beautiful quote with enhanced styling and proper contrast ratios for both light and dark modes."
+              </blockquote>
+            </Prose>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose&gt;
+  &lt;h3&gt;Sample Article&lt;/h3&gt;
+  &lt;p&gt;This is a paragraph of text...&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;First list item...&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/Prose&gt;</code></pre>
+        </div>
+      </div>
+    </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <Prose>
-      <h3>Heading</h3>
-      <p>This content is styled using Tailwind Typography classes.</p>
-    </Prose>
-  </section>
+    <!-- Variants -->
+    <section id="variants" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Variants</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Five distinct visual styles for different content types and presentation contexts.</p>
+      </div>
+
+      <!-- Default Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Default</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Standard typography variant with balanced styling and optimal readability.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Prose variant="default" size="md">
+              <h4>Default Prose Styling</h4>
+              <p>This variant provides the standard typography experience with <strong>bold text</strong>, <em>italic text</em>, and <code>inline code</code> properly styled for maximum readability.</p>
+              <p>Links are styled with proper contrast: <a href="#">example link</a> with hover effects.</p>
+            </Prose>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose variant="default"&gt;
+  &lt;h4&gt;Default Prose Styling&lt;/h4&gt;
+  &lt;p&gt;Standard typography...&lt;/p&gt;
+&lt;/Prose&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Minimal Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Minimal</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Clean variant with reduced visual weight and subtle typography.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Prose variant="minimal" size="md">
+              <h4>Minimal Typography</h4>
+              <p>This variant uses <strong>medium font weights</strong> for headings and maintains a clean, understated appearance perfect for content that needs to feel lightweight.</p>
+              <ul>
+                <li>Reduced heading emphasis</li>
+                <li>Subtle visual hierarchy</li>
+                <li>Clean and modern feel</li>
+              </ul>
+            </Prose>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose variant="minimal"&gt;
+  &lt;h4&gt;Minimal Typography&lt;/h4&gt;
+  &lt;p&gt;Clean and understated...&lt;/p&gt;
+&lt;/Prose&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Bordered Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Bordered</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Contained variant with border and padding for distinct content areas.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Prose variant="bordered" size="md">
+              <h4>Bordered Content</h4>
+              <p>This variant includes a <strong>subtle border</strong> and internal padding, making it perfect for callouts, highlighted content, or distinct content sections.</p>
+              <blockquote>
+                Perfect for content that needs visual separation from the surrounding layout.
+              </blockquote>
+            </Prose>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose variant="bordered"&gt;
+  &lt;h4&gt;Bordered Content&lt;/h4&gt;
+  &lt;p&gt;Contained with border...&lt;/p&gt;
+&lt;/Prose&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Elevated Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Elevated</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Card-like variant with background, border, and shadow for prominent content.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Prose variant="elevated" size="md">
+              <h4>Elevated Content Card</h4>
+              <p>This variant creates a <strong>card-like appearance</strong> with background color, subtle shadow, and enhanced visual presence. Perfect for featured content or important announcements.</p>
+              <p>The elevated styling helps draw attention while maintaining excellent readability and accessibility standards.</p>
+            </Prose>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose variant="elevated"&gt;
+  &lt;h4&gt;Elevated Content Card&lt;/h4&gt;
+  &lt;p&gt;Card-like appearance...&lt;/p&gt;
+&lt;/Prose&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Article Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Article</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Optimized variant for long-form content with enhanced heading hierarchy.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Prose variant="article" size="md">
+              <h2>Article Headline</h2>
+              <p>This variant is optimized for <strong>long-form articles</strong> with enhanced heading sizes and proper scroll margin for anchor navigation.</p>
+              <h3>Section Heading</h3>
+              <p>Subheadings are properly sized for clear content hierarchy, making it easier for readers to scan and navigate through lengthy content.</p>
+              <h4>Subsection</h4>
+              <p>All heading levels maintain proper contrast and accessibility while providing clear visual distinction.</p>
+            </Prose>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose variant="article"&gt;
+  &lt;h2&gt;Article Headline&lt;/h2&gt;
+  &lt;p&gt;Long-form content...&lt;/p&gt;
+&lt;/Prose&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sizes -->
+    <section id="sizes" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Typography Sizes</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Six size options from extra small to extra large for different reading contexts.</p>
+      </div>
+
+      <div class="grid gap-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Extra Small</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Compact typography for sidebar content and secondary information.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose size="xs">
+                <h4>Small Content</h4>
+                <p>This size is perfect for compact interfaces, sidebars, and secondary content that needs to be readable but not prominent.</p>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose size="xs"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Small</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Reduced size for dense content and compact layouts.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose size="sm">
+                <h4>Small Typography</h4>
+                <p>Ideal for content that needs to be compact while maintaining good readability. Perfect for mobile interfaces and dense information display.</p>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose size="sm"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Medium</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Standard size for general content and documentation.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose size="md">
+                <h4>Medium Typography</h4>
+                <p>The standard size that works well for most content types. Provides excellent balance between readability and space efficiency.</p>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose size="md"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Large (Default)</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Enhanced size for primary content and article layouts.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose size="lg">
+                <h4>Large Typography</h4>
+                <p>The default size that provides excellent readability for main content. Perfect for articles, blog posts, and primary information display.</p>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose size="lg"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Extra Large</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Large size for featured content and hero sections.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose size="xl">
+                <h4>Extra Large Typography</h4>
+                <p>Prominent size for featured content, landing pages, and content that needs strong visual presence while maintaining readability.</p>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose size="xl"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">2X Large</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Maximum size for hero content and major headings.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose size="2xl">
+                <h4>2XL Typography</h4>
+                <p>The largest size for maximum impact content, hero sections, and primary headlines that need to command attention.</p>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose size="2xl"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Themes -->
+    <section id="themes" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Color Themes</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Four theme variants optimized for different contexts and accessibility needs.</p>
+      </div>
+
+      <div class="grid gap-6">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Default Theme</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Standard theme with WCAG AAA contrast ratios for both light and dark modes.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose theme="default" size="md">
+                <h4>Default Theme</h4>
+                <p>This theme provides <strong>optimal contrast ratios</strong> with <code>inline code</code> styling and <a href="#">accessible links</a> that meet WCAG AAA standards.</p>
+                <blockquote>Enhanced readability with proper color contrast in both light and dark modes.</blockquote>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose theme="default"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Muted Theme</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Subdued theme for secondary content and subtle presentation.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose theme="muted" size="md">
+                <h4>Muted Theme</h4>
+                <p>A more <strong>subtle appearance</strong> with reduced contrast for <code>secondary content</code> that needs less visual prominence while maintaining <a href="#">readability</a>.</p>
+                <blockquote>Perfect for background information and supplementary content.</blockquote>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose theme="muted"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">High Contrast Theme</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Maximum contrast theme for enhanced accessibility and visual clarity.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose theme="high-contrast" size="md">
+                <h4>High Contrast Theme</h4>
+                <p>This theme provides <strong>maximum contrast</strong> with <code>bold code styling</code> and <a href="#">heavily underlined links</a> for users who need enhanced visual distinction.</p>
+                <blockquote>Optimized for users with visual impairments or low vision conditions.</blockquote>
+              </Prose>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose theme="high-contrast"&gt;...&lt;/Prose&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reading Mode -->
+    <section id="reading-mode" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Reading Mode</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Enhanced typography optimizations for long-form content and extended reading sessions.</p>
+      </div>
+
+      <div class="grid gap-6">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Standard vs Reading Mode</h3>
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div>
+              <h4 class="text-md font-semibold mb-3">Standard</h4>
+              <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <Prose size="md">
+                  <h5>Standard Typography</h5>
+                  <p>Regular spacing and line height for general content display with standard tracking and paragraph spacing.</p>
+                  <p>Good for most content types and general reading.</p>
+                </Prose>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-md font-semibold mb-3">Reading Mode</h4>
+              <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <Prose size="md" readingMode={true}>
+                  <h5>Reading Mode Typography</h5>
+                  <p>Enhanced spacing with relaxed line heights, increased letter tracking, and optimized paragraph spacing for extended reading sessions.</p>
+                  <p>Perfect for articles, documentation, and long-form content where reading comfort is essential.</p>
+                </Prose>
+              </div>
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose readingMode={true}&gt;
+  &lt;h5&gt;Reading Mode Typography&lt;/h5&gt;
+  &lt;p&gt;Enhanced spacing and optimized layout...&lt;/p&gt;
+&lt;/Prose&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- HTML Content -->
+    <section id="html-content" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">HTML Content Rendering</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Render HTML content directly with automatic sanitization and processing options.</p>
+      </div>
+
+      <div class="space-y-6">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">HTML String Rendering</h3>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose 
+                html="<h4>Rendered HTML Content</h4><p>This content is rendered from an <strong>HTML string</strong> with automatic sanitization and processing for <code>safe display</code>.</p><ul><li>Automatic code block cleaning</li><li>Safe HTML rendering</li><li>Preserved formatting</li></ul>"
+                size="md"
+              />
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose 
+  html="&lt;h4&gt;Rendered HTML Content&lt;/h4&gt;&lt;p&gt;Safe HTML rendering...&lt;/p&gt;"
+  size="md"
+/&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Raw HTML Mode</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Disable automatic processing for pre-sanitized content.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Prose 
+                html="<h4>Raw HTML Mode</h4><p>This content bypasses automatic processing when <code>raw={true}</code> is specified for pre-sanitized HTML.</p>"
+                raw={true}
+                size="md"
+              />
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose 
+  html="&lt;h4&gt;Raw HTML Mode&lt;/h4&gt;&lt;p&gt;Pre-sanitized content...&lt;/p&gt;"
+  raw={true}
+/&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Props Reference -->
+    <section id="props" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Props Reference</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Complete API reference for all available properties and their configurations.</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-100 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Prop</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Type</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Default</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Description</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">variant</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default' | 'minimal' | 'bordered' | 'elevated' | 'article'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Visual style variant of the prose container</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">size</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'lg'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Typography size scale</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">theme</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default' | 'invert' | 'muted' | 'high-contrast'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Color scheme variant</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">maxWidth</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | 'none'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'lg'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Maximum width constraint</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">readingMode</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Enable reading mode optimizations</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">html</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">HTML content to render (alternative to slot)</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">raw</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Disable automatic HTML processing</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">ariaLabel</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Custom aria-label for accessibility</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">ariaDescribedBy</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">ID of element that describes the prose content</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">class</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Additional CSS classes for customization</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Accessibility -->
+    <section id="accessibility" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Accessibility Features</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Comprehensive WCAG AAA compliance with enhanced readability and screen reader support.</p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Semantic Structure
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• Proper <code>article</code> element with semantic roles</li>
+            <li>• Hierarchical heading structure for navigation</li>
+            <li>• Accessible link styling with proper focus indicators</li>
+            <li>• Screen reader optimized content flow</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Visual Accessibility
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• WCAG AAA contrast ratios (7:1+) for all text</li>
+            <li>• High contrast theme for enhanced visibility</li>
+            <li>• Reading mode for extended content consumption</li>
+            <li>• Responsive typography scales</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Cognitive Accessibility
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• Clear visual hierarchy with consistent spacing</li>
+            <li>• Optimized line height and letter spacing</li>
+            <li>• Reduced cognitive load with clean styling</li>
+            <li>• Consistent typographic patterns</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Technical Features
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• Custom ARIA labeling support</li>
+            <li>• Proper focus management for interactive content</li>
+            <li>• Smooth scrolling for anchor navigation</li>
+            <li>• Text selection optimization</li>
+          </ul>
+        </Card>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Accessibility Best Practices</h3>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <Prose 
+              ariaLabel="Article about accessibility best practices"
+              variant="article"
+              size="md"
+            >
+              <h4>Accessible Content Structure</h4>
+              <p>This article demonstrates proper <strong>heading hierarchy</strong> and <a href="#accessibility">accessible link styling</a> with sufficient contrast ratios for all users.</p>
+              <blockquote>
+                Content should be structured logically with proper semantic markup for optimal screen reader navigation.
+              </blockquote>
+            </Prose>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Prose 
+  ariaLabel="Article about accessibility best practices"
+  variant="article"
+&gt;
+  &lt;h4&gt;Accessible Content Structure&lt;/h4&gt;
+  &lt;p&gt;Proper semantic markup...&lt;/p&gt;
+&lt;/Prose&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section id="best-practices" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Best Practices</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Guidelines for effective prose component usage and optimal content presentation.</p>
+      </div>
+
+      <div class="space-y-6">
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-green-600 dark:text-green-400">✓ Do</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Use semantic HTML structure within prose content</li>
+            <li>• Choose appropriate size and variant for content type</li>
+            <li>• Enable reading mode for long-form articles</li>
+            <li>• Use high-contrast theme for accessibility-focused interfaces</li>
+            <li>• Provide proper heading hierarchy for navigation</li>
+            <li>• Test content with screen readers</li>
+            <li>• Use appropriate max-width for readability</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-red-600 dark:text-red-400">✗ Don't</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Skip heading levels or create improper hierarchy</li>
+            <li>• Use prose for non-textual content like forms or buttons</li>
+            <li>• Override contrast ratios below WCAG AA standards</li>
+            <li>• Make line lengths too wide (over 75 characters)</li>
+            <li>• Use raw mode without proper HTML sanitization</li>
+            <li>• Mix different themes inconsistently</li>
+            <li>• Forget to test typography at different zoom levels</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-blue-600 dark:text-blue-400">💡 Tips</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Use article variant for long-form content</li>
+            <li>• Use minimal variant for subtle, secondary content</li>
+            <li>• Use elevated variant for featured or highlighted content</li>
+            <li>• Enable reading mode for documentation and articles</li>
+            <li>• Use muted theme for less important information</li>
+            <li>• Consider mobile readability when choosing sizes</li>
+            <li>• Combine with other components for rich layouts</li>
+          </ul>
+        </Card>
+      </div>
+    </section>
+
+    <!-- Related Components -->
+    <section id="related" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Related Components</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Other components that work well with or complement prose content presentation.</p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Card</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For containing prose in structured layouts</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Blockquote</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For highlighted quotes and callouts</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">CodeBlock</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For code examples within prose content</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Callout</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For important information and notices</p>
+        </Card>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

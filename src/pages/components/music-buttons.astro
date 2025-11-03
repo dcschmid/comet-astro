@@ -1,29 +1,508 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import MusicButtons from '../../components/MusicButtons.astro';
-const musicLinks = [
-  { platform: 'Spotify', href: 'https://open.spotify.com/' },
-  { platform: 'Apple', href: 'https://music.apple.com/' },
-  { platform: 'YouTube', href: 'https://music.youtube.com/' },
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const title = 'MusicButtons Component';
+const description = 'WCAG AAA compliant music platform buttons with branded styling and responsive layouts.';
+
+// Example data
+const basicLinks = [
+  { platform: 'spotify', href: 'https://open.spotify.com/artist/example' },
+  { platform: 'apple', href: 'https://music.apple.com/artist/example' },
+  { platform: 'youtube', href: 'https://music.youtube.com/channel/example' }
+];
+
+const allPlatforms = [
+  { platform: 'spotify', href: 'https://open.spotify.com/artist/example' },
+  { platform: 'apple', href: 'https://music.apple.com/artist/example' },
+  { platform: 'youtube', href: 'https://music.youtube.com/channel/example' },
+  { platform: 'soundcloud', href: 'https://soundcloud.com/example' },
+  { platform: 'bandcamp', href: 'https://example.bandcamp.com' },
+  { platform: 'deezer', href: 'https://www.deezer.com/artist/example' },
+  { platform: 'tidal', href: 'https://tidal.com/artist/example' }
+];
+
+const customLabels = [
+  { platform: 'spotify', href: 'https://open.spotify.com/artist/example', label: 'Stream on Spotify' },
+  { platform: 'apple', href: 'https://music.apple.com/artist/example', label: 'Download on Apple Music' },
+  { platform: 'youtube', href: 'https://music.youtube.com/channel/example', label: 'Watch on YouTube Music' }
 ];
 ---
 
-<DocsLayout
-  title="MusicButtons"
-  description="Renders platform buttons linking to music services with branded styling."
->
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>links: &#123;platform, href, label?&#125;[]</code></li>
-      <li><code>layout?: 'row'|'column'|'wrap'</code> – layout direction</li>
-      <li><code>size?: 'sm'|'md'</code> – button size</li>
-      <li><code>className?: string</code></li>
-    </ul>
-  </section>
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The MusicButtons component provides branded, accessible buttons for linking to various music streaming platforms. Each platform has its own distinct styling while maintaining WCAG AAA compliance.
+      </p>
+    </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <MusicButtons layout="wrap" links={musicLinks} />
-  </section>
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MusicButtons links={basicLinks} />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`const musicLinks = [
+  { platform: 'spotify', href: 'https://open.spotify.com/artist/example' },
+  { platform: 'apple', href: 'https://music.apple.com/artist/example' },
+  { platform: 'youtube', href: 'https://music.youtube.com/channel/example' }
+];
+
+<MusicButtons links={musicLinks} />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Layouts -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Layouts
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Row Layout (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} layout="row" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Column Layout</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} layout="column" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Wrap Layout</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={allPlatforms} layout="wrap" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Grid Layout</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={allPlatforms} layout="grid" />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Row layout (default) -->
+<MusicButtons links={musicLinks} layout="row" />
+
+<!-- Column layout -->
+<MusicButtons links={musicLinks} layout="column" />
+
+<!-- Wrap layout for many buttons -->
+<MusicButtons links={musicLinks} layout="wrap" />
+
+<!-- Grid layout - responsive columns -->
+<MusicButtons links={musicLinks} layout="grid" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Sizes
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Small</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} size="sm" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Medium (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} size="md" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Large</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} size="lg" />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small buttons -->
+<MusicButtons links={musicLinks} size="sm" />
+
+<!-- Medium buttons (default) -->
+<MusicButtons links={musicLinks} size="md" />
+
+<!-- Large buttons -->
+<MusicButtons links={musicLinks} size="lg" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Variants
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Default</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} variant="default" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Minimal</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} variant="minimal" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Filled</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} variant="filled" />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant - light background -->
+<MusicButtons links={musicLinks} variant="default" />
+
+<!-- Minimal variant - transparent background -->
+<MusicButtons links={musicLinks} variant="minimal" />
+
+<!-- Filled variant - platform color background -->
+<MusicButtons links={musicLinks} variant="filled" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- All Platforms -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Supported Platforms
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MusicButtons links={allPlatforms} layout="grid" />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`const allPlatforms = [
+  { platform: 'spotify', href: 'https://open.spotify.com/artist/example' },
+  { platform: 'apple', href: 'https://music.apple.com/artist/example' },
+  { platform: 'youtube', href: 'https://music.youtube.com/channel/example' },
+  { platform: 'soundcloud', href: 'https://soundcloud.com/example' },
+  { platform: 'bandcamp', href: 'https://example.bandcamp.com' },
+  { platform: 'deezer', href: 'https://www.deezer.com/artist/example' },
+  { platform: 'tidal', href: 'https://tidal.com/artist/example' }
+];
+
+<MusicButtons links={allPlatforms} layout="grid" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Custom Labels -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Custom Labels
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={customLabels} layout="column" />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`const customLabels = [
+  { platform: 'spotify', href: '#', label: 'Stream on Spotify' },
+  { platform: 'apple', href: '#', label: 'Download on Apple Music' },
+  { platform: 'youtube', href: '#', label: 'Watch on YouTube Music' }
+];
+
+<MusicButtons links={customLabels} layout="column" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Options -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Configuration Options
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Without Icons</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} showIcons={false} />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Custom Aria Label</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <MusicButtons links={basicLinks} ariaLabel="Streaming platforms for this track" />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Hide platform icons -->
+<MusicButtons links={musicLinks} showIcons={false} />
+
+<!-- Custom accessibility label -->
+<MusicButtons 
+  links={musicLinks} 
+  ariaLabel="Streaming platforms for this track" 
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">WCAG AAA Compliance</h3>
+        <ul class="list-disc pl-6 space-y-2 text-blue-800 dark:text-blue-200">
+          <li>Touch targets meet minimum 44px requirement for accessibility</li>
+          <li>Color contrast ratios exceed 7:1 for WCAG AAA standards</li>
+          <li>Screen reader support with descriptive aria-labels</li>
+          <li>Keyboard navigation with visible focus indicators</li>
+          <li>Semantic navigation landmark with role="navigation"</li>
+          <li>External link announcements for screen readers</li>
+          <li>Platform-specific color coding for visual identification</li>
+          <li>Responsive layouts that work on all device sizes</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Props Reference -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Props Reference
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                links
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                PlatformLink[]
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                []
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Array of platform links with platform, href, and optional label
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                layout
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'row' | 'column' | 'wrap' | 'grid'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'row'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Layout direction for the buttons
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Button size
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default' | 'minimal' | 'filled'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                showIcons
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Show platform icons next to labels
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaLabel
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'Music platforms'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Accessible label for the navigation
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                class
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Additional CSS classes
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">PlatformLink Interface</h3>
+        <CodeBlock
+          code={`interface PlatformLink {
+  platform: string;    // Platform identifier (spotify, apple, youtube, etc.)
+  href: string;        // URL to the music platform
+  label?: string;      // Optional custom label (defaults to platform name)
+}`}
+          lang="typescript"
+        />
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Best Practices
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+            ✅ Do
+          </h3>
+          <ul class="space-y-2 text-green-800 dark:text-green-200">
+            <li>• Use the platform's exact name in the platform field for proper styling</li>
+            <li>• Provide direct links to the specific artist, album, or track</li>
+            <li>• Use descriptive custom labels when needed</li>
+            <li>• Choose layouts that work well with your content structure</li>
+            <li>• Test button accessibility with keyboard navigation</li>
+            <li>• Consider the number of platforms when choosing layout</li>
+            <li>• Use consistent sizing across your application</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-red-900 dark:text-red-100 mb-3">
+            ❌ Don't
+          </h3>
+          <ul class="space-y-2 text-red-800 dark:text-red-200">
+            <li>• Use generic or homepage URLs instead of specific content links</li>
+            <li>• Override platform colors unless absolutely necessary</li>
+            <li>• Create too many buttons that overwhelm the interface</li>
+            <li>• Forget to test with screen readers</li>
+            <li>• Use platforms that don't exist or aren't widely recognized</li>
+            <li>• Mix different button sizes in the same context</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+            💡 Tips
+          </h3>
+          <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
+            <li>• Use 'grid' layout for 4+ platforms to maintain organization</li>
+            <li>• Consider 'column' layout for sidebar placement</li>
+            <li>• The 'minimal' variant works well on colored backgrounds</li>
+            <li>• Platform recognition is case-insensitive</li>
+            <li>• Icons improve recognition but can be disabled if needed</li>
+            <li>• Custom labels are useful for call-to-action text</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

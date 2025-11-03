@@ -1,26 +1,193 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import DataList from '../../components/DataList.astro';
+import DataListComponent from '../../components/DataList.astro';
+
+const usageSnippet = `---
+import { DataList } from 'comet-astro';
 
 const items = [
   { term: 'Name', description: 'John Doe' },
   { term: 'Email', description: 'john@example.com' },
-  { term: 'Role', description: 'Developer' },
-  {
-    term: 'Skills',
-    description: ['JavaScript', 'TypeScript', 'React', 'Astro'],
-  },
+  { term: 'Skills', description: ['JavaScript', 'TypeScript', 'React'] },
+];
+---
+
+<DataList items={items} variant="default" divider />`;
+
+const basicItems = [
+  { term: 'Name', description: 'Sarah Chen' },
+  { term: 'Email', description: 'sarah@example.com' },
+  { term: 'Role', description: 'Senior Frontend Developer' },
+  { term: 'Location', description: 'San Francisco, CA' },
+];
+
+const skillsItems = [
+  { term: 'Frontend', description: ['React', 'Vue.js', 'Astro', 'TypeScript'] },
+  { term: 'Backend', description: ['Node.js', 'Python', 'PostgreSQL'] },
+  { term: 'Tools', description: ['Git', 'Docker', 'Figma', 'VS Code'] },
+  { term: 'Soft Skills', description: ['Team Leadership', 'Mentoring', 'Communication'] },
+];
+
+const projectItems = [
+  { term: 'Project Alpha', description: 'E-commerce platform with 50k+ daily users' },
+  { term: 'Project Beta', description: 'Real-time collaboration tool for remote teams' },
+  { term: 'Project Gamma', description: 'Mobile-first progressive web application' },
 ];
 ---
 
 <DocsLayout
   title="DataList"
-  description="Semantic definition list with default, horizontal, and striped variants."
+  description="Accessible definition lists with WCAG AAA contrast and responsive variants for structured data display."
 >
-  <section class="space-y-6">
-    <h2 class="text-xl font-bold">Variants</h2>
-    <DataList items={items} variant="default" divider />
-    <DataList items={items} variant="horizontal" />
-    <DataList items={items} variant="striped" />
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      DataList renders semantic definition lists with proper term-description 
+      relationships. It supports multiple layout variants and maintains excellent 
+      readability with AAA-compliant contrast ratios.
+    </p>
+    <p class="text-base text-slate-200">
+      Use DataList for displaying structured information like user profiles, 
+      specifications, or any key-value data that benefits from semantic markup 
+      and screen reader accessibility.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          items
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of objects with <code>term</code> (string) and <code>description</code> 
+          (string or string array) properties. Required for list content.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Layout style: <code>"default"</code> (stacked), <code>"horizontal"</code> 
+          (grid layout), or <code>"striped"</code> (alternating backgrounds). 
+          Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          divider?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Adds horizontal lines between items in default variant. 
+          Boolean, defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the definition list container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Create an array of items with term and description properties. 
+      Descriptions can be strings or arrays for list content. Choose 
+      a variant based on your layout needs and content density.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">Default (Stacked)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <DataListComponent items={basicItems} variant="default" divider />
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">Horizontal (Grid)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <DataListComponent items={basicItems} variant="horizontal" />
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">Striped (Alternating)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <DataListComponent items={projectItems} variant="striped" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Complex Data</h2>
+    <p class="text-base text-slate-200">
+      Use string arrays for descriptions to create bulleted lists. 
+      Perfect for skills, features, or any multi-item content.
+    </p>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <DataListComponent items={skillsItems} variant="default" divider />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Item Interface</h2>
+    <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4">
+      <h4 class="text-sm font-semibold text-slate-200 mb-3">Item Properties</h4>
+      <ul class="space-y-2 text-sm text-slate-300">
+        <li><code class="text-blue-300">term: string</code> - The label or key for the data item</li>
+        <li><code class="text-blue-300">description: string | string[]</code> - The value, supports arrays for bulleted lists</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Uses semantic <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, and 
+      <code>&lt;dd&gt;</code> elements for proper screen reader navigation. 
+      Text contrast exceeds WCAG AAA standards (7:1+) in both themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Horizontal variant adapts to mobile with responsive grid that stacks 
+      on small screens. List markers have appropriate contrast and spacing 
+      for easy scanning and comprehension.
+    </p>
+    <p class="text-base text-slate-200">
+      Striped variant uses subtle background colors that don't interfere 
+      with text readability. All variants maintain proper semantic structure 
+      for assistive technology navigation.
+    </p>
   </section>
 </DocsLayout>

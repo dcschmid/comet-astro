@@ -1,31 +1,148 @@
 ---
+/**
+ * Grid - WCAG AAA compliant responsive grid layout component
+ * Enhanced with semantic HTML options, accessibility features, and comprehensive responsive design
+ */
 interface Props {
+  /** Number of columns or auto-fit behavior */
   cols?: 1 | 2 | 3 | 4 | 5 | 6 | 'auto';
-  gap?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Spacing between grid items */
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  /** Additional CSS classes */
   className?: string;
+  /** Semantic HTML element to render as */
+  as?: 'div' | 'section' | 'main' | 'article' | 'aside' | 'nav' | 'ul' | 'ol';
+  /** Alignment of grid items */
+  align?: 'start' | 'center' | 'end' | 'stretch';
+  /** Justification of grid items */
+  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
+  /** Whether to apply auto-fit behavior with minimum item width */
+  autoFit?: boolean;
+  /** ARIA label for the grid */
+  ariaLabel?: string;
 }
 
-const { cols = 3, gap = 'md', className = '' } = Astro.props;
+const {
+  cols = 3,
+  gap = 'md',
+  className = '',
+  as = 'div',
+  align = 'stretch',
+  justify = 'start',
+  autoFit = false,
+  ariaLabel,
+} = Astro.props as Props;
 
+// Enhanced responsive column classes with better breakpoint coverage
 const colClasses = {
   1: 'grid-cols-1',
   2: 'grid-cols-1 sm:grid-cols-2',
   3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-  4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
-  5: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5',
-  6: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6',
-  auto: 'grid-cols-[repeat(auto-fit,minmax(250px,1fr))]',
+  4: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+  5: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+  6: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
+  auto: 'grid-cols-[repeat(auto-fit,minmax(120px,1fr))]',
 };
 
+// Enhanced gap system with more granular control
 const gapClasses = {
   none: 'gap-0',
-  sm: 'gap-2',
-  md: 'gap-4',
-  lg: 'gap-6',
-  xl: 'gap-8',
+  xs: 'gap-1',
+  sm: 'gap-2 sm:gap-3',
+  md: 'gap-3 sm:gap-4 lg:gap-6',
+  lg: 'gap-4 sm:gap-6 lg:gap-8',
+  xl: 'gap-6 sm:gap-8 lg:gap-10',
+  '2xl': 'gap-8 sm:gap-10 lg:gap-12',
 };
+
+// Alignment classes
+const alignClasses = {
+  start: 'items-start',
+  center: 'items-center',
+  end: 'items-end',
+  stretch: 'items-stretch',
+};
+
+// Justification classes
+const justifyClasses = {
+  start: 'justify-items-start',
+  center: 'justify-items-center',
+  end: 'justify-items-end',
+  between: 'justify-between',
+  around: 'justify-around',
+  evenly: 'justify-evenly',
+};
+
+// Use auto-fit if cols is 'auto' or autoFit is explicitly true
+const effectiveCols = cols === 'auto' || autoFit ? 'auto' : cols;
+
+// Build comprehensive class string
+const gridClasses = [
+  'grid',
+  colClasses[effectiveCols],
+  gapClasses[gap],
+  alignClasses[align],
+  justifyClasses[justify],
+  className,
+].filter(Boolean).join(' ');
 ---
 
-<div class={`grid ${colClasses[cols]} ${gapClasses[gap]} ${className}`}>
-  <slot />
-</div>
+{as === 'section' ? (
+  <section 
+    class={gridClasses}
+    aria-label={ariaLabel}
+  >
+    <slot />
+  </section>
+) : as === 'main' ? (
+  <main 
+    class={gridClasses}
+    aria-label={ariaLabel}
+  >
+    <slot />
+  </main>
+) : as === 'article' ? (
+  <article 
+    class={gridClasses}
+    aria-label={ariaLabel}
+  >
+    <slot />
+  </article>
+) : as === 'aside' ? (
+  <aside 
+    class={gridClasses}
+    aria-label={ariaLabel}
+  >
+    <slot />
+  </aside>
+) : as === 'nav' ? (
+  <nav 
+    class={gridClasses}
+    aria-label={ariaLabel}
+  >
+    <slot />
+  </nav>
+) : as === 'ul' ? (
+  <ul 
+    class={gridClasses}
+    aria-label={ariaLabel}
+    role="list"
+  >
+    <slot />
+  </ul>
+) : as === 'ol' ? (
+  <ol 
+    class={gridClasses}
+    aria-label={ariaLabel}
+    role="list"
+  >
+    <slot />
+  </ol>
+) : (
+  <div 
+    class={gridClasses}
+    aria-label={ariaLabel}
+  >
+    <slot />
+  </div>
+)}

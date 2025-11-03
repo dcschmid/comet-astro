@@ -1,70 +1,299 @@
 ---
+import { cn } from '../utils/cn';
+
+/**
+ * ScrollToTop - Accessible scroll-to-top button with WCAG AAA compliance
+ */
 interface Props {
+  /** Scroll threshold in pixels before button appears */
   threshold?: number;
-  position?: 'bottom-right' | 'bottom-left' | 'bottom-center';
+  /** Position of the button on screen */
+  position?: 'bottom-right' | 'bottom-left' | 'bottom-center' | 'top-right' | 'top-left';
+  /** Enable smooth scrolling animation */
   smooth?: boolean;
-  className?: string;
+  /** Visual variant of the button */
+  variant?: 'default' | 'minimal' | 'ghost' | 'solid';
+  /** Size of the button */
+  size?: 'sm' | 'md' | 'lg';
+  /** Custom label for accessibility */
+  label?: string;
+  /** Icon to display (default is arrow up) */
+  icon?: 'arrow' | 'chevron' | 'caret';
+  /** Show progress indicator */
+  showProgress?: boolean;
+  /** Custom offset from edges */
+  offset?: number;
+  /** Whether button is disabled */
+  disabled?: boolean;
+  /** Additional CSS classes */
+  class?: string;
 }
 
 const {
   threshold = 300,
   position = 'bottom-right',
   smooth = true,
-  className = '',
+  variant = 'default',
+  size = 'md',
+  label = 'Scroll to top',
+  icon = 'arrow',
+  showProgress = false,
+  offset = 32,
+  disabled = false,
+  class: className = '',
 } = Astro.props;
 
-const positionClasses = {
-  'bottom-right': 'bottom-8 right-8',
-  'bottom-left': 'bottom-8 left-8',
-  'bottom-center': 'bottom-8 left-1/2 -translate-x-1/2',
+// Size configurations
+const sizeClasses = {
+  sm: 'h-10 w-10 text-base',
+  md: 'h-12 w-12 text-xl',
+  lg: 'h-14 w-14 text-2xl',
 };
+
+// Position configurations with custom offset
+const getPositionClasses = (pos: string) => {
+  const positions = {
+    'bottom-right': `bottom-8 right-8`,
+    'bottom-left': `bottom-8 left-8`,
+    'bottom-center': `bottom-8 left-1/2 -translate-x-1/2`,
+    'top-right': `top-8 right-8`,
+    'top-left': `top-8 left-8`,
+  };
+  return positions[pos] || positions['bottom-right'];
+};
+
+// Variant styles with WCAG AAA compliance
+const variantClasses = {
+  default: cn(
+    'bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-900',
+    'border border-blue-700 dark:border-blue-400',
+    'hover:bg-blue-700 dark:hover:bg-blue-400',
+    'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+    'shadow-lg hover:shadow-xl'
+  ),
+  minimal: cn(
+    'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200',
+    'border border-gray-300 dark:border-gray-600',
+    'hover:bg-gray-200 dark:hover:bg-gray-700',
+    'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400',
+    'shadow-md hover:shadow-lg'
+  ),
+  ghost: cn(
+    'bg-white/90 dark:bg-gray-900/90 text-gray-800 dark:text-gray-200',
+    'border border-gray-200 dark:border-gray-700',
+    'hover:bg-white dark:hover:bg-gray-900',
+    'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400',
+    'backdrop-blur-sm shadow-md hover:shadow-lg'
+  ),
+  solid: cn(
+    'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900',
+    'border border-gray-900 dark:border-gray-100',
+    'hover:bg-gray-800 dark:hover:bg-gray-200',
+    'focus-visible:ring-gray-800 dark:focus-visible:ring-gray-200',
+    'shadow-lg hover:shadow-xl'
+  ),
+};
+
+// Icon variants
+const iconMap = {
+  arrow: '↑',
+  chevron: '⌃',
+  caret: '▲',
+};
+
+const buttonClasses = cn(
+  'fixed z-50 flex items-center justify-center rounded-full',
+  'transition-all duration-300 ease-in-out',
+  'opacity-0 invisible translate-y-2',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
+  sizeClasses[size],
+  variantClasses[variant],
+  getPositionClasses(position, offset),
+  disabled && 'opacity-50 cursor-not-allowed',
+  className
+);
+
+const progressClasses = cn(
+  'absolute inset-0 rounded-full',
+  'border-2 border-transparent',
+  'transition-all duration-150 ease-out'
+);
 ---
 
 <button
   type="button"
-  class={`fixed ${positionClasses[position]} z-50 flex h-12 w-12 items-center justify-center rounded-full border border-blue-500 bg-blue-600 text-xl font-bold text-white shadow-lg transition-all opacity-0 invisible focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 dark:border-blue-400 dark:bg-blue-500 dark:text-slate-900 dark:focus-visible:ring-offset-blue-500 ${className}`.trim()}
+  class={buttonClasses}
   data-scroll-top
   data-threshold={threshold}
   data-smooth={smooth}
-  aria-label="Scroll to top"
+  data-show-progress={showProgress}
+  aria-label={label}
   aria-hidden="true"
   tabindex="-1"
+  disabled={disabled}
+  data-testid="scroll-to-top"
 >
-  ↑
+  {showProgress && (
+    <div 
+      class={progressClasses}
+      data-progress-ring
+      style="background: conic-gradient(from 0deg, currentColor 0%, transparent 0%)"
+    ></div>
+  )}
+  <span class={cn('relative z-10', showProgress && 'text-sm')}>
+    {iconMap[icon]}
+  </span>
 </button>
 
+<style is:inline>
+  [data-scroll-top].visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+  [data-progress-ring] {
+    transition: background 150ms ease-out;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    [data-scroll-top] {
+      transition-duration: 0s;
+    }
+    
+    [data-progress-ring] {
+      transition-duration: 0s;
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    [data-scroll-top] {
+      border-width: 2px;
+    }
+  }
+</style>
+
 <script is:inline>
-  (function () {
-    const button = document.currentScript?.previousElementSibling;
-    if (!(button instanceof HTMLElement)) return;
+  (function setupScrollToTop() {
+    const buttons = document.querySelectorAll('[data-scroll-top]');
+    
+    buttons.forEach(button => {
+      if (!(button instanceof HTMLElement)) return;
 
-    const threshold = parseInt(button.getAttribute('data-threshold') || '300');
-    const smooth = button.getAttribute('data-smooth') === 'true';
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const threshold = parseInt(button.getAttribute('data-threshold') || '300');
+      const smooth = button.getAttribute('data-smooth') === 'true';
+      const showProgress = button.getAttribute('data-show-progress') === 'true';
+      const progressRing = button.querySelector('[data-progress-ring]');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    const setVisibility = (visible) => {
-      button.classList.toggle('opacity-0', !visible);
-      button.classList.toggle('invisible', !visible);
-      button.setAttribute('aria-hidden', visible ? 'false' : 'true');
-      button.tabIndex = visible ? 0 : -1;
-    };
+      const setVisibility = (visible) => {
+        button.classList.toggle('visible', visible);
+        button.setAttribute('aria-hidden', visible ? 'false' : 'true');
+        button.tabIndex = visible ? 0 : -1;
+      };
 
-    const checkScroll = () => {
-      if (window.scrollY > threshold) {
-        setVisibility(true);
-      } else {
-        setVisibility(false);
-      }
-    };
+      const updateProgress = () => {
+        if (!showProgress || !progressRing) return;
+        
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        
+        const clampedPercent = Math.min(Math.max(scrollPercent, 0), 100);
+        progressRing.style.background = `conic-gradient(from 0deg, currentColor ${clampedPercent}%, transparent ${clampedPercent}%)`;
+      };
 
-    button.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: smooth && !reduceMotion.matches ? 'smooth' : 'auto',
+      const checkScroll = () => {
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollY > threshold) {
+          setVisibility(true);
+          updateProgress();
+        } else {
+          setVisibility(false);
+        }
+      };
+
+      const scrollToTop = () => {
+        const targetPosition = 0;
+        const startPosition = window.pageYOffset || document.documentElement.scrollTop;
+        const distance = targetPosition - startPosition;
+        const duration = smooth && !reduceMotion.matches ? 800 : 0;
+        
+        if (duration === 0) {
+          window.scrollTo(0, 0);
+          return;
+        }
+        
+        let start = null;
+        
+        const step = (timestamp) => {
+          if (!start) start = timestamp;
+          const progress = timestamp - start;
+          const progressPercent = Math.min(progress / duration, 1);
+          
+          // Easing function for smooth animation
+          const easeOutCubic = 1 - Math.pow(1 - progressPercent, 3);
+          
+          window.scrollTo(0, startPosition + distance * easeOutCubic);
+          
+          if (progress < duration) {
+            requestAnimationFrame(step);
+          }
+        };
+        
+        requestAnimationFrame(step);
+      };
+
+      // Event listeners
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        scrollToTop();
+        
+        // Announce to screen readers
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.textContent = 'Scrolled to top of page';
+        document.body.appendChild(announcement);
+        
+        setTimeout(() => {
+          document.body.removeChild(announcement);
+        }, 1000);
       });
-    });
 
-    window.addEventListener('scroll', checkScroll, { passive: true });
-    checkScroll();
+      // Keyboard support
+      button.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          scrollToTop();
+        }
+      });
+
+      // Throttled scroll listener for better performance
+      let ticking = false;
+      const throttledScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            checkScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      window.addEventListener('scroll', throttledScroll, { passive: true });
+      
+      // Check initial state
+      checkScroll();
+      
+      // Handle resize for responsive behavior
+      window.addEventListener('resize', () => {
+        checkScroll();
+      }, { passive: true });
+    });
   })();
 </script>

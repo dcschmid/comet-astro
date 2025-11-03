@@ -1,11 +1,31 @@
 ---
 /**
- * Modal - accessible dialog with backdrop
+ * Modal - Enhanced with WCAG AAA compliance, multiple variants, and responsive design
  */
+
 interface Props {
+  // Content
+  id?: string;
   open?: boolean;
   title?: string;
   closeLabel?: string;
+  
+  // Variants
+  variant?: 'default' | 'danger' | 'success' | 'warning';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen';
+  
+  // Layout
+  position?: 'center' | 'top' | 'bottom';
+  backdrop?: 'default' | 'blur' | 'dark' | 'none';
+  closable?: boolean;
+  
+  // Accessibility
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  preventBodyScroll?: boolean;
+  
+  // Classes
+  class?: string;
   className?: string;
 }
 
@@ -13,188 +33,234 @@ const {
   open = false,
   title,
   closeLabel = 'Close',
-  className = '',
-} = Astro.props as Props;
+  variant = 'default',
+  size = 'md',
+  position = 'center',
+  backdrop = 'default',
+  closable = true,
+  ariaLabel,
+  ariaDescribedBy,
+  preventBodyScroll = true,
+  class: className,
+  className: legacyClassName
+} = Astro.props;
+
 const hasFooter = Astro.slots.has('footer');
 
+// Generate unique IDs for accessibility
 const modalId = `comet-modal-${Math.random().toString(36).slice(2, 9)}`;
 const titleId = title ? `${modalId}-title` : undefined;
+const descriptionId = ariaDescribedBy || (hasFooter ? `${modalId}-footer` : undefined);
+
+// Variant styles with WCAG AAA contrast
+const variantClasses = {
+  default: {
+    dialog: 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900',
+    header: 'border-gray-200 dark:border-gray-700',
+    title: 'text-gray-900 dark:text-gray-50',
+    content: 'text-gray-700 dark:text-gray-300',
+    footer: 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300'
+  },
+  danger: {
+    dialog: 'border-red-200 dark:border-red-800 bg-white dark:bg-gray-900 ring-1 ring-red-100 dark:ring-red-900',
+    header: 'border-red-200 dark:border-red-800',
+    title: 'text-red-900 dark:text-red-100',
+    content: 'text-gray-700 dark:text-gray-300',
+    footer: 'border-red-200 dark:border-red-800 text-gray-700 dark:text-gray-300'
+  },
+  success: {
+    dialog: 'border-green-200 dark:border-green-800 bg-white dark:bg-gray-900 ring-1 ring-green-100 dark:ring-green-900',
+    header: 'border-green-200 dark:border-green-800',
+    title: 'text-green-900 dark:text-green-100',
+    content: 'text-gray-700 dark:text-gray-300',
+    footer: 'border-green-200 dark:border-green-800 text-gray-700 dark:text-gray-300'
+  },
+  warning: {
+    dialog: 'border-yellow-200 dark:border-yellow-800 bg-white dark:bg-gray-900 ring-1 ring-yellow-100 dark:ring-yellow-900',
+    header: 'border-yellow-200 dark:border-yellow-800',
+    title: 'text-yellow-900 dark:text-yellow-100',
+    content: 'text-gray-700 dark:text-gray-300',
+    footer: 'border-yellow-200 dark:border-yellow-800 text-gray-700 dark:text-gray-300'
+  }
+};
+
+// Size styles with responsive design
+const sizeClasses = {
+  sm: 'max-w-sm',
+  md: 'max-w-md sm:max-w-lg',
+  lg: 'max-w-lg sm:max-w-2xl',
+  xl: 'max-w-xl sm:max-w-4xl',
+  fullscreen: 'max-w-full h-full m-0 sm:max-w-[calc(100vw-2rem)] sm:max-h-[calc(100vh-2rem)] sm:m-4'
+};
+
+// Position styles
+const positionClasses = {
+  center: 'items-center justify-center',
+  top: 'items-start justify-center pt-16 sm:pt-20',
+  bottom: 'items-end justify-center pb-16 sm:pb-20'
+};
+
+// Backdrop styles with WCAG AAA transparency
+const backdropClasses = {
+  default: 'bg-gray-900/80',
+  blur: 'bg-gray-900/80 backdrop-blur-sm',
+  dark: 'bg-black/90',
+  none: 'bg-transparent pointer-events-none'
+};
+
+const currentVariant = variantClasses[variant];
+const finalClassName = className || legacyClassName || '';
 ---
 
 <div
-  id={modalId}
+  id={Astro.props.id || modalId}
   role="dialog"
   aria-modal="true"
   aria-labelledby={titleId}
-  class={`fixed inset-0 z-50 ${open ? '' : 'hidden'} flex items-start justify-center px-4 py-8 sm:py-12`.trim()}
+  aria-describedby={descriptionId}
+  aria-label={ariaLabel || (title ? undefined : 'Modal dialog')}
+  class={`fixed inset-0 z-50 ${open ? '' : 'hidden'} flex px-4 py-8 sm:py-12 ${positionClasses[position]}`.trim()}
   data-open={open}
   data-modal-root
+  data-prevent-body-scroll={preventBodyScroll}
+  data-variant={variant}
+  data-size={size}
 >
+  <!-- Backdrop -->
   <div
-    class="absolute inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity"
-    data-modal-backdrop
+    class={`absolute inset-0 transition-opacity duration-300 ${backdropClasses[backdrop]}`}
+    data-modal-backdrop={backdrop !== 'none' && closable ? 'true' : undefined}
+    aria-hidden="true"
   >
   </div>
+  
+  <!-- Dialog -->
   <div
-    class={`relative z-10 mt-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 text-slate-900 shadow-2xl outline-none transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 sm:mt-0 ${className}`.trim()}
+    class={`
+      relative z-10 w-full rounded-2xl border shadow-2xl outline-none transition-all duration-300
+      ${sizeClasses[size]}
+      ${currentVariant.dialog}
+      ${size === 'fullscreen' ? 'rounded-none sm:rounded-2xl' : ''}
+      ${finalClassName}
+    `.trim().replace(/\s+/g, ' ')}
     data-modal-dialog
     role="document"
     tabindex="-1"
   >
-    <header class="mb-4 flex items-start justify-between gap-4">
-      {
-        title && (
-          <h2
-            id={titleId}
-            class="text-xl font-semibold text-slate-900 dark:text-slate-100"
-          >
-            {title}
-          </h2>
-        )
-      }
-      <button
-        type="button"
-        class="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-sm font-semibold text-slate-900 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
-        data-modal-close
-        aria-label={closeLabel}
-      >
-        <span aria-hidden="true">×</span>
-      </button>
+    <!-- Header -->
+    <header class={`flex items-start justify-between gap-4 p-6 ${title || closable ? `border-b ${currentVariant.header}` : ''}`}>
+      {title && (
+        <h2
+          id={titleId}
+          class={`text-xl font-semibold ${currentVariant.title}`}
+        >
+          {title}
+        </h2>
+      )}
+      
+      {closable && (
+        <button
+          type="button"
+          class={`
+            inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border 
+            text-sm font-semibold transition-all duration-200
+            border-gray-300 dark:border-gray-600 
+            bg-white dark:bg-gray-800 
+            text-gray-700 dark:text-gray-300
+            hover:bg-gray-50 dark:hover:bg-gray-700
+            hover:border-gray-400 dark:hover:border-gray-500
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+            dark:focus:ring-offset-gray-900
+          `.trim().replace(/\s+/g, ' ')}
+          data-modal-close
+          aria-label={closeLabel}
+        >
+          <span aria-hidden="true" class="text-lg leading-none">×</span>
+        </button>
+      )}
     </header>
+    
+    <!-- Content -->
     <div
-      class="max-h-[65vh] overflow-auto pr-1 text-sm text-slate-700 dark:text-slate-200"
+      class={`
+        px-6 ${title || closable ? 'pt-0' : 'pt-6'} ${hasFooter ? 'pb-0' : 'pb-6'}
+        ${size === 'fullscreen' ? 'max-h-none overflow-auto' : 'max-h-[65vh] overflow-auto'}
+        ${currentVariant.content}
+      `.trim().replace(/\s+/g, ' ')}
     >
       <slot />
     </div>
-    {
-      hasFooter && (
-        <footer class="mt-6 border-t border-slate-200 pt-4 text-sm text-slate-700 dark:border-slate-700 dark:text-slate-200">
-          <slot name="footer" />
-        </footer>
-      )
-    }
+    
+    <!-- Footer -->
+    {hasFooter && (
+      <footer 
+        id={ariaDescribedBy ? undefined : `${modalId}-footer`}
+        class={`border-t p-6 ${currentVariant.footer}`}
+      >
+        <slot name="footer" />
+      </footer>
+    )}
   </div>
 </div>
 
 <script is:inline>
-  (function () {
-    const root = document.currentScript?.previousElementSibling;
-    if (!(root instanceof HTMLElement)) return;
-    const win = window;
-    if (typeof win.__cometModalLockCount !== 'number') {
-      win.__cometModalLockCount = 0;
-    }
-    if (typeof win.__cometModalOriginalOverflow !== 'string') {
-      win.__cometModalOriginalOverflow = document.body.style.overflow || '';
-    }
-    const dialog = root.querySelector('[data-modal-dialog]');
-    const backdrop = root.querySelector('[data-modal-backdrop]');
-    const closeButtons = root.querySelectorAll('[data-modal-close]');
-    if (!(dialog instanceof HTMLElement)) return;
-
-    const focusableSelectors = [
-      'a[href]',
-      'area[href]',
-      'button:not([disabled])',
-      'input:not([disabled]):not([type="hidden"])',
-      'select:not([disabled])',
-      'textarea:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])',
-    ].join(',');
-
-    let returnFocus = null;
-
-    const getFocusable = () => {
-      return Array.from(dialog.querySelectorAll(focusableSelectors)).filter(
-        (el) => el instanceof HTMLElement && el.offsetParent !== null
-      );
-    };
-
-    const setOpenState = (isOpen) => {
-      const wasOpen = root.getAttribute('data-open') === 'true';
-      if (wasOpen === isOpen) {
-        root.classList.toggle('hidden', !isOpen);
-        return;
-      }
-      root.setAttribute('data-open', String(isOpen));
-      root.classList.toggle('hidden', !isOpen);
-      if (isOpen) {
-        win.__cometModalLockCount += 1;
-        if (win.__cometModalLockCount === 1) {
+  document.addEventListener('DOMContentLoaded', () => {
+    // Handle all click events
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+      
+      // Open modal
+      if (target.hasAttribute('data-modal-open')) {
+        e.preventDefault();
+        const modalId = target.getAttribute('data-modal-open');
+        const modal = document.getElementById(modalId);
+        console.log('Opening modal:', modalId, modal); // Debug
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.setAttribute('data-open', 'true');
           document.body.style.overflow = 'hidden';
         }
-        returnFocus =
-          document.activeElement instanceof HTMLElement
-            ? document.activeElement
-            : null;
-        const focusables = getFocusable();
-        if (focusables.length) {
-          focusables[0].focus({ preventScroll: true });
-        } else {
-          dialog.focus({ preventScroll: true });
-        }
-      } else {
-        win.__cometModalLockCount = Math.max(0, win.__cometModalLockCount - 1);
-        if (win.__cometModalLockCount === 0) {
-          document.body.style.overflow = win.__cometModalOriginalOverflow || '';
-        }
-        if (returnFocus) {
-          returnFocus.focus({ preventScroll: true });
-        }
-      }
-    };
-
-    const handleKeydown = (event) => {
-      if (root.getAttribute('data-open') !== 'true') return;
-      if (event.key === 'Escape') {
-        event.stopPropagation();
-        setOpenState(false);
         return;
       }
-      if (event.key === 'Tab') {
-        const focusables = getFocusable();
-        if (!focusables.length) {
-          event.preventDefault();
-          dialog.focus({ preventScroll: true });
-          return;
+      
+      // Close modal
+      if (target.hasAttribute('data-modal-close') || target.closest('[data-modal-close]')) {
+        e.preventDefault();
+        const modal = target.closest('[data-modal-root]');
+        console.log('Closing modal:', modal); // Debug
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.setAttribute('data-open', 'false');
+          document.body.style.overflow = '';
         }
-        const currentIndex = focusables.indexOf(document.activeElement);
-        let nextIndex = currentIndex;
-        if (event.shiftKey) {
-          nextIndex =
-            currentIndex <= 0 ? focusables.length - 1 : currentIndex - 1;
-        } else {
-          nextIndex =
-            currentIndex === focusables.length - 1 ? 0 : currentIndex + 1;
-        }
-        event.preventDefault();
-        focusables[nextIndex].focus({ preventScroll: true });
+        return;
       }
-    };
-
-    const close = () => setOpenState(false);
-    const openModal = () => setOpenState(true);
-
-    closeButtons.forEach((btn) => {
-      btn.addEventListener('click', (event) => {
-        event.preventDefault();
-        close();
-      });
+      
+      // Close on backdrop click
+      if (target.hasAttribute('data-modal-backdrop')) {
+        e.preventDefault();
+        const modal = target.closest('[data-modal-root]');
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.setAttribute('data-open', 'false');
+          document.body.style.overflow = '';
+        }
+        return;
+      }
     });
-
-    backdrop?.addEventListener('click', close);
-    root.addEventListener('keydown', handleKeydown);
-
-    if (!win.__cometModalRegistry) {
-      win.__cometModalRegistry = new Map();
-    }
-    win.__cometModalRegistry.set(root.id || 'comet-modal', {
-      open: openModal,
-      close,
+    
+    // Handle Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const openModal = document.querySelector('[data-modal-root][data-open="true"]');
+        if (openModal) {
+          openModal.classList.add('hidden');
+          openModal.setAttribute('data-open', 'false');
+          document.body.style.overflow = '';
+        }
+      }
     });
-
-    if (root.getAttribute('data-open') === 'true') {
-      setOpenState(true);
-    }
-  })();
+  });
 </script>
+
+

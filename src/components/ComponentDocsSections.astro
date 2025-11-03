@@ -1,0 +1,55 @@
+---
+/**
+ * ComponentDocsSections - shared scaffold for component documentation pages.
+ * Usage:
+ * <ComponentDocsSections
+ *   overview={<Fragment>...</Fragment>}
+ *   props={<Fragment>...</Fragment>}
+ *   accessibility={<Fragment>...</Fragment>}
+ *   theming={<Fragment>...</Fragment>}
+ *   examples={<Fragment>...</Fragment>}
+ * />
+ * Any section can be omitted; empty ones are skipped.
+ */
+interface SectionProps {
+  overview?: any;
+  props?: any;
+  accessibility?: any;
+  theming?: any;
+  examples?: any;
+  interactive?: any;
+}
+const { overview, props, accessibility, theming, examples, interactive } = Astro.props as SectionProps;
+
+const sections: { id: string; title: string; content?: any }[] = [
+  { id: 'overview', title: 'Overview', content: overview },
+  { id: 'examples', title: 'Examples', content: examples },
+  { id: 'interactive', title: 'Interactive', content: interactive },
+  { id: 'props', title: 'Props', content: props },
+  { id: 'accessibility', title: 'Accessibility', content: accessibility },
+  { id: 'theming', title: 'Theming & Contrast', content: theming },
+];
+---
+
+<div class="space-y-10">
+  {sections.filter(s => !!s.content).map(section => (
+    <section id={section.id} class="space-y-4">
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+          {section.title}
+        </h2>
+        <a
+          href={`#${section.id}`}
+          class="ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-transparent text-slate-600 hover:bg-slate-100 hover:text-sky-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-sky-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+          aria-label={`Permalink ${section.title}`}
+        >
+          <span aria-hidden class="text-xs font-semibold">#</span>
+        </a>
+      </div>
+
+      <div class="prose max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-3">
+        {section.content}
+      </div>
+    </section>
+  ))}
+</div>

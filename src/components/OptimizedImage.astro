@@ -1,21 +1,47 @@
 ---
 /**
- * OptimizedImage (generic) - responsive <img> wrapper with srcset/sizes
+ * OptimizedImage - Enhanced responsive image with WCAG AAA compliance
  */
+
 interface Props {
+  // Required
   src: string;
   alt: string;
+  
+  // Dimensions
   width?: number | string;
   height?: number | string;
-  sizes?: string; // e.g. "(min-width: 1024px) 800px, 100vw"
-  srcset?: string; // provide your own srcset if available
+  
+  // Responsive
+  sizes?: string;
+  srcset?: string;
+  
+  // Performance
   loading?: 'eager' | 'lazy';
   decoding?: 'async' | 'sync' | 'auto';
   fetchPriority?: 'high' | 'low' | 'auto';
-  rounded?: boolean;
-  className?: string;
+  
+  // Styling
+  variant?: 'default' | 'rounded' | 'circle' | 'bordered';
+  aspectRatio?: '1/1' | '4/3' | '3/2' | '16/9' | '21/9' | 'auto';
+  objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  
+  // Layout
   figure?: boolean;
   caption?: string;
+  captionPosition?: 'bottom' | 'top' | 'overlay';
+  
+  // Accessibility
+  role?: string;
+  ariaDescribedBy?: string;
+  
+  // Error handling
+  errorFallback?: string;
+  placeholder?: boolean;
+  
+  // Classes
+  class?: string;
+  className?: string;
 }
 
 const {
@@ -28,44 +54,105 @@ const {
   loading = 'lazy',
   decoding = 'async',
   fetchPriority = 'auto',
-  rounded = false,
-  className = '',
+  variant = 'default',
+  aspectRatio = 'auto',
+  objectFit = 'cover',
   figure = false,
   caption,
-} = Astro.props as Props;
+  captionPosition = 'bottom',
+  role,
+  ariaDescribedBy,
+  errorFallback,
+  placeholder = true,
+  class: className,
+  className: legacyClassName
+} = Astro.props;
 
-const widthAttr =
-  typeof width === 'number' || typeof width === 'string' ? width : undefined;
-const heightAttr =
-  typeof height === 'number' || typeof height === 'string' ? height : undefined;
+const finalClassName = className || legacyClassName || '';
 
-const imageClass =
-  `h-auto max-w-full ${rounded ? 'rounded-xl' : ''} ${className}`.trim();
+// Generate unique IDs for accessibility
+const imageId = `comet-img-${Math.random().toString(36).slice(2, 9)}`;
+const captionId = caption ? `${imageId}-caption` : undefined;
+
+// Dimension attributes
+const widthAttr = typeof width === 'number' || typeof width === 'string' ? width : undefined;
+const heightAttr = typeof height === 'number' || typeof height === 'string' ? height : undefined;
+
+// Variant styles
+const variantClasses = {
+  default: '',
+  rounded: 'rounded-lg',
+  circle: 'rounded-full',
+  bordered: 'border-2 border-gray-200 dark:border-gray-700 rounded-lg'
+};
+
+// Aspect ratio classes
+const aspectRatioClasses = {
+  'auto': '',
+  '1/1': 'aspect-square',
+  '4/3': 'aspect-[4/3]',
+  '3/2': 'aspect-[3/2]',
+  '16/9': 'aspect-video',
+  '21/9': 'aspect-[21/9]'
+};
+
+// Object fit classes
+const objectFitClasses = {
+  contain: 'object-contain',
+  cover: 'object-cover',
+  fill: 'object-fill',
+  none: 'object-none',
+  'scale-down': 'object-scale-down'
+};
+
+// Base image classes with responsive and accessibility features
+const baseImageClasses = `
+  max-w-full h-auto transition-all duration-300
+  ${aspectRatioClasses[aspectRatio]}
+  ${objectFitClasses[objectFit]}
+  ${variantClasses[variant]}
+  ${finalClassName}
+`.trim().replace(/\s+/g, ' ');
+
+// Caption styles with WCAG AAA contrast
+const captionClasses = {
+  bottom: 'mt-3 text-sm text-gray-700 dark:text-gray-300',
+  top: 'mb-3 text-sm text-gray-700 dark:text-gray-300',
+  overlay: 'absolute bottom-0 left-0 right-0 bg-gray-900/80 text-gray-50 p-3 text-sm backdrop-blur-sm'
+};
+
+// Figure classes for different caption positions
+const figureClasses = captionPosition === 'overlay' 
+  ? 'relative inline-block' 
+  : 'inline-flex flex-col';
+
+// Error handling script
+const errorScript = errorFallback ? `
+  document.addEventListener('DOMContentLoaded', () => {
+    const img = document.getElementById('${imageId}');
+    if (img) {
+      img.addEventListener('error', () => {
+        img.src = '${errorFallback}';
+        img.alt = '${alt} (fallback image)';
+      });
+    }
+  });
+` : '';
 ---
 
-{
-  figure ? (
-    <figure class="inline-flex flex-col items-center text-center">
-      <img
-        src={src}
-        alt={alt}
-        width={widthAttr}
-        height={heightAttr}
-        loading={loading}
-        decoding={decoding}
-        fetchpriority={fetchPriority}
-        sizes={sizes}
-        srcset={srcset}
-        class={imageClass}
-      />
-      {caption && (
-        <figcaption class="mt-2 text-sm text-slate-700 dark:text-slate-200">
-          {caption}
-        </figcaption>
-      )}
-    </figure>
-  ) : (
+{figure ? (
+  <figure class={figureClasses}>
+    {caption && captionPosition === 'top' && (
+      <figcaption 
+        id={captionId}
+        class={captionClasses[captionPosition]}
+      >
+        {caption}
+      </figcaption>
+    )}
+    
     <img
+      id={imageId}
       src={src}
       alt={alt}
       width={widthAttr}
@@ -75,7 +162,84 @@ const imageClass =
       fetchpriority={fetchPriority}
       sizes={sizes}
       srcset={srcset}
-      class={imageClass}
+      class={baseImageClasses}
+      role={role}
+      aria-describedby={ariaDescribedBy || captionId}
     />
-  )
-}
+    
+    {caption && (captionPosition === 'bottom' || captionPosition === 'overlay') && (
+      <figcaption 
+        id={captionId}
+        class={captionClasses[captionPosition]}
+      >
+        {caption}
+      </figcaption>
+    )}
+  </figure>
+) : (
+  <img
+    id={imageId}
+    src={src}
+    alt={alt}
+    width={widthAttr}
+    height={heightAttr}
+    loading={loading}
+    decoding={decoding}
+    fetchpriority={fetchPriority}
+    sizes={sizes}
+    srcset={srcset}
+    class={baseImageClasses}
+    role={role}
+    aria-describedby={ariaDescribedBy}
+  />
+)}
+
+{errorFallback && (
+  <script is:inline set:html={errorScript} />
+)}
+
+{placeholder && (
+  <style>
+    #{imageId} {
+      background-color: #f3f4f6;
+      background-image: 
+        linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    
+    .dark #{imageId} {
+      background-color: #374151;
+      background-image: 
+        linear-gradient(45deg, #4b5563 25%, transparent 25%),
+        linear-gradient(-45deg, #4b5563 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #4b5563 75%),
+        linear-gradient(-45deg, transparent 75%, #4b5563 75%);
+    }
+    
+    #{imageId}.loaded {
+      background-image: none;
+      background-color: transparent;
+    }
+  </style>
+)}
+
+{placeholder && (
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const img = document.getElementById('{imageId}');
+      if (img) {
+        if (img.complete) {
+          img.classList.add('loaded');
+        } else {
+          img.addEventListener('load', () => {
+            img.classList.add('loaded');
+          });
+        }
+      }
+    });
+  </script>
+)}

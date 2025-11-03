@@ -1,75 +1,849 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import InfiniteScroll from '../../components/InfiniteScroll.astro';
+import InfiniteScrollComponent from '../../components/InfiniteScroll.astro';
 import Card from '../../components/Card.astro';
 import CategoryBadge from '../../components/CategoryBadge.astro';
+
+const usageSnippet = `---
+import { InfiniteScroll } from 'comet-astro';
+---
+
+<InfiniteScroll
+  loadingVariant="spinner"
+  size="md"
+  announceContent={true}
+  loaderText="Loading more articles…"
+>
+  <div id="content-container">
+    <!-- Your content here -->
+  </div>
+</InfiniteScroll>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('content-container');
+    const root = container?.closest('[data-infinite-scroll]');
+    
+    root?.addEventListener('infinite-scroll:load', (event) => {
+      const { loading, done, error } = event.detail;
+      
+      loading(true);
+      
+      // Fetch your data
+      fetchMoreContent()
+        .then(items => {
+          // Add items to container
+          appendItems(container, items);
+          
+          if (items.length === 0) {
+            done(); // No more content
+          } else {
+            loading(false);
+          }
+        })
+        .catch(() => {
+          error('Failed to load more content');
+        });
+    });
+  });
+</script>`;
 ---
 
 <DocsLayout
   title="InfiniteScroll"
-  description="Progressively load additional content as users approach the bottom."
+  description="Accessible infinite scroll component with AAA contrast, loading states, and comprehensive error handling."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <InfiniteScroll
-      className="rounded-xl border border-gray-800 bg-gray-900 p-4"
-      loading
-      loaderText="Loading more stories…"
-    >
-      <div id="infinite-demo-items" class="space-y-3">
-        {
-          Array.from({ length: 5 }).map((_, index) => (
-            <Card class="p-4 space-y-2" data-seed={index}>
-              <CategoryBadge label="Story" />
-              <h3 class="text-white text-lg">
-                Editorial highlight {index + 1}
-              </h3>
-              <p class="text-sm text-gray-400">
-                Explore how teams coordinate large-scale launches with detailed
-                playbooks.
-              </p>
-            </Card>
-          ))
-        }
+    <p class="text-base text-slate-100">
+      InfiniteScroll provides a WCAG AAA compliant solution for progressively 
+      loading content as users approach the end of a list. Built with proper 
+      ARIA support, screen reader announcements, and semantic HTML.
+    </p>
+    <p class="text-base text-slate-200">
+      The component supports multiple loading variants, error handling with 
+      retry functionality, and comprehensive accessibility features including 
+      live regions and proper focus management.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          eventName?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom event name dispatched when more content should be loaded. 
+          Defaults to <code>"infinite-scroll:load"</code>.
+        </dd>
       </div>
-    </InfiniteScroll>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Controls loading indicator size and spacing. Options: <code>"sm"</code>, 
+          <code>"md"</code>, <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          loadingVariant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Loading animation style: <code>"pulse"</code>, <code>"spinner"</code>, 
+          <code>"dots"</code>. Defaults to <code>"pulse"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          announceContent?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Enable screen reader announcements for loading states. 
+          Defaults to <code>true</code> for accessibility.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          threshold?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Intersection threshold (0-1) for triggering load. Higher values 
+          require more visibility. Defaults to <code>0.25</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          rootMargin?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Margin around intersection area. Use negative values to trigger 
+          before reaching the bottom. Defaults to <code>"0px 0px 120px 0px"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          Text Props
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>loaderText?</code>, <code>announceText?</code>, <code>errorText?</code>, 
+          <code>retryText?</code> - Customizable text for all UI states with 
+          internationalization support.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Wrap your content in the InfiniteScroll component and listen for the 
+      custom event to load more items. The component provides methods for 
+      managing loading states and error handling.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Interactive Example</h2>
+    <div class="flex items-center gap-2 mb-4">
+      <div class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+      <p class="text-sm text-slate-300">
+        Live demo - scroll to the bottom to load more articles automatically
+      </p>
+    </div>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <InfiniteScrollComponent
+        loaderText="Loading more articles…"
+        size="md"
+        loadingVariant="spinner"
+        announceContent={true}
+        className="max-h-96 overflow-y-auto border border-slate-600/30 rounded-lg p-4"
+        loading={false}
+      >
+        <div id="infinite-demo-items" class="space-y-3">
+          {
+            Array.from({ length: 3 }).map((_, index) => (
+              <Card class="p-4 space-y-2">
+                <CategoryBadge label="Tutorial" />
+                <h3 class="text-slate-100 text-lg">
+                  Getting Started with Infinite Scroll {index + 1}
+                </h3>
+                <p class="text-sm text-slate-300">
+                  Learn how to implement smooth infinite scrolling in your applications 
+                  with proper accessibility and performance considerations.
+                </p>
+              </Card>
+            ))
+          }
+        </div>
+      </InfiniteScrollComponent>
+    </div>
+    <p class="text-xs text-slate-400">
+      💡 Tip: This example loads 4 new articles each time you reach the bottom. 
+      Total of 20 articles available - try scrolling to see them all!
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Product Gallery Example</h2>
+    <div class="flex items-center gap-2 mb-4">
+      <div class="h-2 w-2 bg-blue-500 rounded-full animate-pulse"></div>
+      <p class="text-sm text-slate-300">
+        Example with product cards and grid layout
+      </p>
+    </div>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <InfiniteScrollComponent
+        loaderText="Loading more products…"
+        size="sm"
+        loadingVariant="dots"
+        announceContent={true}
+        className="max-h-80 overflow-y-auto border border-slate-600/30 rounded-lg p-4"
+        loading={false}
+      >
+        <div id="products-demo" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {
+            Array.from({ length: 4 }).map((_, index) => (
+              <div class="p-4 rounded-lg border border-slate-700/50 bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
+                <div class="w-full h-32 bg-linear-to-br from-blue-500/20 to-purple-500/20 rounded-lg mb-3 flex items-center justify-center">
+                  <span class="text-slate-400 text-sm">Electronics</span>
+                </div>
+                <h4 class="text-slate-100 font-medium mb-1">Wireless Headphones {index + 1}</h4>
+                <p class="text-xs text-slate-300 mb-2">Premium audio device with noise cancellation</p>
+                <div class="text-sm font-semibold text-green-300">${(49.99 + index * 10).toFixed(2)}</div>
+              </div>
+            ))
+          }
+        </div>
+      </InfiniteScrollComponent>
+    </div>
+    <p class="text-xs text-slate-400">
+      💡 Grid layout example with 20 total products, loading 4 at a time
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Complete Implementation</h2>
+    <p class="text-base text-slate-200">
+      Here's a complete example showing how to implement infinite scroll with 
+      data fetching, error handling, and proper state management:
+    </p>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Component Usage</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{`---
+import { InfiniteScroll } from 'comet-astro';
+import { ArticleCard } from './components/ArticleCard.astro';
+
+// Optional: Define your data type
+interface Article {
+  id: number;
+  title: string;
+  excerpt: string;
+  category: string;
+}
+---
+
+<InfiniteScroll
+  loadingVariant="spinner"
+  size="md"
+  announceContent={true}
+  loaderText="Loading more articles…"
+  errorText="Failed to load articles"
+  retryText="Try again"
+  className="max-w-4xl mx-auto"
+>
+  <div id="articles-container" class="space-y-4">
+    <!-- Initial articles can be rendered here -->
+    <ArticleCard 
+      title="Getting Started with Astro"
+      excerpt="Learn the fundamentals of building fast websites"
+      category="Tutorial"
+    />
+  </div>
+</InfiniteScroll>`}</code>
+      </pre>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">JavaScript Implementation</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-javascript">{`<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('articles-container');
+  const root = container?.closest('[data-infinite-scroll]');
+  
+  if (!root) return;
+  
+  let page = 1;
+  let isLoading = false;
+
+  // Article template function
+  const createArticleHTML = (article) => \`
+    <article class="p-6 bg-slate-800/50 rounded-lg border border-slate-700/50">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-3 py-1 text-xs font-medium bg-blue-500/10 
+                     text-blue-200 rounded-full border border-blue-500/20">
+          \${article.category}
+        </span>
+      </div>
+      <h3 class="text-xl font-semibold text-slate-100 mb-2">
+        \${article.title}
+      </h3>
+      <p class="text-slate-300 leading-relaxed">
+        \${article.excerpt}
+      </p>
+    </article>
+  \`;
+
+  // Simulate API call - replace with your actual API
+  const fetchArticles = async (pageNumber) => {
+    try {
+      // Replace this with your actual API endpoint
+      const response = await fetch(\`/api/articles?page=\${pageNumber}&limit=5\`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch articles');
+      }
+      
+      const data = await response.json();
+      return data.articles; // Adjust based on your API response structure
+      
+    } catch (error) {
+      console.error('Error fetching articles:', error);
+      throw error;
+    }
+  };
+
+  // Handle infinite scroll events
+  root.addEventListener('infinite-scroll:load', async (event) => {
+    const { loading, done, error } = event.detail;
+    
+    if (isLoading) return;
+    isLoading = true;
+    
+    try {
+      // Show loading state
+      loading(true);
+      
+      // Fetch next page
+      page += 1;
+      const articles = await fetchArticles(page);
+      
+      // Check if we have more content
+      if (!articles || articles.length === 0) {
+        done(); // No more content
+        return;
+      }
+      
+      // Add new articles to the container
+      const fragment = document.createElement('div');
+      fragment.innerHTML = articles
+        .map(article => createArticleHTML(article))
+        .join('');
+      
+      container.appendChild(fragment);
+      
+      // Hide loading state
+      loading(false);
+      
+    } catch (err) {
+      // Show error state with retry option
+      error('Failed to load more articles. Please try again.');
+    } finally {
+      isLoading = false;
+    }
+  });
+});
+</script>`}</code>
+      </pre>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">API Endpoint Example (Optional)</h3>
+      <p class="text-sm text-slate-300">
+        If you're using Astro API routes, here's an example endpoint:
+      </p>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-javascript">{`// src/pages/api/articles.js
+export async function GET({ url }) {
+  const searchParams = new URLSearchParams(url.search);
+  const page = parseInt(searchParams.get('page') || '1');
+  const limit = parseInt(searchParams.get('limit') || '10');
+  
+  try {
+    // Replace with your actual data source
+    const articles = await getArticles({ page, limit });
+    
+    return new Response(JSON.stringify({
+      articles,
+      page,
+      hasMore: articles.length === limit
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: 'Failed to fetch articles'
+    }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+}
+
+// Example data function
+async function getArticles({ page, limit }) {
+  // Simulate database query or external API call
+  const allArticles = [
+    { id: 1, title: "Getting Started with Astro", excerpt: "Learn the fundamentals...", category: "Tutorial" },
+    { id: 2, title: "Advanced Component Patterns", excerpt: "Explore complex patterns...", category: "Advanced" },
+    // ... more articles
+  ];
+  
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  
+  return allArticles.slice(startIndex, endIndex);
+}`}</code>
+      </pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Loading Variants</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Pulse (Default)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InfiniteScrollComponent
+            loading
+            loadingVariant="pulse"
+            loaderText="Loading with pulse animation…"
+            size="md"
+          >
+            <div class="text-slate-300 text-sm">Content with pulse loader</div>
+          </InfiniteScrollComponent>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Spinner</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InfiniteScrollComponent
+            loading
+            loadingVariant="spinner"
+            loaderText="Loading with spinner animation…"
+            size="md"
+          >
+            <div class="text-slate-300 text-sm">Content with spinner loader</div>
+          </InfiniteScrollComponent>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Dots</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InfiniteScrollComponent
+            loading
+            loadingVariant="dots"
+            loaderText="Loading with dots animation…"
+            size="md"
+          >
+            <div class="text-slate-300 text-sm">Content with dots loader</div>
+          </InfiniteScrollComponent>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Small</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InfiniteScrollComponent
+            loading
+            size="sm"
+            loadingVariant="spinner"
+            loaderText="Small loader…"
+          >
+            <div class="text-slate-300 text-sm">Compact content area</div>
+          </InfiniteScrollComponent>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Medium (Default)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InfiniteScrollComponent
+            loading
+            size="md"
+            loadingVariant="spinner"
+            loaderText="Medium loader…"
+          >
+            <div class="text-slate-300 text-sm">Standard content area</div>
+          </InfiniteScrollComponent>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Large</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InfiniteScrollComponent
+            loading
+            size="lg"
+            loadingVariant="spinner"
+            loaderText="Large loader…"
+          >
+            <div class="text-slate-300 text-base">Spacious content area</div>
+          </InfiniteScrollComponent>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      InfiniteScroll follows WCAG AAA guidelines with contrast ratios exceeding 
+      7:1 for all visual elements. The component uses semantic <code>role="feed"</code> 
+      and proper ARIA attributes for screen reader support.
+    </p>
+    <p class="text-base text-slate-200">
+      Loading states are announced via <code>aria-live</code> regions, and the 
+      component maintains proper focus management. Error states include accessible 
+      retry buttons with descriptive labels.
+    </p>
+    <p class="text-base text-slate-200">
+      The intersection observer is configured with sensible defaults to prevent 
+      excessive triggering while maintaining responsive loading. Content 
+      announcements can be customized or disabled as needed.
+    </p>
+    <p class="text-base text-slate-200">
+      Keyboard users can interact with retry buttons and the component properly 
+      handles all loading states without trapping focus or disrupting navigation.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Event API</h2>
+    <p class="text-base text-slate-200">
+      The component dispatches custom events with a detailed API for managing 
+      loading states:
+    </p>
+    <dl class="mt-4 space-y-4">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <dt class="font-semibold text-slate-100 mb-2">
+          <code>detail.loading(state: boolean)</code>
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show or hide the loading indicator and update ARIA states.
+        </dd>
+      </div>
+      <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <dt class="font-semibold text-slate-100 mb-2">
+          <code>detail.error(message?: string)</code>
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display error state with optional custom message and retry button.
+        </dd>
+      </div>
+      <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <dt class="font-semibold text-slate-100 mb-2">
+          <code>detail.done()</code>
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Signal that all content has been loaded and disable further triggers.
+        </dd>
+      </div>
+      <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <dt class="font-semibold text-slate-100 mb-2">
+          <code>detail.pause() / detail.resume()</code>
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Temporarily disable or re-enable the intersection observer.
+        </dd>
+      </div>
+    </dl>
   </section>
 </DocsLayout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('infinite-demo-items');
-    if (!container) return;
-    let page = 1;
+  console.log('🚀 InfiniteScroll demo script loading...');
+  
+  window.addEventListener('load', () => {
+    console.log('📄 Window loaded, setting up infinite scroll demos');
+    
+    // Warte etwas, damit die InfiniteScroll-Komponente initialisiert ist
+    setTimeout(() => {
+      setupArticlesDemo();
+      setupProductsDemo();
+    }, 100);
+  });
 
-    const template = (index) => `
-      <div class="p-4 space-y-2 rounded-lg border border-gray-800 bg-gray-950">
-        <span class="inline-flex items-center gap-1 rounded-full border border-purple-500/40 bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-200">Story</span>
-        <h3 class="text-white text-lg">Editorial highlight ${index}</h3>
-        <p class="text-sm text-gray-400">Fresh insights gathered from community AMA sessions and workshops.</p>
-      </div>
-    `;
+  function setupArticlesDemo() {
+    const container = document.getElementById('infinite-demo-items');
+    if (!container) {
+      console.error('❌ Articles container not found');
+      return;
+    }
+    
+    console.log('✅ Articles container found');
+    
+    let page = 0;
+    let isLoading = false;
+
+    // Große Auswahl an simulierten Artikeln
+    const allArticles = [
+      { title: 'Advanced Component Patterns', category: 'Advanced', excerpt: 'Deep dive into complex React and Astro component architectures for scalable applications.' },
+      { title: 'Building Responsive Layouts', category: 'CSS', excerpt: 'Master modern CSS Grid and Flexbox techniques for responsive web design.' },
+      { title: 'Performance Optimization Tips', category: 'Performance', excerpt: 'Essential strategies for optimizing web application performance and loading times.' },
+      { title: 'Accessibility Best Practices', category: 'A11y', excerpt: 'Comprehensive guide to building inclusive web experiences for all users.' },
+      { title: 'Modern CSS Techniques', category: 'CSS', excerpt: 'Explore cutting-edge CSS features and techniques for modern web development.' },
+      { title: 'JavaScript Design Patterns', category: 'JavaScript', excerpt: 'Learn essential design patterns for writing maintainable JavaScript code.' },
+      { title: 'Web Performance Metrics', category: 'Performance', excerpt: 'Understanding and optimizing Core Web Vitals for better user experience.' },
+      { title: 'User Experience Principles', category: 'UX', excerpt: 'Fundamental UX principles for creating intuitive and engaging interfaces.' },
+      { title: 'Security Best Practices', category: 'Security', excerpt: 'Essential security measures for protecting web applications and user data.' },
+      { title: 'API Design Guidelines', category: 'Backend', excerpt: 'Best practices for designing robust and scalable REST APIs.' },
+      { title: 'Progressive Web Apps', category: 'PWA', excerpt: 'Building app-like experiences with progressive web app technologies.' },
+      { title: 'TypeScript Advanced Types', category: 'TypeScript', excerpt: 'Master advanced TypeScript features for type-safe development.' },
+      { title: 'Database Optimization', category: 'Backend', excerpt: 'Techniques for optimizing database queries and improving performance.' },
+      { title: 'Testing Strategies', category: 'Testing', excerpt: 'Comprehensive testing approaches for reliable software development.' },
+      { title: 'DevOps Fundamentals', category: 'DevOps', excerpt: 'Essential DevOps practices for modern software delivery pipelines.' },
+      { title: 'Mobile-First Design', category: 'Design', excerpt: 'Designing for mobile devices first to create better user experiences.' },
+      { title: 'State Management Patterns', category: 'Frontend', excerpt: 'Effective patterns for managing application state in complex frontends.' },
+      { title: 'Microservices Architecture', category: 'Architecture', excerpt: 'Understanding microservices patterns and implementation strategies.' },
+      { title: 'GraphQL Best Practices', category: 'GraphQL', excerpt: 'Advanced techniques for building efficient GraphQL APIs and clients.' },
+      { title: 'Web Animations Guide', category: 'Animation', excerpt: 'Creating smooth and performant animations for web interfaces.' }
+    ];
+
+    const categoryColors = {
+      'Tutorial': 'border-blue-500/40 bg-blue-500/10 text-blue-200',
+      'Advanced': 'border-purple-500/40 bg-purple-500/10 text-purple-200',
+      'CSS': 'border-green-500/40 bg-green-500/10 text-green-200',
+      'Performance': 'border-orange-500/40 bg-orange-500/10 text-orange-200',
+      'A11y': 'border-pink-500/40 bg-pink-500/10 text-pink-200',
+      'JavaScript': 'border-yellow-500/40 bg-yellow-500/10 text-yellow-200',
+      'UX': 'border-indigo-500/40 bg-indigo-500/10 text-indigo-200',
+      'Security': 'border-red-500/40 bg-red-500/10 text-red-200',
+      'Backend': 'border-gray-500/40 bg-gray-500/10 text-gray-200',
+      'PWA': 'border-cyan-500/40 bg-cyan-500/10 text-cyan-200',
+      'TypeScript': 'border-blue-600/40 bg-blue-600/10 text-blue-300',
+      'Testing': 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
+      'DevOps': 'border-violet-500/40 bg-violet-500/10 text-violet-200',
+      'Design': 'border-rose-500/40 bg-rose-500/10 text-rose-200',
+      'Frontend': 'border-teal-500/40 bg-teal-500/10 text-teal-200',
+      'Architecture': 'border-slate-500/40 bg-slate-500/10 text-slate-200',
+      'GraphQL': 'border-fuchsia-500/40 bg-fuchsia-500/10 text-fuchsia-200',
+      'Animation': 'border-lime-500/40 bg-lime-500/10 text-lime-200'
+    };
+
+    const createArticleHTML = (article: {title: string, category: string, excerpt: string}, index: number) => {
+      const colorClass = categoryColors[article.category as keyof typeof categoryColors] || categoryColors['Tutorial'];
+      return `
+        <div class="p-4 space-y-2 rounded-lg border border-slate-700/50 bg-slate-800/30 hover:bg-slate-800/50 transition-colors duration-200">
+          <span class="inline-flex items-center gap-1 rounded-full border ${colorClass} px-3 py-1 text-xs font-medium">
+            ${article.category}
+          </span>
+          <h3 class="text-slate-100 text-lg font-semibold">${article.title}</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">${article.excerpt}</p>
+          <div class="text-xs text-slate-400 mt-2">Article #${index + 1}</div>
+        </div>
+      `;
+    };
 
     const root = container.closest('[data-infinite-scroll]');
-    if (!root) return;
+    if (!root) {
+      console.error('❌ InfiniteScroll root not found');
+      return;
+    }
 
-    root.addEventListener('infinite-scroll:load', (event) => {
-      const detail = event.detail;
-      if (!detail) return;
+    console.log('✅ Setting up infinite scroll for articles demo');
+
+    // Event listener für das infinite scroll Event
+    root.addEventListener('infinite-scroll:load', (event: Event) => {
+      console.log('🔄 infinite-scroll:load event triggered!');
+      const detail = (event as CustomEvent).detail;
+      if (!detail || isLoading) {
+        console.log('⚠️ Event detail missing or already loading');
+        return;
+      }
+      
+      console.log(`📥 Loading page ${page + 1}`);
+      isLoading = true;
       detail.loading(true);
-      window.setTimeout(() => {
-        page += 1;
-        const fragment = document.createElement('div');
-        fragment.innerHTML = Array.from({ length: 3 })
-          .map((_, idx) => template(page * 3 + idx))
-          .join('');
-        container.append(...fragment.children);
-        if (page >= 3) {
-          detail.done();
-        } else {
-          detail.loading(false);
+      
+      // Simuliere realistische Ladezeit
+      setTimeout(() => {
+        try {
+          page += 1;
+          const itemsPerPage = 4;
+          const startIndex = (page - 1) * itemsPerPage + 3; // +3 für die initial geladenen Items
+          const endIndex = startIndex + itemsPerPage;
+          
+          const newArticles = allArticles.slice(startIndex, endIndex);
+          console.log(`📄 Adding ${newArticles.length} new articles (${startIndex}-${endIndex})`);
+          
+          if (newArticles.length === 0) {
+            console.log('✅ No more articles available - marking as done');
+            detail.done();
+            return;
+          }
+          
+          // Erstelle HTML für neue Artikel
+          const fragment = document.createElement('div');
+          fragment.innerHTML = newArticles
+            .map((article, idx) => createArticleHTML(article, startIndex + idx))
+            .join('');
+          
+          // Füge neue Artikel hinzu
+          container.append(...fragment.children);
+          console.log(`✅ Successfully added ${fragment.children.length} articles to container`);
+          
+          // Prüfe ob wir alle Artikel geladen haben
+          if (endIndex >= allArticles.length) {
+            console.log('✅ All articles loaded - marking as done');
+            detail.done();
+          } else {
+            detail.loading(false);
+          }
+          
+        } catch (err) {
+          console.error('❌ Error loading articles:', err);
+          detail.error('Failed to load more articles');
+        } finally {
+          isLoading = false;
         }
-      }, 900);
+      }, 800 + Math.random() * 400); // Zufällige Ladezeit zwischen 800-1200ms
     });
-  });
+  }
+
+  function setupProductsDemo() {
+    const productsContainer = document.getElementById('products-demo');
+    
+    if (!productsContainer) {
+      console.log('ℹ️ Products container not found - skipping products demo');
+      return;
+    }
+    
+    console.log('✅ Products container found');
+    const productsRoot = productsContainer.closest('[data-infinite-scroll]');
+    
+    if (!productsRoot) {
+      console.error('❌ Products root not found');
+      return;
+    }
+    
+    console.log('✅ Products root found');
+    let productPage = 0;
+    let isProductLoading = false;
+
+    const productCategories = ['Electronics', 'Fashion', 'Home', 'Sports', 'Books'];
+    const productNames = [
+      'Wireless Headphones', 'Smart Watch', 'Laptop Stand', 'Coffee Maker',
+      'Desk Lamp', 'Phone Case', 'Keyboard', 'Monitor', 'Chair', 'Backpack',
+      'Tablet', 'Speaker', 'Camera', 'Printer', 'Mouse Pad'
+    ];
+    
+    productsRoot.addEventListener('infinite-scroll:load', (event: Event) => {
+      console.log('🛍️ Products infinite-scroll:load event triggered!');
+      const detail = (event as CustomEvent).detail;
+      if (!detail || isProductLoading) return;
+      
+      isProductLoading = true;
+      detail.loading(true);
+      
+      setTimeout(() => {
+        try {
+          productPage += 1;
+          const startIdx = productPage * 4 + 4; // +4 für initial Items
+          
+          console.log(`🛍️ Loading products page ${productPage}, startIdx: ${startIdx}`);
+          
+          if (startIdx >= 20) {
+            console.log('✅ All products loaded');
+            detail.done();
+            return;
+          }
+          
+          const newProducts = Array.from({ length: 4 }, (_, idx) => {
+            const prodIdx = (startIdx + idx) % productNames.length;
+            const catIdx = (startIdx + idx) % productCategories.length;
+            const price = (Math.random() * 200 + 20).toFixed(2);
+            
+            return {
+              name: productNames[prodIdx],
+              category: productCategories[catIdx],
+              price: price,
+              id: startIdx + idx
+            };
+          });
+          
+          const fragment = document.createElement('div');
+          fragment.innerHTML = newProducts.map(product => `
+            <div class="p-4 rounded-lg border border-slate-700/50 bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
+              <div class="w-full h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg mb-3 flex items-center justify-center">
+                <span class="text-slate-400 text-sm">${product.category}</span>
+              </div>
+              <h4 class="text-slate-100 font-medium mb-1">${product.name}</h4>
+              <p class="text-xs text-slate-300 mb-2">Premium ${product.category.toLowerCase()} product</p>
+              <div class="text-sm font-semibold text-green-300">$${product.price}</div>
+            </div>
+          `).join('');
+          
+          productsContainer.append(...fragment.children);
+          console.log(`✅ Added ${newProducts.length} new products`);
+          detail.loading(false);
+          
+        } catch (err) {
+          console.error('❌ Product loading error:', err);
+          detail.error('Failed to load more products');
+        } finally {
+          isProductLoading = false;
+        }
+      }, 600);
+    });
+  }
 </script>

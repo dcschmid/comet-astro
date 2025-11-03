@@ -16,17 +16,17 @@ const {
 } = Astro.props;
 
 const sizeClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  full: 'max-w-full',
+  sm: 'max-w-sm mx-4',
+  md: 'max-w-md mx-4',
+  lg: 'max-w-lg mx-4',
+  xl: 'max-w-xl mx-4',
+  full: 'max-w-full mx-4 sm:mx-8',
 };
 ---
 
 <dialog
   id={id}
-  class={`${sizeClasses[size]} w-full rounded-2xl border border-slate-200 bg-white p-0 text-slate-900 backdrop:bg-slate-950/60 ${className} dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100`}
+  class={`${sizeClasses[size]} w-full rounded-2xl border border-slate-300/90 bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/80 ${className} dark:border-slate-600/90 dark:bg-slate-800 dark:text-slate-100 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0`}
   data-dialog
   aria-modal="true"
   role="dialog"
@@ -37,17 +37,19 @@ const sizeClasses = {
       dismissible && (
         <button
           type="button"
-          class="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-transparent text-slate-500 transition hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-300 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900"
+          class="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-white/90 text-slate-800 transition-colors duration-200 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-700/90 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-slate-50 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
           data-dialog-close
-          aria-label="Close"
+          aria-label="Close dialog"
         >
-          ✕
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
         </button>
       )
     }
     {
       title && (
-        <header class="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
+        <header class="border-b border-slate-300/80 bg-slate-50/50 px-6 py-4 dark:border-slate-600/80 dark:bg-slate-700/30">
           <h2
             id={`${id}-title`}
             class="text-xl font-semibold text-slate-900 dark:text-slate-100"
@@ -58,19 +60,19 @@ const sizeClasses = {
       )
     }
     <div
-      class="px-6 py-5 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+      class="px-6 py-6 text-sm leading-relaxed text-slate-800 dark:text-slate-200"
     >
       <slot />
     </div>
     <footer
-      class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4 dark:border-slate-800"
+      class="flex flex-col gap-3 border-t border-slate-300/80 bg-slate-50/30 px-6 py-4 sm:flex-row sm:justify-end dark:border-slate-600/80 dark:bg-slate-700/20"
     >
       <slot name="actions">
         {
           dismissible && (
             <button
               type="button"
-              class="rounded-lg border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-900"
+              class="rounded-lg border border-slate-300/90 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition-colors duration-200 hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-500/90 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-slate-50 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
               data-dialog-close
             >
               Close
@@ -89,43 +91,107 @@ const sizeClasses = {
     ).filter((el) => el instanceof HTMLDialogElement);
     if (!dialogs.length) return;
 
+    let focusedElementBeforeDialog = null;
+
+    const getFocusableElements = (element) => {
+      return element.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+    };
+
+    const trapFocus = (dialog) => {
+      const focusableElements = getFocusableElements(dialog);
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements[focusableElements.length - 1];
+
+      dialog.addEventListener('keydown', (event) => {
+        if (event.key === 'Tab') {
+          if (event.shiftKey) {
+            if (document.activeElement === firstFocusable) {
+              event.preventDefault();
+              lastFocusable?.focus();
+            }
+          } else {
+            if (document.activeElement === lastFocusable) {
+              event.preventDefault();
+              firstFocusable?.focus();
+            }
+          }
+        }
+      });
+    };
+
     const closeDialog = (dialog) => {
       try {
         dialog.close();
       } catch {
         dialog.removeAttribute('open');
       }
+      
+      // Restore focus to the element that opened the dialog
+      if (focusedElementBeforeDialog) {
+        focusedElementBeforeDialog.focus();
+        focusedElementBeforeDialog = null;
+      }
     };
 
     dialogs.forEach((dialog) => {
+      // Handle ESC key and prevent default cancel behavior
       dialog.addEventListener('cancel', (event) => {
         event.preventDefault();
         closeDialog(dialog);
       });
 
+      // Close on backdrop click
       dialog.addEventListener('click', (event) => {
         if (event.target === dialog) {
           closeDialog(dialog);
         }
       });
 
+      // Handle close buttons
       dialog.querySelectorAll('[data-dialog-close]').forEach((button) => {
         button.addEventListener('click', () => closeDialog(dialog));
       });
+
+      // Setup focus trap when dialog opens
+      dialog.addEventListener('close', () => {
+        closeDialog(dialog);
+      });
     });
 
+    // Handle dialog triggers
     document.addEventListener('click', (event) => {
       const trigger =
         event.target instanceof HTMLElement
           ? event.target.closest('[data-dialog-trigger]')
           : null;
       if (!trigger) return;
+      
       const targetId = trigger.getAttribute('data-dialog-trigger');
       if (!targetId) return;
+      
       const dialog = document.getElementById(targetId);
       if (!(dialog instanceof HTMLDialogElement)) return;
+      
+      // Store the focused element
+      focusedElementBeforeDialog = document.activeElement;
+      
       try {
         dialog.showModal();
+        
+        // Focus first focusable element or the dialog itself
+        const focusableElements = getFocusableElements(dialog);
+        const firstFocusable = focusableElements[0];
+        if (firstFocusable) {
+          firstFocusable.focus();
+        } else {
+          dialog.focus();
+        }
+        
+        // Setup focus trap
+        trapFocus(dialog);
+        
       } catch {
         dialog.setAttribute('open', 'true');
       }

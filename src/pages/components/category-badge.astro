@@ -1,27 +1,130 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import CategoryBadge from '../../components/CategoryBadge.astro';
+import CategoryBadgeComp from '../../components/CategoryBadge.astro';
+import Card from '../../components/Card.astro';
 
 const categories = [
-  { label: 'Design', color: 'purple' },
-  { label: 'Development', color: 'blue' },
-  { label: 'Marketing', color: 'amber' },
-  { label: 'Product', color: 'emerald' },
+  { label: 'Design', color: 'purple' as const },
+  { label: 'Development', color: 'blue' as const },
+  { label: 'Marketing', color: 'amber' as const },
+  { label: 'Product', color: 'emerald' as const },
 ];
 ---
 
 <DocsLayout
   title="CategoryBadge"
-  description="Rounded metadata badges with tone presets."
+  description="Accessible, high-contrast category/taxonomy badge component with tone presets, size variants, and optional link behavior."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="flex flex-wrap items-center gap-3">
-      {
-        categories.map((cat) => (
-          <CategoryBadge label={cat.label} tone={cat.color} />
-        ))
-      }
-    </div>
-  </section>
+  <div class="space-y-10">
+    <!-- Intro -->
+    <section class="space-y-4">
+      <p class="text-slate-600 dark:text-slate-400 max-w-3xl">
+        The <strong>CategoryBadge</strong> component labels and visually groups content by taxonomy (e.g. topic, product area, channel). It provides AAA capable color pairs and keyboard-focus styles if used as a link.
+      </p>
+      <p class="text-slate-600 dark:text-slate-400 max-w-3xl">
+        Choose from semantic tone presets or allow heuristic assignment based on category text. Size variants adapt for dense layouts, tags clouds, and prominent headers.
+      </p>
+    </section>
+
+    <!-- Usage -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-bold">Usage</h2>
+      <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-700 dark:bg-slate-900">
+  <pre class="overflow-x-auto"><code>{`import CategoryBadge from '@/components/CategoryBadge.astro';
+
+<CategoryBadge label="Design" tone="purple" />
+<CategoryBadge label="Marketing" tone="amber" size="lg" />
+<CategoryBadge label="Docs" href="/docs" tone="indigo" ariaLabel="Documentation section" />
+`}</code></pre>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        {categories.map((cat) => (
+          <CategoryBadgeComp label={cat.label} tone={cat.color} />
+        ))}
+      </div>
+    </section>
+
+    <!-- Props -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-bold">Props</h2>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
+          <h3 class="font-medium">label<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">Visible text. Falls back to derived category value.</p>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
+          <h3 class="font-medium">category<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">Source classification used for heuristic tone if no tone provided.</p>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
+          <h3 class="font-medium">tone<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">enum</span></h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">Preset palette: purple, blue, emerald, amber, rose, sky, indigo, slate.</p>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
+          <h3 class="font-medium">size<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">enum</span></h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">sm, md, lg adjust padding and font size for hierarchy.</p>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
+          <h3 class="font-medium">href<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">Turns badge into an anchor with interactive focus styles.</p>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
+          <h3 class="font-medium">ariaLabel<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">Accessibility label when visible text is abbreviated.</p>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
+          <h3 class="font-medium">as<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">'span'|'div'</span></h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">Semantic fallback when not a link.</p>
+        </div>
+        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
+          <h3 class="font-medium">className<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">Extra classes for layout tuning.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Variants -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-bold">Variants</h2>
+      <div class="grid gap-6 lg:grid-cols-3">
+        <Card elevation={1} class="space-y-3">
+          <h3 class="font-semibold">Size variants</h3>
+          <div class="flex flex-wrap gap-2">
+            <CategoryBadgeComp label="Small" tone="sky" size="sm" />
+            <CategoryBadgeComp label="Medium" tone="emerald" size="md" />
+            <CategoryBadgeComp label="Large" tone="purple" size="lg" />
+          </div>
+        </Card>
+        <Card elevation={1} class="space-y-3">
+          <h3 class="font-semibold">Heuristic tone</h3>
+          <div class="flex flex-wrap gap-2">
+            <CategoryBadgeComp category="Jazz" />
+            <CategoryBadgeComp category="Rock" />
+            <CategoryBadgeComp category="Hip Hop" />
+            <CategoryBadgeComp category="Classical" />
+          </div>
+        </Card>
+        <Card elevation={1} class="space-y-3">
+          <h3 class="font-semibold">Interactive badges</h3>
+          <div class="flex flex-wrap gap-2">
+            <CategoryBadgeComp label="Docs" href="/docs" tone="indigo" />
+            <CategoryBadgeComp label="Blog" href="/blog" tone="rose" />
+            <CategoryBadgeComp label="API" href="/api" tone="amber" />
+          </div>
+        </Card>
+      </div>
+    </section>
+
+    <!-- Accessibility -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-bold">Accessibility</h2>
+      <ul class="list-disc space-y-2 pl-5 text-sm text-slate-600 dark:text-slate-400">
+        <li>High contrast foreground/background tone pairs target AAA for small text (≥ 7:1).</li>
+        <li>Focusable when rendered as an anchor via <code>href</code>; non-interactive badges are not forced into tab order.</li>
+        <li>Use <code>ariaLabel</code> when label is an acronym or ambiguous.</li>
+        <li>Uppercase style is purely visual; underlying text content remains accessible.</li>
+        <li>Hover and focus states use brightness adjustments without relying solely auf Farbe für Zustand.</li>
+      </ul>
+    </section>
+  </div>
 </DocsLayout>

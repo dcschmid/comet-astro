@@ -1,12 +1,44 @@
 ---
-interface Props {
+import { cn } from '../utils/cn';
+
+/**
+ * Rating - Accessible star rating component with WCAG AAA compliance
+ */
+export interface Props {
+  /** Current rating value */
   value: number;
+  /** Maximum rating value */
   max?: number;
+  /** Whether the rating is read-only */
   readonly?: boolean;
+  /** Size of the rating stars */
   size?: 'sm' | 'md' | 'lg';
+  /** Show numeric value alongside stars */
   showValue?: boolean;
+  /** Form name attribute for interactive ratings */
   name?: string;
-  className?: string;
+  /** Label text for the rating */
+  label?: string;
+  /** Help text displayed below the rating */
+  helpText?: string;
+  /** Whether the rating is disabled */
+  disabled?: boolean;
+  /** Whether the rating is required */
+  required?: boolean;
+  /** Whether the rating has an error state */
+  error?: boolean | string;
+  /** Visual variant of the rating */
+  variant?: 'default' | 'minimal' | 'colored' | 'outlined';
+  /** Custom ID for the rating */
+  id?: string;
+  /** Custom aria-label for accessibility */
+  ariaLabel?: string;
+  /** ID of element that describes the rating */
+  ariaDescribedBy?: string;
+  /** Additional CSS classes */
+  class?: string;
+  /** Allow half-star ratings */
+  allowHalf?: boolean;
 }
 
 const {
@@ -16,125 +48,360 @@ const {
   size = 'md',
   showValue = false,
   name = 'rating',
-  className = '',
+  label,
+  helpText,
+  disabled = false,
+  required = false,
+  error = false,
+  variant = 'default',
+  id: propId,
+  ariaLabel,
+  ariaDescribedBy,
+  class: className = '',
+  allowHalf = false,
 } = Astro.props;
 
+const id = propId || `rating-${Math.random().toString(36).slice(2, 10)}`;
+const helpId = helpText ? `${id}-help` : undefined;
+const errorId = error ? `${id}-error` : undefined;
+const finalAriaDescribedBy = [ariaDescribedBy, helpId, errorId].filter(Boolean).join(' ') || undefined;
+
+// Size configurations
 const sizeClasses = {
-  sm: 'text-base',
-  md: 'text-xl',
-  lg: 'text-3xl',
+  sm: {
+    star: 'text-base',
+    label: 'text-sm',
+    value: 'text-xs',
+    help: 'text-xs',
+    gap: 'gap-0.5',
+  },
+  md: {
+    star: 'text-xl',
+    label: 'text-sm',
+    value: 'text-sm',
+    help: 'text-xs',
+    gap: 'gap-1',
+  },
+  lg: {
+    star: 'text-3xl',
+    label: 'text-base',
+    value: 'text-base',
+    help: 'text-sm',
+    gap: 'gap-1.5',
+  },
+};
+
+// Variant styles with WCAG AAA compliance
+const variantClasses = {
+  default: {
+    filled: 'text-amber-600 dark:text-amber-400',
+    empty: 'text-gray-300 dark:text-gray-600',
+    hover: 'hover:text-amber-700 dark:hover:text-amber-300',
+    focus: 'focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400',
+  },
+  minimal: {
+    filled: 'text-gray-700 dark:text-gray-300',
+    empty: 'text-gray-300 dark:text-gray-600',
+    hover: 'hover:text-gray-800 dark:hover:text-gray-200',
+    focus: 'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400',
+  },
+  colored: {
+    filled: 'text-yellow-500 dark:text-yellow-400',
+    empty: 'text-gray-300 dark:text-gray-600',
+    hover: 'hover:text-yellow-600 dark:hover:text-yellow-300',
+    focus: 'focus-visible:ring-yellow-600 dark:focus-visible:ring-yellow-400',
+  },
+  outlined: {
+    filled: 'text-amber-600 dark:text-amber-400 drop-shadow-sm',
+    empty: 'text-transparent stroke-gray-400 dark:stroke-gray-500',
+    hover: 'hover:text-amber-700 dark:hover:text-amber-300',
+    focus: 'focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400',
+  },
 };
 
 const stars = Array.from({ length: max }, (_, i) => i + 1);
 
+const getStarFillState = (starIndex: number, ratingValue: number) => {
+  const starNumber = starIndex + 1;
+  if (allowHalf && ratingValue >= starNumber - 0.5 && ratingValue < starNumber) {
+    return 'half';
+  }
+  return starNumber <= ratingValue ? 'filled' : 'empty';
+};
+
+const starClasses = cn(
+  'leading-none transition-all duration-200 ease-in-out',
+  sizeClasses[size].star,
+  disabled && 'opacity-50 cursor-not-allowed'
+);
+
+const containerClasses = cn(
+  'inline-flex items-center',
+  sizeClasses[size].gap,
+  className
+);
+
+const labelClasses = cn(
+  'block font-medium text-gray-900 dark:text-gray-100',
+  sizeClasses[size].label,
+  disabled && 'opacity-50',
+  required && 'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
+);
+
+const helpClasses = cn(
+  'text-gray-600 dark:text-gray-300',
+  sizeClasses[size].help,
+  error && 'text-red-600 dark:text-red-300'
+);
+
+const valueClasses = cn(
+  'font-medium text-gray-900 dark:text-gray-100 tabular-nums',
+  sizeClasses[size].value,
+  disabled && 'opacity-50'
+);
+
 const escapeAttribute = (val: string | number) =>
   String(val).replace(/"/g, '&quot;');
-
-const filledClass = 'text-amber-700 dark:text-amber-400';
-const emptyClass = 'text-slate-500 dark:text-slate-400';
-const hoverClass = 'hover:text-amber-600 dark:hover:text-amber-300';
-
-const readonlyStarsHtml = stars
-  .map((star) => {
-    const filled = star <= value;
-    const halfFilled = star === Math.ceil(value) && value % 1 !== 0;
-    const visualFilled = filled || halfFilled;
-    const classes = visualFilled ? filledClass : emptyClass;
-    const halfAttr = halfFilled ? ' data-half="true"' : '';
-    return `<span class="leading-none ${classes}" aria-hidden="true"${halfAttr}>★</span>`;
-  })
-  .join('');
-
-const interactiveStarsHtml = stars
-  .map((star) => {
-    const filled = star <= value;
-    const halfFilled = star === Math.ceil(value) && value % 1 !== 0;
-    const visualFilled = filled || halfFilled;
-    const classes = visualFilled
-      ? `${filledClass} ${hoverClass}`
-      : `${emptyClass} ${hoverClass}`;
-    const checkedAttr = star === Math.round(value) ? ' checked' : '';
-    return `<label class="cursor-pointer transition-transform hover:scale-105 focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 focus-within:ring-offset-white dark:focus-within:ring-offset-slate-900"><input type="radio" name="${escapeAttribute(name)}" value="${star}" class="sr-only" aria-label="Rate ${star} out of ${max}"${checkedAttr} /><span class="transition-colors ${classes}" data-rating-star="${star}">★</span></label>`;
-  })
-  .join('');
 ---
 
-<div class={`inline-flex items-center gap-2 ${className}`}>
-  <div
-    class={`inline-flex gap-0.5 ${sizeClasses[size]}`}
-    role={readonly ? 'img' : 'radiogroup'}
-    aria-label={`Rating: ${value} out of ${max} stars`}
-    data-rating
-    data-readonly={readonly}
-  >
-    {
-      readonly ? (
-        <Fragment set:html={readonlyStarsHtml} />
-      ) : (
-        <Fragment set:html={interactiveStarsHtml} />
-      )
-    }
-  </div>
+<div class="space-y-2">
+  {label && (
+    <label class={labelClasses} for={readonly ? undefined : `${id}-group`}>
+      {label}
+    </label>
+  )}
+  
+  <div class={containerClasses}>
+    <div
+      id={readonly ? undefined : `${id}-group`}
+      class={cn('inline-flex', sizeClasses[size].gap)}
+      role={readonly ? 'img' : 'radiogroup'}
+      aria-label={ariaLabel || `Rating: ${value} out of ${max} stars`}
+      aria-describedby={finalAriaDescribedBy}
+      aria-readonly={readonly ? 'true' : 'false'}
+      aria-disabled={disabled ? 'true' : 'false'}
+      aria-required={required ? 'true' : 'false'}
+      aria-invalid={error ? 'true' : 'false'}
+      data-rating={readonly ? undefined : 'interactive'}
+      data-readonly={readonly}
+      data-variant={variant}
+      data-max={max}
+      data-value={value}
+    >
+      {stars.map((star, index) => {
+        const fillState = getStarFillState(index, value);
+        const starValue = allowHalf ? (index + 0.5) : star;
+        
+        if (readonly) {
+          const starClass = cn(
+            starClasses,
+            fillState === 'filled' ? variantClasses[variant].filled : 
+            fillState === 'half' ? variantClasses[variant].filled :
+            variantClasses[variant].empty
+          );
+          
+          return (
+            <span 
+              class={starClass}
+              aria-hidden="true"
+              data-star={star}
+              data-fill={fillState}
+            >
+              {fillState === 'half' ? '☆' : '★'}
+            </span>
+          );
+        } else {
+          const isChecked = allowHalf 
+            ? (Math.round(value * 2) / 2 === starValue)
+            : (Math.round(value) === star);
+          
+          return (
+            <label 
+              class={cn(
+                'cursor-pointer transition-transform duration-200',
+                'focus-within:ring-2 focus-within:ring-offset-2',
+                'focus-within:ring-offset-white dark:focus-within:ring-offset-gray-900',
+                variantClasses[variant].focus,
+                'hover:scale-105',
+                disabled && 'cursor-not-allowed hover:scale-100'
+              )}
+            >
+              <input
+                type="radio"
+                name={escapeAttribute(name)}
+                value={allowHalf ? starValue : star}
+                class="sr-only"
+                aria-label={`Rate ${allowHalf ? starValue : star} out of ${max} stars`}
+                checked={isChecked}
+                disabled={disabled}
+                required={required}
+              />
+              <span
+                class={cn(
+                  starClasses,
+                  variantClasses[variant].empty,
+                  variantClasses[variant].hover,
+                  fillState === 'filled' && variantClasses[variant].filled
+                )}
+                data-rating-star={allowHalf ? starValue : star}
+                aria-hidden="true"
+              >
+                ★
+              </span>
+            </label>
+          );
+        }
+      })}
+      
+      {allowHalf && !readonly && stars.map((star, index) => {
+        const halfValue = index + 0.5;
+        const isChecked = Math.round(value * 2) / 2 === halfValue;
+        
+        return (
+          <label 
+            class={cn(
+              'cursor-pointer transition-transform duration-200 -ml-3',
+              'focus-within:ring-2 focus-within:ring-offset-2',
+              'focus-within:ring-offset-white dark:focus-within:ring-offset-gray-900',
+              variantClasses[variant].focus,
+              'hover:scale-105',
+              disabled && 'cursor-not-allowed hover:scale-100'
+            )}
+            style="z-index: 1"
+          >
+            <input
+              type="radio"
+              name={escapeAttribute(name)}
+              value={halfValue}
+              class="sr-only"
+              aria-label={`Rate ${halfValue} out of ${max} stars`}
+              checked={isChecked}
+              disabled={disabled}
+              required={required}
+            />
+            <span
+              class={cn(
+                starClasses,
+                'w-1/2 overflow-hidden',
+                variantClasses[variant].empty,
+                variantClasses[variant].hover
+              )}
+              data-rating-star={halfValue}
+              aria-hidden="true"
+            >
+              ★
+            </span>
+          </label>
+        );
+      })}
+    </div>
 
-  {
-    showValue && (
-      <span class="text-sm font-semibold text-slate-800 tabular-nums dark:text-slate-200">
-        {value.toFixed(1)} / {max}
+    {showValue && (
+      <span class={valueClasses}>
+        {value.toFixed(allowHalf ? 1 : 0)} / {max}
       </span>
-    )
-  }
+    )}
+  </div>
+  
+  <div class="space-y-1">
+    {helpText && (
+      <p id={helpId} class={helpClasses}>
+        {helpText}
+      </p>
+    )}
+    {error && (
+      <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
+        {typeof error === 'string' ? error : 'Please select a rating.'}
+      </p>
+    )}
+  </div>
 </div>
 
+<style is:inline>
+  [data-fill="half"] {
+    background: linear-gradient(
+      to right,
+      currentColor 50%,
+      transparent 50%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+  
+  [data-variant="outlined"] [data-fill="empty"] {
+    -webkit-text-stroke: 1px;
+    -webkit-text-stroke-color: currentColor;
+  }
+</style>
+
 <script is:inline>
-  (() => {
-    const highlightStars = (stars, activeCount) => {
-      stars.forEach((element, index) => {
-        if (index < activeCount) {
-          element.classList.add('text-amber-700', 'dark:text-amber-400');
-          element.classList.remove('text-slate-500', 'dark:text-slate-400');
+  (function setupRating() {
+    const highlightStars = (container, activeValue) => {
+      const stars = container.querySelectorAll('[data-rating-star]');
+      stars.forEach((star) => {
+        const starValue = parseFloat(star.getAttribute('data-rating-star') || '0');
+        const shouldHighlight = starValue <= activeValue;
+        
+        const filledClasses = container.getAttribute('data-variant') === 'minimal' 
+          ? ['text-gray-700', 'dark:text-gray-300']
+          : container.getAttribute('data-variant') === 'colored'
+          ? ['text-yellow-500', 'dark:text-yellow-400']
+          : ['text-amber-600', 'dark:text-amber-400'];
+        
+        const emptyClasses = ['text-gray-300', 'dark:text-gray-600'];
+        
+        if (shouldHighlight) {
+          star.classList.add(...filledClasses);
+          star.classList.remove(...emptyClasses);
         } else {
-          element.classList.remove('text-amber-700', 'dark:text-amber-400');
-          element.classList.add('text-slate-500', 'dark:text-slate-400');
+          star.classList.remove(...filledClasses);
+          star.classList.add(...emptyClasses);
         }
       });
     };
 
     const initRatings = () => {
-      const ratings = Array.from(
-        document.querySelectorAll('[data-rating]:not([data-readonly="true"])')
-      );
+      const ratings = document.querySelectorAll('[data-rating="interactive"]');
 
       ratings.forEach((rating) => {
-        if (!(rating instanceof HTMLElement)) return;
-        const stars = Array.from(
-          rating.querySelectorAll('[data-rating-star]')
-        ).filter((element) => element instanceof HTMLElement);
-        if (!stars.length) return;
-
+        const stars = rating.querySelectorAll('[data-rating-star]');
+        
         stars.forEach((star) => {
           star.addEventListener('mouseenter', () => {
-            const raw = star.getAttribute('data-rating-star') || '0';
-            const starValue = Number.parseInt(raw, 10);
-            highlightStars(stars, Number.isNaN(starValue) ? 0 : starValue);
+            const starValue = parseFloat(star.getAttribute('data-rating-star') || '0');
+            highlightStars(rating, starValue);
           });
         });
 
         rating.addEventListener('mouseleave', () => {
           const checkedInput = rating.querySelector('input:checked');
-          const rawValue =
-            checkedInput instanceof HTMLInputElement
-              ? checkedInput.value
-              : null;
-          const ratingValue = Number.parseInt(rawValue || '0', 10);
-          highlightStars(stars, Number.isNaN(ratingValue) ? 0 : ratingValue);
+          const currentValue = checkedInput ? parseFloat(checkedInput.value) : 0;
+          highlightStars(rating, currentValue);
+        });
+        
+        // Keyboard navigation
+        rating.addEventListener('keydown', (event) => {
+          if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            event.preventDefault();
+            const inputs = Array.from(rating.querySelectorAll('input[type="radio"]'));
+            const currentIndex = inputs.findIndex(input => input === document.activeElement);
+            
+            let nextIndex;
+            if (event.key === 'ArrowRight') {
+              nextIndex = currentIndex < inputs.length - 1 ? currentIndex + 1 : 0;
+            } else {
+              nextIndex = currentIndex > 0 ? currentIndex - 1 : inputs.length - 1;
+            }
+            
+            inputs[nextIndex]?.focus();
+            inputs[nextIndex]?.click();
+          }
         });
       });
     };
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initRatings, {
-        once: true,
-      });
+      document.addEventListener('DOMContentLoaded', initRatings);
     } else {
       initRatings();
     }

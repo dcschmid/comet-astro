@@ -1,43 +1,910 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import MegaMenu from '../../components/MegaMenu.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
-const columns = [
+const title = 'MegaMenu Component';
+const description = 'WCAG AAA compliant multi-column dropdown navigation for comprehensive site navigation and product showcases.';
+
+// Sample data for examples
+const productColumns = [
   {
     title: 'Products',
     items: [
       {
-        label: 'Component A',
-        href: '#',
-        description: 'Description A',
+        label: 'Design System',
+        href: '/products/design-system',
+        description: 'Complete UI component library',
         icon: '🎨',
+        badge: 'Popular'
       },
       {
-        label: 'Component B',
-        href: '#',
-        description: 'Description B',
-        icon: '🔧',
+        label: 'Development Tools',
+        href: '/products/dev-tools',
+        description: 'Build and deploy faster',
+        icon: '🔧'
       },
-    ],
+      {
+        label: 'Analytics',
+        href: '/products/analytics',
+        description: 'Track user behavior',
+        icon: '📊'
+      }
+    ]
   },
   {
     title: 'Resources',
+    href: '/resources',
+    description: 'Learning materials and guides',
     items: [
-      { label: 'Docs', href: '#', description: 'Documentation', icon: '📚' },
-      { label: 'Blog', href: '#', description: 'Latest updates', icon: '📝' },
-    ],
+      { 
+        label: 'Documentation', 
+        href: '/docs', 
+        description: 'Complete API reference', 
+        icon: '📚' 
+      },
+      { 
+        label: 'Blog', 
+        href: '/blog', 
+        description: 'Latest updates and tutorials', 
+        icon: '📝' 
+      },
+      { 
+        label: 'Community', 
+        href: '/community', 
+        description: 'Join our Discord server', 
+        icon: '💬' 
+      }
+    ]
   },
+  {
+    title: 'Company',
+    items: [
+      { 
+        label: 'About Us', 
+        href: '/about', 
+        description: 'Our mission and team', 
+        icon: '🏢' 
+      },
+      { 
+        label: 'Careers', 
+        href: '/careers', 
+        description: 'Join our team', 
+        icon: '💼',
+        badge: 'Hiring'
+      },
+      { 
+        label: 'Contact', 
+        href: '/contact', 
+        description: 'Get in touch', 
+        icon: '📧' 
+      }
+    ]
+  }
+];
+
+const simpleColumns = [
+  {
+    title: 'Quick Links',
+    items: [
+      { label: 'Home', href: '/', icon: '🏠' },
+      { label: 'Products', href: '/products', icon: '📦' },
+      { label: 'Services', href: '/services', icon: '⚙️' }
+    ]
+  },
+  {
+    title: 'Support',
+    items: [
+      { label: 'Help Center', href: '/help', icon: '❓' },
+      { label: 'Contact Us', href: '/contact', icon: '📧' }
+    ]
+  }
 ];
 ---
 
-<DocsLayout
-  title="MegaMenu"
-  description="Multi-column dropdown navigation for product-level menus."
->
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <div class="bg-gray-900 p-4 rounded-lg inline-flex">
-      <MegaMenu trigger="Products" columns={columns} />
-    </div>
-  </section>
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The MegaMenu component provides a powerful and accessible multi-column dropdown navigation solution. Perfect for complex site structures, product showcases, and comprehensive navigation systems with rich content and descriptions.
+      </p>
+    </section>
+
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Standard MegaMenu
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu trigger="Products" columns={productColumns} />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Simple Two-Column Menu
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu trigger="Navigation" columns={simpleColumns} />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<MegaMenu 
+  trigger="Products" 
+  columns={[
+    {
+      title: 'Products',
+      items: [
+        {
+          label: 'Design System',
+          href: '/products/design-system',
+          description: 'Complete UI component library',
+          icon: '🎨',
+          badge: 'Popular'
+        },
+        {
+          label: 'Development Tools',
+          href: '/products/dev-tools',
+          description: 'Build and deploy faster',
+          icon: '🔧'
+        }
+      ]
+    },
+    {
+      title: 'Resources',
+      href: '/resources',
+      description: 'Learning materials and guides',
+      items: [
+        { 
+          label: 'Documentation', 
+          href: '/docs', 
+          description: 'Complete API reference', 
+          icon: '📚' 
+        }
+      ]
+    }
+  ]}
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Variants
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Default
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu variant="default" trigger="Default Style" columns={simpleColumns} />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Compact
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu variant="compact" trigger="Compact Style" columns={simpleColumns} />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Detailed
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu variant="detailed" trigger="Detailed Style" columns={productColumns} />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Minimal
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu variant="minimal" trigger="Minimal Style" columns={simpleColumns} />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<MegaMenu variant="default" trigger="Menu" columns={columns} />
+
+<!-- Compact variant -->
+<MegaMenu variant="compact" trigger="Menu" columns={columns} />
+
+<!-- Detailed variant -->
+<MegaMenu variant="detailed" trigger="Menu" columns={columns} />
+
+<!-- Minimal variant -->
+<MegaMenu variant="minimal" trigger="Menu" columns={columns} />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Sizes
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Small
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu size="sm" trigger="Small Menu" columns={simpleColumns} />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Medium (Default)
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu size="md" trigger="Medium Menu" columns={productColumns} />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Large
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu size="lg" trigger="Large Menu" columns={productColumns} />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<MegaMenu size="sm" trigger="Menu" columns={columns} />
+
+<!-- Medium size (default) -->
+<MegaMenu size="md" trigger="Menu" columns={columns} />
+
+<!-- Large size -->
+<MegaMenu size="lg" trigger="Menu" columns={columns} />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Width Options -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Width Options
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Auto Width (Default)
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu width="auto" trigger="Auto Width" columns={simpleColumns} />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Full Width
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu width="full" trigger="Full Width" columns={productColumns} />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Screen Width
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu width="screen" trigger="Screen Width" columns={productColumns} />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Auto width (default) -->
+<MegaMenu width="auto" trigger="Menu" columns={columns} />
+
+<!-- Full width -->
+<MegaMenu width="full" trigger="Menu" columns={columns} />
+
+<!-- Screen width -->
+<MegaMenu width="screen" trigger="Menu" columns={columns} />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Advanced Features -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Advanced Features
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Column Headers as Links
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu 
+              trigger="Linked Headers" 
+              columns={[
+                {
+                  title: 'Products',
+                  href: '/products',
+                  description: 'Browse all our products',
+                  items: [
+                    { label: 'Featured Product', href: '/products/featured', icon: '⭐' },
+                    { label: 'New Releases', href: '/products/new', icon: '🆕' }
+                  ]
+                }
+              ]} 
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            External Links with Badges
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu 
+              trigger="External Links" 
+              columns={[
+                {
+                  title: 'External Resources',
+                  items: [
+                    { 
+                      label: 'GitHub Repository', 
+                      href: 'https://github.com/example/repo', 
+                      target: '_blank',
+                      description: 'View source code',
+                      icon: '📦',
+                      badge: 'Open Source'
+                    },
+                    { 
+                      label: 'API Documentation', 
+                      href: 'https://api.example.com/docs', 
+                      target: '_blank',
+                      description: 'Developer reference',
+                      icon: '📖',
+                      badge: 'New'
+                    }
+                  ]
+                }
+              ]} 
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Disabled State
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu disabled={true} trigger="Disabled Menu" columns={simpleColumns} />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Maximum Columns Limit
+          </h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <MegaMenu 
+              maxColumns={2} 
+              trigger="Max 2 Columns" 
+              columns={productColumns} 
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Column headers as links -->
+<MegaMenu 
+  columns={[
+    {
+      title: 'Products',
+      href: '/products',
+      description: 'Browse all our products',
+      items: [...]
+    }
+  ]} 
+/>
+
+<!-- External links with badges -->
+<MegaMenu 
+  columns={[
+    {
+      title: 'External Resources',
+      items: [
+        { 
+          label: 'GitHub', 
+          href: 'https://github.com/example', 
+          target: '_blank',
+          badge: 'Open Source'
+        }
+      ]
+    }
+  ]} 
+/>
+
+<!-- Disabled state -->
+<MegaMenu disabled={true} trigger="Menu" columns={columns} />
+
+<!-- Limit columns -->
+<MegaMenu maxColumns={2} trigger="Menu" columns={columns} />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg mb-6">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
+          WCAG AAA Compliance
+        </h3>
+        <ul class="space-y-2 text-blue-800 dark:text-blue-200">
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Contrast ratios exceed 7:1 for all text elements</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Full keyboard navigation with arrow keys, Home, End, and Escape</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Proper ARIA roles, states, and properties</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Screen reader friendly with descriptive labels</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Focus management and visible focus indicators</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Touch-friendly for mobile devices</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+          Custom Accessibility Properties
+        </h3>
+        <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+          <MegaMenu 
+            trigger="Accessible Menu"
+            ariaLabel="Main navigation menu with product information"
+            ariaDescribedBy="menu-description"
+            columns={simpleColumns}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<MegaMenu
+  trigger="Products"
+  ariaLabel="Product navigation menu"
+  ariaDescribedBy="menu-description"
+  columns={columns}
+/>
+
+<!-- Hidden description for screen readers -->
+<div id="menu-description" class="sr-only">
+  Navigate through our product categories and resources
+</div>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Props Reference
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                trigger
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Text displayed on the trigger button
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                columns
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Column[]
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Array of column data for the menu
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default' | 'compact' | 'detailed' | 'minimal'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Size of the menu elements
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                width
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'auto' | 'full' | 'screen'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'auto'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Width of the dropdown panel
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                maxColumns
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                number
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                4
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Maximum number of columns to display
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                disabled
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Disable the menu functionality
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaLabel
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Accessible label for the menu
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                class
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Additional CSS classes
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Data Interfaces -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Data Interfaces
+      </h2>
+      
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Column Interface
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+              <thead>
+                <tr class="bg-gray-50 dark:bg-gray-800">
+                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                    Property
+                  </th>
+                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                    Type
+                  </th>
+                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                    Description
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    title
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    string
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Column header text
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    items
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    MenuItem[]
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Array of menu items in this column
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    href
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    string
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Optional link for the column header
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    description
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    string
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Optional description for the column
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            MenuItem Interface
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+              <thead>
+                <tr class="bg-gray-50 dark:bg-gray-800">
+                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                    Property
+                  </th>
+                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                    Type
+                  </th>
+                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                    Description
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    label
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    string
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Display text for the menu item
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    href
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    string
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    URL for the menu item link
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    description
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    string
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Optional description text
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    icon
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    string
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Optional icon (emoji or symbol)
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    badge
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    string
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Optional badge text (e.g., "New", "Popular")
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                    target
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    '_blank' | '_self' | '_parent' | '_top'
+                  </td>
+                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                    Link target (for external links)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Best Practices
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+            ✅ Do
+          </h3>
+          <ul class="space-y-2 text-green-800 dark:text-green-200">
+            <li>• Keep column titles concise and descriptive</li>
+            <li>• Use consistent icons across similar items</li>
+            <li>• Group related items logically within columns</li>
+            <li>• Provide helpful descriptions for complex items</li>
+            <li>• Use badges sparingly for important highlights</li>
+            <li>• Consider mobile users with touch-friendly sizing</li>
+            <li>• Test keyboard navigation thoroughly</li>
+            <li>• Limit columns to 3-4 for better readability</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-red-900 dark:text-red-100 mb-3">
+            ❌ Don't
+          </h3>
+          <ul class="space-y-2 text-red-800 dark:text-red-200">
+            <li>• Overcrowd with too many items per column</li>
+            <li>• Use vague or generic item labels</li>
+            <li>• Mix different icon styles within the same menu</li>
+            <li>• Create columns with vastly different item counts</li>
+            <li>• Ignore loading states for dynamic content</li>
+            <li>• Forget to test with screen readers</li>
+            <li>• Use low-contrast colors for text or backgrounds</li>
+            <li>• Create overly deep navigation hierarchies</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+            💡 Tips
+          </h3>
+          <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
+            <li>• Use hover states to activate menus on desktop for better UX</li>
+            <li>• Consider click-to-open on touch devices to prevent accidental activation</li>
+            <li>• Group frequently accessed items in the first column</li>
+            <li>• Use descriptive trigger text that clearly indicates content</li>
+            <li>• Implement proper focus management for keyboard users</li>
+            <li>• Consider using the detailed variant for feature-rich products</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

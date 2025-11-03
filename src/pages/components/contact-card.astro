@@ -1,20 +1,183 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import ContactCard from '../../components/ContactCard.astro';
+import ContactCardComponent from '../../components/ContactCard.astro';
+
+const usageSnippet = `---
+import { ContactCard } from 'comet-astro';
+---
+
+<ContactCard
+  name="Leslie Alexander"
+  role="Design Systems Lead"
+  email="leslie@example.com"
+  website="https://example.com"
+  avatar="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=240&q=80"
+/>`;
 ---
 
 <DocsLayout
   title="ContactCard"
-  description="Profile card for highlighting team members or contacts."
+  description="Accessible contact profile cards with WCAG AAA contrast and responsive layout."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <ContactCard
-      name="Leslie Alexander"
-      role="Design Systems Lead"
-      email="leslie@example.com"
-      website="https://example.com"
-      avatar="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=240&q=80"
-    />
+    <p class="text-base text-slate-100">
+      ContactCard displays person information in a clean, accessible format. 
+      Each card includes avatar handling with initials fallback, contact actions, 
+      and maintains AAA contrast ratios across light and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Links include proper ARIA labels and screen reader context, while the 
+      responsive layout adapts from vertical stacking on mobile to horizontal 
+      layout on larger screens.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          name
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Full name of the person. Required. Used for display and generating 
+          initials when no avatar is provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          role?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Job title or role description. Optional. Displays below the name 
+          in a subdued color.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          email?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Email address. Optional. When provided, renders as a clickable 
+          <code>mailto:</code> link with proper ARIA labeling.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          website?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Website URL. Optional. Opens in new tab with <code>rel="noopener noreferrer"</code> 
+          and includes screen reader context.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          avatar?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Profile image URL. Optional. Falls back to initials with 
+          gradient background when not provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the card container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and provide at minimum a name. Add optional contact 
+      information and avatar as needed. The component handles responsive layout 
+      and accessibility automatically.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+    
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">With Avatar</h3>
+        <ContactCardComponent
+          name="Leslie Alexander"
+          role="Design Systems Lead"
+          email="leslie@example.com"
+          website="https://example.com"
+          avatar="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=240&q=80"
+        />
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Initials Fallback</h3>
+        <ContactCardComponent
+          name="Jordan Martinez"
+          role="Frontend Developer"
+          email="jordan@example.com"
+        />
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Minimal Information</h3>
+        <ContactCardComponent
+          name="Alex Chen"
+          website="https://alexchen.dev"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Text contrast ratios exceed WCAG AAA standards (7:1+) for both light and 
+      dark themes. Focus rings are prominent and theme-aware with 4px ring width 
+      and proper offset colors.
+    </p>
+    <p class="text-base text-slate-200">
+      Email and website links include descriptive ARIA labels that identify the 
+      person and action ("Send email to Leslie Alexander"). External links 
+      communicate their behavior through screen reader text.
+    </p>
+    <p class="text-base text-slate-200">
+      The avatar is decorative and marked with <code>aria-hidden="true"</code>. 
+      Initials are unselectable to prevent copy confusion. The responsive layout 
+      maintains usability across all device sizes.
+    </p>
   </section>
 </DocsLayout>

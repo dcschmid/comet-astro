@@ -1,53 +1,252 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Grid from '../../components/Grid.astro';
+import GridComponent from '../../components/Grid.astro';
+
+const title = "Grid";
+const description = "WCAG AAA compliant responsive grid layout system with semantic HTML options and comprehensive accessibility features.";
 ---
 
-<DocsLayout
-  title="Grid"
-  description="Responsive grid layout system with auto columns."
->
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li>
-        <code>cols?: 1|2|3|4|5|6|'auto'</code> – number of columns (default: 3)
-      </li>
-      <li>
-        <code>gap?: 'none'|'sm'|'md'|'lg'|'xl'</code> – spacing between items (default:
-        'md')
-      </li>
-      <li><code>className?: string</code></li>
-    </ul>
+<DocsLayout {title} {description}>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      Grid provides a powerful and accessible grid layout system with responsive breakpoints, 
+      semantic HTML options, and comprehensive WCAG AAA compliance. Perfect for creating 
+      organized, accessible content layouts.
+    </p>
+    <p class="text-base text-slate-200">
+      The component features enhanced responsive design, multiple semantic element support, 
+      and flexible alignment options for professional grid layouts.
+    </p>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-6">
-      <div>
-        <h3 class="text-lg font-semibold mb-2">3 Columns (default)</h3>
-        <Grid cols={3}>
-          <div class="bg-purple-500/20 p-4 rounded text-center">1</div>
-          <div class="bg-purple-500/20 p-4 rounded text-center">2</div>
-          <div class="bg-purple-500/20 p-4 rounded text-center">3</div>
-        </Grid>
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">cols?</dt>
+        <dd class="text-sm text-slate-200">
+          Number of columns: <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code>, <code>6</code>, or <code>"auto"</code>. Defaults to <code>3</code>.
+        </dd>
       </div>
-      <div>
-        <h3 class="text-lg font-semibold mb-2">4 Columns</h3>
-        <Grid cols={4} gap="lg">
-          <div class="bg-blue-500/20 p-4 rounded text-center">1</div>
-          <div class="bg-blue-500/20 p-4 rounded text-center">2</div>
-          <div class="bg-blue-500/20 p-4 rounded text-center">3</div>
-          <div class="bg-blue-500/20 p-4 rounded text-center">4</div>
-        </Grid>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">gap?</dt>
+        <dd class="text-sm text-slate-200">
+          Spacing between items: <code>"none"</code>, <code>"xs"</code>, <code>"sm"</code>, <code>"md"</code>, <code>"lg"</code>, <code>"xl"</code>, <code>"2xl"</code>. Defaults to <code>"md"</code>.
+        </dd>
       </div>
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Auto-fit</h3>
-        <Grid cols="auto" gap="sm">
-          <div class="bg-pink-500/20 p-4 rounded text-center">Auto</div>
-          <div class="bg-pink-500/20 p-4 rounded text-center">Auto</div>
-          <div class="bg-pink-500/20 p-4 rounded text-center">Auto</div>
-        </Grid>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">as?</dt>
+        <dd class="text-sm text-slate-200">
+          Semantic HTML element: <code>"div"</code>, <code>"section"</code>, <code>"main"</code>, <code>"article"</code>, <code>"aside"</code>, <code>"nav"</code>, <code>"ul"</code>, <code>"ol"</code>. Defaults to <code>"div"</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">align?</dt>
+        <dd class="text-sm text-slate-200">
+          Vertical alignment: <code>"start"</code>, <code>"center"</code>, <code>"end"</code>, <code>"stretch"</code>. Defaults to <code>"stretch"</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">justify?</dt>
+        <dd class="text-sm text-slate-200">
+          Horizontal alignment: <code>"start"</code>, <code>"center"</code>, <code>"end"</code>, <code>"between"</code>, <code>"around"</code>, <code>"evenly"</code>. Defaults to <code>"start"</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">autoFit?</dt>
+        <dd class="text-sm text-slate-200">
+          Enable auto-fit behavior with responsive columns (120px minimum). Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">ariaLabel?</dt>
+        <dd class="text-sm text-slate-200">
+          ARIA label for screen readers, especially useful for semantic grids.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+      <p class="text-sm text-slate-300">
+        Import the Grid component and use it to create responsive layouts. 
+        The component automatically handles responsive breakpoints and accessibility.
+      </p>
+      <pre class="rounded bg-slate-950/50 p-4 text-sm text-slate-300 overflow-x-auto"><code>{`---
+import Grid from '../../components/Grid.astro';
+import Card from '../../components/Card.astro';
+---
+
+<Grid 
+  cols={3} 
+  gap="md" 
+  as="section"
+  ariaLabel="Featured articles"
+>
+  <Card title="Article 1">Content...</Card>
+  <Card title="Article 2">Content...</Card>
+  <Card title="Article 3">Content...</Card>
+</Grid>`}</code></pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <div class="space-y-8">
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Basic 3-Column Grid</h3>
+        <p class="text-sm text-slate-300">
+          Standard responsive grid that adapts from 1 column on mobile to 3 columns on larger screens.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <GridComponent cols={3} gap="md">
+            <div class="bg-blue-500/20 border border-blue-500/30 p-4 rounded-lg text-center text-slate-200">
+              Item 1
+            </div>
+            <div class="bg-blue-500/20 border border-blue-500/30 p-4 rounded-lg text-center text-slate-200">
+              Item 2
+            </div>
+            <div class="bg-blue-500/20 border border-blue-500/30 p-4 rounded-lg text-center text-slate-200">
+              Item 3
+            </div>
+          </GridComponent>
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Auto-Fit Grid</h3>
+        <p class="text-sm text-slate-300">
+          Responsive grid that automatically fits columns based on available space and minimum width.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <GridComponent cols="auto" gap="sm">
+            <div class="bg-purple-500/20 border border-purple-500/30 p-3 rounded-lg text-center text-slate-200 min-h-[80px] flex items-center justify-center">
+              <div>
+                <div class="font-semibold text-sm">Auto</div>
+                <div class="text-xs text-slate-400">Responsive</div>
+              </div>
+            </div>
+            <div class="bg-purple-500/20 border border-purple-500/30 p-3 rounded-lg text-center text-slate-200 min-h-[80px] flex items-center justify-center">
+              <div>
+                <div class="font-semibold text-sm">Fit</div>
+                <div class="text-xs text-slate-400">Layout</div>
+              </div>
+            </div>
+            <div class="bg-purple-500/20 border border-purple-500/30 p-3 rounded-lg text-center text-slate-200 min-h-[80px] flex items-center justify-center">
+              <div>
+                <div class="font-semibold text-sm">Grid</div>
+                <div class="text-xs text-slate-400">System</div>
+              </div>
+            </div>
+            <div class="bg-purple-500/20 border border-purple-500/30 p-3 rounded-lg text-center text-slate-200 min-h-[80px] flex items-center justify-center">
+              <div>
+                <div class="font-semibold text-sm">Items</div>
+                <div class="text-xs text-slate-400">Dynamic</div>
+              </div>
+            </div>
+          </GridComponent>
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Semantic Section Grid</h3>
+        <p class="text-sm text-slate-300">
+          Grid using semantic HTML with proper ARIA labeling for enhanced accessibility.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <GridComponent 
+            cols={2} 
+            gap="xl" 
+            as="section" 
+            ariaLabel="Feature highlights"
+            align="center"
+            justify="center"
+          >
+            <div class="bg-green-500/20 border border-green-500/30 p-6 rounded-lg text-center text-slate-200">
+              <h4 class="font-semibold mb-2">Feature A</h4>
+              <p class="text-sm text-slate-300">Description of feature A</p>
+            </div>
+            <div class="bg-green-500/20 border border-green-500/30 p-6 rounded-lg text-center text-slate-200">
+              <h4 class="font-semibold mb-2">Feature B</h4>
+              <p class="text-sm text-slate-300">Description of feature B</p>
+            </div>
+          </GridComponent>
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">List Grid</h3>
+        <p class="text-sm text-slate-300">
+          Grid using semantic list elements for content that represents a collection.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <GridComponent 
+            cols={4} 
+            gap="sm" 
+            as="ul" 
+            ariaLabel="Navigation menu"
+          >
+            <li class="bg-orange-500/20 border border-orange-500/30 p-3 rounded text-center text-slate-200 list-none">
+              Home
+            </li>
+            <li class="bg-orange-500/20 border border-orange-500/30 p-3 rounded text-center text-slate-200 list-none">
+              About
+            </li>
+            <li class="bg-orange-500/20 border border-orange-500/30 p-3 rounded text-center text-slate-200 list-none">
+              Services
+            </li>
+            <li class="bg-orange-500/20 border border-orange-500/30 p-3 rounded text-center text-slate-200 list-none">
+              Contact
+            </li>
+          </GridComponent>
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Large Grid with Spacing</h3>
+        <p class="text-sm text-slate-300">
+          6-column grid that showcases responsive behavior across different screen sizes.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <GridComponent cols={6} gap="2xl">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div class="bg-rose-500/20 border border-rose-500/30 p-4 rounded-lg text-center text-slate-200">
+                {i + 1}
+              </div>
+            ))}
+          </GridComponent>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="space-y-4">
+      <p class="text-base text-slate-200">
+        The Grid component implements comprehensive accessibility features:
+      </p>
+      <ul class="space-y-2 text-sm text-slate-300 list-disc list-inside ml-4">
+        <li>Semantic HTML element support with <code>as</code> prop for proper document structure</li>
+        <li>WCAG AAA compliance with enhanced contrast ratios for all visual elements</li>
+        <li>ARIA labeling support for screen readers with <code>ariaLabel</code> prop</li>
+        <li>Responsive design that maintains readability across all device sizes</li>
+        <li>Proper list semantics when using <code>ul</code> or <code>ol</code> elements</li>
+        <li>Flexible alignment options that preserve content accessibility</li>
+        <li>Auto-fit behavior that adapts to user preferences and viewport constraints</li>
+        <li>Enhanced gap system that provides sufficient spacing for touch targets</li>
+        <li>Support for keyboard navigation and focus management</li>
+      </ul>
+      <div class="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4">
+        <p class="text-sm text-amber-200">
+          <strong>Best Practice:</strong> Use semantic HTML elements with the <code>as</code> prop 
+          when your grid represents structured content. Provide an <code>ariaLabel</code> for 
+          grids that group related content, and ensure sufficient contrast ratios for all 
+          grid items.
+        </p>
       </div>
     </div>
   </section>

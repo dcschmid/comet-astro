@@ -1,19 +1,712 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Rating from '../../components/Rating.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 ---
 
 <DocsLayout
   title="Rating"
-  description="Star rating display with optional interactive mode."
+  description="Accessible star rating component with WCAG AAA compliance, multiple variants, and comprehensive interactive features."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-3">
-      <Rating value={4.5} showValue />
-      <Rating value={3} size="lg" />
-      <Rating value={5} size="sm" showValue />
-      <Rating value={2} readonly={false} name="interactive-rating" />
-    </div>
-  </section>
+  <div class="space-y-12">
+    <!-- Basic Example -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Basic Example</h2>
+      <div class="not-prose space-y-4">
+        <Rating 
+          value={4.5} 
+          label="Product Rating"
+          showValue={true}
+          helpText="Average rating from customer reviews"
+        />
+      </div>
+      
+      <CodeBlock
+        code={`<Rating 
+  value={4.5} 
+  label="Product Rating"
+  showValue={true}
+  helpText="Average rating from customer reviews"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Variants</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Default</h3>
+          <div class="not-prose">
+            <Rating 
+              value={4} 
+              variant="default"
+              label="Default Rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Minimal</h3>
+          <div class="not-prose">
+            <Rating 
+              value={3.5} 
+              variant="minimal"
+              label="Minimal Rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Colored</h3>
+          <div class="not-prose">
+            <Rating 
+              value={5} 
+              variant="colored"
+              label="Colored Rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Outlined</h3>
+          <div class="not-prose">
+            <Rating 
+              value={2.5} 
+              variant="outlined"
+              label="Outlined Rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<Rating variant="default" value={4} />
+
+<!-- Minimal variant -->
+<Rating variant="minimal" value={3.5} />
+
+<!-- Colored variant -->
+<Rating variant="colored" value={5} />
+
+<!-- Outlined variant -->
+<Rating variant="outlined" value={2.5} />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Sizes</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Small</h3>
+          <div class="not-prose">
+            <Rating 
+              value={4.5} 
+              size="sm"
+              label="Small Rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Medium (Default)</h3>
+          <div class="not-prose">
+            <Rating 
+              value={3.5} 
+              size="md"
+              label="Medium Rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Large</h3>
+          <div class="not-prose">
+            <Rating 
+              value={5} 
+              size="lg"
+              label="Large Rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<Rating size="sm" value={4.5} />
+
+<!-- Medium size (default) -->
+<Rating size="md" value={3.5} />
+
+<!-- Large size -->
+<Rating size="lg" value={5} />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Interactive Mode -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Interactive Mode</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Basic Interactive</h3>
+          <div class="not-prose">
+            <Rating 
+              value={3} 
+              readonly={false}
+              name="basic-rating"
+              label="Rate this product"
+              helpText="Click to rate from 1 to 5 stars"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Half Stars</h3>
+          <div class="not-prose">
+            <Rating 
+              value={3.5} 
+              readonly={false}
+              allowHalf={true}
+              name="half-rating"
+              label="Detailed Rating"
+              helpText="Supports half-star precision"
+              showValue={true}
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Required Rating</h3>
+          <div class="not-prose">
+            <Rating 
+              value={0} 
+              readonly={false}
+              required={true}
+              name="required-rating"
+              label="Required Rating"
+              helpText="Please provide a rating to continue"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Basic interactive -->
+<Rating 
+  readonly={false}
+  name="product-rating"
+  label="Rate this product"
+/>
+
+<!-- With half stars -->
+<Rating 
+  readonly={false}
+  allowHalf={true}
+  name="detailed-rating"
+  showValue={true}
+/>
+
+<!-- Required rating -->
+<Rating 
+  readonly={false}
+  required={true}
+  name="required-rating"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- States -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">States</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Required</h3>
+          <div class="not-prose">
+            <Rating 
+              value={0} 
+              readonly={false}
+              required={true}
+              name="required-state"
+              label="Required Rating"
+              helpText="This field is required"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Error</h3>
+          <div class="not-prose">
+            <Rating 
+              value={0} 
+              readonly={false}
+              error="Please select a rating before submitting"
+              name="error-state"
+              label="Rating with Error"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Disabled</h3>
+          <div class="not-prose">
+            <Rating 
+              value={3} 
+              readonly={false}
+              disabled={true}
+              name="disabled-state"
+              label="Disabled Rating"
+              helpText="This rating is currently disabled"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Read-only</h3>
+          <div class="not-prose">
+            <Rating 
+              value={4.5} 
+              readonly={true}
+              label="Read-only Rating"
+              helpText="Display-only rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Required state -->
+<Rating required={true} readonly={false} />
+
+<!-- Error state -->
+<Rating error="Please select a rating" readonly={false} />
+
+<!-- Disabled state -->
+<Rating disabled={true} readonly={false} />
+
+<!-- Read-only state -->
+<Rating readonly={true} value={4.5} />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Custom Scale -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Custom Scale</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">10-Point Scale</h3>
+          <div class="not-prose">
+            <Rating 
+              value={7} 
+              max={10}
+              label="10-Point Rating"
+              showValue={true}
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">3-Point Scale</h3>
+          <div class="not-prose">
+            <Rating 
+              value={2} 
+              max={3}
+              label="3-Point Rating"
+              showValue={true}
+              size="lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- 10-point scale -->
+<Rating value={7} max={10} showValue={true} />
+
+<!-- 3-point scale -->
+<Rating value={2} max={3} showValue={true} />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Props Reference</h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                value
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                number
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Current rating value
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                max
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                number
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                5
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Maximum rating value
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                readonly
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Whether the rating is read-only or interactive
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Size of the rating stars
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'default' | 'minimal' | 'colored' | 'outlined'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                showValue
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Show numeric value alongside stars
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                allowHalf
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Allow half-star ratings
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                name
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'rating'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Form name attribute for interactive ratings
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                label
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Label text for the rating
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                helpText
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Help text displayed below the rating
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                disabled
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Whether the rating is disabled
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Whether the rating is required
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                error
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean | string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Shows error state with optional message
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <CodeBlock
+        code={`export interface Props {
+  value: number;
+  max?: number;
+  readonly?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  showValue?: boolean;
+  name?: string;
+  label?: string;
+  helpText?: string;
+  disabled?: boolean;
+  required?: boolean;
+  error?: boolean | string;
+  variant?: 'default' | 'minimal' | 'colored' | 'outlined';
+  id?: string;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  class?: string;
+  allowHalf?: boolean;
+}`}
+        language="typescript"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Accessibility</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>WCAG AAA Compliance</h3>
+        <ul>
+          <li><strong>Contrast:</strong> All color combinations meet WCAG AAA standards (7:1 contrast ratio)</li>
+          <li><strong>Focus Management:</strong> Clear focus indicators with proper keyboard navigation</li>
+          <li><strong>Screen Reader Support:</strong> ARIA labels and roles for both display and interactive modes</li>
+          <li><strong>Error Identification:</strong> Clear error states with descriptive messages</li>
+        </ul>
+
+        <h3>Keyboard Navigation</h3>
+        <ul>
+          <li><strong>Tab:</strong> Navigate to rating component</li>
+          <li><strong>Arrow Left/Right:</strong> Navigate between rating values in interactive mode</li>
+          <li><strong>Space/Enter:</strong> Select rating value</li>
+          <li><strong>Numbers 1-5 (or 1-max):</strong> Quick rating selection</li>
+        </ul>
+
+        <h3>Screen Reader Features</h3>
+        <ul>
+          <li>Read-only ratings announced as images with descriptive text</li>
+          <li>Interactive ratings use radiogroup role for proper navigation</li>
+          <li>Each rating option clearly labeled with value and scale</li>
+          <li>Error messages announced immediately when they occur</li>
+          <li>Help text properly associated with rating controls</li>
+        </ul>
+
+        <h3>ARIA Attributes</h3>
+        <ul>
+          <li><code>role="img"</code> for read-only ratings</li>
+          <li><code>role="radiogroup"</code> for interactive ratings</li>
+          <li><code>aria-label</code> describing the current rating and scale</li>
+          <li><code>aria-describedby</code> linking help text and error messages</li>
+          <li><code>aria-invalid</code> for error states</li>
+          <li><code>aria-required</code> for required ratings</li>
+          <li><code>aria-disabled</code> for disabled states</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Accessible Rating example -->
+<Rating
+  value={4}
+  readonly={false}
+  label="Product Rating"
+  helpText="Rate from 1 to 5 stars based on your experience"
+  ariaLabel="Product rating scale"
+  required={true}
+  name="product-rating"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Best Practices -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Best Practices</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>Do's</h3>
+        <ul>
+          <li>Always provide a descriptive label for interactive ratings</li>
+          <li>Use help text to explain the rating scale or criteria</li>
+          <li>Consider showing the numeric value for clarity</li>
+          <li>Use appropriate variants that match your design system</li>
+          <li>Provide clear error messages when validation fails</li>
+          <li>Use consistent rating scales across your application</li>
+          <li>Consider half-star precision for detailed feedback</li>
+        </ul>
+
+        <h3>Don'ts</h3>
+        <ul>
+          <li>Don't use interactive ratings without proper labels</li>
+          <li>Don't mix different rating scales in the same context</li>
+          <li>Don't rely solely on visual cues for rating states</li>
+          <li>Don't use overly complex rating scales (keep it simple)</li>
+          <li>Don't forget to handle form submission for interactive ratings</li>
+          <li>Don't use ratings for binary yes/no decisions</li>
+        </ul>
+
+        <h3>Content Guidelines</h3>
+        <ul>
+          <li>Use clear, consistent rating criteria across your application</li>
+          <li>Provide context about what the rating represents</li>
+          <li>Consider cultural differences in rating scale interpretation</li>
+          <li>Test with screen readers to ensure proper announcements</li>
+          <li>Validate rating inputs on both client and server side</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Good: Complete, accessible setup -->
+<Rating
+  value={4.5}
+  readonly={false}
+  label="Overall Satisfaction"
+  helpText="Rate your overall experience from 1 (poor) to 5 (excellent)"
+  showValue={true}
+  required={true}
+  name="satisfaction-rating"
+  allowHalf={true}
+/>
+
+<!-- Good: Display rating -->
+<Rating
+  value={4.2}
+  readonly={true}
+  label="Average Customer Rating"
+  showValue={true}
+  variant="colored"
+/>
+
+<!-- Avoid: Missing label -->
+<Rating readonly={false} value={3} />
+
+<!-- Avoid: Unclear scale -->
+<Rating 
+  readonly={false}
+  max={7}
+  label="Rate this"
+/>`}
+        language="astro"
+      />
+    </section>
+  </div>
 </DocsLayout>

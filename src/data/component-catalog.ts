@@ -178,12 +178,6 @@ export const componentCatalog: ComponentDoc[] = [
     category: 'Typography',
   },
   {
-    slug: 'color-picker',
-    name: 'ColorPicker',
-    description: 'Color input with preset swatches and custom HEX entry.',
-    category: 'Forms',
-  },
-  {
     slug: 'command-menu',
     name: 'CommandMenu',
     description: 'CMD+K / Ctrl+K command palette with keyboard navigation.',

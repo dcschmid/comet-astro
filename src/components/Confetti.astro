@@ -9,6 +9,7 @@ interface Props {
   colors?: string[];
   className?: string;
   buttonLabel?: string;
+  fullscreen?: boolean; // If true, canvas covers viewport
 }
 
 const {
@@ -18,6 +19,7 @@ const {
   colors = ['#22d3ee', '#f97316', '#facc15', '#a855f7', '#4ade80', '#f472b6'],
   className = '',
   buttonLabel = 'Celebrate',
+  fullscreen = false,
 } = Astro.props as Props;
 
 const id = `confetti-${Math.random().toString(36).slice(2, 10)}`;
@@ -29,25 +31,29 @@ const autoStartAttr = autoStart ? 'true' : 'false';
 
 <div
   id={id}
-  class={`relative ${className}`.trim()}
+  class={`${fullscreen ? 'fixed inset-0 z-40' : 'relative'} ${className}`.trim()}
   data-confetti-root
   data-confetti-colors={encodedColors}
   data-confetti-duration={durationAttr}
   data-confetti-particles={particleAttr}
   data-confetti-auto-start={autoStartAttr}
+  data-confetti-fullscreen={fullscreen ? 'true' : 'false'}
 >
   <canvas
     data-confetti-canvas
-    class="pointer-events-none absolute inset-0 h-full w-full"
+  class="pointer-events-none absolute inset-0 h-full w-full z-0"
     aria-hidden="true"></canvas>
   {
     !autoStart && (
       <button
         type="button"
-        class="relative z-10 inline-flex items-center gap-2 rounded-full border border-blue-500 bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 focus-visible:ring-offset-white dark:border-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-slate-900"
+        class="relative z-10 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold shadow-sm transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+        style="background-color:var(--confetti-btn-bg, #0ea5e9); color:var(--confetti-btn-fg, #fff); border-color:var(--confetti-btn-border, #0369a1)"
+        aria-label={buttonLabel}
         data-confetti-trigger
       >
-        🎉 {buttonLabel}
+        <span aria-hidden class="text-lg">🎉</span>
+        <span>{buttonLabel}</span>
       </button>
     )
   }
@@ -55,8 +61,10 @@ const autoStartAttr = autoStart ? 'true' : 'false';
 
 <script is:inline>
   (function setupConfetti() {
-    const root = document.getElementById('${id}');
-    if (!(root instanceof HTMLElement)) return;
+    // Universal setup: find any confetti root and set it up
+    document.querySelectorAll('[data-confetti-root]').forEach(root => {
+      if (root.dataset.confettiSetup) return; // Already initialized
+      root.dataset.confettiSetup = 'true';
 
     const canvas = root.querySelector('[data-confetti-canvas]');
     if (!(canvas instanceof HTMLCanvasElement)) return;
@@ -78,17 +86,31 @@ const autoStartAttr = autoStart ? 'true' : 'false';
     let startTime = 0;
     let animationFrame = null;
 
-    const resize = () => {
-      canvas.width = root.clientWidth;
-      canvas.height = root.clientHeight;
-    };
+      const resize = () => {
+        const fullscreen = root.dataset.confettiFullscreen === 'true';
+        const width = fullscreen ? window.innerWidth : Math.max(1, root.clientWidth || window.innerWidth);
+        const height = fullscreen ? window.innerHeight : Math.max(1, root.clientHeight || window.innerHeight);
+        const dpr = Math.min(2, window.devicePixelRatio || 1); // limit DPR for perf
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        if (!fullscreen && !root.style.minHeight) {
+          root.style.minHeight = '160px';
+        }
+        // Reset transform before scaling, otherwise successive resizes compound
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+      };
 
     const random = (min, max) => Math.random() * (max - min) + min;
 
     const createParticles = () => {
+      const width = canvas.clientWidth || window.innerWidth;
+      const height = canvas.clientHeight || window.innerHeight;
       particles = Array.from({ length: particleTotal }, () => ({
-        x: random(0, canvas.width),
-        y: random(-canvas.height, 0),
+        x: random(0, width),
+        y: random(-height, 0),
         angle: random(0, Math.PI * 2),
         velocity: random(2, 6),
         radius: random(6, 12),
@@ -126,7 +148,7 @@ const autoStartAttr = autoStart ? 'true' : 'false';
         particle.y += particle.velocity;
         particle.tilt = Math.sin(particle.tiltAngle) * 10;
 
-        if (particle.y > canvas.height) {
+        if (particle.y > canvas.height / (window.devicePixelRatio || 1)) {
           particle.y = -20;
           particle.x = random(0, canvas.width);
         }
@@ -145,6 +167,8 @@ const autoStartAttr = autoStart ? 'true' : 'false';
 
     const start = () => {
       if (prefersReducedMotion.matches) return;
+      // Debug log can be removed later
+      console.debug('[Confetti] start');
       resize();
       createParticles();
       startTime = performance.now();
@@ -174,14 +198,19 @@ const autoStartAttr = autoStart ? 'true' : 'false';
       start();
     });
 
-    root
-      .querySelector('[data-confetti-trigger]')
-      ?.addEventListener('click', () => start());
+    const trigger = root.querySelector('[data-confetti-trigger]');
+    if (trigger) {
+      trigger.addEventListener('click', () => {
+        console.log('[Confetti] Button clicked!');
+        start();
+      });
+    }
 
     if (autoStartEnabled && !prefersReducedMotion.matches) {
       start();
     }
 
     resize();
+    }); // End forEach
   })();
 </script>

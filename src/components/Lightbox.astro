@@ -1,131 +1,437 @@
 ---
+import { cn } from '../utils/cn';
+
 /**
- * Lightbox - image gallery with overlay viewer
+ * Lightbox - WCAG AAA compliant image gallery with overlay viewer
  */
 interface LightboxImage {
   src: string;
   alt?: string;
   thumbnail?: string;
   caption?: string;
+  description?: string;
 }
 
 interface Props {
+  /** Array of images for the lightbox gallery */
   images?: LightboxImage[];
+  /** Show captions on thumbnails */
   showCaptions?: boolean;
+  /** Show image counter in overlay */
+  showCounter?: boolean;
+  /** Gallery layout variant */
+  variant?: 'grid' | 'masonry' | 'carousel' | 'list';
+  /** Thumbnail size */
+  thumbnailSize?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Number of columns for grid layout */
+  columns?: 2 | 3 | 4 | 5 | 6;
+  /** Gap between thumbnails */
+  gap?: 'sm' | 'md' | 'lg';
+  /** Border radius for thumbnails */
+  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  /** Enable zoom functionality */
+  enableZoom?: boolean;
+  /** Enable slideshow autoplay */
+  autoplay?: boolean;
+  /** Autoplay interval in seconds */
+  autoplayInterval?: number;
+  /** Transition animation type */
+  animation?: 'fade' | 'slide' | 'zoom' | 'none';
+  /** Close on backdrop click */
+  closeOnBackdrop?: boolean;
+  /** Close on escape key */
+  closeOnEscape?: boolean;
+  /** Enable keyboard navigation */
+  keyboardNavigation?: boolean;
+  /** Enable touch/swipe navigation */
+  touchNavigation?: boolean;
+  /** Custom CSS classes */
   className?: string;
+  /** Custom overlay CSS classes */
   overlayClassName?: string;
+  /** Custom thumbnails container CSS classes */
   thumbnailsClassName?: string;
+  /** Aria label for the lightbox */
+  ariaLabel?: string;
+  /** Aria label for close button */
+  closeAriaLabel?: string;
+  /** Aria label for previous button */
+  prevAriaLabel?: string;
+  /** Aria label for next button */
+  nextAriaLabel?: string;
+  /** Loading state for images */
+  loading?: 'eager' | 'lazy';
 }
 
 const {
   images = [],
   showCaptions = true,
-  className = '',
-  overlayClassName = '',
-  thumbnailsClassName = '',
+  showCounter = true,
+  variant = 'grid',
+  thumbnailSize = 'md',
+  columns = 4,
+  gap = 'md',
+  rounded = 'lg',
+  enableZoom = true,
+  autoplay = false,
+  autoplayInterval = 3000,
+  animation = 'fade',
+  closeOnBackdrop = true,
+  closeOnEscape = true,
+  keyboardNavigation = true,
+  touchNavigation = true,
+  className,
+  overlayClassName,
+  thumbnailsClassName,
+  ariaLabel = 'Image gallery',
+  closeAriaLabel = 'Close image viewer',
+  prevAriaLabel = 'Previous image',
+  nextAriaLabel = 'Next image',
+  loading = 'lazy'
 } = Astro.props as Props;
 
+// Generate unique ID
 const id = `lightbox-${Math.random().toString(36).slice(2, 10)}`;
+
+// Thumbnail size classes with WCAG AAA compliant styling
+const thumbnailSizeClasses = {
+  sm: 'h-24 md:h-32',
+  md: 'h-32 md:h-40',
+  lg: 'h-40 md:h-48',
+  xl: 'h-48 md:h-56'
+};
+
+// Gap classes
+const gapClasses = {
+  sm: 'gap-2',
+  md: 'gap-4',
+  lg: 'gap-6'
+};
+
+// Border radius classes
+const roundedClasses = {
+  none: 'rounded-none',
+  sm: 'rounded-sm',
+  md: 'rounded-md',
+  lg: 'rounded-lg',
+  xl: 'rounded-xl',
+  full: 'rounded-full'
+};
+
+// Column classes for responsive grid
+const getColumnClasses = () => {
+  const baseColumns = Math.min(columns, 6);
+  const mobileColumns = Math.min(baseColumns, 2);
+  const tabletColumns = Math.min(baseColumns, 3);
+  
+  return `grid-cols-${mobileColumns} sm:grid-cols-${tabletColumns} md:grid-cols-${baseColumns}`;
+};
+
+// Variant-specific container classes
+const getContainerClasses = () => {
+  switch (variant) {
+    case 'grid':
+      return `grid ${getColumnClasses()} ${gapClasses[gap]}`;
+    case 'masonry':
+      return `columns-2 sm:columns-3 md:columns-${columns} ${gapClasses[gap]}`;
+    case 'carousel':
+      return `flex overflow-x-auto ${gapClasses[gap]} pb-2 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-800 dark:scrollbar-thumb-slate-600`;
+    case 'list':
+      return `flex flex-col ${gapClasses[gap]}`;
+    default:
+      return `grid ${getColumnClasses()} ${gapClasses[gap]}`;
+  }
+};
+
+// Animation classes
+const animationClasses = {
+  fade: 'transition-opacity duration-300',
+  slide: 'transition-transform duration-300',
+  zoom: 'transition-all duration-300',
+  none: ''
+};
 ---
 
-<div id={id} data-lightbox-root class={`lightbox ${className}`}>
-  {
-    images.length > 0 ? (
-      <div
-        class={`grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 ${thumbnailsClassName}`}
-      >
-        {images.map((image, index) => (
-          <button
-            type="button"
-            class="group relative overflow-hidden rounded-lg border border-slate-200 bg-white text-left text-slate-900 shadow-sm transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-            data-lightbox-trigger={index}
-            data-lightbox-src={image.src}
-            data-lightbox-alt={image.alt || `Image ${index + 1}`}
-            data-lightbox-caption={image.caption || ''}
-          >
+<div 
+  id={id} 
+  data-lightbox-root 
+  class={cn('lightbox', className)}
+  role="region"
+  aria-label={ariaLabel}
+>
+  {images.length > 0 ? (
+    <div
+      class={cn(
+        getContainerClasses(),
+        thumbnailsClassName
+      )}
+      role="grid"
+      aria-label={`${ariaLabel} with ${images.length} images`}
+    >
+      {images.map((image, index) => (
+        <button
+          type="button"
+          class={cn(
+            'group relative overflow-hidden text-left transition-all duration-200',
+            'border-2 border-slate-200 bg-white text-slate-900',
+            'hover:border-blue-500 hover:shadow-lg',
+            'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/50 focus-visible:border-blue-500',
+            'dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100',
+            'dark:hover:border-blue-400 dark:focus-visible:ring-blue-400/50 dark:focus-visible:border-blue-400',
+            roundedClasses[rounded],
+            variant === 'carousel' && 'shrink-0 w-48',
+            variant === 'masonry' && 'mb-4 break-inside-avoid',
+            variant === 'list' && 'flex items-center p-4'
+          )}
+          data-lightbox-trigger={index}
+          data-lightbox-src={image.src}
+          data-lightbox-alt={image.alt || `Image ${index + 1}`}
+          data-lightbox-caption={image.caption || ''}
+          data-lightbox-description={image.description || ''}
+          role="gridcell"
+          aria-label={`View ${image.alt || `image ${index + 1}`}${image.caption ? `: ${image.caption}` : ''}`}
+          tabindex="0"
+        >
+          <div class={cn(
+            'relative',
+            variant === 'list' ? 'w-16 h-16 mr-4 shrink-0' : thumbnailSizeClasses[thumbnailSize]
+          )}>
             <img
               src={image.thumbnail || image.src}
               alt={image.alt || `Image ${index + 1}`}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              class="h-36 w-full object-cover transition duration-300 group-hover:scale-105 md:h-48"
+              loading={index === 0 ? 'eager' : loading}
+              class={cn(
+                'w-full h-full object-cover transition-transform duration-300',
+                'group-hover:scale-105',
+                roundedClasses[rounded]
+              )}
+              draggable="false"
             />
-            {showCaptions && image.caption && (
-              <span class="absolute inset-x-0 bottom-0 bg-black/60 px-3 py-2 text-xs text-white backdrop-blur">
-                {image.caption}
-              </span>
-            )}
-            <span
-              class="pointer-events-none absolute inset-0 bg-blue-200/20 opacity-0 transition group-hover:opacity-100 dark:bg-blue-500/20"
+            
+            {/* Hover overlay with WCAG AAA contrast */}
+            <div
+              class={cn(
+                'absolute inset-0 bg-blue-600/20 opacity-0 transition-opacity duration-200',
+                'group-hover:opacity-100 group-focus-visible:opacity-100',
+                'dark:bg-blue-400/30',
+                roundedClasses[rounded]
+              )}
               aria-hidden="true"
             />
-            <span class="sr-only">View image {index + 1}</span>
-          </button>
-        ))}
-      </div>
-    ) : (
-      <div data-lightbox-slot>
-        <slot />
-      </div>
-    )
-  }
+            
+            {/* Zoom icon */}
+            <div
+              class={cn(
+                'absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200',
+                'group-hover:opacity-100 group-focus-visible:opacity-100'
+              )}
+              aria-hidden="true"
+            >
+              <div class="rounded-full bg-white/90 p-2 text-slate-900 shadow-lg dark:bg-slate-900/90 dark:text-slate-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                </svg>
+              </div>
+            </div>
+            
+            {/* Caption overlay */}
+            {showCaptions && image.caption && variant !== 'list' && (
+              <div class={cn(
+                'absolute inset-x-0 bottom-0 bg-slate-900/80 backdrop-blur-sm',
+                'px-3 py-2 text-xs text-white',
+                'transition-opacity duration-200',
+                roundedClasses[rounded] === 'rounded-full' ? 'rounded-b-full' : 'rounded-b-lg'
+              )}>
+                <p class="line-clamp-2 font-medium">{image.caption}</p>
+              </div>
+            )}
+          </div>
+          
+          {/* List variant content */}
+          {variant === 'list' && (
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                {image.caption || `Image ${index + 1}`}
+              </p>
+              {image.description && (
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
+                  {image.description}
+                </p>
+              )}
+            </div>
+          )}
+          
+          <span class="sr-only">
+            {image.alt || `Image ${index + 1}`}
+            {image.caption && `, ${image.caption}`}
+            {image.description && `, ${image.description}`}
+          </span>
+        </button>
+      ))}
+    </div>
+  ) : (
+    <div data-lightbox-slot>
+      <slot />
+    </div>
+  )}
 
+  <!-- Lightbox Overlay with WCAG AAA compliance -->
   <div
-    class={`fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm ${overlayClassName}`}
+    class={cn(
+      'fixed inset-0 z-50 hidden items-center justify-center',
+      'bg-slate-950/95 backdrop-blur-md',
+      animationClasses[animation],
+      overlayClassName
+    )}
     data-lightbox-overlay
     aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Image viewer"
   >
-    <div
-      class="relative flex max-h-[90vh] max-w-5xl flex-col gap-4 px-4 text-white"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Image viewer"
-    >
-      <div class="relative flex items-center justify-center">
+    <div class="relative flex max-h-[95vh] max-w-[95vw] flex-col text-white p-4">
+      <!-- Main image container -->
+      <div class="relative flex items-center justify-center flex-1">
+        <!-- Previous button -->
         <button
           type="button"
-          class="absolute left-0 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-3 text-2xl text-white transition hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+          class={cn(
+            'absolute left-4 top-1/2 -translate-y-1/2 z-10',
+            'rounded-full bg-slate-800/80 backdrop-blur-sm p-3',
+            'text-white transition-all duration-200',
+            'hover:bg-slate-700/90 hover:scale-110',
+            'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/50',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            'md:p-4 md:left-6'
+          )}
           data-lightbox-prev
-          aria-label="Previous image"
+          aria-label={prevAriaLabel}
         >
-          ‹
+          <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
-        <img
-          data-lightbox-image
-          alt=""
-          class="max-h-[75vh] w-auto max-w-full rounded-xl border border-white/30 object-contain"
-        />
+
+        <!-- Image -->
+        <div class="relative max-w-full max-h-full">
+          <img
+            data-lightbox-image
+            alt=""
+            class={cn(
+              'max-h-[80vh] max-w-full h-auto w-auto object-contain',
+              'rounded-lg border border-slate-600/50 shadow-2xl',
+              enableZoom && 'cursor-zoom-in',
+              animationClasses[animation]
+            )}
+            style="color: transparent;"
+          />
+          
+          {/* Loading spinner */}
+          <div 
+            class="absolute inset-0 flex items-center justify-center bg-slate-900/50 rounded-lg"
+            data-lightbox-loading
+          >
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+          </div>
+        </div>
+
+        <!-- Next button -->
         <button
           type="button"
-          class="absolute right-0 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-3 text-2xl text-white transition hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+          class={cn(
+            'absolute right-4 top-1/2 -translate-y-1/2 z-10',
+            'rounded-full bg-slate-800/80 backdrop-blur-sm p-3',
+            'text-white transition-all duration-200',
+            'hover:bg-slate-700/90 hover:scale-110',
+            'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/50',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            'md:p-4 md:right-6'
+          )}
           data-lightbox-next
-          aria-label="Next image"
+          aria-label={nextAriaLabel}
         >
-          ›
+          <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
+
+      <!-- Caption and controls -->
       <div
-        class="flex items-center justify-between gap-4 text-sm text-white/80"
+        class={cn(
+          'mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4',
+          'text-white/90'
+        )}
         data-lightbox-meta
-        hidden
       >
-        <p data-lightbox-caption class="flex-1"></p>
-        <span data-lightbox-counter></span>
+        <div class="flex-1 min-w-0">
+          <p data-lightbox-caption class="font-medium text-white"></p>
+          <p data-lightbox-description class="text-sm text-white/70 mt-1"></p>
+        </div>
+        
+        {showCounter && (
+          <div class="flex items-center gap-4 shrink-0">
+            <span 
+              data-lightbox-counter 
+              class="text-sm font-medium bg-slate-800/60 px-3 py-1 rounded-full"
+            ></span>
+            
+            {autoplay && (
+              <button
+                type="button"
+                class={cn(
+                  'p-2 rounded-full bg-slate-800/60 hover:bg-slate-700/80',
+                  'transition-colors duration-200',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
+                )}
+                data-lightbox-playpause
+                aria-label="Toggle slideshow"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path data-play-icon d="M8 5v14l11-7z" />
+                  <path data-pause-icon d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" style="display: none;" />
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
       </div>
+
+      <!-- Close button -->
       <button
         type="button"
-        class="absolute right-4 top-4 rounded-full bg-white/20 p-2 text-xl text-white transition hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+        class={cn(
+          'absolute right-4 top-4 z-20',
+          'rounded-full bg-slate-800/80 backdrop-blur-sm p-2',
+          'text-white transition-all duration-200',
+          'hover:bg-slate-700/90 hover:scale-110',
+          'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/50',
+          'md:p-3'
+        )}
         data-lightbox-close
-        aria-label="Close lightbox"
+        aria-label={closeAriaLabel}
       >
-        ×
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
     </div>
   </div>
 </div>
 
-<script is:inline>
+<script is:inline define:vars={{ 
+  id, 
+  autoplay, 
+  autoplayInterval, 
+  animation, 
+  closeOnBackdrop, 
+  closeOnEscape, 
+  keyboardNavigation, 
+  touchNavigation, 
+  enableZoom 
+}}>
   (function setupLightbox() {
-    const root = document.getElementById('${id}');
+    const root = document.getElementById(id);
     if (!(root instanceof HTMLElement)) return;
 
     const overlay = root.querySelector('[data-lightbox-overlay]');
@@ -133,17 +439,17 @@ const id = `lightbox-${Math.random().toString(36).slice(2, 10)}`;
     const imageElement = overlay.querySelector('[data-lightbox-image]');
     if (!(imageElement instanceof HTMLImageElement)) return;
     const captionElement = overlay.querySelector('[data-lightbox-caption]');
+    const descriptionElement = overlay.querySelector('[data-lightbox-description]');
     const counterElement = overlay.querySelector('[data-lightbox-counter]');
     const meta = overlay.querySelector('[data-lightbox-meta]');
+    const loadingElement = overlay.querySelector('[data-lightbox-loading]');
+    const playPauseButton = overlay.querySelector('[data-lightbox-playpause]');
 
-    const triggers = Array.from(
-      root.querySelectorAll('[data-lightbox-trigger]')
-    );
+    const triggers = Array.from(root.querySelectorAll('[data-lightbox-trigger]'));
 
+    // Fallback for custom slot content
     if (triggers.length === 0) {
-      const fallbackTriggers = Array.from(
-        root.querySelectorAll('[data-lightbox-item]')
-      );
+      const fallbackTriggers = Array.from(root.querySelectorAll('[data-lightbox-item]'));
       fallbackTriggers.forEach((el, index) => {
         if (el instanceof HTMLElement) {
           el.setAttribute('data-lightbox-trigger', String(index));
@@ -155,21 +461,18 @@ const id = `lightbox-${Math.random().toString(36).slice(2, 10)}`;
     const parsedTriggers = triggers.filter((el) => el instanceof HTMLElement);
     if (parsedTriggers.length === 0) return;
 
+    // Parse image data
     const images = parsedTriggers
       .map((trigger) => {
         const dataset = trigger.dataset;
         const img = trigger.querySelector('img');
         const imageEl = img instanceof HTMLImageElement ? img : null;
-        const src =
-          dataset.lightboxSrc ||
-          dataset.src ||
-          imageEl?.dataset.full ||
-          imageEl?.src ||
-          '';
+        const src = dataset.lightboxSrc || dataset.src || imageEl?.dataset.full || imageEl?.src || '';
         return {
           src,
           alt: dataset.lightboxAlt || imageEl?.alt || '',
           caption: dataset.lightboxCaption || dataset.caption || '',
+          description: dataset.lightboxDescription || dataset.description || '',
         };
       })
       .filter((item) => item.src);
@@ -178,108 +481,410 @@ const id = `lightbox-${Math.random().toString(36).slice(2, 10)}`;
 
     let currentIndex = 0;
     let lastFocused = null;
+    let autoplayTimer = null;
+    let isPlaying = autoplay;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isZoomed = false;
 
+    // Update display
     const update = () => {
       const current = images[currentIndex];
       if (!current) return;
+
+      // Show loading
+      if (loadingElement instanceof HTMLElement) {
+        loadingElement.style.display = 'flex';
+      }
+
+      // Update image
       imageElement.src = current.src;
       imageElement.alt = current.alt || `Image ${currentIndex + 1}`;
+      
+      // Update metadata
       if (captionElement instanceof HTMLElement) {
         captionElement.textContent = current.caption || '';
+      }
+      if (descriptionElement instanceof HTMLElement) {
+        descriptionElement.textContent = current.description || '';
+        descriptionElement.style.display = current.description ? 'block' : 'none';
       }
       if (counterElement instanceof HTMLElement) {
         counterElement.textContent = `${currentIndex + 1} / ${images.length}`;
       }
       if (meta instanceof HTMLElement) {
-        meta.hidden = !(current.caption || images.length > 1);
+        meta.style.display = (current.caption || current.description || images.length > 1) ? 'flex' : 'none';
       }
+
+      // Update navigation button states
+      const prevButton = overlay.querySelector('[data-lightbox-prev]');
+      const nextButton = overlay.querySelector('[data-lightbox-next]');
+      if (prevButton instanceof HTMLButtonElement) {
+        prevButton.disabled = images.length <= 1;
+        prevButton.style.display = images.length <= 1 ? 'none' : 'block';
+      }
+      if (nextButton instanceof HTMLButtonElement) {
+        nextButton.disabled = images.length <= 1;
+        nextButton.style.display = images.length <= 1 ? 'none' : 'block';
+      }
+
+      // Apply animation class
+      if (animation !== 'none') {
+        imageElement.classList.add(`lightbox-${animation}`);
+      }
+
+      // Reset zoom
+      isZoomed = false;
+      imageElement.style.transform = '';
+      imageElement.style.cursor = enableZoom ? 'zoom-in' : 'default';
     };
 
+    // Hide loading when image loads
+    imageElement.addEventListener('load', () => {
+      if (loadingElement instanceof HTMLElement) {
+        loadingElement.style.display = 'none';
+      }
+    });
+
+    // Open lightbox
     const open = (index) => {
       currentIndex = Math.max(0, Math.min(images.length - 1, index));
       update();
       overlay.classList.remove('hidden');
       overlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      lastFocused =
-        document.activeElement instanceof HTMLElement
-          ? document.activeElement
-          : null;
+      
+      // Focus management
+      lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       const closeButton = overlay.querySelector('[data-lightbox-close]');
       if (closeButton instanceof HTMLElement) {
         closeButton.focus();
       }
+
+      // Start autoplay if enabled
+      if (autoplay && images.length > 1) {
+        startAutoplay();
+      }
+
+      // Announce to screen readers
+      const announcement = `Opened image viewer. ${images[currentIndex].alt || `Image ${currentIndex + 1}`}. ${currentIndex + 1} of ${images.length}.`;
+      announceToScreenReader(announcement);
     };
 
+    // Close lightbox
     const close = () => {
       overlay.classList.add('hidden');
       overlay.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      
+      // Stop autoplay
+      stopAutoplay();
+      
+      // Restore focus
       if (lastFocused instanceof HTMLElement) {
         lastFocused.focus();
       }
+
+      // Reset zoom
+      isZoomed = false;
+      imageElement.style.transform = '';
+
+      // Announce to screen readers
+      announceToScreenReader('Closed image viewer');
     };
 
+    // Navigate to next image
     const next = () => {
+      if (images.length <= 1) return;
       currentIndex = (currentIndex + 1) % images.length;
       update();
+      announceToScreenReader(`${images[currentIndex].alt || `Image ${currentIndex + 1}`}. ${currentIndex + 1} of ${images.length}.`);
     };
 
+    // Navigate to previous image
     const prev = () => {
+      if (images.length <= 1) return;
       currentIndex = (currentIndex - 1 + images.length) % images.length;
       update();
+      announceToScreenReader(`${images[currentIndex].alt || `Image ${currentIndex + 1}`}. ${currentIndex + 1} of ${images.length}.`);
     };
 
+    // Autoplay functions
+    const startAutoplay = () => {
+      if (!autoplay || images.length <= 1) return;
+      isPlaying = true;
+      updatePlayPauseButton();
+      autoplayTimer = setInterval(next, autoplayInterval);
+    };
+
+    const stopAutoplay = () => {
+      isPlaying = false;
+      updatePlayPauseButton();
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    };
+
+    const toggleAutoplay = () => {
+      if (isPlaying) {
+        stopAutoplay();
+      } else {
+        startAutoplay();
+      }
+    };
+
+    const updatePlayPauseButton = () => {
+      if (playPauseButton instanceof HTMLElement) {
+        const playIcon = playPauseButton.querySelector('[data-play-icon]');
+        const pauseIcon = playPauseButton.querySelector('[data-pause-icon]');
+        if (playIcon && pauseIcon) {
+          playIcon.style.display = isPlaying ? 'none' : 'block';
+          pauseIcon.style.display = isPlaying ? 'block' : 'none';
+        }
+        playPauseButton.setAttribute('aria-label', isPlaying ? 'Pause slideshow' : 'Play slideshow');
+      }
+    };
+
+    // Zoom functionality
+    const toggleZoom = (event) => {
+      if (!enableZoom) return;
+      
+      event.preventDefault();
+      isZoomed = !isZoomed;
+      
+      if (isZoomed) {
+        imageElement.style.transform = 'scale(2)';
+        imageElement.style.cursor = 'zoom-out';
+      } else {
+        imageElement.style.transform = '';
+        imageElement.style.cursor = 'zoom-in';
+      }
+    };
+
+    // Screen reader announcements
+    const announceToScreenReader = (message) => {
+      const announcement = document.createElement('div');
+      announcement.setAttribute('aria-live', 'polite');
+      announcement.setAttribute('aria-atomic', 'true');
+      announcement.style.position = 'absolute';
+      announcement.style.left = '-10000px';
+      announcement.style.width = '1px';
+      announcement.style.height = '1px';
+      announcement.style.overflow = 'hidden';
+      announcement.textContent = message;
+      document.body.appendChild(announcement);
+      
+      setTimeout(() => {
+        document.body.removeChild(announcement);
+      }, 1000);
+    };
+
+    // Touch handling
+    const handleTouchStart = (event) => {
+      if (!touchNavigation) return;
+      touchStartX = event.changedTouches[0].screenX;
+    };
+
+    const handleTouchEnd = (event) => {
+      if (!touchNavigation) return;
+      touchEndX = event.changedTouches[0].screenX;
+      handleSwipe();
+    };
+
+    const handleSwipe = () => {
+      const swipeThreshold = 50;
+      const swipeDistance = touchEndX - touchStartX;
+      
+      if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance > 0) {
+          prev(); // Swipe right = previous
+        } else {
+          next(); // Swipe left = next
+        }
+      }
+    };
+
+    // Event listeners for triggers
     parsedTriggers.forEach((trigger, index) => {
       trigger.addEventListener('click', (event) => {
         event.preventDefault();
-        const dataIndex = Number.parseInt(
-          trigger.getAttribute('data-lightbox-trigger') || String(index),
-          10
-        );
+        const dataIndex = Number.parseInt(trigger.getAttribute('data-lightbox-trigger') || String(index), 10);
         open(Number.isNaN(dataIndex) ? index : dataIndex);
       });
     });
 
+    // Control button event listeners
     const closeButton = overlay.querySelector('[data-lightbox-close]');
-    if (closeButton instanceof HTMLElement)
+    if (closeButton instanceof HTMLElement) {
       closeButton.addEventListener('click', close);
-    const nextButton = overlay.querySelector('[data-lightbox-next]');
-    if (nextButton instanceof HTMLElement)
-      nextButton.addEventListener('click', next);
-    const prevButton = overlay.querySelector('[data-lightbox-prev]');
-    if (prevButton instanceof HTMLElement)
-      prevButton.addEventListener('click', prev);
+    }
 
+    const nextButton = overlay.querySelector('[data-lightbox-next]');
+    if (nextButton instanceof HTMLElement) {
+      nextButton.addEventListener('click', () => {
+        stopAutoplay();
+        next();
+      });
+    }
+
+    const prevButton = overlay.querySelector('[data-lightbox-prev]');
+    if (prevButton instanceof HTMLElement) {
+      prevButton.addEventListener('click', () => {
+        stopAutoplay();
+        prev();
+      });
+    }
+
+    if (playPauseButton instanceof HTMLElement) {
+      playPauseButton.addEventListener('click', toggleAutoplay);
+    }
+
+    // Image zoom on click
+    imageElement.addEventListener('click', toggleZoom);
+
+    // Backdrop click to close
     overlay.addEventListener('click', (event) => {
-      if (event.target === overlay) {
+      if (closeOnBackdrop && event.target === overlay) {
         close();
       }
     });
 
+    // Keyboard navigation
     document.addEventListener('keydown', (event) => {
       if (overlay.classList.contains('hidden')) return;
-      if (event.key === 'Escape') close();
-      if (event.key === 'ArrowRight') next();
-      if (event.key === 'ArrowLeft') prev();
+      
+      if (keyboardNavigation) {
+        switch (event.key) {
+          case 'Escape':
+            if (closeOnEscape) {
+              event.preventDefault();
+              close();
+            }
+            break;
+          case 'ArrowRight':
+          case ' ':
+            event.preventDefault();
+            stopAutoplay();
+            next();
+            break;
+          case 'ArrowLeft':
+            event.preventDefault();
+            stopAutoplay();
+            prev();
+            break;
+          case 'Home':
+            event.preventDefault();
+            stopAutoplay();
+            currentIndex = 0;
+            update();
+            break;
+          case 'End':
+            event.preventDefault();
+            stopAutoplay();
+            currentIndex = images.length - 1;
+            update();
+            break;
+        }
+      }
     });
 
-    overlay.addEventListener(
-      'wheel',
-      (event) => {
-        if (overlay.classList.contains('hidden')) return;
-        if (event.deltaY > 0) next();
-        if (event.deltaY < 0) prev();
-      },
-      { passive: true }
-    );
+    // Touch events
+    overlay.addEventListener('touchstart', handleTouchStart, { passive: true });
+    overlay.addEventListener('touchend', handleTouchEnd, { passive: true });
 
-    const preload = (index) => {
-      const nextIndex = (index + 1) % images.length;
-      const img = new Image();
-      img.src = images[nextIndex].src;
+    // Mouse wheel navigation
+    overlay.addEventListener('wheel', (event) => {
+      if (overlay.classList.contains('hidden')) return;
+      event.preventDefault();
+      stopAutoplay();
+      
+      if (event.deltaY > 0) {
+        next();
+      } else {
+        prev();
+      }
+    }, { passive: false });
+
+    // Preload next/previous images
+    const preloadImage = (index) => {
+      if (index >= 0 && index < images.length) {
+        const img = new Image();
+        img.src = images[index].src;
+      }
     };
 
-    overlay.addEventListener('transitionend', () => preload(currentIndex));
+    // Preload adjacent images when opening
+    const preloadAdjacent = () => {
+      preloadImage(currentIndex + 1);
+      preloadImage(currentIndex - 1);
+    };
+
+    // Initial setup
+    updatePlayPauseButton();
+    
+    // Preload on first interaction
+    overlay.addEventListener('transitionend', preloadAdjacent, { once: true });
   })();
 </script>
+
+<style>
+  /* Animation classes */
+  .lightbox-fade {
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .lightbox-slide {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .lightbox-zoom {
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    [data-lightbox-overlay] {
+      background-color: black;
+      backdrop-filter: none;
+    }
+    
+    [data-lightbox-trigger] {
+      border-width: 3px;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox-fade,
+    .lightbox-slide,
+    .lightbox-zoom {
+      transition-duration: 0.01ms;
+    }
+    
+    [data-lightbox-trigger] img {
+      transition-duration: 0.01ms;
+    }
+  }
+
+  /* Custom scrollbar for carousel */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-track-slate-100 {
+    scrollbar-color: rgb(203 213 225) rgb(241 245 249);
+  }
+  
+  .dark .scrollbar-track-slate-800 {
+    scrollbar-color: rgb(100 116 139) rgb(30 41 59);
+  }
+
+  /* Line clamp utility */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

@@ -3,12 +3,17 @@ interface Props {
   category?: string;
   title?: string;
   description?: string;
-  href?: string;
-  image?: string;
-  alt?: string;
-  height?: number | string;
-  rounded?: boolean;
-  className?: string;
+  href?: string; // if provided renders link
+  image?: string; // background image URL
+  alt?: string; // alt for image/fallback
+  height?: number | string; // explicit height overrides size preset
+  rounded?: boolean; // rounded corners (2xl vs lg)
+  className?: string; // extra classes
+  ariaLabel?: string; // override accessible label (link)
+  overlayStrength?: 'soft' | 'medium' | 'strong'; // darkness for AAA contrast
+  size?: 'sm' | 'md' | 'lg'; // height presets
+  headingLevel?: 2 | 3 | 4 | 5 | 6; // semantic heading for title
+  interactive?: boolean; // enable hover motion/scale
 }
 
 const {
@@ -18,14 +23,20 @@ const {
   href,
   image,
   alt,
-  height = '14rem',
+  height,
   rounded = true,
   className = '',
+  ariaLabel,
+  overlayStrength = 'medium',
+  size = 'md',
+  headingLevel = 3,
+  interactive = true,
 } = Astro.props as Props;
 
 const displayTitle = title ?? category ?? 'Category';
 const displayCategory = category ?? '';
 
+// Fallback gradient heuristic based on title/category keywords.
 const key = displayTitle.trim().toLowerCase();
 const gradient = key.includes('rock')
   ? 'from-purple-700 to-rose-500'
@@ -39,61 +50,82 @@ const gradient = key.includes('rock')
           ? 'from-indigo-700 to-blue-500'
           : 'from-slate-800 to-slate-950';
 
+// Height presets.
+const sizeHeights: Record<string, string> = { sm: '10rem', md: '14rem', lg: '18rem' };
+const resolvedHeight = height || sizeHeights[size] || sizeHeights.md;
+
+// Container classes.
 const containerClasses = [
-  'relative block overflow-hidden border border-slate-800/40 bg-slate-900 shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30',
+  'group relative block overflow-hidden border border-slate-300/40 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-900 shadow-sm dark:shadow-none',
+  interactive ? 'transition will-change-transform hover:-translate-y-0.5' : '',
+  href ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400' : 'focus:outline-none',
   rounded ? 'rounded-2xl' : 'rounded-lg',
   className,
-]
-  .filter(Boolean)
-  .join(' ')
-  .trim();
+].filter(Boolean).join(' ').trim();
 
+// Image classes.
 const mediaClasses = [
-  'h-full w-full object-cover transition duration-700',
-  image ? 'scale-100 group-hover:scale-105' : '',
-].join(' ');
+  'h-full w-full object-cover',
+  interactive ? 'transition duration-500 ease-out motion-reduce:transition-none' : 'motion-reduce:transition-none',
+  interactive && image ? 'scale-100 group-hover:scale-[1.03]' : '',
+].filter(Boolean).join(' ');
 
-const Tag = href ? 'a' : 'div';
+// Overlay strengths tuned for AAA contrast.
+const overlayMap: Record<string, string> = {
+  soft: 'from-slate-950/75 via-slate-950/35',
+  medium: 'from-slate-950/82 via-slate-950/42',
+  strong: 'from-slate-950/90 via-slate-950/55',
+};
+const overlayGradient = overlayMap[overlayStrength] || overlayMap.medium;
+
 const resolvedAlt = alt ?? `${displayTitle} preview`;
----
+const label = ariaLabel || resolvedAlt;
+const descId = href && description ? `${displayTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')}-desc` : undefined;
 
-<Tag href={href} class={containerClasses}>
-  <div class="group relative h-full" style={`height:${height}`}>
-    {
-      image ? (
-        <img
-          src={image}
-          alt={resolvedAlt}
-          class={mediaClasses}
-          loading="lazy"
-          decoding="async"
-        />
+const headingClass = 'text-base sm:text-lg font-semibold text-white leading-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]';
+---
+{href ? (
+  <a href={href} class={containerClasses} aria-label={label} aria-describedby={descId}>
+    <div class="relative h-full" style={`height:${resolvedHeight}`}> 
+      {image ? (
+        <img src={image} alt={resolvedAlt} class={mediaClasses} loading="lazy" decoding="async" />
       ) : (
-        <div
-          class={`flex h-full w-full items-center justify-center bg-gradient-to-br ${gradient}`}
-          role="img"
-          aria-label={resolvedAlt}
-        >
-          <span class="text-lg font-semibold uppercase tracking-wide text-white/80 drop-shadow">
-            {displayTitle}
-          </span>
+        <div class={`flex h-full w-full items-center justify-center bg-linear-to-br ${gradient}`} role="img" aria-label={resolvedAlt}>
+          <span class="text-lg font-semibold uppercase tracking-wide text-white/80 drop-shadow">{displayTitle}</span>
         </div>
-      )
-    }
-    <div
-      class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"
-    >
+      )}
+      <div class={`pointer-events-none absolute inset-0 bg-linear-to-t ${overlayGradient} to-transparent`} aria-hidden="true"></div>
+      <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-4 sm:p-5">
+        {displayCategory && <span class="text-xs font-semibold uppercase tracking-wide text-white/70">{displayCategory}</span>}
+  {headingLevel === 2 && <h2 class={headingClass}>{displayTitle}</h2>}
+  {headingLevel === 3 && <h3 class={headingClass}>{displayTitle}</h3>}
+  {headingLevel === 4 && <h4 class={headingClass}>{displayTitle}</h4>}
+  {headingLevel === 5 && <h5 class={headingClass}>{displayTitle}</h5>}
+  {headingLevel === 6 && <h6 class={headingClass}>{displayTitle}</h6>}
+        {description && <span id={descId} class="text-xs sm:text-sm text-white/85 leading-snug">{description}</span>}
+      </div>
     </div>
-    <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-5">
-      {
-        displayCategory && (
-          <span class="text-xs font-semibold uppercase tracking-wide text-white/70">
-            {displayCategory}
-          </span>
-        )
-      }
-      <span class="text-lg font-semibold text-white">{displayTitle}</span>
-      {description && <span class="text-sm text-white/80">{description}</span>}
+  </a>
+) : (
+  <div class={containerClasses} aria-label={ariaLabel || undefined}>
+    <div class="relative h-full" style={`height:${resolvedHeight}`}> 
+      {image ? (
+        <img src={image} alt={resolvedAlt} class={mediaClasses} loading="lazy" decoding="async" />
+      ) : (
+        <div class={`flex h-full w-full items-center justify-center bg-linear-to-br ${gradient}`} role="img" aria-label={resolvedAlt}>
+          <span class="text-lg font-semibold uppercase tracking-wide text-white/80 drop-shadow">{displayTitle}</span>
+        </div>
+      )}
+      <div class={`pointer-events-none absolute inset-0 bg-linear-to-t ${overlayGradient} to-transparent`} aria-hidden="true"></div>
+      <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-4 sm:p-5">
+        {displayCategory && <span class="text-xs font-semibold uppercase tracking-wide text-white/70">{displayCategory}</span>}
+  {headingLevel === 2 && <h2 class={headingClass}>{displayTitle}</h2>}
+  {headingLevel === 3 && <h3 class={headingClass}>{displayTitle}</h3>}
+  {headingLevel === 4 && <h4 class={headingClass}>{displayTitle}</h4>}
+  {headingLevel === 5 && <h5 class={headingClass}>{displayTitle}</h5>}
+  {headingLevel === 6 && <h6 class={headingClass}>{displayTitle}</h6>}
+        {description && <span class="text-xs sm:text-sm text-white/85 leading-snug">{description}</span>}
+      </div>
     </div>
   </div>
-</Tag>
+)}

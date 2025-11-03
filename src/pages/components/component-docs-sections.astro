@@ -1,0 +1,59 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import DocsSections from '../../components/ComponentDocsSections.astro';
+
+const overview = `Reusable scaffold that renders titled documentation sections (overview, examples, props, accessibility, theming). Omit any section to hide it.`;
+
+const props = `- overview?: content for the Overview section\n- examples?: content for Examples\n- interactive?: optional live demo region\n- props?: content for Props (dl/list)\n- accessibility?: accessibility guidance\n- theming?: theming/contrast notes`;
+
+const examples = `<DocsSections overview={<p>Short intro about the component.</p>} props={<p>Props rendered as a description list.</p>} examples={<p>Show example snippets and live demos.</p>} />`;
+---
+
+<DocsLayout title="ComponentDocsSections" description="Shared documentation scaffold for component pages.">
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">The <code>ComponentDocsSections</code> component provides a consistent, high-contrast layout for documenting components. It focuses on readability, keyboard accessibility, and responsive spacing so docs are usable in both light and dark modes.</p>
+  </section>
+
+  <section class="mt-6">
+    <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 text-sm text-slate-200">
+      <strong class="block text-slate-100">Quick reference</strong>
+      <p class="mt-2 whitespace-pre-wrap">{overview}</p>
+      <pre class="mt-3 text-xs bg-slate-800 p-2 rounded">{props}</pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">Import the scaffold and pass JSX fragments (Astro slots) for each section you need. Any omitted section is automatically hidden.</p>
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{examples}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">overview?</dt>
+        <dd class="text-sm text-slate-200">Content for the Overview section (Astro fragment). Hidden if omitted.</dd>
+      </div>
+
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">examples?</dt>
+        <dd class="text-sm text-slate-200">Example markup or live demos to appear in the Examples section.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Example</h2>
+    <div class="rounded-lg border border-slate-700/60 bg-slate-900/40 p-4">
+  <DocsSections overview={<p>This is the overview content.</p>} props={<p>Props list goes here.</p>} examples={<p>Some examples here.</p>} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">Headings and permalinks are keyboard-focusable and use a visible focus ring. Text and background contrast follow the same token approach as other docs pages to keep ratios high in both themes.</p>
+  </section>
+</DocsLayout>

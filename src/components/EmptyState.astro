@@ -1,11 +1,12 @@
 ---
 /**
- * EmptyState - generic placeholder with actions
+ * EmptyState - accessible placeholder with actions and WCAG AAA compliance
  */
 interface Action {
   href: string;
   label: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
+  ariaLabel?: string;
 }
 
 interface Props {
@@ -14,6 +15,10 @@ interface Props {
   primary?: Action;
   secondary?: Action;
   className?: string;
+  iconBg?: 'blue' | 'green' | 'purple' | 'red' | 'orange' | 'slate';
+  size?: 'sm' | 'md' | 'lg';
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
 }
 
 const {
@@ -22,14 +27,52 @@ const {
   primary,
   secondary,
   className = '',
+  iconBg = 'blue',
+  size = 'md',
+  ariaLabelledby,
+  ariaDescribedby,
 } = Astro.props as Props;
+
+const iconBgClasses = {
+  blue: 'bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600',
+  green: 'bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600',
+  purple: 'bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-600',
+  red: 'bg-gradient-to-br from-red-600 via-rose-600 to-pink-600',
+  orange: 'bg-gradient-to-br from-orange-600 via-amber-600 to-yellow-600',
+  slate: 'bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800',
+};
+
+const sizeClasses = {
+  sm: {
+    section: 'p-6',
+    icon: 'h-12 w-12',
+    title: 'text-xl',
+    description: 'text-sm',
+  },
+  md: {
+    section: 'p-8',
+    icon: 'h-14 w-14',
+    title: 'text-2xl',
+    description: 'text-base',
+  },
+  lg: {
+    section: 'p-10',
+    icon: 'h-16 w-16',
+    title: 'text-3xl',
+    description: 'text-lg',
+  },
+};
 ---
 
 <section
-  class={`rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-800 shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${className}`.trim()}
+  class={`rounded-3xl border-2 border-slate-300/90 bg-white ${sizeClasses[size].section} text-center text-slate-900 shadow-lg ring-1 ring-slate-950/10 dark:border-slate-600/90 dark:bg-slate-800 dark:text-slate-100 dark:shadow-slate-950/30 dark:ring-white/10 ${className}`.trim()}
+  role="region"
+  aria-labelledby={ariaLabelledby}
+  aria-describedby={ariaDescribedby}
 >
   <div
-    class="mx-auto.mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white shadow-sm"
+    class={`mx-auto mb-6 inline-flex ${sizeClasses[size].icon} items-center justify-center rounded-2xl ${iconBgClasses[iconBg]} text-white shadow-lg`}
+    aria-hidden="true"
   >
     <slot name="icon">
       <svg
@@ -48,25 +91,26 @@ const {
       </svg>
     </slot>
   </div>
-  <h3 class="mb-2 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+  <h3 class={`mb-3 ${sizeClasses[size].title} font-semibold text-slate-900 dark:text-slate-100`}>
     {title}
   </h3>
   {
     description && (
-      <p class="mx-auto mb-6 max-w-prose text-slate-600 dark:text-slate-300">
+      <p class={`mx-auto mb-8 max-w-prose ${sizeClasses[size].description} text-slate-700 dark:text-slate-300`}>
         {description}
       </p>
     )
   }
 
-  <div class="flex flex-wrap items-center justify-center gap-3">
+  <div class="flex flex-wrap items-center justify-center gap-4">
     {
       primary && (
         <a
           href={primary.href}
           target={primary.target || '_self'}
           rel={primary.target === '_blank' ? 'noopener noreferrer' : undefined}
-          class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-semibold text-white no-underline shadow-sm transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-slate-900"
+          aria-label={primary.ariaLabel}
+          class="inline-flex min-h-11 items-center justify-center rounded-lg border-2 border-blue-600/90 bg-blue-600 px-6 py-3 text-sm font-semibold text-white no-underline shadow-lg transition-colors duration-200 hover:bg-blue-700 hover:border-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-blue-500/90 dark:bg-blue-500 dark:hover:bg-blue-400 dark:hover:border-blue-400 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
         >
           {primary.label}
         </a>
@@ -80,11 +124,16 @@ const {
           rel={
             secondary.target === '_blank' ? 'noopener noreferrer' : undefined
           }
-          class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 no-underline shadow-sm transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+          aria-label={secondary.ariaLabel}
+          class="inline-flex min-h-11 items-center justify-center rounded-lg border-2 border-slate-300/90 bg-white px-6 py-3 text-sm font-semibold text-slate-900 no-underline shadow-lg transition-colors duration-200 hover:bg-slate-50 hover:border-slate-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/90 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:border-slate-500 dark:focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-800"
         >
           {secondary.label}
         </a>
       )
     }
+  </div>
+  
+  <div class="mt-6">
+    <slot />
   </div>
 </section>

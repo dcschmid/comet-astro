@@ -1,13 +1,37 @@
 ---
-interface Props {
+import { cn } from '../utils/cn';
+
+export interface Props {
+  /** Name attribute for radio group */
   name: string;
+  /** Value of this radio option */
   value: string;
+  /** Label text for the radio button */
   label?: string;
+  /** Whether the radio is checked */
   checked?: boolean;
+  /** Whether the radio is disabled */
   disabled?: boolean;
+  /** Whether the radio is required */
   required?: boolean;
-  className?: string;
+  /** Whether the radio has an error state */
+  error?: boolean;
+  /** Visual variant of the radio button */
+  variant?: 'default' | 'success' | 'warning' | 'error' | 'minimal';
+  /** Size of the radio button */
+  size?: 'sm' | 'md' | 'lg';
+  /** Position of the label relative to radio */
+  labelPosition?: 'right' | 'left';
+  /** Description text for additional context */
+  description?: string;
+  /** Custom ID for the input element */
   id?: string;
+  /** Custom aria-label for accessibility */
+  ariaLabel?: string;
+  /** ID of element that describes the radio */
+  ariaDescribedBy?: string;
+  /** Additional CSS classes */
+  class?: string;
 }
 
 const {
@@ -17,46 +41,164 @@ const {
   checked = false,
   disabled = false,
   required = false,
-  className = '',
-  id = `${name}-${value}`,
+  error = false,
+  variant = 'default',
+  size = 'md',
+  labelPosition = 'right',
+  description,
+  id = `radio-${name}-${value}`,
+  ariaLabel,
+  ariaDescribedBy,
+  class: className = '',
 } = Astro.props;
 
-const baseClasses =
-  'h-5 w-5 rounded-full border-2 border-slate-400 bg-white text-blue-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white accent-blue-600 dark:border-slate-500 dark:bg-slate-900 dark:text-blue-400 dark:focus-visible:ring-offset-slate-900 dark:accent-blue-400';
-const interactiveClasses = disabled
-  ? 'cursor-not-allowed opacity-60'
-  : 'cursor-pointer';
+// Size classes for radio button
+const sizeClasses = {
+  sm: 'h-4 w-4',
+  md: 'h-5 w-5',
+  lg: 'h-6 w-6',
+};
+
+// Label text size classes
+const labelSizeClasses = {
+  sm: 'text-sm',
+  md: 'text-sm',
+  lg: 'text-base',
+};
+
+// Description text size classes
+const descriptionSizeClasses = {
+  sm: 'text-xs',
+  md: 'text-xs',
+  lg: 'text-sm',
+};
+
+// Variant color schemes with WCAG AAA compliance
+const variantClasses = {
+  default: {
+    radio: cn(
+      'border-gray-400 dark:border-gray-500',
+      'text-blue-600 dark:text-blue-400',
+      'checked:border-blue-600 dark:checked:border-blue-400',
+      'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+      error && 'border-red-500 dark:border-red-400 checked:border-red-600 dark:checked:border-red-400 focus-visible:ring-red-500 dark:focus-visible:ring-red-400'
+    ),
+    label: 'text-gray-900 dark:text-gray-100',
+    description: 'text-gray-600 dark:text-gray-300',
+  },
+  success: {
+    radio: cn(
+      'border-emerald-500 dark:border-emerald-400',
+      'text-emerald-600 dark:text-emerald-400',
+      'checked:border-emerald-600 dark:checked:border-emerald-400',
+      'focus-visible:ring-emerald-600 dark:focus-visible:ring-emerald-400'
+    ),
+    label: 'text-gray-900 dark:text-gray-100',
+    description: 'text-emerald-600 dark:text-emerald-300',
+  },
+  warning: {
+    radio: cn(
+      'border-amber-500 dark:border-amber-400',
+      'text-amber-600 dark:text-amber-400',
+      'checked:border-amber-600 dark:checked:border-amber-400',
+      'focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400'
+    ),
+    label: 'text-gray-900 dark:text-gray-100',
+    description: 'text-amber-600 dark:text-amber-300',
+  },
+  error: {
+    radio: cn(
+      'border-red-500 dark:border-red-400',
+      'text-red-600 dark:text-red-400',
+      'checked:border-red-600 dark:checked:border-red-400',
+      'focus-visible:ring-red-600 dark:focus-visible:ring-red-400'
+    ),
+    label: 'text-gray-900 dark:text-gray-100',
+    description: 'text-red-600 dark:text-red-300',
+  },
+  minimal: {
+    radio: cn(
+      'border-gray-300 dark:border-gray-600',
+      'text-gray-700 dark:text-gray-300',
+      'checked:border-gray-700 dark:checked:border-gray-300',
+      'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400',
+      error && 'border-red-500 dark:border-red-400 checked:border-red-600 dark:checked:border-red-400 focus-visible:ring-red-500 dark:focus-visible:ring-red-400'
+    ),
+    label: 'text-gray-700 dark:text-gray-300',
+    description: 'text-gray-500 dark:text-gray-400',
+  },
+};
+
+// Radio button classes
+const radioClasses = cn(
+  'rounded-full border-2 bg-white dark:bg-gray-900',
+  'transition-all duration-200 ease-in-out',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
+  sizeClasses[size],
+  variantClasses[variant].radio,
+  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-opacity-80',
+  labelPosition === 'right' ? 'mt-0.5' : 'mt-0.5'
+);
+
+// Label classes
+const labelClasses = cn(
+  'font-medium leading-tight',
+  labelSizeClasses[size],
+  variantClasses[variant].label,
+  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+  required && 'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
+);
+
+// Description classes
+const descriptionClasses = cn(
+  'mt-1 leading-tight',
+  descriptionSizeClasses[size],
+  variantClasses[variant].description,
+  disabled && 'opacity-50'
+);
+
+// Container classes
+const containerClasses = cn(
+  'flex items-start gap-3',
+  labelPosition === 'left' && 'flex-row-reverse',
+  size === 'sm' && 'gap-2',
+  size === 'lg' && 'gap-4',
+  className
+);
+
+const descriptionId = description ? `${id}-description` : undefined;
+const finalAriaDescribedBy = [ariaDescribedBy, descriptionId].filter(Boolean).join(' ') || undefined;
 ---
 
-<div
-  class={`flex items-start gap-2 text-slate-900 dark:text-slate-100 ${className}`.trim()}
->
+<div class={containerClasses}>
   <input
     type="radio"
-    id={id}
-    name={name}
-    value={value}
-    checked={checked}
-    disabled={disabled}
-    required={required}
-    class={`${baseClasses} ${interactiveClasses} mt-0.5`}
+    {id}
+    {name}
+    {value}
+    {checked}
+    {disabled}
+    {required}
+    aria-label={ariaLabel}
+    aria-describedby={finalAriaDescribedBy}
+    aria-invalid={error ? 'true' : undefined}
+    class={radioClasses}
   />
-  {
-    label && (
-      <label
-        for={id}
-        class={`text-sm leading-tight ${disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'} text-slate-800 dark:text-slate-200`}
-      >
-        {label}
-        {required && (
-          <span
-            class="ml-1 text-rose-600 dark:text-rose-400"
-            aria-hidden="true"
-          >
-            *
-          </span>
-        )}
-      </label>
-    )
-  }
+  
+  {(label || description) && (
+    <div class="flex-1 min-w-0">
+      {label && (
+        <label for={id} class={labelClasses}>
+          {label}
+        </label>
+      )}
+      
+      {description && (
+        <div id={descriptionId} class={descriptionClasses}>
+          {description}
+        </div>
+      )}
+    </div>
+  )}
 </div>

@@ -1,6 +1,7 @@
 ---
 /**
- * HeroSection - headline, subheadline and optional actions
+ * HeroSection - WCAG AAA compliant hero component with enhanced accessibility and responsive design
+ * Enhanced with semantic HTML, proper contrast ratios, and flexible layout options
  */
 import ButtonLink from './ButtonLink.astro';
 
@@ -8,14 +9,34 @@ interface Action {
   href: string;
   label: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
+  variant?: 'primary' | 'secondary';
 }
 
 interface Props {
+  /** Main headline text */
   title: string;
+  /** Supporting subtitle text */
   subtitle?: string;
+  /** Primary call-to-action */
   primary?: Action;
+  /** Secondary call-to-action */
   secondary?: Action;
+  /** Additional CSS classes */
   className?: string;
+  /** Visual theme variant */
+  variant?: 'default' | 'gradient' | 'minimal' | 'dark';
+  /** Content alignment */
+  align?: 'left' | 'center' | 'right';
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Background image URL */
+  backgroundImage?: string;
+  /** Whether to show background pattern */
+  showPattern?: boolean;
+  /** ARIA label for the section */
+  ariaLabel?: string;
+  /** Custom heading level for SEO */
+  headingLevel?: 'h1' | 'h2' | 'h3';
 }
 
 const {
@@ -24,45 +45,135 @@ const {
   primary,
   secondary,
   className = '',
+  variant = 'default',
+  align = 'center',
+  size = 'lg',
+  backgroundImage,
+  showPattern = true,
+  ariaLabel,
+  headingLevel = 'h1',
 } = Astro.props as Props;
+
+// Enhanced variant system
+const variantClasses = {
+  default: 'bg-gradient-to-br from-blue-50/80 via-white to-purple-50/80 border-slate-200/60 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 dark:border-slate-700/60',
+  gradient: 'bg-gradient-to-br from-indigo-50 via-white to-cyan-50 border-indigo-200/60 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 dark:border-indigo-700/60',
+  minimal: 'bg-white border-slate-200 dark:bg-slate-950 dark:border-slate-800',
+  dark: 'bg-slate-900 border-slate-700 text-slate-100',
+};
+
+// Size variants
+const sizeClasses = {
+  sm: 'p-6 sm:p-8',
+  md: 'p-8 sm:p-12',
+  lg: 'p-10 sm:p-16 lg:p-20',
+  xl: 'p-12 sm:p-20 lg:p-24',
+};
+
+// Alignment classes
+const alignClasses = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+};
+
+// Content max width based on alignment
+const contentWidthClasses = {
+  left: 'max-w-4xl',
+  center: 'max-w-4xl mx-auto',
+  right: 'max-w-4xl ml-auto',
+};
+
+// Title size based on section size
+const titleSizeClasses = {
+  sm: 'text-3xl sm:text-4xl md:text-5xl',
+  md: 'text-4xl sm:text-5xl md:text-6xl',
+  lg: 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl',
+  xl: 'text-6xl sm:text-7xl md:text-8xl lg:text-9xl',
+};
+
+// Subtitle size based on section size
+const subtitleSizeClasses = {
+  sm: 'text-base sm:text-lg',
+  md: 'text-lg sm:text-xl',
+  lg: 'text-xl sm:text-2xl',
+  xl: 'text-2xl sm:text-3xl',
+};
+
+// Enhanced background classes
+const backgroundClasses = backgroundImage 
+  ? `bg-cover bg-center bg-no-repeat` 
+  : '';
+
+const patternClasses = showPattern 
+  ? 'before:absolute before:inset-0 before:bg-[url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23000" fill-opacity="0.02"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")] before:opacity-50 dark:before:opacity-30'
+  : '';
+
+// Build comprehensive class string
+const sectionClasses = [
+  'relative overflow-hidden rounded-2xl border shadow-xl',
+  variantClasses[variant],
+  sizeClasses[size],
+  backgroundClasses,
+  patternClasses,
+  className,
+].filter(Boolean).join(' ');
+
+// Dynamic heading component
+const HeadingTag = headingLevel;
 ---
 
 <section
-  class={`relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-blue-50 via-white to-purple-50 p-8 text-slate-800 shadow-xl dark:border-slate-700 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 dark:text-slate-100 ${className}`.trim()}
+  class={sectionClasses}
+  style={backgroundImage ? `background-image: url(${backgroundImage})` : undefined}
+  aria-label={ariaLabel}
+  role="banner"
 >
-  <div class="mx-auto max-w-3xl text-center">
-    <h1
-      class="mb-3 text-4xl font-extrabold text-slate-900 tracking-tight md:text-5xl dark:text-white"
+  {showPattern && <div class="absolute inset-0 opacity-40 dark:opacity-20"></div>}
+  
+  <div class={`relative z-10 ${contentWidthClasses[align]} ${alignClasses[align]}`}>
+    <HeadingTag
+      class={`
+        mb-4 font-extrabold leading-tight tracking-tight text-balance
+        text-slate-900 dark:text-slate-50
+        ${titleSizeClasses[size]}
+      `.trim()}
     >
       {title}
-    </h1>
-    {
-      subtitle && (
-        <p class="mx-auto mb-6 max-w-prose text-lg text-slate-600 dark:text-slate-300">
-          {subtitle}
-        </p>
-      )
-    }
-    {
-      (primary || secondary) && (
-        <div class="flex flex-wrap items-center justify-center gap-3">
-          {primary && (
-            <ButtonLink
-              href={primary.href}
-              label={primary.label}
-              target={primary.target || '_self'}
-            />
-          )}
-          {secondary && (
-            <ButtonLink
-              href={secondary.href}
-              label={secondary.label}
-              variant="secondary"
-              target={secondary.target || '_self'}
-            />
-          )}
-        </div>
-      )
-    }
+    </HeadingTag>
+    
+    {subtitle && (
+      <p class={`
+        mb-8 max-w-3xl leading-relaxed text-slate-700 dark:text-slate-300
+        ${subtitleSizeClasses[size]}
+        ${align === 'center' ? 'mx-auto' : align === 'right' ? 'ml-auto' : ''}
+      `.trim()}>
+        {subtitle}
+      </p>
+    )}
+    
+    {(primary || secondary) && (
+      <div class={`
+        flex flex-wrap items-center gap-4
+        ${align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : 'justify-start'}
+      `.trim()}>
+        {primary && (
+          <ButtonLink
+            href={primary.href}
+            label={primary.label}
+            variant={primary.variant || 'primary'}
+            target={primary.target || '_self'}
+          />
+        )}
+        {secondary && (
+          <ButtonLink
+            href={secondary.href}
+            label={secondary.label}
+            variant={secondary.variant || 'secondary'}
+            target={secondary.target || '_self'}
+          />
+        )}
+      </div>
+    )}
   </div>
 </section>

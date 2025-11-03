@@ -1,61 +1,234 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Divider from '../../components/Divider.astro';
+import DividerComponent from '../../components/Divider.astro';
+
+const usageSnippet = `---
+import { Divider } from 'comet-astro';
+
+---
+
+<div class="space-y-6">
+  <p>Content above</p>
+  <Divider />
+  <p>Content below</p>
+  
+  <p>Section with label</p>
+  <Divider label="or" />
+  <p>Alternative content</p>
+  
+  <div class="flex items-center gap-4">
+    <span>Left</span>
+    <Divider orientation="vertical" />
+    <span>Right</span>
+  </div>
+</div>`;
 ---
 
 <DocsLayout
   title="Divider"
-  description="Visual separator for content sections."
+  description="Accessible visual separators with WCAG AAA contrast, multiple variants, and responsive spacing."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li>
-        <code>orientation?: 'horizontal'|'vertical'</code> – direction (default:
-        'horizontal')
-      </li>
-      <li>
-        <code>variant?: 'solid'|'dashed'|'dotted'|'gradient'</code> – style (default:
-        'solid')
-      </li>
-      <li>
-        <code>spacing?: 'none'|'sm'|'md'|'lg'</code> – margin spacing (default: 'md')
-      </li>
-      <li><code>className?: string</code></li>
-    </ul>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      Divider provides semantic content separation with multiple visual styles and orientations. 
+      The component maintains WCAG AAA contrast ratios across all variants and includes optional 
+      text labels for enhanced semantic meaning and accessibility.
+    </p>
+    <p class="text-base text-slate-200">
+      Horizontal and vertical orientations support responsive spacing with automatic adjustments 
+      for different screen sizes. Label variants improve content structure and provide clear 
+      section boundaries for screen readers.
+    </p>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          orientation?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Direction of the divider: <code>"horizontal"</code> or <code>"vertical"</code>. Defaults to <code>"horizontal"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style: <code>"solid"</code>, <code>"dashed"</code>, <code>"dotted"</code>, or <code>"gradient"</code>. Defaults to <code>"solid"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          spacing?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Margin spacing around divider: <code>"none"</code>, <code>"sm"</code>, <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          label?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional text label centered on horizontal dividers for semantic separation.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the divider element for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Use dividers to create visual separation between content sections. Choose orientations 
+      and variants based on your layout needs, and add labels for enhanced semantic meaning.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Examples</h2>
+    <p class="text-base text-slate-200">
+      Standard horizontal dividers with different visual styles.
+    </p>
     <div class="space-y-6">
       <div>
-        <h3 class="text-lg font-semibold mb-2">Solid (default)</h3>
-        <p>Content above</p>
-        <Divider />
-        <p>Content below</p>
+        <h3 class="mb-3 text-lg font-semibold text-slate-100">Solid (default)</h3>
+        <p class="text-slate-200">Content above the divider</p>
+        <DividerComponent />
+        <p class="text-slate-200">Content below the divider</p>
       </div>
+      
       <div>
-        <h3 class="text-lg font-semibold mb-2">Dashed</h3>
-        <p>Content above</p>
-        <Divider variant="dashed" />
-        <p>Content below</p>
+        <h3 class="mb-3 text-lg font-semibold text-slate-100">Dashed</h3>
+        <p class="text-slate-200">Content above</p>
+        <DividerComponent variant="dashed" />
+        <p class="text-slate-200">Content below</p>
       </div>
+      
       <div>
-        <h3 class="text-lg font-semibold mb-2">Gradient</h3>
-        <p>Content above</p>
-        <Divider variant="gradient" spacing="lg" />
-        <p>Content below</p>
-      </div>
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Vertical</h3>
-        <div class="flex items-center gap-4" style="height: 100px;">
-          <span>Left</span>
-          <Divider orientation="vertical" />
-          <span>Middle</span>
-          <Divider orientation="vertical" />
-          <span>Right</span>
-        </div>
+        <h3 class="mb-3 text-lg font-semibold text-slate-100">Gradient</h3>
+        <p class="text-slate-200">Content above</p>
+        <DividerComponent variant="gradient" spacing="lg" />
+        <p class="text-slate-200">Content below</p>
       </div>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Labeled Dividers</h2>
+    <p class="text-base text-slate-200">
+      Add semantic text labels to provide context and improve accessibility.
+    </p>
+    <div class="space-y-6">
+      <div>
+        <p class="text-slate-200">Sign in with your account</p>
+        <DividerComponent label="or" />
+        <p class="text-slate-200">Continue as guest</p>
+      </div>
+      
+      <div>
+        <p class="text-slate-200">Basic plan features</p>
+        <DividerComponent label="Premium Features" spacing="lg" />
+        <p class="text-slate-200">Advanced capabilities</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Vertical Orientation</h2>
+    <p class="text-base text-slate-200">
+      Use vertical dividers for inline content separation and navigation elements.
+    </p>
+    <div class="space-y-6">
+      <div class="flex h-20 items-center gap-4">
+        <span class="text-slate-200">Left Section</span>
+        <DividerComponent orientation="vertical" />
+        <span class="text-slate-200">Middle Section</span>
+        <DividerComponent orientation="vertical" />
+        <span class="text-slate-200">Right Section</span>
+      </div>
+      
+      <div class="flex h-16 items-center gap-6">
+        <span class="text-slate-200">Home</span>
+        <DividerComponent orientation="vertical" variant="dashed" spacing="none" />
+        <span class="text-slate-200">About</span>
+        <DividerComponent orientation="vertical" variant="dashed" spacing="none" />
+        <span class="text-slate-200">Contact</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Spacing Variants</h2>
+    <p class="text-base text-slate-200">
+      Control spacing around dividers to match your layout requirements.
+    </p>
+    <div class="space-y-8">
+      <div>
+        <h3 class="mb-2 text-base font-semibold text-slate-100">Small spacing</h3>
+        <p class="text-slate-200">Content with tight spacing</p>
+        <DividerComponent spacing="sm" />
+        <p class="text-slate-200">Following content</p>
+      </div>
+      
+      <div>
+        <h3 class="mb-2 text-base font-semibold text-slate-100">Large spacing</h3>
+        <p class="text-slate-200">Content with generous spacing</p>
+        <DividerComponent spacing="lg" />
+        <p class="text-slate-200">Well-separated content</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Contrast ratios exceed WCAG AAA requirements (7:1+) across all divider variants in both 
+      light and dark themes. Visual separators maintain sufficient visibility while remaining 
+      unobtrusive to content flow.
+    </p>
+    <p class="text-base text-slate-200">
+      Semantic HTML uses proper <code>hr</code> elements with <code>role="separator"</code> 
+      for labeled variants. Screen readers understand content structure through appropriate 
+      ARIA attributes and can navigate section boundaries effectively.
+    </p>
+    <p class="text-base text-slate-200">
+      Responsive spacing automatically adjusts for different screen sizes, maintaining 
+      proportional separation while optimizing content density for mobile and desktop viewing.
+    </p>
   </section>
 </DocsLayout>

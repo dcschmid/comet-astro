@@ -1,20 +1,33 @@
 ---
+/**
+ * Container - responsive max-width wrapper for content layout
+ */
 interface Props {
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   className?: string;
+  as?: 'div' | 'main' | 'section' | 'article' | 'aside' | 'header' | 'footer';
+  id?: string;
 }
 
-const { size = 'lg', className = '' } = Astro.props;
+const { 
+  size = 'lg', 
+  className = '', 
+  as: Element = 'div',
+  id
+} = Astro.props;
 
-const sizeClasses = {
+const sizeClasses: Record<string, string> = {
   sm: 'max-w-2xl',
-  md: 'max-w-4xl',
+  md: 'max-w-4xl', 
   lg: 'max-w-6xl',
   xl: 'max-w-7xl',
   full: 'max-w-full',
 };
+
+const baseClasses = `mx-auto px-4 sm:px-6 lg:px-8 ${sizeClasses[size]}`;
+const combinedClasses = `${baseClasses} ${className}`.trim();
 ---
 
-<div class={`mx-auto px-4 sm:px-6 lg:px-8 ${sizeClasses[size]} ${className}`}>
+<Element class={combinedClasses} id={id}>
   <slot />
-</div>
+</Element>

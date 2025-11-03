@@ -1,28 +1,224 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import DropdownMenu from '../../components/DropdownMenu.astro';
+import DropdownMenuComponent from '../../components/DropdownMenu.astro';
 
-const items = [
+const usageSnippet = `---
+import { DropdownMenu } from 'comet-astro';
+
+---
+
+<DropdownMenu
+  items={[
+    { label: 'Profile', href: '/profile', icon: '👤' },
+    { label: 'Settings', href: '/settings', icon: '⚙️' },
+    { divider: true },
+    { label: 'Sign out', href: '/logout', icon: '🚪' }
+  ]}
+  align="right"
+  size="md"
+>
+  <span slot="trigger">Account ▼</span>
+</DropdownMenu>`;
+
+const basicItems = [
+  { label: 'Edit', href: '#', icon: '✏️' },
+  { label: 'Share', href: '#', icon: '📤' },
+  { label: 'Delete', href: '#', icon: '🗑️', disabled: true },
+];
+
+const accountItems = [
   { label: 'Profile', href: '#', icon: '👤' },
+  { label: 'Billing', href: '#', icon: '💳' },
   { label: 'Settings', href: '#', icon: '⚙️' },
   { divider: true },
-  { label: 'Logout', href: '#', icon: '🚪' },
+  { label: 'Help & Support', href: '#', icon: '❓' },
+  { label: 'Sign out', href: '#', icon: '🚪' },
+];
+
+const moreItems = [
+  { label: 'Copy link', href: '#', icon: '🔗' },
+  { label: 'Download PDF', href: '#', icon: '📄' },
+  { divider: true },
+  { label: 'Report issue', href: '#', icon: '🚨' },
 ];
 ---
 
 <DocsLayout
   title="DropdownMenu"
-  description="Accessible menu triggered by buttons or custom elements."
+  description="Accessible dropdown menus with WCAG AAA contrast, keyboard navigation, and flexible content."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
+    <p class="text-base text-slate-100">
+      DropdownMenu provides accessible dropdown interfaces with comprehensive keyboard navigation 
+      and focus management. The component maintains WCAG AAA contrast ratios across all interactive 
+      elements and supports both link and button menu items with proper ARIA semantics.
+    </p>
+    <p class="text-base text-slate-200">
+      Arrow key navigation, Home/End support, and ESC key handling provide complete keyboard 
+      accessibility. The menu automatically closes on outside clicks and restores focus to the 
+      trigger element for optimal user experience.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          items
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of menu items with <code>label</code>, optional <code>href</code>, <code>onClick</code>, <code>icon</code>, <code>disabled</code>, or <code>divider</code> properties.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          align?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Menu alignment relative to trigger: <code>"left"</code> or <code>"right"</code>. Defaults to <code>"left"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Menu width preset: <code>"sm"</code>, <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the dropdown wrapper for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Define menu items with labels, links, click handlers, and visual separators. 
+      Customize the trigger content using the "trigger" slot. The component handles all 
+      accessibility concerns automatically.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Example</h2>
+    <p class="text-base text-slate-200">
+      Simple dropdown with default alignment and sizing.
+    </p>
     <div class="flex gap-4">
-      <DropdownMenu items={items}>
+      <DropdownMenuComponent items={basicItems}>
         <span slot="trigger">Actions ▼</span>
-      </DropdownMenu>
-      <DropdownMenu items={items} align="right">
-        <span slot="trigger">Right Aligned ▼</span>
-      </DropdownMenu>
+      </DropdownMenuComponent>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Alignment Options</h2>
+    <p class="text-base text-slate-200">
+      Control menu positioning relative to the trigger button.
+    </p>
+    <div class="flex justify-between">
+      <DropdownMenuComponent items={accountItems} align="left">
+        <span slot="trigger">Left Aligned ▼</span>
+      </DropdownMenuComponent>
+      
+      <DropdownMenuComponent items={accountItems} align="right">
+        <span slot="trigger">Right Aligned ▼</span>
+      </DropdownMenuComponent>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
+    <p class="text-base text-slate-200">
+      Choose from predefined width sizes to match your content needs.
+    </p>
+    <div class="flex flex-wrap gap-4">
+      <DropdownMenuComponent items={basicItems} size="sm">
+        <span slot="trigger">Small Menu ▼</span>
+      </DropdownMenuComponent>
+      
+      <DropdownMenuComponent items={accountItems} size="md">
+        <span slot="trigger">Medium Menu ▼</span>
+      </DropdownMenuComponent>
+      
+      <DropdownMenuComponent items={accountItems} size="lg">
+        <span slot="trigger">Large Menu ▼</span>
+      </DropdownMenuComponent>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Mixed Content</h2>
+    <p class="text-base text-slate-200">
+      Combine links, buttons, dividers, and disabled items for complex menu structures.
+    </p>
+    <div class="flex gap-4">
+      <DropdownMenuComponent items={moreItems}>
+        <span slot="trigger">More Options ▼</span>
+      </DropdownMenuComponent>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Custom Styling</h2>
+    <p class="text-base text-slate-200">
+      Apply custom classes for branded or specialized dropdown appearances.
+    </p>
+    <div class="flex gap-4">
+      <DropdownMenuComponent 
+        items={basicItems} 
+        className="[&_button]:bg-purple-600 [&_button]:text-white [&_button]:border-purple-600 [&_button:hover]:bg-purple-700"
+      >
+        <span slot="trigger">Custom Style ▼</span>
+      </DropdownMenuComponent>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Contrast ratios exceed WCAG AAA requirements (7:1+) across all menu items and states 
+      in both light and dark themes. Focus indicators use inset ring styles for clear 
+      keyboard navigation without layout disruption.
+    </p>
+    <p class="text-base text-slate-200">
+      Keyboard navigation includes arrow keys for item traversal, Home/End for quick navigation, 
+      Enter/Space for activation, and ESC for dismissal. The menu uses proper ARIA attributes 
+      including <code>role="menu"</code>, <code>role="menuitem"</code>, and <code>aria-expanded</code> 
+      for screen reader compatibility.
+    </p>
+    <p class="text-base text-slate-200">
+      Focus management automatically moves to the first enabled menu item when opened and 
+      returns to the trigger button when closed. Disabled items are properly excluded from 
+      keyboard navigation while remaining visible for context.
+    </p>
   </section>
 </DocsLayout>

@@ -1,31 +1,716 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import Paragraph from '../../components/Paragraph.astro';
+import Button from '../../components/Button.astro';
+import Badge from '../../components/Badge.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const title = 'PageHeader Component';
+const description = 'WCAG AAA compliant page header component with multiple variants, responsive design, and accessibility features.';
 ---
 
-<DocsLayout
-  title="PageHeader"
-  description="Headline block with subtitle, action slots, and supporting content."
->
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Overview</h2>
-    <p class="text-gray-400 text-sm">
-      Compose titles, subtitles, and optional actions for hero sections or
-      resource pages. Use the slots to attach CTAs or secondary metadata.
-    </p>
-  </section>
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The PageHeader component provides semantic page headers with titles, subtitles, eyebrows, and action areas. 
+        It supports multiple variants, sizes, and alignment options while maintaining WCAG AAA compliance and responsive design.
+      </p>
+    </section>
 
-  <section>
-    <PageHeader
-      eyebrow="Release notes"
-      title="Comet 1.4 is live"
-      subtitle="Fresh components, improved defaults, and smoother navigation."
-    >
-      <Paragraph size="sm">
-        Explore the changelog to learn what shipped, what changed, and how to
-        migrate.
-      </Paragraph>
-    </PageHeader>
-  </section>
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              title="Welcome to Our Platform"
+              subtitle="Build amazing experiences with our comprehensive component library and design system."
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<PageHeader
+  title="Welcome to Our Platform"
+  subtitle="Build amazing experiences with our comprehensive component library and design system."
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Variants
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Default</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              variant="default"
+              title="Default Page Header"
+              subtitle="Standard layout with left alignment and normal spacing."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Centered</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              variant="centered"
+              title="Centered Page Header"
+              subtitle="Centered layout perfect for landing pages and marketing content."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Minimal</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              variant="minimal"
+              title="Minimal Page Header"
+              subtitle="Compact spacing for content-focused pages."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Hero</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              variant="hero"
+              title="Hero Page Header"
+              subtitle="Large, centered layout perfect for hero sections and feature announcements."
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<PageHeader variant="default" title="Page Title" subtitle="Description" />
+
+<!-- Centered variant -->
+<PageHeader variant="centered" title="Page Title" subtitle="Description" />
+
+<!-- Minimal variant -->
+<PageHeader variant="minimal" title="Page Title" subtitle="Description" />
+
+<!-- Hero variant -->
+<PageHeader variant="hero" title="Page Title" subtitle="Description" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Sizes
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Small</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              size="sm"
+              title="Small Page Header"
+              subtitle="Compact size for secondary pages and content sections."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Medium (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              size="md"
+              title="Medium Page Header"
+              subtitle="Standard size for most page headers and main content areas."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Large</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              size="lg"
+              title="Large Page Header"
+              subtitle="Prominent size for important pages and feature sections."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Extra Large</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              size="xl"
+              title="Extra Large Header"
+              subtitle="Maximum impact size for hero sections and landing pages."
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<PageHeader size="sm" title="Page Title" />
+
+<!-- Medium size (default) -->
+<PageHeader size="md" title="Page Title" />
+
+<!-- Large size -->
+<PageHeader size="lg" title="Page Title" />
+
+<!-- Extra large size -->
+<PageHeader size="xl" title="Page Title" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Eyebrow and Actions -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Eyebrow and Actions
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">With Eyebrow</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              eyebrow="Release Notes"
+              title="Comet 1.5 is Live"
+              subtitle="Fresh components, improved performance, and enhanced accessibility features."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">With Actions</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              title="Project Dashboard"
+              subtitle="Monitor your projects and track progress in real-time."
+            >
+              <div class="flex flex-col sm:flex-row gap-3">
+                <Button variant="primary" size="md">
+                  Create Project
+                </Button>
+                <Button variant="outline" size="md">
+                  Import Data
+                </Button>
+              </div>
+            </PageHeader>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Complete Example</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              eyebrow="Documentation"
+              title="Component Library"
+              subtitle="Explore our comprehensive collection of accessible, responsive components."
+              variant="centered"
+              size="lg"
+            >
+              <div class="flex flex-col sm:flex-row gap-3 items-center">
+                <Button variant="primary" size="lg">
+                  Get Started
+                </Button>
+                <Button variant="ghost" size="lg">
+                  View Examples
+                </Button>
+                <Badge variant="success" size="sm">New</Badge>
+              </div>
+            </PageHeader>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- With eyebrow -->
+<PageHeader
+  eyebrow="Release Notes"
+  title="Comet 1.5 is Live"
+  subtitle="Fresh components and improved performance."
+/>
+
+<!-- With actions in slot -->
+<PageHeader
+  title="Project Dashboard"
+  subtitle="Monitor your projects in real-time."
+>
+  <div class="flex gap-3">
+    <Button variant="primary">Create Project</Button>
+    <Button variant="outline">Import Data</Button>
+  </div>
+</PageHeader>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Alignment Options -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Alignment Options
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Left Aligned (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              alignment="left"
+              title="Left Aligned Header"
+              subtitle="Standard left alignment for most content pages."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Center Aligned</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              alignment="center"
+              title="Center Aligned Header"
+              subtitle="Perfect for landing pages and marketing content."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Right Aligned</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              alignment="right"
+              title="Right Aligned Header"
+              subtitle="Unique alignment for special layouts and creative designs."
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Left alignment -->
+<PageHeader alignment="left" title="Page Title" />
+
+<!-- Center alignment -->
+<PageHeader alignment="center" title="Page Title" />
+
+<!-- Right alignment -->
+<PageHeader alignment="right" title="Page Title" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Background Options -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Background Options
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">No Background (Default)</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <PageHeader
+              background="none"
+              title="No Background"
+              subtitle="Clean header without any background styling."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Subtle Background</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <PageHeader
+              background="subtle"
+              title="Subtle Background"
+              subtitle="Light background that adds gentle visual separation."
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Pattern Background</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <PageHeader
+              background="pattern"
+              title="Pattern Background"
+              subtitle="Gradient background with subtle grid pattern for visual interest."
+              variant="hero"
+              size="lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- No background -->
+<PageHeader background="none" title="Page Title" />
+
+<!-- Subtle background -->
+<PageHeader background="subtle" title="Page Title" />
+
+<!-- Pattern background -->
+<PageHeader background="pattern" title="Page Title" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Semantic HTML Levels -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Semantic HTML Levels
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Different Heading Levels</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden space-y-6 p-6">
+            <PageHeader
+              title="H1 Page Title"
+              subtitle="Using h1 for main page heading (default)"
+              titleLevel={1}
+              size="sm"
+            />
+            <PageHeader
+              title="H2 Section Title"
+              subtitle="Using h2 for section headings"
+              titleLevel={2}
+              size="sm"
+            />
+            <PageHeader
+              title="H3 Subsection Title"
+              subtitle="Using h3 for subsection headings"
+              titleLevel={3}
+              size="sm"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Main page heading (default) -->
+<PageHeader titleLevel={1} title="Page Title" />
+
+<!-- Section heading -->
+<PageHeader titleLevel={2} title="Section Title" />
+
+<!-- Subsection heading -->
+<PageHeader titleLevel={3} title="Subsection Title" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">WCAG AAA Compliance</h3>
+        <ul class="list-disc pl-6 space-y-2 text-blue-800 dark:text-blue-200">
+          <li>Semantic HTML with proper heading hierarchy (h1-h6)</li>
+          <li>WCAG AAA contrast ratios (7:1+) for all text elements</li>
+          <li>Proper ARIA relationships between titles and subtitles</li>
+          <li>Responsive design that works across all device sizes</li>
+          <li>Screen reader optimized with semantic header element</li>
+          <li>Keyboard navigation support for interactive elements</li>
+          <li>High contrast support for users with visual impairments</li>
+          <li>Proper spacing and line height for enhanced readability</li>
+        </ul>
+      </div>
+
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Enhanced Accessibility</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <PageHeader
+              title="Accessible Page Header"
+              subtitle="This header includes enhanced accessibility features for better user experience."
+              role="banner"
+              ariaLabel="Main page header"
+              ariaDescribedBy="header-description"
+            >
+              <p id="header-description" class="text-sm text-gray-600 dark:text-gray-400">
+                Additional context that screen readers can associate with this header.
+              </p>
+            </PageHeader>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<PageHeader
+  title="Accessible Page Header"
+  subtitle="Enhanced accessibility features"
+  role="banner"
+  ariaLabel="Main page header"
+  ariaDescribedBy="header-description"
+>
+  <p id="header-description">
+    Additional context for screen readers.
+  </p>
+</PageHeader>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Props Reference
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-red-700 dark:text-red-300">
+                title
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Main heading text
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                subtitle
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Optional subtitle text
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                eyebrow
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Small text above title
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default' | 'centered' | 'minimal' | 'hero'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual layout variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg' | 'xl'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Text size and spacing
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                alignment
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'left' | 'center' | 'right'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'left'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Text alignment
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                background
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'none' | 'subtle' | 'pattern'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'none'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Background styling
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                titleLevel
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                1 | 2 | 3 | 4 | 5 | 6
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                1
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                HTML heading level (h1-h6)
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                role
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                ARIA role attribute
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaLabel
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                ARIA label for accessibility
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaDescribedBy
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                ID of describing element
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Best Practices
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+            ✅ Do
+          </h3>
+          <ul class="space-y-2 text-green-800 dark:text-green-200">
+            <li>• Use proper heading hierarchy (h1 for main page, h2 for sections)</li>
+            <li>• Keep titles concise and descriptive</li>
+            <li>• Use eyebrows for context or category information</li>
+            <li>• Choose appropriate variants based on page purpose</li>
+            <li>• Provide meaningful subtitles that add context</li>
+            <li>• Use the slot for relevant actions or additional content</li>
+            <li>• Test with screen readers to ensure accessibility</li>
+            <li>• Consider mobile experience when choosing sizes</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-red-900 dark:text-red-100 mb-3">
+            ❌ Don't
+          </h3>
+          <ul class="space-y-2 text-red-800 dark:text-red-200">
+            <li>• Skip heading levels (h1 → h3 without h2)</li>
+            <li>• Use multiple h1 elements on the same page</li>
+            <li>• Make titles too long or complex</li>
+            <li>• Use decorative text in titles</li>
+            <li>• Ignore responsive design considerations</li>
+            <li>• Overcrowd the header with too many actions</li>
+            <li>• Use hero variant for simple content pages</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+            💡 Tips
+          </h3>
+          <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
+            <li>• Use 'hero' variant for landing pages and marketing content</li>
+            <li>• 'minimal' variant works well for content-heavy pages</li>
+            <li>• Consider using 'pattern' background for special announcements</li>
+            <li>• Group related actions in the slot area</li>
+            <li>• Use eyebrows to establish context before the main title</li>
+            <li>• Test header readability on different screen sizes</li>
+            <li>• Consider page loading performance when using pattern backgrounds</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

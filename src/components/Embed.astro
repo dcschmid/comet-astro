@@ -9,6 +9,8 @@ interface Props {
   sandbox?: string;
   allow?: string;
   className?: string;
+  ariaLabel?: string;
+  ariaDescribedby?: string;
 }
 
 const {
@@ -21,6 +23,8 @@ const {
   sandbox,
   allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
   className = '',
+  ariaLabel,
+  ariaDescribedby,
 } = Astro.props;
 
 const ratioClasses = {
@@ -33,12 +37,12 @@ const ratioClasses = {
 
 const hasAspectRatio = aspectRatio !== 'none';
 const wrapperClass = hasAspectRatio
-  ? `relative overflow-hidden rounded-xl border border-slate-200 bg-slate-950 ${ratioClasses[aspectRatio]} dark:border-slate-700`
-  : 'rounded-xl overflow-hidden border border-slate-200 bg-slate-950 dark:border-slate-700';
+  ? `relative overflow-hidden rounded-xl border-2 border-slate-300/90 bg-slate-50 shadow-lg ring-1 ring-slate-950/10 ${ratioClasses[aspectRatio]} dark:border-slate-600/90 dark:bg-slate-800 dark:shadow-slate-950/30 dark:ring-white/10`
+  : 'rounded-xl overflow-hidden border-2 border-slate-300/90 bg-slate-50 shadow-lg ring-1 ring-slate-950/10 dark:border-slate-600/90 dark:bg-slate-800 dark:shadow-slate-950/30 dark:ring-white/10';
 
 const iframeClass = hasAspectRatio
-  ? 'absolute inset-0 w-full h-full border-0'
-  : 'w-full border-0';
+  ? 'absolute inset-0 w-full h-full border-0 rounded-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800'
+  : 'w-full border-0 rounded-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800';
 
 const iframeStyle =
   !hasAspectRatio && height ? `height: ${height}px` : undefined;
@@ -53,5 +57,9 @@ const iframeStyle =
     loading={loading}
     sandbox={sandbox}
     class={iframeClass}
-    style={iframeStyle}></iframe>
+    style={iframeStyle}
+    aria-label={ariaLabel}
+    aria-describedby={ariaDescribedby}
+    tabindex="0"
+  ></iframe>
 </div>

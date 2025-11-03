@@ -1,30 +1,577 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Navbar from '../../components/Navbar.astro';
-import ButtonLink from '../../components/ButtonLink.astro';
-const navItems = [
-  { href: '#', label: 'Home' },
-  { href: '#', label: 'Docs' },
+import Button from '../../components/Button.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const title = 'Navbar Component';
+const description = 'WCAG AAA compliant responsive navigation with mobile toggle and customizable styling.';
+
+// Example navigation items
+const basicNavItems = [
+  { href: '#home', label: 'Home' },
+  { href: '#about', label: 'About' },
+  { href: '#services', label: 'Services' },
+  { href: '#contact', label: 'Contact' }
+];
+
+const externalNavItems = [
+  { href: '#home', label: 'Home' },
+  { href: '#docs', label: 'Docs' },
+  { href: 'https://github.com', label: 'GitHub', external: true },
+  { href: 'https://twitter.com', label: 'Twitter', external: true }
+];
+
+const activeNavItems = [
+  { href: '#home', label: 'Home', active: true },
+  { href: '#about', label: 'About' },
+  { href: '#services', label: 'Services' },
+  { href: '#contact', label: 'Contact' }
 ];
 ---
 
-<DocsLayout
-  title="Navbar"
-  description="Responsive top navigation with a mobile toggle and actions slot."
->
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>items?: &#123;href,label,external?&#125;[]</code></li>
-      <li><code>brand?: string</code></li>
-      <li><code>className?: string</code></li>
-    </ul>
-  </section>
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The Navbar component provides a responsive, accessible navigation header with mobile menu support. It includes brand/logo display, navigation links, and customizable action slots.
+      </p>
+    </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Example</h2>
-    <Navbar brand="Comet" items={navItems}>
-      <ButtonLink slot="actions" href="#" label="GitHub" variant="secondary" />
-    </Navbar>
-  </section>
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Comet" items={basicNavItems}>
+              <Button slot="actions" variant="primary" size="sm">
+                Get Started
+              </Button>
+            </Navbar>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`const navItems = [
+  { href: '#home', label: 'Home' },
+  { href: '#about', label: 'About' },
+  { href: '#services', label: 'Services' },
+  { href: '#contact', label: 'Contact' }
+];
+
+<Navbar brand="Comet" items={navItems}>
+  <Button slot="actions" variant="primary" size="sm">
+    Get Started
+  </Button>
+</Navbar>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Variants
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Default</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Default" items={basicNavItems} variant="default" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Minimal</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Minimal" items={basicNavItems} variant="minimal" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Glass</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-linear-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900">
+            <Navbar brand="Glass" items={basicNavItems} variant="glass" />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant - solid background with border -->
+<Navbar brand="MyApp" items={navItems} variant="default" />
+
+<!-- Minimal variant - transparent background -->
+<Navbar brand="MyApp" items={navItems} variant="minimal" />
+
+<!-- Glass variant - frosted glass effect -->
+<Navbar brand="MyApp" items={navItems} variant="glass" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Positions -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Position Options
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Static (Default)</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Static" items={basicNavItems} position="static" />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Normal document flow positioning
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Sticky</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Sticky" items={basicNavItems} position="sticky" />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Sticks to top when scrolling
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Fixed</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Fixed" items={basicNavItems} position="fixed" />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Always fixed at top of viewport
+          </p>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Static positioning (default) -->
+<Navbar items={navItems} position="static" />
+
+<!-- Sticky positioning - sticks to top when scrolling -->
+<Navbar items={navItems} position="sticky" />
+
+<!-- Fixed positioning - always at top -->
+<Navbar items={navItems} position="fixed" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Max Width Options -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Container Widths
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Small (max-w-2xl)</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Small" items={basicNavItems} maxWidth="sm" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Large (max-w-6xl)</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Large" items={basicNavItems} maxWidth="lg" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Full Width (no max-width)</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Full" items={basicNavItems} maxWidth="full" />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Different container widths -->
+<Navbar items={navItems} maxWidth="sm" />   <!-- max-w-2xl -->
+<Navbar items={navItems} maxWidth="md" />   <!-- max-w-4xl -->
+<Navbar items={navItems} maxWidth="lg" />   <!-- max-w-6xl -->
+<Navbar items={navItems} maxWidth="xl" />   <!-- max-w-7xl (default) -->
+<Navbar items={navItems} maxWidth="full" /> <!-- no max-width -->`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Navigation Features -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Navigation Features
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">External Links</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="External" items={externalNavItems} />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            External links show an indicator and open in new window
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Active Page</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Active" items={activeNavItems} />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Active page is highlighted and announced to screen readers
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Custom Brand Link</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Custom" brandHref="/custom" items={basicNavItems} />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Brand can link to custom URL instead of homepage
+          </p>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`// External links with indicators
+const externalItems = [
+  { href: '#home', label: 'Home' },
+  { href: 'https://github.com', label: 'GitHub', external: true }
+];
+
+// Active page highlighting
+const activeItems = [
+  { href: '#home', label: 'Home', active: true },
+  { href: '#about', label: 'About' }
+];
+
+<Navbar 
+  brand="MyApp" 
+  brandHref="/custom"
+  items={externalItems} 
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Action Slots -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Action Slots
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Single Action</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Single" items={basicNavItems}>
+              <Button slot="actions" variant="primary" size="sm">
+                Sign Up
+              </Button>
+            </Navbar>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Multiple Actions</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Multiple" items={basicNavItems}>
+              <div slot="actions" class="flex items-center gap-2">
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
+                <Button variant="primary" size="sm">
+                  Sign Up
+                </Button>
+              </div>
+            </Navbar>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Theme Toggle</h3>
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <Navbar brand="Theme" items={basicNavItems}>
+              <button 
+                slot="actions" 
+                class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Toggle theme"
+              >
+                <span class="text-lg">🌙</span>
+              </button>
+            </Navbar>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Single action button -->
+<Navbar brand="MyApp" items={navItems}>
+  <Button slot="actions" variant="primary" size="sm">
+    Sign Up
+  </Button>
+</Navbar>
+
+<!-- Multiple actions -->
+<Navbar brand="MyApp" items={navItems}>
+  <div slot="actions" class="flex items-center gap-2">
+    <Button variant="ghost" size="sm">Login</Button>
+    <Button variant="primary" size="sm">Sign Up</Button>
+  </div>
+</Navbar>
+
+<!-- Custom elements -->
+<Navbar brand="MyApp" items={navItems}>
+  <button slot="actions" class="..." aria-label="Toggle theme">
+    🌙
+  </button>
+</Navbar>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">WCAG AAA Compliance</h3>
+        <ul class="list-disc pl-6 space-y-2 text-blue-800 dark:text-blue-200">
+          <li>Touch targets meet minimum 44px requirement</li>
+          <li>Color contrast ratios exceed 7:1 for WCAG AAA standards</li>
+          <li>Keyboard navigation with Tab, Enter, and Escape keys</li>
+          <li>Screen reader support with proper ARIA labels and landmarks</li>
+          <li>Focus management when opening/closing mobile menu</li>
+          <li>Active page indication with aria-current="page"</li>
+          <li>External link announcements for screen readers</li>
+          <li>Semantic HTML with proper header, nav, and list structure</li>
+          <li>Mobile menu toggle with proper aria-expanded state</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Props Reference -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Props Reference
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                items
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                NavItem[]
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                []
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Array of navigation items
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                brand
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'Comet'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Brand name or logo text
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                brandHref
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                '/'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                URL for the brand link
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default' | 'minimal' | 'glass'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                position
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'static' | 'sticky' | 'fixed'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'static'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                CSS position behavior
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                maxWidth
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg' | 'xl' | 'full'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'xl'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Maximum container width
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaLabel
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'Main navigation'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Accessible label for navigation
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                class
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Additional CSS classes
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">NavItem Interface</h3>
+        <CodeBlock
+          code={`interface NavItem {
+  href: string;      // URL for the navigation link
+  label: string;     // Display text for the link
+  external?: boolean; // Open in new window (adds indicator)
+  active?: boolean;  // Mark as current page (highlighted)
+}`}
+          lang="typescript"
+        />
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Best Practices
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+            ✅ Do
+          </h3>
+          <ul class="space-y-2 text-green-800 dark:text-green-200">
+            <li>• Keep navigation items concise and descriptive</li>
+            <li>• Use active state for current page indication</li>
+            <li>• Mark external links with external: true</li>
+            <li>• Test mobile menu functionality on touch devices</li>
+            <li>• Provide clear brand/logo that links to homepage</li>
+            <li>• Use sticky or fixed position for long pages</li>
+            <li>• Limit navigation items to 5-7 for better usability</li>
+            <li>• Test keyboard navigation thoroughly</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-red-900 dark:text-red-100 mb-3">
+            ❌ Don't
+          </h3>
+          <ul class="space-y-2 text-red-800 dark:text-red-200">
+            <li>• Overcrowd the navigation with too many items</li>
+            <li>• Use vague labels like "Page 1" or "Link"</li>
+            <li>• Forget to test mobile menu on actual devices</li>
+            <li>• Override focus styles without providing alternatives</li>
+            <li>• Make the mobile toggle button too small</li>
+            <li>• Use only color to indicate active states</li>
+            <li>• Nest dropdowns without proper keyboard support</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+            💡 Tips
+          </h3>
+          <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
+            <li>• Use 'glass' variant over hero images or videos</li>
+            <li>• 'minimal' variant works well on colored backgrounds</li>
+            <li>• Sticky positioning improves navigation accessibility</li>
+            <li>• Consider user journey when ordering navigation items</li>
+            <li>• Actions slot is perfect for CTAs and user controls</li>
+            <li>• Test with screen readers for optimal accessibility</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

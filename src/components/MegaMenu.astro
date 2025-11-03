@@ -1,94 +1,269 @@
 ---
+/**
+ * MegaMenu - Enhanced with WCAG AAA compliance, multiple variants, and responsive design
+ */
+
 interface MenuItem {
   label: string;
   href: string;
   description?: string;
   icon?: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  badge?: string;
 }
 
 interface Column {
   title: string;
   items: MenuItem[];
+  href?: string;
+  description?: string;
 }
 
 interface Props {
+  // Content
   trigger: string;
   columns: Column[];
+  
+  // Variants
+  variant?: 'default' | 'compact' | 'detailed' | 'minimal';
+  size?: 'sm' | 'md' | 'lg';
+  
+  // Layout
+  maxColumns?: number;
+  width?: 'auto' | 'full' | 'screen';
+  
+  // States
+  disabled?: boolean;
+  
+  // Accessibility
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  
+  // Classes
+  class?: string;
   className?: string;
 }
 
-const { trigger, columns, className = '' } = Astro.props;
+const {
+  trigger,
+  columns,
+  variant = 'default',
+  size = 'md',
+  maxColumns = 4,
+  width = 'auto',
+  disabled = false,
+  ariaLabel,
+  ariaDescribedBy,
+  class: className,
+  className: legacyClassName
+} = Astro.props;
 
-const panelId = `mega-menu-panel-${Math.random().toString(36).slice(2, 10)}`;
+// Generate unique IDs for accessibility
+const menuId = `mega-menu-${Math.random().toString(36).slice(2, 10)}`;
+const panelId = `${menuId}-panel`;
+
+// Variant styles
+const variantClasses = {
+  default: 'border border-gray-300 dark:border-gray-600 shadow-sm',
+  compact: 'border border-gray-200 dark:border-gray-700 shadow-sm',
+  detailed: 'border-2 border-gray-300 dark:border-gray-600 shadow-lg',
+  minimal: 'border-0 shadow-none'
+};
+
+// Size styles - Fixed column widths to prevent overlap
+const sizeClasses = {
+  sm: {
+    trigger: 'px-3 py-1.5 text-sm',
+    panel: 'p-6 gap-6',
+    icon: 'text-sm',
+    title: 'text-xs font-medium',
+    item: 'p-3 text-sm',
+    description: 'text-xs',
+    columnWidth: 'w-[240px]'
+  },
+  md: {
+    trigger: 'px-4 py-2 text-sm',
+    panel: 'p-8 gap-8',
+    icon: 'text-base',
+    title: 'text-sm font-semibold',
+    item: 'p-4 text-sm',
+    description: 'text-xs',
+    columnWidth: 'w-[280px]'
+  },
+  lg: {
+    trigger: 'px-6 py-3 text-base',
+    panel: 'p-10 gap-10',
+    icon: 'text-lg',
+    title: 'text-base font-semibold',
+    item: 'p-5 text-base',
+    description: 'text-sm',
+    columnWidth: 'w-[320px]'
+  }
+};
+
+const currentSize = sizeClasses[size];
+
+// Width styles - Better scaling for fixed column layouts
+const widthClasses = {
+  auto: 'min-w-fit max-w-7xl',
+  full: 'w-full min-w-fit max-w-7xl',
+  screen: 'w-screen max-w-screen-2xl'
+};
+
+// Grid columns based on actual columns and maxColumns - Fixed width distribution
+const actualColumns = Math.min(columns.length, maxColumns);
+const gridClasses = {
+  1: 'grid-cols-1 min-w-[320px]',
+  2: 'grid-cols-2 min-w-[640px]',
+  3: 'grid-cols-3 min-w-[960px]',
+  4: 'grid-cols-4 min-w-[1280px]'
+};
+
+// Base trigger classes with WCAG AAA contrast
+const triggerClasses = `
+  inline-flex items-center gap-2 rounded-lg font-medium
+  ${currentSize.trigger}
+  ${variantClasses[variant]}
+  ${variant !== 'minimal' ? 'bg-white dark:bg-gray-900' : 'bg-transparent'}
+  text-gray-900 dark:text-gray-50
+  hover:bg-gray-50 dark:hover:bg-gray-800
+  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+  dark:focus:ring-offset-gray-900
+  transition-all duration-200 ease-in-out
+  ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
+`.trim().replace(/\s+/g, ' ');
+
+// Panel classes with WCAG AAA contrast
+const panelClasses = `
+  absolute left-0 z-50 mt-2 rounded-lg
+  ${widthClasses[width]}
+  ${variant !== 'minimal' ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'}
+  ${variant !== 'minimal' ? 'border border-gray-200 dark:border-gray-700' : ''}
+  ${variant === 'detailed' ? 'shadow-2xl' : variant !== 'minimal' ? 'shadow-lg' : 'shadow-md'}
+  ${variant !== 'minimal' ? 'ring-1 ring-black/5 dark:ring-white/10' : ''}
+  opacity-0 invisible pointer-events-none transition-all duration-200 ease-out
+`.trim().replace(/\s+/g, ' ');
+
+const finalClassName = className || legacyClassName || '';
 ---
 
 <div
-  class={`relative inline-block text-slate-900 dark:text-slate-100 ${className}`.trim()}
+  id={menuId}
+  class={`relative inline-block ${finalClassName}`}
   data-mega-menu
 >
   <button
     type="button"
-    class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900"
+    class={triggerClasses}
     data-mega-trigger
     aria-haspopup="true"
     aria-expanded="false"
     aria-controls={panelId}
+    aria-label={ariaLabel || `${trigger} menu`}
+    aria-describedby={ariaDescribedBy}
+    disabled={disabled}
   >
     {trigger}
-    <span class="text-xs" aria-hidden="true">▼</span>
+    <span class={`${currentSize.icon} transition-transform duration-200`} aria-hidden="true">▼</span>
   </button>
 
   <div
     id={panelId}
-    class="absolute left-0 z-50 mt-2 w-screen max-w-4xl rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-2xl ring-1 ring-black/5 opacity-0 invisible pointer-events-none transition duration-150 ease-out dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+    class={panelClasses}
     data-mega-panel
     role="menu"
     aria-hidden="true"
+    aria-labelledby={`${menuId}-trigger`}
     hidden
   >
     <div
-      class={`grid gap-6 p-6 ${columns.length === 2 ? 'grid-cols-2' : columns.length === 3 ? 'grid-cols-3' : 'grid-cols-4'} max-[640px]:grid-cols-1`}
+      class={`grid ${gridClasses[actualColumns] || 'grid-cols-1'} ${currentSize.panel} w-full`}
     >
-      {
-        columns.map((column) => (
-          <div>
-            <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+      {columns.map((column, columnIndex) => (
+        <div key={columnIndex} class={`${currentSize.columnWidth} overflow-hidden`}>
+          {column.href ? (
+            <a
+              href={column.href}
+              class={`
+                block mb-4 ${currentSize.title} uppercase tracking-wide
+                text-gray-700 dark:text-gray-300
+                hover:text-blue-700 dark:hover:text-blue-300
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                dark:focus:ring-offset-gray-900
+                transition-colors duration-200
+                truncate
+              `.trim().replace(/\s+/g, ' ')}
+              title={column.title}
+            >
+              {column.title}
+            </a>
+          ) : (
+            <h3 class={`mb-4 ${currentSize.title} uppercase tracking-wide text-gray-700 dark:text-gray-300 truncate`} title={column.title}>
               {column.title}
             </h3>
-            <ul class="space-y-2">
-              {column.items.map((item) => (
-                <li>
-                  <a
-                    href={item.href}
-                    class="group flex items-start gap-3 rounded-xl border border-transparent p-3 transition hover:border-blue-200 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:border-blue-400/40 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-900"
-                    role="menuitem"
-                    tabIndex={-1}
-                  >
-                    {item.icon && (
-                      <span
-                        class="flex-shrink-0 text-lg text-blue-700 dark:text-blue-300"
-                        aria-hidden="true"
-                      >
-                        {item.icon}
-                      </span>
-                    )}
-                    <div>
-                      <div class="text-sm font-semibold text-slate-900 group-hover:text-blue-800 dark:text-slate-100 dark:group-hover:text-blue-100">
-                        {item.label}
-                      </div>
-                      {item.description && (
-                        <p class="mt-0.5 text-xs text-slate-600 dark:text-slate-300">
-                          {item.description}
-                        </p>
+          )}
+          
+          {column.description && (
+            <p class={`mb-4 ${currentSize.description} text-gray-600 dark:text-gray-400 break-words`}>
+              {column.description}
+            </p>
+          )}
+          
+          <ul class="space-y-2" role="none">
+            {column.items.map((item, itemIndex) => (
+              <li key={itemIndex} role="none">
+                <a
+                  href={item.href}
+                  target={item.target || '_self'}
+                  rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
+                  class={`
+                    group flex items-start gap-3 rounded-lg border border-transparent w-full
+                    ${currentSize.item}
+                    text-gray-900 dark:text-gray-50
+                    hover:border-blue-200 dark:hover:border-blue-700
+                    hover:bg-blue-50 dark:hover:bg-blue-950
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                    dark:focus:ring-offset-gray-900
+                    transition-all duration-200
+                  `.trim().replace(/\s+/g, ' ')}
+                  role="menuitem"
+                  tabindex="-1"
+                  title={`${item.label}${item.description ? ': ' + item.description : ''}`}
+                >
+                  {item.icon && (
+                    <span
+                      class={`shrink-0 ${currentSize.icon} text-blue-700 dark:text-blue-300`}
+                      aria-hidden="true"
+                    >
+                      {item.icon}
+                    </span>
+                  )}
+                  <div class="flex-1 min-w-0 overflow-hidden">
+                    <div class={`font-medium text-gray-900 dark:text-gray-50 group-hover:text-blue-800 dark:group-hover:text-blue-200 break-words`}>
+                      <span class="break-words">{item.label}</span>
+                      {item.badge && (
+                        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 shrink-0">
+                          {item.badge}
+                        </span>
                       )}
                     </div>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
+                    {item.description && (
+                      <p class={`mt-1 ${currentSize.description} text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 break-words`}>
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+                  {item.target === '_blank' && (
+                    <span class={`shrink-0 ${currentSize.icon} text-gray-400`} aria-hidden="true">
+                      ↗
+                    </span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   </div>
 </div>
@@ -198,7 +373,7 @@ const panelId = `mega-menu-panel-${Math.random().toString(36).slice(2, 10)}`;
           const items = getItems(panel);
           if (items.length) {
             const last = items[items.length - 1];
-            last.tabIndex = 0;
+            setTabStops(panel, items.length - 1);
             last.focus({ preventScroll: true });
           }
         }

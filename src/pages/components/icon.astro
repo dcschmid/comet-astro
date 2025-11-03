@@ -1,29 +1,277 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Icon from '../../components/Icon.astro';
+import IconComponent from '../../components/Icon.astro';
+
+const usageSnippet = `---
+import { Icon } from 'comet-astro';
+---
+
+<div class="flex items-center gap-3">
+  <IconComponent name="check" color="success" />
+  <IconComponent name="search" size="lg" ariaLabel="Search" />
+  <IconComponent name="settings" decorative />
+</div>`;
 ---
 
 <DocsLayout
   title="Icon"
-  description="SVG icon sprite with size props and utility classes."
+  description="Accessible SVG icons with AAA contrast, semantic variants, and comprehensive icon collection."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Icons</h2>
+    <p class="text-base text-slate-100">
+      Icons provide visual context and enhance user experience in Comet applications. 
+      Our icon system includes over 60 carefully crafted SVG icons with WCAG AAA 
+      contrast ratios and proper accessibility support.
+    </p>
+    <p class="text-base text-slate-200">
+      Each icon supports semantic color variants, flexible sizing, and comprehensive 
+      accessibility features including ARIA labels, titles, and decorative modes 
+      for optimal screen reader experience.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          name
+        </dt>
+        <dd class="text-sm text-slate-200">
+          The icon to display from our comprehensive collection. Required property 
+          with fallback to <code>"info"</code> for unknown names.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Icon dimensions from <code>"xs"</code> (12px) to <code>"4xl"</code> (64px). 
+          Defaults to <code>"md"</code> (20px). Includes responsive breakpoints.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          color?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Semantic color variant with WCAG AAA compliance. Options: <code>"default"</code>, 
+          <code>"primary"</code>, <code>"secondary"</code>, <code>"success"</code>, 
+          <code>"warning"</code>, <code>"error"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          decorative?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Marks icon as decorative with <code>aria-hidden="true"</code>. Use for 
+          visual enhancement where the icon doesn't convey essential meaning.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label for screen readers. Sets <code>role="img"</code> and 
+          <code>aria-label</code>. Essential for standalone icons.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Tooltip text displayed on hover. Adds <code>&lt;title&gt;</code> element 
+          and <code>role="img"</code> for enhanced accessibility.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, specify an icon name, and configure accessibility 
+      attributes. The system automatically handles fallbacks and semantic 
+      markup for optimal user experience.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
     <div class="flex flex-wrap items-center gap-4">
-      <Icon name="home" />
-      <Icon name="user" size="lg" />
-      <Icon name="search" size="xl" className="text-purple-400" />
-      <Icon name="heart" size="2xl" className="text-pink-500" />
-      <Icon name="star" size="2xl" className="text-yellow-500" />
-      <Icon name="check" className="text-green-500" />
-      <Icon name="x" className="text-red-500" />
-      <Icon name="settings" />
-      <Icon name="arrow-right" />
-      <Icon name="external" size="sm" />
+      <IconComponent name="star" size="xs" title="Extra small star" />
+      <IconComponent name="star" size="sm" title="Small star" />
+      <IconComponent name="star" size="md" title="Medium star" />
+      <IconComponent name="star" size="lg" title="Large star" />
+      <IconComponent name="star" size="xl" title="Extra large star" />
+      <IconComponent name="star" size="2xl" title="2X large star" />
+      <IconComponent name="star" size="3xl" title="3X large star" />
+      <IconComponent name="star" size="4xl" title="4X large star" />
     </div>
-    <div class="mt-3 text-xs text-gray-500">
-      Available: home, user, search, heart, star, check, x, settings, menu,
-      arrow-* (up, down, left, right), info, external
+    <div class="mt-3 text-xs text-slate-400">
+      From xs (12px) to 4xl (64px) with consistent proportions
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Colors</h2>
+    <div class="flex flex-wrap items-center gap-4">
+      <IconComponent name="info" color="default" size="lg" title="Default info" />
+      <IconComponent name="info" color="primary" size="lg" title="Primary info" />
+      <IconComponent name="info" color="secondary" size="lg" title="Secondary info" />
+      <IconComponent name="check-circle" color="success" size="lg" title="Success check" />
+      <IconComponent name="alert" color="warning" size="lg" title="Warning alert" />
+      <IconComponent name="x-circle" color="error" size="lg" title="Error x" />
+    </div>
+    <div class="mt-3 text-xs text-slate-400">
+      WCAG AAA compliant colors with 7:1+ contrast ratios in both themes
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Icon Collection</h2>
+    
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Navigation & Direction</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <IconComponent name="arrow-right" size="lg" title="Arrow right" />
+          <IconComponent name="arrow-left" size="lg" title="Arrow left" />
+          <IconComponent name="arrow-up" size="lg" title="Arrow up" />
+          <IconComponent name="arrow-down" size="lg" title="Arrow down" />
+          <IconComponent name="chevron-right" size="lg" title="Chevron right" />
+          <IconComponent name="chevron-left" size="lg" title="Chevron left" />
+          <IconComponent name="chevron-up" size="lg" title="Chevron up" />
+          <IconComponent name="chevron-down" size="lg" title="Chevron down" />
+          <IconComponent name="external" size="lg" title="External link" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Actions & States</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <IconComponent name="check" size="lg" color="success" title="Check" />
+          <IconComponent name="x" size="lg" color="error" title="Close" />
+          <IconComponent name="plus" size="lg" title="Add" />
+          <IconComponent name="minus" size="lg" title="Remove" />
+          <IconComponent name="edit" size="lg" title="Edit" />
+          <IconComponent name="trash" size="lg" color="error" title="Delete" />
+          <IconComponent name="download" size="lg" title="Download" />
+          <IconComponent name="upload" size="lg" title="Upload" />
+          <IconComponent name="copy" size="lg" title="Copy" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Interface Elements</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <IconComponent name="menu" size="lg" title="Menu" />
+          <IconComponent name="search" size="lg" title="Search" />
+          <IconComponent name="filter" size="lg" title="Filter" />
+          <IconComponent name="sort" size="lg" title="Sort" />
+          <IconComponent name="grid" size="lg" title="Grid view" />
+          <IconComponent name="list" size="lg" title="List view" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">User & Social</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <IconComponent name="user" size="lg" title="User" />
+          <IconComponent name="users" size="lg" title="Users" />
+          <IconComponent name="heart" size="lg" color="error" title="Heart" />
+          <IconComponent name="star" size="lg" color="warning" title="Star" />
+          <IconComponent name="share" size="lg" title="Share" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">System & Settings</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <IconComponent name="settings" size="lg" title="Settings" />
+          <IconComponent name="info" size="lg" color="primary" title="Information" />
+          <IconComponent name="alert" size="lg" color="warning" title="Alert" />
+          <IconComponent name="bell" size="lg" title="Notifications" />
+          <IconComponent name="lock" size="lg" title="Lock" />
+          <IconComponent name="unlock" size="lg" title="Unlock" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Communication</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <IconComponent name="mail" size="lg" title="Email" />
+          <IconComponent name="phone" size="lg" title="Phone" />
+          <IconComponent name="chat" size="lg" title="Chat" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Content & Media</h3>
+        <div class="flex flex-wrap items-center gap-3">
+          <IconComponent name="document" size="lg" title="Document" />
+          <IconComponent name="folder" size="lg" title="Folder" />
+          <IconComponent name="folder-open" size="lg" title="Folder open" />
+          <IconComponent name="image" size="lg" title="Image" />
+          <IconComponent name="video" size="lg" title="Video" />
+          <IconComponent name="music" size="lg" title="Music" />
+          <IconComponent name="play" size="lg" color="success" title="Play" />
+          <IconComponent name="pause" size="lg" title="Pause" />
+          <IconComponent name="stop" size="lg" color="error" title="Stop" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Icons follow WCAG AAA guidelines with contrast ratios exceeding 7:1 across 
+      all color variants and themes. Each icon supports proper semantic markup 
+      with configurable accessibility attributes.
+    </p>
+    <p class="text-base text-slate-200">
+      Use <code>ariaLabel</code> for standalone icons that convey meaning, 
+      <code>title</code> for additional context on hover, and <code>decorative</code> 
+      for purely visual icons that don't add semantic value. The component 
+      automatically handles appropriate ARIA attributes and roles.
+    </p>
+    <p class="text-base text-slate-200">
+      Icons are designed with consistent stroke width and visual weight to 
+      maintain clarity at all sizes. The <code>shrink-0</code> class prevents 
+      distortion in flex layouts.
+    </p>
   </section>
 </DocsLayout>

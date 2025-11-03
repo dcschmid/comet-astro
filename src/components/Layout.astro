@@ -2,21 +2,224 @@
 import { cn } from '../utils/cn';
 
 export interface Props {
+  /** Custom CSS classes */
   class?: string;
+  /** Apply container styling to main content */
   container?: boolean;
+  /** Layout variant - controls spacing and structure */
+  variant?: 'default' | 'wide' | 'narrow' | 'sidebar';
+  /** Background theme */
+  background?: 'default' | 'muted' | 'accent' | 'gradient';
+  /** Content spacing size */
+  spacing?: 'tight' | 'normal' | 'loose';
+  /** Enable sticky header */
+  stickyHeader?: boolean;
+  /** Enable sticky footer */
+  stickyFooter?: boolean;
+  /** Sidebar position for sidebar variant */
+  sidebarPosition?: 'left' | 'right';
+  /** Maximum content width */
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  /** Skip to main content label for accessibility */
+  skipToMainLabel?: string;
+  /** Aria label for main content area */
+  mainAriaLabel?: string;
+  /** Header aria label */
+  headerAriaLabel?: string;
+  /** Footer aria label */
+  footerAriaLabel?: string;
 }
 
-const { class: className, container = true } = Astro.props as Props;
+const {
+  class: className,
+  container = true,
+  variant = 'default',
+  background = 'default',
+  spacing = 'normal',
+  stickyHeader = false,
+  stickyFooter = false,
+  sidebarPosition = 'left',
+  maxWidth = 'lg',
+  skipToMainLabel = 'Skip to main content',
+  mainAriaLabel = 'Main content',
+  headerAriaLabel = 'Site header',
+  footerAriaLabel = 'Site footer'
+} = Astro.props as Props;
+
+// Background variants with WCAG AAA compliant colors
+const backgroundClasses = {
+  default: 'bg-white dark:bg-slate-950',
+  muted: 'bg-slate-50 dark:bg-slate-900',
+  accent: 'bg-blue-50 dark:bg-blue-950/30',
+  gradient: 'bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/50'
+};
+
+// Spacing variants
+const spacingClasses = {
+  tight: 'gap-4',
+  normal: 'gap-6 lg:gap-8',
+  loose: 'gap-8 lg:gap-12'
+};
+
+// Container max-width classes
+const maxWidthClasses = {
+  sm: 'max-w-3xl',
+  md: 'max-w-5xl',
+  lg: 'max-w-7xl',
+  xl: 'max-w-screen-xl',
+  '2xl': 'max-w-screen-2xl',
+  full: 'max-w-none'
+};
+
+// Layout variant styles
+const getLayoutClasses = () => {
+  const base = 'min-h-screen flex';
+  
+  switch (variant) {
+    case 'wide':
+      return `${base} flex-col`;
+    case 'narrow':
+      return `${base} flex-col`;
+    case 'sidebar':
+      return `${base} ${sidebarPosition === 'left' ? 'flex-row' : 'flex-row-reverse'} lg:flex-row`;
+    default:
+      return `${base} flex-col`;
+  }
+};
+
+// Container classes based on variant
+const getContainerClasses = () => {
+  if (!container) return 'flex-1';
+  
+  const baseContainer = `container mx-auto px-4 sm:px-6 lg:px-8 flex-1 ${maxWidthClasses[maxWidth]}`;
+  
+  switch (variant) {
+    case 'narrow':
+      return `${baseContainer} max-w-4xl`;
+    case 'sidebar':
+      return 'flex-1 px-4 sm:px-6 lg:px-8';
+    default:
+      return baseContainer;
+  }
+};
+
+// Header classes
+const getHeaderClasses = () => {
+  const base = 'w-full';
+  const sticky = stickyHeader ? 'sticky top-0 z-40' : '';
+  const bg = stickyHeader ? 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800' : '';
+  
+  return cn(base, sticky, bg);
+};
+
+// Footer classes
+const getFooterClasses = () => {
+  const base = 'w-full';
+  const sticky = stickyFooter ? 'sticky bottom-0 z-40' : '';
+  const bg = stickyFooter ? 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-800' : '';
+  
+  return cn(base, sticky, bg);
+};
+
+// Sidebar classes for sidebar variant
+const getSidebarClasses = () => {
+  return 'w-full lg:w-80 flex-shrink-0 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800';
+};
+
+// Generate unique IDs for skip links
+const skipLinkId = `main-content-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class={cn('min-h-screen flex flex-col', className)}>
-  <header class="w-full">
+<!-- Skip to main content link for accessibility -->
+<a
+  href={`#${skipLinkId}`}
+  class={cn(
+    'sr-only focus:not-sr-only',
+    'absolute top-4 left-4 z-50',
+    'px-4 py-2 rounded-md',
+    'bg-blue-600 text-white',
+    'hover:bg-blue-700 focus:bg-blue-700',
+    'transition-colors duration-200',
+    'text-sm font-medium',
+    'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+  )}
+>
+  {skipToMainLabel}
+</a>
+
+<div class={cn(
+  getLayoutClasses(),
+  backgroundClasses[background],
+  spacingClasses[spacing],
+  'text-slate-900 dark:text-slate-100',
+  className
+)}>
+  <header
+    class={getHeaderClasses()}
+    aria-label={headerAriaLabel}
+    role="banner"
+  >
     <slot name="header" />
   </header>
-  <main class={cn(container ? 'container mx-auto px-4 flex-1' : 'flex-1')}>
+  
+  {variant === 'sidebar' && (
+    <aside
+      class={getSidebarClasses()}
+      aria-label="Sidebar navigation"
+      role="complementary"
+    >
+      <slot name="sidebar" />
+    </aside>
+  )}
+  
+  <main
+    id={skipLinkId}
+    class={cn(
+      getContainerClasses(),
+      'focus:outline-none',
+      // Ensure sufficient spacing from header when sticky
+      stickyHeader && 'pt-4',
+      // Ensure sufficient spacing from footer when sticky
+      stickyFooter && 'pb-4'
+    )}
+    aria-label={mainAriaLabel}
+    role="main"
+    tabindex="-1"
+  >
     <slot />
   </main>
-  <footer class="w-full">
+  
+  <footer
+    class={getFooterClasses()}
+    aria-label={footerAriaLabel}
+    role="contentinfo"
+  >
     <slot name="footer" />
   </footer>
 </div>
+
+<style>
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .bg-gradient-to-br {
+      background-image: none;
+      background-color: white;
+    }
+    
+    .dark .bg-gradient-to-br {
+      background-color: black;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .transition-colors {
+      transition-duration: 0.01ms;
+    }
+  }
+  
+  /* Focus management for skip link */
+  [tabindex="-1"]:focus {
+    outline: 2px solid transparent;
+  }
+</style>

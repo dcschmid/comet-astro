@@ -1,27 +1,243 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Dialog from '../../components/Dialog.astro';
+import DialogComponent from '../../components/Dialog.astro';
+
+const usageSnippet = `---
+import { Dialog } from 'comet-astro';
+
+---
+
+<button
+  data-dialog-trigger="example-dialog"
+  type="button"
+  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+>
+  Open Dialog
+</button>
+
+<Dialog id="example-dialog" title="Confirmation" size="md">
+  <p>Are you sure you want to continue?</p>
+  <Fragment slot="actions">
+    <button data-dialog-close>Cancel</button>
+    <button class="bg-blue-600 text-white px-4 py-2 rounded">
+      Confirm
+    </button>
+  </Fragment>
+</Dialog>`;
 
 const dialogId = 'demo-dialog';
+const confirmDialogId = 'confirm-dialog';
 ---
 
 <DocsLayout
   title="Dialog"
-  description="Accessible wrapper around the HTML dialog element with trigger helpers."
+  description="Accessible modal dialogs with WCAG AAA contrast, focus management, and responsive sizing."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <button
-      data-dialog-trigger={dialogId}
-      class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
-      type="button"
-    >
-      Open Dialog
-    </button>
-    <Dialog id={dialogId} title="Example Dialog">
-      <p class="text-gray-300">
-        This is a native HTML dialog with custom styling.
-      </p>
-    </Dialog>
+    <p class="text-base text-slate-100">
+      Dialog provides a robust modal interface built on the native HTML dialog element. 
+      The component maintains WCAG AAA contrast ratios across all interactive states and 
+      includes comprehensive focus management for keyboard navigation accessibility.
+    </p>
+    <p class="text-base text-slate-200">
+      Focus trapping, backdrop interaction, and ESC key handling work automatically. 
+      The dialog returns focus to the triggering element when closed, ensuring a seamless 
+      user experience across keyboard and mouse interactions.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          id
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Required unique identifier for the dialog element. Used for triggering with <code>data-dialog-trigger</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional header title for the dialog. Creates accessible heading with proper ARIA labeling.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Dialog width preset: <code>"sm"</code>, <code>"md"</code>, <code>"lg"</code>, <code>"xl"</code>, or <code>"full"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          dismissible?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Shows close button and enables backdrop/ESC dismissal. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the dialog element for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Create a trigger element with <code>data-dialog-trigger</code> pointing to the dialog ID. 
+      The dialog handles opening, focus management, and closing automatically. Customize actions 
+      using the "actions" slot for complex interactions.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Example</h2>
+    <p class="text-base text-slate-200">
+      Simple dialog with default settings and responsive design.
+    </p>
+    <div class="space-y-4">
+      <button
+        data-dialog-trigger={dialogId}
+        class="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+        type="button"
+      >
+        Open Basic Dialog
+      </button>
+      <DialogComponent id={dialogId} title="Basic Dialog Example">
+        <p>This is a basic dialog with default styling and behavior. It demonstrates the standard layout with header, content area, and footer actions.</p>
+      </DialogComponent>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Dialog Sizes</h2>
+    <p class="text-base text-slate-200">
+      Choose from predefined size variants to match your content needs.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <button
+        data-dialog-trigger="small-dialog"
+        class="rounded-lg bg-slate-600 px-3 py-2 text-sm text-white transition-colors hover:bg-slate-700"
+        type="button"
+      >
+        Small
+      </button>
+      <button
+        data-dialog-trigger="large-dialog"
+        class="rounded-lg bg-slate-600 px-3 py-2 text-sm text-white transition-colors hover:bg-slate-700"
+        type="button"
+      >
+        Large
+      </button>
+      <button
+        data-dialog-trigger="xl-dialog"
+        class="rounded-lg bg-slate-600 px-3 py-2 text-sm text-white transition-colors hover:bg-slate-700"
+        type="button"
+      >
+        Extra Large
+      </button>
+    </div>
+    
+    <DialogComponent id="small-dialog" title="Small Dialog" size="sm">
+      <p>This is a small dialog perfect for simple confirmations or brief messages.</p>
+    </DialogComponent>
+    
+    <DialogComponent id="large-dialog" title="Large Dialog" size="lg">
+      <p>Large dialogs provide more space for forms, detailed content, or complex interactions. They maintain responsive behavior across different screen sizes.</p>
+    </DialogComponent>
+    
+    <DialogComponent id="xl-dialog" title="Extra Large Dialog" size="xl">
+      <p>Extra large dialogs offer maximum content area while preserving mobile responsiveness. Use these for data tables, multi-step forms, or rich media content.</p>
+      <p class="mt-4">The dialog automatically handles focus trapping and returns focus to the trigger element when closed.</p>
+    </DialogComponent>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Custom Actions</h2>
+    <p class="text-base text-slate-200">
+      Override the default close button with custom action buttons using the "actions" slot.
+    </p>
+    <div class="space-y-4">
+      <button
+        data-dialog-trigger={confirmDialogId}
+        class="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
+        type="button"
+      >
+        Delete Item
+      </button>
+      <DialogComponent id={confirmDialogId} title="Confirm Deletion">
+        <p>This action cannot be undone. Are you sure you want to delete this item permanently?</p>
+        <Fragment slot="actions">
+          <button
+            data-dialog-close
+            class="rounded-lg border border-slate-300/90 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50 dark:border-slate-500/90 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            type="button"
+            onclick="this.closest('dialog').close(); /* Add your delete logic here */"
+          >
+            Delete
+          </button>
+        </Fragment>
+      </DialogComponent>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Contrast ratios exceed WCAG AAA requirements (7:1+) across all dialog elements including 
+      headers, content areas, and action buttons in both light and dark themes. Focus indicators 
+      use 2px visible rings with proper offset values for clear keyboard navigation.
+    </p>
+    <p class="text-base text-slate-200">
+      Focus management includes automatic trapping within the dialog, restoration to the triggering 
+      element on close, and initial focus placement on the first interactive element. ESC key 
+      handling and backdrop clicks provide intuitive dismissal patterns.
+    </p>
+    <p class="text-base text-slate-200">
+      The dialog uses semantic HTML with proper ARIA attributes including <code>aria-modal</code>, 
+      <code>aria-labelledby</code>, and role assignments. Screen readers receive appropriate 
+      announcements for dialog state changes and action confirmations.
+    </p>
   </section>
 </DocsLayout>

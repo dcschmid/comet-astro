@@ -30,47 +30,48 @@ const initials = name
 ---
 
 <article
-  class={`flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-slate-800 shadow-sm transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${className}`.trim()}
+  class={`flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 text-slate-900 shadow-sm transition-colors hover:shadow-md dark:border-slate-700/80 dark:bg-slate-900 dark:text-slate-50 ${className}`.trim()}
 >
   {
     avatar ? (
       <img
         src={avatar}
         alt={`Portrait of ${name}`}
-        class="h-16 w-16 rounded-full object-cover shadow-sm"
+        class="h-16 w-16 shrink-0 rounded-full object-cover shadow-sm ring-2 ring-slate-200/50 dark:ring-slate-700/50"
         loading="lazy"
         decoding="async"
       />
     ) : (
       <div
-        class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-500 text-white shadow-sm"
+        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-indigo-600 via-purple-600 to-rose-500 text-white shadow-sm"
         aria-hidden="true"
       >
-        <span class="text-lg font-semibold">{initials}</span>
+        <span class="text-lg font-semibold select-none">{initials}</span>
       </div>
     )
   }
   <div class="min-w-0 flex-1">
     <div
-      class="truncate text-lg font-semibold text-slate-900 dark:text-slate-100"
+      class="truncate text-lg font-semibold text-slate-950 dark:text-slate-50"
     >
       {name}
     </div>
     {
       role && (
-        <div class="truncate text-sm text-slate-600 dark:text-slate-300">
+        <div class="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
           {role}
         </div>
       )
     }
     <div
-      class="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-300"
+      class="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-700 dark:text-slate-200"
     >
       {
         email && (
           <a
             href={`mailto:${email}`}
-            class="rounded-md border border-transparent px-1 py-0.5 text-blue-600 no-underline transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-blue-300 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-900"
+            class="inline-flex rounded-md border border-transparent px-2 py-1 text-blue-700 no-underline transition-colors hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-blue-300 dark:hover:bg-blue-500/20 dark:hover:text-blue-200 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-900"
+            aria-label={`Send email to ${name}`}
           >
             {email}
           </a>
@@ -82,7 +83,8 @@ const initials = name
             href={website}
             target="_blank"
             rel="noopener noreferrer"
-            class="rounded-md border border-transparent px-1 py-0.5 text-blue-600 no-underline transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-blue-300 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-900"
+            class="inline-flex rounded-md border border-transparent px-2 py-1 text-blue-700 no-underline transition-colors hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-blue-300 dark:hover:bg-blue-500/20 dark:hover:text-blue-200 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-900"
+            aria-label={`Visit ${name}'s website`}
           >
             Website<span class="sr-only"> (opens in new window)</span>
           </a>

@@ -2,10 +2,15 @@
 interface Props {
   direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
   wrap?: boolean | 'reverse';
-  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline';
   inline?: boolean;
+  as?: 'div' | 'section' | 'article' | 'aside' | 'nav' | 'main' | 'header' | 'footer';
+  role?: string;
+  ariaLabel?: string;
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
   className?: string;
 }
 
@@ -16,23 +21,28 @@ const {
   justify = 'start',
   align = 'stretch',
   inline = false,
+  as = 'div',
+  role,
+  ariaLabel,
+  ariaLabelledby,
+  ariaDescribedby,
   className = '',
 } = Astro.props;
 
-const directionClasses = {
+const directionClasses: Record<string, string> = {
   row: 'flex-row',
   column: 'flex-col',
   'row-reverse': 'flex-row-reverse',
   'column-reverse': 'flex-col-reverse',
 };
 
-const wrapClasses = {
+const wrapClasses: Record<string, string> = {
   false: '',
   true: 'flex-wrap',
   reverse: 'flex-wrap-reverse',
 };
 
-const gapClasses = {
+const gapClasses: Record<string, string> = {
   none: 'gap-0',
   xs: 'gap-1',
   sm: 'gap-2',
@@ -40,9 +50,10 @@ const gapClasses = {
   lg: 'gap-6',
   xl: 'gap-8',
   '2xl': 'gap-12',
+  '3xl': 'gap-16',
 };
 
-const justifyClasses = {
+const justifyClasses: Record<string, string> = {
   start: 'justify-start',
   center: 'justify-center',
   end: 'justify-end',
@@ -51,7 +62,7 @@ const justifyClasses = {
   evenly: 'justify-evenly',
 };
 
-const alignClasses = {
+const alignClasses: Record<string, string> = {
   start: 'items-start',
   center: 'items-center',
   end: 'items-end',
@@ -60,10 +71,31 @@ const alignClasses = {
 };
 
 const displayClass = inline ? 'inline-flex' : 'flex';
+
+// Accessibility attributes
+const accessibilityProps: Record<string, any> = {};
+if (role) accessibilityProps.role = role;
+if (ariaLabel) accessibilityProps['aria-label'] = ariaLabel;
+if (ariaLabelledby) accessibilityProps['aria-labelledby'] = ariaLabelledby;
+if (ariaDescribedby) accessibilityProps['aria-describedby'] = ariaDescribedby;
+
+const Element = as;
+
+// Build class string with proper spacing
+const classNames = [
+  displayClass,
+  directionClasses[direction],
+  wrapClasses[wrap.toString()],
+  gapClasses[gap],
+  justifyClasses[justify],
+  alignClasses[align],
+  className
+].filter(Boolean).join(' ');
 ---
 
-<div
-  class={`${displayClass} ${directionClasses[direction]} ${wrapClasses[wrap as keyof typeof wrapClasses]} ${gapClasses[gap]} ${justifyClasses[justify]} ${alignClasses[align]} ${className}`}
+<Element
+  class={classNames}
+  {...accessibilityProps}
 >
   <slot />
-</div>
+</Element>

@@ -1,8 +1,11 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import ContextMenu from '../../components/ContextMenu.astro';
+import ContextMenuComponent from '../../components/ContextMenu.astro';
 
-const items = [
+const usageSnippet = `---
+import { ContextMenu } from 'comet-astro';
+
+const menuItems = [
   { label: 'Copy', action: 'copy', icon: '📋' },
   { label: 'Paste', action: 'paste', icon: '📄' },
   { divider: true },
@@ -10,21 +13,204 @@ const items = [
 ];
 ---
 
+<div id="my-target">Right-click me</div>
+<ContextMenu targetId="my-target" items={menuItems} />
+
+<script>
+  document.getElementById('my-target')?.addEventListener('contextaction', (e) => {
+    console.log('Action:', e.detail.action);
+  });
+</script>`;
+
+const basicItems = [
+  { label: 'Copy', action: 'copy', icon: '📋' },
+  { label: 'Paste', action: 'paste', icon: '📄' },
+  { divider: true, label: '', action: '' },
+  { label: 'Delete', action: 'delete', icon: '🗑️', danger: true },
+];
+
+const advancedItems = [
+  { label: 'New File', action: 'new-file', icon: '📄' },
+  { label: 'New Folder', action: 'new-folder', icon: '📁' },
+  { divider: true, label: '', action: '' },
+  { label: 'Copy', action: 'copy', icon: '📋' },
+  { label: 'Cut', action: 'cut', icon: '✂️' },
+  { label: 'Paste', action: 'paste', icon: '📋', disabled: true },
+  { divider: true, label: '', action: '' },
+  { label: 'Rename', action: 'rename', icon: '✏️' },
+  { label: 'Delete', action: 'delete', icon: '🗑️', danger: true },
+];
+---
+
 <DocsLayout
   title="ContextMenu"
-  description="Custom right-click context menu with keyboard support."
+  description="Accessible right-click context menu with WCAG AAA contrast and full keyboard navigation."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <div
-      id="context-target"
-      class="bg-gray-900 p-8 rounded-lg border-2 border-dashed border-gray-700 text-center cursor-pointer hover:border-purple-500 transition-colors"
-    >
-      <p class="text-gray-400">Right-click here to open context menu</p>
+    <p class="text-base text-slate-100">
+      ContextMenu provides a customizable right-click menu with full keyboard 
+      navigation and screen reader support. Each menu maintains AAA contrast 
+      ratios and includes proper ARIA attributes for accessibility.
+    </p>
+    <p class="text-base text-slate-200">
+      Menus support icons, dividers, disabled states, and danger styling for 
+      destructive actions. Keyboard navigation follows standard menu patterns 
+      with Arrow keys, Home/End, and Escape support.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          items
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of menu items. Each item can have <code>label</code>, <code>action</code>, 
+          <code>icon</code>, <code>divider</code>, <code>disabled</code>, and <code>danger</code> properties.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          targetId
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ID of the HTML element that should trigger the context menu on right-click. 
+          Required for menu positioning and event handling.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the menu container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Create menu items with labels and actions, assign a target element ID, 
+      and listen for <code>contextaction</code> events to handle user selections. 
+      The menu automatically positions itself and handles keyboard navigation.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+    
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">Basic Menu</h3>
+        <div
+          id="basic-target"
+          class="rounded-lg border-2 border-dashed border-slate-600/60 bg-slate-800/30 p-8 text-center cursor-pointer hover:border-blue-500/60 hover:bg-blue-500/10 transition-colors"
+        >
+          <p class="text-slate-300">Right-click here for basic context menu</p>
+        </div>
+        <ContextMenuComponent targetId="basic-target" items={basicItems} />
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">Advanced Menu</h3>
+        <div
+          id="advanced-target"
+          class="rounded-lg border-2 border-dashed border-slate-600/60 bg-slate-800/30 p-8 text-center cursor-pointer hover:border-green-500/60 hover:bg-green-500/10 transition-colors"
+        >
+          <p class="text-slate-300">Right-click here for advanced context menu</p>
+          <p class="text-slate-400 text-sm mt-2">Includes disabled items and more options</p>
+        </div>
+        <ContextMenuComponent targetId="advanced-target" items={advancedItems} />
+      </div>
     </div>
-    <ContextMenu targetId="context-target" items={items} />
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">MenuItem Interface</h2>
+    <div class="space-y-3">
+      <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4">
+        <h4 class="text-sm font-semibold text-slate-200 mb-2">Properties</h4>
+        <ul class="space-y-2 text-sm text-slate-300">
+          <li><code class="text-blue-300">label: string</code> - Display text for the menu item</li>
+          <li><code class="text-blue-300">action?: string</code> - Action identifier sent in events</li>
+          <li><code class="text-blue-300">icon?: string</code> - Optional icon (emoji or text)</li>
+          <li><code class="text-blue-300">divider?: boolean</code> - Renders as a separator line</li>
+          <li><code class="text-blue-300">disabled?: boolean</code> - Disables interaction</li>
+          <li><code class="text-blue-300">danger?: boolean</code> - Applies destructive styling</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Text and background contrast ratios exceed WCAG AAA standards (7:1+) in both 
+      light and dark themes. Focus indicators use 2px inset rings that are clearly 
+      visible against menu backgrounds.
+    </p>
+    <p class="text-base text-slate-200">
+      Full keyboard navigation with Arrow keys (up/down), Home/End for first/last 
+      item, Enter/Space to activate, and Escape to close. The menu uses proper 
+      ARIA roles (<code>menu</code>, <code>menuitem</code>) and manages focus appropriately.
+    </p>
+    <p class="text-base text-slate-200">
+      Screen readers announce the menu state and selected items. Icons are marked 
+      with <code>aria-hidden="true"</code> to prevent redundant announcements. 
+      Disabled items are properly communicated to assistive technology.
+    </p>
   </section>
 </DocsLayout>
+
+<script is:inline>
+  // Handle context actions for demo
+  function handleContextAction(event) {
+    console.info('Context action triggered:', event.detail.action);
+    
+    // Show a brief notification for demo purposes
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-opacity';
+    notification.textContent = 'Action: ' + event.detail.action;
+    document.body.appendChild(notification);
+    
+    setTimeout(function() {
+      notification.style.opacity = '0';
+      setTimeout(function() { 
+        notification.remove(); 
+      }, 300);
+    }, 2000);
+  }
+
+  const basicTarget = document.getElementById('basic-target');
+  const advancedTarget = document.getElementById('advanced-target');
+  
+  if (basicTarget) {
+    basicTarget.addEventListener('contextaction', handleContextAction);
+  }
+  if (advancedTarget) {
+    advancedTarget.addEventListener('contextaction', handleContextAction);
+  }
+</script>
 
 <script>
   document

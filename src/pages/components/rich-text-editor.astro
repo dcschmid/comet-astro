@@ -1,18 +1,728 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import RichTextEditor from '../../components/RichTextEditor.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 ---
 
 <DocsLayout
   title="RichTextEditor"
-  description="ContentEditable-based WYSIWYG input with formatting toolbar."
+  description="Accessible WYSIWYG editor built on contenteditable with WCAG AAA compliance, multiple variants, and comprehensive formatting tools."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <RichTextEditor
-      label="Notes"
-      helpText="Use the toolbar to format content."
-      value="<p>Compose a delightful product update…</p>"
-    />
-  </section>
+  <div class="space-y-12">
+    <!-- Basic Example -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Basic Example</h2>
+      <div class="not-prose space-y-4">
+        <RichTextEditor
+          label="Product Description"
+          placeholder="Enter your product description..."
+          helpText="Use the toolbar to format your content."
+          value="<p>Start writing your <strong>amazing</strong> content here!</p>"
+          name="description"
+        />
+      </div>
+      
+      <CodeBlock
+        code={`<RichTextEditor
+  label="Product Description"
+  placeholder="Enter your product description..."
+  helpText="Use the toolbar to format your content."
+  value="<p>Start writing your <strong>amazing</strong> content here!</p>"
+  name="description"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Variants</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Default</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Default Editor"
+              placeholder="Standard appearance..."
+              variant="default"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Minimal</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Minimal Editor"
+              placeholder="Subtle and clean..."
+              variant="minimal"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Bordered</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Bordered Editor"
+              placeholder="Strong borders for emphasis..."
+              variant="bordered"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Elevated</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Elevated Editor"
+              placeholder="Enhanced with shadows..."
+              variant="elevated"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<RichTextEditor variant="default" />
+
+<!-- Minimal variant -->
+<RichTextEditor variant="minimal" />
+
+<!-- Bordered variant -->
+<RichTextEditor variant="bordered" />
+
+<!-- Elevated variant -->
+<RichTextEditor variant="elevated" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Sizes</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Small</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Small Editor"
+              placeholder="Compact size for inline editing..."
+              size="sm"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Medium (Default)</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Medium Editor"
+              placeholder="Balanced size for most use cases..."
+              size="md"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Large</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Large Editor"
+              placeholder="Spacious editing area for extensive content..."
+              size="lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<RichTextEditor size="sm" />
+
+<!-- Medium size (default) -->
+<RichTextEditor size="md" />
+
+<!-- Large size -->
+<RichTextEditor size="lg" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- States -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">States</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Required</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Required Editor"
+              placeholder="This field is required..."
+              required={true}
+              helpText="Please provide content for this field."
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Error</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Error Editor"
+              placeholder="Something went wrong..."
+              error="Content is required and must be at least 10 characters long."
+              value="Short"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Disabled</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Disabled Editor"
+              placeholder="Cannot be edited..."
+              disabled={true}
+              value="<p>This content cannot be edited.</p>"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Read-only</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Read-only Editor"
+              readOnly={true}
+              value="<p>This is <strong>read-only</strong> content with <em>formatting</em> preserved.</p>"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Required state -->
+<RichTextEditor required={true} />
+
+<!-- Error state -->
+<RichTextEditor error="Content is required." />
+
+<!-- Disabled state -->
+<RichTextEditor disabled={true} />
+
+<!-- Read-only state -->
+<RichTextEditor readOnly={true} />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Character Count -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Character Count</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">With Limit</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Limited Editor"
+              placeholder="Type up to 280 characters..."
+              maxLength={280}
+              showCharCount={true}
+              helpText="Perfect for social media posts or short descriptions."
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Without Limit</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Tracked Editor"
+              placeholder="No limit but count is shown..."
+              showCharCount={true}
+              helpText="Useful for tracking content length without restrictions."
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- With character limit -->
+<RichTextEditor
+  maxLength={280}
+  showCharCount={true}
+/>
+
+<!-- Show count without limit -->
+<RichTextEditor
+  showCharCount={true}
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Custom Toolbar -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Custom Toolbar</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Basic Formatting Only</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Basic Editor"
+              placeholder="Basic formatting tools only..."
+              toolbar={['bold', 'italic', 'underline', 'clear']}
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Rich Formatting</h3>
+          <div class="not-prose">
+            <RichTextEditor
+              label="Rich Editor"
+              placeholder="Full feature set available..."
+              toolbar={[
+                'bold',
+                'italic',
+                'underline',
+                'strike',
+                'heading',
+                'quote',
+                'code',
+                'link',
+                'ordered-list',
+                'unordered-list',
+                'undo',
+                'redo',
+                'clear'
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Basic toolbar -->
+<RichTextEditor
+  toolbar={['bold', 'italic', 'underline', 'clear']}
+/>
+
+<!-- Full toolbar -->
+<RichTextEditor
+  toolbar={[
+    'bold', 'italic', 'underline', 'strike',
+    'heading', 'quote', 'code', 'link',
+    'ordered-list', 'unordered-list',
+    'undo', 'redo', 'clear'
+  ]}
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Props Reference</h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                value
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                ''
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Initial HTML content for the editor
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                placeholder
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'Start typing…'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Placeholder text shown when editor is empty
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                label
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Label text for the editor
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                helpText
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Help text displayed below the editor
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'default' | 'minimal' | 'bordered' | 'elevated'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Size of the editor and toolbar
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                disabled
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Disables the editor completely
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                readOnly
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Makes the editor read-only
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Marks the field as required
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                error
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean | string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Shows error state with optional message
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                maxLength
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                number
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Maximum character count
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                showCharCount
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Shows character count display
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                toolbar
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Array&lt;string&gt;
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                All tools
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Custom toolbar configuration
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                name
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Form field name attribute
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <CodeBlock
+        code={`export interface Props {
+  value?: string;
+  placeholder?: string;
+  label?: string;
+  helpText?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  error?: boolean | string;
+  variant?: 'default' | 'minimal' | 'bordered' | 'elevated';
+  size?: 'sm' | 'md' | 'lg';
+  maxLength?: number;
+  showCharCount?: boolean;
+  toolbar?: Array<
+    | 'bold' | 'italic' | 'underline' | 'strike'
+    | 'code' | 'quote' | 'link' | 'heading'
+    | 'ordered-list' | 'unordered-list'
+    | 'clear' | 'undo' | 'redo'
+  >;
+  name?: string;
+  id?: string;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  class?: string;
+}`}
+        language="typescript"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Accessibility</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>WCAG AAA Compliance</h3>
+        <ul>
+          <li><strong>Contrast:</strong> All color combinations meet WCAG AAA standards (7:1 contrast ratio)</li>
+          <li><strong>Focus Management:</strong> Clear focus indicators with proper keyboard navigation</li>
+          <li><strong>Screen Reader Support:</strong> ARIA labels, roles, and live regions for content changes</li>
+          <li><strong>Error Identification:</strong> Clear error states with descriptive messages</li>
+        </ul>
+
+        <h3>Keyboard Navigation</h3>
+        <ul>
+          <li><strong>Tab:</strong> Navigate through toolbar buttons and editor</li>
+          <li><strong>Ctrl+B:</strong> Toggle bold formatting</li>
+          <li><strong>Ctrl+I:</strong> Toggle italic formatting</li>
+          <li><strong>Ctrl+U:</strong> Toggle underline formatting</li>
+          <li><strong>Ctrl+Z:</strong> Undo last action</li>
+          <li><strong>Ctrl+Y / Ctrl+Shift+Z:</strong> Redo last undone action</li>
+          <li><strong>Enter:</strong> Insert line break within editor</li>
+          <li><strong>Space/Enter:</strong> Activate toolbar buttons</li>
+        </ul>
+
+        <h3>Screen Reader Features</h3>
+        <ul>
+          <li>Toolbar announced as "Text formatting options"</li>
+          <li>Editor role identified as "textbox" with multiline support</li>
+          <li>Live announcements for character count changes</li>
+          <li>Error messages announced immediately when they occur</li>
+          <li>Clear button labels and tooltips for all formatting tools</li>
+        </ul>
+
+        <h3>ARIA Attributes</h3>
+        <ul>
+          <li><code>role="textbox"</code> and <code>aria-multiline="true"</code> for the editor</li>
+          <li><code>role="toolbar"</code> for the formatting toolbar</li>
+          <li><code>aria-label</code> for each formatting button</li>
+          <li><code>aria-describedby</code> linking help text and error messages</li>
+          <li><code>aria-invalid</code> for error states</li>
+          <li><code>aria-required</code> for required fields</li>
+          <li><code>aria-live="polite"</code> for character count updates</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Accessible RichTextEditor example -->
+<RichTextEditor
+  label="Article Content"
+  placeholder="Write your article content..."
+  helpText="Use the toolbar to format your text. Character limit: 500"
+  ariaLabel="Article content editor"
+  required={true}
+  maxLength={500}
+  showCharCount={true}
+  name="content"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Best Practices -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Best Practices</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>Do's</h3>
+        <ul>
+          <li>Always provide a descriptive label for the editor</li>
+          <li>Use help text to explain formatting capabilities or limitations</li>
+          <li>Set appropriate character limits for the content type</li>
+          <li>Customize the toolbar to match your use case needs</li>
+          <li>Provide clear error messages when validation fails</li>
+          <li>Use the appropriate size variant for your layout</li>
+          <li>Include character count for content with length requirements</li>
+        </ul>
+
+        <h3>Don'ts</h3>
+        <ul>
+          <li>Don't use without a label - it affects accessibility</li>
+          <li>Don't forget to handle the rich-text:change events for real-time updates</li>
+          <li>Don't use read-only for temporarily disabled states - use disabled instead</li>
+          <li>Don't include too many toolbar options for simple use cases</li>
+          <li>Don't forget to validate the HTML content on the server side</li>
+          <li>Don't rely solely on visual cues for error states</li>
+        </ul>
+
+        <h3>Content Guidelines</h3>
+        <ul>
+          <li>Sanitize HTML content before displaying or storing</li>
+          <li>Consider providing content templates for common use cases</li>
+          <li>Test with screen readers to ensure formatting is announced properly</li>
+          <li>Validate that required formatting is preserved in your backend</li>
+          <li>Provide clear guidance on supported HTML elements</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Good: Complete, accessible setup -->
+<RichTextEditor
+  label="Blog Post Content"
+  placeholder="Write your blog post..."
+  helpText="Format your content using the toolbar. HTML tags will be preserved."
+  required={true}
+  maxLength={2000}
+  showCharCount={true}
+  name="content"
+  variant="elevated"
+  size="lg"
+  toolbar={[
+    'bold', 'italic', 'underline',
+    'heading', 'quote', 'link',
+    'ordered-list', 'unordered-list',
+    'undo', 'redo', 'clear'
+  ]}
+/>
+
+<!-- Good: Simple note-taking -->
+<RichTextEditor
+  label="Quick Notes"
+  placeholder="Jot down your thoughts..."
+  size="sm"
+  variant="minimal"
+  toolbar={['bold', 'italic', 'clear']}
+/>
+
+<!-- Avoid: Missing label -->
+<RichTextEditor placeholder="Type here..." />
+
+<!-- Avoid: Overcomplicated for simple text -->
+<RichTextEditor
+  toolbar={[
+    'bold', 'italic', 'underline', 'strike',
+    'heading', 'quote', 'code', 'link',
+    'ordered-list', 'unordered-list',
+    'undo', 'redo', 'clear'
+  ]}
+  placeholder="Just need simple text..."
+/>`}
+        language="astro"
+      />
+    </section>
+  </div>
 </DocsLayout>

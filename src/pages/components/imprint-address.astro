@@ -1,25 +1,316 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import ImprintAddress from '../../components/ImprintAddress.astro';
+import ImprintAddressComponent from '../../components/ImprintAddress.astro';
+
+const usageSnippet = `---
+import { ImprintAddress } from 'comet-astro';
+---
+
+<ImprintAddress
+  name="Comet Studio GmbH"
+  street="Rosenthaler Straße 40"
+  postalCode="10178"
+  city="Berlin"
+  country="Germany"
+  email="hello@comet.studio"
+  phone="+49 30 123456"
+  website="https://comet.studio"
+  vatId="DE123456789"
+  register="Amtsgericht Berlin, HRB 123456"
+  size="md"
+  layout="default"
+/>`;
 ---
 
 <DocsLayout
   title="ImprintAddress"
-  description="Structured address block for legal imprint requirements."
+  description="Accessible legal address block with AAA contrast, semantic markup, and structured data support."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <ImprintAddress
-      name="Comet Studio GmbH"
-      street="Rosenthaler Straße 40"
-      postalCode="10178"
-      city="Berlin"
-      country="Germany"
-      email="hello@comet.studio"
-      phone="+49 30 123456"
-      website="https://comet.studio"
-      vatId="DE123456789"
-      register="Amtsgericht Berlin Charlottenburg, HRB 123456"
-    />
+    <p class="text-base text-slate-100">
+      ImprintAddress provides a WCAG AAA compliant component for displaying 
+      legal imprint and contact information. Built with semantic HTML and 
+      structured data markup for optimal accessibility and SEO.
+    </p>
+    <p class="text-base text-slate-200">
+      The component supports flexible layouts, responsive sizing, and proper 
+      microdata markup following Schema.org Organization and PostalAddress 
+      standards for enhanced search engine understanding.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          name
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Organization or business name. Required field displayed as the 
+          main heading with semantic markup.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Controls typography scale. Options: <code>"sm"</code>, <code>"md"</code>, 
+          <code>"lg"</code>. Defaults to <code>"md"</code> with responsive sizing.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          layout?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Spacing configuration: <code>"compact"</code>, <code>"default"</code>, 
+          <code>"expanded"</code>. Affects vertical spacing between sections.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showLabels?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display section labels for "Address", "Contact", and "Legal Information". 
+          Defaults to <code>false</code> for cleaner appearance.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          Address Fields
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>street?</code>, <code>postalCode?</code>, <code>city?</code>, 
+          <code>country?</code> - All optional address components with proper 
+          microdata markup and responsive formatting.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          Contact Fields
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>email?</code>, <code>phone?</code>, <code>website?</code> - 
+          Contact links with accessible labels, proper protocols, and WCAG AAA 
+          compliant focus states.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          Legal Fields
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>vatId?</code>, <code>register?</code> - Legal identifiers 
+          for VAT number and business registration details.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and provide the required name field along with 
+      any optional contact and address information. The component automatically 
+      handles semantic markup and accessibility features.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Example</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <ImprintAddressComponent
+        name="Comet Studio GmbH"
+        street="Rosenthaler Straße 40"
+        postalCode="10178"
+        city="Berlin"
+        country="Germany"
+        email="hello@comet.studio"
+        phone="+49 30 123456"
+        website="https://comet.studio"
+        vatId="DE123456789"
+        register="Amtsgericht Berlin Charlottenburg, HRB 123456"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Small</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <ImprintAddressComponent
+            name="Small Business Ltd."
+            street="Main Street 123"
+            postalCode="12345"
+            city="Sample City"
+            email="info@small-business.com"
+            size="sm"
+          />
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Medium (Default)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <ImprintAddressComponent
+            name="Medium Corp"
+            street="Business Avenue 456"
+            postalCode="67890"
+            city="Corporate City"
+            email="contact@medium-corp.com"
+            phone="+1 555 123 4567"
+            size="md"
+          />
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Large</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <ImprintAddressComponent
+            name="Large Enterprise Inc."
+            street="Enterprise Blvd 789"
+            postalCode="13579"
+            city="Metro City"
+            country="United States"
+            email="info@large-enterprise.com"
+            phone="+1 555 987 6543"
+            website="https://large-enterprise.com"
+            size="lg"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Layouts</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Compact Layout</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <ImprintAddressComponent
+            name="Compact Design Co."
+            street="Design Street 100"
+            postalCode="24680"
+            city="Creative City"
+            email="hello@compact-design.com"
+            layout="compact"
+          />
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Default Layout</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <ImprintAddressComponent
+            name="Standard Solutions LLC"
+            street="Solution Avenue 200"
+            postalCode="97531"
+            city="Standard City"
+            email="info@standard-solutions.com"
+            phone="+1 555 246 8024"
+            layout="default"
+          />
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-100 mb-3">Expanded Layout</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <ImprintAddressComponent
+            name="Spacious Studios"
+            street="Studio Lane 300"
+            postalCode="86420"
+            city="Artistic City"
+            email="contact@spacious-studios.com"
+            phone="+1 555 135 7920"
+            website="https://spacious-studios.com"
+            layout="expanded"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">With Labels</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <ImprintAddressComponent
+        name="Labeled Business Corp"
+        street="Professional Drive 400"
+        postalCode="75319"
+        city="Business District"
+        country="United States"
+        email="admin@labeled-business.com"
+        phone="+1 555 159 2634"
+        website="https://labeled-business.com"
+        vatId="US987654321"
+        register="State of Business, Corp. #123456"
+        showLabels={true}
+        layout="expanded"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      ImprintAddress follows WCAG AAA guidelines with contrast ratios exceeding 
+      7:1 for all text and interactive elements. The component uses semantic 
+      <code>&lt;address&gt;</code> markup with proper roles and labels.
+    </p>
+    <p class="text-base text-slate-200">
+      Contact links include descriptive aria-labels and screen reader announcements 
+      for external links. Focus states use high-contrast ring indicators with 
+      proper offset for visibility against any background.
+    </p>
+    <p class="text-base text-slate-200">
+      Structured data markup follows Schema.org standards for Organization and 
+      PostalAddress, enabling search engines and assistive technologies to 
+      understand and present the information appropriately.
+    </p>
+    <p class="text-base text-slate-200">
+      The component supports keyboard navigation with logical tab order and 
+      responsive design that maintains usability across all device sizes and 
+      zoom levels up to 200%.
+    </p>
   </section>
 </DocsLayout>

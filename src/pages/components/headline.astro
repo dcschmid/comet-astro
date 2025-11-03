@@ -1,33 +1,217 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
+import HeadlineComponent from '../../components/Headline.astro';
+
+const title = "Headline";
+const description = "WCAG AAA compliant heading component with enhanced typography, responsive design, and comprehensive accessibility features.";
+---
+
+<DocsLayout {title} {description}>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      Headline provides semantic heading elements with enhanced typography, 
+      WCAG AAA compliant colors, and responsive text sizing. Built for optimal 
+      readability and accessibility across all devices and screen readers.
+    </p>
+    <p class="text-base text-slate-200">
+      The component features comprehensive color variants, flexible sizing options, 
+      and intelligent text balancing for professional typography.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">title?</dt>
+        <dd class="text-sm text-slate-200">
+          Text content for the headline. Alternatively, use slot content.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">level?</dt>
+        <dd class="text-sm text-slate-200">
+          Semantic heading level: <code>h1</code>, <code>h2</code>, <code>h3</code>, <code>h4</code>, <code>h5</code>, <code>h6</code>. Defaults to <code>h1</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">textSize?</dt>
+        <dd class="text-sm text-slate-200">
+          Responsive text size: <code>xs</code>, <code>sm</code>, <code>base</code>, <code>lg</code>, <code>xl</code>, <code>2xl</code>, <code>3xl</code>, <code>4xl</code>. Defaults to <code>lg</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">textAlign?</dt>
+        <dd class="text-sm text-slate-200">
+          Text alignment: <code>left</code>, <code>center</code>, <code>right</code>, <code>justify</code>. Defaults to <code>left</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">color?</dt>
+        <dd class="text-sm text-slate-200">
+          WCAG AAA compliant colors: <code>default</code>, <code>muted</code>, <code>accent</code>, <code>success</code>, <code>warning</code>, <code>error</code>. Defaults to <code>default</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">weight?</dt>
+        <dd class="text-sm text-slate-200">
+          Font weight: <code>normal</code>, <code>medium</code>, <code>semibold</code>, <code>bold</code>, <code>extrabold</code>. Defaults to <code>bold</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">balance?</dt>
+        <dd class="text-sm text-slate-200">
+          Enable text balancing for better line distribution. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">maxWidth?</dt>
+        <dd class="text-sm text-slate-200">
+          Maximum width: <code>none</code>, <code>sm</code>, <code>md</code>, <code>lg</code>, <code>xl</code>, <code>2xl</code>, <code>prose</code>. Defaults to <code>none</code>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+      <p class="text-sm text-slate-300">
+        Import the Headline component and use it with semantic heading levels. 
+        The component automatically provides responsive typography and accessibility features.
+      </p>
+      <pre class="rounded bg-slate-950/50 p-4 text-sm text-slate-300 overflow-x-auto"><code>{`---
 import Headline from '../../components/Headline.astro';
 ---
 
-<DocsLayout
-  title="Headline"
-  description="Accessible heading component with size and alignment variants."
+<Headline 
+  level="h1" 
+  textSize="2xl" 
+  color="default"
+  weight="bold"
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>title?: string</code> – text content (or use slot)</li>
-      <li>
-        <code>level?: 'h1'|'h2'|'h3'|'h4'|'h5'|'h6'</code> – heading level (default:
-        h1)
-      </li>
-      <li>
-        <code>textSize?: 'sm'|'base'|'lg'|'xl'|'2xl'|'3xl'</code> – size preset
-      </li>
-      <li><code>textAlign?: 'left'|'center'|'right'</code> – text alignment</li>
-      <li><code>className?: string</code> – extra classes</li>
-    </ul>
+  Main Page Title
+</Headline>
+
+<Headline 
+  level="h2" 
+  textSize="lg" 
+  color="muted"
+  textAlign="center"
+>
+  Section Subtitle
+</Headline>`}</code></pre>
+    </div>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <Headline level="h1" textSize="2xl">Main title</Headline>
-    <Headline level="h2" textSize="xl" textAlign="center"
-      >Centered subtitle</Headline
-    >
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <div class="space-y-8">
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Text Sizes</h3>
+        <p class="text-sm text-slate-300">
+          Responsive text sizing that adapts to different screen sizes.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6 space-y-4">
+          <HeadlineComponent level="h2" textSize="xs" title="Extra Small Headline" />
+          <HeadlineComponent level="h2" textSize="sm" title="Small Headline" />
+          <HeadlineComponent level="h2" textSize="base" title="Base Headline" />
+          <HeadlineComponent level="h2" textSize="lg" title="Large Headline" />
+          <HeadlineComponent level="h2" textSize="xl" title="Extra Large Headline" />
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Color Variants</h3>
+        <p class="text-sm text-slate-300">
+          WCAG AAA compliant color variants for different contexts.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6 space-y-3">
+          <HeadlineComponent level="h3" textSize="base" color="default" title="Default Text" />
+          <HeadlineComponent level="h3" textSize="base" color="muted" title="Muted Text" />
+          <HeadlineComponent level="h3" textSize="base" color="accent" title="Accent Text" />
+          <HeadlineComponent level="h3" textSize="base" color="success" title="Success Text" />
+          <HeadlineComponent level="h3" textSize="base" color="warning" title="Warning Text" />
+          <HeadlineComponent level="h3" textSize="base" color="error" title="Error Text" />
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Font Weights</h3>
+        <p class="text-sm text-slate-300">
+          Different font weights for various design needs.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6 space-y-3">
+          <HeadlineComponent level="h3" textSize="base" weight="normal" title="Normal Weight" />
+          <HeadlineComponent level="h3" textSize="base" weight="medium" title="Medium Weight" />
+          <HeadlineComponent level="h3" textSize="base" weight="semibold" title="Semibold Weight" />
+          <HeadlineComponent level="h3" textSize="base" weight="bold" title="Bold Weight" />
+          <HeadlineComponent level="h3" textSize="base" weight="extrabold" title="Extra Bold Weight" />
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Text Alignment</h3>
+        <p class="text-sm text-slate-300">
+          Different alignment options for various layouts.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6 space-y-4">
+          <HeadlineComponent level="h3" textSize="base" textAlign="left" title="Left Aligned Headline" />
+          <HeadlineComponent level="h3" textSize="base" textAlign="center" title="Center Aligned Headline" />
+          <HeadlineComponent level="h3" textSize="base" textAlign="right" title="Right Aligned Headline" />
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Maximum Width</h3>
+        <p class="text-sm text-slate-300">
+          Constrained width for optimal reading experience.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6 space-y-4">
+          <HeadlineComponent 
+            level="h3" 
+            textSize="base" 
+            maxWidth="prose" 
+            title="This headline has a maximum width of prose for optimal reading experience and better text layout" 
+          />
+          <HeadlineComponent 
+            level="h3" 
+            textSize="base" 
+            maxWidth="lg" 
+            textAlign="center"
+            title="This centered headline is constrained to large width" 
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="space-y-4">
+      <p class="text-base text-slate-200">
+        The Headline component implements comprehensive accessibility features:
+      </p>
+      <ul class="space-y-2 text-sm text-slate-300 list-disc list-inside ml-4">
+        <li>Semantic HTML heading elements (h1-h6) for proper document structure</li>
+        <li>WCAG AAA contrast ratios (7:1+) for all color variants in light and dark modes</li>
+        <li>Responsive typography that scales appropriately across all device sizes</li>
+        <li>Text balancing for improved line distribution and readability</li>
+        <li>Support for ARIA attributes with <code>ariaLevel</code> and <code>ariaLabel</code> props</li>
+        <li>Optimal line height and character spacing for enhanced readability</li>
+        <li>Hyphenation support for better text wrapping</li>
+        <li>Maximum width options to maintain optimal reading line lengths</li>
+        <li>Screen reader compatible with proper heading hierarchy</li>
+      </ul>
+      <div class="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4">
+        <p class="text-sm text-amber-200">
+          <strong>Best Practice:</strong> Use semantic heading levels (<code>h1</code>-<code>h6</code>) 
+          to create a logical document structure. Avoid skipping heading levels and ensure 
+          there's only one <code>h1</code> per page. Use <code>maxWidth="prose"</code> for 
+          optimal reading experience on wide screens.
+        </p>
+      </div>
+    </div>
   </section>
 </DocsLayout>

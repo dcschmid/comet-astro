@@ -1,157 +1,93 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Badge from '../../components/Badge.astro';
+import BadgeComp from '../../components/Badge.astro';
+import ComponentDocsSections from '../../components/ComponentDocsSections.astro';
 
-const usageSnippet = `---
-import { Badge } from 'comet-astro';
-
----
-
-<Badge label="Launch ready" variant="success" />`;
+const usageSnippet = `---\nimport { Badge } from 'comet-astro';\n\n---\n\n<Badge label="Launch ready" variant="success" />`;
 ---
 
 <DocsLayout
   title="Badge"
   description="Compact status label with AAA contrast across light and dark mode."
 >
-  <section class="space-y-4">
-    <p class="text-base text-slate-100">
-      Badges call out short states or categories without overpowering
-      surrounding copy. Each variant uses a high-contrast palette that meets
-      WCAG AAA for small text in both themes, so the label remains legible even
-      inside dense tables or cards.
-    </p>
-    <p class="text-base text-slate-200">
-      Drop badges inline with headings, lists, or buttons. Prefix a status,
-      highlight an availability window, or draw attention to experimental
-      features without introducing a full alert.
-    </p>
-  </section>
-
-  <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
-    <dl class="grid gap-6 sm:grid-cols-2">
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          label
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Text content of the badge. Keep it brief—typically a single word or
-          short phrase.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          variant?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Visual theme for the badge. Choose among <code>neutral</code>, <code
-            >primary</code
-          >, <code>success</code>, <code>warning</code>, or <code>danger</code>.
-          Defaults to <code>neutral</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          className?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Extra Tailwind utilities appended to the badge. Useful for adding
-          margins, uppercase transforms, or custom tracking to match your
-          typography.
-        </dd>
-      </div>
-    </dl>
-  </section>
-
-  <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">
-      Import the component, pass the label, and optionally choose a variant. The
-      badge automatically swaps palettes in dark mode to maintain AAA contrast,
-      so you can rely on the defaults without hand-tuning colors.
-    </p>
-    <pre
-      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-      <code class="language-astro">{usageSnippet}</code>
-    </pre>
-  </section>
-
-  <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
-    <div class="flex flex-wrap items-center gap-3">
-      <Badge label="Neutral" variant="neutral" />
-      <Badge label="Primary" variant="primary" />
-      <Badge label="Success" variant="success" />
-      <Badge label="Warning" variant="warning" />
-      <Badge label="Danger" variant="danger" />
-    </div>
-    <p class="text-sm text-slate-300">
-      Each variant pairs a deep tone in light mode with a light counterpart in
-      dark mode, ensuring the 12&nbsp;px text remains legible everywhere.
-    </p>
-  </section>
-
-  <section class="mt-10 space-y-4">
-    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
-    <p class="text-base text-slate-200">
-      AAA contrast is built in: we target at least a 9:1 ratio between
-      background and text in both themes. Because badges often appear next to
-      other interactive controls, keeping them readable helps everyone parse
-      statuses quickly.
-    </p>
-    <p class="text-base text-slate-200">
-      When translating UI strings, provide localized labels so assistive
-      technology users hear the same wording as sighted visitors. The component
-      renders a plain <code>span</code>, so no extra roles are required.
-    </p>
-  </section>
-
-  <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
-
-    <article class="space-y-4">
-      <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Inline with headings
-        </h3>
-        <p class="text-base text-slate-200">
-          Append a badge to release notes or API titles to quickly call out
-          lifecycle information. Add a small margin utility to keep the spacing
-          balanced.
-        </p>
-      </div>
-      <h4 class="text-2xl font-semibold text-slate-100">
-        v3.1 Launch Notes
-        <Badge label="Stable" variant="success" className="ml-3" />
-      </h4>
-    </article>
-
-    <article class="space-y-4">
-      <div>
-        <h3 class="text-lg font-semibold text-slate-100">Grouped legends</h3>
-        <p class="text-base text-slate-200">
-          Combine multiple badges to create a compact legend. The consistent
-          sizing keeps alignment tidy without extra wrappers.
-        </p>
-      </div>
-      <div class="flex flex-wrap items-center gap-2">
-        <Badge label="Alpha" variant="warning" />
-        <Badge label="Live" variant="primary" />
-        <Badge label="Limited" variant="danger" />
-      </div>
-    </article>
-  </section>
+  <ComponentDocsSections
+    overview={
+      <fragment>
+        <p>Badges call out short states or categories without overpowering surrounding copy. Each variant uses a high-contrast palette that meets WCAG AAA for small text in both themes, so the label remains legible even inside dense tables or cards.</p>
+        <p>Drop badges inline with headings, lists, or buttons. Prefix a status, highlight an availability window, or draw attention to experimental features without introducing a full alert.</p>
+      </fragment>
+    }
+    props={
+      <fragment>
+        <table class="w-full text-sm border border-neutral-200 dark:border-neutral-800 rounded-md overflow-hidden">
+          <thead class="bg-neutral-50 dark:bg-neutral-800">
+            <tr>
+              <th class="p-2 text-left">Prop</th>
+              <th class="p-2 text-left">Type</th>
+              <th class="p-2 text-left">Default</th>
+              <th class="p-2 text-left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-neutral-200 dark:border-neutral-800">
+              <td class="p-2 font-mono">label</td>
+              <td class="p-2 font-mono">string</td>
+              <td class="p-2 font-mono">—</td>
+              <td class="p-2">Text content of the badge. Keep it brief—typically a single word or short phrase.</td>
+            </tr>
+            <tr class="border-t border-neutral-200 dark:border-neutral-800">
+              <td class="p-2 font-mono">variant</td>
+              <td class="p-2 font-mono">'neutral' | 'primary' | 'success' | 'warning' | 'danger'</td>
+              <td class="p-2 font-mono">'neutral'</td>
+              <td class="p-2">Visual theme for the badge.</td>
+            </tr>
+            <tr class="border-t border-neutral-200 dark:border-neutral-800">
+              <td class="p-2 font-mono">className</td>
+              <td class="p-2 font-mono">string</td>
+              <td class="p-2 font-mono">''</td>
+              <td class="p-2">Additional utility classes to append.</td>
+            </tr>
+          </tbody>
+        </table>
+      </fragment>
+    }
+    accessibility={
+      <fragment>
+        <p>AAA contrast is built in: we target at least a 9:1 ratio between background and text in both themes. Because badges often appear next to other interactive controls, keeping them readable helps everyone parse statuses quickly.</p>
+        <p>The component renders a plain <code>span</code>, so no extra ARIA roles are required. Ensure the label string itself is localised for assistive technology users.</p>
+      </fragment>
+    }
+    theming={
+      <fragment>
+        <p>Badge palettes are tokenized; override via custom utility classes or CSS variables if integrating into a broader design system. Maintain ≥ 7:1 contrast for the small text size. Prefer deep backgrounds (950 range) for light mode and light backgrounds (100 range) for dark mode to keep semantic color mapping intuitive.</p>
+      </fragment>
+    }
+    examples={
+      <fragment>
+        <div class="flex flex-wrap items-center gap-3">
+          <BadgeComp label="Neutral" variant="neutral" />
+          <BadgeComp label="Primary" variant="primary" />
+          <BadgeComp label="Success" variant="success" />
+          <BadgeComp label="Warning" variant="warning" />
+          <BadgeComp label="Danger" variant="danger" />
+        </div>
+        <p class="text-xs text-neutral-600 dark:text-neutral-400">Each variant pairs a deep tone in light mode with a light counterpart in dark mode, ensuring the 12px text remains legible everywhere.</p>
+        <h3 class="mt-6 text-base font-semibold">Inline usage</h3>
+        <p>Add a badge to release notes or API titles to call out lifecycle information.</p>
+  <h4 class="text-lg font-semibold">v3.1 Launch Notes <BadgeComp label="Stable" variant="success" className="ml-2" /></h4>
+        <h3 class="mt-6 text-base font-semibold">Grouped legend</h3>
+        <div class="flex flex-wrap items-center gap-2">
+          <BadgeComp label="Alpha" variant="warning" />
+          <BadgeComp label="Live" variant="primary" />
+          <BadgeComp label="Limited" variant="danger" />
+        </div>
+      </fragment>
+    }
+    interactive={
+      <fragment>
+        <p>Usage:</p>
+        <pre class="overflow-x-auto rounded-lg border border-neutral-300 dark:border-neutral-700 bg-neutral-950/80 p-4 text-xs text-neutral-50"><code class="language-astro">{usageSnippet}</code></pre>
+      </fragment>
+    }
+  />
 </DocsLayout>

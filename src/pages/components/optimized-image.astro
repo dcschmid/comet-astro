@@ -1,21 +1,879 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const title = 'OptimizedImage Component';
+const description = 'WCAG AAA compliant responsive image component with performance optimization and accessibility features.';
+
+// Sample images for demonstration
+const sampleImage = 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=800&q=80';
+const portraitImage = 'https://images.unsplash.com/photo-1494790108755-2616b612b193?auto=format&fit=crop&w=400&q=80';
+const landscapeImage = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80';
 ---
 
-<DocsLayout
-  title="OptimizedImage"
-  description="Responsive image component with eager/lazy loading and blur placeholder."
->
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <OptimizedImage
-      src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=800&q=80"
-      alt="Laptop on desk"
-      rounded
-      width={800}
-      height={450}
-      className="w-full max-w-xl"
-    />
-  </section>
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The OptimizedImage component provides responsive, accessible images with performance optimization, error handling, and comprehensive styling options. It includes built-in placeholder patterns, loading states, and WCAG AAA compliance.
+      </p>
+    </section>
+
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <OptimizedImage
+              src={sampleImage}
+              alt="Laptop on desk workspace"
+              width={400}
+              height={225}
+              class="max-w-md mx-auto"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<OptimizedImage
+  src="https://example.com/image.jpg"
+  alt="Descriptive alternative text"
+  width={400}
+  height={225}
+  class="max-w-md mx-auto"
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Style Variants
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Default</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={sampleImage}
+              alt="Default styling"
+              width={300}
+              height={169}
+              variant="default"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Rounded</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={sampleImage}
+              alt="Rounded corners"
+              width={300}
+              height={169}
+              variant="rounded"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Circle</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={portraitImage}
+              alt="Circular image"
+              width={200}
+              height={200}
+              variant="circle"
+              aspectRatio="1/1"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Bordered</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={sampleImage}
+              alt="Image with border"
+              width={300}
+              height={169}
+              variant="bordered"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<OptimizedImage src="image.jpg" alt="Description" variant="default" />
+
+<!-- Rounded corners -->
+<OptimizedImage src="image.jpg" alt="Description" variant="rounded" />
+
+<!-- Perfect circle -->
+<OptimizedImage src="image.jpg" alt="Description" variant="circle" aspectRatio="1/1" />
+
+<!-- With border -->
+<OptimizedImage src="image.jpg" alt="Description" variant="bordered" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Aspect Ratios -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Aspect Ratios
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Square (1:1)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Square aspect ratio"
+              width={250}
+              height={250}
+              aspectRatio="1/1"
+              variant="rounded"
+              class="max-w-xs mx-auto"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Video (16:9)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Video aspect ratio"
+              width={400}
+              height={225}
+              aspectRatio="16/9"
+              variant="rounded"
+              class="max-w-md mx-auto"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Classic (4:3)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Classic aspect ratio"
+              width={400}
+              height={300}
+              aspectRatio="4/3"
+              variant="rounded"
+              class="max-w-md mx-auto"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Ultrawide (21:9)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Ultrawide aspect ratio"
+              width={420}
+              height={180}
+              aspectRatio="21/9"
+              variant="rounded"
+              class="max-w-lg mx-auto"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Square images -->
+<OptimizedImage src="image.jpg" alt="Description" aspectRatio="1/1" />
+
+<!-- Video format -->
+<OptimizedImage src="image.jpg" alt="Description" aspectRatio="16/9" />
+
+<!-- Classic format -->
+<OptimizedImage src="image.jpg" alt="Description" aspectRatio="4/3" />
+
+<!-- Photo format -->
+<OptimizedImage src="image.jpg" alt="Description" aspectRatio="3/2" />
+
+<!-- Ultrawide -->
+<OptimizedImage src="image.jpg" alt="Description" aspectRatio="21/9" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Object Fit -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Object Fit Options
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Cover (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Object fit cover"
+              width={300}
+              height={200}
+              aspectRatio="3/2"
+              objectFit="cover"
+              variant="rounded"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Scales to fill container, may crop image
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Contain</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Object fit contain"
+              width={300}
+              height={200}
+              aspectRatio="3/2"
+              objectFit="contain"
+              variant="rounded"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Fits entire image, may show empty space
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Fill</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Object fit fill"
+              width={300}
+              height={200}
+              aspectRatio="3/2"
+              objectFit="fill"
+              variant="rounded"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Stretches to fill, may distort image
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Scale Down</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Object fit scale-down"
+              width={300}
+              height={200}
+              aspectRatio="3/2"
+              objectFit="scale-down"
+              variant="rounded"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Acts like contain or none, whichever is smaller
+          </p>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Cover - fills container, may crop -->
+<OptimizedImage src="image.jpg" alt="Description" objectFit="cover" />
+
+<!-- Contain - fits entire image -->
+<OptimizedImage src="image.jpg" alt="Description" objectFit="contain" />
+
+<!-- Fill - stretches to fill -->
+<OptimizedImage src="image.jpg" alt="Description" objectFit="fill" />
+
+<!-- Scale down - smaller of contain or none -->
+<OptimizedImage src="image.jpg" alt="Description" objectFit="scale-down" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Figure and Captions -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Figure and Captions
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Bottom Caption</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Mountain landscape with lake"
+              width={400}
+              height={225}
+              figure={true}
+              caption="Beautiful mountain landscape with crystal clear lake reflection"
+              captionPosition="bottom"
+              variant="rounded"
+              class="mx-auto"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Top Caption</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={sampleImage}
+              alt="Modern workspace setup"
+              width={400}
+              height={225}
+              figure={true}
+              caption="Modern workspace with laptop and accessories"
+              captionPosition="top"
+              variant="rounded"
+              class="mx-auto"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Overlay Caption</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Dramatic mountain vista"
+              width={400}
+              height={225}
+              figure={true}
+              caption="Dramatic mountain vista at sunset"
+              captionPosition="overlay"
+              variant="rounded"
+              class="mx-auto"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Figure with bottom caption -->
+<OptimizedImage
+  src="image.jpg"
+  alt="Description"
+  figure={true}
+  caption="Image caption text"
+  captionPosition="bottom"
+/>
+
+<!-- Figure with top caption -->
+<OptimizedImage
+  src="image.jpg"
+  alt="Description"
+  figure={true}
+  caption="Image caption text"
+  captionPosition="top"
+/>
+
+<!-- Figure with overlay caption -->
+<OptimizedImage
+  src="image.jpg"
+  alt="Description"
+  figure={true}
+  caption="Image caption text"
+  captionPosition="overlay"
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Performance Features -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Performance Features
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Lazy Loading</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={sampleImage}
+              alt="Lazy loaded image"
+              width={300}
+              height={169}
+              loading="lazy"
+              variant="rounded"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Images load only when they enter the viewport
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Eager Loading</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={portraitImage}
+              alt="Eager loaded image"
+              width={200}
+              height={267}
+              loading="eager"
+              fetchPriority="high"
+              variant="rounded"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Critical images load immediately with high priority
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Responsive Images</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={landscapeImage}
+              alt="Responsive image"
+              width={800}
+              height={450}
+              srcset="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=400&q=80 400w, https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80 800w"
+              sizes="(max-width: 640px) 400px, 800px"
+              variant="rounded"
+              class="w-full max-w-lg mx-auto"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Different image sizes for different screen sizes
+          </p>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Lazy loading (default) -->
+<OptimizedImage src="image.jpg" alt="Description" loading="lazy" />
+
+<!-- Eager loading for above-the-fold images -->
+<OptimizedImage 
+  src="hero.jpg" 
+  alt="Description" 
+  loading="eager" 
+  fetchPriority="high" 
+/>
+
+<!-- Responsive images with srcset -->
+<OptimizedImage
+  src="image-800.jpg"
+  alt="Description"
+  srcset="image-400.jpg 400w, image-800.jpg 800w, image-1200.jpg 1200w"
+  sizes="(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px"
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Error Handling -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Error Handling
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Fallback Image</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src="https://invalid-url.com/broken-image.jpg"
+              alt="Image with fallback"
+              width={300}
+              height={169}
+              errorFallback="https://via.placeholder.com/300x169/e5e7eb/6b7280?text=Image+Not+Found"
+              variant="rounded"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Automatically switches to fallback if main image fails to load
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Loading Placeholder</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={sampleImage}
+              alt="Image with placeholder"
+              width={300}
+              height={169}
+              placeholder={true}
+              variant="rounded"
+            />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Shows checkered pattern while image loads
+          </p>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Fallback image for error handling -->
+<OptimizedImage
+  src="image.jpg"
+  alt="Description"
+  errorFallback="https://via.placeholder.com/400x225?text=Not+Found"
+/>
+
+<!-- Loading placeholder pattern -->
+<OptimizedImage
+  src="image.jpg"
+  alt="Description"
+  placeholder={true}
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">WCAG AAA Compliance</h3>
+        <ul class="list-disc pl-6 space-y-2 text-blue-800 dark:text-blue-200">
+          <li>Required alt text for all images</li>
+          <li>Proper figure and figcaption semantic markup</li>
+          <li>ARIA describedby relationships between images and captions</li>
+          <li>High contrast placeholder patterns for loading states</li>
+          <li>Keyboard navigation support for interactive images</li>
+          <li>Screen reader optimized error fallback announcements</li>
+          <li>Responsive images reduce data usage on mobile devices</li>
+          <li>Performance optimization reduces loading barriers</li>
+        </ul>
+      </div>
+
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Enhanced Accessibility</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <OptimizedImage
+              src={portraitImage}
+              alt="Professional headshot of a woman in business attire"
+              width={200}
+              height={267}
+              figure={true}
+              caption="Marketing Director, Sarah Johnson"
+              role="img"
+              ariaDescribedBy="custom-description"
+              variant="circle"
+              aspectRatio="1/1"
+              class="mx-auto"
+            />
+            <p id="custom-description" class="text-sm text-gray-600 dark:text-gray-400 mt-4">
+              Professional portrait showing confident business leader in modern office setting.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<OptimizedImage
+  src="portrait.jpg"
+  alt="Professional headshot of a woman in business attire"
+  figure={true}
+  caption="Marketing Director, Sarah Johnson"
+  role="img"
+  ariaDescribedBy="custom-description"
+/>
+
+<p id="custom-description">
+  Professional portrait showing confident business leader.
+</p>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Props Reference
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-red-700 dark:text-red-300">
+                src
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Image source URL
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-red-700 dark:text-red-300">
+                alt
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Alternative text for accessibility
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                width
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                number | string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Image width
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                height
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                number | string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Image height
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default' | 'rounded' | 'circle' | 'bordered'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                aspectRatio
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                '1/1' | '4/3' | '3/2' | '16/9' | '21/9' | 'auto'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'auto'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Force specific aspect ratio
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                objectFit
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'cover'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                How image fits in container
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                loading
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'eager' | 'lazy'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'lazy'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Image loading strategy
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                figure
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Wrap in figure element
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                caption
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Image caption text
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                captionPosition
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'bottom' | 'top' | 'overlay'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'bottom'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Caption placement
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                errorFallback
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Fallback image URL on error
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                placeholder
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Show loading placeholder pattern
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Best Practices
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+            ✅ Do
+          </h3>
+          <ul class="space-y-2 text-green-800 dark:text-green-200">
+            <li>• Always provide descriptive alt text for accessibility</li>
+            <li>• Use eager loading and high priority for above-the-fold images</li>
+            <li>• Provide width and height to prevent layout shift</li>
+            <li>• Use appropriate aspect ratios for your content</li>
+            <li>• Optimize image files before using (WebP, AVIF when possible)</li>
+            <li>• Use srcset for responsive images across different screen sizes</li>
+            <li>• Test with screen readers and keyboard navigation</li>
+            <li>• Provide error fallbacks for critical images</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-red-900 dark:text-red-100 mb-3">
+            ❌ Don't
+          </h3>
+          <ul class="space-y-2 text-red-800 dark:text-red-200">
+            <li>• Use images without alt text (empty alt="" only for decorative images)</li>
+            <li>• Load large images for mobile users unnecessarily</li>
+            <li>• Use eager loading for all images (impacts performance)</li>
+            <li>• Forget to test on slower connections</li>
+            <li>• Use vague alt text like "image" or "photo"</li>
+            <li>• Ignore aspect ratios causing layout shifts</li>
+            <li>• Override browser lazy loading without good reason</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+            💡 Tips
+          </h3>
+          <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
+            <li>• Use 'circle' variant with 1:1 aspect ratio for profile pictures</li>
+            <li>• 'bordered' variant helps images stand out on light backgrounds</li>
+            <li>• Overlay captions work well for hero images and banners</li>
+            <li>• Consider using 'contain' object-fit for logos and icons</li>
+            <li>• Provide error fallbacks for user-uploaded content</li>
+            <li>• Use placeholder patterns to improve perceived performance</li>
+            <li>• Test loading behavior on various network speeds</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

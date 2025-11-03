@@ -1,130 +1,263 @@
 ---
 /**
- * Navbar - responsive top navigation with toggle
+ * Navbar - Enhanced responsive navigation with WCAG AAA compliance
  */
+
 interface NavItem {
   href: string;
   label: string;
   external?: boolean;
+  active?: boolean;
 }
 
 interface Props {
+  // Content
   items?: NavItem[];
   brand?: string;
+  brandHref?: string;
+  
+  // Styling
+  variant?: 'default' | 'minimal' | 'glass';
+  position?: 'static' | 'sticky' | 'fixed';
+  
+  // Layout
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  
+  // Accessibility
+  ariaLabel?: string;
+  
+  // Classes
+  class?: string;
   className?: string;
 }
 
-const { items = [], brand = 'Comet', className = '' } = Astro.props as Props;
+const {
+  items = [],
+  brand = 'Comet',
+  brandHref = '/',
+  variant = 'default',
+  position = 'static',
+  maxWidth = 'xl',
+  ariaLabel = 'Main navigation',
+  class: className,
+  className: legacyClassName
+} = Astro.props;
+
+const finalClassName = className || legacyClassName || '';
+
+// Generate unique ID for accessibility
 const navId = `comet-nav-${Math.random().toString(36).slice(2, 9)}`;
+
+// Position classes
+const positionClasses = {
+  static: '',
+  sticky: 'sticky top-0 z-40',
+  fixed: 'fixed top-0 left-0 right-0 z-40'
+};
+
+// Max width classes
+const maxWidthClasses = {
+  sm: 'max-w-2xl',
+  md: 'max-w-4xl',
+  lg: 'max-w-6xl',
+  xl: 'max-w-7xl',
+  full: 'max-w-none'
+};
+
+// Variant styles with WCAG AAA contrast ratios
+const variantClasses = {
+  default: {
+    header: 'border-b border-gray-200 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-50',
+    brand: 'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
+    toggleButton: 'border-gray-300 bg-white text-gray-900 hover:bg-gray-50 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-700 dark:hover:border-gray-500',
+    navLink: 'text-gray-700 hover:text-blue-700 hover:bg-gray-50 focus:text-blue-700 focus:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800 dark:focus:text-blue-300 dark:focus:bg-gray-800',
+    activeNavLink: 'text-blue-700 bg-blue-50 dark:text-blue-300 dark:bg-blue-950'
+  },
+  minimal: {
+    header: 'bg-transparent text-gray-900 dark:text-gray-50',
+    brand: 'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
+    toggleButton: 'border-gray-300 bg-white/80 backdrop-blur text-gray-900 hover:bg-white hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-50 dark:hover:bg-gray-800 dark:hover:border-gray-500',
+    navLink: 'text-gray-700 hover:text-blue-700 hover:bg-white/50 focus:text-blue-700 focus:bg-white/50 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800/50 dark:focus:text-blue-300 dark:focus:bg-gray-800/50',
+    activeNavLink: 'text-blue-700 bg-white/70 dark:text-blue-300 dark:bg-gray-800/70'
+  },
+  glass: {
+    header: 'border-b border-gray-200/20 bg-white/70 backdrop-blur-md text-gray-900 dark:border-gray-700/20 dark:bg-gray-900/70 dark:text-gray-50',
+    brand: 'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
+    toggleButton: 'border-gray-300/50 bg-white/60 backdrop-blur text-gray-900 hover:bg-white/80 hover:border-gray-400/70 dark:border-gray-600/50 dark:bg-gray-800/60 dark:text-gray-50 dark:hover:bg-gray-800/80 dark:hover:border-gray-500/70',
+    navLink: 'text-gray-700 hover:text-blue-700 hover:bg-white/30 focus:text-blue-700 focus:bg-white/30 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800/30 dark:focus:text-blue-300 dark:focus:bg-gray-800/30',
+    activeNavLink: 'text-blue-700 bg-white/50 dark:text-blue-300 dark:bg-gray-800/50'
+  }
+};
+
+const currentVariant = variantClasses[variant];
 ---
 
 <header
-  class={`w-full border-b border-slate-200 bg-white/95 text-slate-900 backdrop-blur supports-[backdrop-filter]:bg-white/85 dark:border-slate-800 dark:bg-slate-950/85 dark:text-slate-100 ${className}`.trim()}
+  class={`w-full ${positionClasses[position]} ${currentVariant.header} ${finalClassName}`.trim()}
+  role="banner"
 >
-  <div
-    class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6"
-  >
+  <div class={`mx-auto flex items-center justify-between gap-4 px-4 py-3 sm:px-6 ${maxWidthClasses[maxWidth]}`}>
+    <!-- Brand/Logo -->
     <a
-      href="/"
-      class="text-lg font-semibold text-slate-900 no-underline transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-100 dark:hover:text-blue-200 dark:focus-visible:ring-offset-slate-900"
+      href={brandHref}
+      class={`
+        text-lg font-semibold no-underline transition-all duration-200
+        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+        dark:focus:ring-offset-gray-900 rounded-md px-2 py-1 -mx-2 -my-1
+        ${currentVariant.brand}
+      `.trim().replace(/\s+/g, ' ')}
+      aria-label={`${brand} - Go to homepage`}
     >
       {brand}
     </a>
+
+    <!-- Mobile Menu Toggle -->
     <button
       type="button"
-      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900 md:hidden"
+      class={`
+        inline-flex min-h-12 min-w-12 items-center justify-center gap-2 
+        rounded-lg border px-3 py-2 text-sm font-semibold shadow-sm 
+        transition-all duration-200 md:hidden
+        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+        dark:focus:ring-offset-gray-900
+        ${currentVariant.toggleButton}
+      `.trim().replace(/\s+/g, ' ')}
       data-nav-toggle
       aria-controls={navId}
       aria-expanded="false"
+      aria-label="Toggle navigation menu"
     >
-      Menu
-      <span class="text-base" aria-hidden="true">☰</span>
+      <span class="text-sm font-medium">Menu</span>
+      <span class="text-base transition-transform duration-200" aria-hidden="true" data-nav-icon>☰</span>
     </button>
+
+    <!-- Navigation -->
     <nav
       id={navId}
-      class="hidden w-full max-w-3xl md:block md:w-auto"
+      class="hidden w-full md:block md:w-auto"
       data-nav
       role="navigation"
+      aria-label={ariaLabel}
     >
-      <ul
-        class="mt-3 flex flex-col gap-2 md:mt-0 md:flex-row md:items-center md:gap-4"
-      >
-        {
-          items.map((i) => (
-            <li>
-              <a
-                href={i.href}
-                target={i.external ? '_blank' : undefined}
-                rel={i.external ? 'noopener noreferrer' : undefined}
-                class="inline-flex min-h-[44px] items-center rounded-lg px-3 py-2 text-sm font-medium text-slate-700 no-underline transition hover:bg-slate-100 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-200 dark:focus-visible:ring-offset-slate-900"
-              >
-                {i.label}
-                {i.external && (
+      <ul class="mt-3 flex flex-col gap-1 md:mt-0 md:flex-row md:items-center md:gap-2">
+        {items.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noopener noreferrer' : undefined}
+              class={`
+                inline-flex min-h-11 items-center rounded-lg px-3 py-2 
+                text-sm font-medium no-underline transition-all duration-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                dark:focus:ring-offset-gray-900
+                ${item.active ? currentVariant.activeNavLink : currentVariant.navLink}
+              `.trim().replace(/\s+/g, ' ')}
+              aria-current={item.active ? 'page' : undefined}
+            >
+              {item.label}
+              {item.external && (
+                <>
+                  <span class="ml-1 text-xs" aria-hidden="true">↗</span>
                   <span class="sr-only"> (opens in new window)</span>
-                )}
-              </a>
-            </li>
-          ))
-        }
-        <slot name="actions" />
+                </>
+              )}
+            </a>
+          </li>
+        ))}
+        
+        <!-- Actions Slot -->
+        <li class="mt-3 md:mt-0 md:ml-4">
+          <slot name="actions" />
+        </li>
       </ul>
     </nav>
   </div>
 </header>
 
 <script is:inline>
-  (function () {
-    const root = document.currentScript?.previousElementSibling;
-    if (!(root instanceof HTMLElement)) return;
-    const toggle = root.querySelector('[data-nav-toggle]');
-    const nav = root.querySelector('[data-nav]');
-    if (!(toggle instanceof HTMLElement) || !(nav instanceof HTMLElement))
-      return;
+  document.addEventListener('DOMContentLoaded', () => {
+    // Find all navbar instances
+    const navbars = document.querySelectorAll('header[role="banner"]');
+    
+    navbars.forEach(navbar => {
+      const toggle = navbar.querySelector('[data-nav-toggle]');
+      const nav = navbar.querySelector('[data-nav]');
+      const icon = navbar.querySelector('[data-nav-icon]');
+      
+      if (!(toggle instanceof HTMLElement) || !(nav instanceof HTMLElement)) return;
 
-    const updateVisibility = (nextOpen) => {
-      toggle.setAttribute('aria-expanded', String(nextOpen));
-      if (window.innerWidth >= 768) {
-        nav.classList.remove('hidden');
-        return;
-      }
-      nav.classList.toggle('hidden', !nextOpen);
-    };
+      let isOpen = false;
 
-    toggle.addEventListener('click', (event) => {
-      event.preventDefault();
-      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-      updateVisibility(!isOpen);
-    });
+      const updateVisibility = (nextOpen) => {
+        isOpen = nextOpen;
+        toggle.setAttribute('aria-expanded', String(nextOpen));
+        
+        // Update icon
+        if (icon) {
+          icon.textContent = nextOpen ? '✕' : '☰';
+          icon.style.transform = nextOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+        
+        // Handle mobile/desktop visibility
+        if (window.innerWidth >= 768) {
+          nav.classList.remove('hidden');
+          return;
+        }
+        
+        nav.classList.toggle('hidden', !nextOpen);
+        
+        // Focus management
+        if (nextOpen) {
+          // Focus first nav link when menu opens
+          const firstLink = nav.querySelector('a');
+          if (firstLink) {
+            firstLink.focus();
+          }
+        }
+      };
 
-    nav.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        updateVisibility(false);
-        toggle.focus({ preventScroll: true });
-      }
-    });
+      // Toggle click handler
+      toggle.addEventListener('click', (event) => {
+        event.preventDefault();
+        updateVisibility(!isOpen);
+      });
 
-    nav.addEventListener('click', (event) => {
-      const link =
-        event.target instanceof HTMLElement
-          ? event.target.closest('a[href]')
+      // Escape key handler
+      navbar.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && isOpen) {
+          updateVisibility(false);
+          toggle.focus();
+        }
+      });
+
+      // Close menu when clicking nav links on mobile
+      nav.addEventListener('click', (event) => {
+        const link = event.target instanceof HTMLElement 
+          ? event.target.closest('a[href]') 
           : null;
-      if (!(link instanceof HTMLElement)) return;
-      if (window.innerWidth < 768) {
-        updateVisibility(false);
-      }
-    });
+          
+        if (link && window.innerWidth < 768) {
+          updateVisibility(false);
+        }
+      });
 
-    window.addEventListener('resize', () => {
-      const isDesktop = window.innerWidth >= 768;
-      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-      if (isDesktop) {
-        nav.classList.remove('hidden');
-        toggle.setAttribute('aria-expanded', 'false');
-      } else {
-        nav.classList.toggle('hidden', !isOpen);
-      }
-    });
+      // Handle window resize
+      const handleResize = () => {
+        const isDesktop = window.innerWidth >= 768;
+        
+        if (isDesktop) {
+          nav.classList.remove('hidden');
+          updateVisibility(false);
+        } else {
+          nav.classList.toggle('hidden', !isOpen);
+        }
+      };
 
-    updateVisibility(false);
-  })();
+      window.addEventListener('resize', handleResize);
+      
+      // Initialize
+      updateVisibility(false);
+    });
+  });
 </script>

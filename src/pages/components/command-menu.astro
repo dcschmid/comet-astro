@@ -1,45 +1,63 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import CommandMenu from '../../components/CommandMenu.astro';
+import CommandMenuComponent from '../../components/CommandMenu.astro';
 
 const commands = [
-  {
-    id: 'home',
-    label: 'Go to Home',
-    icon: '🏠',
-    action: '/',
-    keywords: ['home', 'start'],
-  },
-  {
-    id: 'settings',
-    label: 'Open Settings',
-    icon: '⚙️',
-    action: '/settings',
-    keywords: ['settings', 'config'],
-  },
-  {
-    id: 'search',
-    label: 'Search',
-    icon: '🔍',
-    action: '/search',
-    description: 'Search everything',
-    keywords: ['find', 'search'],
-  },
+  { id: 'home', label: 'Go to Home', icon: '🏠', action: '/', keywords: ['home', 'start'] },
+  { id: 'settings', label: 'Open Settings', icon: '⚙️', action: '/settings', keywords: ['settings', 'config'] },
+  { id: 'search', label: 'Search', icon: '🔍', action: '/search', description: 'Search everything', keywords: ['find', 'search'] },
 ];
+
+const usageSnippet = `---\nimport { CommandMenu } from 'comet-astro';\n\n---\n\n<CommandMenu commands={commands} />`;
 ---
 
-<DocsLayout
-  title="CommandMenu"
-  description="CMD+K / Ctrl+K command palette with keyboard navigation."
->
+<DocsLayout title="CommandMenu" description="CMD+K / Ctrl+K command palette with keyboard navigation and WCAG AAA contrast.">
+
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <div class="bg-gray-900 p-4 rounded-lg">
-      <p class="text-gray-400 text-sm">
-        Press <kbd class="px-2 py-1 bg-gray-800 rounded text-xs">Ctrl+K</kbd> to
-        open the command menu
-      </p>
-    </div>
-    <CommandMenu commands={commands} />
+    <p class="text-base text-slate-100">
+      The CommandMenu provides a lightweight, accessible command palette triggered
+      by <code>Ctrl/Cmd+K</code>. It supports keyboard navigation, type-to-filter,
+      and respects high contrast in both light and dark themes. Keep the set of
+      commands focused and avoid overloading the palette with too many items.
+    </p>
   </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">Import and render the component with an array of command objects. Each command should provide a unique <code>id</code>, a human label, and an optional <code>action</code> (URL) or callback handled by your page.</p>
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">commands</dt>
+        <dd class="text-sm text-slate-200">Array of command objects: id, label, optional description, icon, action (URL), and keywords.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">placeholder?</dt>
+        <dd class="text-sm text-slate-200">Placeholder text for the search input. Defaults to <code>'Search commands...'</code>.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">shortcut?</dt>
+        <dd class="text-sm text-slate-200">Keyboard hint shown in the UI. Defaults to <code>'Ctrl+K'</code>.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Example</h2>
+    <div class="rounded-lg border border-slate-700/60 bg-slate-900/40 p-4">
+      <p class="text-sm text-slate-200 mb-2">Press <kbd class="px-2 py-1 bg-slate-800 rounded text-xs">Ctrl+K</kbd> (or Cmd+K) to open the command menu. This example renders an inline instance for demo purposes only.</p>
+  <CommandMenuComponent commands={commands} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">The component uses native focus management, ARIA roles (combobox + listbox/option), and clear focus-visible styles to ensure keyboard users can discover and operate the menu. Color choices are tuned to maintain WCAG AAA contrast in both themes for text, input, and selected/focus states.</p>
+    <p class="text-base text-slate-200">When supplying commands that navigate, prefer meaningful labels and avoid generic text like “Click here”. If your commands perform non-navigation actions, wire them to callbacks in your page and avoid short, ambiguous labels.</p>
+  </section>
+
 </DocsLayout>

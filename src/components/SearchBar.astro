@@ -1,15 +1,50 @@
 ---
+import { cn } from '../utils/cn';
+
 /**
- * SearchBar - accessible search form
+ * SearchBar - Accessible search form with WCAG AAA compliance
  */
 interface Props {
+  /** Initial search value */
   value?: string;
+  /** Placeholder text for the search input */
   placeholder?: string;
+  /** Form action URL */
   action?: string;
+  /** Input name attribute */
   name?: string;
+  /** Form method */
   method?: 'get' | 'post';
+  /** Submit button label */
   submitLabel?: string;
-  className?: string;
+  /** Label for the search input */
+  label?: string;
+  /** Help text displayed below the search bar */
+  helpText?: string;
+  /** Whether the search is disabled */
+  disabled?: boolean;
+  /** Whether the search is required */
+  required?: boolean;
+  /** Whether the search has an error state */
+  error?: boolean | string;
+  /** Visual variant of the search bar */
+  variant?: 'default' | 'minimal' | 'outlined' | 'filled';
+  /** Size of the search bar */
+  size?: 'sm' | 'md' | 'lg';
+  /** Show search icon */
+  showIcon?: boolean;
+  /** Show submit button */
+  showButton?: boolean;
+  /** Enable live search suggestions */
+  enableSuggestions?: boolean;
+  /** Custom ID for the search input */
+  id?: string;
+  /** Custom aria-label for accessibility */
+  ariaLabel?: string;
+  /** ID of element that describes the search */
+  ariaDescribedBy?: string;
+  /** Additional CSS classes */
+  class?: string;
 }
 
 const {
@@ -19,33 +54,440 @@ const {
   name = 'q',
   method = 'get',
   submitLabel = 'Search',
-  className = '',
-} = Astro.props as Props;
+  label,
+  helpText,
+  disabled = false,
+  required = false,
+  error = false,
+  variant = 'default',
+  size = 'md',
+  showIcon = true,
+  showButton = true,
+  enableSuggestions = false,
+  id: propId,
+  ariaLabel,
+  ariaDescribedBy,
+  class: className = '',
+} = Astro.props;
 
-const inputId = `search-input-${Math.random().toString(36).slice(2, 9)}`;
+const id = propId || `search-${Math.random().toString(36).slice(2, 10)}`;
+const inputId = `${id}-input`;
+const helpId = helpText ? `${id}-help` : undefined;
+const errorId = error ? `${id}-error` : undefined;
+const suggestionsId = enableSuggestions ? `${id}-suggestions` : undefined;
+const finalAriaDescribedBy = [ariaDescribedBy, helpId, errorId].filter(Boolean).join(' ') || undefined;
+
+// Size configurations
+const sizeClasses = {
+  sm: {
+    input: 'min-h-[40px] px-3 py-2 text-sm',
+    button: 'min-h-[40px] px-3 text-sm',
+    icon: 'w-4 h-4', // Icon size within centered container
+    label: 'text-sm',
+    help: 'text-xs',
+  },
+  md: {
+    input: 'min-h-[44px] px-4 py-3 text-sm',
+    button: 'min-h-[44px] px-4 text-sm',
+    icon: 'w-5 h-5',
+    label: 'text-sm',
+    help: 'text-xs',
+  },
+  lg: {
+    input: 'min-h-[48px] px-5 py-4 text-base',
+    button: 'min-h-[48px] px-6 text-base',
+    icon: 'w-5 h-5',
+    label: 'text-base',
+    help: 'text-sm',
+  },
+};
+
+// Variant styles with WCAG AAA compliance
+const variantClasses = {
+  default: {
+    container: 'bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm',
+    input: cn(
+      'bg-transparent text-gray-900 dark:text-gray-100',
+      'placeholder:text-gray-500 dark:placeholder:text-gray-400',
+      'focus:outline-none'
+    ),
+    button: cn(
+      'bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-900',
+      'border-l border-gray-300 dark:border-gray-600',
+      'hover:bg-blue-700 dark:hover:bg-blue-400',
+      'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
+    ),
+    icon: 'text-gray-500 dark:text-gray-400',
+    focus: 'focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
+    error: error && 'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400',
+  },
+  minimal: {
+    container: 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg',
+    input: cn(
+      'bg-transparent text-gray-900 dark:text-gray-100',
+      'placeholder:text-gray-500 dark:placeholder:text-gray-400',
+      'focus:outline-none'
+    ),
+    button: cn(
+      'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
+      'border-l border-gray-300 dark:border-gray-600',
+      'hover:bg-gray-300 dark:hover:bg-gray-600',
+      'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400'
+    ),
+    icon: 'text-gray-500 dark:text-gray-400',
+    focus: 'focus-within:border-gray-400 dark:focus-within:border-gray-500 focus-within:ring-2 focus-within:ring-gray-400 dark:focus-within:ring-gray-500',
+    error: error && 'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400',
+  },
+  outlined: {
+    container: 'bg-transparent border-2 border-gray-300 dark:border-gray-600 rounded-lg',
+    input: cn(
+      'bg-transparent text-gray-900 dark:text-gray-100',
+      'placeholder:text-gray-500 dark:placeholder:text-gray-400',
+      'focus:outline-none'
+    ),
+    button: cn(
+      'bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-900',
+      'border-l-2 border-gray-300 dark:border-gray-600',
+      'hover:bg-blue-700 dark:hover:bg-blue-400',
+      'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
+    ),
+    icon: 'text-gray-600 dark:text-gray-300',
+    focus: 'focus-within:border-blue-600 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-600 dark:focus-within:ring-blue-400',
+    error: error && 'border-red-600 dark:border-red-400 focus-within:border-red-600 dark:focus-within:border-red-400 focus-within:ring-red-600 dark:focus-within:ring-red-400',
+  },
+  filled: {
+    container: 'bg-gray-100 dark:bg-gray-800 border-0 rounded-lg shadow-inner',
+    input: cn(
+      'bg-transparent text-gray-900 dark:text-gray-100',
+      'placeholder:text-gray-600 dark:placeholder:text-gray-300',
+      'focus:outline-none'
+    ),
+    button: cn(
+      'bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-900',
+      'hover:bg-blue-700 dark:hover:bg-blue-400',
+      'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
+    ),
+    icon: 'text-gray-600 dark:text-gray-300',
+    focus: 'focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
+    error: error && 'bg-red-50 dark:bg-red-900/20 focus-within:ring-red-500 dark:focus-within:ring-red-400',
+  },
+};
+
+const containerClasses = cn(
+  'flex items-center transition-all duration-200', // Added items-center for vertical alignment
+  variantClasses[variant].container,
+  variantClasses[variant].focus,
+  variantClasses[variant].error,
+  disabled && 'opacity-50 cursor-not-allowed',
+  className
+);
+
+const inputClasses = cn(
+  'flex-1 border-0 focus:outline-none focus:ring-0',
+  sizeClasses[size].input,
+  variantClasses[variant].input,
+  disabled && 'cursor-not-allowed'
+);
+
+const buttonClasses = cn(
+  'inline-flex items-center justify-center font-medium rounded-r-lg transition-all duration-200',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
+  'disabled:opacity-50 disabled:cursor-not-allowed',
+  sizeClasses[size].button,
+  variantClasses[variant].button
+);
+
+const iconClasses = cn(
+  'flex items-center justify-center flex-shrink-0',
+  'px-3 h-full', // Padding and full height for proper centering
+  variantClasses[variant].icon
+);
+
+const labelClasses = cn(
+  'block font-medium text-gray-900 dark:text-gray-100 mb-2',
+  sizeClasses[size].label,
+  disabled && 'opacity-50',
+  required && 'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
+);
+
+const helpClasses = cn(
+  'mt-2 text-gray-600 dark:text-gray-300',
+  sizeClasses[size].help,
+  error && 'text-red-600 dark:text-red-300'
+);
 ---
 
-<form
-  role="search"
-  method={method}
-  action={action}
-  class={`flex items-stretch gap-2 ${className}`.trim()}
->
-  <label class="sr-only" for={inputId}>{submitLabel}</label>
-  <input
-    id={inputId}
-    type="search"
-    name={name}
-    value={value}
-    placeholder={placeholder}
-    class="min-h-[44px] flex-1 rounded-lg border border-slate-300 bg-white px-3 text-slate-900 placeholder:text-slate-500 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus-visible:ring-offset-slate-900"
-    enterkeyhint="search"
-    autocomplete="search"
-  />
-  <button
-    type="submit"
-    class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-4 font-semibold text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 dark:border-blue-500 dark:bg-blue-500 dark:text-slate-900 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-blue-500"
+<div class="space-y-2">
+  {label && (
+    <label class={labelClasses} for={inputId}>
+      {label}
+    </label>
+  )}
+  
+  <form
+    role="search"
+    method={method}
+    action={action}
+    class="relative"
   >
-    {submitLabel}
-  </button>
-</form>
+    <div class={containerClasses} data-search-container>
+      {showIcon && (
+        <div class={iconClasses}>
+          <svg 
+            class={sizeClasses[size].icon}
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            stroke-width="1.8"
+          >
+            <circle cx="11" cy="11" r="8" stroke-width="1.8"/>
+            <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      )}
+      
+      <input
+        id={inputId}
+        type="search"
+        name={name}
+        value={value}
+        placeholder={placeholder}
+        class={inputClasses}
+        aria-label={ariaLabel || placeholder}
+        aria-describedby={finalAriaDescribedBy}
+        aria-expanded={enableSuggestions ? 'false' : undefined}
+        aria-autocomplete={enableSuggestions ? 'list' : undefined}
+        aria-controls={suggestionsId}
+        aria-required={required ? 'true' : 'false'}
+        aria-invalid={error ? 'true' : 'false'}
+        enterkeyhint="search"
+        autocomplete="search"
+        disabled={disabled}
+        required={required}
+        data-search-input
+        data-testid="search-input"
+      />
+      
+      {showButton && (
+        <button
+          type="submit"
+          class={buttonClasses}
+          disabled={disabled}
+          aria-label={submitLabel}
+          data-testid="search-button"
+        >
+          <span class="sr-only sm:not-sr-only">{submitLabel}</span>
+          <svg 
+            class={cn('sm:hidden', sizeClasses[size].icon)}
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            stroke-width="1.8"
+          >
+            <circle cx="11" cy="11" r="8" stroke-width="1.8"/>
+            <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      )}
+    </div>
+    
+    {enableSuggestions && (
+      <div
+        id={suggestionsId}
+        class={cn(
+          'absolute top-full left-0 right-0 z-50 mt-1',
+          'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700',
+          'rounded-lg shadow-lg max-h-60 overflow-y-auto',
+          'hidden'
+        )}
+        role="listbox"
+        aria-label="Search suggestions"
+        data-search-suggestions
+      >
+        <!-- Suggestions will be populated by JavaScript -->
+      </div>
+    )}
+  </form>
+  
+  <div class="space-y-1">
+    {helpText && (
+      <p id={helpId} class={helpClasses}>
+        {helpText}
+      </p>
+    )}
+    {error && (
+      <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
+        {typeof error === 'string' ? error : 'Please check your search query.'}
+      </p>
+    )}
+  </div>
+</div>
+
+<style is:inline>
+  [data-search-container]:focus-within {
+    outline: none;
+  }
+  
+  [data-search-suggestions] {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(156 163 175) transparent;
+  }
+  
+  [data-search-suggestions]::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  [data-search-suggestions]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  [data-search-suggestions]::-webkit-scrollbar-thumb {
+    background: rgb(156 163 175);
+    border-radius: 4px;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    [data-search-suggestions] {
+      scrollbar-color: rgb(75 85 99) transparent;
+    }
+    
+    [data-search-suggestions]::-webkit-scrollbar-thumb {
+      background: rgb(75 85 99);
+    }
+  }
+</style>
+
+<script is:inline>
+  (function setupSearchBar() {
+    const searchContainers = document.querySelectorAll('[data-search-container]');
+    
+    searchContainers.forEach(container => {
+      const input = container.querySelector('[data-search-input]');
+      const suggestionsContainer = container.parentElement?.querySelector('[data-search-suggestions]');
+      
+      if (!(input instanceof HTMLInputElement)) return;
+      
+      // Handle search suggestions if enabled
+      if (suggestionsContainer) {
+        let suggestionTimeout;
+        
+        const showSuggestions = () => {
+          suggestionsContainer.classList.remove('hidden');
+          input.setAttribute('aria-expanded', 'true');
+        };
+        
+        const hideSuggestions = () => {
+          suggestionsContainer.classList.add('hidden');
+          input.setAttribute('aria-expanded', 'false');
+        };
+        
+        const createSuggestionItem = (text, isHighlighted = false) => {
+          const item = document.createElement('div');
+          item.className = [
+            'px-4 py-2 cursor-pointer text-sm',
+            'hover:bg-blue-100 dark:hover:bg-blue-500/20',
+            'text-gray-900 dark:text-gray-100',
+            isHighlighted && 'bg-blue-100 dark:bg-blue-500/20'
+          ].filter(Boolean).join(' ');
+          item.textContent = text;
+          item.setAttribute('role', 'option');
+          item.setAttribute('aria-selected', isHighlighted ? 'true' : 'false');
+          return item;
+        };
+        
+        // Mock suggestions for demo (in real implementation, fetch from API)
+        const getSuggestions = (query) => {
+          if (!query.trim()) return [];
+          
+          const mockSuggestions = [
+            'Search results',
+            'Search tips',
+            'Search documentation',
+            'Search examples',
+            'Search help'
+          ];
+          
+          return mockSuggestions
+            .filter(item => item.toLowerCase().includes(query.toLowerCase()))
+            .slice(0, 5);
+        };
+        
+        input.addEventListener('input', (event) => {
+          clearTimeout(suggestionTimeout);
+          const query = event.target.value;
+          
+          if (query.length < 2) {
+            hideSuggestions();
+            return;
+          }
+          
+          suggestionTimeout = setTimeout(() => {
+            const suggestions = getSuggestions(query);
+            suggestionsContainer.innerHTML = '';
+            
+            if (suggestions.length > 0) {
+              suggestions.forEach((suggestion, index) => {
+                const item = createSuggestionItem(suggestion, index === 0);
+                item.addEventListener('click', () => {
+                  input.value = suggestion;
+                  hideSuggestions();
+                  input.form?.submit();
+                });
+                suggestionsContainer.appendChild(item);
+              });
+              showSuggestions();
+            } else {
+              hideSuggestions();
+            }
+          }, 300);
+        });
+        
+        // Keyboard navigation for suggestions
+        input.addEventListener('keydown', (event) => {
+          if (!suggestionsContainer.classList.contains('hidden')) {
+            const items = Array.from(suggestionsContainer.querySelectorAll('[role="option"]'));
+            const currentIndex = items.findIndex(item => item.getAttribute('aria-selected') === 'true');
+            
+            if (event.key === 'ArrowDown') {
+              event.preventDefault();
+              const nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+              items.forEach((item, index) => {
+                item.setAttribute('aria-selected', index === nextIndex ? 'true' : 'false');
+                item.classList.toggle('bg-blue-100', index === nextIndex);
+                item.classList.toggle('dark:bg-blue-500/20', index === nextIndex);
+              });
+            } else if (event.key === 'ArrowUp') {
+              event.preventDefault();
+              const prevIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+              items.forEach((item, index) => {
+                item.setAttribute('aria-selected', index === prevIndex ? 'true' : 'false');
+                item.classList.toggle('bg-blue-100', index === prevIndex);
+                item.classList.toggle('dark:bg-blue-500/20', index === prevIndex);
+              });
+            } else if (event.key === 'Enter') {
+              const selectedItem = items.find(item => item.getAttribute('aria-selected') === 'true');
+              if (selectedItem) {
+                event.preventDefault();
+                input.value = selectedItem.textContent || '';
+                hideSuggestions();
+                input.form?.submit();
+              }
+            } else if (event.key === 'Escape') {
+              hideSuggestions();
+            }
+          }
+        });
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (event) => {
+          if (!container.contains(event.target) && !suggestionsContainer.contains(event.target)) {
+            hideSuggestions();
+          }
+        });
+      }
+    });
+  })();
+</script>

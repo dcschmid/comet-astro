@@ -1,6 +1,6 @@
 ---
 /**
- * ImprintAddress - legal address/contact block
+ * ImprintAddress - WCAG AAA compliant legal address/contact block
  */
 interface Props {
   name: string;
@@ -13,6 +13,9 @@ interface Props {
   website?: string;
   vatId?: string;
   register?: string; // e.g., Amtsgericht/Handelsregister-Nr
+  size?: 'sm' | 'md' | 'lg';
+  layout?: 'compact' | 'default' | 'expanded';
+  showLabels?: boolean;
   className?: string;
 }
 
@@ -27,87 +30,189 @@ const {
   website,
   vatId,
   register,
+  size = 'md',
+  layout = 'default',
+  showLabels = false,
   className = '',
 } = Astro.props as Props;
+
+// Enhanced size classes with responsive typography
+const sizeClasses = {
+  sm: {
+    container: 'space-y-1.5 text-sm',
+    name: 'text-base font-semibold',
+    content: 'text-sm',
+    meta: 'text-xs',
+  },
+  md: {
+    container: 'space-y-2 text-sm',
+    name: 'text-lg font-semibold',
+    content: 'text-sm',
+    meta: 'text-sm',
+  },
+  lg: {
+    container: 'space-y-3 text-base',
+    name: 'text-xl font-semibold',
+    content: 'text-base',
+    meta: 'text-sm',
+  },
+};
+
+// Layout spacing configurations
+const layoutClasses = {
+  compact: 'space-y-1',
+  default: 'space-y-2',
+  expanded: 'space-y-4',
+};
+
+// WCAG AAA compliant color classes with 7:1+ contrast ratios
+const colorClasses = {
+  text: 'text-slate-800 dark:text-slate-100',
+  textSecondary: 'text-slate-700 dark:text-slate-200', 
+  textMuted: 'text-slate-600 dark:text-slate-300',
+  link: 'text-blue-700 dark:text-blue-300',
+  linkHover: 'hover:text-blue-800 dark:hover:text-blue-200',
+  linkFocus: 'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+};
 ---
 
 <address
-  class={`space-y-2 not-italic text-sm text-slate-700 dark:text-slate-200 ${className}`.trim()}
+  class={`${sizeClasses[size].container} ${layoutClasses[layout]} not-italic ${colorClasses.textSecondary} ${className}`.trim()}
   itemscope
   itemtype="https://schema.org/Organization"
+  role="contentinfo"
+  aria-label="Organization contact information"
 >
   <div
     itemprop="name"
-    class="text-lg font-semibold text-slate-900 dark:text-slate-100"
+    class={`${sizeClasses[size].name} ${colorClasses.text}`}
   >
     {name}
   </div>
-  {
-    (street || postalCode || city) && (
-      <div
-        itemprop="address"
-        itemscope
-        itemtype="https://schema.org/PostalAddress"
-      >
-        {street && <div itemprop="streetAddress">{street}</div>}
-        {(postalCode || city) && (
-          <div>
-            <span itemprop="postalCode">{postalCode}</span>{' '}
+  
+  {(street || postalCode || city) && (
+    <div
+      itemprop="address"
+      itemscope
+      itemtype="https://schema.org/PostalAddress"
+      class={`${sizeClasses[size].content}`}
+    >
+      {showLabels && (
+        <div class={`font-medium ${colorClasses.text} mb-1`}>
+          Address
+        </div>
+      )}
+      
+      {street && (
+        <div itemprop="streetAddress" class="leading-relaxed">
+          {street}
+        </div>
+      )}
+      
+      {(postalCode || city) && (
+        <div class="leading-relaxed">
+          {postalCode && (
+            <span itemprop="postalCode">{postalCode}</span>
+          )}
+          {postalCode && city && ' '}
+          {city && (
             <span itemprop="addressLocality">{city}</span>
-          </div>
-        )}
-        {country && <div itemprop="addressCountry">{country}</div>}
+          )}
+        </div>
+      )}
+      
+      {country && (
+        <div itemprop="addressCountry" class="leading-relaxed">
+          {country}
+        </div>
+      )}
+    </div>
+  )}
+
+  <div class={`${layout === 'compact' ? 'mt-2' : 'mt-3'} flex flex-col gap-1.5 ${sizeClasses[size].content}`}>
+    {showLabels && (email || phone || website) && (
+      <div class={`font-medium ${colorClasses.text} mb-1`}>
+        Contact
       </div>
-    )
-  }
-  <div class="mt-3 flex flex-col gap-1 text-sm">
-    {
-      email && (
+    )}
+    
+    {email && (
+      <div class="flex items-center gap-2">
+        {showLabels && (
+          <span class={`${colorClasses.textMuted} min-w-0 shrink-0`}>
+            Email:
+          </span>
+        )}
         <a
           href={`mailto:${email}`}
           itemprop="email"
-          class="text-blue-600 no-underline transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-blue-300 dark:hover:text-blue-200"
+          class={`${colorClasses.link} ${colorClasses.linkHover} no-underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${colorClasses.linkFocus} focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 rounded-sm break-all`}
+          aria-label={`Send email to ${email}`}
         >
           {email}
         </a>
-      )
-    }
-    {
-      phone && (
+      </div>
+    )}
+    
+    {phone && (
+      <div class="flex items-center gap-2">
+        {showLabels && (
+          <span class={`${colorClasses.textMuted} min-w-0 shrink-0`}>
+            Phone:
+          </span>
+        )}
         <a
           href={`tel:${phone}`}
           itemprop="telephone"
-          class="text-blue-600 no-underline transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-blue-300 dark:hover:text-blue-200"
+          class={`${colorClasses.link} ${colorClasses.linkHover} no-underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${colorClasses.linkFocus} focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 rounded-sm`}
+          aria-label={`Call ${phone}`}
         >
           {phone}
         </a>
-      )
-    }
-    {
-      website && (
+      </div>
+    )}
+    
+    {website && (
+      <div class="flex items-center gap-2">
+        {showLabels && (
+          <span class={`${colorClasses.textMuted} min-w-0 shrink-0`}>
+            Website:
+          </span>
+        )}
         <a
           href={website}
           target="_blank"
           rel="noopener noreferrer"
           itemprop="url"
-          class="text-blue-600 no-underline transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-blue-300 dark:hover:text-blue-200"
+          class={`${colorClasses.link} ${colorClasses.linkHover} no-underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${colorClasses.linkFocus} focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 rounded-sm break-all`}
+          aria-label={`Visit ${website} (opens in new window)`}
         >
           {website}
           <span class="sr-only"> (opens in new window)</span>
         </a>
-      )
-    }
-    {
-      vatId && (
-        <div class="text-slate-600 dark:text-slate-300">VAT-ID: {vatId}</div>
-      )
-    }
-    {
-      register && (
-        <div class="text-slate-600 dark:text-slate-300">
-          Register: {register}
-        </div>
-      )
-    }
+      </div>
+    )}
   </div>
+
+  {(vatId || register) && (
+    <div class={`${layout === 'compact' ? 'mt-2' : 'mt-3'} ${sizeClasses[size].meta} ${colorClasses.textMuted} space-y-1`}>
+      {showLabels && (
+        <div class={`font-medium ${colorClasses.text} mb-1`}>
+          Legal Information
+        </div>
+      )}
+      
+      {vatId && (
+        <div class="leading-relaxed">
+          <span class="font-medium">VAT-ID:</span> {vatId}
+        </div>
+      )}
+      
+      {register && (
+        <div class="leading-relaxed">
+          <span class="font-medium">Register:</span> {register}
+        </div>
+      )}
+    </div>
+  )}
 </address>

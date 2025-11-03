@@ -1,11 +1,13 @@
 ---
 /**
- * FilterChips - selectable chip list (multi-select)
+ * FilterChips - accessible selectable chip list with WCAG AAA compliance
  */
 interface Chip {
   id: string;
   label: string;
   href?: string;
+  count?: number;
+  disabled?: boolean;
 }
 
 interface Props {
@@ -13,6 +15,10 @@ interface Props {
   selected?: string[];
   multi?: boolean;
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'outlined' | 'subtle';
+  ariaLabel?: string;
+  ariaDescribedby?: string;
 }
 
 const {
@@ -20,51 +26,128 @@ const {
   selected = [],
   multi = true,
   className = '',
+  size = 'md',
+  variant = 'default',
+  ariaLabel,
+  ariaDescribedby,
 } = Astro.props as Props;
 
-const activeClasses = [
-  'bg-blue-600',
-  'text-white',
-  'border-blue-600',
-  'shadow-sm',
-  'dark:bg-blue-500',
-  'dark:border-blue-500',
-];
-const inactiveClasses = [
-  'bg-white',
-  'text-slate-700',
-  'border-slate-300',
-  'hover:bg-slate-100',
-  'dark:bg-slate-900',
-  'dark:text-slate-100',
-  'dark:border-slate-600',
-  'dark:hover:bg-slate-800',
-];
+const sizeClasses = {
+  sm: 'px-3 py-1 text-xs',
+  md: 'px-4 py-2 text-sm',
+  lg: 'px-5 py-3 text-base',
+};
+
+const variantClasses = {
+  default: {
+    active: [
+      'bg-blue-600',
+      'text-white',
+      'border-blue-600/90',
+      'shadow-lg',
+      'dark:bg-blue-500',
+      'dark:border-blue-500/90',
+    ],
+    inactive: [
+      'bg-white',
+      'text-slate-800',
+      'border-slate-300/90',
+      'hover:bg-slate-50',
+      'hover:border-slate-400',
+      'dark:bg-slate-800',
+      'dark:text-slate-200',
+      'dark:border-slate-600/90',
+      'dark:hover:bg-slate-700',
+      'dark:hover:border-slate-500',
+    ],
+  },
+  outlined: {
+    active: [
+      'bg-blue-50',
+      'text-blue-800',
+      'border-blue-600/90',
+      'shadow-lg',
+      'dark:bg-blue-500/20',
+      'dark:text-blue-300',
+      'dark:border-blue-400/90',
+    ],
+    inactive: [
+      'bg-transparent',
+      'text-slate-700',
+      'border-slate-300/90',
+      'hover:bg-slate-50',
+      'hover:border-slate-400',
+      'dark:text-slate-300',
+      'dark:border-slate-600/90',
+      'dark:hover:bg-slate-800',
+      'dark:hover:border-slate-500',
+    ],
+  },
+  subtle: {
+    active: [
+      'bg-slate-100',
+      'text-slate-900',
+      'border-slate-300/90',
+      'shadow-lg',
+      'dark:bg-slate-700',
+      'dark:text-slate-100',
+      'dark:border-slate-600/90',
+    ],
+    inactive: [
+      'bg-slate-50',
+      'text-slate-700',
+      'border-slate-200/90',
+      'hover:bg-slate-100',
+      'hover:border-slate-300',
+      'dark:bg-slate-800',
+      'dark:text-slate-300',
+      'dark:border-slate-700/90',
+      'dark:hover:bg-slate-700',
+      'dark:hover:border-slate-600',
+    ],
+  },
+};
+
+const activeClasses = variantClasses[variant].active;
+const inactiveClasses = variantClasses[variant].inactive;
 ---
 
 <div
-  class={`flex flex-wrap gap-2 ${className}`.trim()}
+  class={`flex flex-wrap gap-3 ${className}`.trim()}
   data-multi={multi}
   data-selected={selected.join(',')}
   data-active-classes={activeClasses.join(' ')}
   data-inactive-classes={inactiveClasses.join(' ')}
+  role={multi ? 'group' : 'radiogroup'}
+  aria-label={ariaLabel || (multi ? 'Filter options' : 'Select option')}
+  aria-describedby={ariaDescribedby}
 >
   {
     items.map((chip) => {
       const isActive = selected.includes(chip.id);
+      const isDisabled = chip.disabled || false;
       return (
-        <a
-          href={chip.href || '#'}
+        <button
+          type="button"
           data-id={chip.id}
-          role="button"
-          aria-pressed={isActive}
+          role={multi ? 'checkbox' : 'radio'}
+          aria-checked={isActive}
+          aria-disabled={isDisabled}
+          disabled={isDisabled}
           class:list={[
-            'inline-flex items-center rounded-full border px-3 py-1 text-sm font-semibold no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900',
+            'inline-flex items-center gap-2 rounded-full border-2 font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800',
+            sizeClasses[size],
             ...(isActive ? activeClasses : inactiveClasses),
+            isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
           ]}
         >
-          {chip.label}
-        </a>
+          <span>{chip.label}</span>
+          {chip.count !== undefined && (
+            <span class="ml-1 rounded-full bg-current/20 px-2 py-0.5 text-xs font-medium">
+              {chip.count}
+            </span>
+          )}
+        </button>
       );
     })
   }
@@ -94,11 +177,11 @@ const inactiveClasses = [
     };
 
     const applyStyles = (selectedSet) => {
-      root.querySelectorAll('a[data-id]').forEach((el) => {
+      root.querySelectorAll('button[data-id]').forEach((el) => {
         if (!(el instanceof HTMLElement)) return;
         const id = el.getAttribute('data-id');
         const isActive = id ? selectedSet.has(id) : false;
-        el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        el.setAttribute('aria-checked', isActive ? 'true' : 'false');
         el.classList.remove(...activeClasses, ...inactiveClasses);
         el.classList.add(...(isActive ? activeClasses : inactiveClasses));
       });
@@ -107,13 +190,14 @@ const inactiveClasses = [
     applyStyles(getSelected());
 
     root.addEventListener('click', (event) => {
-      const anchor =
+      const button =
         event.target instanceof HTMLElement
-          ? event.target.closest('a[data-id]')
+          ? event.target.closest('button[data-id]')
           : null;
-      if (!(anchor instanceof HTMLElement)) return;
-      event.preventDefault();
-      const id = anchor.getAttribute('data-id');
+      if (!(button instanceof HTMLElement)) return;
+      if (button.disabled || button.getAttribute('aria-disabled') === 'true') return;
+      
+      const id = button.getAttribute('data-id');
       if (!id) return;
 
       const selectedSet = getSelected();
@@ -130,6 +214,40 @@ const inactiveClasses = [
 
       setSelected(selectedSet);
       applyStyles(selectedSet);
+    });
+
+    // Keyboard navigation
+    root.addEventListener('keydown', (event) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      
+      const buttons = Array.from(root.querySelectorAll('button[data-id]:not([disabled])'));
+      const currentIndex = buttons.findIndex(btn => btn === document.activeElement);
+      
+      if (currentIndex === -1) return;
+      
+      event.preventDefault();
+      
+      let nextIndex;
+      switch (event.key) {
+        case 'ArrowLeft':
+          nextIndex = currentIndex > 0 ? currentIndex - 1 : buttons.length - 1;
+          break;
+        case 'ArrowRight':
+          nextIndex = currentIndex < buttons.length - 1 ? currentIndex + 1 : 0;
+          break;
+        case 'Home':
+          nextIndex = 0;
+          break;
+        case 'End':
+          nextIndex = buttons.length - 1;
+          break;
+        default:
+          return;
+      }
+      
+      if (buttons[nextIndex] instanceof HTMLElement) {
+        buttons[nextIndex].focus();
+      }
     });
   })();
 </script>

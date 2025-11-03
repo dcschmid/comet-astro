@@ -1,33 +1,1003 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import MediaListItem from '../../components/MediaListItem.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const title = 'MediaListItem Component';
+const description = 'WCAG AAA compliant list item component for displaying media content in organized lists with thumbnails, metadata, and actions.';
 ---
 
-<DocsLayout
-  title="MediaListItem"
-  description="List row combining thumbnail, metadata, and action links."
->
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-3">
-      <MediaListItem
-        imageSrc="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=160&q=80"
-        title="Crafting team rituals"
-        subtitle="Workshop · 42 min watch"
-        href="#"
-        meta={['By Leslie Alexander', 'Updated 2 days ago']}
-        actions={[
-          { href: '#', label: 'Watch' },
-          { href: '#', label: 'Share' },
-        ]}
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The MediaListItem component provides a flexible and accessible way to display media content in list formats. Perfect for articles, videos, podcasts, or any content that benefits from a structured list presentation with thumbnails and metadata.
+      </p>
+    </section>
+
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="space-y-4 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Default List Item
+          </h3>
+          <MediaListItem
+            imageSrc="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=160&q=80"
+            imageAlt="Workshop thumbnail"
+            title="Crafting team rituals"
+            subtitle="Workshop · 42 min watch"
+            href="/workshops/team-rituals"
+            meta={['By Leslie Alexander', 'Updated 2 days ago']}
+            actions={[
+              { label: 'Watch', href: '/workshops/team-rituals', variant: 'primary' },
+              { label: 'Share', href: '#', variant: 'secondary', icon: '📤' }
+            ]}
+          />
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Without Image
+          </h3>
+          <MediaListItem
+            title="Design ops weekly"
+            subtitle="Newsletter • Issue 18"
+            href="/newsletter/design-ops-18"
+            meta={['32k readers', 'Sent every Friday']}
+            actions={[{ label: 'Subscribe', href: '/newsletter/subscribe', variant: 'primary' }]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<MediaListItem
+  imageSrc="https://example.com/thumbnail.jpg"
+  imageAlt="Content thumbnail"
+  imageAspectRatio="16:9"
+  title="Article Title"
+  subtitle="Article description or category"
+  href="/article/link"
+  meta={['Author Name', 'Published date']}
+  actions={[
+    { label: 'Read More', href: '/article', variant: 'primary' },
+    { label: 'Share', href: '#', variant: 'secondary' }
+  ]}
+/>`}
+        lang="astro"
       />
-      <MediaListItem
-        title="Design ops weekly"
-        subtitle="Newsletter • Issue 18"
-        href="#"
-        meta={['32k readers', 'Sent every Friday']}
-        actions={[{ href: '#', label: 'Subscribe' }]}
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Variants
+      </h2>
+      
+      <div class="space-y-6 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Default
+          </h3>
+          <MediaListItem
+            variant="default"
+            imageSrc="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=160&h=160&fit=crop"
+            imageAlt="Technology"
+            title="Default Variant"
+            subtitle="Standard list item with balanced spacing"
+            meta={['Standard spacing', 'Full features']}
+            actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Compact
+          </h3>
+          <MediaListItem
+            variant="compact"
+            imageSrc="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=120&h=120&fit=crop"
+            imageAlt="Development"
+            title="Compact Variant"
+            subtitle="Condensed layout for dense lists"
+            meta={['Space efficient', 'Truncated text']}
+            actions={[{ label: 'Open', href: '#', variant: 'secondary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Detailed
+          </h3>
+          <MediaListItem
+            variant="detailed"
+            imageSrc="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=160&h=160&fit=crop"
+            imageAlt="Programming"
+            title="Detailed Variant"
+            subtitle="Spacious layout with enhanced metadata display"
+            meta={['More vertical space', 'Better for longer content', 'Enhanced readability']}
+            actions={[
+              { label: 'Read', href: '#', variant: 'primary' },
+              { label: 'Bookmark', href: '#', variant: 'secondary', icon: '🔖' }
+            ]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Minimal
+          </h3>
+          <MediaListItem
+            variant="minimal"
+            imageSrc="https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=160&h=160&fit=crop"
+            imageAlt="Workspace"
+            title="Minimal Variant"
+            subtitle="Clean design without borders or shadows"
+            meta={['No borders', 'Transparent background']}
+            actions={[{ label: 'View', href: '#', variant: 'secondary' }]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<MediaListItem variant="default" title="Standard Item" />
+
+<!-- Compact for dense lists -->
+<MediaListItem variant="compact" title="Space Efficient" />
+
+<!-- Detailed for rich content -->
+<MediaListItem variant="detailed" title="Rich Content" />
+
+<!-- Minimal for clean presentation -->
+<MediaListItem variant="minimal" title="Clean Design" />`}
+        lang="astro"
       />
-    </div>
-  </section>
+    </section>
+
+    <!-- Sizes -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Sizes
+      </h2>
+      
+      <div class="space-y-6 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Small
+          </h3>
+          <MediaListItem
+            size="sm"
+            imageSrc="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=120&h=120&fit=crop"
+            imageAlt="Technology"
+            title="Small List Item"
+            subtitle="Compact size for mobile or sidebar"
+            meta={['Mobile friendly']}
+            actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Medium (Default)
+          </h3>
+          <MediaListItem
+            size="md"
+            imageSrc="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=160&h=160&fit=crop"
+            imageAlt="Laptop"
+            title="Medium List Item"
+            subtitle="Standard size for most use cases"
+            meta={['Balanced proportions', 'Default choice']}
+            actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Large
+          </h3>
+          <MediaListItem
+            size="lg"
+            imageSrc="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=200&h=200&fit=crop"
+            imageAlt="Team work"
+            title="Large List Item"
+            subtitle="Spacious size for featured content and detailed information"
+            meta={['Enhanced visibility', 'Desktop optimal', 'Featured content']}
+            actions={[
+              { label: 'View Details', href: '#', variant: 'primary' },
+              { label: 'Share', href: '#', variant: 'secondary' }
+            ]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<MediaListItem size="sm" title="Compact Item" />
+
+<!-- Medium size (default) -->
+<MediaListItem size="md" title="Standard Item" />
+
+<!-- Large size -->
+<MediaListItem size="lg" title="Featured Item" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Image Aspect Ratios -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Image Aspect Ratios
+      </h2>
+      
+      <div class="space-y-6 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Square (Default)
+          </h3>
+          <MediaListItem
+            imageAspectRatio="square"
+            imageSrc="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=200&h=200&fit=crop"
+            imageAlt="Square format"
+            title="Square Image Format"
+            subtitle="Traditional 1:1 aspect ratio for thumbnails"
+            meta={['Perfect for avatars', 'Classic thumbnail style']}
+            actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            16:9 (Widescreen)
+          </h3>
+          <MediaListItem
+            imageAspectRatio="16:9"
+            imageSrc="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=225&fit=crop"
+            imageAlt="Widescreen format"
+            title="Widescreen Video Format"
+            subtitle="Modern 16:9 aspect ratio for video content"
+            meta={['Great for videos', 'Modern standard', 'YouTube format']}
+            actions={[{ label: 'Play', href: '#', variant: 'primary', icon: '▶️' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            4:3 (Classic)
+          </h3>
+          <MediaListItem
+            imageAspectRatio="4:3"
+            imageSrc="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop"
+            imageAlt="Classic format"
+            title="Classic Photo Format"
+            subtitle="Traditional 4:3 aspect ratio for photographs"
+            meta={['Classic photography', 'Old TV format', 'Photo albums']}
+            actions={[{ label: 'View Photo', href: '#', variant: 'primary', icon: '📷' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            3:2 (Photography)
+          </h3>
+          <MediaListItem
+            imageAspectRatio="3:2"
+            imageSrc="https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=400&h=267&fit=crop"
+            imageAlt="Photography format"
+            title="Photography Standard"
+            subtitle="Professional 3:2 aspect ratio for DSLR cameras"
+            meta={['DSLR standard', 'Professional photography', 'Print ready']}
+            actions={[{ label: 'Download', href: '#', variant: 'primary', icon: '⬇️' }]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Square aspect ratio (default) -->
+<MediaListItem imageAspectRatio="square" imageSrc="..." />
+
+<!-- 16:9 widescreen format -->
+<MediaListItem imageAspectRatio="16:9" imageSrc="..." />
+
+<!-- 4:3 classic format -->
+<MediaListItem imageAspectRatio="4:3" imageSrc="..." />
+
+<!-- 3:2 photography format -->
+<MediaListItem imageAspectRatio="3:2" imageSrc="..." />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Action Types -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Action Types
+      </h2>
+      
+      <div class="space-y-6 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Link Actions
+          </h3>
+          <MediaListItem
+            imageSrc="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=160&h=160&fit=crop"
+            imageAlt="Navigation"
+            title="Navigation Example"
+            subtitle="Links to different sections or external resources"
+            meta={['Navigation actions']}
+            actions={[
+              { label: 'Read Article', href: '/article', variant: 'primary' },
+              { label: 'View Profile', href: '/profile', variant: 'secondary' },
+              { label: 'External Link', href: 'https://example.com', variant: 'secondary', target: '_blank', icon: '🔗' }
+            ]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Button Actions
+          </h3>
+          <MediaListItem
+            imageSrc="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=160&h=160&fit=crop"
+            imageAlt="Interactive"
+            title="Interactive Example"
+            subtitle="JavaScript-powered actions for dynamic behavior"
+            meta={['Interactive actions']}
+            actions={[
+              { label: 'Like', onClick: 'alert("Liked!")', variant: 'primary', icon: '❤️' },
+              { label: 'Bookmark', onClick: 'toggleBookmark()', variant: 'secondary', icon: '🔖' },
+              { label: 'Delete', onClick: 'confirmDelete()', variant: 'danger', icon: '🗑️' }
+            ]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Link actions -->
+<MediaListItem
+  actions={[
+    { label: 'Read More', href: '/article', variant: 'primary' },
+    { label: 'External', href: 'https://example.com', target: '_blank' }
+  ]}
+/>
+
+<!-- Button actions -->
+<MediaListItem
+  actions={[
+    { label: 'Like', onClick: 'handleLike()', variant: 'primary', icon: '❤️' },
+    { label: 'Delete', onClick: 'handleDelete()', variant: 'danger' }
+  ]}
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- States -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        States
+      </h2>
+      
+      <div class="space-y-6 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Loading State
+          </h3>
+          <MediaListItem
+            loading={true}
+            imageSrc="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=160&h=160&fit=crop"
+            imageAlt="Loading"
+            title="Loading Content"
+            subtitle="Item with loading animation"
+            meta={['Loading...']}
+            actions={[{ label: 'Loading...', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Disabled State
+          </h3>
+          <MediaListItem
+            disabled={true}
+            imageSrc="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=160&h=160&fit=crop"
+            imageAlt="Disabled"
+            title="Disabled Content"
+            subtitle="Item with disabled interactions"
+            meta={['Disabled state']}
+            actions={[{ label: 'Disabled', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Selected State
+          </h3>
+          <MediaListItem
+            selected={true}
+            imageSrc="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=160&h=160&fit=crop"
+            imageAlt="Selected"
+            title="Selected Content"
+            subtitle="Item in selected state with visual emphasis"
+            meta={['Currently selected']}
+            actions={[{ label: 'Deselect', href: '#', variant: 'secondary' }]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Loading state -->
+<MediaListItem loading={true} title="Loading Content" />
+
+<!-- Disabled state -->
+<MediaListItem disabled={true} title="Disabled Content" />
+
+<!-- Selected state -->
+<MediaListItem selected={true} title="Selected Content" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Visibility Options -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Visibility Options
+      </h2>
+      
+      <div class="space-y-6 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Hide Image
+          </h3>
+          <MediaListItem
+            showImage={false}
+            imageSrc="https://example.com/hidden-image.jpg"
+            title="Text-Only Item"
+            subtitle="List item without image display"
+            meta={['No image shown']}
+            actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Hide Metadata
+          </h3>
+          <MediaListItem
+            showMeta={false}
+            imageSrc="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=160&h=160&fit=crop"
+            imageAlt="Clean"
+            title="Clean Item"
+            subtitle="List item without metadata display"
+            meta={['This metadata is hidden']}
+            actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Hide Actions
+          </h3>
+          <MediaListItem
+            showActions={false}
+            imageSrc="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=160&h=160&fit=crop"
+            imageAlt="Read-only"
+            title="Read-Only Item"
+            subtitle="List item without action buttons"
+            meta={['No actions available']}
+            actions={[{ label: 'Hidden Action', href: '#', variant: 'primary' }]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Hide components selectively -->
+<MediaListItem showImage={false} title="Text Only" />
+<MediaListItem showMeta={false} title="No Metadata" />
+<MediaListItem showActions={false} title="Read Only" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg mb-6">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
+          WCAG AAA Compliance
+        </h3>
+        <ul class="space-y-2 text-blue-800 dark:text-blue-200">
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Contrast ratios exceed 7:1 for all text elements</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Proper semantic HTML structure with listitem role</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Comprehensive keyboard navigation support</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Screen reader friendly with proper ARIA labels</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Focus indicators with 2px outline for visibility</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Proper selection states with aria-selected</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+          Custom Accessibility Properties
+        </h3>
+        <MediaListItem
+          imageSrc="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=160&h=160&fit=crop"
+          imageAlt="Accessible design example with detailed description"
+          title="Accessible List Item"
+          subtitle="Demonstrates accessibility features"
+          ariaLabel="Featured article about accessibility best practices"
+          ariaDescribedBy="accessibility-description"
+          meta={['Accessibility focused']}
+          actions={[{ label: 'Learn More', href: '/accessibility', variant: 'primary' }]}
+        />
+      </div>
+
+      <CodeBlock
+        code={`<MediaListItem
+  title="Accessible Content"
+  ariaLabel="Featured article about web accessibility"
+  ariaDescribedBy="description-id"
+  imageAlt="Detailed description of the image content"
+  role="listitem"
+  selected={true}
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Props Reference
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                imageSrc
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                URL of the thumbnail image
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                imageAlt
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                ''
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Alternative text for the image
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                imageAspectRatio
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'square' | '16:9' | '4:3' | '3:2'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'square'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Aspect ratio format for the thumbnail image
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                href
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                URL to link the title and image to
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                title
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Primary title text
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                subtitle
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Secondary description text
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                meta
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string[]
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                []
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Array of metadata strings
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default' | 'compact' | 'detailed' | 'minimal'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual variant of the list item
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Size of the list item
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                actions
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Action[]
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                []
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Array of action buttons/links
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                loading
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Show loading state
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                disabled
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Disable item interactions
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                selected
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Show selected state with visual emphasis
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                showImage
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Whether to show the thumbnail image
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                showMeta
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Whether to show metadata
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                showActions
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Whether to show action buttons
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaLabel
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Accessible label for the list item
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                class
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Additional CSS classes
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Action Interface -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Action Interface
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Property
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                label
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Text displayed on the action button
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                href
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                URL for link actions (renders as anchor tag)
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                onClick
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                JavaScript code for button actions
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'primary' | 'secondary' | 'danger'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual style of the action button
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                icon
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Icon to display before the label text
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                target
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                '_blank' | '_self' | '_parent' | '_top'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Target for link actions (only applies to href)
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Best Practices
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+            ✅ Do
+          </h3>
+          <ul class="space-y-2 text-green-800 dark:text-green-200">
+            <li>• Provide meaningful alt text for thumbnail images</li>
+            <li>• Use descriptive metadata that adds value to the content</li>
+            <li>• Keep action labels clear and specific to their purpose</li>
+            <li>• Use appropriate variants based on the list density needs</li>
+            <li>• Consider compact variant for sidebar or mobile layouts</li>
+            <li>• Implement proper selection states for interactive lists</li>
+            <li>• Group related metadata logically</li>
+            <li>• Choose aspect ratios that match your content type (16:9 for videos, square for avatars)</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-red-900 dark:text-red-100 mb-3">
+            ❌ Don't
+          </h3>
+          <ul class="space-y-2 text-red-800 dark:text-red-200">
+            <li>• Overcrowd the item with too many actions (3 maximum recommended)</li>
+            <li>• Use generic action labels like "Click here"</li>
+            <li>• Mix essential and optional metadata without clear hierarchy</li>
+            <li>• Ignore loading states for dynamic content lists</li>
+            <li>• Use detailed variant when space is constrained</li>
+            <li>• Forget to provide fallback alt text for images</li>
+            <li>• Use images that don't relate to the content</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+            💡 Tips
+          </h3>
+          <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
+            <li>• Use consistent sizing across lists for visual harmony</li>
+            <li>• Consider the compact variant for long lists to improve scanning</li>
+            <li>• Leverage metadata separators (•) for visual clarity in non-compact variants</li>
+            <li>• Use selected states to indicate current or active items</li>
+            <li>• Combine with proper list semantics (ul, ol) for screen readers</li>
+            <li>• Match aspect ratios to content type: 16:9 for videos, square for profiles, 4:3 for photos</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

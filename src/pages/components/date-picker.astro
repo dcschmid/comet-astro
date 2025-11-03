@@ -1,14 +1,278 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import DatePicker from '../../components/DatePicker.astro';
+import DatePickerComponent from '../../components/DatePicker.astro';
+
+const usageSnippet = `---
+import { DatePicker } from 'comet-astro';
+
+---
+
+<div class="space-y-6">
+  <DatePicker 
+    label="Start date" 
+    placeholder="Choose your start date"
+    value="2024-01-15"
+  />
+  <DatePicker 
+    label="Event date" 
+    min="2024-01-01"
+    max="2024-12-31"
+    firstDayOfWeek={1}
+    showTodayShortcut={true}
+  />
+</div>`;
 ---
 
 <DocsLayout
   title="DatePicker"
-  description="Calendar picker with range presets and keyboard navigation."
+  description="Accessible calendar picker with WCAG AAA contrast, keyboard navigation, and date range constraints."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <DatePicker label="Schedule start date" placeholder="Select a date" />
+    <p class="text-base text-slate-100">
+      DatePicker provides an intuitive calendar interface for date selection with full keyboard navigation support 
+      and fast year/month navigation. The component maintains WCAG AAA contrast ratios across all interactive 
+      elements and states, ensuring accessibility for users with varying visual capabilities.
+    </p>
+    <p class="text-base text-slate-200">
+      Calendar navigation includes clickable month/year headers for rapid date switching, month traversal with 
+      dedicated year jump buttons, date range constraints, and customizable week start days. Focus management 
+      follows modern accessibility patterns with clear visual indicators and screen reader support.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          value?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Initial selected date in <code>YYYY-MM-DD</code> format. Updates hidden input for form submission.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          label?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label text for the date input. Defaults to <code>"Select date"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          placeholder?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Placeholder text shown when no date is selected. Defaults to <code>"Choose a date"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          min?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Minimum selectable date in <code>YYYY-MM-DD</code> format. Dates before this are disabled.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          max?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Maximum selectable date in <code>YYYY-MM-DD</code> format. Dates after this are disabled.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          firstDayOfWeek?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          First day of the week (0=Sunday, 1=Monday, etc.). Defaults to <code>1</code> (Monday).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          inputName?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Name attribute for the hidden input field, enabling form submission integration.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showTodayShortcut?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Shows "Today" button for quick current date selection. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the outer container for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and configure date constraints, labels, and calendar behavior. 
+      The component handles keyboard navigation, focus management, and form integration automatically.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Example</h2>
+    <p class="text-base text-slate-200">
+      A simple date picker with default configuration and responsive design.
+    </p>
+    <div class="max-w-sm">
+      <DatePickerComponent label="Schedule start date" placeholder="Select a date" />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">With Date Range</h2>
+    <p class="text-base text-slate-200">
+      Constrain selectable dates to a specific range using min and max properties.
+    </p>
+    <div class="max-w-sm">
+      <DatePickerComponent 
+        label="Event date" 
+        placeholder="Choose event date"
+        min="2024-01-01"
+        max="2024-12-31"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Week Configuration</h2>
+    <p class="text-base text-slate-200">
+      Customize the first day of the week and disable the Today shortcut for specific use cases.
+    </p>
+    <div class="max-w-sm">
+      <DatePickerComponent 
+        label="Week start Sunday" 
+        placeholder="Select date"
+        firstDayOfWeek={0}
+        showTodayShortcut={false}
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Fast Navigation</h2>
+    <p class="text-base text-slate-200">
+      Click month or year headers to quickly jump between months and years. Use the double arrows for year-by-year navigation.
+    </p>
+    <div class="max-w-sm">
+      <DatePickerComponent 
+        label="Fast navigation example" 
+        placeholder="Try clicking month/year"
+        min="2020-01-01"
+        max="2030-12-31"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Historical Date Range</h2>
+    <p class="text-base text-slate-200">
+      Test with historical dates from 1990s era to verify range constraints work across decades.
+    </p>
+    <div class="max-w-sm">
+      <DatePickerComponent 
+        label="Birth date (1990s)" 
+        placeholder="Select birth date"
+        min="1990-01-01"
+        max="1999-12-31"
+        value="1995-06-15"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Form Integration</h2>
+    <p class="text-base text-slate-200">
+      Include an input name for seamless form submission with hidden input handling.
+    </p>
+    <div class="max-w-sm">
+      <DatePickerComponent 
+        label="Birth date" 
+        placeholder="Enter your birth date"
+        inputName="birthDate"
+        value="1990-01-01"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Contrast ratios exceed WCAG AAA requirements (7:1+) across all calendar elements, date cells, 
+      and navigation controls in both light and dark themes. Focus indicators use 2px visible rings 
+      with theme-aware offsets for clear keyboard navigation tracking.
+    </p>
+    <p class="text-base text-slate-200">
+      Calendar navigation supports full keyboard control: arrow keys for date navigation, 
+      Enter/Space for selection, Escape to close (or return from month/year picker), and Tab to cycle through 
+      interactive elements. Screen readers receive proper ARIA labels, role assignments, and state announcements.
+    </p>
+    <p class="text-base text-slate-200">
+      Fast navigation is accessible via clickable month/year headers that open dedicated picker dialogs. 
+      Year navigation includes « » buttons for rapid year jumping, and date range constraints are properly 
+      enforced across all navigation modes to prevent selection of invalid dates.
+    </p>
+    <p class="text-base text-slate-200">
+      The calendar dialog maintains focus trap behavior when open, and returns focus to the 
+      trigger button when closed. Date ranges and constraints are clearly communicated to 
+      assistive technologies through semantic markup and ARIA attributes.
+    </p>
   </section>
 </DocsLayout>

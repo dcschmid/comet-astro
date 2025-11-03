@@ -2,27 +2,74 @@
 interface Props {
   axis?: 'horizontal' | 'vertical' | 'both';
   inline?: boolean;
+  /** Optional max width preset */
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  /** Apply internal padding (gutter). */
+  padded?: boolean;
+  /** Background contrast variant ensuring text readability. */
+  background?: 'none' | 'subtle' | 'soft' | 'solid';
+  /** Additional classes */
   className?: string;
+  /** Semantic wrapper element */
+  as?: 'div' | 'section' | 'article' | 'main' | 'aside';
+  /** Accessible label when region semantics need description */
+  ariaLabel?: string;
 }
 
-const { axis = 'both', inline = false, className = '' } = Astro.props;
+const {
+  axis = 'both',
+  inline = false,
+  maxWidth = 'full',
+  padded = false,
+  background = 'none',
+  className = '',
+  as = 'div',
+  ariaLabel
+} = Astro.props as Props;
 
-const getClasses = () => {
-  if (axis === 'both') {
-    return 'flex items-center justify-center';
-  }
-  if (axis === 'horizontal') {
-    return 'flex justify-center';
-  }
-  if (axis === 'vertical') {
-    return 'flex items-center';
-  }
-  return '';
-};
+const axisClass = axis === 'both'
+  ? 'items-center justify-center'
+  : axis === 'horizontal'
+    ? 'justify-center'
+    : axis === 'vertical'
+      ? 'items-center'
+      : '';
 
 const displayClass = inline ? 'inline-flex' : 'flex';
+
+const widthMap: Record<string, string> = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+  '2xl': 'max-w-2xl',
+  full: 'max-w-full'
+};
+
+const widthClass = widthMap[maxWidth];
+
+// Background variants chosen for AAA contrast with typical foreground text (slate-50 / slate-900)
+// subtle: transparent with slight neutral layer
+// soft: stronger translucent layer
+// solid: opaque high-contrast surface
+const bgMap: Record<string, string> = {
+  none: '',
+  subtle: 'bg-slate-800/30 dark:bg-slate-200/15 backdrop-blur-sm',
+  soft: 'bg-slate-800/60 dark:bg-slate-200/25 backdrop-blur-sm',
+  solid: 'bg-slate-900 dark:bg-slate-100'
+};
+const bgClass = bgMap[background];
+
+const padClass = padded ? 'p-4 md:p-6' : '';
+
+// Compose final classes. Avoid over-engineering: a single pass of concatenation.
+const classes = [displayClass, axisClass, widthClass, padClass, bgClass, 'mx-auto', 'w-full', className]
+  .filter(Boolean)
+  .join(' ');
+
+const Tag = as;
 ---
 
-<div class={`${displayClass} ${getClasses()} ${className}`}>
+<Tag class={classes} aria-label={ariaLabel}>
   <slot />
-</div>
+</Tag>

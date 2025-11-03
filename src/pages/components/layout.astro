@@ -1,35 +1,514 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Layout from '../../components/Layout.astro';
+import LayoutComponent from '../../components/Layout.astro';
 import Paragraph from '../../components/Paragraph.astro';
+import Button from '../../components/Button.astro';
+
+// Usage code snippets
+const basicUsage = `---
+import { Layout } from 'comet-astro';
+---
+
+<Layout>
+  <header slot="header">
+    <nav><!-- Navigation --></nav>
+  </header>
+  
+  <div>
+    <h1>Main Content</h1>
+    <p>Your page content here...</p>
+  </div>
+  
+  <footer slot="footer">
+    <p>&copy; 2025 Your Company</p>
+  </footer>
+</Layout>`;
+
+const sidebarUsage = `---
+import { Layout } from 'comet-astro';
+---
+
+<Layout variant="sidebar" sidebarPosition="left">
+  <header slot="header">
+    <nav><!-- Top navigation --></nav>
+  </header>
+  
+  <aside slot="sidebar">
+    <nav><!-- Sidebar navigation --></nav>
+  </aside>
+  
+  <div>
+    <h1>Main Content</h1>
+    <p>Content with sidebar...</p>
+  </div>
+  
+  <footer slot="footer">
+    <p>&copy; 2025 Your Company</p>
+  </footer>
+</Layout>`;
+
+const advancedUsage = `---
+import { Layout } from 'comet-astro';
+---
+
+<Layout
+  variant="wide"
+  background="gradient"
+  spacing="loose"
+  maxWidth="2xl"
+  stickyHeader
+  skipToMainLabel="Zum Hauptinhalt springen"
+  mainAriaLabel="Hauptinhalt der Seite"
+>
+  <header slot="header">
+    <nav><!-- Sticky header --></nav>
+  </header>
+  
+  <div>
+    <h1>Enhanced Layout</h1>
+    <p>With advanced features...</p>
+  </div>
+  
+  <footer slot="footer">
+    <p>&copy; 2025 Your Company</p>
+  </footer>
+</Layout>`;
 ---
 
 <DocsLayout
-  title="Layout"
-  description="Page frame with header, footer, and containerized main slot."
+  title="Layout Component"
+  description="WCAG AAA compliant page structure component with header, main content, footer, and advanced accessibility features."
 >
+  <!-- Overview -->
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Layout class="border border-gray-800 rounded-2xl overflow-hidden">
-      <div
-        slot="header"
-        class="bg-gray-900/80 px-6 py-4 text-sm font-semibold text-white"
-      >
-        Acme · Dashboard
+    <p class="text-lg text-slate-200">
+      A comprehensive layout component that provides the foundation for accessible 
+      page structures with multiple variants, responsive design, and enhanced 
+      accessibility features including skip links and proper landmarks.
+    </p>
+    <div class="flex flex-wrap gap-2">
+      <span class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20">
+        WCAG AAA
+      </span>
+      <span class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20">
+        Semantic HTML
+      </span>
+      <span class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20">
+        Responsive
+      </span>
+      <span class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20">
+        Skip Links
+      </span>
+    </div>
+  </section>
+
+  <!-- Quick Examples -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Quick Examples</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Basic Layout</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LayoutComponent class="border border-slate-600 rounded-lg overflow-hidden min-h-[300px]">
+            <div
+              slot="header"
+              class="bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-100 border-b border-slate-600"
+            >
+              Header Section
+            </div>
+            <section class="space-y-3 py-6">
+              <h3 class="text-lg font-bold text-slate-100">Main Content</h3>
+              <Paragraph size="sm">
+                This is the main content area with proper semantic structure.
+              </Paragraph>
+            </section>
+            <footer
+              slot="footer"
+              class="bg-slate-800 px-4 py-3 text-xs text-slate-400 border-t border-slate-600"
+            >
+              © 2025 Footer Section
+            </footer>
+          </LayoutComponent>
+        </div>
       </div>
-      <section id="demo-main" class="space-y-3 py-8">
-        <h3 class="text-xl font-bold text-white">Team insights</h3>
-        <Paragraph size="sm">
-          Capture a high-level overview of active projects, new messages, and
-          priority alerts.
-        </Paragraph>
-      </section>
-      <footer
-        slot="footer"
-        class="bg-gray-900/80 px-6 py-4 text-xs text-gray-400"
-      >
-        © {new Date().getFullYear()} Acme Inc. All rights reserved.
-      </footer>
-    </Layout>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Narrow Layout</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LayoutComponent variant="narrow" class="border border-slate-600 rounded-lg overflow-hidden min-h-[300px]">
+            <div
+              slot="header"
+              class="bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-100 border-b border-slate-600"
+            >
+              Narrow Header
+            </div>
+            <section class="space-y-3 py-6">
+              <h3 class="text-lg font-bold text-slate-100">Focused Content</h3>
+              <Paragraph size="sm">
+                Narrow variant for focused reading experiences.
+              </Paragraph>
+            </section>
+            <footer
+              slot="footer"
+              class="bg-slate-800 px-4 py-3 text-xs text-slate-400 border-t border-slate-600"
+            >
+              © 2025 Narrow Footer
+            </footer>
+          </LayoutComponent>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Layout Variants -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Layout Variants</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Default</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Header</div>
+            <div class="py-4 text-center text-sm text-slate-100">Standard layout</div>
+            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Footer</div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Standard responsive layout with container</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Wide</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent variant="wide" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Wide Header</div>
+            <div class="py-4 text-center text-sm text-slate-100">Full-width content</div>
+            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Wide Footer</div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Full-width layout for dashboards</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Narrow</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent variant="narrow" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Narrow Header</div>
+            <div class="py-4 text-center text-sm text-slate-100">Focused content</div>
+            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Narrow Footer</div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Constrained width for reading</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Sidebar</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent variant="sidebar" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">App Header</div>
+            <div slot="sidebar" class="bg-slate-700 px-3 py-2 text-xs text-slate-200">Sidebar</div>
+            <div class="py-4 text-center text-sm text-slate-100">Main with sidebar</div>
+            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">App Footer</div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Layout with navigation sidebar</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Background Options -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Background Options</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Default</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent background="default" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
+            <div class="py-4 text-center text-sm text-slate-900 dark:text-slate-100">Clean background</div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Standard white/dark background</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Muted</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent background="muted" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
+            <div class="py-4 text-center text-sm text-slate-900 dark:text-slate-100">Subtle background</div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Subtle gray background</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Accent</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent background="accent" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
+            <div class="py-4 text-center text-sm text-slate-900 dark:text-slate-100">Colored background</div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Blue accent background</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Gradient</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent background="gradient" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
+            <div class="py-4 text-center text-sm text-slate-900 dark:text-slate-100">Gradient background</div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Subtle gradient effect</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spacing Options -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Spacing Options</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Tight</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent spacing="tight" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Header</div>
+            <div class="py-2 text-center text-sm text-slate-100">Compact spacing</div>
+            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Footer</div>
+          </LayoutComponent>
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Normal</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent spacing="normal" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Header</div>
+            <div class="py-4 text-center text-sm text-slate-100">Standard spacing</div>
+            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Footer</div>
+          </LayoutComponent>
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Loose</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent spacing="loose" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Header</div>
+            <div class="py-6 text-center text-sm text-slate-100">Generous spacing</div>
+            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Footer</div>
+          </LayoutComponent>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advanced Features -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Advanced Features</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Sticky Header</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent stickyHeader class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100 border-b border-slate-600">
+              Sticky Header
+            </div>
+            <div class="py-8 text-center text-sm text-slate-100">
+              Header stays at top when scrolling
+            </div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Header remains visible during scroll</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Max Width Control</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <LayoutComponent maxWidth="sm" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
+            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Constrained Header</div>
+            <div class="py-8 text-center text-sm text-slate-100">
+              Content width limited to small
+            </div>
+          </LayoutComponent>
+        </div>
+        <p class="text-xs text-slate-400">Control maximum content width</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skip Link Demo -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility Features</h2>
+    <div class="space-y-4">
+      <h3 class="text-base font-medium text-slate-200">Skip Link (Press Tab to see)</h3>
+      <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+        <LayoutComponent skipToMainLabel="Zum Hauptinhalt springen" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
+          <div slot="header" class="bg-slate-800 px-4 py-3 text-sm text-slate-100">
+            Accessible Header - Press Tab to see skip link
+          </div>
+          <div class="py-8 text-center space-y-2">
+            <p class="text-sm text-slate-100">Press Tab to reveal the skip link</p>
+            <Button variant="outline" size="sm">Focusable element</Button>
+          </div>
+          <div slot="footer" class="bg-slate-800 px-4 py-3 text-xs text-slate-400">
+            Accessible Footer
+          </div>
+        </LayoutComponent>
+      </div>
+      <p class="text-xs text-slate-400">Skip links appear when focused for keyboard navigation</p>
+    </div>
+  </section>
+
+  <!-- Props Documentation -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Structure
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>variant?</code>, <code>container?</code>, <code>sidebarPosition?</code> - 
+          Control layout structure and positioning.
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Visual Style
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>background?</code>, <code>spacing?</code>, <code>maxWidth?</code> - 
+          Control appearance and content width.
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Behavior
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>stickyHeader?</code>, <code>stickyFooter?</code> - 
+          Enable sticky positioning for header/footer.
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Accessibility
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>skipToMainLabel?</code>, <code>mainAriaLabel?</code>, <code>headerAriaLabel?</code>, <code>footerAriaLabel?</code> - 
+          Customize accessibility labels.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- Slot Documentation -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Slots</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <dl class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:gap-4">
+          <dt class="text-sm font-medium text-slate-200 w-24 shrink-0">
+            <code>header</code>
+          </dt>
+          <dd class="text-sm text-slate-200">
+            Header content area with proper banner landmark role
+          </dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:gap-4">
+          <dt class="text-sm font-medium text-slate-200 w-24 shrink-0">
+            <code>sidebar</code>
+          </dt>
+          <dd class="text-sm text-slate-200">
+            Sidebar content (only used with sidebar variant)
+          </dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:gap-4">
+          <dt class="text-sm font-medium text-slate-200 w-24 shrink-0">
+            <code>default</code>
+          </dt>
+          <dd class="text-sm text-slate-200">
+            Main content area with proper main landmark role and skip link target
+          </dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:gap-4">
+          <dt class="text-sm font-medium text-slate-200 w-24 shrink-0">
+            <code>footer</code>
+          </dt>
+          <dd class="text-sm text-slate-200">
+            Footer content area with proper contentinfo landmark role
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Usage -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      The Layout component provides a complete page structure foundation with 
+      proper semantic landmarks, accessibility features, and responsive design. 
+      Use it as the base for all your pages.
+    </p>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Layout</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{basicUsage}</code>
+      </pre>
+    </div>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sidebar Layout</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{sidebarUsage}</code>
+      </pre>
+    </div>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Advanced Features</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{advancedUsage}</code>
+      </pre>
+    </div>
+  </section>
+
+  <!-- Accessibility -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <ul class="space-y-3 text-sm text-slate-200">
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+ contrast ratios with high contrast mode support</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Semantic Structure:</strong> Proper HTML5 landmarks (banner, main, contentinfo, complementary)</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Skip Links:</strong> Keyboard users can skip directly to main content with customizable labels</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Focus Management:</strong> Proper focus handling and visible focus indicators throughout</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Screen Reader Support:</strong> Descriptive ARIA labels and proper role assignments</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Responsive Design:</strong> Adaptive layouts that work on all device sizes and orientations</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Reduced Motion:</strong> Respects user's motion preferences for animations</span>
+        </li>
+      </ul>
+    </div>
   </section>
 </DocsLayout>

@@ -1,37 +1,313 @@
 ---
+/**
+ * KBD - WCAG AAA compliant keyboard key display component
+ * Displays keyboard shortcuts and key combinations with optimal accessibility
+ */
 interface Props {
   keys?: string[];
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'outlined' | 'minimal' | 'filled';
+  separator?: 'plus' | 'then' | 'or' | 'space';
   className?: string;
+  ariaLabel?: string;
+  description?: string;
+  platform?: 'auto' | 'mac' | 'windows' | 'linux';
 }
 
-const { keys = [], size = 'md', className = '' } = Astro.props;
+const { 
+  keys = [], 
+  size = 'md', 
+  variant = 'default',
+  separator = 'plus',
+  className = '',
+  ariaLabel,
+  description,
+  platform = 'auto'
+} = Astro.props;
 
+// Enhanced size classes with responsive design
 const sizeClasses = {
-  sm: 'text-xs px-1.5 py-0.5 min-w-[1.5rem]',
-  md: 'text-sm px-2 py-1 min-w-[2rem]',
-  lg: 'text-base px-2.5 py-1.5 min-w-[2.5rem]',
+  xs: {
+    key: 'text-xs px-1 py-0.5 min-w-[1.25rem] leading-3',
+    gap: 'gap-0.5',
+    separator: 'text-xs',
+    icon: 'w-2.5 h-2.5',
+  },
+  sm: {
+    key: 'text-xs px-1.5 py-0.5 min-w-[1.5rem] leading-4',
+    gap: 'gap-1',
+    separator: 'text-xs',
+    icon: 'w-3 h-3',
+  },
+  md: {
+    key: 'text-sm px-2 py-1 min-w-[2rem] leading-4',
+    gap: 'gap-1.5',
+    separator: 'text-sm',
+    icon: 'w-3.5 h-3.5',
+  },
+  lg: {
+    key: 'text-base px-2.5 py-1.5 min-w-[2.5rem] leading-5',
+    gap: 'gap-2',
+    separator: 'text-base',
+    icon: 'w-4 h-4',
+  },
+  xl: {
+    key: 'text-lg px-3 py-2 min-w-[3rem] leading-6',
+    gap: 'gap-2.5',
+    separator: 'text-lg',
+    icon: 'w-5 h-5',
+  },
 };
 
-const baseClasses =
-  'inline-flex items-center justify-center rounded border font-mono font-semibold bg-slate-100 border-slate-300 text-slate-700 shadow-sm dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100';
+// WCAG AAA compliant color classes with 7:1+ contrast ratios
+const colorClasses = {
+  // Text colors
+  text: 'text-slate-900 dark:text-slate-50',
+  textSecondary: 'text-slate-800 dark:text-slate-100',
+  textMuted: 'text-slate-700 dark:text-slate-200',
+  // Background colors
+  bg: 'bg-white dark:bg-slate-950',
+  bgSubtle: 'bg-slate-50 dark:bg-slate-900',
+  bgElevated: 'bg-slate-100 dark:bg-slate-800',
+  // Border colors
+  border: 'border-slate-400 dark:border-slate-500',
+  borderSubtle: 'border-slate-300 dark:border-slate-600',
+  borderStrong: 'border-slate-500 dark:border-slate-400',
+  // Shadow colors
+  shadow: 'shadow-sm shadow-slate-200 dark:shadow-slate-800',
+  shadowStrong: 'shadow-md shadow-slate-300 dark:shadow-slate-700',
+};
+
+// Variant styles
+const variantClasses = {
+  default: `
+    ${colorClasses.bgElevated} 
+    ${colorClasses.border} 
+    ${colorClasses.shadow}
+    border-b-2 border-r-2
+    hover:${colorClasses.bgSubtle}
+    active:translate-y-0.5 active:shadow-none
+  `,
+  outlined: `
+    ${colorClasses.bg} 
+    border-2 ${colorClasses.borderStrong} 
+    ${colorClasses.shadow}
+    hover:${colorClasses.bgSubtle}
+  `,
+  minimal: `
+    ${colorClasses.bgSubtle} 
+    ${colorClasses.borderSubtle} 
+    border
+    hover:${colorClasses.bgElevated}
+  `,
+  filled: `
+    ${colorClasses.bgElevated} 
+    ${colorClasses.borderSubtle} 
+    border
+    ${colorClasses.shadowStrong}
+  `,
+};
+
+// Separator symbols and labels
+const separatorConfig = {
+  plus: { symbol: '+', label: 'plus' },
+  then: { symbol: '→', label: 'then' },
+  or: { symbol: '/', label: 'or' },
+  space: { symbol: ' ', label: 'space' },
+};
+
+// Platform-specific key mappings
+const keyMappings = {
+  mac: {
+    'cmd': '⌘',
+    'option': '⌥',
+    'alt': '⌥',
+    'shift': '⇧',
+    'ctrl': '⌃',
+    'control': '⌃',
+    'enter': '↵',
+    'return': '↵',
+    'delete': '⌫',
+    'backspace': '⌫',
+    'tab': '⇥',
+    'space': '␣',
+    'esc': '⎋',
+    'escape': '⎋',
+  },
+  windows: {
+    'cmd': 'Win',
+    'win': 'Win',
+    'alt': 'Alt',
+    'shift': 'Shift',
+    'ctrl': 'Ctrl',
+    'control': 'Ctrl',
+    'enter': 'Enter',
+    'return': 'Enter',
+    'delete': 'Del',
+    'backspace': 'Backspace',
+    'tab': 'Tab',
+    'space': 'Space',
+    'esc': 'Esc',
+    'escape': 'Esc',
+  },
+  linux: {
+    'cmd': 'Super',
+    'super': 'Super',
+    'alt': 'Alt',
+    'shift': 'Shift',
+    'ctrl': 'Ctrl',
+    'control': 'Ctrl',
+    'enter': 'Enter',
+    'return': 'Enter',
+    'delete': 'Del',
+    'backspace': 'Backspace',
+    'tab': 'Tab',
+    'space': 'Space',
+    'esc': 'Esc',
+    'escape': 'Esc',
+  },
+};
+
+// Detect platform if auto
+const getPlatform = () => {
+  if (platform !== 'auto') return platform;
+  // Default to windows for SSR
+  return 'windows';
+};
+
+const currentPlatform = getPlatform();
+const mappings = keyMappings[currentPlatform] || keyMappings.windows;
+
+// Transform keys based on platform
+const transformKey = (key: string) => {
+  const lowercaseKey = key.toLowerCase();
+  return (mappings as any)[lowercaseKey] || key;
+};
+
+// Generate accessible description
+const generateDescription = () => {
+  if (description) return description;
+  if (keys.length === 0) return undefined;
+  
+  const keyNames = keys.map(key => transformKey(key));
+  const separatorLabel = separatorConfig[separator].label;
+  
+  if (keys.length === 1) {
+    return `Press ${keyNames[0]} key`;
+  }
+  
+  return `Press ${keyNames.join(` ${separatorLabel} `)} keys`;
+};
+
+// Compute classes
+const baseClasses = `
+  inline-flex items-center justify-center rounded-md font-mono font-semibold
+  transition-all duration-150 ease-in-out
+  ${colorClasses.text}
+  select-none cursor-default
+`.trim();
+
+const separatorSymbol = separatorConfig[separator].symbol;
+const accessibleDescription = generateDescription();
+
+// Generate unique ID for aria-describedby if needed
+const descriptionId = description ? `kbd-desc-${Math.random().toString(36).slice(2, 8)}` : undefined;
 ---
 
-{
-  keys.length > 0 ? (
-    <span class={`inline-flex items-center gap-1 ${className}`}>
-      {keys.map((key, i) => (
-        <>
-          <kbd class={`${baseClasses} ${sizeClasses[size]}`}>{key}</kbd>
-          {i < keys.length - 1 && (
-            <span class="text-xs text-slate-500 dark:text-slate-400">+</span>
-          )}
-        </>
-      ))}
-    </span>
-  ) : (
-    <kbd class={`${baseClasses} ${sizeClasses[size]} ${className}`}>
-      <slot />
-    </kbd>
-  )
-}
+{keys.length > 0 ? (
+  <span 
+    class={`inline-flex items-center ${sizeClasses[size].gap} ${className}`}
+    role="group"
+    aria-label={ariaLabel || accessibleDescription}
+    aria-describedby={descriptionId}
+  >
+    {keys.map((key, i) => (
+      <>
+        <kbd 
+          class={`
+            ${baseClasses} 
+            ${sizeClasses[size].key} 
+            ${variantClasses[variant]}
+          `}
+          title={`${transformKey(key)} key`}
+        >
+          {transformKey(key)}
+        </kbd>
+        {i < keys.length - 1 && (
+          <span 
+            class={`
+              ${sizeClasses[size].separator} 
+              ${colorClasses.textMuted} 
+              mx-1 font-medium
+            `}
+            aria-hidden="true"
+          >
+            {separatorSymbol}
+          </span>
+        )}
+      </>
+    ))}
+    
+    {description && (
+      <span 
+        id={descriptionId}
+        class="sr-only"
+      >
+        {description}
+      </span>
+    )}
+  </span>
+) : (
+  <kbd 
+    class={`
+      ${baseClasses} 
+      ${sizeClasses[size].key} 
+      ${variantClasses[variant]} 
+      ${className}
+    `}
+    aria-label={ariaLabel}
+    aria-describedby={descriptionId}
+    title="Keyboard shortcut"
+  >
+    <slot />
+    
+    {description && (
+      <span 
+        id={descriptionId}
+        class="sr-only"
+      >
+        {description}
+      </span>
+    )}
+  </kbd>
+)}
+
+<style>
+  /* Enhanced visual feedback for better accessibility */
+  kbd:focus-visible {
+    outline: 2px solid rgb(59 130 246);
+    outline-offset: 2px;
+  }
+  
+  /* Subtle animation for key press effect */
+  kbd:active {
+    transform: translateY(1px);
+    transition-duration: 50ms;
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    kbd {
+      border-width: 2px;
+      font-weight: 700;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    kbd {
+      transition: none;
+      transform: none !important;
+    }
+  }
+</style>

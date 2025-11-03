@@ -1,4 +1,7 @@
 ---
+/**
+ * DataList - semantic definition list with accessible styling and responsive variants
+ */
 interface Item {
   term: string;
   description: string | string[];
@@ -24,30 +27,30 @@ const isStriped = variant === 'striped';
 
 <dl
   class={`${
-    isHorizontal ? 'grid grid-cols-[auto_1fr] gap-x-6 gap-y-3' : 'space-y-4'
-  } text-sm text-slate-700 dark:text-slate-200 ${className}`}
+    isHorizontal ? 'grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-x-6 gap-y-3' : 'space-y-4'
+  } text-sm text-slate-800 dark:text-slate-100 ${className}`}
 >
   {
     items.map((item, index) => (
       <div
         class={`${isHorizontal ? 'contents' : ''} ${
           isStriped && index % 2 === 0
-            ? 'rounded-xl border border-slate-200 bg-slate-100/80 px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-900/60'
+            ? 'rounded-lg border border-slate-200/80 bg-slate-50/60 px-4 py-3 shadow-sm dark:border-slate-600/80 dark:bg-slate-800/60'
             : ''
         }`}
       >
         <dt
-          class={`text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${
-            !isHorizontal ? 'mb-1 block' : ''
+          class={`text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 ${
+            !isHorizontal ? 'mb-2 block' : ''
           }`}
         >
           {item.term}
         </dt>
-        <dd class="text-slate-700 dark:text-slate-200">
+        <dd class="text-slate-800 dark:text-slate-100 leading-relaxed">
           {Array.isArray(item.description) ? (
-            <ul class="list-disc pl-5 space-y-1">
+            <ul class="list-disc pl-5 space-y-1.5 marker:text-slate-600 dark:marker:text-slate-300">
               {item.description.map((desc) => (
-                <li>{desc}</li>
+                <li class="pl-1">{desc}</li>
               ))}
             </ul>
           ) : (
@@ -55,7 +58,7 @@ const isStriped = variant === 'striped';
           )}
         </dd>
         {divider && !isHorizontal && index < items.length - 1 && (
-          <hr class="my-4 border-slate-200 dark:border-slate-700" />
+          <hr class="my-4 border-slate-300/60 dark:border-slate-600/60" />
         )}
       </div>
     ))

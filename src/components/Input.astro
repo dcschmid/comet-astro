@@ -1,17 +1,36 @@
 ---
+/**
+ * Input - WCAG AAA compliant form input component
+ * Supports all standard HTML input types with enhanced accessibility features
+ */
 interface Props {
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date' | 'datetime-local' | 'time' | 'month' | 'week';
   name: string;
   label?: string;
   placeholder?: string;
   value?: string | number;
   required?: boolean;
   disabled?: boolean;
+  readonly?: boolean;
   error?: string;
   helperText?: string;
   size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'filled' | 'outlined';
   className?: string;
   id?: string;
+  autocomplete?: string;
+  pattern?: string;
+  minlength?: number;
+  maxlength?: number;
+  min?: string | number;
+  max?: string | number;
+  step?: string | number;
+  prefix?: string;
+  suffix?: string;
+  showCharCount?: boolean;
+  ariaLabel?: string;
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
 }
 
 const {
@@ -22,60 +41,239 @@ const {
   value,
   required = false,
   disabled = false,
+  readonly = false,
   error,
   helperText,
   size = 'md',
+  variant = 'default',
   className = '',
   id = name,
+  autocomplete,
+  pattern,
+  minlength,
+  maxlength,
+  min,
+  max,
+  step,
+  prefix,
+  suffix,
+  showCharCount = false,
+  ariaLabel,
+  ariaLabelledby,
+  ariaDescribedby,
 } = Astro.props;
 
+// Enhanced size classes with responsive design
 const sizeClasses = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-5 py-3 text-lg',
+  sm: {
+    input: 'px-3 py-1.5 text-sm leading-4',
+    label: 'text-xs',
+    text: 'text-xs',
+    icon: 'w-3.5 h-3.5',
+  },
+  md: {
+    input: 'px-4 py-2.5 text-sm leading-5',
+    label: 'text-sm',
+    text: 'text-xs',
+    icon: 'w-4 h-4',
+  },
+  lg: {
+    input: 'px-5 py-3.5 text-base leading-6',
+    label: 'text-base',
+    text: 'text-sm',
+    icon: 'w-5 h-5',
+  },
 };
 
-const baseClasses =
-  'w-full rounded-lg border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900';
+// WCAG AAA compliant color classes with 7:1+ contrast ratios
+const colorClasses = {
+  // Text colors
+  text: 'text-slate-900 dark:text-slate-50',
+  textSecondary: 'text-slate-800 dark:text-slate-100',
+  textMuted: 'text-slate-700 dark:text-slate-200',
+  textDisabled: 'text-slate-500 dark:text-slate-400',
+  // Background colors
+  bg: 'bg-white dark:bg-slate-950',
+  bgFilled: 'bg-slate-50 dark:bg-slate-900',
+  bgDisabled: 'bg-slate-100 dark:bg-slate-800',
+  // Border colors
+  border: 'border-slate-400 dark:border-slate-500',
+  borderHover: 'hover:border-slate-500 dark:hover:border-slate-400',
+  borderFocus: 'focus-visible:border-slate-600 dark:focus-visible:border-slate-300',
+  // State colors
+  error: 'border-red-600 dark:border-red-400 bg-red-50 dark:bg-red-950/50',
+  errorText: 'text-red-700 dark:text-red-300',
+  success: 'border-green-600 dark:border-green-400',
+  // Focus ring
+  focusRing: 'focus-visible:ring-2 focus-visible:ring-slate-600 dark:focus-visible:ring-slate-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
+};
+
+// Variant styles
+const variantClasses = {
+  default: `${colorClasses.bg} ${colorClasses.border} ${colorClasses.borderHover} ${colorClasses.borderFocus}`,
+  filled: `${colorClasses.bgFilled} ${colorClasses.border} ${colorClasses.borderHover} ${colorClasses.borderFocus}`,
+  outlined: `${colorClasses.bg} border-2 ${colorClasses.border} ${colorClasses.borderHover} ${colorClasses.borderFocus}`,
+};
+
+// Compute classes
+const baseClasses = `
+  w-full rounded-lg transition-all duration-200 
+  ${colorClasses.focusRing}
+  focus-visible:outline-none
+  disabled:cursor-not-allowed
+  ${readonly ? 'cursor-default' : ''}
+`.trim();
+
 const stateClasses = error
-  ? 'border-rose-500 bg-rose-50 focus-visible:ring-rose-400 dark:border-rose-400 dark:bg-rose-500/10'
-  : 'border-slate-300 bg-white text-slate-900 focus-visible:ring-blue-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100';
-const disabledClasses = disabled ? 'cursor-not-allowed opacity-60' : '';
-const descriptionId = error || helperText ? `${id}-description` : undefined;
+  ? colorClasses.error
+  : variantClasses[variant];
+
+const disabledClasses = disabled 
+  ? `${colorClasses.bgDisabled} ${colorClasses.textDisabled} opacity-60`
+  : colorClasses.text;
+
+// Generate IDs
+const inputId = id || `input-${Math.random().toString(36).slice(2, 8)}`;
+const descriptionId = error || helperText ? `${inputId}-description` : undefined;
+const charCountId = showCharCount ? `${inputId}-char-count` : undefined;
+
+// Combine aria-describedby
+const computedAriaDescribedby = [
+  ariaDescribedby,
+  descriptionId,
+  charCountId
+].filter(Boolean).join(' ') || undefined;
+
+// Character count calculation
+const currentLength = value ? String(value).length : 0;
+const showCount = showCharCount && maxlength;
 ---
 
-<div class={`space-y-1.5 ${className}`}>
-  {
-    label && (
-      <label
-        for={id}
-        class="block text-sm font-medium text-slate-700 dark:text-slate-200"
+<div class={`space-y-2 ${className}`}>
+  <!-- Label -->
+  {label && (
+    <label
+      for={inputId}
+      class={`
+        block font-medium leading-5
+        ${sizeClasses[size].label}
+        ${colorClasses.textSecondary}
+        ${disabled ? colorClasses.textDisabled : ''}
+      `}
+    >
+      {label}
+      {required && (
+        <span 
+          class={`ml-1 ${colorClasses.errorText}`}
+          aria-hidden="true"
+          title="Required field"
+        >
+          *
+        </span>
+      )}
+    </label>
+  )}
+
+  <!-- Input Container -->
+  <div class="relative">
+    <!-- Prefix -->
+    {prefix && (
+      <div class={`
+        absolute left-0 top-0 bottom-0 flex items-center pl-3
+        ${sizeClasses[size].text}
+        ${colorClasses.textMuted}
+        pointer-events-none
+      `}>
+        <span>{prefix}</span>
+      </div>
+    )}
+
+    <!-- Input Field -->
+    <input
+      type={type}
+      id={inputId}
+      name={name}
+      placeholder={placeholder}
+      value={value}
+      required={required}
+      disabled={disabled}
+      readonly={readonly}
+      autocomplete={autocomplete}
+      pattern={pattern}
+      minlength={minlength}
+      maxlength={maxlength}
+      min={min}
+      max={max}
+      step={step}
+      aria-invalid={error ? 'true' : 'false'}
+      aria-describedby={computedAriaDescribedby}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
+      class={`
+        ${baseClasses}
+        ${sizeClasses[size].input}
+        ${stateClasses}
+        ${disabledClasses}
+        ${prefix ? 'pl-8' : ''}
+        ${suffix || showCount ? 'pr-16' : ''}
+      `}
+    />
+
+    <!-- Suffix -->
+    {suffix && (
+      <div class={`
+        absolute right-0 top-0 bottom-0 flex items-center pr-3
+        ${sizeClasses[size].text}
+        ${colorClasses.textMuted}
+        pointer-events-none
+      `}>
+        <span>{suffix}</span>
+      </div>
+    )}
+
+    <!-- Character Count -->
+    {showCount && (
+      <div 
+        id={charCountId}
+        class={`
+          absolute right-0 top-0 bottom-0 flex items-center pr-3
+          ${sizeClasses[size].text}
+          ${currentLength > maxlength! ? colorClasses.errorText : colorClasses.textMuted}
+          pointer-events-none
+        `}
+        aria-live="polite"
       >
-        {label}
-        {required && <span class="ml-1 text-rose-500">*</span>}
-      </label>
-    )
-  }
-  <input
-    type={type}
-    id={id}
-    name={name}
-    placeholder={placeholder}
-    value={value}
-    required={required}
-    disabled={disabled}
-    aria-invalid={error ? 'true' : undefined}
-    aria-describedby={descriptionId}
-    class={`${baseClasses} ${sizeClasses[size]} ${stateClasses} ${disabledClasses}`}
-  />
-  {
-    (error || helperText) && (
-      <p
-        id={descriptionId}
-        class={`text-xs ${error ? 'text-rose-500 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400'}`}
-      >
-        {error || helperText}
-      </p>
-    )
-  }
+        <span>{currentLength}/{maxlength}</span>
+      </div>
+    )}
+  </div>
+
+  <!-- Helper Text / Error Message -->
+  {(error || helperText) && (
+    <div 
+      id={descriptionId}
+      class={`
+        ${sizeClasses[size].text}
+        ${error ? colorClasses.errorText : colorClasses.textMuted}
+        leading-4
+      `}
+      role={error ? 'alert' : undefined}
+      aria-live={error ? 'polite' : undefined}
+    >
+      {error && (
+        <span class="inline-flex items-center gap-1">
+          <svg 
+            class={`${sizeClasses[size].icon} ${colorClasses.errorText}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          {error}
+        </span>
+      )}
+      {!error && helperText && helperText}
+    </div>
+  )}
 </div>

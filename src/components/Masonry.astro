@@ -1,6 +1,7 @@
 ---
 /**
- * Masonry - responsive masonry layout using CSS columns
+ * Masonry - Accessible responsive masonry layout using CSS columns
+ * WCAG AAA compliant with proper focus management and semantic structure
  */
 interface Breakpoints {
   base?: number;
@@ -13,13 +14,59 @@ interface Breakpoints {
 const clampColumns = (value: number) => Math.max(1, Math.round(value));
 
 interface Props {
+  /** Number of columns or responsive breakpoint object */
   columns?: number | Breakpoints;
-  gap?: string;
+  /** Gap between columns and items */
+  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | string;
+  /** Visual variant */
+  variant?: 'default' | 'card' | 'gallery' | 'minimal';
+  /** Size preset for consistent spacing */
+  size?: 'sm' | 'md' | 'lg';
+  /** Accessible title for the masonry grid */
+  title?: string;
+  /** Role for semantic structure */
+  role?: 'list' | 'grid' | 'region';
+  /** Custom CSS classes */
   className?: string;
+  /** Enable focus management for keyboard navigation */
+  focusManagement?: boolean;
 }
 
-const { columns = 1, gap = '1.5rem', className = '' } = Astro.props as Props;
+const {
+  columns = { base: 1, sm: 2, md: 2, lg: 3, xl: 4 },
+  gap = 'md',
+  variant = 'default',
+  size = 'md',
+  title,
+  role = 'grid',
+  className = '',
+  focusManagement = true,
+} = Astro.props as Props;
 
+// Gap size mappings
+const gapSizes = {
+  xs: '0.5rem',
+  sm: '0.75rem', 
+  md: '1rem',
+  lg: '1.5rem',
+  xl: '2rem'
+};
+
+// Size variants for consistent spacing
+const sizeVariants = {
+  sm: { gap: gapSizes.sm, minHeight: '200px' },
+  md: { gap: gapSizes.md, minHeight: '300px' },
+  lg: { gap: gapSizes.lg, minHeight: '400px' }
+};
+
+// Resolve gap value
+const gapValue = typeof gap === 'string' && gap in gapSizes 
+  ? gapSizes[gap as keyof typeof gapSizes]
+  : typeof gap === 'string' 
+    ? gap 
+    : sizeVariants[size].gap;
+
+// Column configuration with proper fallbacks
 const columnConfig: Required<Breakpoints> = {
   base: clampColumns(
     typeof columns === 'number' ? columns : (columns.base ?? 1)
@@ -49,18 +96,72 @@ const columnConfig: Required<Breakpoints> = {
   ),
 };
 
+// Variant styles with WCAG AAA compliant colors
+const variantClasses = {
+  default: '',
+  card: 'p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900',
+  gallery: 'rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800',
+  minimal: 'space-y-2'
+};
+
+// Generate unique ID for this masonry instance
 const id = `masonry-${Math.random().toString(36).slice(2, 9)}`;
+
+// Enhanced CSS with accessibility features
 const styleContent = `
   #${id} {
     column-count: ${columnConfig.base};
-    column-gap: ${gap};
+    column-gap: ${gapValue};
+    column-fill: balance;
   }
 
   #${id} > * {
     break-inside: avoid;
-    margin-bottom: ${gap};
+    margin-bottom: ${gapValue};
+    page-break-inside: avoid;
   }
 
+  /* Remove margin from last items in each column */
+  #${id} > *:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Focus management for keyboard navigation */
+  ${focusManagement ? `
+  #${id}:focus-within {
+    outline: 2px solid rgb(59 130 246);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  #${id} > *:focus {
+    outline: 2px solid rgb(59 130 246);
+    outline-offset: 2px;
+    border-radius: 4px;
+    position: relative;
+    z-index: 10;
+  }
+  ` : ''}
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    #${id} > * {
+      border: 1px solid currentColor;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    #${id} {
+      transition: none;
+    }
+    
+    #${id} > * {
+      transition: none;
+    }
+  }
+
+  /* Responsive breakpoints */
   @media (min-width: 640px) {
     #${id} {
       column-count: ${columnConfig.sm};
@@ -84,11 +185,54 @@ const styleContent = `
       column-count: ${columnConfig.xl};
     }
   }
+
+  /* Print styles */
+  @media print {
+    #${id} {
+      column-count: ${Math.min(columnConfig.lg, 2)};
+      break-inside: auto;
+    }
+    
+    #${id} > * {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
 `;
+
+// Container classes
+const containerClasses = `masonry-columns ${variantClasses[variant]} ${className}`.trim();
+
+// ARIA attributes
+const ariaAttributes = {
+  role,
+  ...(title && { 'aria-label': title }),
+  ...(role === 'grid' && { 'aria-readonly': 'true' }),
+  ...(focusManagement && { tabindex: '0' })
+};
 ---
 
 <style is:inline set:html={styleContent}></style>
 
-<div id={id} class={`masonry-columns ${className}`}>
+{title && (
+  <div class="sr-only" id={`${id}-title`}>
+    {title}
+  </div>
+)}
+
+<div 
+  id={id} 
+  class={containerClasses}
+  {...ariaAttributes}
+  aria-describedby={title ? `${id}-title` : undefined}
+>
   <slot />
 </div>
+
+<!-- Screen reader instructions for complex layouts -->
+{role === 'grid' && (
+  <div class="sr-only">
+    Navigate this grid using arrow keys. Items are arranged in {columnConfig.base} column{columnConfig.base > 1 ? 's' : ''} on mobile, 
+    increasing to {columnConfig.xl} column{columnConfig.xl > 1 ? 's' : ''} on larger screens.
+  </div>
+)}

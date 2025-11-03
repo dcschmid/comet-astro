@@ -1,35 +1,751 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import MediaCard from '../../components/MediaCard.astro';
-const mcActions = [{ href: '#', label: 'Open' }];
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const title = 'MediaCard Component';
+const description = 'WCAG AAA compliant card component for displaying media content with titles, descriptions, and actions.';
 ---
 
-<DocsLayout
-  title="MediaCard"
-  description="Card with optional image, title, description and action links."
->
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li>
-        <code>image?: string</code>, <code>title: string</code>, <code
-          >description?: string</code
-        >
-      </li>
-      <li><code>href?: string</code> – wrap title as link</li>
-      <li><code>actions?: &#123;href,label,target?&#125;[]</code></li>
-      <li><code>className?: string</code></li>
-    </ul>
-  </section>
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The MediaCard component provides a flexible and accessible way to display media content with titles, descriptions, and interactive actions. It supports multiple variants, sizes, and maintains WCAG AAA compliance standards.
+      </p>
+    </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <MediaCard
-      image="https://picsum.photos/seed/mc/800/450"
-      title="Sample Media"
-      description="A short description for the media card."
-      href="#"
-      actions={mcActions}
-    />
-  </section>
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Default Card
+          </h3>
+          <MediaCard
+            image="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=250&fit=crop"
+            alt="Computer setup"
+            title="Getting Started with Astro"
+            description="Learn how to build modern websites with Astro's component-based architecture."
+            href="/blog/getting-started"
+            actions={[
+              { label: 'Read More', href: '/blog/getting-started', variant: 'primary' },
+              { label: 'Share', href: '#', variant: 'secondary' }
+            ]}
+          />
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Horizontal Layout
+          </h3>
+          <MediaCard
+            variant="horizontal"
+            image="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=150&fit=crop"
+            alt="Web development"
+            title="Web Development Tips"
+            description="Essential tips for modern web developers."
+            href="/blog/web-dev-tips"
+            actions={[
+              { label: 'Learn More', href: '/blog/web-dev-tips', variant: 'primary' }
+            ]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<MediaCard
+  image="https://example.com/image.jpg"
+  alt="Description of image"
+  title="Card Title"
+  description="Card description text"
+  href="/link"
+  actions={[
+    { label: 'Primary Action', href: '/action', variant: 'primary' },
+    { label: 'Secondary Action', href: '/secondary', variant: 'secondary' }
+  ]}
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Variants
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Default
+          </h3>
+          <MediaCard
+            variant="default"
+            image="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300&h=200&fit=crop"
+            alt="Programming"
+            title="Default Variant"
+            description="Standard card with border and shadow."
+            actions={[{ label: 'Action', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Horizontal
+          </h3>
+          <MediaCard
+            variant="horizontal"
+            image="https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=200&h=150&fit=crop"
+            alt="Code editor"
+            title="Horizontal Variant"
+            description="Side-by-side layout for compact display."
+            actions={[{ label: 'Action', href: '#', variant: 'secondary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Minimal
+          </h3>
+          <MediaCard
+            variant="minimal"
+            image="https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=300&h=200&fit=crop"
+            alt="Workspace"
+            title="Minimal Variant"
+            description="Clean design without borders or shadows."
+            actions={[{ label: 'Action', href: '#', variant: 'secondary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Featured
+          </h3>
+          <MediaCard
+            variant="featured"
+            image="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=200&fit=crop"
+            alt="Development"
+            title="Featured Variant"
+            description="Emphasized design with colored border."
+            actions={[{ label: 'Action', href: '#', variant: 'primary' }]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<MediaCard variant="default" title="Standard Card" />
+
+<!-- Horizontal layout -->
+<MediaCard variant="horizontal" title="Side by Side" />
+
+<!-- Minimal design -->
+<MediaCard variant="minimal" title="Clean Look" />
+
+<!-- Featured with emphasis -->
+<MediaCard variant="featured" title="Important Card" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Sizes
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Small
+          </h3>
+          <div class="flex justify-start">
+            <MediaCard
+              size="sm"
+              image="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=200&h=130&fit=crop"
+              alt="Technology"
+              title="Small Card"
+              description="Compact size for tight layouts."
+              actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Medium (Default)
+          </h3>
+          <div class="flex justify-start">
+            <MediaCard
+              size="md"
+              image="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=300&h=200&fit=crop"
+              alt="Laptop"
+              title="Medium Card"
+              description="Standard size for most use cases."
+              actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Large
+          </h3>
+          <div class="flex justify-start">
+            <MediaCard
+              size="lg"
+              image="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=260&fit=crop"
+              alt="Team work"
+              title="Large Card"
+              description="Spacious size for featured content and detailed descriptions."
+              actions={[{ label: 'View', href: '#', variant: 'primary' }]}
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<MediaCard size="sm" title="Compact Card" />
+
+<!-- Medium size (default) -->
+<MediaCard size="md" title="Standard Card" />
+
+<!-- Large size -->
+<MediaCard size="lg" title="Spacious Card" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Action Types -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Action Types
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Link Actions
+          </h3>
+          <MediaCard
+            image="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=300&h=200&fit=crop"
+            alt="Keyboard"
+            title="Navigation Card"
+            description="Actions that navigate to other pages."
+            actions={[
+              { label: 'Home', href: '/', variant: 'primary' },
+              { label: 'About', href: '/about', variant: 'secondary' },
+              { label: 'External', href: 'https://example.com', variant: 'secondary', target: '_blank' }
+            ]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Button Actions
+          </h3>
+          <MediaCard
+            image="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=300&h=200&fit=crop"
+            alt="Programming"
+            title="Interactive Card"
+            description="Actions that trigger JavaScript functions."
+            actions={[
+              { label: 'Like', onClick: 'alert("Liked!")', variant: 'primary', icon: '❤️' },
+              { label: 'Share', onClick: 'navigator.share({title: "Card"})', variant: 'secondary', icon: '📤' },
+              { label: 'Delete', onClick: 'confirm("Delete?")', variant: 'danger', icon: '🗑️' }
+            ]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Link actions -->
+<MediaCard
+  actions={[
+    { label: 'View Details', href: '/details', variant: 'primary' },
+    { label: 'External Link', href: 'https://example.com', target: '_blank' }
+  ]}
+/>
+
+<!-- Button actions -->
+<MediaCard
+  actions={[
+    { label: 'Like', onClick: 'handleLike()', variant: 'primary', icon: '❤️' },
+    { label: 'Delete', onClick: 'handleDelete()', variant: 'danger' }
+  ]}
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- States -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        States
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Loading State
+          </h3>
+          <MediaCard
+            loading={true}
+            image="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300&h=200&fit=crop"
+            alt="Loading"
+            title="Loading Card"
+            description="Card with loading animation."
+            actions={[{ label: 'Loading...', href: '#', variant: 'primary' }]}
+          />
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Disabled State
+          </h3>
+          <MediaCard
+            disabled={true}
+            image="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=300&h=200&fit=crop"
+            alt="Disabled"
+            title="Disabled Card"
+            description="Card with disabled interactions."
+            actions={[{ label: 'Disabled', href: '#', variant: 'primary' }]}
+          />
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Loading state -->
+<MediaCard loading={true} title="Loading Content" />
+
+<!-- Disabled state -->
+<MediaCard disabled={true} title="Disabled Content" />`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg mb-6">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
+          WCAG AAA Compliance
+        </h3>
+        <ul class="space-y-2 text-blue-800 dark:text-blue-200">
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Contrast ratios exceed 7:1 for all text elements</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Proper semantic HTML structure with article elements</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Comprehensive keyboard navigation support</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Screen reader friendly with proper ARIA labels</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
+            <span>Focus indicators with 2px outline for visibility</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+          Custom Accessibility Properties
+        </h3>
+        <MediaCard
+          image="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=300&h=200&fit=crop"
+          alt="Accessible design example"
+          title="Accessible Card"
+          description="This card demonstrates accessibility features."
+          ariaLabel="Featured article about accessibility"
+          ariaDescribedBy="accessibility-description"
+          actions={[{ label: 'Learn More', href: '/accessibility', variant: 'primary' }]}
+        />
+      </div>
+
+      <CodeBlock
+        code={`<MediaCard
+  title="Accessible Content"
+  ariaLabel="Featured article about web accessibility"
+  ariaDescribedBy="description-id"
+  alt="Detailed description of the image content"
+  role="article"
+/>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Props Reference
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                image
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                URL of the image to display
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                alt
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                ''
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Alternative text for the image
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                title
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Title text for the card
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                href
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                URL to link the title to
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                description
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Description text for the card
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default' | 'horizontal' | 'minimal' | 'featured'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual variant of the card
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Size of the card
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                actions
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Action[]
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                []
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Array of action buttons/links
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                loading
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Show loading state
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                disabled
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Disable card interactions
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                showImage
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Whether to show the image
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                showActions
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Whether to show action buttons
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaLabel
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Accessible label for the card
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                class
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Additional CSS classes
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Action Interface -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Action Interface
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Property
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                label
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Text displayed on the action button
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                href
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                URL for link actions (renders as anchor tag)
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                onClick
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                JavaScript code for button actions
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'primary' | 'secondary' | 'danger'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Visual style of the action button
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                icon
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Icon to display before the label text
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                target
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                '_blank' | '_self' | '_parent' | '_top'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Target for link actions (only applies to href)
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Best Practices
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+            ✅ Do
+          </h3>
+          <ul class="space-y-2 text-green-800 dark:text-green-200">
+            <li>• Always provide meaningful alt text for images</li>
+            <li>• Use descriptive action labels that clearly indicate the action outcome</li>
+            <li>• Keep descriptions concise but informative</li>
+            <li>• Use appropriate variants for the context and importance</li>
+            <li>• Consider horizontal layout for narrow containers</li>
+            <li>• Provide proper href attributes for navigation actions</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-red-900 dark:text-red-100 mb-3">
+            ❌ Don't
+          </h3>
+          <ul class="space-y-2 text-red-800 dark:text-red-200">
+            <li>• Use vague action labels like "Click here" or "Read more"</li>
+            <li>• Mix href and onClick properties in the same action</li>
+            <li>• Overload cards with too many actions (3-4 maximum recommended)</li>
+            <li>• Use images without alt text for decorative purposes</li>
+            <li>• Force content into inappropriate card variants</li>
+            <li>• Ignore loading and disabled states for dynamic content</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

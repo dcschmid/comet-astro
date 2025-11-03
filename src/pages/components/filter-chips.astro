@@ -1,21 +1,385 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import FilterChips from '../../components/FilterChips.astro';
+import FilterChipsComponent from '../../components/FilterChips.astro';
 
-const options = [
-  { id: 'design', label: 'Design' },
-  { id: 'dev', label: 'Development' },
-  { id: 'ops', label: 'Operations' },
-  { id: 'marketing', label: 'Marketing' },
+const usageSnippet = `---
+import { FilterChips } from 'comet-astro';
+
+---
+
+<FilterChipsComponent
+  items={[
+    { id: 'design', label: 'Design', count: 12 },
+    { id: 'dev', label: 'Development', count: 8 },
+    { id: 'marketing', label: 'Marketing', count: 5 }
+  ]}
+  selected={['design']}
+  multi={true}
+  size="md"
+  variant="default"
+/>`;
+
+const categories = [
+  { id: 'design', label: 'Design', count: 12 },
+  { id: 'development', label: 'Development', count: 8 },
+  { id: 'marketing', label: 'Marketing', count: 5 },
+  { id: 'sales', label: 'Sales', count: 3 },
+];
+
+const skills = [
+  { id: 'react', label: 'React' },
+  { id: 'vue', label: 'Vue.js' },
+  { id: 'angular', label: 'Angular' },
+  { id: 'svelte', label: 'Svelte' },
+  { id: 'astro', label: 'Astro' },
+];
+
+const priorities = [
+  { id: 'low', label: 'Low Priority' },
+  { id: 'medium', label: 'Medium Priority' },
+  { id: 'high', label: 'High Priority' },
+  { id: 'urgent', label: 'Urgent', disabled: true },
+];
+
+const status = [
+  { id: 'active', label: 'Active', count: 24 },
+  { id: 'pending', label: 'Pending', count: 12 },
+  { id: 'completed', label: 'Completed', count: 156 },
+  { id: 'archived', label: 'Archived', count: 89 },
 ];
 ---
 
 <DocsLayout
   title="FilterChips"
-  description="Toggleable chip group with clear-all control."
+  description="Accessible selectable chip groups with WCAG AAA contrast, keyboard navigation, and multi-select support."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <FilterChips label="Categories" options={options} clearLabel="Clear all" />
+    <p class="text-base text-slate-100">
+      FilterChips provides accessible chip interfaces for filtering and selection with comprehensive 
+      keyboard navigation and focus management. The component maintains WCAG AAA contrast ratios 
+      across all interactive elements and supports both single and multi-select modes with proper 
+      ARIA semantics for screen readers.
+    </p>
+    <p class="text-base text-slate-200">
+      Enhanced focus indicators, arrow key navigation, and proper checkbox/radio semantics ensure 
+      optimal accessibility. Multiple size variants and visual styles adapt to any filtering 
+      interface while maintaining consistent interaction patterns.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          items
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of chip objects with <code>id</code>, <code>label</code>, optional <code>count</code>, and <code>disabled</code> properties.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          selected?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of selected chip IDs. Controls which chips are initially active.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          multi?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Enable multi-select mode (checkbox behavior). When <code>false</code>, uses radio button behavior. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Chip size variant: <code>"sm"</code>, <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style: <code>"default"</code>, <code>"outlined"</code>, or <code>"subtle"</code>. Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ARIA label for the chip group for enhanced screen reader support.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaDescribedby?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Reference to element that describes the chip group for accessibility.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the chip container for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Create accessible filter interfaces with clear selection feedback and keyboard navigation. 
+      The component automatically handles focus management and emits change events with selected 
+      chip IDs for integration with filtering logic.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Multi-Select</h2>
+    <p class="text-base text-slate-200">
+      Standard multi-select filter chips with counts displaying the number of items in each category.
+    </p>
+    <div class="max-w-2xl">
+      <FilterChipsComponent
+        items={categories}
+        selected={['design', 'development']}
+        multi={true}
+        ariaLabel="Filter by category"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Single Select (Radio)</h2>
+    <p class="text-base text-slate-200">
+      Single selection mode using radio button semantics for exclusive choices.
+    </p>
+    <div class="max-w-2xl">
+      <FilterChipsComponent
+        items={priorities}
+        selected={['medium']}
+        multi={false}
+        ariaLabel="Select priority level"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
+    <p class="text-base text-slate-200">
+      Choose from small, medium, or large sizes to match your interface density.
+    </p>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Small</h3>
+        <FilterChipsComponent
+          items={skills.slice(0, 3)}
+          selected={['react']}
+          size="sm"
+          multi={true}
+        />
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Medium (Default)</h3>
+        <FilterChipsComponent
+          items={skills.slice(0, 4)}
+          selected={['react', 'vue']}
+          size="md"
+          multi={true}
+        />
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Large</h3>
+        <FilterChipsComponent
+          items={skills}
+          selected={['react', 'astro']}
+          size="lg"
+          multi={true}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Visual Variants</h2>
+    <p class="text-base text-slate-200">
+      Different visual styles to match your design system and interface context.
+    </p>
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">Default</h3>
+        <FilterChipsComponent
+          items={status.slice(0, 3)}
+          selected={['active']}
+          variant="default"
+          multi={true}
+        />
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">Outlined</h3>
+        <FilterChipsComponent
+          items={status.slice(0, 3)}
+          selected={['pending']}
+          variant="outlined"
+          multi={true}
+        />
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">Subtle</h3>
+        <FilterChipsComponent
+          items={status.slice(0, 3)}
+          selected={['completed']}
+          variant="subtle"
+          multi={true}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">With Counts</h2>
+    <p class="text-base text-slate-200">
+      Display item counts alongside filter labels to provide context about available content.
+    </p>
+    <div class="max-w-3xl">
+      <FilterChipsComponent
+        items={status}
+        selected={['active', 'pending']}
+        multi={true}
+        ariaLabel="Filter by status"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Disabled States</h2>
+    <p class="text-base text-slate-200">
+      Chips can be disabled to indicate unavailable options while maintaining visual context.
+    </p>
+    <div class="max-w-2xl">
+      <FilterChipsComponent
+        items={priorities}
+        selected={['high']}
+        multi={true}
+        ariaLabel="Select priority (some options unavailable)"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Event Handling</h2>
+    <p class="text-base text-slate-200">
+      Listen for selection changes to implement filtering logic or update application state.
+    </p>
+    <div class="max-w-2xl">
+      <FilterChipsComponent
+        items={categories}
+        selected={[]}
+        multi={true}
+        ariaLabel="Category filters"
+      />
+      
+      <div class="mt-4 p-4 rounded-lg bg-slate-800 border border-slate-600">
+        <p class="text-sm text-slate-200 mb-2">Selected filters will appear here:</p>
+        <div id="filter-display" class="text-sm text-slate-400">None selected</div>
+      </div>
+      
+      <script is:inline>
+        document.addEventListener('DOMContentLoaded', () => {
+          const filterChips = document.querySelector('[data-multi="true"]');
+          const display = document.getElementById('filter-display');
+          
+          if (filterChips && display) {
+            filterChips.addEventListener('change', (event) => {
+              const selected = event.detail.selected;
+              if (selected.length === 0) {
+                display.textContent = 'None selected';
+                display.className = 'text-sm text-slate-400';
+              } else {
+                display.textContent = selected.join(', ');
+                display.className = 'text-sm text-blue-300';
+              }
+            });
+          }
+        });
+      </script>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Contrast ratios exceed WCAG AAA requirements (7:1+) for all text elements and interactive 
+      states in both light and dark themes. Enhanced focus rings use strong color contrast with 
+      proper offset spacing for clear keyboard navigation visibility.
+    </p>
+    <p class="text-base text-slate-200">
+      The component uses proper semantic HTML with <code>role="group"</code> for multi-select 
+      and <code>role="radiogroup"</code> for single-select modes. Individual chips use 
+      <code>role="checkbox"</code> or <code>role="radio"</code> with <code>aria-checked</code> 
+      attributes for accurate screen reader announcements.
+    </p>
+    <p class="text-base text-slate-200">
+      Keyboard navigation supports arrow keys (Left/Right) for moving between chips, Home/End 
+      for jumping to first/last chip, and Space/Enter for toggling selection. Disabled chips 
+      are properly excluded from keyboard navigation while remaining visible for context.
+    </p>
+    <p class="text-base text-slate-200">
+      Custom change events include the complete selection state for seamless integration with 
+      filtering logic. ARIA labels and descriptions provide additional context for screen 
+      readers about the purpose and current state of the filter group.
+    </p>
   </section>
 </DocsLayout>

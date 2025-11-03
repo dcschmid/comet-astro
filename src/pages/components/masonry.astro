@@ -4,57 +4,386 @@ import Masonry from '../../components/Masonry.astro';
 import Card from '../../components/Card.astro';
 import CategoryBadge from '../../components/CategoryBadge.astro';
 
+const usageSnippet = `---
+import { Masonry } from 'comet-astro';
+
+---
+
+<Masonry 
+  columns=${'{{ base: 1, md: 2, lg: 3 }}'}
+  gap="lg"
+  variant="default"
+  title="Article grid"
+>
+  <!-- Your content items -->
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Masonry>`;
+
 const items = [
   {
     title: 'Async Collaboration',
-    excerpt: 'Discover strategies for remote teamwork.',
+    excerpt: 'Discover strategies for remote teamwork and effective communication across time zones.',
     length: '5 min read',
+    category: 'Workflow'
   },
   {
     title: 'Accessibility Checklist',
-    excerpt: 'Use this list before every design review.',
+    excerpt: 'Use this comprehensive list before every design review to ensure inclusive experiences.',
     length: '7 min read',
+    category: 'Design'
   },
   {
     title: 'Motion Guidelines',
-    excerpt: 'Subtle animations that feel alive.',
+    excerpt: 'Create subtle animations that feel alive and enhance user experience without overwhelming.',
     length: '4 min read',
+    category: 'Animation'
   },
   {
     title: 'Dark Mode Patterns',
-    excerpt: 'Design inclusive, low-light experiences.',
+    excerpt: 'Design inclusive, low-light experiences that respect user preferences and reduce eye strain.',
     length: '6 min read',
+    category: 'UI'
   },
   {
     title: 'Content System',
-    excerpt: 'Scale your editorial efforts with ease.',
+    excerpt: 'Scale your editorial efforts with ease using systematic approaches to content creation.',
     length: '8 min read',
+    category: 'Content'
   },
   {
     title: 'Onboarding Flows',
-    excerpt: 'First impressions that convert.',
+    excerpt: 'Create first impressions that convert users into engaged customers through thoughtful design.',
     length: '9 min read',
+    category: 'UX'
   },
+  {
+    title: 'Performance Optimization',
+    excerpt: 'Techniques for building fast, responsive web applications.',
+    length: '12 min read',
+    category: 'Technical'
+  },
+  {
+    title: 'User Research Methods',
+    excerpt: 'Effective strategies for gathering and analyzing user feedback.',
+    length: '6 min read',
+    category: 'Research'
+  }
 ];
 ---
 
 <DocsLayout
   title="Masonry"
-  description="Responsive multi-column layout that reflows cards automatically."
+  description="Accessible responsive masonry layout with AAA contrast and semantic structure."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Masonry columns={{ base: 1, md: 2, lg: 3 }} gap="1.75rem">
-      {
-        items.map((item) => (
-          <Card class="p-4 space-y-2">
-            <CategoryBadge label="Article" tone="purple" />
-            <h3 class="text-lg font-semibold text-white">{item.title}</h3>
-            <p class="text-sm text-gray-400">{item.excerpt}</p>
-            <span class="text-xs font-medium text-gray-500">{item.length}</span>
-          </Card>
-        ))
-      }
+    <p class="text-base text-slate-100">
+      Masonry provides an accessible, responsive multi-column layout that automatically
+      reflows content based on available space. Built with CSS columns for optimal performance,
+      it maintains WCAG AAA compliance with proper focus management and semantic structure.
+    </p>
+    <p class="text-base text-slate-200">
+      The component supports flexible column configurations, multiple visual variants, and
+      comprehensive accessibility features including keyboard navigation, screen reader support,
+      and high contrast mode compatibility.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          columns?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Number of columns or responsive breakpoint object. Can be a single number
+          or an object with <code>base</code>, <code>sm</code>, <code>md</code>, 
+          <code>lg</code>, <code>xl</code> properties.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          gap?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Spacing between columns and items. Choose <code>"xs"</code>, <code>"sm"</code>, 
+          <code>"md"</code>, <code>"lg"</code>, <code>"xl"</code>, or custom CSS value. 
+          Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style variant. Choose <code>"default"</code>, <code>"card"</code>,
+          <code>"gallery"</code>, or <code>"minimal"</code>. Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size preset for consistent spacing. Options are <code>"sm"</code>, 
+          <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible title for the masonry grid. Announced to screen readers
+          to provide context about the content layout.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          role?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Semantic role for the container. Choose <code>"list"</code>, <code>"grid"</code>,
+          or <code>"region"</code>. Defaults to <code>"grid"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          focusManagement?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Enable focus management for keyboard navigation. Adds focus styles and
+          tabindex for better accessibility. Defaults to <code>true</code>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and provide content via slots. The masonry layout will
+      automatically arrange items across responsive columns with proper accessibility
+      features and semantic structure.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Default Example</h2>
+    <p class="text-base text-slate-200">
+      A responsive article grid that adapts from 1 column on mobile to 3 columns on desktop.
+    </p>
+    <Masonry 
+      columns={{ base: 1, md: 2, lg: 3 }} 
+      gap="lg"
+      title="Featured articles"
+    >
+      <Card class="p-4 space-y-2">
+        <CategoryBadge label="Workflow" />
+        <h3 class="text-lg font-semibold text-slate-100">{items[0].title}</h3>
+        <p class="text-sm text-slate-300">{items[0].excerpt}</p>
+        <span class="text-xs font-medium text-slate-500">{items[0].length}</span>
+      </Card>
+      <Card class="p-4 space-y-2">
+        <CategoryBadge label="Design" />
+        <h3 class="text-lg font-semibold text-slate-100">{items[1].title}</h3>
+        <p class="text-sm text-slate-300">{items[1].excerpt}</p>
+        <span class="text-xs font-medium text-slate-500">{items[1].length}</span>
+      </Card>
+      <Card class="p-4 space-y-2">
+        <CategoryBadge label="Animation" />
+        <h3 class="text-lg font-semibold text-slate-100">{items[2].title}</h3>
+        <p class="text-sm text-slate-300">{items[2].excerpt}</p>
+        <span class="text-xs font-medium text-slate-500">{items[2].length}</span>
+      </Card>
+      <Card class="p-4 space-y-2">
+        <CategoryBadge label="UI" />
+        <h3 class="text-lg font-semibold text-slate-100">{items[3].title}</h3>
+        <p class="text-sm text-slate-300">{items[3].excerpt}</p>
+        <span class="text-xs font-medium text-slate-500">{items[3].length}</span>
+      </Card>
+      <Card class="p-4 space-y-2">
+        <CategoryBadge label="Content" />
+        <h3 class="text-lg font-semibold text-slate-100">{items[4].title}</h3>
+        <p class="text-sm text-slate-300">{items[4].excerpt}</p>
+        <span class="text-xs font-medium text-slate-500">{items[4].length}</span>
+      </Card>
+      <Card class="p-4 space-y-2">
+        <CategoryBadge label="UX" />
+        <h3 class="text-lg font-semibold text-slate-100">{items[5].title}</h3>
+        <p class="text-sm text-slate-300">{items[5].excerpt}</p>
+        <span class="text-xs font-medium text-slate-500">{items[5].length}</span>
+      </Card>
     </Masonry>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="space-y-8">
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-200">Card Variant</h3>
+        <p class="text-sm text-slate-300">Adds card styling to the container itself</p>
+        <Masonry 
+          columns={{ base: 1, md: 2 }} 
+          gap="md"
+          variant="card"
+          title="Card layout example"
+        >
+          <div class="p-3 bg-slate-800 rounded text-slate-200">Card item 1</div>
+          <div class="p-3 bg-slate-800 rounded text-slate-200">Card item 2 with more content</div>
+          <div class="p-3 bg-slate-800 rounded text-slate-200">Card item 3</div>
+        </Masonry>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-200">Gallery Variant</h3>
+        <p class="text-sm text-slate-300">Optimized for image galleries with subtle borders</p>
+        <Masonry 
+          columns={{ base: 2, md: 3, lg: 4 }} 
+          gap="sm"
+          variant="gallery"
+          title="Image gallery"
+        >
+          <div class="aspect-square bg-gradient-to-br from-blue-500 to-purple-600 rounded"></div>
+          <div class="aspect-[3/4] bg-gradient-to-br from-green-500 to-teal-600 rounded"></div>
+          <div class="aspect-[4/3] bg-gradient-to-br from-orange-500 to-red-600 rounded"></div>
+          <div class="aspect-square bg-gradient-to-br from-purple-500 to-pink-600 rounded"></div>
+          <div class="aspect-[3/4] bg-gradient-to-br from-teal-500 to-blue-600 rounded"></div>
+        </Masonry>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-200">Minimal Variant</h3>
+        <p class="text-sm text-slate-300">Clean layout with minimal styling</p>
+        <Masonry 
+          columns={{ base: 1, md: 2 }} 
+          gap="xs"
+          variant="minimal"
+          title="Minimal layout"
+        >
+          <div class="text-slate-200">• Simple list item</div>
+          <div class="text-slate-200">• Another item with more text content</div>
+          <div class="text-slate-200">• Third item</div>
+          <div class="text-slate-200">• Fourth item</div>
+        </Masonry>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Gap Sizes</h2>
+    <p class="text-base text-slate-200">
+      Control spacing between items with predefined gap sizes.
+    </p>
+    <div class="space-y-6">
+      <div class="space-y-2">
+        <h3 class="text-base font-medium text-slate-300">Small Gap (xs)</h3>
+        <Masonry columns={3} gap="xs">
+          <div class="p-2 bg-slate-800 rounded text-slate-200 text-sm">Item 1</div>
+          <div class="p-2 bg-slate-800 rounded text-slate-200 text-sm">Item 2</div>
+          <div class="p-2 bg-slate-800 rounded text-slate-200 text-sm">Item 3</div>
+        </Masonry>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-base font-medium text-slate-300">Large Gap (xl)</h3>
+        <Masonry columns={3} gap="xl">
+          <div class="p-2 bg-slate-800 rounded text-slate-200 text-sm">Item 1</div>
+          <div class="p-2 bg-slate-800 rounded text-slate-200 text-sm">Item 2</div>
+          <div class="p-2 bg-slate-800 rounded text-slate-200 text-sm">Item 3</div>
+        </Masonry>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Responsive Columns</h2>
+    <p class="text-base text-slate-200">
+      Configure different column counts for each breakpoint to create optimal layouts.
+    </p>
+    <div class="space-y-4">
+      <div class="text-sm text-slate-300">
+        <code>columns=${'{{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }}'}</code>
+      </div>
+      <Masonry 
+        columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }} 
+        gap="md"
+        title="Fully responsive layout"
+      >
+        <div class="p-3 bg-slate-800 rounded text-slate-200">Responsive item 1</div>
+        <div class="p-3 bg-slate-800 rounded text-slate-200">Responsive item 2 with more content</div>
+        <div class="p-3 bg-slate-800 rounded text-slate-200">Responsive item 3</div>
+        <div class="p-3 bg-slate-800 rounded text-slate-200">Responsive item 4</div>
+        <div class="p-3 bg-slate-800 rounded text-slate-200">Responsive item 5</div>
+        <div class="p-3 bg-slate-800 rounded text-slate-200">Responsive item 6</div>
+      </Masonry>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Masonry follows WCAG AAA guidelines with comprehensive accessibility features.
+      The component uses semantic HTML with proper ARIA attributes and maintains
+      focus management for keyboard navigation.
+    </p>
+    <p class="text-base text-slate-200">
+      Focus indicators are visible and have sufficient contrast ratios. The layout
+      respects reduced motion preferences and provides alternative navigation patterns
+      for screen readers with detailed layout announcements.
+    </p>
+    <p class="text-base text-slate-200">
+      Use the <code>title</code> prop to provide context about the content grid,
+      and consider the <code>role</code> prop to choose the most appropriate semantic
+      meaning for your use case (<code>list</code> for article lists, <code>grid</code> for data, 
+      <code>region</code> for content sections).
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Performance</h2>
+    <p class="text-base text-slate-200">
+      Built with CSS columns for optimal performance, Masonry avoids JavaScript-based
+      layouts that can cause reflow and jank. The component is print-friendly and
+      works gracefully without JavaScript enabled.
+    </p>
+    <p class="text-base text-slate-200">
+      Column balancing ensures even distribution of content, while break-inside rules
+      prevent items from being split across columns. The component automatically
+      adapts to content changes without manual recalculation.
+    </p>
   </section>
 </DocsLayout>

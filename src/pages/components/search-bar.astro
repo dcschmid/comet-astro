@@ -1,18 +1,741 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import SearchBar from '../../components/SearchBar.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 ---
 
 <DocsLayout
   title="SearchBar"
-  description="Accessible search form with submit button and screen reader labels."
+  description="Accessible search form with WCAG AAA compliance, multiple variants, live suggestions, and comprehensive search functionality."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <SearchBar
-      action="/search"
-      placeholder="Search components…"
-      submitLabel="Search"
-    />
-  </section>
+  <div class="space-y-12">
+    <!-- Basic Example -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Basic Example</h2>
+      <div class="not-prose space-y-4">
+        <SearchBar
+          action="/search"
+          placeholder="Search components, documentation, examples..."
+          submitLabel="Search"
+          label="Site Search"
+          helpText="Search across all components and documentation"
+        />
+      </div>
+      
+      <CodeBlock
+        code={`<SearchBar
+  action="/search"
+  placeholder="Search components, documentation, examples..."
+  submitLabel="Search"
+  label="Site Search"
+  helpText="Search across all components and documentation"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Variants</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Default</h3>
+          <div class="not-prose">
+            <SearchBar
+              variant="default"
+              placeholder="Default search style..."
+              label="Default Search"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Minimal</h3>
+          <div class="not-prose">
+            <SearchBar
+              variant="minimal"
+              placeholder="Minimal and clean..."
+              label="Minimal Search"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Outlined</h3>
+          <div class="not-prose">
+            <SearchBar
+              variant="outlined"
+              placeholder="Bold outlined borders..."
+              label="Outlined Search"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Filled</h3>
+          <div class="not-prose">
+            <SearchBar
+              variant="filled"
+              placeholder="Filled background style..."
+              label="Filled Search"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<SearchBar variant="default" />
+
+<!-- Minimal variant -->
+<SearchBar variant="minimal" />
+
+<!-- Outlined variant -->
+<SearchBar variant="outlined" />
+
+<!-- Filled variant -->
+<SearchBar variant="filled" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Sizes</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Small</h3>
+          <div class="not-prose">
+            <SearchBar
+              size="sm"
+              placeholder="Compact search..."
+              label="Small Search"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Medium (Default)</h3>
+          <div class="not-prose">
+            <SearchBar
+              size="md"
+              placeholder="Standard search size..."
+              label="Medium Search"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Large</h3>
+          <div class="not-prose">
+            <SearchBar
+              size="lg"
+              placeholder="Large, prominent search..."
+              label="Large Search"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<SearchBar size="sm" />
+
+<!-- Medium size (default) -->
+<SearchBar size="md" />
+
+<!-- Large size -->
+<SearchBar size="lg" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Features -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Features</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">With Search Icon</h3>
+          <div class="not-prose">
+            <SearchBar
+              showIcon={true}
+              placeholder="Search with icon..."
+              label="Icon Search"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Without Submit Button</h3>
+          <div class="not-prose">
+            <SearchBar
+              showButton={false}
+              placeholder="Icon only search..."
+              label="Icon Only Search"
+              helpText="Press Enter to search"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">With Live Suggestions</h3>
+          <div class="not-prose">
+            <SearchBar
+              enableSuggestions={true}
+              placeholder="Type to see suggestions..."
+              label="Smart Search"
+              helpText="Start typing to see search suggestions"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Minimal Configuration</h3>
+          <div class="not-prose">
+            <SearchBar
+              showIcon={false}
+              showButton={false}
+              variant="filled"
+              placeholder="Clean, minimal search..."
+              label="Minimal Search"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- With search icon -->
+<SearchBar showIcon={true} />
+
+<!-- Without submit button -->
+<SearchBar showButton={false} />
+
+<!-- With live suggestions -->
+<SearchBar enableSuggestions={true} />
+
+<!-- Minimal configuration -->
+<SearchBar 
+  showIcon={false} 
+  showButton={false} 
+  variant="filled" 
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- States -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">States</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Required</h3>
+          <div class="not-prose">
+            <SearchBar
+              required={true}
+              label="Required Search"
+              placeholder="This field is required..."
+              helpText="Please enter a search term"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Error</h3>
+          <div class="not-prose">
+            <SearchBar
+              error="Search query must be at least 3 characters long"
+              label="Search with Error"
+              placeholder="Enter search term..."
+              value="ab"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Disabled</h3>
+          <div class="not-prose">
+            <SearchBar
+              disabled={true}
+              label="Disabled Search"
+              placeholder="Search is disabled..."
+              helpText="Search functionality is currently unavailable"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Required state -->
+<SearchBar required={true} />
+
+<!-- Error state -->
+<SearchBar error="Search query too short" />
+
+<!-- Disabled state -->
+<SearchBar disabled={true} />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Form Integration -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Form Integration</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">GET Method (Default)</h3>
+          <div class="not-prose">
+            <SearchBar
+              method="get"
+              action="/search"
+              name="query"
+              placeholder="Search with GET..."
+              label="GET Search"
+              helpText="Submits as URL parameters"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">POST Method</h3>
+          <div class="not-prose">
+            <SearchBar
+              method="post"
+              action="/api/search"
+              name="searchTerm"
+              placeholder="Search with POST..."
+              label="POST Search"
+              helpText="Submits as form data"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Custom Labels</h3>
+          <div class="not-prose">
+            <SearchBar
+              submitLabel="Find Results"
+              ariaLabel="Search the knowledge base"
+              placeholder="Search knowledge base..."
+              label="Knowledge Base Search"
+            />
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- GET method (default) -->
+<SearchBar 
+  method="get"
+  action="/search"
+  name="query"
+/>
+
+<!-- POST method -->
+<SearchBar 
+  method="post"
+  action="/api/search"
+  name="searchTerm"
+/>
+
+<!-- Custom labels -->
+<SearchBar 
+  submitLabel="Find Results"
+  ariaLabel="Search the knowledge base"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Props Reference</h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                value
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                ''
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Initial search value
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                placeholder
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'Search…'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Placeholder text for the search input
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                action
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                '#'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Form action URL
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                method
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'get' | 'post'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'get'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Form submission method
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'default' | 'minimal' | 'outlined' | 'filled'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Size of the search bar
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                showIcon
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Show search icon
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                showButton
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Show submit button
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                enableSuggestions
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Enable live search suggestions
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                label
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Label for the search input
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                helpText
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Help text displayed below the search bar
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                disabled
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Whether the search is disabled
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                required
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Whether the search is required
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                error
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean | string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Shows error state with optional message
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <CodeBlock
+        code={`interface Props {
+  value?: string;
+  placeholder?: string;
+  action?: string;
+  name?: string;
+  method?: 'get' | 'post';
+  submitLabel?: string;
+  label?: string;
+  helpText?: string;
+  disabled?: boolean;
+  required?: boolean;
+  error?: boolean | string;
+  variant?: 'default' | 'minimal' | 'outlined' | 'filled';
+  size?: 'sm' | 'md' | 'lg';
+  showIcon?: boolean;
+  showButton?: boolean;
+  enableSuggestions?: boolean;
+  id?: string;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  class?: string;
+}`}
+        language="typescript"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Accessibility</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>WCAG AAA Compliance</h3>
+        <ul>
+          <li><strong>Contrast:</strong> All color combinations meet WCAG AAA standards (7:1 contrast ratio)</li>
+          <li><strong>Focus Management:</strong> Clear focus indicators with proper keyboard navigation</li>
+          <li><strong>Screen Reader Support:</strong> Proper labels, roles, and ARIA attributes</li>
+          <li><strong>Error Identification:</strong> Clear error states with descriptive messages</li>
+        </ul>
+
+        <h3>Keyboard Navigation</h3>
+        <ul>
+          <li><strong>Tab:</strong> Navigate to search input and submit button</li>
+          <li><strong>Enter:</strong> Submit search form</li>
+          <li><strong>Arrow Up/Down:</strong> Navigate through search suggestions</li>
+          <li><strong>Escape:</strong> Close suggestions dropdown</li>
+          <li><strong>Enter on suggestion:</strong> Select and search for suggestion</li>
+        </ul>
+
+        <h3>Screen Reader Features</h3>
+        <ul>
+          <li>Search form properly identified with role="search"</li>
+          <li>Input field clearly labeled and described</li>
+          <li>Submit button has descriptive label</li>
+          <li>Error messages announced immediately</li>
+          <li>Search suggestions announced as listbox with options</li>
+          <li>Live regions for dynamic content updates</li>
+        </ul>
+
+        <h3>ARIA Attributes</h3>
+        <ul>
+          <li><code>role="search"</code> for the form container</li>
+          <li><code>aria-label</code> for clear input identification</li>
+          <li><code>aria-describedby</code> linking help text and error messages</li>
+          <li><code>aria-expanded</code> for suggestion dropdown state</li>
+          <li><code>aria-autocomplete="list"</code> for suggestion behavior</li>
+          <li><code>aria-controls</code> linking input to suggestions</li>
+          <li><code>role="listbox"</code> and <code>role="option"</code> for suggestions</li>
+        </ul>
+
+        <h3>Search Suggestions</h3>
+        <ul>
+          <li>Keyboard navigable with arrow keys</li>
+          <li>Screen reader compatible with proper ARIA roles</li>
+          <li>Visual focus indicators for highlighted options</li>
+          <li>Escape key to close suggestions</li>
+          <li>Click outside to dismiss</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Accessible SearchBar example -->
+<SearchBar
+  label="Search Documentation"
+  placeholder="Search components, guides, and examples..."
+  helpText="Use keywords to find relevant content"
+  ariaLabel="Search the component documentation"
+  enableSuggestions={true}
+  required={true}
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Best Practices -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Best Practices</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>Do's</h3>
+        <ul>
+          <li>Always provide a descriptive label for the search input</li>
+          <li>Use clear, actionable placeholder text</li>
+          <li>Provide helpful context with help text when needed</li>
+          <li>Choose appropriate form methods (GET for searches, POST for actions)</li>
+          <li>Implement search suggestions for better user experience</li>
+          <li>Use appropriate variants that match your design system</li>
+          <li>Test with keyboard navigation and screen readers</li>
+        </ul>
+
+        <h3>Don'ts</h3>
+        <ul>
+          <li>Don't use search bars without proper labels</li>
+          <li>Don't make the search functionality unclear or hidden</li>
+          <li>Don't forget to handle empty search states gracefully</li>
+          <li>Don't rely solely on icons without text labels</li>
+          <li>Don't ignore error states and validation feedback</li>
+          <li>Don't make search suggestions too overwhelming</li>
+        </ul>
+
+        <h3>UX Guidelines</h3>
+        <ul>
+          <li>Position search prominently where users expect to find it</li>
+          <li>Provide immediate feedback for user actions</li>
+          <li>Consider the context and scope of what can be searched</li>
+          <li>Implement helpful search suggestions and autocomplete</li>
+          <li>Show search results in a clear, organized manner</li>
+          <li>Handle "no results" states with helpful alternatives</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Good: Complete, accessible search -->
+<SearchBar
+  label="Site Search"
+  placeholder="Search articles, tutorials, and documentation..."
+  action="/search"
+  method="get"
+  name="query"
+  helpText="Use keywords to find relevant content across our site"
+  enableSuggestions={true}
+  showIcon={true}
+  variant="default"
+  size="md"
+/>
+
+<!-- Good: Minimal search -->
+<SearchBar
+  label="Quick Search"
+  placeholder="Search..."
+  showButton={false}
+  variant="filled"
+  size="sm"
+/>
+
+<!-- Avoid: Missing label -->
+<SearchBar placeholder="Search..." />
+
+<!-- Avoid: Unclear purpose -->
+<SearchBar placeholder="Type here..." />`}
+        language="astro"
+      />
+    </section>
+  </div>
 </DocsLayout>

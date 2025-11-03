@@ -1,19 +1,223 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
+import HeroSectionComponent from '../../components/HeroSection.astro';
+
+const title = "HeroSection";
+const description = "WCAG AAA compliant hero component with enhanced accessibility, responsive design, and flexible layout options for marketing sections.";
+---
+
+<DocsLayout {title} {description}>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      HeroSection provides a prominent, accessible hero component perfect for landing pages 
+      and marketing sections. Built with WCAG AAA compliance, semantic HTML, and comprehensive 
+      responsive design features.
+    </p>
+    <p class="text-base text-slate-200">
+      The component features multiple visual variants, flexible sizing options, 
+      and intelligent content alignment for professional hero presentations.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">title</dt>
+        <dd class="text-sm text-slate-200">
+          Main headline text for the hero section. Required.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">subtitle?</dt>
+        <dd class="text-sm text-slate-200">
+          Supporting subtitle text that appears below the main headline.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">primary?</dt>
+        <dd class="text-sm text-slate-200">
+          Primary call-to-action button with href, label, target, and variant properties.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">secondary?</dt>
+        <dd class="text-sm text-slate-200">
+          Secondary call-to-action button with href, label, target, and variant properties.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">variant?</dt>
+        <dd class="text-sm text-slate-200">
+          Visual theme: <code>default</code>, <code>gradient</code>, <code>minimal</code>, <code>dark</code>. Defaults to <code>default</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">align?</dt>
+        <dd class="text-sm text-slate-200">
+          Content alignment: <code>left</code>, <code>center</code>, <code>right</code>. Defaults to <code>center</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">size?</dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>sm</code>, <code>md</code>, <code>lg</code>, <code>xl</code>. Defaults to <code>lg</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">headingLevel?</dt>
+        <dd class="text-sm text-slate-200">
+          Semantic heading level: <code>h1</code>, <code>h2</code>, <code>h3</code>. Defaults to <code>h1</code>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+      <p class="text-sm text-slate-300">
+        Import the HeroSection component and provide at minimum a title. 
+        The component automatically handles responsive design and accessibility features.
+      </p>
+      <pre class="rounded bg-slate-950/50 p-4 text-sm text-slate-300 overflow-x-auto"><code>{`---
 import HeroSection from '../../components/HeroSection.astro';
 ---
 
-<DocsLayout
-  title="HeroSection"
-  description="Marketing hero with headline, supporting copy, and dual CTA slots."
->
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <HeroSection
-      title="Build accessible experiences faster"
-      subtitle="Comet Astro ships a polished component system with AAA-ready themes, focusing on speed, accessibility, and developer joy."
-      primary={{ href: '#', label: 'Get started' }}
-      secondary={{ href: '#', label: 'View docs' }}
-    />
+<HeroSection
+  title="Build accessible experiences faster"
+  subtitle="Create beautiful, WCAG AAA compliant components with our design system."
+  variant="gradient"
+  size="lg"
+  align="center"
+  primary={{ 
+    href: "/get-started", 
+    label: "Get Started",
+    variant: "primary" 
+  }}
+  secondary={{ 
+    href: "/docs", 
+    label: "View Documentation",
+    variant: "secondary" 
+  }}
+/>`}</code></pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <div class="space-y-8">
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Default Hero</h3>
+        <p class="text-sm text-slate-300">
+          Standard hero section with centered content and gradient background.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <HeroSectionComponent
+            title="Build accessible experiences faster"
+            subtitle="Comet Astro ships a polished component system with AAA-ready themes, focusing on speed, accessibility, and developer joy."
+            primary={{ href: '#', label: 'Get started' }}
+            secondary={{ href: '#', label: 'View docs' }}
+          />
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Minimal Variant</h3>
+        <p class="text-sm text-slate-300">
+          Clean, minimal hero with subtle styling and left-aligned content.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <HeroSectionComponent
+            title="Simple and Clean Design"
+            subtitle="Sometimes less is more. This minimal variant focuses on content with subtle styling."
+            variant="minimal"
+            align="left"
+            size="md"
+            primary={{ href: '#', label: 'Learn More' }}
+          />
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Gradient Variant</h3>
+        <p class="text-sm text-slate-300">
+          Vibrant gradient background with enhanced visual appeal.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <HeroSectionComponent
+            title="Stunning Visual Design"
+            subtitle="Eye-catching gradients that maintain WCAG AAA accessibility standards."
+            variant="gradient"
+            size="lg"
+            primary={{ href: '#', label: 'Explore Features' }}
+            secondary={{ href: '#', label: 'See Examples' }}
+          />
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Small Size</h3>
+        <p class="text-sm text-slate-300">
+          Compact hero perfect for secondary pages or smaller sections.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <HeroSectionComponent
+            title="Compact Hero Section"
+            subtitle="Perfect for secondary pages that need a prominent but not overwhelming header."
+            size="sm"
+            variant="minimal"
+            primary={{ href: '#', label: 'Continue' }}
+          />
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Right Aligned</h3>
+        <p class="text-sm text-slate-300">
+          Right-aligned content for unique layouts and design variety.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <HeroSectionComponent
+            title="Right-Aligned Content"
+            subtitle="Alternative alignment options for creative layouts and design flexibility."
+            align="right"
+            size="md"
+            primary={{ href: '#', label: 'Get Started' }}
+            secondary={{ href: '#', label: 'Learn More' }}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="space-y-4">
+      <p class="text-base text-slate-200">
+        The HeroSection component implements comprehensive accessibility features:
+      </p>
+      <ul class="space-y-2 text-sm text-slate-300 list-disc list-inside ml-4">
+        <li>Semantic HTML structure with proper <code>role="banner"</code> for hero sections</li>
+        <li>WCAG AAA contrast ratios (7:1+) across all variants and color combinations</li>
+        <li>Flexible heading levels (h1-h3) for proper document hierarchy</li>
+        <li>Responsive typography that scales appropriately across all devices</li>
+        <li>Text balancing for improved line distribution and readability</li>
+        <li>ARIA labeling support with <code>ariaLabel</code> prop</li>
+        <li>Focus management for interactive elements (buttons)</li>
+        <li>Screen reader compatible with clear content structure</li>
+        <li>High contrast background patterns that don't interfere with content</li>
+        <li>Responsive spacing and layout that maintains touch targets</li>
+      </ul>
+      <div class="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4">
+        <p class="text-sm text-amber-200">
+          <strong>Best Practice:</strong> Use <code>h1</code> for main page heroes and 
+          <code>h2</code> or <code>h3</code> for section heroes. Ensure button labels 
+          are descriptive and provide clear actions. Use <code>ariaLabel</code> when 
+          the hero represents a specific landmark on the page.
+        </p>
+      </div>
+    </div>
   </section>
 </DocsLayout>

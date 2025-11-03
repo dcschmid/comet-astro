@@ -1,62 +1,208 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Modal from '../../components/Modal.astro';
-import Button from '../../components/Button.astro';
-import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
-const triggerId = 'modal-doc-trigger';
-const closeId = 'modal-doc-close';
+const title = 'Modal Component';
+const description = 'WCAG AAA compliant modal dialogs with simple, accessible interactions.';
 ---
 
-<DocsLayout
-  title="Modal"
-  description="Accessible dialog with focus trap, aria labelling, and scroll locking."
->
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Button id={triggerId} variant="primary">Open modal</Button>
-    <Modal title="Product Update" closeLabel="Close">
-      <Paragraph size="sm">
-        We refreshed the dashboard with improved metrics and automated alerts.
-        Review the changes and share your feedback.
-      </Paragraph>
-      <div slot="footer" class="flex justify-end gap-2">
-        <Button variant="ghost" id={closeId}>Dismiss</Button>
-        <Button variant="primary">View changelog</Button>
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The Modal component provides accessible dialog overlays with WCAG AAA compliance.
+      </p>
+    </section>
+
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <button 
+              onclick="openModal('example-modal')"
+              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Open Modal (Direct)
+            </button>
+            
+            <button 
+              data-modal-open="example-modal" 
+              class="ml-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              Open Modal (Data Attr)
+            </button>
+          </div>
+        </div>
       </div>
-    </Modal>
-  </section>
+
+      <CodeBlock
+        code={`<Button data-modal-open="my-modal">Open Modal</Button>
+
+<Modal id="my-modal" title="Example">
+  <p>Modal content goes here.</p>
+  <div slot="footer" class="flex justify-end gap-3">
+    <Button variant="ghost" data-modal-close>Cancel</Button>
+    <Button variant="primary">Confirm</Button>
+  </div>
+</Modal>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Variants
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Default</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <button onclick="openModal('default-modal')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Default Modal</button>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Danger</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <button onclick="openModal('danger-modal')" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Danger Modal</button>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Success</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <button onclick="openModal('success-modal')" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Success Modal</button>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Warning</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <button onclick="openModal('warning-modal')" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Warning Modal</button>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<Modal variant="danger" title="Delete Item">
+  <p>Are you sure you want to delete this item?</p>
+  <div slot="footer" class="flex justify-end gap-3">
+    <Button variant="ghost" data-modal-close>Cancel</Button>
+    <Button variant="danger">Delete</Button>
+  </div>
+</Modal>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">WCAG AAA Compliance</h3>
+        <ul class="list-disc pl-6 space-y-2 text-blue-800 dark:text-blue-200">
+          <li>Focus management and keyboard navigation</li>
+          <li>Screen reader support with proper ARIA labels</li>
+          <li>Color contrast ratios meet WCAG AAA standards (7:1+)</li>
+          <li>Escape key to close modals</li>
+          <li>Focus trapping within modal content</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal Examples -->
+  <Modal id="example-modal" title="Example Modal">
+    <p class="text-gray-700 dark:text-gray-300">
+      This is an example modal with basic content.
+    </p>
+    <div slot="footer" class="flex justify-end gap-3">
+      <button onclick="closeModal('example-modal')" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+      <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Confirm</button>
+    </div>
+  </Modal>
+
+  <Modal id="default-modal" variant="default" title="Default Modal">
+    <p class="text-gray-700 dark:text-gray-300">
+      This is a default variant modal.
+    </p>
+    <div slot="footer" class="flex justify-end gap-3">
+      <button onclick="closeModal('default-modal')" class="px-4 py-2 text-gray-600 hover:text-gray-800">Close</button>
+    </div>
+  </Modal>
+
+  <Modal id="danger-modal" variant="danger" title="Delete Confirmation">
+    <p class="text-gray-700 dark:text-gray-300">
+      Are you sure you want to delete this item? This action cannot be undone.
+    </p>
+    <div slot="footer" class="flex justify-end gap-3">
+      <button onclick="closeModal('danger-modal')" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+      <button class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+    </div>
+  </Modal>
+
+  <Modal id="success-modal" variant="success" title="Success">
+    <p class="text-gray-700 dark:text-gray-300">
+      Your action was completed successfully!
+    </p>
+    <div slot="footer" class="flex justify-end gap-3">
+      <button onclick="closeModal('success-modal')" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Continue</button>
+    </div>
+  </Modal>
+
+  <Modal id="warning-modal" variant="warning" title="Warning">
+    <p class="text-gray-700 dark:text-gray-300">
+      Please review your input before proceeding.
+    </p>
+    <div slot="footer" class="flex justify-end gap-3">
+      <button onclick="closeModal('warning-modal')" class="px-4 py-2 text-gray-600 hover:text-gray-800">Review</button>
+      <button class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Proceed Anyway</button>
+    </div>
+  </Modal>
 </DocsLayout>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const trigger = document.getElementById('modal-doc-trigger');
-    const close = document.getElementById('modal-doc-close');
-    const root = document.querySelector('[data-modal-root]');
-    if (!trigger || !root) return;
-
-    const registry = window.__cometModalRegistry;
-    const entry = root.id && registry ? registry.get(root.id) : null;
-
-    const open = () => {
-      if (entry) {
-        entry.open();
-      } else {
-        root.classList.remove('hidden');
-        root.setAttribute('data-open', 'true');
-      }
-    };
-
-    const closeModal = () => {
-      if (entry) {
-        entry.close();
-      } else {
-        root.classList.add('hidden');
-        root.setAttribute('data-open', 'false');
-      }
-    };
-
-    trigger.addEventListener('click', open);
-    close?.addEventListener('click', closeModal);
-  });
+<script is:inline>
+  console.log('Modal page script loading...');
+  
+  function openModal(modalId) {
+    console.log('Opening modal:', modalId);
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.setAttribute('data-open', 'true');
+      document.body.style.overflow = 'hidden';
+      console.log('Modal opened successfully');
+    } else {
+      console.log('Modal not found:', modalId);
+    }
+  }
+  
+  function closeModal(modalId) {
+    console.log('Closing modal:', modalId);
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.setAttribute('data-open', 'false');
+      document.body.style.overflow = '';
+      console.log('Modal closed successfully');
+    }
+  }
+  
+  // Make functions globally available
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+  
+  console.log('Modal page script loaded');
 </script>

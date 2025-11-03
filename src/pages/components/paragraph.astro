@@ -1,24 +1,881 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const title = 'Paragraph Component';
+const description = 'WCAG AAA compliant typography component with multiple variants, responsive sizing, and comprehensive accessibility features.';
 ---
 
-<DocsLayout
-  title="Paragraph"
-  description="Typography helper with size, weight, and muted variants."
+<DocsLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Introduction -->
+    <section>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+        The Paragraph component provides semantic, accessible text rendering with multiple variants, responsive typography, and comprehensive customization options. It maintains WCAG AAA contrast ratios and supports various HTML elements for different content contexts.
+      </p>
+    </section>
+
+    <!-- Basic Usage -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Basic Usage
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
+            <Paragraph>
+              This is a default paragraph with standard typography settings. It provides excellent readability with WCAG AAA compliant contrast ratios and responsive sizing.
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<Paragraph>
+  This is a default paragraph with standard typography settings.
+</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Typography Sizes
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Extra Small</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph size="xs">
+              Extra small text for fine print, captions, or supplementary information.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Small</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph size="sm">
+              Small text perfect for metadata, helper text, or secondary information.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Medium (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph size="md">
+              Medium text is the default size, ideal for body content and standard paragraphs.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Large</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph size="lg">
+              Large text works well for lead paragraphs, introductory content, or emphasis.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Extra Large</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph size="xl">
+              Extra large text for prominent content and featured information.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">2X Large</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph size="2xl">
+              2X large text for hero sections and major statements.
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Different sizes -->
+<Paragraph size="xs">Extra small text</Paragraph>
+<Paragraph size="sm">Small text</Paragraph>
+<Paragraph size="md">Medium text (default)</Paragraph>
+<Paragraph size="lg">Large text</Paragraph>
+<Paragraph size="xl">Extra large text</Paragraph>
+<Paragraph size="2xl">2X large text</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Color Variants
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Default</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph variant="default">
+              Default variant with high contrast for optimal readability.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Muted</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph variant="muted">
+              Muted variant for secondary content and supporting information.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Subtle</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph variant="subtle">
+              Subtle variant for supplementary text with slightly reduced emphasis.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Accent</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph variant="accent">
+              Accent variant using brand colors for highlighted content.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Error</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph variant="error">
+              Error variant for validation messages and critical information.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Success</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph variant="success">
+              Success variant for positive feedback and confirmation messages.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Warning</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph variant="warning">
+              Warning variant for cautionary information and important notices.
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Color variants -->
+<Paragraph variant="default">Default text</Paragraph>
+<Paragraph variant="muted">Muted text</Paragraph>
+<Paragraph variant="subtle">Subtle text</Paragraph>
+<Paragraph variant="accent">Accent text</Paragraph>
+<Paragraph variant="error">Error text</Paragraph>
+<Paragraph variant="success">Success text</Paragraph>
+<Paragraph variant="warning">Warning text</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Font Weights -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Font Weights
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Font Weight Options</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg space-y-4">
+            <Paragraph weight="light">Light weight text for delicate, elegant content.</Paragraph>
+            <Paragraph weight="normal">Normal weight text is the standard choice for body content.</Paragraph>
+            <Paragraph weight="medium">Medium weight text provides subtle emphasis.</Paragraph>
+            <Paragraph weight="semibold">Semibold weight text for stronger emphasis.</Paragraph>
+            <Paragraph weight="bold">Bold weight text for maximum impact and attention.</Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Font weights -->
+<Paragraph weight="light">Light weight text</Paragraph>
+<Paragraph weight="normal">Normal weight text</Paragraph>
+<Paragraph weight="medium">Medium weight text</Paragraph>
+<Paragraph weight="semibold">Semibold weight text</Paragraph>
+<Paragraph weight="bold">Bold weight text</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Line Heights -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Line Heights
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Tight</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph lineHeight="tight">
+              Tight line height creates a compact appearance ideal for headlines, captions, or dense information displays. This setting reduces the space between lines for a more condensed look.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Normal</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph lineHeight="normal">
+              Normal line height provides standard spacing between lines, creating a balanced appearance suitable for most content types. This is often used for interface elements and structured content.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Relaxed (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph lineHeight="relaxed">
+              Relaxed line height offers comfortable reading with generous spacing between lines. This is the default setting and works excellently for body text, articles, and long-form content where readability is paramount.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Loose</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph lineHeight="loose">
+              Loose line height creates maximum spacing between lines for enhanced readability and visual breathing room. This setting is perfect for accessibility-focused designs, large text, or content that needs extra emphasis and clarity.
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Line heights -->
+<Paragraph lineHeight="tight">Tight line height</Paragraph>
+<Paragraph lineHeight="normal">Normal line height</Paragraph>
+<Paragraph lineHeight="relaxed">Relaxed line height (default)</Paragraph>
+<Paragraph lineHeight="loose">Loose line height</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Text Alignment -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Text Alignment
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Left Aligned (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph align="left">
+              Left aligned text follows natural reading patterns and is the standard choice for most content types.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Center Aligned</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph align="center">
+              Center aligned text works well for headlines, captions, and short statements that need emphasis.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Right Aligned</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph align="right">
+              Right aligned text is useful for special layouts, captions, or design elements that need unique positioning.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Justified</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph align="justify">
+              Justified text creates clean edges on both sides by adjusting word spacing. This alignment works best with longer paragraphs and formal documents where a structured appearance is desired.
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Text alignment -->
+<Paragraph align="left">Left aligned text</Paragraph>
+<Paragraph align="center">Center aligned text</Paragraph>
+<Paragraph align="right">Right aligned text</Paragraph>
+<Paragraph align="justify">Justified text</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Max Width -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Max Width Options
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Prose Width</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph maxWidth="prose">
+              Prose width (around 65-75 characters) is optimized for reading comfort and is based on typography best practices for body text. This width prevents lines from becoming too long, which can strain the reader's eyes and make it difficult to track from one line to the next.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Small Width</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph maxWidth="sm">
+              Small width constrains text to a narrow column, perfect for captions, side notes, or sidebar content.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Medium Width</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph maxWidth="md">
+              Medium width provides a moderate constraint that works well for card content, form descriptions, and structured layouts.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">No Width Constraint</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph maxWidth="none">
+              No width constraint allows text to flow naturally within its container, adapting to the available space. This is useful when the parent container already controls the width, or when you want maximum flexibility in responsive layouts.
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Max width options -->
+<Paragraph maxWidth="prose">Optimized for reading</Paragraph>
+<Paragraph maxWidth="sm">Small width constraint</Paragraph>
+<Paragraph maxWidth="md">Medium width constraint</Paragraph>
+<Paragraph maxWidth="lg">Large width constraint</Paragraph>
+<Paragraph maxWidth="xl">Extra large width</Paragraph>
+<Paragraph maxWidth="2xl">2X large width</Paragraph>
+<Paragraph maxWidth="none">No width constraint</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- HTML Elements -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        HTML Element Options
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Paragraph (Default)</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph as="p">
+              Semantic paragraph element for body text and standard content blocks.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Span</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph as="span">
+              Inline span element for text within other content or inline styling.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Div</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph as="div">
+              Generic div element for flexible layouts and custom styling scenarios.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Blockquote</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph as="blockquote">
+              Semantic blockquote element for quoted content and testimonials.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Figure Caption</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph as="figcaption">
+              Semantic figcaption element for image and media captions.
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- HTML element options -->
+<Paragraph as="p">Paragraph element</Paragraph>
+<Paragraph as="span">Inline span element</Paragraph>
+<Paragraph as="div">Generic div element</Paragraph>
+<Paragraph as="blockquote">Blockquote element</Paragraph>
+<Paragraph as="figcaption">Figure caption element</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Combined Examples -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Combined Examples
+      </h2>
+      
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Article Lead</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph 
+              size="lg" 
+              weight="medium" 
+              maxWidth="prose" 
+              lineHeight="relaxed"
+            >
+              This is a lead paragraph with larger text, medium weight, and optimized width for article introductions and featured content.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Error Message</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph 
+              variant="error" 
+              size="sm" 
+              weight="medium"
+              role="alert"
+              ariaLabel="Error message"
+            >
+              Please correct the following errors before submitting the form.
+            </Paragraph>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Centered Quote</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph 
+              as="blockquote"
+              size="lg" 
+              align="center"
+              variant="accent"
+              weight="medium"
+              maxWidth="lg"
+            >
+              "Design is not just what it looks like and feels like. Design is how it works."
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Article lead -->
+<Paragraph 
+  size="lg" 
+  weight="medium" 
+  maxWidth="prose" 
+  lineHeight="relaxed"
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Variants</h2>
-    <div class="space-y-3">
-      <Paragraph size="lg">Large paragraph for lead copy.</Paragraph>
-      <Paragraph>
-        Default body text keeps things readable across themes with sensible
-        spacing and color.
-      </Paragraph>
-      <Paragraph size="sm" muted>
-        Muted small text is perfect for hints, helper text, or secondary
-        descriptions.
-      </Paragraph>
-    </div>
-  </section>
+  Lead paragraph content...
+</Paragraph>
+
+<!-- Error message -->
+<Paragraph 
+  variant="error" 
+  size="sm" 
+  weight="medium"
+  role="alert"
+  ariaLabel="Error message"
+>
+  Error message content...
+</Paragraph>
+
+<!-- Centered quote -->
+<Paragraph 
+  as="blockquote"
+  size="lg" 
+  align="center"
+  variant="accent"
+  weight="medium"
+  maxWidth="lg"
+>
+  Quote content...
+</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Accessibility Features
+      </h2>
+      
+      <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">WCAG AAA Compliance</h3>
+        <ul class="list-disc pl-6 space-y-2 text-blue-800 dark:text-blue-200">
+          <li>WCAG AAA contrast ratios (7:1+) for all text variants</li>
+          <li>Semantic HTML elements for proper document structure</li>
+          <li>Responsive typography that scales appropriately</li>
+          <li>Support for ARIA attributes and roles</li>
+          <li>Optimal line lengths and spacing for readability</li>
+          <li>High contrast mode compatibility</li>
+          <li>Screen reader friendly content structure</li>
+          <li>Keyboard navigation support where applicable</li>
+        </ul>
+      </div>
+
+      <div class="space-y-8 mb-8">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">ARIA Support</h3>
+          <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+            <Paragraph 
+              variant="success"
+              role="status"
+              ariaLabel="Success message"
+              id="success-notification"
+            >
+              Form submitted successfully! Thank you for your information.
+            </Paragraph>
+            <Paragraph 
+              variant="muted" 
+              size="sm" 
+              ariaDescribedBy="success-notification"
+            >
+              You will receive a confirmation email shortly.
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<Paragraph 
+  variant="success"
+  role="status"
+  ariaLabel="Success message"
+  id="success-notification"
+>
+  Form submitted successfully!
+</Paragraph>
+
+<Paragraph 
+  variant="muted" 
+  size="sm" 
+  ariaDescribedBy="success-notification"
+>
+  Additional context...
+</Paragraph>`}
+        lang="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Props Reference
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                text
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Text content (alternative to slot)
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                as
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'p' | 'span' | 'div' | 'blockquote' | 'figcaption'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'p'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                HTML element to render
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Text size with responsive scaling
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                weight
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'light' | 'normal' | 'medium' | 'semibold' | 'bold'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'normal'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Font weight
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                lineHeight
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'tight' | 'normal' | 'relaxed' | 'loose'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'relaxed'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Line height spacing
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default' | 'muted' | 'subtle' | 'accent' | 'error' | 'success' | 'warning'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Color variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                align
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'left' | 'center' | 'right' | 'justify'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'left'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Text alignment
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                maxWidth
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'none' | 'prose' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                'none'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Maximum width constraint
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                role
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                ARIA role attribute
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaLabel
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                ARIA label for accessibility
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                ariaDescribedBy
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                ID of describing element
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                id
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                undefined
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Element ID attribute
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                muted
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                Deprecated: use variant="muted"
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
+        Best Practices
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+            ✅ Do
+          </h3>
+          <ul class="space-y-2 text-green-800 dark:text-green-200">
+            <li>• Use semantic HTML elements (as prop) for proper document structure</li>
+            <li>• Choose appropriate text sizes based on content hierarchy</li>
+            <li>• Use prose max-width for optimal reading comfort</li>
+            <li>• Test color variants for sufficient contrast in both light and dark modes</li>
+            <li>• Use appropriate line heights for different content types</li>
+            <li>• Provide ARIA labels for dynamic or status content</li>
+            <li>• Consider the reading context when choosing alignment</li>
+            <li>• Use consistent typography scales across your application</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-red-900 dark:text-red-100 mb-3">
+            ❌ Don't
+          </h3>
+          <ul class="space-y-2 text-red-800 dark:text-red-200">
+            <li>• Use too many different text sizes on one page</li>
+            <li>• Make text lines too long (avoid maxWidth="none" for body text)</li>
+            <li>• Use justified alignment for short lines or narrow columns</li>
+            <li>• Override semantic meaning with inappropriate element choices</li>
+            <li>• Use error/warning variants for decorative purposes</li>
+            <li>• Ignore responsive scaling in different viewport sizes</li>
+            <li>• Use extremely tight line heights for long-form content</li>
+          </ul>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
+          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+            💡 Tips
+          </h3>
+          <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
+            <li>• Use 'prose' max-width for articles and long-form content</li>
+            <li>• 'accent' variant works well for highlighting key information</li>
+            <li>• Combine size="lg" with weight="medium" for effective lead paragraphs</li>
+            <li>• Use 'figcaption' element for image and media captions</li>
+            <li>• Test different line heights with your chosen font families</li>
+            <li>• Consider using 'loose' line height for accessibility-focused designs</li>
+            <li>• Combine variants thoughtfully to create clear content hierarchy</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

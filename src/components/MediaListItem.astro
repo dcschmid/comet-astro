@@ -1,21 +1,53 @@
 ---
 /**
- * MediaListItem - list row with optional thumbnail, title, subtitle, meta and actions
+ * MediaListItem - Enhanced list row with WCAG AAA compliance, multiple variants, and responsive design
  */
+
 interface Action {
-  href: string;
   label: string;
+  href?: string;
+  onClick?: string;
+  variant?: 'primary' | 'secondary' | 'danger';
+  icon?: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
 }
 
 interface Props {
+  // Content
   imageSrc?: string;
   imageAlt?: string;
   href?: string;
   title: string;
   subtitle?: string;
   meta?: string[];
+  
+  // Image formatting
+  imageAspectRatio?: 'square' | '16:9' | '4:3' | '3:2';
+  
+  // Variants
+  variant?: 'default' | 'compact' | 'detailed' | 'minimal';
+  size?: 'sm' | 'md' | 'lg';
+  
+  // Actions (using Astro array syntax instead of React .map)
   actions?: Action[];
+  
+  // States
+  loading?: boolean;
+  disabled?: boolean;
+  selected?: boolean;
+  
+  // Visibility
+  showImage?: boolean;
+  showMeta?: boolean;
+  showActions?: boolean;
+  
+  // Accessibility
+  role?: string;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  
+  // Classes
+  class?: string;
   className?: string;
 }
 
@@ -26,73 +58,296 @@ const {
   title,
   subtitle,
   meta = [],
+  imageAspectRatio = 'square',
+  variant = 'default',
+  size = 'md',
   actions = [],
-  className = '',
-} = Astro.props as Props;
+  loading = false,
+  disabled = false,
+  selected = false,
+  showImage = true,
+  showMeta = true,
+  showActions = true,
+  role = 'listitem',
+  ariaLabel,
+  ariaDescribedBy,
+  class: className,
+  className: legacyClassName
+} = Astro.props;
+
+// Generate unique IDs for accessibility
+const itemId = `media-list-item-${Math.random().toString(36).substr(2, 9)}`;
+const titleId = `${itemId}-title`;
+const descId = `${itemId}-desc`;
+
+// Variant styles
+const variantClasses = {
+  default: 'flex items-center gap-4',
+  compact: 'flex items-center gap-2',
+  detailed: 'flex items-start gap-4',
+  minimal: 'flex items-center gap-3 border-0 shadow-none bg-transparent dark:bg-transparent'
+};
+
+// Aspect ratio styles
+const aspectRatioClasses = {
+  'square': 'aspect-square',
+  '16:9': 'aspect-video',
+  '4:3': 'aspect-[4/3]',
+  '3:2': 'aspect-[3/2]'
+};
+
+// Size styles for different variants and aspect ratios
+const sizeClasses = {
+  sm: {
+    container: 'p-2',
+    imageWidth: variant === 'compact' ? 'w-8' : 'w-10',
+    imageHeight: imageAspectRatio === 'square' ? (variant === 'compact' ? 'h-8' : 'h-10') : '',
+    title: 'text-sm',
+    subtitle: 'text-xs',
+    meta: 'text-xs',
+    actions: 'text-xs px-2 py-1'
+  },
+  md: {
+    container: 'p-3',
+    imageWidth: variant === 'compact' ? 'w-10' : 'w-14',
+    imageHeight: imageAspectRatio === 'square' ? (variant === 'compact' ? 'h-10' : 'h-14') : '',
+    title: 'text-base',
+    subtitle: 'text-sm',
+    meta: 'text-xs',
+    actions: 'text-sm px-3 py-1.5'
+  },
+  lg: {
+    container: 'p-4',
+    imageWidth: variant === 'compact' ? 'w-12' : 'w-16',
+    imageHeight: imageAspectRatio === 'square' ? (variant === 'compact' ? 'h-12' : 'h-16') : '',
+    title: 'text-lg',
+    subtitle: 'text-base',
+    meta: 'text-sm',
+    actions: 'text-sm px-4 py-2'
+  }
+};
+
+const currentSize = sizeClasses[size];
+
+// Base container classes with WCAG AAA contrast
+const baseClasses = `
+  ${variantClasses[variant]}
+  ${currentSize.container}
+  ${variant !== 'minimal' ? 'bg-white dark:bg-gray-900' : ''}
+  ${variant !== 'minimal' ? 'border border-gray-200 dark:border-gray-700' : ''}
+  ${variant !== 'minimal' ? 'rounded-lg shadow-sm' : ''}
+  ${variant !== 'minimal' ? 'hover:shadow-md' : ''}
+  ${selected ? 'ring-2 ring-blue-500 border-blue-300 dark:border-blue-600' : ''}
+  transition-all duration-200 ease-in-out
+  ${disabled ? 'opacity-50 pointer-events-none' : ''}
+  ${loading ? 'animate-pulse' : ''}
+  group
+`.trim().replace(/\s+/g, ' ');
+
+// Image container classes
+const imageClasses = `
+  ${currentSize.imageWidth}
+  ${currentSize.imageHeight}
+  ${imageAspectRatio !== 'square' ? aspectRatioClasses[imageAspectRatio] : ''}
+  rounded-lg object-cover shrink-0
+  ${variant !== 'minimal' ? 'shadow-sm' : ''}
+  ${variant !== 'minimal' ? 'bg-gray-100 dark:bg-gray-800' : ''}
+`.trim().replace(/\s+/g, ' ');
+
+// Content container classes
+const contentClasses = `
+  min-w-0 flex-1
+  ${variant === 'detailed' ? 'space-y-1' : ''}
+`.trim().replace(/\s+/g, ' ');
+
+const finalClassName = className || legacyClassName || '';
 ---
 
-<div
-  class={`flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-3 text-slate-800 shadow-sm transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${className}`.trim()}
+<div 
+  id={itemId}
+  role={role}
+  aria-label={ariaLabel}
+  aria-describedby={ariaDescribedBy || (subtitle ? descId : undefined)}
+  aria-selected={selected}
+  class={`${baseClasses} ${finalClassName}`}
 >
-  {
-    imageSrc && (
-      <a href={href || '#'} class="block flex-shrink-0">
+  {showImage && imageSrc && (
+    <div class="shrink-0">
+      {href ? (
+        <a 
+          href={href} 
+          class="block focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg"
+          tabindex="-1"
+          aria-hidden="true"
+        >
+          <img
+            src={imageSrc}
+            alt={imageAlt || title}
+            class={imageClasses}
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
+      ) : (
         <img
           src={imageSrc}
           alt={imageAlt || title}
-          class="h-14 w-14 rounded-lg object-cover shadow-sm"
+          class={imageClasses}
           loading="lazy"
           decoding="async"
         />
-      </a>
-    )
-  }
-  <div class="min-w-0 flex-1">
-    <div class="truncate font-semibold text-slate-900 dark:text-slate-100">
-      {
-        href ? (
-          <a
-            href={href}
-            class="no-underline transition hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900"
-          >
-            {title}
-          </a>
-        ) : (
-          title
-        )
-      }
+      )}
+      {loading && (
+        <div 
+          class={`
+            ${currentSize.imageWidth} 
+            ${currentSize.imageHeight}
+            ${imageAspectRatio !== 'square' ? aspectRatioClasses[imageAspectRatio] : ''}
+            rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse
+          `.trim().replace(/\s+/g, ' ')}
+          aria-label="Loading image..."
+        ></div>
+      )}
     </div>
-    {
-      subtitle && (
-        <div class="truncate text-sm text-slate-600 dark:text-slate-300">
-          {subtitle}
+  )}
+  
+  <div class={contentClasses}>
+    <div class={variant === 'compact' ? 'truncate' : ''}>
+      {href ? (
+        <a
+          href={href}
+          id={titleId}
+          class={`
+            ${currentSize.title} font-semibold
+            text-gray-900 dark:text-gray-50
+            hover:text-blue-700 dark:hover:text-blue-300
+            focus:text-blue-700 dark:focus:text-blue-300
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+            dark:focus:ring-offset-gray-900
+            transition-colors duration-200
+            underline-offset-4 hover:underline focus:underline
+            no-underline
+            ${variant === 'compact' ? 'truncate block' : ''}
+          `.trim().replace(/\s+/g, ' ')}
+          aria-describedby={subtitle ? descId : undefined}
+        >
+          {title}
+        </a>
+      ) : (
+        <div 
+          id={titleId}
+          class={`
+            ${currentSize.title} font-semibold
+            text-gray-900 dark:text-gray-50
+            ${variant === 'compact' ? 'truncate' : ''}
+          `.trim().replace(/\s+/g, ' ')}
+        >
+          {title}
         </div>
-      )
-    }
-    {
-      meta.length > 0 && (
-        <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-          {meta.map((m) => (
-            <span>{m}</span>
-          ))}
-        </div>
-      )
-    }
-  </div>
-  {
-    actions.length > 0 && (
-      <div class="ml-2 flex flex-shrink-0 flex-wrap gap-2">
-        {actions.map((a) => (
-          <a
-            href={a.href}
-            target={a.target || '_self'}
-            rel={a.target === '_blank' ? 'noopener noreferrer' : undefined}
-            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 no-underline transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-900"
-          >
-            {a.label}
-          </a>
+      )}
+    </div>
+    
+    {subtitle && (
+      <div 
+        id={descId}
+        class={`
+          ${currentSize.subtitle}
+          text-gray-700 dark:text-gray-300
+          ${variant === 'compact' ? 'truncate' : ''}
+        `.trim().replace(/\s+/g, ' ')}
+      >
+        {subtitle}
+      </div>
+    )}
+    
+    {showMeta && meta.length > 0 && (
+      <div 
+        class={`
+          ${variant === 'detailed' ? 'mt-2' : 'mt-1'}
+          flex flex-wrap items-center gap-2
+          ${currentSize.meta}
+          text-gray-600 dark:text-gray-400
+        `.trim().replace(/\s+/g, ' ')}
+        role="group"
+        aria-label="Item metadata"
+      >
+        {meta.map((metaItem, index) => (
+          <span key={index}>
+            {metaItem}
+            {index < meta.length - 1 && variant !== 'compact' && (
+              <span class="mx-1 text-gray-400 dark:text-gray-500" aria-hidden="true">•</span>
+            )}
+          </span>
         ))}
       </div>
-    )
-  }
+    )}
+  </div>
+  
+  {showActions && actions.length > 0 && (
+    <div 
+      class={`
+        shrink-0 flex flex-wrap gap-2
+        ${variant === 'detailed' ? 'items-start' : 'items-center'}
+        ${variant === 'compact' ? 'ml-1' : 'ml-2'}
+      `.trim().replace(/\s+/g, ' ')}
+      role="group" 
+      aria-label="Item actions"
+    >
+      {actions.map((action, index) => {
+        const actionId = `${itemId}-action-${index}`;
+        const buttonClasses = `
+          ${currentSize.actions} rounded-md font-medium
+          transition-all duration-200 ease-in-out
+          focus:outline-none focus:ring-2 focus:ring-offset-2
+          dark:focus:ring-offset-gray-900
+          disabled:opacity-50 disabled:cursor-not-allowed
+          no-underline
+          ${action.variant === 'primary' 
+            ? `bg-blue-700 dark:bg-blue-600 text-white
+               hover:bg-blue-800 dark:hover:bg-blue-700
+               focus:ring-blue-500`
+            : action.variant === 'danger'
+            ? `bg-red-700 dark:bg-red-600 text-white
+               hover:bg-red-800 dark:hover:bg-red-700
+               focus:ring-red-500`
+            : `bg-gray-200 dark:bg-gray-700 
+               text-gray-900 dark:text-gray-100
+               hover:bg-gray-300 dark:hover:bg-gray-600
+               focus:ring-gray-500
+               border border-gray-300 dark:border-gray-600`
+          }
+        `.trim().replace(/\s+/g, ' ');
+        
+        if (action.href) {
+          return (
+            <a
+              id={actionId}
+              href={action.href}
+              target={action.target || '_self'}
+              rel={action.target === '_blank' ? 'noopener noreferrer' : undefined}
+              class={buttonClasses}
+              role="button"
+              tabindex="0"
+            >
+              {action.icon && <span class="mr-1.5" aria-hidden="true">{action.icon}</span>}
+              {action.label}
+            </a>
+          );
+        } else {
+          return (
+            <button
+              id={actionId}
+              type="button"
+              onclick={action.onClick}
+              class={buttonClasses}
+              disabled={disabled}
+            >
+              {action.icon && <span class="mr-1.5" aria-hidden="true">{action.icon}</span>}
+              {action.label}
+            </button>
+          );
+        }
+      })}
+    </div>
+  )}
 </div>

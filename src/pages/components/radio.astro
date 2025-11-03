@@ -1,18 +1,644 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Radio from '../../components/Radio.astro';
+import Button from '../../components/Button.astro';
+import Badge from '../../components/Badge.astro';
+import Card from '../../components/Card.astro';
 ---
 
 <DocsLayout
   title="Radio"
-  description="Single-select inputs grouped by shared name attribute."
+  description="Accessible radio button component with WCAG AAA compliance, multiple variants, and responsive design for single-choice form inputs."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-3">
-      <Radio name="plan" value="free" label="Free Plan" checked />
-      <Radio name="plan" value="pro" label="Pro Plan" />
-      <Radio name="plan" value="enterprise" label="Enterprise Plan" />
-    </div>
-  </section>
+  <div class="space-y-10">
+    <!-- Overview -->
+    <section id="overview" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Overview</h2>
+        <div class="prose prose-lg max-w-none dark:prose-invert">
+          <p>Radio buttons allow users to select a single option from a group of mutually exclusive choices. They provide clear visual feedback about the current selection and support keyboard navigation for enhanced accessibility.</p>
+          
+          <p>Built with comprehensive WCAG AAA accessibility features including proper ARIA attributes, high contrast ratios for dark and light modes, and keyboard navigation support for screen reader compatibility.</p>
+        </div>
+      </div>
+      
+      <!-- Basic Usage -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Basic Usage</h3>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-3">
+              <Radio name="basic-example" value="option1" label="Option 1" checked />
+              <Radio name="basic-example" value="option2" label="Option 2" />
+              <Radio name="basic-example" value="option3" label="Option 3" />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="basic-example" value="option1" label="Option 1" checked /&gt;
+&lt;Radio name="basic-example" value="option2" label="Option 2" /&gt;
+&lt;Radio name="basic-example" value="option3" label="Option 3" /&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Variants -->
+    <section id="variants" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Variants</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Five distinct visual styles for different contexts and semantic meanings.</p>
+      </div>
+
+      <!-- Default Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Default</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Standard blue variant for general form inputs.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-3">
+              <Radio name="default-variant" value="opt1" label="Default Option 1" variant="default" checked />
+              <Radio name="default-variant" value="opt2" label="Default Option 2" variant="default" />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="default-variant" value="opt1" label="Default Option 1" variant="default" checked /&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Success Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Success</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Green variant for positive selections and confirmations.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-3">
+              <Radio name="success-variant" value="opt1" label="Success Option 1" variant="success" checked />
+              <Radio name="success-variant" value="opt2" label="Success Option 2" variant="success" />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="success-variant" value="opt1" label="Success Option 1" variant="success" checked /&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Warning Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Warning</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Amber variant for cautionary selections requiring attention.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-3">
+              <Radio name="warning-variant" value="opt1" label="Warning Option 1" variant="warning" checked />
+              <Radio name="warning-variant" value="opt2" label="Warning Option 2" variant="warning" />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="warning-variant" value="opt1" label="Warning Option 1" variant="warning" checked /&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Error Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Error</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Red variant for error states and validation failures.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-3">
+              <Radio name="error-variant" value="opt1" label="Error Option 1" variant="error" checked />
+              <Radio name="error-variant" value="opt2" label="Error Option 2" variant="error" />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="error-variant" value="opt1" label="Error Option 1" variant="error" checked /&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Minimal Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Minimal</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Subtle grayscale variant with reduced visual weight.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-3">
+              <Radio name="minimal-variant" value="opt1" label="Minimal Option 1" variant="minimal" checked />
+              <Radio name="minimal-variant" value="opt2" label="Minimal Option 2" variant="minimal" />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="minimal-variant" value="opt1" label="Minimal Option 1" variant="minimal" checked /&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sizes -->
+    <section id="sizes" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Sizes</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Three size options for different interface densities and emphasis levels.</p>
+      </div>
+
+      <div class="grid gap-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Small</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Compact size for dense interfaces and tight layouts.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-2">
+                <Radio name="small-size" value="opt1" label="Small Option 1" size="sm" checked />
+                <Radio name="small-size" value="opt2" label="Small Option 2" size="sm" />
+                <Radio name="small-size" value="opt3" label="Small Option 3" size="sm" />
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="small-size" value="opt1" label="Small Option 1" size="sm" checked /&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Medium (Default)</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Standard size suitable for most use cases.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-3">
+                <Radio name="medium-size" value="opt1" label="Medium Option 1" size="md" checked />
+                <Radio name="medium-size" value="opt2" label="Medium Option 2" size="md" />
+                <Radio name="medium-size" value="opt3" label="Medium Option 3" size="md" />
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="medium-size" value="opt1" label="Medium Option 1" size="md" checked /&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Large</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Prominent size for important selections and touch interfaces.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-4">
+                <Radio name="large-size" value="opt1" label="Large Option 1" size="lg" checked />
+                <Radio name="large-size" value="opt2" label="Large Option 2" size="lg" />
+                <Radio name="large-size" value="opt3" label="Large Option 3" size="lg" />
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="large-size" value="opt1" label="Large Option 1" size="lg" checked /&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- States -->
+    <section id="states" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">States</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Different states for form validation and user interaction feedback.</p>
+      </div>
+
+      <div class="grid gap-6">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Default State</h3>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-3">
+                <Radio name="default-state" value="opt1" label="Normal radio option" checked />
+                <Radio name="default-state" value="opt2" label="Another option" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Required State</h3>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-3">
+                <Radio name="required-state" value="opt1" label="Required Option 1" required checked />
+                <Radio name="required-state" value="opt2" label="Required Option 2" required />
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="required-state" value="opt1" label="Required Option 1" required checked /&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Error State</h3>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-3">
+                <Radio name="error-state" value="opt1" label="Option with error" error checked />
+                <Radio name="error-state" value="opt2" label="Another option" error />
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="error-state" value="opt1" label="Option with error" error checked /&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Disabled State</h3>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-3">
+                <Radio name="disabled-state" value="opt1" label="Disabled checked option" disabled checked />
+                <Radio name="disabled-state" value="opt2" label="Disabled unchecked option" disabled />
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio name="disabled-state" value="opt1" label="Disabled checked option" disabled checked /&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- With Descriptions -->
+    <section id="descriptions" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">With Descriptions</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Add descriptive text to provide additional context for each option.</p>
+      </div>
+
+      <div class="space-y-6">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Plan Selection</h3>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-4">
+                <Radio 
+                  name="plan-selection" 
+                  value="free" 
+                  label="Free Plan" 
+                  description="Perfect for individuals and small projects. Includes basic features and community support."
+                  checked 
+                />
+                <Radio 
+                  name="plan-selection" 
+                  value="pro" 
+                  label="Pro Plan" 
+                  description="Ideal for growing teams and businesses. Includes advanced features and priority support."
+                />
+                <Radio 
+                  name="plan-selection" 
+                  value="enterprise" 
+                  label="Enterprise Plan" 
+                  description="For large organizations with complex needs. Includes custom integrations and dedicated support."
+                />
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio 
+  name="plan-selection" 
+  value="free" 
+  label="Free Plan" 
+  description="Perfect for individuals and small projects..."
+  checked 
+/&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">With Different Variants</h3>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="space-y-4">
+                <Radio 
+                  name="variant-descriptions" 
+                  value="recommended" 
+                  label="Recommended Option" 
+                  description="This is our most popular choice with the best value."
+                  variant="success"
+                  checked 
+                />
+                <Radio 
+                  name="variant-descriptions" 
+                  value="caution" 
+                  label="Proceed with Caution" 
+                  description="This option may have some limitations or requirements."
+                  variant="warning"
+                />
+                <Radio 
+                  name="variant-descriptions" 
+                  value="not-recommended" 
+                  label="Not Recommended" 
+                  description="This option is deprecated and may be removed in future versions."
+                  variant="error"
+                />
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio 
+  name="variant-descriptions" 
+  value="recommended" 
+  label="Recommended Option" 
+  description="This is our most popular choice..."
+  variant="success"
+  checked 
+/&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Label Positioning -->
+    <section id="label-positioning" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Label Positioning</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Position labels on either side of the radio button for different layout requirements.</p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Right Position (Default)</h3>
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-3">
+              <Radio name="right-position" value="opt1" label="Label on the right" labelPosition="right" checked />
+              <Radio name="right-position" value="opt2" label="Another right label" labelPosition="right" />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio labelPosition="right" label="Label on the right" /&gt;</code></pre>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Left Position</h3>
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-3">
+              <Radio name="left-position" value="opt1" label="Label on the left" labelPosition="left" checked />
+              <Radio name="left-position" value="opt2" label="Another left label" labelPosition="left" />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio labelPosition="left" label="Label on the left" /&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Props Reference -->
+    <section id="props" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Props Reference</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Complete API reference for all available properties and their configurations.</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-100 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Prop</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Type</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Default</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Description</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">name</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">required</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Name attribute for radio group</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">value</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">required</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Value of this radio option</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">label</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Label text for the radio button</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">checked</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Whether the radio is checked</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">disabled</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Whether the radio is disabled</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">required</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Whether the radio is required</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">error</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Whether the radio has an error state</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">variant</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default' | 'success' | 'warning' | 'error' | 'minimal'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Visual variant of the radio button</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">size</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'sm' | 'md' | 'lg'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'md'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Size of the radio button</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">labelPosition</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'right' | 'left'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'right'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Position of label relative to radio</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">description</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Description text for additional context</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">id</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">auto-generated</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Custom ID for the input element</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">ariaLabel</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Custom aria-label for accessibility</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">ariaDescribedBy</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">ID of element that describes the radio</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">class</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Additional CSS classes for customization</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Accessibility -->
+    <section id="accessibility" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Accessibility Features</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Comprehensive WCAG AAA compliance with enhanced keyboard navigation and screen reader support.</p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Keyboard Navigation
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• <strong>Tab:</strong> Navigate to radio group</li>
+            <li>• <strong>Arrow keys:</strong> Select between options</li>
+            <li>• <strong>Space:</strong> Select focused radio button</li>
+            <li>• Clear focus indicators with high contrast</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Screen Reader Support
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• Proper radio button semantics and grouping</li>
+            <li>• Custom <code>aria-label</code> support</li>
+            <li>• Description association via <code>aria-describedby</code></li>
+            <li>• Required field indication with asterisk</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Visual Accessibility
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• WCAG AAA contrast ratios (7:1+)</li>
+            <li>• High contrast mode compatibility</li>
+            <li>• Dark mode with proper contrast</li>
+            <li>• Clear visual state indicators</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Form Integration
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• Native HTML form submission support</li>
+            <li>• Proper validation state indication</li>
+            <li>• Error state with <code>aria-invalid</code></li>
+            <li>• Required field marking and announcement</li>
+          </ul>
+        </Card>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Accessibility Best Practices</h3>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="space-y-4">
+              <Radio 
+                name="accessibility-example" 
+                value="option1" 
+                label="Choose your preferred method" 
+                description="This selection will affect how notifications are delivered to you"
+                ariaLabel="Notification delivery method"
+                checked 
+              />
+              <Radio 
+                name="accessibility-example" 
+                value="option2" 
+                label="Alternative method" 
+                description="Less frequent but more detailed notifications"
+                ariaLabel="Alternative notification method"
+              />
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Radio 
+  name="accessibility-example" 
+  value="option1" 
+  label="Choose your preferred method" 
+  description="This selection will affect notifications..."
+  ariaLabel="Notification delivery method"
+  checked 
+/&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section id="best-practices" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Best Practices</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Guidelines for effective radio button implementation and optimal user experience.</p>
+      </div>
+
+      <div class="space-y-6">
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-green-600 dark:text-green-400">✓ Do</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Use radio buttons for mutually exclusive choices</li>
+            <li>• Provide clear, descriptive labels for each option</li>
+            <li>• Group related options with the same name attribute</li>
+            <li>• Include descriptions for complex or unclear options</li>
+            <li>• Use appropriate variants to convey meaning (success, warning, error)</li>
+            <li>• Ensure sufficient touch target size for mobile devices</li>
+            <li>• Test with keyboard navigation and screen readers</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-red-600 dark:text-red-400">✗ Don't</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Use radio buttons for multiple selection (use checkboxes instead)</li>
+            <li>• Have only one radio button in a group</li>
+            <li>• Use radio buttons for actions (use buttons instead)</li>
+            <li>• Make labels too long or complex</li>
+            <li>• Override accessibility features like focus indicators</li>
+            <li>• Use colors alone to convey important information</li>
+            <li>• Forget to provide proper grouping and labels</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-blue-600 dark:text-blue-400">💡 Tips</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Use success variant for recommended options</li>
+            <li>• Use warning variant for options that need attention</li>
+            <li>• Use error variant for deprecated or problematic options</li>
+            <li>• Use minimal variant for subtle, less important choices</li>
+            <li>• Pre-select the most common or recommended option</li>
+            <li>• Consider using descriptions for complex business logic</li>
+            <li>• Group radio buttons with fieldset and legend for better semantics</li>
+          </ul>
+        </Card>
+      </div>
+    </section>
+
+    <!-- Related Components -->
+    <section id="related" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Related Components</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Other components that work well with or serve similar purposes as radio buttons.</p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Checkbox</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For multiple selection inputs</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Select</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For dropdown selection with many options</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Switch</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For binary on/off toggles</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">FormGroup</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For grouping form elements with labels</p>
+        </Card>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

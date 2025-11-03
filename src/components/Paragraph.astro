@@ -1,52 +1,142 @@
 ---
-/**
- * Paragraph - simple text wrapper with sizing and alignment
- */
-interface Props {
+import { cn } from '../utils/cn';
+
+export interface Props {
+  // Content props
   text?: string;
-  as?: 'p' | 'span' | 'div';
-  size?: 'sm' | 'base' | 'lg' | 'xl';
+  
+  // HTML element options
+  as?: 'p' | 'span' | 'div' | 'blockquote' | 'figcaption';
+  
+  // Typography options
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
+  lineHeight?: 'tight' | 'normal' | 'relaxed' | 'loose';
+  
+  // Visual variants
+  variant?: 'default' | 'muted' | 'subtle' | 'accent' | 'error' | 'success' | 'warning';
+  
+  // Layout options
   align?: 'left' | 'center' | 'right' | 'justify';
+  maxWidth?: 'none' | 'prose' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  
+  // Accessibility props
+  role?: string;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  id?: string;
+  
+  // Deprecated props (for backward compatibility)
   muted?: boolean;
-  className?: string;
+  
+  // Styling
+  class?: string;
 }
 
 const {
   text,
   as = 'p',
-  size = 'base',
+  size = 'md',
+  weight = 'normal',
+  lineHeight = 'relaxed',
+  variant = 'default',
   align = 'left',
+  maxWidth = 'none',
+  role,
+  ariaLabel,
+  ariaDescribedBy,
+  id,
   muted = false,
-  className = '',
+  class: className
 } = Astro.props as Props;
 
-const Tag = as;
+// Generate unique ID if needed
+const elementId = id || (ariaDescribedBy ? `paragraph-${Math.random().toString(36).substr(2, 9)}` : undefined);
 
-const sizeMap: Record<NonNullable<Props['size']>, string> = {
-  sm: 'text-sm md:text-base',
-  base: 'text-base md:text-lg',
-  lg: 'text-lg md:text-xl',
-  xl: 'text-xl md:text-2xl',
+// Size styles with responsive scaling
+const sizeStyles = {
+  xs: 'text-xs lg:text-sm',
+  sm: 'text-sm lg:text-base',
+  md: 'text-base lg:text-lg',
+  lg: 'text-lg lg:text-xl',
+  xl: 'text-xl lg:text-2xl',
+  '2xl': 'text-2xl lg:text-3xl'
 };
 
-const alignMap: Record<NonNullable<Props['align']>, string> = {
+// Weight styles
+const weightStyles = {
+  light: 'font-light',
+  normal: 'font-normal',
+  medium: 'font-medium',
+  semibold: 'font-semibold',
+  bold: 'font-bold'
+};
+
+// Line height styles
+const lineHeightStyles = {
+  tight: 'leading-tight',
+  normal: 'leading-normal',
+  relaxed: 'leading-relaxed',
+  loose: 'leading-loose'
+};
+
+// Variant styles with WCAG AAA contrast ratios
+const variantStyles = {
+  default: 'text-gray-900 dark:text-gray-100',
+  muted: 'text-gray-600 dark:text-gray-400',
+  subtle: 'text-gray-700 dark:text-gray-300',
+  accent: 'text-blue-700 dark:text-blue-300',
+  error: 'text-red-700 dark:text-red-300',
+  success: 'text-green-700 dark:text-green-300',
+  warning: 'text-amber-700 dark:text-amber-300'
+};
+
+// Alignment styles
+const alignStyles = {
   left: 'text-left',
   center: 'text-center',
   right: 'text-right',
-  justify: 'text-justify',
+  justify: 'text-justify'
 };
 
-const classes = [
-  'leading-relaxed',
-  muted
-    ? 'text-slate-600 dark:text-slate-400'
-    : 'text-slate-800 dark:text-slate-200',
-  sizeMap[size],
-  alignMap[align],
-  className,
-]
-  .filter(Boolean)
-  .join(' ');
+// Max width styles
+const maxWidthStyles = {
+  none: '',
+  prose: 'max-w-prose',
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+  '2xl': 'max-w-2xl'
+};
+
+// Handle backward compatibility
+const finalVariant = muted ? 'muted' : variant;
+
+// Build classes
+const classes = cn(
+  // Base typography
+  sizeStyles[size],
+  weightStyles[weight],
+  lineHeightStyles[lineHeight],
+  variantStyles[finalVariant],
+  alignStyles[align],
+  maxWidthStyles[maxWidth],
+  // Responsive margins for better readability
+  'mb-0',
+  className
+);
+
+// Dynamic tag
+const Tag = as;
 ---
 
-<Tag class={classes}>{typeof text === 'string' ? text : <slot />}</Tag>
+<Tag
+  id={elementId}
+  class={classes}
+  role={role}
+  aria-label={ariaLabel}
+  aria-describedby={ariaDescribedBy}
+>
+  {text ? text : <slot />}
+</Tag>

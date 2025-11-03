@@ -1,57 +1,486 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Input from '../../components/Input.astro';
+import InputComponent from '../../components/Input.astro';
+
+// Usage code snippets
+const basicUsage = `---
+import { Input } from 'comet-astro';
+---
+
+<InputComponent 
+  name="email"
+  type="email" 
+  label="Email Address"
+  placeholder="Enter your email"
+  required
+/>`;
+
+const advancedUsage = `---
+import { Input } from 'comet-astro';
+---
+
+<InputComponent 
+  name="username"
+  type="text"
+  label="Username"
+  placeholder="Choose a username"
+  minlength={3}
+  maxlength={20}
+  pattern="[a-zA-Z0-9_]+"
+  helperText="Only letters, numbers, and underscores allowed"
+  showCharCount
+  autocomplete="username"
+/>`;
+
+const formUsage = `---
+import { Input } from 'comet-astro';
+---
+
+<form>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <InputComponent 
+      name="firstName"
+      label="First Name"
+      placeholder="John"
+      required
+    />
+    <InputComponent 
+      name="lastName" 
+      label="Last Name"
+      placeholder="Doe"
+      required
+    />
+  </div>
+  
+  <InputComponent 
+    name="email"
+    type="email"
+    label="Email"
+    placeholder="john@example.com"
+    autocomplete="email"
+    required
+  />
+  
+  <InputComponent 
+    name="phone"
+    type="tel"
+    label="Phone Number"
+    placeholder="+1 (555) 123-4567"
+    prefix="+1"
+    autocomplete="tel"
+  />
+  
+  <InputComponent 
+    name="bio"
+    label="Bio"
+    placeholder="Tell us about yourself..."
+    maxlength={500}
+    showCharCount
+    helperText="Optional: Brief description about yourself"
+  />
+</form>`;
 ---
 
 <DocsLayout
-  title="Input"
-  description="Text input field with validation states and sizes."
+  title="Input Component"
+  description="WCAG AAA compliant form input component with comprehensive validation, accessibility features, and responsive design."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300 text-sm space-y-1">
-      <li><code>name: string</code> – input name (required)</li>
-      <li>
-        <code
-          >type?: 'text'|'email'|'password'|'number'|'tel'|'url'|'search'</code
-        >
-      </li>
-      <li><code>label?: string</code> – label text</li>
-      <li><code>placeholder?: string</code></li>
-      <li><code>value?: string|number</code></li>
-      <li><code>required?: boolean</code></li>
-      <li><code>disabled?: boolean</code></li>
-      <li><code>error?: string</code> – error message</li>
-      <li><code>helperText?: string</code> – helper text</li>
-      <li><code>size?: 'sm'|'md'|'lg'</code></li>
-      <li><code>className?: string</code></li>
-    </ul>
+  <!-- Overview -->
+  <section class="space-y-4">
+    <p class="text-lg text-slate-200">
+      A comprehensive input component that provides excellent user experience 
+      with full accessibility support, validation states, and multiple variants.
+    </p>
+    <div class="flex flex-wrap gap-2">
+      <span class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20">
+        WCAG AAA
+      </span>
+      <span class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20">
+        Responsive
+      </span>
+      <span class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20">
+        Form Ready
+      </span>
+      <span class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20">
+        Validation
+      </span>
+    </div>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
+  <!-- Quick Examples -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Quick Examples</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Basic Inputs</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <InputComponent 
+            name="basic-text"
+            label="Name" 
+            placeholder="Enter your full name"
+          />
+          <InputComponent 
+            name="basic-email"
+            type="email"
+            label="Email Address" 
+            placeholder="you@example.com"
+            required
+          />
+          <InputComponent 
+            name="basic-password"
+            type="password"
+            label="Password"
+            placeholder="Enter secure password"
+            helperText="Minimum 8 characters required"
+          />
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Advanced Features</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <InputComponent 
+            name="advanced-username"
+            label="Username"
+            placeholder="cooluser123"
+            maxlength={20}
+            showCharCount
+            helperText="Only letters, numbers, and underscores"
+          />
+          <InputComponent 
+            name="advanced-price"
+            type="number"
+            label="Price"
+            placeholder="0.00"
+            prefix="$"
+            min="0"
+            step="0.01"
+          />
+          <InputComponent 
+            name="advanced-website"
+            type="url"
+            label="Website"
+            placeholder="https://example.com"
+            prefix="🌐"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Size Variants -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+      <InputComponent 
+        name="size-sm"
+        size="sm"
+        label="Small Input" 
+        placeholder="Compact size for dense layouts"
+      />
+      <InputComponent 
+        name="size-md"
+        size="md"
+        label="Medium Input (Default)" 
+        placeholder="Standard size for most use cases"
+      />
+      <InputComponent 
+        name="size-lg"
+        size="lg"
+        label="Large Input" 
+        placeholder="Prominent size for important fields"
+      />
+    </div>
+  </section>
+
+  <!-- Style Variants -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Style Variants</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="space-y-3">
+        <h3 class="text-sm font-medium text-slate-300">Default</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InputComponent 
+            name="variant-default"
+            variant="default"
+            label="Default Style"
+            placeholder="Clean and minimal"
+          />
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-sm font-medium text-slate-300">Filled</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InputComponent 
+            name="variant-filled"
+            variant="filled"
+            label="Filled Style"
+            placeholder="Subtle background"
+          />
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-sm font-medium text-slate-300">Outlined</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+          <InputComponent 
+            name="variant-outlined"
+            variant="outlined"
+            label="Outlined Style"
+            placeholder="Prominent border"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- States -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">States</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Error State</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <InputComponent 
+            name="state-error"
+            label="Email Address"
+            value="invalid-email"
+            error="Please enter a valid email address"
+          />
+          <InputComponent 
+            name="state-required"
+            label="Required Field"
+            required
+            error="This field is required"
+          />
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Disabled & Readonly</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <InputComponent 
+            name="state-disabled"
+            label="Disabled Input"
+            value="Cannot be edited"
+            disabled
+          />
+          <InputComponent 
+            name="state-readonly"
+            label="Readonly Input"
+            value="Read only content"
+            readonly
+            helperText="This field cannot be modified"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Input Types -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Input Types</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Text & Communication</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <InputComponent 
+            name="type-text"
+            type="text"
+            label="Text Input"
+            placeholder="Any text content"
+          />
+          <InputComponent 
+            name="type-email"
+            type="email"
+            label="Email Input"
+            placeholder="user@domain.com"
+            autocomplete="email"
+          />
+          <InputComponent 
+            name="type-tel"
+            type="tel"
+            label="Phone Number"
+            placeholder="+1 (555) 123-4567"
+            autocomplete="tel"
+          />
+          <InputComponent 
+            name="type-url"
+            type="url"
+            label="Website URL"
+            placeholder="https://example.com"
+          />
+          <InputComponent 
+            name="type-search"
+            type="search"
+            label="Search"
+            placeholder="Search products..."
+          />
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Numbers & Dates</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <InputComponent 
+            name="type-number"
+            type="number"
+            label="Number Input"
+            placeholder="123"
+            min="0"
+            max="100"
+          />
+          <InputComponent 
+            name="type-password"
+            type="password"
+            label="Password"
+            placeholder="Secure password"
+          />
+          <InputComponent 
+            name="type-date"
+            type="date"
+            label="Date"
+          />
+          <InputComponent 
+            name="type-time"
+            type="time"
+            label="Time"
+          />
+          <InputComponent 
+            name="type-datetime"
+            type="datetime-local"
+            label="Date & Time"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Props Documentation -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Basic Props
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>name</code> (required), <code>type?</code>, <code>label?</code>, 
+          <code>placeholder?</code>, <code>value?</code>, <code>id?</code>
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Validation
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>required?</code>, <code>pattern?</code>, <code>minlength?</code>, 
+          <code>maxlength?</code>, <code>min?</code>, <code>max?</code>, <code>step?</code>
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          States
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>disabled?</code>, <code>readonly?</code>, <code>error?</code>, 
+          <code>helperText?</code>
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Styling
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>size?</code>, <code>variant?</code>, <code>className?</code>
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Enhancements
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>prefix?</code>, <code>suffix?</code>, <code>showCharCount?</code>, 
+          <code>autocomplete?</code>
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Accessibility
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>ariaLabel?</code>, <code>ariaLabelledby?</code>, <code>ariaDescribedby?</code> - 
+          Enhanced ARIA support for complex form layouts and screen readers.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- Usage -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the Input component and use it in your forms with proper labeling 
+      and validation. The component automatically handles accessibility attributes 
+      and provides comprehensive form integration.
+    </p>
+    
     <div class="space-y-4">
-      <Input name="text" label="Name" placeholder="Enter your name" />
-      <Input
-        name="email"
-        type="email"
-        label="Email"
-        placeholder="you@example.com"
-        required
-      />
-      <Input
-        name="password"
-        type="password"
-        label="Password"
-        helperText="Min 8 characters"
-      />
-      <Input
-        name="error"
-        label="With Error"
-        error="This field is required"
-        value="invalid"
-      />
-      <Input name="disabled" label="Disabled" disabled value="Cannot edit" />
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{basicUsage}</code>
+      </pre>
+    </div>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Advanced Features</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{advancedUsage}</code>
+      </pre>
+    </div>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Complete Form Example</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{formUsage}</code>
+      </pre>
+    </div>
+  </section>
+
+  <!-- Accessibility -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <ul class="space-y-3 text-sm text-slate-200">
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+ contrast ratios for optimal readability</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Screen Reader Support:</strong> Proper ARIA attributes, labels, and descriptions for all states</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Keyboard Navigation:</strong> Full keyboard accessibility with visible focus indicators</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Error Handling:</strong> Clear error messages with role="alert" and aria-live regions</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Form Integration:</strong> Seamless integration with form validation and submission</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Responsive Design:</strong> Consistent experience across all device sizes and orientations</span>
+        </li>
+      </ul>
     </div>
   </section>
 </DocsLayout>

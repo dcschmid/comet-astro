@@ -1,24 +1,70 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Chip from '../../components/Chip.astro';
+import ChipComp from '../../components/Chip.astro';
+
+const usageSnippet = `---\nimport { Chip } from 'comet-astro';\n\n---\n\n<div class="flex flex-wrap gap-2">\n  <Chip>Default</Chip>\n  <Chip variant="primary">Primary</Chip>\n  <Chip variant="success">Success</Chip>\n  <Chip variant="warning">Warning</Chip>\n  <Chip variant="error">Error</Chip>\n  <Chip removable>Removable</Chip>\n  <Chip href="#" variant="primary">Linked chip</Chip>\n</div>`;
 ---
 
 <DocsLayout
   title="Chip"
-  description="Compact tag component with variants, sizes, and removable state."
+  description="Compact, high-contrast label for categorization and status with removable and link states."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
+    <p class="text-base text-slate-100">Chips provide inline categorization or status metadata. They maintain WCAG AAA contrast for text and interactive focus states across light and dark themes.</p>
+    <p class="text-base text-slate-200">Use them sparingly—too many chips create visual noise. Prefer concise wording (1–2 words).</p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">variant?</dt><dd class="text-sm text-slate-200">Visual intent: <code>"default"</code>, <code>"primary"</code>, <code>"success"</code>, <code>"warning"</code>, <code>"error"</code>. Defaults to <code>"default"</code>.</dd></div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">size?</dt><dd class="text-sm text-slate-200">Sets padding & text size: <code>"sm"</code>, <code>"md"</code>, <code>"lg"</code>. Defaults to <code>"md"</code>.</dd></div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">removable?</dt><dd class="text-sm text-slate-200">Adds a dismiss button (×) that removes the element client-side.</dd></div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">href?</dt><dd class="text-sm text-slate-200">Renders an anchor instead of a static <code>span</code>, preserving styling.</dd></div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">className?</dt><dd class="text-sm text-slate-200">Append custom utility classes. Avoid overriding critical focus/contrast styles.</dd></div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">Import, choose a variant, and optionally enable <code>removable</code> or provide <code>href</code> for a linked tag.</p>
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
     <div class="flex flex-wrap gap-2">
-      <Chip>Default</Chip>
-      <Chip variant="primary">Primary</Chip>
-      <Chip variant="success">Success</Chip>
-      <Chip variant="warning">Warning</Chip>
-      <Chip variant="error">Error</Chip>
-      <Chip size="sm">Small</Chip>
-      <Chip size="lg">Large</Chip>
-      <Chip removable>Removable</Chip>
-      <Chip href="#" variant="primary">Link</Chip>
+      <ChipComp>Default</ChipComp>
+      <ChipComp variant="primary">Primary</ChipComp>
+      <ChipComp variant="success">Success</ChipComp>
+      <ChipComp variant="warning">Warning</ChipComp>
+      <ChipComp variant="error">Error</ChipComp>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="flex flex-wrap items-center gap-2">
+      <ChipComp size="sm" variant="primary">Small</ChipComp>
+      <ChipComp size="md" variant="primary">Medium</ChipComp>
+      <ChipComp size="lg" variant="primary">Large</ChipComp>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Removable</h2>
+    <p class="text-base text-slate-200">Enable <code>removable</code> to show a focusable dismiss control. Removal is client-only; persist changes manually if needed.</p>
+    <div class="flex flex-wrap gap-2">
+      <ChipComp removable variant="primary">Filter A</ChipComp>
+      <ChipComp removable variant="success">Filter B</ChipComp>
+      <ChipComp removable variant="error">Filter C</ChipComp>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">Chips render semantic <code>span</code> elements by default; linked chips become anchors. Removable chips expose a native <code>button</code> with an <code>aria-label</code> of “Remove”.</p>
+    <p class="text-base text-slate-200">Contrast remains ≥7:1 for text against its background in base state. Focus rings use a 2px outline plus offset ensuring ≥3:1 ring contrast and clear separation from adjacent content.</p>
+    <p class="text-base text-slate-200">Keep text short for scannability. When using color to communicate status, also include text (e.g. “Error” not just red alone).</p>
   </section>
 </DocsLayout>

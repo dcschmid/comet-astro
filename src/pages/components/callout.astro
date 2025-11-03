@@ -1,24 +1,74 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Callout from '../../components/Callout.astro';
+import CalloutComp from '../../components/Callout.astro';
+
+const usageSnippet = `---
+import { Callout } from 'comet-astro';
+
+---
+
+<Callout variant="warning" title="Heads up">
+  <p>Production deploys are paused while we run the migration.</p>
+  <p>Track progress in the status channel for updates every 15 minutes.</p>
+</Callout>`;
 ---
 
 <DocsLayout
   title="Callout"
-  description="Highlight important information with contextual accent colors."
+  description="Contextual notice component with AAA contrast across informative, success, warning, error, and note variants."
 >
+  <!-- Intro paragraphs (like Button) -->
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Variants</h2>
-    <div class="space-y-3">
-      <Callout variant="info" title="Info"
-        >This is important information</Callout
-      >
-      <Callout variant="success" title="Success"
-        >Task completed successfully</Callout
-      >
-      <Callout variant="warning" title="Warning">Please be careful</Callout>
-      <Callout variant="error" title="Error">Something went wrong</Callout>
-      <Callout variant="note">Simple note without title</Callout>
+    <p class="text-base text-slate-100">Callouts surface supplemental or time-sensitive information inline without derailing reading flow. Each variant ships with light/dark palettes meeting AAA contrast for headings and body copy.</p>
+    <p class="text-base text-slate-200">Provide a concise <code>title</code> for scanning, optionally supply a custom <code>icon</code>, and group related paragraphs in the default slot.</p>
+  </section>
+
+  <!-- Props (dl tiles replicating Button style) -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">variant?</dt>
+        <dd class="text-sm text-slate-200">Color theme: <code>info</code>, <code>success</code>, <code>warning</code>, <code>error</code>, <code>note</code>. Default <code>info</code>.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">title?</dt>
+        <dd class="text-sm text-slate-200">Optional heading text above body content.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">icon?</dt>
+        <dd class="text-sm text-slate-200">Emoji/symbol override; defaults per variant.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">className?</dt>
+        <dd class="text-sm text-slate-200">Extra utilities for layout tweaks (margins etc.).</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- Usage section -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">Wrap one or more paragraphs; keep titles short. Avoid stacking many callouts in close succession to preserve impact.</p>
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+  </section>
+
+  <!-- Variants section -->
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="space-y-4">
+      <CalloutComp variant="info" title="Information"><p>The new security controls are live and automatically applied to all tenants.</p></CalloutComp>
+      <CalloutComp variant="success" title="Success"><p>All background jobs finished syncing with the analytics warehouse.</p></CalloutComp>
+      <CalloutComp variant="warning" title="Warning"><p>Scheduled maintenance begins tonight at 22:00 UTC. Expect degraded performance.</p></CalloutComp>
+      <CalloutComp variant="error" title="Error"><p>We detected a billing webhook failure. Please verify your endpoint credentials.</p></CalloutComp>
+      <CalloutComp variant="note" title="Note"><p>Use callouts sparingly to avoid visual fatigue—one per section is usually sufficient.</p></CalloutComp>
     </div>
+  </section>
+
+  <!-- Accessibility section -->
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">Rendered with <code>role="note"</code> to convey supplemental context. Color palettes target &ge; 9:1 contrast for body and &ge; 12:1 for heading text across themes.</p>
+    <p class="text-base text-slate-200">Don’t rely solely on color; spell out status changes. Avoid interactive elements inside callouts unless you manage focus and announce changes.</p>
   </section>
 </DocsLayout>

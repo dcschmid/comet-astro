@@ -1,86 +1,171 @@
 ---
-/**
- * Popover - floating content container with configurable trigger and placement
- */
-type Placement =
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right'
-  | 'top-start'
-  | 'top-end'
-  | 'bottom-start'
-  | 'bottom-end';
-type TriggerMode = 'click' | 'hover' | 'focus';
+import { cn } from '../utils/cn';
 
-interface Props {
-  placement?: Placement;
-  trigger?: TriggerMode;
+export interface Props {
+  // Content and behavior
+  content?: string;
+  
+  // Positioning
+  placement?: 'top' | 'bottom' | 'left' | 'right' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
   offset?: number;
+  
+  // Trigger modes
+  trigger?: 'click' | 'hover' | 'focus';
   defaultOpen?: boolean;
-  className?: string;
-  contentClassName?: string;
+  
+  // Visual variants
+  variant?: 'default' | 'minimal' | 'bordered' | 'elevated';
+  size?: 'sm' | 'md' | 'lg';
+  
+  // Accessibility props
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  role?: string;
+  
+  // Styling
+  class?: string;
+  contentClass?: string;
 }
 
 const {
+  content,
   placement = 'bottom',
-  trigger = 'click',
   offset = 12,
+  trigger = 'click',
   defaultOpen = false,
-  className = '',
-  contentClassName = '',
+  variant = 'default',
+  size = 'md',
+  ariaLabel,
+  ariaDescribedBy,
+  role = 'dialog',
+  class: className,
+  contentClass
 } = Astro.props as Props;
 
-const id = `popover-${Math.random().toString(36).slice(2, 10)}`;
-const placementAttr = placement;
-const triggerAttr = trigger;
-const offsetAttr = String(offset);
-const defaultOpenAttr = defaultOpen ? 'true' : 'false';
+// Generate unique IDs for accessibility
+const popoverId = `popover-${Math.random().toString(36).slice(2, 10)}`;
+const contentId = `${popoverId}-content`;
+const triggerId = `${popoverId}-trigger`;
+
+// Variant styles with WCAG AAA contrast ratios
+const variantStyles = {
+  default: {
+    content: 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg',
+    trigger: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800'
+  },
+  minimal: {
+    content: 'border-0 bg-white dark:bg-gray-900 shadow-md',
+    trigger: 'border-0 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800'
+  },
+  bordered: {
+    content: 'border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 shadow-sm',
+    trigger: 'border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:border-gray-400 dark:hover:border-gray-500'
+  },
+  elevated: {
+    content: 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-xl ring-1 ring-black/5 dark:ring-white/10',
+    trigger: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md'
+  }
+};
+
+// Size styles
+const sizeStyles = {
+  sm: {
+    content: 'min-w-[160px] max-w-[240px] p-3 text-xs',
+    trigger: 'px-2 py-1 text-xs'
+  },
+  md: {
+    content: 'min-w-[200px] max-w-[320px] p-4 text-sm',
+    trigger: 'px-3 py-1.5 text-sm'
+  },
+  lg: {
+    content: 'min-w-[240px] max-w-[400px] p-6 text-base',
+    trigger: 'px-4 py-2 text-base'
+  }
+};
+
+// Build classes
+const containerClasses = cn(
+  'relative inline-flex',
+  className
+);
+
+const triggerClasses = cn(
+  'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
+  // WCAG AAA contrast ratios
+  'text-gray-900 dark:text-gray-100',
+  variantStyles[variant].trigger,
+  sizeStyles[size].trigger
+);
+
+const contentClasses = cn(
+  'absolute z-50 rounded-lg leading-relaxed',
+  // WCAG AAA contrast ratios
+  'text-gray-900 dark:text-gray-100',
+  variantStyles[variant].content,
+  sizeStyles[size].content,
+  contentClass
+);
 ---
 
 <div
-  id={id}
-  class={`relative inline-flex text-slate-900 dark:text-slate-100 ${className}`.trim()}
+  id={popoverId}
+  class={containerClasses}
   data-popover-root
-  data-popover-placement={placementAttr}
-  data-popover-trigger-mode={triggerAttr}
-  data-popover-offset={offsetAttr}
-  data-popover-open={defaultOpenAttr}
+  data-popover-placement={placement}
+  data-popover-trigger-mode={trigger}
+  data-popover-offset={String(offset)}
+  data-popover-open={defaultOpen ? 'true' : 'false'}
 >
+  <!-- Trigger Element -->
   <div data-popover-trigger>
-    <slot name="trigger">
+    {Astro.slots.has('trigger') ? (
+      <slot name="trigger" />
+    ) : (
       <button
+        id={triggerId}
         type="button"
-        class="rounded-full border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-900"
+        class={triggerClasses}
+        aria-expanded={defaultOpen ? 'true' : 'false'}
+        aria-haspopup="dialog"
+        aria-controls={contentId}
+        aria-label={ariaLabel || 'Open popover'}
+        aria-describedby={ariaDescribedBy}
       >
-        Open popover
+        <slot name="trigger-content">Open popover</slot>
       </button>
-    </slot>
+    )}
   </div>
+
+  <!-- Popover Content -->
   <div
-    class={`absolute z-50 min-w-[200px] rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-900 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${contentClassName}`.trim()}
+    id={contentId}
+    class={contentClasses}
     data-popover-content
     hidden={!defaultOpen}
-    role="dialog"
-    tabindex="-1"
+    role={role}
     aria-hidden={defaultOpen ? 'false' : 'true'}
+    aria-labelledby={triggerId}
+    tabindex="-1"
   >
-    <slot />
+    {content ? (
+      <div>{content}</div>
+    ) : (
+      <slot />
+    )}
   </div>
 </div>
 
-<script is:inline>
+<script is:inline define:vars={{ popoverId }}>
   (function setupPopover() {
-    const root = document.getElementById('${id}');
+    const root = document.getElementById(popoverId);
     if (!(root instanceof HTMLElement)) return;
 
     const triggerEl = root.querySelector('[data-popover-trigger]');
     const contentEl = root.querySelector('[data-popover-content]');
-    if (
-      !(triggerEl instanceof HTMLElement) ||
-      !(contentEl instanceof HTMLElement)
-    )
-      return;
+    const triggerButton = triggerEl?.querySelector('button, [role="button"]');
+    
+    if (!(triggerEl instanceof HTMLElement) || !(contentEl instanceof HTMLElement)) return;
 
     const placement = root.dataset.popoverPlacement || 'bottom';
     const triggerMode = root.dataset.popoverTriggerMode || 'click';
@@ -88,10 +173,15 @@ const defaultOpenAttr = defaultOpen ? 'true' : 'false';
     let isOpen = root.dataset.popoverOpen === 'true';
     let lastFocused = null;
 
+    // Enhanced positioning with viewport bounds checking
     const position = () => {
       const triggerRect = triggerEl.getBoundingClientRect();
       const contentRect = contentEl.getBoundingClientRect();
       const rootRect = root.getBoundingClientRect();
+      const viewport = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
 
       let top = 0;
       let left = 0;
@@ -99,6 +189,7 @@ const defaultOpenAttr = defaultOpen ? 'true' : 'false';
       const baseTop = triggerRect.top - rootRect.top;
       const baseLeft = triggerRect.left - rootRect.left;
 
+      // Calculate initial position based on placement
       switch (placement) {
         case 'top':
           top = baseTop - contentRect.height - offset;
@@ -137,6 +228,24 @@ const defaultOpenAttr = defaultOpen ? 'true' : 'false';
           left = baseLeft + triggerRect.width / 2 - contentRect.width / 2;
       }
 
+      // Viewport bounds checking and adjustment
+      const absoluteLeft = rootRect.left + left;
+      const absoluteTop = rootRect.top + top;
+
+      // Adjust horizontal position if out of bounds
+      if (absoluteLeft < 8) {
+        left = 8 - rootRect.left;
+      } else if (absoluteLeft + contentRect.width > viewport.width - 8) {
+        left = viewport.width - 8 - rootRect.left - contentRect.width;
+      }
+
+      // Adjust vertical position if out of bounds
+      if (absoluteTop < 8) {
+        top = 8 - rootRect.top;
+      } else if (absoluteTop + contentRect.height > viewport.height - 8) {
+        top = viewport.height - 8 - rootRect.top - contentRect.height;
+      }
+
       contentEl.style.top = `${Math.round(top)}px`;
       contentEl.style.left = `${Math.round(left)}px`;
     };
@@ -146,17 +255,26 @@ const defaultOpenAttr = defaultOpen ? 'true' : 'false';
       isOpen = true;
       contentEl.hidden = false;
       contentEl.setAttribute('aria-hidden', 'false');
-      position();
+      
+      if (triggerButton) {
+        triggerButton.setAttribute('aria-expanded', 'true');
+      }
+      
+      // Position after DOM update
+      requestAnimationFrame(() => {
+        position();
+        // Focus management for accessibility
+        if (triggerMode !== 'hover') {
+          lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          contentEl.focus({ preventScroll: true });
+        }
+      });
+      
       window.addEventListener('scroll', position, true);
       window.addEventListener('resize', position);
       document.addEventListener('click', handleOutsideClick);
-      if (triggerMode !== 'hover') {
-        lastFocused =
-          document.activeElement instanceof HTMLElement
-            ? document.activeElement
-            : null;
-        contentEl.focus({ preventScroll: true });
-      }
+      document.addEventListener('keydown', handleKeyDown);
+      
       root.dispatchEvent(new CustomEvent('popover:open', { bubbles: true }));
     };
 
@@ -165,12 +283,21 @@ const defaultOpenAttr = defaultOpen ? 'true' : 'false';
       isOpen = false;
       contentEl.hidden = true;
       contentEl.setAttribute('aria-hidden', 'true');
+      
+      if (triggerButton) {
+        triggerButton.setAttribute('aria-expanded', 'false');
+      }
+      
       window.removeEventListener('scroll', position, true);
       window.removeEventListener('resize', position);
       document.removeEventListener('click', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeyDown);
+      
+      // Restore focus for accessibility
       if (triggerMode !== 'hover' && lastFocused instanceof HTMLElement) {
         lastFocused.focus({ preventScroll: true });
       }
+      
       root.dispatchEvent(new CustomEvent('popover:close', { bubbles: true }));
     };
 
@@ -182,6 +309,14 @@ const defaultOpenAttr = defaultOpen ? 'true' : 'false';
       }
     };
 
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+      }
+    };
+
+    // Set up trigger event listeners based on trigger mode
     if (triggerMode === 'click') {
       triggerEl.addEventListener('click', (event) => {
         event.preventDefault();
@@ -189,33 +324,49 @@ const defaultOpenAttr = defaultOpen ? 'true' : 'false';
       });
     } else if (triggerMode === 'focus') {
       triggerEl.addEventListener('focusin', open);
-      triggerEl.addEventListener('focusout', close);
+      triggerEl.addEventListener('focusout', () => {
+        // Delay close to allow focus to move to content
+        setTimeout(() => {
+          if (!contentEl.contains(document.activeElement) && !triggerEl.contains(document.activeElement)) {
+            close();
+          }
+        }, 0);
+      });
+      contentEl.addEventListener('focusout', () => {
+        setTimeout(() => {
+          if (!contentEl.contains(document.activeElement) && !triggerEl.contains(document.activeElement)) {
+            close();
+          }
+        }, 0);
+      });
     } else if (triggerMode === 'hover') {
       let timeout = null;
-      const start = () => {
-        if (timeout) window.clearTimeout(timeout);
+      
+      const startHover = () => {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
         open();
       };
-      const stop = () => {
-        if (timeout) window.clearTimeout(timeout);
-        timeout = window.setTimeout(close, 120);
+      
+      const endHover = () => {
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(close, 150);
       };
-      triggerEl.addEventListener('mouseenter', start);
-      triggerEl.addEventListener('mouseleave', stop);
-      contentEl.addEventListener('mouseenter', start);
-      contentEl.addEventListener('mouseleave', stop);
+      
+      triggerEl.addEventListener('mouseenter', startHover);
+      triggerEl.addEventListener('mouseleave', endHover);
+      contentEl.addEventListener('mouseenter', startHover);
+      contentEl.addEventListener('mouseleave', endHover);
     }
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        close();
-      }
-    });
-
+    // Custom event listeners for programmatic control
     root.addEventListener('popover:open', open);
     root.addEventListener('popover:close', close);
     root.addEventListener('popover:toggle', toggle);
 
+    // Initialize if defaultOpen
     if (isOpen) {
       open(true);
     }

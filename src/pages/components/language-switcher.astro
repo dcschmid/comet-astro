@@ -1,20 +1,532 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
+import LanguageSwitcherComponent from '../../components/LanguageSwitcher.astro';
+
+// Sample language data for examples
+const basicLanguages = [
+  { code: 'en', label: 'English', href: '/en' },
+  { code: 'de', label: 'Deutsch', href: '/de' },
+  { code: 'fr', label: 'Français', href: '/fr' },
+  { code: 'es', label: 'Español', href: '/es' },
+];
+
+const extendedLanguages = [
+  { 
+    code: 'en', 
+    label: 'English', 
+    nativeName: 'English',
+    href: '/en',
+    flag: '🇺🇸',
+    direction: 'ltr'
+  },
+  { 
+    code: 'de', 
+    label: 'German', 
+    nativeName: 'Deutsch',
+    href: '/de',
+    flag: '🇩🇪',
+    direction: 'ltr'
+  },
+  { 
+    code: 'fr', 
+    label: 'French', 
+    nativeName: 'Français',
+    href: '/fr',
+    flag: '🇫🇷',
+    direction: 'ltr'
+  },
+  { 
+    code: 'es', 
+    label: 'Spanish', 
+    nativeName: 'Español',
+    href: '/es',
+    flag: '🇪🇸',
+    direction: 'ltr'
+  },
+  { 
+    code: 'ar', 
+    label: 'Arabic', 
+    nativeName: 'العربية',
+    href: '/ar',
+    flag: '🇸🇦',
+    direction: 'rtl'
+  },
+  { 
+    code: 'ja', 
+    label: 'Japanese', 
+    nativeName: '日本語',
+    href: '/ja',
+    flag: '🇯🇵',
+    direction: 'ltr'
+  },
+];
+
+// Usage code snippets
+const basicUsage = `---
+import { LanguageSwitcher } from 'comet-astro';
 
 const languages = [
-  { code: 'en', label: 'EN', href: '?lang=en' },
-  { code: 'de', label: 'DE', href: '?lang=de' },
-  { code: 'fr', label: 'FR', href: '?lang=fr' },
+  { code: 'en', label: 'English', href: '/en' },
+  { code: 'de', label: 'Deutsch', href: '/de' },
+  { code: 'fr', label: 'Français', href: '/fr' },
 ];
 ---
 
+<LanguageSwitcher 
+  current="en" 
+  languages={languages} 
+/>`;
+
+const advancedUsage = `---
+import { LanguageSwitcher } from 'comet-astro';
+
+const languages = [
+  { 
+    code: 'en', 
+    label: 'English', 
+    nativeName: 'English',
+    href: '/en',
+    flag: '🇺🇸',
+    direction: 'ltr'
+  },
+  { 
+    code: 'de', 
+    label: 'German', 
+    nativeName: 'Deutsch',
+    href: '/de',
+    flag: '🇩🇪',
+    direction: 'ltr'
+  },
+  { 
+    code: 'ar', 
+    label: 'Arabic', 
+    nativeName: 'العربية',
+    href: '/ar',
+    flag: '🇸🇦',
+    direction: 'rtl'
+  },
+];
+---
+
+<LanguageSwitcher 
+  current="en"
+  languages={languages}
+  variant="dropdown"
+  size="lg"
+  showFlags
+  showNativeNames
+  ariaLabel="Choose your language"
+/>`;
+
+const responsiveUsage = `---
+import { LanguageSwitcher } from 'comet-astro';
+---
+
+<!-- Responsive design: compact on mobile, full on desktop -->
+<div class="flex justify-between items-center">
+  <h1>My Website</h1>
+  
+  <!-- Mobile: Compact with codes -->
+  <LanguageSwitcher 
+    current="en"
+    languages={languages}
+    variant="compact"
+    size="sm"
+    className="md:hidden"
+  />
+  
+  <!-- Desktop: Full with flags -->
+  <LanguageSwitcher 
+    current="en"
+    languages={languages}
+    variant="default"
+    showFlags
+    className="hidden md:flex"
+  />
+</div>`;
+---
+
 <DocsLayout
-  title="LanguageSwitcher"
-  description="Link-based language switcher showing the current locale."
+  title="LanguageSwitcher Component"
+  description="WCAG AAA compliant language switcher with comprehensive internationalization support, multiple variants, and enhanced accessibility features."
 >
+  <!-- Overview -->
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <LanguageSwitcher current="en" languages={languages} />
+    <p class="text-lg text-slate-200">
+      A sophisticated language switcher component that provides excellent 
+      internationalization support with multiple display variants, flag support, 
+      and full accessibility compliance.
+    </p>
+    <div class="flex flex-wrap gap-2">
+      <span class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20">
+        WCAG AAA
+      </span>
+      <span class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20">
+        i18n Ready
+      </span>
+      <span class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20">
+        Responsive
+      </span>
+      <span class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20">
+        RTL Support
+      </span>
+    </div>
+  </section>
+
+  <!-- Quick Examples -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Quick Examples</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Basic Switcher</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <LanguageSwitcherComponent 
+            current="en" 
+            languages={basicLanguages} 
+          />
+          <p class="text-xs text-slate-400">Standard language switcher with text labels</p>
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">With Flags</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <LanguageSwitcherComponent 
+            current="en" 
+            languages={extendedLanguages.slice(0, 4)} 
+            showFlags
+          />
+          <p class="text-xs text-slate-400">Enhanced with flag icons</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Size Variants -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-6">
+      <div class="space-y-2">
+        <h3 class="text-sm font-medium text-slate-300">Small</h3>
+        <LanguageSwitcherComponent 
+          current="en" 
+          languages={basicLanguages.slice(0, 3)} 
+          size="sm"
+        />
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-sm font-medium text-slate-300">Medium (Default)</h3>
+        <LanguageSwitcherComponent 
+          current="en" 
+          languages={basicLanguages.slice(0, 3)} 
+          size="md"
+        />
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-sm font-medium text-slate-300">Large</h3>
+        <LanguageSwitcherComponent 
+          current="en" 
+          languages={basicLanguages.slice(0, 3)} 
+          size="lg"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Style Variants -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Style Variants</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Default</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LanguageSwitcherComponent 
+            current="en" 
+            languages={basicLanguages.slice(0, 3)} 
+            variant="default"
+          />
+        </div>
+        <p class="text-xs text-slate-400">Standard button style with borders and shadows</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Minimal</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LanguageSwitcherComponent 
+            current="en" 
+            languages={basicLanguages.slice(0, 3)} 
+            variant="minimal"
+          />
+        </div>
+        <p class="text-xs text-slate-400">Clean style without borders</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Compact</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LanguageSwitcherComponent 
+            current="en" 
+            languages={basicLanguages.slice(0, 3)} 
+            variant="compact"
+          />
+        </div>
+        <p class="text-xs text-slate-400">Space-efficient design for mobile</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Dropdown</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LanguageSwitcherComponent 
+            current="en" 
+            languages={basicLanguages} 
+            variant="dropdown"
+            dropdownLabel="Select Language"
+          />
+        </div>
+        <p class="text-xs text-slate-400">Dropdown menu for many languages</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advanced Features -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Advanced Features</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Native Names & Flags</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LanguageSwitcherComponent 
+            current="en" 
+            languages={extendedLanguages.slice(0, 4)} 
+            showFlags
+            showNativeNames
+            size="lg"
+          />
+        </div>
+        <p class="text-xs text-slate-400">Shows native language names with flag icons</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">RTL Support</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LanguageSwitcherComponent 
+            current="ar" 
+            languages={[
+              { code: 'en', label: 'English', nativeName: 'English', href: '/en' },
+              { code: 'ar', label: 'Arabic', nativeName: 'العربية', href: '/ar', direction: 'rtl' },
+              { code: 'he', label: 'Hebrew', nativeName: 'עברית', href: '/he', direction: 'rtl' }
+            ]} 
+            showNativeNames
+          />
+        </div>
+        <p class="text-xs text-slate-400">Proper RTL support for Arabic and Hebrew</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dropdown Variant -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Dropdown Variant</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Basic Dropdown</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LanguageSwitcherComponent 
+            current="en" 
+            languages={extendedLanguages} 
+            variant="dropdown"
+            dropdownLabel="Choose Language"
+          />
+        </div>
+        <p class="text-xs text-slate-400">Click to see dropdown menu with all languages</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Enhanced Dropdown</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <LanguageSwitcherComponent 
+            current="de" 
+            languages={extendedLanguages} 
+            variant="dropdown"
+            showFlags
+            showNativeNames
+            size="lg"
+            ariaLabel="Select your preferred language"
+          />
+        </div>
+        <p class="text-xs text-slate-400">With flags, native names, and enhanced accessibility</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Positioning -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Positioning</h2>
+    <div class="space-y-6">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+        <div class="space-y-2">
+          <h3 class="text-sm font-medium text-slate-300">Start (Left)</h3>
+          <div class="w-full">
+            <LanguageSwitcherComponent 
+              current="en" 
+              languages={basicLanguages.slice(0, 3)} 
+              position="start"
+            />
+          </div>
+        </div>
+        
+        <div class="space-y-2">
+          <h3 class="text-sm font-medium text-slate-300">Center</h3>
+          <div class="w-full">
+            <LanguageSwitcherComponent 
+              current="en" 
+              languages={basicLanguages.slice(0, 3)} 
+              position="center"
+            />
+          </div>
+        </div>
+        
+        <div class="space-y-2">
+          <h3 class="text-sm font-medium text-slate-300">End (Right)</h3>
+          <div class="w-full">
+            <LanguageSwitcherComponent 
+              current="en" 
+              languages={basicLanguages.slice(0, 3)} 
+              position="end"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Props Documentation -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Basic Props
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>current?</code>, <code>languages</code> (required), 
+          <code>className?</code>, <code>ariaLabel?</code>
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Visual Style
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>size?</code>, <code>variant?</code>, <code>position?</code> - 
+          Control appearance and layout.
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Enhanced Features
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>showFlags?</code>, <code>showNativeNames?</code> - 
+          Display flags and native language names.
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Dropdown Options
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>dropdownLabel?</code> - Custom dropdown button text when no language is selected.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- Language Object Structure -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Language Object Structure</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <pre class="text-sm text-slate-200 overflow-x-auto">
+        <code>{`interface Lang {
+  code: string;           // ISO language code (e.g., 'en', 'de')
+  label: string;          // Display name in English
+  href: string;           // Link URL for this language
+  flag?: string;          // Custom flag emoji (optional)
+  nativeName?: string;    // Name in native language (optional)
+  direction?: 'ltr' | 'rtl'; // Text direction (optional)
+}`}</code>
+      </pre>
+    </div>
+  </section>
+
+  <!-- Usage -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      The LanguageSwitcher component provides comprehensive internationalization 
+      support with automatic flag detection, RTL support, and full keyboard 
+      accessibility for dropdown variants.
+    </p>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{basicUsage}</code>
+      </pre>
+    </div>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Advanced Features</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{advancedUsage}</code>
+      </pre>
+    </div>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Responsive Design</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{responsiveUsage}</code>
+      </pre>
+    </div>
+  </section>
+
+  <!-- Accessibility -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <ul class="space-y-3 text-sm text-slate-200">
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+ contrast ratios for optimal readability</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Semantic HTML:</strong> Proper navigation structure with <code>&lt;nav&gt;</code> and language attributes</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Keyboard Navigation:</strong> Full keyboard support for dropdown with arrow keys and escape</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Screen Reader Support:</strong> Descriptive aria-labels and proper role assignments</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Internationalization:</strong> Built-in support for RTL languages and proper hreflang attributes</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>High Contrast Mode:</strong> Enhanced styling for high contrast accessibility displays</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Responsive Design:</strong> Adaptive layouts that work across all device sizes</span>
+        </li>
+      </ul>
+    </div>
   </section>
 </DocsLayout>

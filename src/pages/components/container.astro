@@ -1,46 +1,196 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Container from '../../components/Container.astro';
+import ContainerComponent from '../../components/Container.astro';
+
+const usageSnippet = `---
+import { Container } from 'comet-astro';
+---
+
+<Container size="lg" as="main">
+  <h1>Welcome to our app</h1>
+  <p>This content is automatically centered and responsive.</p>
+</Container>`;
 ---
 
 <DocsLayout
   title="Container"
-  description="Max-width content wrapper with responsive padding."
+  description="Responsive max-width content wrapper with semantic HTML support and AAA-compliant spacing."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li>
-        <code>size?: 'sm'|'md'|'lg'|'xl'|'full'</code> – max-width (default: 'lg')
-      </li>
-      <li><code>className?: string</code></li>
-    </ul>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      Container provides consistent max-width constraints and responsive padding 
+      for content layout. It centers content horizontally and adapts padding 
+      based on screen size for optimal readability.
+    </p>
+    <p class="text-base text-slate-200">
+      The component supports semantic HTML elements through the <code>as</code> prop, 
+      enabling proper document structure while maintaining visual consistency.
+    </p>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-4">
-      <div class="bg-gray-900 p-4 rounded">
-        <Container size="sm">
-          <div class="bg-purple-500/20 p-4 rounded text-center">
-            Small container (max-w-2xl)
-          </div>
-        </Container>
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Maximum width constraint. Options: <code>"sm"</code> (max-w-2xl), 
+          <code>"md"</code> (max-w-4xl), <code>"lg"</code> (max-w-6xl), 
+          <code>"xl"</code> (max-w-7xl), <code>"full"</code> (max-w-full). 
+          Defaults to <code>"lg"</code>.
+        </dd>
       </div>
-      <div class="bg-gray-900 p-4 rounded">
-        <Container size="md">
-          <div class="bg-purple-500/20 p-4 rounded text-center">
-            Medium container (max-w-4xl)
-          </div>
-        </Container>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          as?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          HTML element to render. Supports <code>"div"</code>, <code>"main"</code>, 
+          <code>"section"</code>, <code>"article"</code>, <code>"aside"</code>, 
+          <code>"header"</code>, <code>"footer"</code>. Defaults to <code>"div"</code>.
+        </dd>
       </div>
-      <div class="bg-gray-900 p-4 rounded">
-        <Container size="lg">
-          <div class="bg-purple-500/20 p-4 rounded text-center">
-            Large container (max-w-6xl)
-          </div>
-        </Container>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the container element.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          id?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional ID attribute for the container element, useful for 
+          skip links and scroll targeting.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and wrap your content. Choose an appropriate semantic 
+      element with the <code>as</code> prop to improve document structure and 
+      screen reader navigation.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Small (max-w-2xl)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+          <ContainerComponent size="sm">
+            <div class="rounded bg-blue-500/20 p-4 text-center text-slate-200 border border-blue-500/30">
+              Small container - ideal for text-heavy content and forms
+            </div>
+          </ContainerComponent>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Medium (max-w-4xl)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+          <ContainerComponent size="md">
+            <div class="rounded bg-green-500/20 p-4 text-center text-slate-200 border border-green-500/30">
+              Medium container - balanced width for most content
+            </div>
+          </ContainerComponent>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Large (max-w-6xl)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+          <ContainerComponent size="lg">
+            <div class="rounded bg-purple-500/20 p-4 text-center text-slate-200 border border-purple-500/30">
+              Large container - default size, great for dashboards and landing pages
+            </div>
+          </ContainerComponent>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">Extra Large (max-w-7xl)</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+          <ContainerComponent size="xl">
+            <div class="rounded bg-orange-500/20 p-4 text-center text-slate-200 border border-orange-500/30">
+              Extra large container - for wide layouts and data tables
+            </div>
+          </ContainerComponent>
+        </div>
       </div>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Semantic Usage</h2>
+    <p class="text-base text-slate-200">
+      Use appropriate semantic elements to improve document structure and 
+      accessibility. This helps screen readers understand content hierarchy.
+    </p>
+    <div class="space-y-4">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <ContainerComponent as="main" size="md">
+          <div class="rounded bg-slate-700/50 p-4 text-slate-200">
+            <code class="text-blue-300">&lt;main&gt;</code> container - primary content area
+          </div>
+        </ContainerComponent>
+      </div>
+      
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <ContainerComponent as="section" size="lg">
+          <div class="rounded bg-slate-700/50 p-4 text-slate-200">
+            <code class="text-green-300">&lt;section&gt;</code> container - thematic content grouping
+          </div>
+        </ContainerComponent>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Container supports semantic HTML elements that improve screen reader 
+      navigation and document structure. The responsive padding (16px → 24px → 32px) 
+      ensures adequate touch targets and comfortable reading distances.
+    </p>
+    <p class="text-base text-slate-200">
+      Use <code>as="main"</code> for the primary content area, <code>as="section"</code> 
+      for thematic content groupings, and <code>as="article"</code> for standalone 
+      content. The optional <code>id</code> prop enables skip link targets.
+    </p>
+    <p class="text-base text-slate-200">
+      Max-width constraints follow readability guidelines: smaller containers 
+      for text-heavy content (45-75 characters per line) and larger containers 
+      for complex layouts and data visualization.
+    </p>
   </section>
 </DocsLayout>

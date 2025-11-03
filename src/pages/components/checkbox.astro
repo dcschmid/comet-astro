@@ -1,18 +1,121 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import Checkbox from '../../components/Checkbox.astro';
+import CheckboxComp from '../../components/Checkbox.astro';
+
+const usageSnippet = `---\nimport { Checkbox } from 'comet-astro';\n\n---\n\n<form class="space-y-3">\n  <Checkbox name="terms" label="I agree to the terms" required />\n  <Checkbox name="updates" label="Email me product updates" helperText="You can unsubscribe anytime." />\n  <Checkbox name="beta" label="Join beta program" indeterminate />\n</form>`;
 ---
 
 <DocsLayout
   title="Checkbox"
-  description="Styled checkbox supporting indeterminate, disabled, and helper text."
+  description="Accessible checkbox with indeterminate state, helper text, responsive sizes, and AAA contrast across light and dark themes."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-3">
-      <Checkbox name="terms" label="I agree to the terms" />
-      <Checkbox name="newsletter" label="Subscribe to newsletter" checked />
-      <Checkbox name="disabled" label="Disabled option" disabled />
+    <p class="text-base text-slate-100">Checkboxes let users select one or more independent options. This implementation keeps contrast above WCAG AAA for borders, indicators, focus rings, and text in light and dark themes.</p>
+    <p class="text-base text-slate-200">Use the indeterminate state to indicate a mixed selection (e.g. parent category partially selected). The state is set programmatically for clarity and announced properly by assistive tech.</p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">name</dt>
+        <dd class="text-sm text-slate-200">Form field name (required). Used for grouping related values in submission.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">label?</dt>
+        <dd class="text-sm text-slate-200">Visible label text. If omitted, provide <code>ariaLabel</code> for accessibility.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">value?</dt>
+        <dd class="text-sm text-slate-200">Submitted value when checked. Defaults to <code>"on"</code> if omitted.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">checked?</dt>
+        <dd class="text-sm text-slate-200">Initial checked state. For controlled behaviour manage at form level.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">indeterminate?</dt>
+        <dd class="text-sm text-slate-200">Displays mixed selection (dash). Useful for parent nodes in hierarchies.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">disabled?</dt>
+        <dd class="text-sm text-slate-200">Removes interactivity and dims content. Still conveys state.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">required?</dt>
+        <dd class="text-sm text-slate-200">Indicates at least one option must be selected before submission.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">size?</dt>
+        <dd class="text-sm text-slate-200">Visual size of the box: <code>"sm"</code>, <code>"md"</code>, <code>"lg"</code>. Defaults to <code>"md"</code>.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">helperText?</dt>
+        <dd class="text-sm text-slate-200">Supplementary guidance below the label. Do not duplicate label meaning.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">error?</dt>
+        <dd class="text-sm text-slate-200">Error message replacing helper text. Sets <code>aria-invalid</code>.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">ariaLabel?</dt>
+        <dd class="text-sm text-slate-200">Accessible name when no visible <code>label</code> is rendered (icon-only or custom layout).</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">Import and place inside a form. Use <code>helperText</code> for additional guidance and <code>error</code> when validation fails. Avoid using both simultaneously.</p>
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">States & sizes</h2>
+    <p class="text-sm text-slate-300">Size adjusts box dimensions, label typography, and spacing for comfortable hit areas while maintaining AAA contrast.</p>
+    <div class="grid gap-6 md:grid-cols-3">
+      <div class="space-y-2">
+  <CheckboxComp name="demo-sm" size="sm" label="Small" />
+  <CheckboxComp name="demo-sm-c" size="sm" label="Small checked" checked />
+  <CheckboxComp name="demo-sm-i" size="sm" label="Small indeterminate" indeterminate />
+      </div>
+      <div class="space-y-2">
+  <CheckboxComp name="demo-md" size="md" label="Medium" />
+  <CheckboxComp name="demo-md-c" size="md" label="Medium checked" checked />
+  <CheckboxComp name="demo-md-i" size="md" label="Medium indeterminate" indeterminate />
+      </div>
+      <div class="space-y-2">
+  <CheckboxComp name="demo-lg" size="lg" label="Large" />
+  <CheckboxComp name="demo-lg-c" size="lg" label="Large checked" checked />
+  <CheckboxComp name="demo-lg-i" size="lg" label="Large indeterminate" indeterminate />
+      </div>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Disabled & error</h2>
+    <div class="space-y-3">
+  <CheckboxComp name="demo-dis" label="Disabled" disabled />
+  <CheckboxComp name="demo-dis-c" label="Disabled checked" checked disabled />
+  <CheckboxComp name="demo-err" label="Marketing opt-in" error="Please confirm or uncheck." />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Group example</h2>
+    <p class="text-base text-slate-200">Group related options with a fieldset and legend to provide context. Indeterminate can represent partial selection on a parent option.</p>
+    <fieldset class="space-y-2 rounded-lg border border-slate-700/70 p-4">
+      <legend class="px-1 text-sm font-semibold text-slate-200">Notification channels</legend>
+  <CheckboxComp name="notif-email" label="Email" checked />
+  <CheckboxComp name="notif-sms" label="SMS" />
+  <CheckboxComp name="notif-push" label="Push" indeterminate helperText="Partially enabled in mobile settings" />
+    </fieldset>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">Native inputs ensure assistive tech compatibility. Indeterminate state is applied after hydration, recognized by screen readers. Focus ring maintains ≥ 3:1 contrast against surrounding surface while checkbox fill/border maintain ≥7:1 for primary blue and error states.</p>
+    <p class="text-base text-slate-200">Always connect visible labels using <code>for</code>/<code>id</code>. Use a concise, task-oriented label. Prefer grouping with <code>fieldset</code> & <code>legend</code> rather than repeating context in each label.</p>
+    <p class="text-base text-slate-200">Avoid relying solely on color to indicate errors—this implementation uses both color and <code>aria-invalid</code>. Provide clear helper text and replace it with an actionable error message when validation fails.</p>
   </section>
 </DocsLayout>

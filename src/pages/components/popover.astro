@@ -2,19 +2,639 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Popover from '../../components/Popover.astro';
 import Button from '../../components/Button.astro';
+import Badge from '../../components/Badge.astro';
+import Card from '../../components/Card.astro';
 ---
 
 <DocsLayout
   title="Popover"
-  description="Contextual bubble anchored to a trigger with directional placement."
+  description="Accessible contextual overlay that displays rich content when triggered by user interaction with enhanced positioning and responsive design."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Popover
-      content="Teams on the Pro plan gain access to automation and API usage."
-      placement="right"
-    >
-      <Button variant="ghost">Hover or focus me</Button>
-    </Popover>
-  </section>
+  <div class="space-y-10">
+    <!-- Overview -->
+    <section id="overview" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Overview</h2>
+        <div class="prose prose-lg max-w-none dark:prose-invert">
+          <p>Popovers are versatile contextual overlays that display rich content when triggered by user interaction. They automatically position themselves relative to their trigger elements with intelligent viewport boundary detection and support multiple trigger modes for optimal user experience.</p>
+          
+          <p>Built with comprehensive WCAG AAA accessibility features including proper ARIA labeling, focus management, and keyboard navigation support for screen reader compatibility.</p>
+        </div>
+      </div>
+      
+      <!-- Basic Usage -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Basic Usage</h3>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="flex gap-4 items-center justify-center">
+              <Popover content="This is a simple popover with default styling" placement="top">
+                <Button variant="outline">Hover me</Button>
+              </Popover>
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover content="This is a simple popover with default styling" placement="top"&gt;
+  &lt;Button variant="outline"&gt;Hover me&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Variants -->
+    <section id="variants" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Variants</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Four distinct visual styles designed for different contexts and emphasis levels.</p>
+      </div>
+
+      <!-- Default Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Default</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Standard variant with subtle shadow and balanced contrast.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="flex gap-4 items-center justify-center">
+              <Popover variant="default" content="Default variant with balanced styling" placement="top">
+                <Button variant="primary">Default Popover</Button>
+              </Popover>
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover variant="default" content="Default variant with balanced styling"&gt;
+  &lt;Button variant="primary"&gt;Default Popover&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Minimal Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Minimal</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Clean variant with reduced visual weight and subtle styling.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="flex gap-4 items-center justify-center">
+              <Popover variant="minimal" content="Minimal variant with clean, subtle styling" placement="right">
+                <Button variant="outline">Minimal Popover</Button>
+              </Popover>
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover variant="minimal" content="Minimal variant with clean styling"&gt;
+  &lt;Button variant="outline"&gt;Minimal Popover&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Bordered Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Bordered</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Variant with distinct border for clear visual separation.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="flex gap-4 items-center justify-center">
+              <Popover variant="bordered" content="Bordered variant with clear visual definition" placement="bottom">
+                <Button variant="secondary">Bordered Popover</Button>
+              </Popover>
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover variant="bordered" content="Bordered variant with clear definition"&gt;
+  &lt;Button variant="secondary"&gt;Bordered Popover&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Elevated Variant -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Elevated</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Prominent variant with enhanced shadow for maximum visual impact.</p>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="flex gap-4 items-center justify-center">
+              <Popover variant="elevated" content="Elevated variant with prominent shadow styling" placement="left">
+                <Button variant="primary">Elevated Popover</Button>
+              </Popover>
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover variant="elevated" content="Elevated variant with prominent shadow"&gt;
+  &lt;Button variant="primary"&gt;Elevated Popover&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sizes -->
+    <section id="sizes" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Sizes</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Three size options to accommodate different content lengths and screen sizes.</p>
+      </div>
+
+      <div class="grid gap-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Small</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Compact size for brief hints and simple messages.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="flex gap-4 items-center justify-center">
+                <Popover size="sm" content="Small popover for brief content" placement="top">
+                  <Button size="sm">Small Popover</Button>
+                </Popover>
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover size="sm" content="Small popover for brief content"&gt;
+  &lt;Button size="sm"&gt;Small Popover&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Medium (Default)</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Standard size suitable for most content types and use cases.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="flex gap-4 items-center justify-center">
+                <Popover size="md" content="Medium popover with standard sizing for regular content" placement="right">
+                  <Button>Medium Popover</Button>
+                </Popover>
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover size="md" content="Medium popover with standard sizing"&gt;
+  &lt;Button&gt;Medium Popover&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Large</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Spacious size for detailed information and longer content.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="flex gap-4 items-center justify-center">
+                <Popover size="lg" content="Large popover with spacious sizing perfect for detailed information and longer content descriptions" placement="bottom">
+                  <Button size="lg">Large Popover</Button>
+                </Popover>
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover size="lg" content="Large popover with spacious sizing"&gt;
+  &lt;Button size="lg"&gt;Large Popover&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Placement -->
+    <section id="placement" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Placement Options</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Eight directional placement options with automatic viewport boundary detection.</p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Cardinal Directions</h3>
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="grid grid-cols-2 gap-4 place-items-center">
+              <Popover content="Top placement" placement="top">
+                <Button variant="outline" size="sm">Top</Button>
+              </Popover>
+              <Popover content="Right placement" placement="right">
+                <Button variant="outline" size="sm">Right</Button>
+              </Popover>
+              <Popover content="Bottom placement" placement="bottom">
+                <Button variant="outline" size="sm">Bottom</Button>
+              </Popover>
+              <Popover content="Left placement" placement="left">
+                <Button variant="outline" size="sm">Left</Button>
+              </Popover>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Corner Directions</h3>
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="grid grid-cols-2 gap-4 place-items-center">
+              <Popover content="Top-left placement" placement="top-left">
+                <Button variant="outline" size="sm">Top-Left</Button>
+              </Popover>
+              <Popover content="Top-right placement" placement="top-right">
+                <Button variant="outline" size="sm">Top-Right</Button>
+              </Popover>
+              <Popover content="Bottom-left placement" placement="bottom-left">
+                <Button variant="outline" size="sm">Bottom-Left</Button>
+              </Popover>
+              <Popover content="Bottom-right placement" placement="bottom-right">
+                <Button variant="outline" size="sm">Bottom-Right</Button>
+              </Popover>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;!-- Cardinal directions --&gt;
+&lt;Popover placement="top" content="Top placement"&gt;...&lt;/Popover&gt;
+&lt;Popover placement="right" content="Right placement"&gt;...&lt;/Popover&gt;
+&lt;Popover placement="bottom" content="Bottom placement"&gt;...&lt;/Popover&gt;
+&lt;Popover placement="left" content="Left placement"&gt;...&lt;/Popover&gt;
+
+&lt;!-- Corner directions --&gt;
+&lt;Popover placement="top-left" content="Top-left placement"&gt;...&lt;/Popover&gt;
+&lt;Popover placement="top-right" content="Top-right placement"&gt;...&lt;/Popover&gt;
+&lt;Popover placement="bottom-left" content="Bottom-left placement"&gt;...&lt;/Popover&gt;
+&lt;Popover placement="bottom-right" content="Bottom-right placement"&gt;...&lt;/Popover&gt;</code></pre>
+    </section>
+
+    <!-- Trigger Modes -->
+    <section id="trigger-modes" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Trigger Modes</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Three interaction modes to suit different user experience patterns.</p>
+      </div>
+
+      <div class="grid gap-6">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Hover (Default)</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Shows on mouse hover and focus, hides on mouse leave and blur.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="flex gap-4 items-center justify-center">
+                <Popover trigger="hover" content="Hover trigger mode - shows on mouse hover and focus">
+                  <Button variant="outline">Hover Trigger</Button>
+                </Popover>
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover trigger="hover" content="Hover trigger mode"&gt;
+  &lt;Button&gt;Hover Trigger&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Click</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Shows on click, hides on outside click or escape key.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="flex gap-4 items-center justify-center">
+                <Popover trigger="click" content="Click trigger mode - shows on click, hides on outside click">
+                  <Button variant="secondary">Click Trigger</Button>
+                </Popover>
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover trigger="click" content="Click trigger mode"&gt;
+  &lt;Button&gt;Click Trigger&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold">Focus</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Shows on focus, hides on blur - ideal for keyboard navigation.</p>
+          <div class="grid gap-6">
+            <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="flex gap-4 items-center justify-center">
+                <Popover trigger="focus" content="Focus trigger mode - shows on focus, hides on blur">
+                  <Button variant="primary">Focus Trigger</Button>
+                </Popover>
+              </div>
+            </div>
+            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover trigger="focus" content="Focus trigger mode"&gt;
+  &lt;Button&gt;Focus Trigger&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rich Content -->
+    <section id="rich-content" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Rich Content</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Popovers support complex HTML content through slots for maximum flexibility.</p>
+      </div>
+
+      <div class="space-y-6">
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="flex gap-4 items-center justify-center">
+              <Popover variant="elevated" size="lg" placement="top">
+                <Button slot="trigger" variant="primary">Rich Content Popover</Button>
+                <div class="space-y-3">
+                  <h4 class="font-semibold text-gray-900 dark:text-gray-100">Feature Highlights</h4>
+                  <div class="flex gap-2 flex-wrap">
+                    <Badge variant="secondary">New</Badge>
+                    <Badge variant="success">Updated</Badge>
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">Enhanced with comprehensive accessibility features and responsive design patterns.</p>
+                  <div class="pt-2 border-t border-gray-200 dark:border-gray-600">
+                    <Button size="sm" variant="outline">Learn More</Button>
+                  </div>
+                </div>
+              </Popover>
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover variant="elevated" size="lg" placement="top"&gt;
+  &lt;Button slot="trigger" variant="primary"&gt;Rich Content Popover&lt;/Button&gt;
+  &lt;div class="space-y-3"&gt;
+    &lt;h4 class="font-semibold"&gt;Feature Highlights&lt;/h4&gt;
+    &lt;div class="flex gap-2"&gt;
+      &lt;Badge variant="secondary"&gt;New&lt;/Badge&gt;
+      &lt;Badge variant="success"&gt;Updated&lt;/Badge&gt;
+    &lt;/div&gt;
+    &lt;p class="text-sm"&gt;Enhanced with comprehensive accessibility...&lt;/p&gt;
+    &lt;div class="pt-2 border-t"&gt;
+      &lt;Button size="sm" variant="outline"&gt;Learn More&lt;/Button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/Popover&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Props Reference -->
+    <section id="props" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Props Reference</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Complete API reference for all available properties and their configurations.</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-100 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Prop</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Type</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Default</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Description</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">variant</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default' | 'minimal' | 'bordered' | 'elevated'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Visual style variant of the popover</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">size</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'sm' | 'md' | 'lg'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'md'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Size of the popover content area</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">placement</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'top' | 'right' | 'bottom' | 'left' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'top'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Position of popover relative to trigger</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">trigger</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'hover' | 'click' | 'focus'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'hover'</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Interaction mode for showing/hiding</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">content</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Simple text content (alternative to slot)</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">offset</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">number</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">8</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Distance in pixels from trigger element</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">delay</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">number</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">150</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Show/hide delay in milliseconds</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">disabled</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Disables popover interactions</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">ariaLabel</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Accessible label for screen readers</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">ariaDescribedBy</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">ID of element that describes the popover</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">class</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Additional CSS classes for customization</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Slots -->
+    <section id="slots" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Slots</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Named slots for flexible content composition and advanced layouts.</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-100 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Slot</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Description</th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Usage</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">default</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Trigger element that activates the popover</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Place any interactive element as trigger</td>
+            </tr>
+            <tr class="bg-gray-50 dark:bg-gray-800">
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">trigger</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Named slot for trigger element (alternative to default)</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Explicit trigger when using rich content slot</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">content</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Rich HTML content displayed in the popover</td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Complex layouts, interactive elements, images</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Accessibility -->
+    <section id="accessibility" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Accessibility Features</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Comprehensive WCAG AAA compliance with enhanced screen reader support and keyboard navigation.</p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Keyboard Navigation
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• <strong>Tab:</strong> Navigate to trigger element</li>
+            <li>• <strong>Enter/Space:</strong> Activate click triggers</li>
+            <li>• <strong>Escape:</strong> Close popover</li>
+            <li>• <strong>Focus:</strong> Automatic trigger with focus mode</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Screen Reader Support
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• Proper ARIA labeling with <code>aria-label</code></li>
+            <li>• Content association via <code>aria-describedby</code></li>
+            <li>• Live region announcements for dynamic content</li>
+            <li>• Semantic role definitions</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Visual Accessibility
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• WCAG AAA contrast ratios (7:1+)</li>
+            <li>• High contrast mode compatibility</li>
+            <li>• Dark mode with proper contrast</li>
+            <li>• Focus indicators with sufficient visibility</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            Enhanced Features
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <li>• Viewport boundary detection</li>
+            <li>• Automatic position adjustment</li>
+            <li>• Configurable interaction delays</li>
+            <li>• Progressive enhancement support</li>
+          </ul>
+        </Card>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Accessibility Best Practices</h3>
+        <div class="grid gap-6">
+          <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="flex gap-4 items-center justify-center">
+              <Popover 
+                content="This popover provides additional context about the user's profile settings" 
+                ariaLabel="Profile settings information"
+                placement="top"
+              >
+                <Button variant="outline" aria-describedby="profile-help">Profile Settings</Button>
+              </Popover>
+            </div>
+          </div>
+          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;Popover 
+  content="This popover provides additional context..."
+  ariaLabel="Profile settings information"
+  placement="top"
+&gt;
+  &lt;Button aria-describedby="profile-help"&gt;Profile Settings&lt;/Button&gt;
+&lt;/Popover&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section id="best-practices" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Best Practices</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Guidelines for effective popover implementation and optimal user experience.</p>
+      </div>
+
+      <div class="space-y-6">
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-green-600 dark:text-green-400">✓ Do</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Use popovers for contextual help and additional information</li>
+            <li>• Keep content concise and scannable</li>
+            <li>• Choose appropriate trigger modes for your use case</li>
+            <li>• Provide clear visual hierarchy with proper variants</li>
+            <li>• Test with screen readers and keyboard navigation</li>
+            <li>• Use consistent placement patterns across your interface</li>
+            <li>• Include descriptive aria-labels for accessibility</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-red-600 dark:text-red-400">✗ Don't</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Use popovers for critical information that must be seen</li>
+            <li>• Overflow popovers with excessive content</li>
+            <li>• Mix different trigger modes inconsistently</li>
+            <li>• Place essential actions only in popovers</li>
+            <li>• Use click triggers for simple tooltips</li>
+            <li>• Ignore viewport boundaries on mobile devices</li>
+            <li>• Forget to test with various screen sizes</li>
+          </ul>
+        </Card>
+
+        <Card class="p-6">
+          <h3 class="font-semibold mb-3 text-blue-600 dark:text-blue-400">💡 Tips</h3>
+          <ul class="space-y-2 text-sm">
+            <li>• Use hover triggers for informational content</li>
+            <li>• Use click triggers for interactive content</li>
+            <li>• Use focus triggers for keyboard-first interfaces</li>
+            <li>• Consider minimal variant for subtle hints</li>
+            <li>• Use elevated variant for important announcements</li>
+            <li>• Test placement options to avoid covering important content</li>
+            <li>• Combine with other components for rich experiences</li>
+          </ul>
+        </Card>
+      </div>
+    </section>
+
+    <!-- Related Components -->
+    <section id="related" class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold mb-4">Related Components</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Other components that work well with or serve similar purposes as popovers.</p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Modal</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For complex content requiring full attention</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Dropdown Menu</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For actionable menu items and navigation</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Dialog</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For confirmation prompts and forms</p>
+        </Card>
+        <Card class="p-4 hover:shadow-md transition-shadow">
+          <h3 class="font-semibold mb-2">Toast</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300">For temporary status notifications</p>
+        </Card>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

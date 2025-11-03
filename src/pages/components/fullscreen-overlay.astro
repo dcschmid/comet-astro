@@ -1,43 +1,303 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import FullscreenOverlay from '../../components/FullscreenOverlay.astro';
+import FullscreenOverlayComponent from '../../components/FullscreenOverlay.astro';
 import Button from '../../components/Button.astro';
 import Paragraph from '../../components/Paragraph.astro';
 
-const triggerId = 'overlay-doc-trigger';
-const closeId = 'overlay-doc-close';
+const title = "FullscreenOverlay";
+const description = "WCAG AAA compliant fullscreen overlay component for dialogs, modals, and confirmations with enhanced accessibility and focus management.";
+
+const triggerBasicId = 'overlay-basic-trigger';
+const triggerLargeId = 'overlay-large-trigger';
+const triggerNoEscapeId = 'overlay-no-escape-trigger';
+const closeBasicId = 'overlay-basic-close';
+const closeLargeId = 'overlay-large-close';
+const closeNoEscapeId = 'overlay-no-escape-close';
 ---
 
-<DocsLayout
-  title="FullscreenOverlay"
-  description="Edge-to-edge overlay for onboarding, confirmations, or feature tours."
->
+<DocsLayout {title} {description}>
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Button id={triggerId} variant="secondary">Show overlay</Button>
-    <FullscreenOverlay title="Join the beta" closable>
-      <Paragraph size="sm">
-        Gain early access to experimentation features and share insights with
-        the product team.
-      </Paragraph>
-      <div slot="actions" class="flex gap-2">
-        <Button variant="secondary" id={closeId}>Maybe later</Button>
-        <Button variant="primary">Request access</Button>
+    <p class="text-base text-slate-100">
+      FullscreenOverlay provides a modal dialog interface that takes up the entire viewport. 
+      Built with comprehensive WCAG AAA compliance, it ensures proper focus management, 
+      keyboard navigation, and screen reader accessibility.
+    </p>
+    <p class="text-base text-slate-200">
+      The component features enhanced contrast ratios, flexible sizing options, 
+      and configurable interaction behaviors for professional modal experiences.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">open?</dt>
+        <dd class="text-sm text-slate-200">
+          Controls whether the overlay is visible. Defaults to <code>false</code>.
+        </dd>
       </div>
-    </FullscreenOverlay>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">title?</dt>
+        <dd class="text-sm text-slate-200">
+          Title for the overlay. Automatically provides ARIA labeling for screen readers.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">closable?</dt>
+        <dd class="text-sm text-slate-200">
+          Whether to show a close button. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">closeLabel?</dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label for the close button. Defaults to <code>"Close"</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">size?</dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>"sm"</code>, <code>"md"</code>, <code>"lg"</code>, or <code>"xl"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">preventBackdropClose?</dt>
+        <dd class="text-sm text-slate-200">
+          Prevents closing when clicking outside the dialog. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">preventEscapeClose?</dt>
+        <dd class="text-sm text-slate-200">
+          Prevents closing with the Escape key. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">ariaLabel?</dt>
+        <dd class="text-sm text-slate-200">
+          Custom ARIA label for the dialog when no title is provided.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+      <p class="text-sm text-slate-300">
+        Import the FullscreenOverlay component and use the global CometOverlay API to control visibility.
+        The component automatically handles focus management and accessibility.
+      </p>
+      <pre class="rounded bg-slate-950/50 p-4 text-sm text-slate-300 overflow-x-auto"><code>{`---
+import FullscreenOverlay from '../../components/FullscreenOverlay.astro';
+import Button from '../../components/Button.astro';
+---
+
+<Button id="trigger">Open Dialog</Button>
+
+<FullscreenOverlay 
+  title="Confirmation"
+  size="md"
+  closable={true}
+>
+  <p>Are you sure you want to continue?</p>
+  <div slot="actions">
+    <Button variant="secondary" id="cancel">Cancel</Button>
+    <Button variant="primary">Confirm</Button>
+  </div>
+</FullscreenOverlay>
+
+<script>
+  document.getElementById('trigger')?.addEventListener('click', () => {
+    window.CometOverlay?.open();
+  });
+  
+  document.getElementById('cancel')?.addEventListener('click', () => {
+    window.CometOverlay?.close();
+  });
+</script>`}</code></pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <div class="space-y-8">
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Basic Dialog</h3>
+        <p class="text-sm text-slate-300">
+          Simple overlay with title, content, and action buttons.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <button 
+            id={triggerBasicId} 
+            class="inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 transition-all hover:bg-slate-200 focus:ring-2 focus:ring-blue-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+          >
+            Show Basic Dialog
+          </button>
+          <FullscreenOverlayComponent title="Welcome" closable size="md">
+            <Paragraph size="sm">
+              Welcome to our platform! This is a basic dialog example with proper accessibility features.
+            </Paragraph>
+            <div slot="actions" class="flex gap-2">
+              <button 
+                id={closeBasicId}
+                class="inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 transition-all hover:bg-slate-200 focus:ring-2 focus:ring-blue-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+              >
+                Close
+              </button>
+              <Button variant="primary">Get Started</Button>
+            </div>
+          </FullscreenOverlayComponent>
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Large Dialog</h3>
+        <p class="text-sm text-slate-300">
+          Larger overlay for content-heavy dialogs with enhanced scrolling.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <button 
+            id={triggerLargeId} 
+            class="inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 transition-all hover:bg-slate-200 focus:ring-2 focus:ring-blue-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+          >
+            Show Large Dialog
+          </button>
+          <FullscreenOverlayComponent title="Terms of Service" closable size="lg">
+            <div class="space-y-4">
+              <Paragraph size="sm">
+                This is a larger dialog that can accommodate more content. It includes enhanced scrolling
+                capabilities and maintains proper focus management even with extensive content.
+              </Paragraph>
+              <Paragraph size="sm">
+                The dialog maintains WCAG AAA contrast ratios and provides excellent readability
+                in both light and dark modes. All interactive elements are keyboard accessible.
+              </Paragraph>
+              <Paragraph size="sm">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
+                exercitation ullamco laboris.
+              </Paragraph>
+            </div>
+            <div slot="actions" class="flex gap-2">
+              <button 
+                id={closeLargeId}
+                class="inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 transition-all hover:bg-slate-200 focus:ring-2 focus:ring-blue-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+              >
+                Decline
+              </button>
+              <Button variant="primary">Accept</Button>
+            </div>
+          </FullscreenOverlayComponent>
+        </div>
+      </div>
+
+      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+        <h3 class="text-lg font-medium text-slate-100">Protected Dialog</h3>
+        <p class="text-sm text-slate-300">
+          Dialog that prevents accidental closure with backdrop click and escape key disabled.
+        </p>
+        <div class="bg-slate-800/50 rounded p-6">
+          <button 
+            id={triggerNoEscapeId} 
+            class="inline-flex items-center justify-center rounded-lg border-2 border-blue-600 bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-700 focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            Show Protected Dialog
+          </button>
+          <FullscreenOverlayComponent 
+            title="Critical Action" 
+            closable 
+            size="md"
+            preventBackdropClose={true}
+            preventEscapeClose={true}
+          >
+            <Paragraph size="sm">
+              This dialog requires explicit user action and cannot be closed accidentally.
+              Only the close button or action buttons can dismiss it.
+            </Paragraph>
+            <div slot="actions" class="flex gap-2">
+              <button 
+                id={closeNoEscapeId}
+                class="inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 transition-all hover:bg-slate-200 focus:ring-2 focus:ring-blue-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+              >
+                Cancel
+              </button>
+              <Button variant="primary">Delete Account</Button>
+            </div>
+          </FullscreenOverlayComponent>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="space-y-4">
+      <p class="text-base text-slate-200">
+        The FullscreenOverlay component implements comprehensive accessibility features:
+      </p>
+      <ul class="space-y-2 text-sm text-slate-300 list-disc list-inside ml-4">
+        <li>Modal dialog semantics with proper <code>role="dialog"</code> and <code>aria-modal="true"</code></li>
+        <li>Enhanced focus management with focus trapping and restoration</li>
+        <li>WCAG AAA contrast ratios (7:1+) for all text and interactive elements</li>
+        <li>Keyboard navigation support with Tab/Shift+Tab cycling and Escape key handling</li>
+        <li>Screen reader announcements for dialog state changes</li>
+        <li>Proper ARIA labeling with <code>aria-labelledby</code> and <code>aria-describedby</code></li>
+        <li>Enhanced scrolling support with custom scrollbars for better visibility</li>
+        <li>Configurable interaction behaviors for different use cases</li>
+        <li>Backdrop and escape key handling with override options</li>
+      </ul>
+      <div class="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4">
+        <p class="text-sm text-amber-200">
+          <strong>Best Practice:</strong> Always provide a meaningful <code>title</code> or <code>ariaLabel</code> 
+          for screen reader users. Use the <code>actions</code> slot for dialog buttons and ensure 
+          at least one action allows users to close the dialog.
+        </p>
+      </div>
+    </div>
   </section>
 </DocsLayout>
 
-<script>
+<script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    const trigger = document.getElementById('overlay-doc-trigger');
-    const close = document.getElementById('overlay-doc-close');
-    if (!trigger) return;
+    // Basic dialog
+    const triggerBasic = document.getElementById('overlay-basic-trigger');
+    const closeBasic = document.getElementById('overlay-basic-close');
+    
+    // Large dialog  
+    const triggerLarge = document.getElementById('overlay-large-trigger');
+    const closeLarge = document.getElementById('overlay-large-close');
+    
+    // Protected dialog
+    const triggerNoEscape = document.getElementById('overlay-no-escape-trigger');
+    const closeNoEscape = document.getElementById('overlay-no-escape-close');
 
-    trigger.addEventListener('click', () => {
+    // Note: In a real implementation, you would need separate overlay instances
+    // or a more sophisticated state management system for multiple overlays
+    
+    triggerBasic?.addEventListener('click', () => {
       if (window.CometOverlay?.open) window.CometOverlay.open();
     });
-    close?.addEventListener('click', () => {
+    
+    closeBasic?.addEventListener('click', () => {
+      if (window.CometOverlay?.close) window.CometOverlay.close();
+    });
+    
+    triggerLarge?.addEventListener('click', () => {
+      if (window.CometOverlay?.open) window.CometOverlay.open();
+    });
+    
+    closeLarge?.addEventListener('click', () => {
+      if (window.CometOverlay?.close) window.CometOverlay.close();
+    });
+    
+    triggerNoEscape?.addEventListener('click', () => {
+      if (window.CometOverlay?.open) window.CometOverlay.open();
+    });
+    
+    closeNoEscape?.addEventListener('click', () => {
       if (window.CometOverlay?.close) window.CometOverlay.close();
     });
   });

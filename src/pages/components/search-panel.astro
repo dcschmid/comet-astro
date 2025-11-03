@@ -2,30 +2,797 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import SearchPanel from '../../components/SearchPanel.astro';
 import Button from '../../components/Button.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 const triggerId = 'search-panel-doc-trigger';
 ---
 
 <DocsLayout
   title="SearchPanel"
-  description="Full-screen search and command surface with keyboard shortcuts."
+  description="Accessible full-screen search overlay with WCAG AAA compliance, multiple variants, keyboard shortcuts, and comprehensive search functionality."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Button id={triggerId} variant="ghost">Open search</Button>
-    <SearchPanel placeholder="Search docs, teams, or settings…" />
-  </section>
+  <div class="space-y-12">
+    <!-- Basic Example -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Basic Example</h2>
+      <div class="not-prose space-y-4">
+        <Button id={triggerId} variant="default">
+          Open Search Panel
+        </Button>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          Try pressing <kbd class="px-1 py-0.5 text-xs bg-gray-200 dark:bg-gray-700 rounded">Cmd/Ctrl + K</kbd> to open the search panel
+        </p>
+      </div>
+      
+      <CodeBlock
+        code={`<Button id="search-trigger">Open Search</Button>
+<SearchPanel 
+  title="Search Documentation"
+  placeholder="Search components, guides, and examples..."
+  helpText="Use keywords to find relevant content"
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Variants -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Variants</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Default</h3>
+          <div class="not-prose">
+            <Button id="trigger-default" variant="outline">
+              Default Variant
+            </Button>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Clean, professional design with subtle shadows and borders
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Minimal</h3>
+          <div class="not-prose">
+            <Button id="trigger-minimal" variant="outline">
+              Minimal Variant
+            </Button>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Simplified design with reduced visual emphasis
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Blur</h3>
+          <div class="not-prose">
+            <Button id="trigger-blur" variant="outline">
+              Blur Variant
+            </Button>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Modern glassmorphism effect with backdrop blur
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Solid</h3>
+          <div class="not-prose">
+            <Button id="trigger-solid" variant="outline">
+              Solid Variant
+            </Button>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Bold, high-contrast design with solid colors
+          </p>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Default variant -->
+<SearchPanel variant="default" />
+
+<!-- Minimal variant -->
+<SearchPanel variant="minimal" />
+
+<!-- Blur variant -->
+<SearchPanel variant="blur" />
+
+<!-- Solid variant -->
+<SearchPanel variant="solid" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Sizes -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Sizes</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Small</h3>
+          <div class="not-prose">
+            <Button id="trigger-small" variant="outline">
+              Small Panel
+            </Button>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Compact panel perfect for quick searches
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Medium (Default)</h3>
+          <div class="not-prose">
+            <Button id="trigger-medium" variant="outline">
+              Medium Panel
+            </Button>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Balanced size for most use cases
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Large</h3>
+          <div class="not-prose">
+            <Button id="trigger-large" variant="outline">
+              Large Panel
+            </Button>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Spacious panel for extensive search interfaces
+          </p>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Small size -->
+<SearchPanel size="sm" />
+
+<!-- Medium size (default) -->
+<SearchPanel size="md" />
+
+<!-- Large size -->
+<SearchPanel size="lg" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Positioning -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Positioning</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Top (Default)</h3>
+          <div class="not-prose">
+            <Button id="trigger-top" variant="outline">
+              Top Position
+            </Button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Center</h3>
+          <div class="not-prose">
+            <Button id="trigger-center" variant="outline">
+              Center Position
+            </Button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Bottom</h3>
+          <div class="not-prose">
+            <Button id="trigger-bottom" variant="outline">
+              Bottom Position
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Top position (default) -->
+<SearchPanel position="top" />
+
+<!-- Center position -->
+<SearchPanel position="center" />
+
+<!-- Bottom position -->
+<SearchPanel position="bottom" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Features -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Features</h2>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">With Help Text</h3>
+          <div class="not-prose">
+            <Button id="trigger-help" variant="outline">
+              Panel with Help
+            </Button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">No Shortcuts</h3>
+          <div class="not-prose">
+            <Button id="trigger-no-shortcuts" variant="outline">
+              No Shortcuts
+            </Button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">No Close Button</h3>
+          <div class="not-prose">
+            <Button id="trigger-no-close" variant="outline">
+              No Close Button
+            </Button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Error State</h3>
+          <div class="not-prose">
+            <Button id="trigger-error" variant="outline">
+              Error State
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <CodeBlock
+        code={`<!-- With help text -->
+<SearchPanel helpText="Use keywords to find relevant content" />
+
+<!-- Hide keyboard shortcuts -->
+<SearchPanel showShortcuts={false} />
+
+<!-- Hide close button -->
+<SearchPanel showCloseButton={false} />
+
+<!-- Error state -->
+<SearchPanel error="Search service is currently unavailable" />`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Props Reference -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Props Reference</h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Prop
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Type
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Default
+              </th>
+              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                open
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Whether the panel is open
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                placeholder
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'Search…'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Placeholder text for the search input
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                title
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'Search'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Panel title for accessibility
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                variant
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'default' | 'minimal' | 'blur' | 'solid'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'default'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Visual style variant
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                size
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'sm' | 'md' | 'lg'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'md'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Size of the search panel
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                position
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'top' | 'center' | 'bottom'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                'top'
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Position of the panel
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                showShortcuts
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Whether to show keyboard shortcuts
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                showCloseButton
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                true
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Whether to show the close button
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                helpText
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                -
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Help text displayed below the search input
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono text-purple-600 dark:text-purple-300">
+                error
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                boolean | string
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                false
+              </td>
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+                Shows error state with optional message
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <CodeBlock
+        code={`interface Props {
+  open?: boolean;
+  placeholder?: string;
+  title?: string;
+  helpText?: string;
+  variant?: 'default' | 'minimal' | 'blur' | 'solid';
+  size?: 'sm' | 'md' | 'lg';
+  position?: 'top' | 'center' | 'bottom';
+  showShortcuts?: boolean;
+  showCloseButton?: boolean;
+  closeLabel?: string;
+  error?: boolean | string;
+  id?: string;
+  class?: string;
+}`}
+        language="typescript"
+      />
+    </section>
+
+    <!-- Keyboard Shortcuts -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Keyboard Shortcuts</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>Global Shortcuts</h3>
+        <ul>
+          <li><kbd>Cmd/Ctrl + K</kbd> - Open search panel from anywhere</li>
+        </ul>
+
+        <h3>Within Panel</h3>
+        <ul>
+          <li><kbd>Escape</kbd> - Close the search panel</li>
+          <li><kbd>Tab</kbd> - Navigate between focusable elements</li>
+          <li><kbd>Shift + Tab</kbd> - Navigate backwards</li>
+          <li><kbd>↑ ↓</kbd> - Navigate through search results</li>
+          <li><kbd>Enter</kbd> - Select highlighted result</li>
+        </ul>
+
+        <h3>Search Functionality</h3>
+        <ul>
+          <li>Auto-focus on search input when panel opens</li>
+          <li>Live search suggestions and results</li>
+          <li>Screen reader announcements for search actions</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Custom keyboard shortcut handling -->
+<script>
+  // Access the search panel programmatically
+  const searchPanel = window.__cometSearchPanelRegistry?.get('panel-id');
+  
+  if (searchPanel) {
+    searchPanel.open();    // Open the panel
+    searchPanel.close();   // Close the panel
+    searchPanel.toggle();  // Toggle open/closed
+    searchPanel.focus();   // Focus the search input
+  }
+</script>`}
+        language="javascript"
+      />
+    </section>
+
+    <!-- Accessibility -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Accessibility</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>WCAG AAA Compliance</h3>
+        <ul>
+          <li><strong>Contrast:</strong> All color combinations meet WCAG AAA standards (7:1 contrast ratio)</li>
+          <li><strong>Focus Management:</strong> Proper focus trapping and restoration</li>
+          <li><strong>Screen Reader Support:</strong> Full ARIA implementation with live regions</li>
+          <li><strong>Keyboard Navigation:</strong> Complete keyboard accessibility</li>
+        </ul>
+
+        <h3>Modal Behavior</h3>
+        <ul>
+          <li>Focus trapping within the panel when open</li>
+          <li>Focus restoration to trigger element when closed</li>
+          <li>Body scroll lock when panel is active</li>
+          <li>Multiple panel support with proper stacking</li>
+        </ul>
+
+        <h3>Screen Reader Features</h3>
+        <ul>
+          <li>Panel properly identified as dialog with modal behavior</li>
+          <li>Search input clearly labeled and described</li>
+          <li>Results region with live announcements</li>
+          <li>Keyboard shortcut hints announced</li>
+          <li>State changes announced to screen readers</li>
+        </ul>
+
+        <h3>ARIA Attributes</h3>
+        <ul>
+          <li><code>role="dialog"</code> and <code>aria-modal="true"</code> for the panel</li>
+          <li><code>aria-label</code> for clear identification</li>
+          <li><code>aria-describedby</code> linking help text and errors</li>
+          <li><code>aria-expanded</code> for search state</li>
+          <li><code>aria-controls</code> linking input to results</li>
+          <li><code>aria-live="polite"</code> for result announcements</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Fully accessible SearchPanel -->
+<SearchPanel
+  title="Search Documentation"
+  placeholder="Search components, guides, and examples..."
+  helpText="Use keywords to find relevant content across our documentation"
+  variant="default"
+  size="md"
+  position="top"
+  showShortcuts={true}
+  showCloseButton={true}
+/>`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Best Practices -->
+    <section class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Best Practices</h2>
+      
+      <div class="prose prose-slate dark:prose-invert">
+        <h3>Do's</h3>
+        <ul>
+          <li>Provide clear, descriptive titles and placeholders</li>
+          <li>Use appropriate variants that match your design system</li>
+          <li>Implement the global Cmd/Ctrl+K shortcut for quick access</li>
+          <li>Include helpful context with help text when needed</li>
+          <li>Test keyboard navigation and screen reader compatibility</li>
+          <li>Position panels appropriately for your interface</li>
+          <li>Use larger sizes for complex search interfaces</li>
+        </ul>
+
+        <h3>Don'ts</h3>
+        <ul>
+          <li>Don't open multiple search panels simultaneously</li>
+          <li>Don't forget to handle search results and empty states</li>
+          <li>Don't disable keyboard shortcuts without good reason</li>
+          <li>Don't make the panel too small for the content</li>
+          <li>Don't ignore focus management and accessibility</li>
+        </ul>
+
+        <h3>UX Guidelines</h3>
+        <ul>
+          <li>Keep search panels minimal and focused on the task</li>
+          <li>Provide immediate feedback for search actions</li>
+          <li>Show keyboard shortcuts to help users learn the interface</li>
+          <li>Handle loading and error states gracefully</li>
+          <li>Consider the context and scope of searchable content</li>
+          <li>Make search results easy to scan and navigate</li>
+        </ul>
+      </div>
+
+      <CodeBlock
+        code={`<!-- Good: Complete, accessible search panel -->
+<SearchPanel
+  title="Site Search"
+  placeholder="Search articles, tutorials, and documentation..."
+  helpText="Use keywords to find relevant content across our site"
+  variant="default"
+  size="md"
+  position="top"
+  showShortcuts={true}
+/>
+
+<!-- Good: Minimal search for quick actions -->
+<SearchPanel
+  variant="minimal"
+  size="sm"
+  showShortcuts={false}
+  placeholder="Quick search..."
+/>
+
+<!-- Avoid: No context or labels -->
+<SearchPanel placeholder="Search..." />
+
+<!-- Avoid: Conflicting multiple panels -->
+<SearchPanel open={true} />
+<SearchPanel open={true} /> <!-- Don't do this -->`}
+        language="astro"
+      />
+    </section>
+
+    <!-- Hidden SearchPanels for examples -->
+    <SearchPanel 
+      id="panel-default"
+      title="Search Documentation"
+      placeholder="Search components, documentation, examples..."
+      helpText="Search across all components and documentation"
+    />
+    
+    <SearchPanel 
+      id="panel-minimal"
+      variant="minimal"
+      title="Minimal Search"
+      placeholder="Simple search..."
+    />
+    
+    <SearchPanel 
+      id="panel-blur"
+      variant="blur"
+      title="Blur Search"
+      placeholder="Modern glassmorphism search..."
+    />
+    
+    <SearchPanel 
+      id="panel-solid"
+      variant="solid"
+      title="Solid Search"
+      placeholder="Bold, high-contrast search..."
+    />
+    
+    <SearchPanel 
+      id="panel-small"
+      size="sm"
+      title="Small Search"
+      placeholder="Compact search..."
+    />
+    
+    <SearchPanel 
+      id="panel-medium"
+      size="md"
+      title="Medium Search"
+      placeholder="Standard search..."
+    />
+    
+    <SearchPanel 
+      id="panel-large"
+      size="lg"
+      title="Large Search"
+      placeholder="Spacious search interface..."
+    />
+    
+    <SearchPanel 
+      id="panel-top"
+      position="top"
+      title="Top Position"
+      placeholder="Search from the top..."
+    />
+    
+    <SearchPanel 
+      id="panel-center"
+      position="center"
+      title="Center Position"
+      placeholder="Centered search..."
+    />
+    
+    <SearchPanel 
+      id="panel-bottom"
+      position="bottom"
+      title="Bottom Position"
+      placeholder="Search from the bottom..."
+    />
+    
+    <SearchPanel 
+      id="panel-help"
+      title="Search with Help"
+      placeholder="Search components..."
+      helpText="Use keywords to find components, guides, and examples"
+    />
+    
+    <SearchPanel 
+      id="panel-no-shortcuts"
+      title="No Shortcuts"
+      placeholder="Search without shortcuts..."
+      showShortcuts={false}
+    />
+    
+    <SearchPanel 
+      id="panel-no-close"
+      title="No Close Button"
+      placeholder="Search without close button..."
+      showCloseButton={false}
+    />
+    
+    <SearchPanel 
+      id="panel-error"
+      title="Error State"
+      placeholder="Search with error..."
+      error="Search service is currently unavailable. Please try again later."
+    />
+  </div>
 </DocsLayout>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    console.log('Documentation script loaded');
+    
+    // Main trigger
     const trigger = document.getElementById('search-panel-doc-trigger');
-    if (!trigger) return;
-    trigger.addEventListener('click', () => {
-      const registry = window.__cometSearchPanelRegistry;
-      if (!registry) return;
-      const entry = Array.from(registry.values())[0];
-      entry?.open();
+    if (trigger) {
+      trigger.addEventListener('click', () => {
+        console.log('Main trigger clicked');
+        const registry = window.__cometSearchPanelRegistry;
+        console.log('Registry:', registry);
+        if (registry) {
+          const panel = registry.get('panel-default');
+          console.log('Panel found:', panel);
+          if (panel) {
+            panel.open();
+          } else {
+            console.log('Panel not found, available panels:', Array.from(registry.keys()));
+          }
+        }
+      });
+    }
+
+    // Example triggers
+    const triggers = [
+      { id: 'trigger-default', panelId: 'panel-default' },
+      { id: 'trigger-minimal', panelId: 'panel-minimal' },
+      { id: 'trigger-blur', panelId: 'panel-blur' },
+      { id: 'trigger-solid', panelId: 'panel-solid' },
+      { id: 'trigger-small', panelId: 'panel-small' },
+      { id: 'trigger-medium', panelId: 'panel-medium' },
+      { id: 'trigger-large', panelId: 'panel-large' },
+      { id: 'trigger-top', panelId: 'panel-top' },
+      { id: 'trigger-center', panelId: 'panel-center' },
+      { id: 'trigger-bottom', panelId: 'panel-bottom' },
+      { id: 'trigger-help', panelId: 'panel-help' },
+      { id: 'trigger-no-shortcuts', panelId: 'panel-no-shortcuts' },
+      { id: 'trigger-no-close', panelId: 'panel-no-close' },
+      { id: 'trigger-error', panelId: 'panel-error' },
+    ];
+
+    triggers.forEach(({ id, panelId }) => {
+      const triggerEl = document.getElementById(id);
+      if (triggerEl) {
+        triggerEl.addEventListener('click', () => {
+          console.log(`Trigger ${id} clicked for panel ${panelId}`);
+          
+          // Wait a bit for panels to be registered
+          setTimeout(() => {
+            const registry = window.__cometSearchPanelRegistry;
+            if (registry) {
+              const panel = registry.get(panelId);
+              if (panel) {
+                console.log(`Opening panel ${panelId}`);
+                panel.open();
+              } else {
+                console.log(`Panel ${panelId} not found, available:`, Array.from(registry.keys()));
+              }
+            } else {
+              console.log('Registry not found');
+            }
+          }, 100);
+        });
+      }
     });
+    
+    // Debug: Log all panels after a delay
+    setTimeout(() => {
+      const registry = window.__cometSearchPanelRegistry;
+      if (registry) {
+        console.log('All registered panels:', Array.from(registry.keys()));
+      }
+    }, 1000);
   });
 </script>
+
+```

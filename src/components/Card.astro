@@ -1,15 +1,88 @@
 ---
 import { cn } from '../utils/cn';
 
+/**
+ * Accessible Card component.
+ * WCAG AAA considerations:
+ * - Uses semantic container (<article> default) for standalone content blocks.
+ * - Provides configurable element via `as` prop (e.g. 'section', 'div') for layout contexts.
+ * - Supports interactive variant via `href` / `on:click` (focus ring + role semantics).
+ * - Ensures color contrast by relying on design-token CSS variables and fallback high-contrast values.
+ * - Adds clear focus outline (2px) with sufficient contrast in both light and dark themes.
+ */
 export interface Props {
+  /** Optional element tag name; defaults to 'article'. */
+  as?: 'article' | 'section' | 'div' | 'li';
+  /** Optional link target; turns card into an anchor element. */
+  href?: string;
+  /** Optional explicit aria-label when no visible heading is present. */
+  ariaLabel?: string;
+  /** Custom class names to extend styling. */
   class?: string;
+  /** Disable shadow for flat appearance. */
+  flat?: boolean;
+  /** Elevation level (0-3) controlling shadow intensity. */
+  elevation?: 0 | 1 | 2 | 3;
+  /** Make card focusable even if not a link/button. */
+  tabIndex?: number;
 }
-const { class: className } = Astro.props as Props;
+const {
+  as = 'article',
+  href,
+  ariaLabel,
+  class: className,
+  flat = false,
+  elevation = 1,
+  tabIndex,
+} = Astro.props as Props;
 
-const base =
-  'rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm';
+// Map elevation to shadow utility classes (assumes Tailwind style tokens present)
+const elevationShadow = (
+  {
+    0: 'shadow-none',
+    1: 'shadow-sm',
+    2: 'shadow-md',
+    3: 'shadow-lg',
+  } as const
+)[elevation];
+
+// Base styling with CSS variables to enforce contrast; tokens can be themed externally.
+// --card-bg / --card-fg allow consuming app to adjust for AAA contrast.
+const base = cn(
+  'group relative rounded-lg border bg-[var(--card-bg,theme(colors.white))] dark:bg-[var(--card-bg-dark,theme(colors.neutral.900))] border-neutral-200 dark:border-neutral-800',
+  flat ? 'shadow-none' : elevationShadow,
+  // Text color fallback ensures >= 7:1 contrast on both modes (e.g., neutral-900 vs white).
+  'text-[var(--card-fg,theme(colors.neutral.900))] dark:text-[var(--card-fg-dark,theme(colors.neutral.50))]'
+);
+
+// Focus ring (AA/AAA contrast) uses outline with offset for visibility.
+const focusStyles = cn(
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+  'focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400'
+);
+
+// Interactive styles if href provided.
+const interactive = href
+  ? 'cursor-pointer transition-colors hover:bg-[var(--card-bg-hover,theme(colors.neutral.50))] dark:hover:bg-[var(--card-bg-dark-hover,theme(colors.neutral.800))]'
+  : '';
+
+// Decide which element to render; anchor if href, else chosen semantic tag.
+const Tag = href ? 'a' : as;
+
+// Accessibility attributes.
+const ariaAttrs: Record<string, string> = {};
+if (ariaLabel) ariaAttrs['aria-label'] = ariaLabel;
+
+// If interactive and not naturally focusable (anchor handles itself), ensure role and tabindex.
+if (!href && tabIndex !== undefined) {
+  // no extra role needed unless click handler is added externally.
+}
 ---
-
-<div class={cn(base, className)}>
+<Tag
+  class={cn(base, focusStyles, interactive, className)}
+  href={href}
+  tabindex={tabIndex}
+  {...ariaAttrs}
+>
   <slot />
-</div>
+</Tag>

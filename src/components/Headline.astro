@@ -1,10 +1,31 @@
 ---
+/**
+ * Headline - WCAG AAA compliant heading component with enhanced typography and accessibility
+ * Enhanced with semantic HTML, proper contrast ratios, and responsive design
+ */
 interface Props {
+  /** Text content for the headline */
   title?: string;
+  /** Semantic heading level */
   level?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  /** Additional CSS classes */
   className?: string;
-  textSize?: 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl';
-  textAlign?: 'left' | 'center' | 'right';
+  /** Text size variant with responsive scaling */
+  textSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  /** Text alignment */
+  textAlign?: 'left' | 'center' | 'right' | 'justify';
+  /** Color variant with WCAG AAA compliance */
+  color?: 'default' | 'muted' | 'accent' | 'success' | 'warning' | 'error';
+  /** Weight variant */
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold' | 'extrabold';
+  /** Whether to balance text lines for better readability */
+  balance?: boolean;
+  /** Maximum width for optimal reading experience */
+  maxWidth?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'prose';
+  /** ARIA level override for accessibility */
+  ariaLevel?: number;
+  /** Additional ARIA label */
+  ariaLabel?: string;
 }
 
 const {
@@ -13,37 +34,95 @@ const {
   className = '',
   textSize = 'lg',
   textAlign = 'left',
+  color = 'default',
+  weight = 'bold',
+  balance = true,
+  maxWidth = 'none',
+  ariaLevel,
+  ariaLabel,
 } = Astro.props as Props;
 const Tag = level;
 
+// Enhanced base classes with improved typography and accessibility
 const baseClasses = [
-  'font-bold leading-tight tracking-tight',
-  'text-balance break-words',
-].join(' ');
+  'leading-tight tracking-tight',
+  balance ? 'text-balance' : '',
+  'break-words hyphens-auto',
+].filter(Boolean).join(' ');
 
+// Enhanced text size system with better responsive scaling
 const textSizeClasses: Record<NonNullable<Props['textSize']>, string> = {
-  sm: 'text-lg md:text-xl',
-  base: 'text-xl md:text-2xl',
-  lg: 'text-2xl md:text-3xl',
-  xl: 'text-3xl md:text-4xl',
-  '2xl': 'text-4xl md:text-5xl',
-  '3xl': 'text-5xl md:text-6xl',
+  xs: 'text-base sm:text-lg md:text-xl',
+  sm: 'text-lg sm:text-xl md:text-2xl',
+  base: 'text-xl sm:text-2xl md:text-3xl',
+  lg: 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl',
+  xl: 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl',
+  '2xl': 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl',
+  '3xl': 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl',
+  '4xl': 'text-6xl sm:text-7xl md:text-8xl lg:text-9xl',
 };
 
+// Enhanced alignment options
 const textAlignClasses: Record<NonNullable<Props['textAlign']>, string> = {
   left: 'text-left',
-  center: 'text-center',
-  right: 'text-right',
+  center: 'text-center mx-auto',
+  right: 'text-right ml-auto',
+  justify: 'text-justify',
 };
 
+// WCAG AAA compliant color system with enhanced contrast
+const colorClasses: Record<NonNullable<Props['color']>, string> = {
+  default: 'text-slate-900 dark:text-slate-50',
+  muted: 'text-slate-700 dark:text-slate-300',
+  accent: 'text-blue-900 dark:text-blue-100',
+  success: 'text-green-900 dark:text-green-100',
+  warning: 'text-amber-900 dark:text-amber-100',
+  error: 'text-red-900 dark:text-red-100',
+};
+
+// Enhanced weight system
+const weightClasses: Record<NonNullable<Props['weight']>, string> = {
+  normal: 'font-normal',
+  medium: 'font-medium',
+  semibold: 'font-semibold',
+  bold: 'font-bold',
+  extrabold: 'font-extrabold',
+};
+
+// Max width system for optimal reading experience
+const maxWidthClasses: Record<NonNullable<Props['maxWidth']>, string> = {
+  none: '',
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+  '2xl': 'max-w-2xl',
+  prose: 'max-w-prose',
+};
+
+// Build comprehensive class string
 const classes = [
   baseClasses,
   textSizeClasses[textSize],
   textAlignClasses[textAlign],
+  colorClasses[color],
+  weightClasses[weight],
+  maxWidthClasses[maxWidth],
   className,
 ]
   .filter(Boolean)
   .join(' ');
+
+// Enhanced ARIA attributes
+const ariaAttributes = {
+  ...(ariaLevel && { 'aria-level': ariaLevel }),
+  ...(ariaLabel && { 'aria-label': ariaLabel }),
+};
 ---
 
-<Tag class={classes}>{title || <slot />}</Tag>
+<Tag 
+  class={classes}
+  {...ariaAttributes}
+>
+  {title || <slot />}
+</Tag>

@@ -1,18 +1,469 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import LoadingSpinner from '../../components/LoadingSpinner.astro';
+import LoadingSpinnerComponent from '../../components/LoadingSpinner.astro';
+
+// Usage code snippets
+const basicUsage = `---
+import { LoadingSpinner } from 'comet-astro';
+---
+
+<!-- Basic spinner -->
+<LoadingSpinner label="Loading content..." />
+
+<!-- With visible label -->
+<LoadingSpinner 
+  label="Loading data..." 
+  showLabel 
+  variant="primary" 
+  size="md" 
+/>`;
+
+const advancedUsage = `---
+import { LoadingSpinner } from 'comet-astro';
+---
+
+<!-- Progress indicator -->
+<LoadingSpinner 
+  label="Uploading file"
+  progress={65}
+  showProgress
+  showLabel
+  variant="success"
+  size="lg"
+/>
+
+<!-- Different animations -->
+<LoadingSpinner 
+  animation="dots"
+  variant="warning"
+  speed="fast"
+  showLabel
+/>
+
+<!-- Overlay loading -->
+<LoadingSpinner 
+  overlay
+  label="Processing request..."
+  showLabel
+  variant="primary"
+  size="xl"
+/>`;
+
+const responsiveUsage = `---
+import { LoadingSpinner } from 'comet-astro';
+---
+
+<!-- Responsive loading states -->
+<div class="flex flex-col gap-4">
+  <!-- Mobile: smaller, inline -->
+  <LoadingSpinner 
+    size="sm"
+    inline
+    label="Loading..."
+    className="md:hidden"
+  />
+  
+  <!-- Desktop: larger, centered -->
+  <LoadingSpinner 
+    size="lg"
+    centered
+    showLabel
+    label="Loading content..."
+    className="hidden md:flex"
+  />
+</div>`;
 ---
 
 <DocsLayout
-  title="LoadingSpinner"
-  description="Accessible SVG spinner with size and color variants."
+  title="LoadingSpinner Component"
+  description="WCAG AAA compliant loading indicators with multiple animations, progress support, and comprehensive accessibility features."
 >
+  <!-- Overview -->
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="flex items-center gap-6">
-      <LoadingSpinner size="sm" variant="neutral" />
-      <LoadingSpinner size="md" variant="primary" />
-      <LoadingSpinner size="lg" variant="primary" label="Fetching data" />
+    <p class="text-lg text-slate-200">
+      A versatile loading spinner component with multiple animation types, 
+      progress indication, and full accessibility compliance including 
+      screen reader support and reduced motion preferences.
+    </p>
+    <div class="flex flex-wrap gap-2">
+      <span class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20">
+        WCAG AAA
+      </span>
+      <span class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20">
+        Progress Support
+      </span>
+      <span class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20">
+        6 Animations
+      </span>
+      <span class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20">
+        Reduced Motion
+      </span>
+    </div>
+  </section>
+
+  <!-- Quick Examples -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Quick Examples</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Basic Spinners</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <div class="flex items-center gap-6">
+            <LoadingSpinnerComponent size="sm" variant="neutral" />
+            <LoadingSpinnerComponent size="md" variant="primary" />
+            <LoadingSpinnerComponent size="lg" variant="success" />
+          </div>
+        </div>
+        <p class="text-xs text-slate-400">Different sizes and color variants</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">With Labels</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <div class="space-y-4">
+            <LoadingSpinnerComponent label="Loading data..." showLabel variant="primary" />
+            <LoadingSpinnerComponent label="Processing..." showLabel variant="warning" size="lg" />
+          </div>
+        </div>
+        <p class="text-xs text-slate-400">Visible labels for better user experience</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Size Variants -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <div class="flex items-center gap-8">
+        <div class="text-center">
+          <LoadingSpinnerComponent size="xs" variant="primary" />
+          <p class="text-xs text-slate-400 mt-2">Extra Small</p>
+        </div>
+        <div class="text-center">
+          <LoadingSpinnerComponent size="sm" variant="primary" />
+          <p class="text-xs text-slate-400 mt-2">Small</p>
+        </div>
+        <div class="text-center">
+          <LoadingSpinnerComponent size="md" variant="primary" />
+          <p class="text-xs text-slate-400 mt-2">Medium</p>
+        </div>
+        <div class="text-center">
+          <LoadingSpinnerComponent size="lg" variant="primary" />
+          <p class="text-xs text-slate-400 mt-2">Large</p>
+        </div>
+        <div class="text-center">
+          <LoadingSpinnerComponent size="xl" variant="primary" />
+          <p class="text-xs text-slate-400 mt-2">Extra Large</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Color Variants -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Color Variants</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+      <div class="text-center space-y-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <LoadingSpinnerComponent variant="primary" size="lg" />
+        <p class="text-sm text-slate-200 font-medium">Primary</p>
+        <p class="text-xs text-slate-400">Default brand color</p>
+      </div>
+      
+      <div class="text-center space-y-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <LoadingSpinnerComponent variant="secondary" size="lg" />
+        <p class="text-sm text-slate-200 font-medium">Secondary</p>
+        <p class="text-xs text-slate-400">Neutral accent</p>
+      </div>
+      
+      <div class="text-center space-y-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <LoadingSpinnerComponent variant="success" size="lg" />
+        <p class="text-sm text-slate-200 font-medium">Success</p>
+        <p class="text-xs text-slate-400">Positive operations</p>
+      </div>
+      
+      <div class="text-center space-y-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <LoadingSpinnerComponent variant="warning" size="lg" />
+        <p class="text-sm text-slate-200 font-medium">Warning</p>
+        <p class="text-xs text-slate-400">Cautionary states</p>
+      </div>
+      
+      <div class="text-center space-y-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <LoadingSpinnerComponent variant="error" size="lg" />
+        <p class="text-sm text-slate-200 font-medium">Error</p>
+        <p class="text-xs text-slate-400">Error states</p>
+      </div>
+      
+      <div class="text-center space-y-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
+        <LoadingSpinnerComponent variant="neutral" size="lg" />
+        <p class="text-sm text-slate-200 font-medium">Neutral</p>
+        <p class="text-xs text-slate-400">Subtle loading</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Animation Types -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Animation Types</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+      <div class="text-center space-y-4 rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+        <LoadingSpinnerComponent animation="spin" variant="primary" size="lg" />
+        <div>
+          <p class="text-sm text-slate-200 font-medium">Spin</p>
+          <p class="text-xs text-slate-400">Classic rotating spinner</p>
+        </div>
+      </div>
+      
+      <div class="text-center space-y-4 rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+        <LoadingSpinnerComponent animation="pulse" variant="primary" size="lg" />
+        <div>
+          <p class="text-sm text-slate-200 font-medium">Pulse</p>
+          <p class="text-xs text-slate-400">Breathing effect</p>
+        </div>
+      </div>
+      
+      <div class="text-center space-y-4 rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+        <LoadingSpinnerComponent animation="dots" variant="primary" size="lg" />
+        <div>
+          <p class="text-sm text-slate-200 font-medium">Dots</p>
+          <p class="text-xs text-slate-400">Three bouncing dots</p>
+        </div>
+      </div>
+      
+      <div class="text-center space-y-4 rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+        <LoadingSpinnerComponent animation="bars" variant="primary" size="lg" />
+        <div>
+          <p class="text-sm text-slate-200 font-medium">Bars</p>
+          <p class="text-xs text-slate-400">Vertical bar animation</p>
+        </div>
+      </div>
+      
+      <div class="text-center space-y-4 rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+        <LoadingSpinnerComponent animation="orbit" variant="primary" size="lg" />
+        <div>
+          <p class="text-sm text-slate-200 font-medium">Orbit</p>
+          <p class="text-xs text-slate-400">Orbiting dot</p>
+        </div>
+      </div>
+      
+      <div class="text-center space-y-4 rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+        <LoadingSpinnerComponent animation="bounce" variant="primary" size="lg" />
+        <div>
+          <p class="text-sm text-slate-200 font-medium">Bounce</p>
+          <p class="text-xs text-slate-400">Bouncing motion</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Progress Indicators -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Progress Indicators</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Determinate Progress</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <LoadingSpinnerComponent 
+            progress={25} 
+            showProgress 
+            showLabel 
+            label="Uploading files"
+            variant="primary" 
+            size="lg" 
+          />
+          <LoadingSpinnerComponent 
+            progress={65} 
+            showProgress 
+            showLabel 
+            label="Processing data"
+            variant="warning" 
+            size="lg" 
+          />
+          <LoadingSpinnerComponent 
+            progress={90} 
+            showProgress 
+            showLabel 
+            label="Almost done"
+            variant="success" 
+            size="lg" 
+          />
+        </div>
+        <p class="text-xs text-slate-400">Shows specific completion percentage</p>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Speed Variations</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-slate-200">Slow</span>
+            <LoadingSpinnerComponent speed="slow" variant="primary" />
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-slate-200">Normal</span>
+            <LoadingSpinnerComponent speed="normal" variant="primary" />
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-slate-200">Fast</span>
+            <LoadingSpinnerComponent speed="fast" variant="primary" />
+          </div>
+        </div>
+        <p class="text-xs text-slate-400">Different animation speeds</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Layout Options -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Layout Options</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Inline & Centered</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+          <div>
+            <p class="text-sm text-slate-200 mb-2">Inline with text:</p>
+            <p class="text-slate-200">
+              Please wait <LoadingSpinnerComponent inline size="sm" variant="primary" /> while we process your request.
+            </p>
+          </div>
+          <div>
+            <p class="text-sm text-slate-200 mb-2">Centered:</p>
+            <LoadingSpinnerComponent centered showLabel label="Loading content..." variant="primary" />
+          </div>
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-base font-medium text-slate-200">Thickness Options</h3>
+        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+          <div class="flex items-center gap-6">
+            <div class="text-center">
+              <LoadingSpinnerComponent thickness="thin" variant="primary" size="lg" />
+              <p class="text-xs text-slate-400 mt-2">Thin</p>
+            </div>
+            <div class="text-center">
+              <LoadingSpinnerComponent thickness="normal" variant="primary" size="lg" />
+              <p class="text-xs text-slate-400 mt-2">Normal</p>
+            </div>
+            <div class="text-center">
+              <LoadingSpinnerComponent thickness="thick" variant="primary" size="lg" />
+              <p class="text-xs text-slate-400 mt-2">Thick</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Props Documentation -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Basic
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>label?</code>, <code>size?</code>, <code>variant?</code> - 
+          Essential spinner configuration.
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Animation
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>animation?</code>, <code>speed?</code>, <code>disableAnimation?</code> - 
+          Control animation behavior.
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Progress
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>progress?</code>, <code>showProgress?</code> - 
+          Determinate loading indicators.
+        </dd>
+      </div>
+      
+      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+          Layout
+        </dt>
+        <dd class="text-sm text-slate-200">
+          <code>showLabel?</code>, <code>centered?</code>, <code>inline?</code>, <code>overlay?</code> - 
+          Control display and positioning.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- Usage -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      The LoadingSpinner component provides flexible loading states with 
+      comprehensive accessibility support and multiple animation options 
+      for any loading scenario.
+    </p>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Implementation</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{basicUsage}</code>
+      </pre>
+    </div>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Advanced Features</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{advancedUsage}</code>
+      </pre>
+    </div>
+    
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Responsive Design</h3>
+      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{responsiveUsage}</code>
+      </pre>
+    </div>
+  </section>
+
+  <!-- Accessibility -->
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
+      <ul class="space-y-3 text-sm text-slate-200">
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>WCAG AAA Compliance:</strong> All color variants meet 7:1+ contrast ratios for optimal visibility</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Screen Reader Support:</strong> Proper ARIA attributes and live regions for status updates</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Reduced Motion:</strong> Respects prefers-reduced-motion and provides static alternatives</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Progress Communication:</strong> Clear progress announcements for determinate loading</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>High Contrast Mode:</strong> Enhanced visibility in high contrast accessibility displays</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Semantic HTML:</strong> Proper role and status attributes for assistive technologies</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-green-400">✓</span>
+          <span><strong>Flexible Labels:</strong> Customizable labels with automatic progress integration</span>
+        </li>
+      </ul>
     </div>
   </section>
 </DocsLayout>
