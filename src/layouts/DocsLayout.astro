@@ -4,10 +4,9 @@ import ThemeToggle from '../components/ThemeToggle.astro';
 import Headline from '../components/Headline.astro';
 import Paragraph from '../components/Paragraph.astro';
 import Prose from '../components/Prose.astro';
-import {
-  componentCatalog,
-  componentCategories,
-} from '../data/component-catalog';
+import SkipLink from '../components/SkipLink.astro';
+import Container from '../components/Container.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 interface Props {
   title: string;
@@ -18,6 +17,10 @@ interface Props {
   headlineSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
   /** Paragraph size for description */
   descriptionSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  /** Hide the default header (breadcrumbs, title, description) so a page can fully customize a hero section */
+  hideHeader?: boolean;
+  /** Show breadcrumbs even if header is shown (ignored when hideHeader=true) */
+  showBreadcrumbs?: boolean;
 }
 
 const {
@@ -26,23 +29,27 @@ const {
   prose = true,
   headlineSize = 'lg',
   descriptionSize = 'md',
+  hideHeader = false,
+  showBreadcrumbs = true,
 } = Astro.props as Props;
 
-const navGroups = componentCategories
-  .map((category) => ({
-    ...category,
-    items: componentCatalog
-      .filter((component) => component.category === category.id)
-      .sort((a, b) => a.name.localeCompare(b.name)),
-  }))
-  .filter((group) => group.items.length > 0);
-
-const currentSlug = Astro.url.pathname
-  .replace(/\/$/, '')
-  .replace(/^\/components\//, '');
+// (navGroups and currentSlug previously used in side navigation; removed to avoid unused variable warnings in this layout-only variant)
 
 const navId = `docs-nav-${Math.random().toString(36).slice(2, 8)}`;
 const overlayId = `${navId}-overlay`;
+
+// Derive breadcrumb items from path (simple: /components/<slug>)
+const pathParts = Astro.url.pathname
+  .replace(/\/$/, '')
+  .split('/')
+  .filter(Boolean);
+const breadcrumbItems = [
+  { href: '/', label: 'Home' },
+  ...(pathParts[0] === 'components'
+    ? [{ href: '/components', label: 'Components' }]
+    : []),
+  ...(pathParts[pathParts.length - 1] ? [{ label: title, current: true }] : []),
+];
 ---
 
 <!doctype html>
@@ -143,6 +150,8 @@ const overlayId = `${navId}-overlay`;
   <body
     class="min-h-screen bg-slate-100 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100"
   >
+    <!-- Accessible skip link for keyboard users -->
+    <SkipLink targetId="main" label="Skip to main content" />
     <div class="relative flex min-h-screen flex-col lg:flex-row">
       <div
         id={overlayId}
@@ -150,68 +159,16 @@ const overlayId = `${navId}-overlay`;
         class="fixed inset-0 z-30 hidden bg-slate-950/60 backdrop-blur-sm opacity-0 transition-opacity duration-200 data-[open='true']:block data-[open='true']:opacity-100 lg:hidden"
       >
       </div>
-      <!-- Sidebar -->
-      <aside
-        id={navId}
-        data-docs-nav
-        class="fixed inset-y-0 left-0 z-40 hidden w-72 max-w-full overflow-y-auto border-r border-slate-300 bg-white p-6 shadow-xl transition-[opacity,transform] duration-200 -translate-x-full opacity-0 data-[open='true']:block data-[open='true']:translate-x-0 data-[open='true']:opacity-100 dark:border-slate-800 dark:bg-slate-900 lg:static lg:block lg:w-64 lg:translate-x-0 lg:opacity-100 lg:shadow-none"
-      >
-        <div class="mb-6 flex items-center justify-between gap-2">
-          <a
-            href="/"
-            class="text-xl font-bold text-slate-900 transition hover:text-blue-950 dark:text-slate-100 dark:hover:text-blue-200"
-            >← Comet Astro</a
-          >
-          <div class="flex items-center gap-2">
-            <ThemeToggle />
-            <button
-              type="button"
-              class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-400 text-slate-700 transition hover:border-blue-900 hover:text-blue-950 dark:border-slate-600 dark:text-slate-200 dark:hover:border-blue-300 dark:hover:text-blue-200 lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-800 dark:focus-visible:ring-blue-300"
-              data-docs-nav-close={navId}
-              aria-label="Navigation schließen"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-        <nav class="space-y-6">
-          {
-            navGroups.map((group) => (
-              <div>
-                <div class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
-                  {group.id}
-                </div>
-                <ul class="space-y-1">
-                  {group.items.map((item) => {
-                    const active = item.slug === currentSlug;
-                    return (
-                      <li>
-                        <a
-                          href={`/components/${item.slug}`}
-                          aria-current={active ? 'page' : undefined}
-                          class={`block rounded-md px-3 py-2 text-sm no-underline transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-800 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-slate-900 ${
-                            active
-                              ? 'bg-blue-950 text-blue-50 shadow-sm dark:bg-blue-100 dark:text-blue-950'
-                              : 'text-slate-700 hover:bg-slate-200 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white'
-                          }`}
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))
-          }
-        </nav>
-      </aside>
 
       <!-- Main content -->
       <main
-        class="flex-1 bg-white p-6 pb-12 shadow-inner dark:bg-slate-900 sm:p-8"
+        id="main"
+        class="flex-1 bg-white pb-12 shadow-inner dark:bg-slate-900"
       >
-        <div class="mx-auto w-full max-w-5xl space-y-6">
+        <Container
+          size="lg"
+          className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6"
+        >
           <div class="mb-6 flex items-center justify-between gap-3 lg:hidden">
             <button
               type="button"
@@ -228,29 +185,34 @@ const overlayId = `${navId}-overlay`;
             </div>
           </div>
 
-          <header class="mb-8 space-y-2">
-            <Headline
-              level="h1"
-              textSize={headlineSize}
-              weight="extrabold"
-              maxWidth="none"
-              className="text-slate-900 dark:text-slate-50"
-            >
-              {title}
-            </Headline>
-            {
-              description && (
-                <Paragraph
-                  size={descriptionSize}
-                  variant="muted"
-                  maxWidth="prose"
-                  class="md:text-lg"
+          {
+            !hideHeader && (
+              <header class="mb-8 space-y-3">
+                {showBreadcrumbs && <Breadcrumbs items={breadcrumbItems} />}
+                <Headline
+                  level="h1"
+                  textSize={headlineSize}
+                  weight="extrabold"
+                  maxWidth="none"
+                  textAlign="center"
+                  className="text-slate-900 dark:text-slate-50"
                 >
-                  {description}
-                </Paragraph>
-              )
-            }
-          </header>
+                  {title}
+                </Headline>
+                {description && (
+                  <Paragraph
+                    size={descriptionSize}
+                    variant="muted"
+                    maxWidth="prose"
+                    class="md:text-lg"
+                    align="center"
+                  >
+                    {description}
+                  </Paragraph>
+                )}
+              </header>
+            )
+          }
           <!-- Optional showcase slot using typography components -->
           {
             prose ? (
@@ -275,7 +237,7 @@ const overlayId = `${navId}-overlay`;
               <slot />
             )
           }
-        </div>
+        </Container>
       </main>
     </div>
 
