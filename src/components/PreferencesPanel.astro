@@ -1,0 +1,373 @@
+---
+/** PreferencesPanel.astro
+ * Accessible user preferences panel for theme, font, and legibility mode.
+ * Persists settings in localStorage. Applies changes immediately.
+ *
+ * Props:
+ * - fonts: array of selectable font ids (matching BaseLayout fontMode map)
+ * - includeCodeFonts: whether to show monospace fonts
+ * - defaultTheme: 'system' | 'light' | 'dark'
+ * - defaultFont: string font id
+ * - defaultLegibility: boolean
+ */
+interface FontOption {
+  id: string;
+  label: string;
+  category?: 'text' | 'code';
+}
+interface Props {
+  fonts?: FontOption[];
+  includeCodeFonts?: boolean;
+  defaultTheme?: 'system' | 'light' | 'dark';
+  defaultFont?: string;
+  defaultLegibility?: boolean;
+  heading?: string;
+  storagePrefix?: string;
+}
+
+const {
+  fonts = [
+    { id: 'atkinson', label: 'Atkinson Hyperlegible' },
+    { id: 'opendyslexic', label: 'OpenDyslexic' },
+    { id: 'opensans', label: 'Open Sans' },
+    { id: 'nunito', label: 'Nunito' },
+    { id: 'lato', label: 'Lato' },
+    { id: 'ubuntu', label: 'Ubuntu' },
+    { id: 'sourcesans', label: 'Source Sans Pro' },
+    { id: 'spacegrotesk', label: 'Space Grotesk' },
+    { id: 'sylexiad', label: 'Sylexiad' },
+    { id: 'tiresias', label: 'Tiresias PC' },
+  ],
+  includeCodeFonts = false,
+  defaultTheme = 'system',
+  defaultFont = 'atkinson',
+  defaultLegibility = false,
+  heading = 'Preferences',
+  storagePrefix = 'comet',
+} = Astro.props as Props;
+
+const panelId = `prefs-${Math.random().toString(36).slice(2, 8)}`;
+const liveId = `${panelId}-live`;
+---
+
+<div
+  class="rounded-lg border border-slate-300/70 dark:border-slate-600/70 bg-white dark:bg-slate-900 p-4 space-y-5 shadow-sm"
+  aria-labelledby={panelId}
+  aria-describedby={`${panelId}-help`}
+  role="group"
+  data-component="preferences-panel"
+  data-default-theme={defaultTheme}
+  data-default-font={defaultFont}
+  data-default-legibility={String(defaultLegibility)}
+  data-storage-prefix={storagePrefix}
+>
+  <h2
+    id={panelId}
+    class="text-base font-semibold tracking-tight m-0 text-slate-800 dark:text-slate-100"
+  >
+    {heading}
+  </h2>
+  <p
+    id={`${panelId}-help`}
+    class="m-0 text-xs md:text-sm text-slate-700 dark:text-slate-300"
+  >
+    Adjust appearance & readability. Changes apply instantly and persist
+    locally.
+  </p>
+  <div class="sr-only" id={liveId} aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Theme Selection -->
+  <fieldset class="space-y-2" aria-describedby={`${panelId}-theme-desc`}>
+    <legend class="text-sm font-medium text-slate-800 dark:text-slate-100"
+      >Theme</legend
+    >
+    <p
+      id={`${panelId}-theme-desc`}
+      class="text-xs text-slate-700 dark:text-slate-300"
+    >
+      Choose color scheme (System, Light, Dark).
+    </p>
+    <div class="flex flex-wrap gap-3">
+      {
+        ['system', 'light', 'dark'].map((mode) => (
+          <label class="inline-flex items-center gap-2 text-sm text-slate-800 dark:text-slate-100">
+            <input
+              type="radio"
+              name="theme-choice"
+              value={mode}
+              data-theme-input
+              class="accent-blue-600 dark:accent-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+              aria-label={`Theme ${mode}`}
+            />
+            <span class="capitalize">{mode}</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <!-- Font Selection -->
+  <fieldset class="space-y-2" aria-describedby={`${panelId}-font-desc`}>
+    <legend class="text-sm font-medium text-slate-800 dark:text-slate-100"
+      >Font</legend
+    >
+    <p
+      id={`${panelId}-font-desc`}
+      class="text-xs text-slate-700 dark:text-slate-300"
+    >
+      Select an accessible font.
+    </p>
+    <div class="grid gap-2 sm:grid-cols-2">
+      {
+        fonts
+          .filter((f) => f.category !== 'code')
+          .map((f) => (
+            <label class="flex items-center gap-2 text-sm text-slate-800 dark:text-slate-100">
+              <input
+                type="radio"
+                name="font-choice"
+                value={f.id}
+                data-font-input
+                class="accent-blue-600 dark:accent-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+                aria-label={`Font ${f.label}`}
+              />
+              <span class="truncate">{f.label}</span>
+            </label>
+          ))
+      }
+    </div>
+    {
+      includeCodeFonts && (
+        <details class="mt-2">
+          <summary class="cursor-pointer text-sm font-medium text-slate-800 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900">
+            Code Fonts
+          </summary>
+          <div class="mt-2 grid gap-2 sm:grid-cols-2">
+            {['sourcecode', 'firacode', 'ibmplexmono'].map((id) => (
+              <label class="flex items-center gap-2 text-xs text-slate-800 dark:text-slate-100">
+                <input
+                  type="radio"
+                  name="font-choice"
+                  value={id}
+                  data-font-input
+                  class="accent-blue-600 dark:accent-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+                  aria-label={`Code font ${id}`}
+                />
+                <span class="font-mono">{id}</span>
+              </label>
+            ))}
+          </div>
+        </details>
+      )
+    }
+  </fieldset>
+
+  <!-- Legibility Toggle -->
+  <div class="flex items-start gap-3">
+    <input
+      id={`${panelId}-legibility`}
+      type="checkbox"
+      data-legibility-input
+      class="mt-0.5 accent-blue-600 dark:accent-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+      aria-describedby={`${panelId}-legibility-desc`}
+    />
+    <label
+      for={`${panelId}-legibility`}
+      class="text-sm leading-5 text-slate-800 dark:text-slate-100"
+    >
+      High readability mode
+      <span
+        id={`${panelId}-legibility-desc`}
+        class="block text-xs text-slate-700 dark:text-slate-300"
+        >Increases line height & word spacing.</span
+      >
+    </label>
+  </div>
+
+  <!-- Reset Button -->
+  <button
+    type="button"
+    data-prefs-reset
+    class="mt-2 inline-flex items-center gap-2 rounded-md border border-slate-300 dark:border-slate-600 px-3 py-1.5 text-xs font-medium bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+    aria-label="Reset to default values"
+  >
+    Reset
+  </button>
+</div>
+
+<script is:inline>
+  (() => {
+    const panel = document.querySelector(
+      '[data-component="preferences-panel"]'
+    );
+    if (!panel) return;
+    const storagePrefix = panel.getAttribute('data-storage-prefix') || 'comet';
+    const storageTheme = storagePrefix + '-theme';
+    const storageFont = storagePrefix + '-font';
+    const storageLegibility = storagePrefix + '-legibility';
+    const defaults = {
+      theme: panel.getAttribute('data-default-theme') || 'system',
+      font: panel.getAttribute('data-default-font') || 'atkinson',
+      legibility: panel.getAttribute('data-default-legibility') === 'true',
+    };
+    const live = document.getElementById('${liveId}');
+    const themeInputs = Array.from(
+      document.querySelectorAll('input[data-theme-input]')
+    );
+    const fontInputs = Array.from(
+      document.querySelectorAll('input[data-font-input]')
+    );
+    const legibilityInput = document.querySelector(
+      'input[data-legibility-input]'
+    );
+    const resetBtn = document.querySelector('button[data-prefs-reset]');
+    const body = document.body;
+
+    const fontClassMap = {
+      default: 'font-default',
+      atkinson: 'font-atkinson',
+      opendyslexic: 'font-opendyslexic',
+      opensans: 'font-opensans',
+      nunito: 'font-nunito',
+      lato: 'font-lato',
+      ubuntu: 'font-ubuntu',
+      sourcesans: 'font-sourcesans',
+      spacegrotesk: 'font-spacegrotesk',
+      lexie: 'font-lexie font-atkinson',
+      sylexiad: 'font-sylexiad',
+      tiresias: 'font-tiresias',
+      sourcecode: 'font-sourcecode',
+      firacode: 'font-firacode',
+      ibmplexmono: 'font-ibmplexmono',
+    };
+
+    function announce(msg) {
+      if (live) {
+        live.textContent = msg;
+      }
+    }
+
+    function applyTheme(mode) {
+      const controller = window.__cometTheme; // existing theme controller from DocsLayout
+      if (controller && typeof controller.setMode === 'function') {
+        controller.setMode(mode);
+      } else {
+        // fallback: toggle class manually
+        const resolved =
+          mode === 'system'
+            ? window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+            : mode;
+        document.documentElement.classList.toggle('dark', resolved === 'dark');
+      }
+      announce('Theme set to ' + mode);
+    }
+
+    function applyFont(id) {
+      Object.values(fontClassMap).forEach((cls) =>
+        cls.split(' ').forEach((c) => body.classList.remove(c))
+      );
+      const cls = fontClassMap[id] || fontClassMap.default;
+      cls.split(' ').forEach((c) => body.classList.add(c));
+      body.dataset.fontMode = id;
+      announce('Font changed to ' + id);
+    }
+
+    function applyLegibility(enabled) {
+      body.classList.toggle('a11y-highlegibility', enabled);
+      announce('High legibility ' + (enabled ? 'enabled' : 'disabled'));
+    }
+
+    function read(key, fallback) {
+      try {
+        const v = localStorage.getItem(key);
+        return v === null ? fallback : v;
+      } catch {
+        return fallback;
+      }
+    }
+    function write(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // ignore persistence errors (private mode, quota)
+      }
+    }
+
+    // Initialize from storage or defaults
+    const initialTheme = read(storageTheme, defaults.theme);
+    const initialFont = read(storageFont, defaults.font);
+    const initialLegibility =
+      read(storageLegibility, defaults.legibility ? 'true' : 'false') ===
+      'true';
+
+    themeInputs.forEach((i) => {
+      i.checked = i.value === initialTheme;
+    });
+    fontInputs.forEach((i) => {
+      i.checked = i.value === initialFont;
+    });
+    if (legibilityInput) legibilityInput.checked = initialLegibility;
+
+    applyTheme(initialTheme);
+    applyFont(initialFont);
+    applyLegibility(initialLegibility);
+
+    themeInputs.forEach((i) => {
+      i.addEventListener('change', () => {
+        if (i.checked) {
+          write(storageTheme, i.value);
+          applyTheme(i.value);
+        }
+      });
+    });
+    fontInputs.forEach((i) => {
+      i.addEventListener('change', () => {
+        if (i.checked) {
+          write(storageFont, i.value);
+          applyFont(i.value);
+        }
+      });
+    });
+    if (legibilityInput) {
+      legibilityInput.addEventListener('change', () => {
+        write(storageLegibility, legibilityInput.checked ? 'true' : 'false');
+        applyLegibility(legibilityInput.checked);
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        write(storageTheme, defaults.theme);
+        write(storageFont, defaults.font);
+        write(storageLegibility, defaults.legibility ? 'true' : 'false');
+        themeInputs.forEach((i) => {
+          i.checked = i.value === defaults.theme;
+        });
+        fontInputs.forEach((i) => {
+          i.checked = i.value === defaults.font;
+        });
+        if (legibilityInput) legibilityInput.checked = defaults.legibility;
+        applyTheme(defaults.theme);
+        applyFont(defaults.font);
+        applyLegibility(defaults.legibility);
+        announce('Preferences reset to defaults');
+      });
+    }
+  })();
+</script>
+
+<style>
+  /* Minor panel specific refinements */
+  details[open] > summary {
+    color: var(--color-accent, #0a5);
+  }
+  summary {
+    outline: none;
+  }
+  summary:focus-visible {
+    outline: 2px solid var(--color-accent, #2563eb);
+    outline-offset: 2px;
+  }
+</style>

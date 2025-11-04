@@ -1,11 +1,9 @@
 ---
-import '../styles/tailwind.css';
+import BaseLayout from './BaseLayout.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import Headline from '../components/Headline.astro';
 import Paragraph from '../components/Paragraph.astro';
 import Prose from '../components/Prose.astro';
-import SkipLink from '../components/SkipLink.astro';
-import Container from '../components/Container.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 interface Props {
@@ -32,15 +30,11 @@ const {
   hideHeader = false,
   showBreadcrumbs = true,
 } = Astro.props as Props;
-// Conditional container padding: remove top/bottom padding when header is hidden
-const containerClass = hideHeader
-  ? 'px-4 sm:px-6 lg:px-8 space-y-6'
-  : 'px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6';
+// Padding logic handled directly by prose / header blocks now.
 
 // (navGroups and currentSlug previously used in side navigation; removed to avoid unused variable warnings in this layout-only variant)
 
-const navId = `docs-nav-${Math.random().toString(36).slice(2, 8)}`;
-const overlayId = `${navId}-overlay`;
+// Legacy nav overlay removed; BaseLayout provides structural slots.
 
 // Derive breadcrumb items from path (simple: /components/<slug>)
 const pathParts = Astro.url.pathname
@@ -49,267 +43,61 @@ const pathParts = Astro.url.pathname
   .filter(Boolean);
 const breadcrumbItems = [
   { href: '/', label: 'Home' },
-  ...(pathParts[0] === 'components'
-    ? [{ href: '/components', label: 'Components' }]
-    : []),
+  ...(pathParts[0] === 'components' ? [{ href: '', label: 'Components' }] : []),
   ...(pathParts[pathParts.length - 1] ? [{ label: title, current: true }] : []),
 ];
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} – Comet Astro</title>
-    {description && <meta name="description" content={description} />}
-    <script is:inline>
-      (function () {
-        const storageKey = 'comet-theme';
-        const root = document.documentElement;
-        const media = window.matchMedia('(prefers-color-scheme: dark)');
-        const subscribers = new Set();
-
-        const apply = (mode) => {
-          const resolved =
-            mode === 'system' ? (media.matches ? 'dark' : 'light') : mode;
-          root.classList.toggle('dark', resolved === 'dark');
-          root.dataset.themeMode = mode;
-          root.dataset.themeResolved = resolved;
-        };
-
-        const readStorage = () => {
-          try {
-            return localStorage.getItem(storageKey);
-          } catch {
-            return null;
-          }
-        };
-
-        let currentMode = ['light', 'dark'].includes(readStorage() || '')
-          ? readStorage()
-          : 'system';
-        apply(currentMode);
-
-        const notify = (mode) => {
-          subscribers.forEach((fn) => {
-            try {
-              fn(mode);
-            } catch {
-              // ignore subscriber errors
-            }
-          });
-        };
-
-        const onMediaChange = () => {
-          if (currentMode === 'system') {
-            apply('system');
-            notify('system');
-          }
-        };
-
-        if (typeof media.addEventListener === 'function') {
-          media.addEventListener('change', onMediaChange);
-        } else if (typeof media.addListener === 'function') {
-          media.addListener(onMediaChange);
-        }
-
-        const setMode = (mode) => {
-          if (mode !== 'light' && mode !== 'dark') {
-            mode = 'system';
-          }
-          currentMode = mode;
-          try {
-            if (mode === 'system') {
-              localStorage.removeItem(storageKey);
-            } else {
-              localStorage.setItem(storageKey, mode);
-            }
-          } catch (error) {
-            console.warn('Unable to persist theme preference', error);
-          }
-          apply(mode);
-          notify(mode);
-        };
-
-        const controller = {
-          getMode: () => currentMode,
-          setMode,
-          subscribe: (fn) => {
-            if (typeof fn !== 'function') return () => {};
-            subscribers.add(fn);
-            try {
-              fn(currentMode);
-            } catch (error) {
-              console.warn('Theme subscriber threw an error', error);
-            }
-            return () => subscribers.delete(fn);
-          },
-        };
-
-        window.__cometTheme = controller;
-      })();
-    </script>
-  </head>
-  <body
-    class="min-h-screen bg-slate-100 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100"
-  >
-    <!-- Accessible skip link for keyboard users -->
-    <SkipLink targetId="main" label="Skip to main content" />
-    <div class="relative flex min-h-screen flex-col lg:flex-row">
-      <div
-        id={overlayId}
-        data-docs-nav-overlay={navId}
-        class="fixed inset-0 z-30 hidden bg-slate-950/60 backdrop-blur-sm opacity-0 transition-opacity duration-200 data-[open='true']:block data-[open='true']:opacity-100 lg:hidden"
-      >
-      </div>
-
-      <!-- Main content -->
-      <main
-        id="main"
-        class="flex-1 bg-white pb-12 shadow-inner dark:bg-slate-900"
-      >
-        <Container size="lg" className={containerClass}>
-          <div class="mb-6 flex items-center justify-between gap-3 lg:hidden">
-            <button
-              type="button"
-              data-docs-nav-toggle={navId}
-              class="inline-flex items-center gap-2 rounded-lg border border-slate-400 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-blue-900 hover:text-blue-950 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-blue-300 dark:hover:text-blue-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-800 dark:focus-visible:ring-blue-300"
-              aria-controls={navId}
-              aria-expanded="false"
-            >
-              <span class="text-base">☰</span>
-              Komponenten
-            </button>
-            <div class="shrink-0">
-              <ThemeToggle />
-            </div>
-          </div>
-
-          {
-            !hideHeader && (
-              <header class="mb-8 space-y-3">
-                {showBreadcrumbs && <Breadcrumbs items={breadcrumbItems} />}
-                <Headline
-                  level="h1"
-                  textSize={headlineSize}
-                  weight="extrabold"
-                  maxWidth="none"
-                  textAlign="center"
-                  className="text-slate-900 dark:text-slate-50"
-                >
-                  {title}
-                </Headline>
-                {description && (
-                  <Paragraph
-                    size={descriptionSize}
-                    variant="muted"
-                    maxWidth="prose"
-                    class="md:text-lg"
-                    align="center"
-                  >
-                    {description}
-                  </Paragraph>
-                )}
-              </header>
-            )
-          }
-          <!-- Optional showcase slot using typography components -->
-          {
-            prose ? (
-              <Prose variant="default" size="md" maxWidth="lg" class="mb-10">
-                <slot name="showcase" />
-              </Prose>
-            ) : (
-              <slot name="showcase" />
-            )
-          }
-          {
-            prose ? (
-              <Prose
-                variant="article"
-                size="lg"
-                maxWidth="xl"
-                readingMode={true}
-              >
-                <slot />
-              </Prose>
-            ) : (
-              <slot />
-            )
-          }
-        </Container>
-      </main>
-    </div>
-
-    <script is:inline>
-      (() => {
-        const navId = '${navId}';
-        const nav = document.getElementById(navId);
-        if (!nav) return;
-        const overlay = document.querySelector(
-          `[data-docs-nav-overlay="${navId}"]`
-        );
-        const toggles = Array.from(
-          document.querySelectorAll(`[data-docs-nav-toggle="${navId}"]`)
-        );
-        const closeButtons = Array.from(
-          document.querySelectorAll(`[data-docs-nav-close="${navId}"]`)
-        );
-        const media = window.matchMedia('(min-width: 1024px)');
-
-        const setOpen = (open) => {
-          if (open) {
-            nav.setAttribute('data-open', 'true');
-            overlay?.setAttribute('data-open', 'true');
-            if (!media.matches) {
-              document.body.classList.add('overflow-hidden');
-            }
-            toggles.forEach((button) =>
-              button.setAttribute('aria-expanded', 'true')
-            );
-            const firstLink = nav.querySelector('a');
-            if (firstLink instanceof HTMLElement) {
-              firstLink.focus();
-            }
-          } else {
-            nav.removeAttribute('data-open');
-            overlay?.removeAttribute('data-open');
-            document.body.classList.remove('overflow-hidden');
-            toggles.forEach((button) =>
-              button.setAttribute('aria-expanded', 'false')
-            );
-          }
-        };
-
-        const openNav = () => setOpen(true);
-        const closeNav = () => setOpen(false);
-
-        toggles.forEach((button) => {
-          button.addEventListener('click', openNav);
-        });
-        closeButtons.forEach((button) => {
-          button.addEventListener('click', closeNav);
-        });
-        overlay?.addEventListener('click', closeNav);
-
-        document.addEventListener('keydown', (event) => {
-          if (event.key === 'Escape') {
-            closeNav();
-          }
-        });
-
-        const onMediaChange = (event) => {
-          if (event.matches) {
-            closeNav();
-          }
-        };
-        if (typeof media.addEventListener === 'function') {
-          media.addEventListener('change', onMediaChange);
-        } else if (typeof media.addListener === 'function') {
-          media.addListener(onMediaChange);
-        }
-      })();
-    </script>
-  </body>
-</html>
+<BaseLayout
+  title={`${title} – Comet Astro`}
+  description={description}
+  containerSize="lg"
+>
+  <div slot="theme"><ThemeToggle /></div>
+  {
+    !hideHeader && (
+      <header class="mb-8 space-y-3">
+        {showBreadcrumbs && <Breadcrumbs items={breadcrumbItems} />}
+        <Headline
+          level="h1"
+          textSize={headlineSize}
+          weight="extrabold"
+          maxWidth="none"
+          textAlign="center"
+          className="text-slate-900 dark:text-slate-50"
+        >
+          {title}
+        </Headline>
+        {description && (
+          <Paragraph
+            size={descriptionSize}
+            variant="muted"
+            maxWidth="prose"
+            class="md:text-lg"
+            align="center"
+          >
+            {description}
+          </Paragraph>
+        )}
+      </header>
+    )
+  }
+  {
+    prose ? (
+      <Prose variant="default" size="md" maxWidth="lg" class="mb-10">
+        <slot name="showcase" />
+      </Prose>
+    ) : (
+      <slot name="showcase" />
+    )
+  }
+  {
+    prose ? (
+      <Prose variant="article" size="lg" maxWidth="xl" readingMode={true}>
+        <slot />
+      </Prose>
+    ) : (
+      <slot />
+    )
+  }
+</BaseLayout>

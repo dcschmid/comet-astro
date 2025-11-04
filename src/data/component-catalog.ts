@@ -28,6 +28,20 @@ export const componentCategories: ComponentCategory[] = [
 
 export const componentCatalog: ComponentDoc[] = [
   {
+    slug: 'base-layout',
+    name: 'BaseLayout',
+    description:
+      'Semantic page frame with skip link, landmarks, theme controller, and font/legibility props.',
+    category: 'Layout',
+  },
+  {
+    slug: 'preferences-panel',
+    name: 'PreferencesPanel',
+    description:
+      'User preferences panel for theme, font, and high‑legibility mode with local persistence.',
+    category: 'Utilities',
+  },
+  {
     slug: 'accordion',
     name: 'Accordion',
     description: 'Disclosure/accordion with single or multiple open sections.',

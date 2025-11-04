@@ -1,0 +1,187 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import PreferencesPanel from '../../components/PreferencesPanel.astro';
+
+const usageSnippet = `---\nimport { PreferencesPanel } from 'comet-astro';\n\n---\n\n<PreferencesPanel\n  heading="Preferences"\n  defaultTheme="system"\n  defaultFont="atkinson"\n  defaultLegibility={false}\n/>`;
+---
+
+<DocsLayout
+  title="PreferencesPanel"
+  description="Accessible preferences panel (theme, font, legibility) with WCAG AAA contrast & instant persistence."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      The <strong>PreferencesPanel</strong> lets users switch theme, font, and a
+      high legibility mode. All changes apply immediately and persist in <code
+        >localStorage</code
+      >.
+    </p>
+    <p class="text-base text-slate-200">
+      Contrast ratios meet AAA targets (≥ 7:1 for body text) across light &
+      dark. Focus styles use clear, high‑contrast rings with offset so keyboard
+      intent remains obvious.
+    </p>
+    <p class="text-base text-slate-200">
+      Lightweight implementation: semantic fieldsets, radios & checkbox, live
+      region for announcements, and a reset action—no over‑engineering.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          fonts?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of font options {`{ id, label, category? }`} (default: curated accessible
+          fonts list).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          includeCodeFonts?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to show additional monospace fonts (default: <code>false</code
+          >).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          defaultTheme?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Initial theme (<code>"system" | "light" | "dark"</code>; default: <code
+            >"system"</code
+          >).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          defaultFont?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Initial font id (default: <code>"atkinson"</code>).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          defaultLegibility?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Initial high legibility mode (default: <code>false</code>).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          heading?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Panel heading (default: <code>"Preferences"</code>).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          storagePrefix?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Prefix for local storage keys (default: <code>"comet"</code>).
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the panel and optionally set defaults. It persists keys (<code
+        >&lt;prefix&gt;-theme</code
+      >, <code>&lt;prefix&gt;-font</code>, <code>&lt;prefix&gt;-legibility</code
+      >) in <code>localStorage</code>.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Example</h2>
+    <div class="max-w-lg">
+      <PreferencesPanel heading="Preferences" />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <ul class="list-disc pl-6 space-y-2 text-slate-200">
+      <li>
+        <strong>Semantics:</strong> Fieldsets + legends for grouped theme/font radios.
+      </li>
+      <li>
+        <strong>Live region:</strong>
+        <code>aria-live</code> announces changes politely.
+      </li>
+      <li>
+        <strong>Visible focus:</strong> 2px ring + offset with theme awareness.
+      </li>
+      <li>
+        <strong>AAA contrast:</strong> Body text ≥ 7:1 across light & dark modes.
+      </li>
+      <li>
+        <strong>Keyboard:</strong> Tab + arrow navigation (native radio behavior)
+        fully supported.
+      </li>
+      <li>
+        <strong>Persistence:</strong> Local storage with graceful failures (try/catch).
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Responsive</h2>
+    <p class="text-base text-slate-200">
+      Grid layout shifts to two columns at <code>sm</code>. On narrow viewports
+      everything stacks and remains horizontally scroll‑safe.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Reset & Extension</h2>
+    <p class="text-base text-slate-200">
+      The reset button restores the three keys to defaults. To add new
+      preferences (e.g. reduced motion), replicate the pattern: input + CSS
+      class + storage key.
+    </p>
+  </section>
+</DocsLayout>

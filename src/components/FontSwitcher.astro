@@ -1,0 +1,152 @@
+---
+/** Accessible Font Switcher Component
+ * Provides a select dropdown to change font preference. Announces changes via aria-live region.
+ */
+interface Props {
+  /** Currently active font mode */
+  value?: string;
+  /** Available font options (id,label,description) */
+  options?: Array<{ id: string; label: string; description?: string }>;
+  /** Label for the select control */
+  label?: string;
+  /** Storage key override (default: comet-font) */
+  storageKey?: string;
+}
+
+const {
+  value = 'default',
+  label = 'Schriftart wählen',
+  storageKey = 'comet-font',
+  options = [
+    {
+      id: 'default',
+      label: 'Standard',
+      description: 'System / Inter fallback',
+    },
+    {
+      id: 'atkinson',
+      label: 'Atkinson Hyperlegible',
+      description: 'Für Sehbehinderungen optimiert',
+    },
+    {
+      id: 'opendyslexic',
+      label: 'OpenDyslexic',
+      description: 'Kostenloser Dyslexie-Font',
+    },
+    {
+      id: 'lexie',
+      label: 'Lexie Readable',
+      description: 'Lesefreundlich, alternative Formen',
+    },
+    {
+      id: 'sylexiad',
+      label: 'Sylexiad',
+      description: 'Entwickelt für ältere / Sehprobleme',
+    },
+    {
+      id: 'tiresias',
+      label: 'Tiresias PC',
+      description: 'RNIB, Bildschirmoptimiert',
+    },
+    {
+      id: 'braille',
+      label: 'Unified Braille (visuell)',
+      description: 'Nur für spezielle Visualisierung',
+    },
+  ],
+} = Astro.props as Props;
+
+const id = `font-switcher-${Math.random().toString(36).slice(2, 8)}`;
+const liveId = `${id}-live`;
+---
+
+<div class="space-y-2" data-font-storage-key={storageKey}>
+  <label
+    for={id}
+    class="text-sm font-medium text-slate-800 dark:text-slate-200"
+  >
+    {label}
+  </label>
+  <div class="relative">
+    <select
+      id={id}
+      class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-blue-300"
+      aria-describedby={liveId}
+      data-font-select
+    >
+      {
+        options.map((o) => (
+          <option value={o.id} selected={o.id === value}>
+            {o.label}
+          </option>
+        ))
+      }
+    </select>
+  </div>
+  <ul
+    class="list-disc pl-5 space-y-1 text-xs text-slate-600 dark:text-slate-400"
+  >
+    {
+      options.map((o) => (
+        <li data-font-opt={o.id}>
+          <strong>{o.label}:</strong> {o.description}
+        </li>
+      ))
+    }
+  </ul>
+  <div id={liveId} class="sr-only" aria-live="polite" aria-atomic="true"></div>
+</div>
+
+<script is:inline>
+  (() => {
+    const storageKey = '{storageKey}';
+    const select = document.querySelector('#{id}');
+    const live = document.getElementById('{liveId}');
+    if (!select) return;
+
+    const apply = (mode) => {
+      const root = document.documentElement;
+      root.dataset.fontMode = mode;
+      document.body.dataset.fontMode = mode; // convenience
+      const classMap = {
+        default: 'font-default',
+        atkinson: 'font-atkinson',
+        opendyslexic: 'font-opendyslexic',
+        lexie: 'font-lexie',
+        sylexiad: 'font-sylexiad',
+        tiresias: 'font-tiresias',
+        braille: 'font-braille',
+      };
+      // remove old classes
+      Object.values(classMap).forEach((c) => document.body.classList.remove(c));
+      const nextClass = classMap[mode] || 'font-default';
+      document.body.classList.add(nextClass);
+      if (live) live.textContent = 'Schriftart geändert zu ' + mode;
+    };
+
+    const readStorage = () => {
+      try {
+        return localStorage.getItem(storageKey) || 'default';
+      } catch {
+        return 'default';
+      }
+    };
+    const writeStorage = (val) => {
+      try {
+        localStorage.setItem(storageKey, val);
+      } catch {
+        // ignore persistence errors (private mode, etc.)
+      }
+    };
+
+    const initial = readStorage();
+    select.value = initial;
+    apply(initial);
+
+    select.addEventListener('change', () => {
+      const val = select.value;
+      writeStorage(val);
+      apply(val);
+    });
+  })();
+</script>
