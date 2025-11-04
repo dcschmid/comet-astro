@@ -7,30 +7,40 @@ const usageSnippet = `---\nimport { WeatherForecast } from 'comet-astro';\n\n---
 
 <DocsLayout
   title="WeatherForecast"
-  description="Minimal daily forecast snapshot (icon, condition, high/low, precip %) with optional live Open‑Meteo fetch and AAA contrast."
+  description="Lean daily weather overview (day label, icon, condition, high/low temperature, precipitation chance) with optional live Open‑Meteo data. Built for WCAG AAA, zero bloat, quick embedding."
+  prose={true}
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      WeatherForecast shows a concise multi‑day outlook (default 5 days) with
-      only essential details: day label, symbol, condition text, high/low
-      temperatures, and precipitation probability. No charts, wind roses,
-      sunrise grids, or complex variant systems—kept intentionally lean for
-      performance and clarity.
+      <strong>WeatherForecast</strong> gives you a fast multi‑day snapshot (default
+      5 days) of the core signal a user actually scans: day label (Today/Tomorrow/Weekday),
+      an icon, plain‑language condition, high / low in °C, and precipitation probability.
+      Everything else (wind charts, sunrise tables, variant theming) is intentionally
+      excluded for speed, cognitive simplicity, and tiny payload.
     </p>
     <p class="text-base text-slate-200">
-      If coordinates are provided it fetches daily <code
+      Provide <code>latitude</code> + <code>longitude</code> to fetch daily <code
         >temperature_2m_max</code
-      >, <code>temperature_2m_min</code>,
-      <code>precipitation_probability_max</code> and <code>weather_code</code> from
-      Open‑Meteo. Fallback demo data renders when fetching is disabled or fails.
-      Auto refresh (minutes) is optional and off by default.
+      >, <code>temperature_2m_min</code>, <code
+        >precipitation_probability_max</code
+      >, and <code>weather_code</code> from Open‑Meteo. Omit them (or set <code
+        >disableFetch</code
+      >) to render deterministic fallback demo data—useful for skeleton screens,
+      design previews, and offline examples. Optional <code
+        >refreshInterval</code
+      > (minutes) keeps cards current; 0 means "static snapshot".
     </p>
     <p class="text-base text-slate-200">
-      Condition colors are applied only to a small indicator dot—text itself
-      remains neutral for guaranteed WCAG AAA contrast in light and dark themes.
-      Motion (loading shimmer) is suppressed under <code
-        >prefers-reduced-motion</code
-      > and high contrast mode adds an outline.
+      Visual contrast: only the tiny status dot is colored; all textual content
+      stays neutral to guarantee WCAG AAA in light/dark. Loading shimmer
+      respects <code>prefers-reduced-motion</code>; high contrast mode adds an
+      outline without altering structure. No focus traps, no nested interactive
+      controls—cards are passive, making screen reader output concise.
+    </p>
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+      Ideal use cases: sidebar forecast, dashboard tile, newsletter snippet,
+      static SSG export. Avoid for long range (&gt;7 day) or probabilistic
+      ensemble displays.
     </p>
   </section>
 

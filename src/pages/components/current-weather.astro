@@ -31,21 +31,35 @@ const dataProps = [
 
 <DocsLayout
   title="CurrentWeather"
-  description="Minimal, accessible current weather summary with optional live data from Open‑Meteo. High-contrast, responsive, Astro-only implementation."
+  description="Compact real‑time conditions (temperature, humidity, wind, feels‑like) with optional Open‑Meteo fetch, graceful fallback and WCAG AAA contrast."
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      The <strong>CurrentWeather</strong> component presents a concise snapshot of
-      present conditions (temperature, humidity, wind) with WCAG AAA contrast and
-      semantic markup. It avoids overengineering: no large data graphs, no heavy
-      client bundles—just essentials.
+      <strong>CurrentWeather</strong> delivers the "right now" signal with zero fluff:
+      temperature (°C/°F), humidity %, wind speed & direction, optional feels‑like,
+      timestamp. No graphs, no historical trend widgets, no third‑party UI frameworks—kept
+      deliberately lean for fast TTI and predictable accessibility.
     </p>
     <p class="text-base text-slate-200">
-      If you provide <code>latitude</code> and <code>longitude</code>, it
-      fetches live data from <a href="https://open-meteo.com" class="underline"
-        >Open‑Meteo</a
-      >. Without coordinates, it displays fallback demo values. Progressive
-      enhancement only—server HTML remains meaningful.
+      Provide <code>latitude</code> + <code>longitude</code> to fetch live values
+      from <a href="https://open-meteo.com" class="underline">Open‑Meteo</a>.
+      Omit them or set <code>disableFetch</code> to show deterministic fallback demo
+      data (useful for layout mocks and offline docs). Optional <code
+        >refreshInterval</code
+      > (minutes) enables passive auto updates; 0 keeps a static snapshot.
+    </p>
+    <p class="text-base text-slate-200">
+      Accessibility: container acts as a labeled <code>region</code>, loading
+      uses <code>aria-busy</code>, only the timestamp line is <code
+        >aria-live="polite"</code
+      > to minimize chatter. All text colors meet ≥9:1 contrast; motion pulses disappear
+      under <code>prefers-reduced-motion</code>; forced high contrast gets an
+      outline. Emoji icons are decorative but kept readable.
+    </p>
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+      Good fit for: dashboards, hero banner overlay, widget embed, email
+      preprocessing. Not intended for forecasting, alerts aggregation, or
+      historical analytics.
     </p>
   </section>
 

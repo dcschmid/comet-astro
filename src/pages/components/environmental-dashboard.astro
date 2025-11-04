@@ -23,20 +23,34 @@ const props = [
 
 <DocsLayout
   title="EnvironmentalDashboard"
-  description="Minimal aggregated snapshot (temperature, humidity, wind, AQI, PM2.5) with optional live fetch from Open‑Meteo. High contrast & responsive without overengineering."
+  description="Unified environmental snapshot (temperature, humidity, wind, AQI, PM2.5) with optional Open‑Meteo live fetch; WCAG AAA, no dashboard bloat."
+  prose={true}
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      The <strong>EnvironmentalDashboard</strong> component provides a unified glance
-      at current atmospheric + air quality conditions. It intentionally avoids complex
-      layouts, tabs, heavy scripting or secondary visualizations—only essential figures
-      with clear labels.
+      <strong>EnvironmentalDashboard</strong> merges core near‑term climate signals
+      into one compact panel: temperature (°C/°F), humidity %, wind speed + direction,
+      AQI index, and PM2.5 concentration. Everything extraneous (tab systems, deep
+      charts, historical time‑series, pollen expansion, alert feeds) is purposely
+      omitted to keep DOM weight and cognitive load low.
     </p>
     <p class="text-base text-slate-200">
-      Live data is fetched client-side if you supply <code>latitude</code> and <code
-        >longitude</code
-      >. Without coordinates, meaningful static fallback values render
-      server-side for progressive enhancement.
+      Provide <code>latitude</code> + <code>longitude</code> for live Open‑Meteo
+      weather + air quality queries; otherwise deterministic fallback data renders
+      server‑side enabling SSR / SSG resilience. Use <code>refreshInterval</code
+      > for passive updates; leave at 0 for edge‑cache friendly static export.
+    </p>
+    <p class="text-base text-slate-200">
+      Accessibility: a single labeled <code>region</code>, one polite status
+      line (no multi‑live spam), <code>aria-busy</code> during fetch, color never
+      the sole conveyor (each card has explicit textual value + unit). Motion effects
+      are disabled under <code>prefers-reduced-motion</code>; high contrast mode
+      adds outline emphasis. Text contrast ≥9:1 maintained across themes.
+    </p>
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+      Best suited for: overview dashboards, sidebars, kiosk displays, embed
+      iframes. Not suitable for predictive modeling, regulatory compliance
+      reporting, or fine‑grained pollutant breakdown beyond PM2.5.
     </p>
   </section>
 

@@ -7,30 +7,41 @@ const usageSnippet = `---\nimport { WeatherLocationSearch } from 'comet-astro';\
 
 <DocsLayout
   title="WeatherLocationSearch"
-  description="Minimal geocoding location search (name, country, coordinates) with optional live Open‑Meteo fetch and AAA contrast."
+  description="Accessible lightweight geocoding combobox (city, country, coordinates) with optional Open‑Meteo live search, debounced, WCAG AAA contrast."
+  prose={true}
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      WeatherLocationSearch provides an accessible, minimal combobox for
-      selecting a location. It uses the Open‑Meteo Geocoding API when fetching
-      is enabled; otherwise it filters a small static fallback list. The
-      component intentionally omits advanced features (recent storage,
-      geolocation, population metadata, size variants) to remain fast, clear,
-      and WCAG AAA compliant.
+      <strong>WeatherLocationSearch</strong> is a lean combobox for turning a human
+      place name into coordinates usable by other weather components. It calls the
+      Open‑Meteo Geocoding API when live search is enabled; otherwise it filters
+      a curated static fallback list—zero network, deterministic output. We deliberately
+      excluded recent history, geolocation button, population sort, and size variants
+      to keep the interaction instantaneous and predictable.
     </p>
     <p class="text-base text-slate-200">
-      Keyboard navigation (Arrow Up/Down, Enter, Escape) works on the generated
-      result list. A polite status line announces states: waiting, searching,
-      errors, and selection. On success it dispatches a <code
+      Interaction: type at least 2 characters to trigger a debounced (default
+      350ms) search; use Arrow Up / Down keys to highlight, Enter to select,
+      Escape or outside click to close. Selection dispatches a bubbling <code
         >location-selected</code
-      > CustomEvent containing
-      <code>&#123; name, country, latitude, longitude &#125;</code> for other weather
-      components.
+      >
+      <code>CustomEvent</code> with <code
+        >&#123; name, country, latitude, longitude &#125;</code
+      >. Listen on a parent container to plug directly into forecast or air
+      quality widgets.
     </p>
     <p class="text-base text-slate-200">
-      Color is never the sole indicator of state; high contrast mode adds an
-      outline and reduced motion preference removes subtle transitions. All text
-      exceeds ≥9:1 contrast in light and dark themes.
+      Accessibility: input + results live in a labeled <code>region</code>;
+      status text is <code>aria-live="polite"</code> for incremental feedback (waiting,
+      searching, error, count, selection). Highlighting does not steal focus—screen
+      reader users stay anchored in the input. Color never carries sole meaning;
+      high contrast mode adds an outline; motion fades under <code
+        >prefers-reduced-motion</code
+      >. All text maintains ≥9:1 contrast.
+    </p>
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+      Recommended use: top‑bar location picker, dashboard filter, quick
+      coordinate injector. Not a full-featured place intelligence module.
     </p>
   </section>
 

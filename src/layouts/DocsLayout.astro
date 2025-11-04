@@ -32,6 +32,10 @@ const {
   hideHeader = false,
   showBreadcrumbs = true,
 } = Astro.props as Props;
+// Conditional container padding: remove top/bottom padding when header is hidden
+const containerClass = hideHeader
+  ? 'px-4 sm:px-6 lg:px-8 space-y-6'
+  : 'px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6';
 
 // (navGroups and currentSlug previously used in side navigation; removed to avoid unused variable warnings in this layout-only variant)
 
@@ -165,10 +169,7 @@ const breadcrumbItems = [
         id="main"
         class="flex-1 bg-white pb-12 shadow-inner dark:bg-slate-900"
       >
-        <Container
-          size="lg"
-          className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6"
-        >
+        <Container size="lg" className={containerClass}>
           <div class="mb-6 flex items-center justify-between gap-3 lg:hidden">
             <button
               type="button"
