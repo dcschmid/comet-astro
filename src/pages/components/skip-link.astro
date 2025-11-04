@@ -1,25 +1,477 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import SkipLink from '../../components/SkipLink.astro';
-import Paragraph from '../../components/Paragraph.astro';
+
+const usageSnippet = `---
+import { SkipLink } from 'comet-astro';
+---
+
+<SkipLink 
+  targetId="main-content" 
+  label="Skip to main content"
+  position="top-left"
+  variant="default"
+  size="md"
+/>`;
 ---
 
 <DocsLayout
   title="SkipLink"
-  description="Keyboard-accessible jump link to skip repetitive navigation."
+  description="WCAG AAA compliant skip navigation link for keyboard accessibility and screen reader users."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <div
-      class="relative overflow-hidden rounded-xl border border-gray-800 bg-gray-900 p-6"
-    >
-      <SkipLink targetId="demo-main" />
-      <Paragraph size="sm" muted>
-        Press <kbd class="rounded bg-gray-800 px-2 py-1 text-xs text-gray-200"
+    <p class="text-base text-slate-100">
+      SkipLink provides keyboard and screen reader users with a quick way to
+      bypass repetitive navigation and jump directly to main content areas. It
+      remains hidden until focused and meets WCAG AAA accessibility standards.
+    </p>
+    <p class="text-base text-slate-200">
+      The component automatically handles focus management, provides proper ARIA
+      labeling, and ensures sufficient contrast ratios in both light and dark
+      themes. Touch targets meet minimum size requirements for mobile
+      accessibility.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          targetId?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ID of the target element to skip to. Defaults to <code>"main"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          label?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label text for the skip link. Defaults to <code
+            >"Skip to content"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          position?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Position when focused. Choose <code>"top-left"</code>, <code
+            >"top-right"</code
+          >, or <code>"top-center"</code>. Defaults to <code>"top-left"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style variant. Choose <code>"default"</code>, <code
+            >"high-contrast"</code
+          >, or <code>"minimal"</code>. Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size of the skip link. Choose <code>"sm"</code>, <code>"md"</code>, or <code
+            >"lg"</code
+          >. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Place the SkipLink at the very beginning of your page structure, before
+      any navigation elements. It will remain invisible until a keyboard user
+      tabs to it, then become visible and allow them to skip directly to the
+      main content.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Interactive Demo</h2>
+    <div class="space-y-4">
+      <p class="text-base text-slate-200">
+        Press <kbd
+          class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
           >Tab</kbd
         >
-        to reveal the skip link.
-      </Paragraph>
+        to reveal the skip link, then press <kbd
+          class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+          >Enter</kbd
+        >
+        to activate it.
+      </p>
+      <div
+        class="relative min-h-[200px] overflow-hidden rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <SkipLink targetId="demo-main" label="Skip to demo content" />
+
+        <!-- Simulated navigation -->
+        <nav class="mb-6 border-b border-slate-700 pb-4">
+          <div class="text-sm text-slate-300 mb-2">Navigation (simulated)</div>
+          <div class="flex space-x-4">
+            <button class="text-slate-400 hover:text-slate-200" tabindex="-1"
+              >Home</button
+            >
+            <button class="text-slate-400 hover:text-slate-200" tabindex="-1"
+              >About</button
+            >
+            <button class="text-slate-400 hover:text-slate-200" tabindex="-1"
+              >Contact</button
+            >
+          </div>
+        </nav>
+
+        <!-- Demo main content -->
+        <main
+          id="demo-main"
+          class="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+        >
+          <div class="text-slate-100 font-medium mb-2">Main Content Area</div>
+          <p class="text-slate-300 text-sm">
+            This is where the user lands when they use the skip link. The focus
+            indicator shows that keyboard navigation successfully jumped here.
+          </p>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Positions</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <!-- Top Left -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Top Left</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink
+            targetId="demo-1"
+            label="Skip to content"
+            position="top-left"
+            variant="default"
+          />
+          <div class="text-sm text-slate-300 pt-8">
+            Press Tab to see position
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Center -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Top Center</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink
+            targetId="demo-2"
+            label="Skip to content"
+            position="top-center"
+            variant="default"
+          />
+          <div class="text-sm text-slate-300 pt-8">
+            Press Tab to see position
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Right -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Top Right</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink
+            targetId="demo-3"
+            label="Skip to content"
+            position="top-right"
+            variant="default"
+          />
+          <div class="text-sm text-slate-300 pt-8">
+            Press Tab to see position
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <!-- Default Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Default</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink
+            targetId="demo-default"
+            label="Skip to content"
+            variant="default"
+          />
+          <div class="text-sm text-slate-300 pt-8">
+            Dark background, white text
+          </div>
+        </div>
+      </div>
+
+      <!-- High Contrast Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">High Contrast</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink
+            targetId="demo-contrast"
+            label="Skip to content"
+            variant="high-contrast"
+          />
+          <div class="text-sm text-slate-300 pt-8">
+            Yellow background, black text
+          </div>
+        </div>
+      </div>
+
+      <!-- Minimal Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Minimal</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink
+            targetId="demo-minimal"
+            label="Skip to content"
+            variant="minimal"
+          />
+          <div class="text-sm text-slate-300 pt-8">
+            White background, dark text
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <!-- Small -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Small</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink targetId="demo-sm" label="Skip to content" size="sm" />
+          <div class="text-sm text-slate-300 pt-8">Compact size for mobile</div>
+        </div>
+      </div>
+
+      <!-- Medium -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Medium</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink targetId="demo-md" label="Skip to content" size="md" />
+          <div class="text-sm text-slate-300 pt-8">
+            Standard size for most cases
+          </div>
+        </div>
+      </div>
+
+      <!-- Large -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Large</h3>
+        <div
+          class="relative min-h-[120px] rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <SkipLink targetId="demo-lg" label="Skip to content" size="lg" />
+          <div class="text-sm text-slate-300 pt-8">
+            Enhanced visibility for accessibility
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Website Header -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Website Header</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <SkipLink targetId="main-content" label="Skip to main content" />
+          <SkipLink
+            targetId="navigation"
+            label="Skip to navigation"
+            position="top-center"
+          />
+          <SkipLink
+            targetId="footer"
+            label="Skip to footer"
+            position="top-right"
+          />
+
+          <div class="text-sm text-slate-300 border-t border-slate-700 pt-4">
+            Multiple skip links for different page sections
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E-commerce Product Page -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">
+        E-commerce Product Page
+      </h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-2">
+          <SkipLink
+            targetId="product-details"
+            label="Skip to product details"
+            size="sm"
+          />
+          <SkipLink
+            targetId="reviews"
+            label="Skip to customer reviews"
+            size="sm"
+            position="top-center"
+          />
+          <SkipLink
+            targetId="related-products"
+            label="Skip to related products"
+            size="sm"
+            position="top-right"
+          />
+
+          <div class="text-sm text-slate-300 border-t border-slate-700 pt-4">
+            Content-specific skip links for better UX
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Dashboard Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-2">
+          <SkipLink
+            targetId="dashboard-main"
+            label="Skip to dashboard content"
+            variant="high-contrast"
+          />
+          <SkipLink
+            targetId="sidebar-nav"
+            label="Skip to sidebar navigation"
+            variant="minimal"
+            position="top-center"
+          />
+
+          <div class="text-sm text-slate-300 border-t border-slate-700 pt-4">
+            High contrast variants for better visibility in data-heavy
+            interfaces
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      SkipLink ensures WCAG AAA compliance with contrast ratios exceeding 9:1 in
+      all variants and themes. The component automatically adjusts for high
+      contrast mode and respects user preferences for reduced motion.
+    </p>
+    <p class="text-base text-slate-200">
+      Touch targets meet the minimum 44x44px requirement for mobile
+      accessibility, and the component provides proper ARIA labeling with
+      role="navigation" for screen readers. Focus indicators use enhanced
+      shadows for maximum visibility.
+    </p>
+    <p class="text-base text-slate-200">
+      The skip link is positioned with the highest z-index to ensure it appears
+      above all other content when focused, and includes additional
+      instructional text for screen reader users about activation methods.
+    </p>
+
+    <div
+      class="mt-6 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+    >
+      <h3 class="text-sm font-semibold text-slate-200 mb-2">
+        Keyboard Shortcuts
+      </h3>
+      <div class="grid gap-2 sm:grid-cols-2">
+        <div class="flex items-center space-x-2">
+          <kbd
+            class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+            >Tab</kbd
+          >
+          <span class="text-sm text-slate-300">Focus skip link</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <kbd
+            class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+            >Enter</kbd
+          >
+          <span class="text-sm text-slate-300">Activate skip link</span>
+        </div>
+      </div>
     </div>
   </section>
 </DocsLayout>

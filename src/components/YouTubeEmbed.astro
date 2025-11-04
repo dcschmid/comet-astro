@@ -1,46 +1,115 @@
 ---
+import EmbedBase from './EmbedBase.astro';
+
+/**
+ * YouTubeEmbed - WCAG AAA compliant YouTube video embed
+ * Provides accessible YouTube integration with proper loading states and error handling
+ */
 interface Props {
+  /** YouTube video ID */
   videoId: string;
+  /** Accessible title for screen readers */
   title?: string;
-  aspectRatio?: '16/9' | '4/3' | '1/1';
+  /** Visual theme variant */
+  variant?: 'default' | 'minimal' | 'card' | 'featured' | 'inline';
+  /** Enable autoplay */
   autoplay?: boolean;
+  /** Show player controls */
   controls?: boolean;
+  /** Loop video playback */
+  loop?: boolean;
+  /** Start video muted */
+  muted?: boolean;
+  /** Start time in seconds */
+  start?: number;
+  /** End time in seconds */
+  end?: number;
+  /** Playlist ID for continuous playback */
+  playlist?: string;
+  /** Privacy mode (use youtube-nocookie.com) */
   privacyMode?: boolean;
-  className?: string;
+  /** Show loading state */
+  showLoading?: boolean;
+  /** Aspect ratio - YouTube typically uses 16:9 */
+  aspectRatio?: '16:9' | '4:3' | '1:1' | '21:9' | '9:16' | 'auto';
+  /** CSS class for styling */
+  class?: string;
+  /** ARIA label for accessibility */
+  ariaLabel?: string;
+  /** Additional iframe attributes */
+  [key: string]: any;
 }
 
 const {
   videoId,
   title = 'YouTube video player',
-  aspectRatio = '16/9',
+  variant = 'default',
   autoplay = false,
   controls = true,
+  loop = false,
+  muted = false,
+  start,
+  end,
+  playlist,
   privacyMode = true,
-  className = '',
+  showLoading = true,
+  aspectRatio = '16:9',
+  class: className = '',
+  ariaLabel,
+  ...props
 } = Astro.props;
 
-const ratioClasses = {
-  '16/9': 'aspect-video',
-  '4/3': 'aspect-[4/3]',
-  '1/1': 'aspect-square',
+// Validate videoId
+if (!videoId || typeof videoId !== 'string') {
+  throw new Error('YouTubeEmbed: videoId is required and must be a string');
+}
+
+// Build YouTube embed URL
+const buildYouTubeEmbedUrl = (): string => {
+  const baseUrl = privacyMode
+    ? 'https://www.youtube-nocookie.com/embed'
+    : 'https://www.youtube.com/embed';
+
+  const url = new URL(`${baseUrl}/${encodeURIComponent(videoId)}`);
+
+  // Playback parameters
+  if (autoplay) url.searchParams.set('autoplay', '1');
+  if (!controls) url.searchParams.set('controls', '0');
+  if (loop) {
+    url.searchParams.set('loop', '1');
+    url.searchParams.set('playlist', playlist || videoId);
+  }
+  if (muted) url.searchParams.set('mute', '1');
+  if (start) url.searchParams.set('start', start.toString());
+  if (end) url.searchParams.set('end', end.toString());
+  if (playlist && !loop) url.searchParams.set('playlist', playlist);
+
+  // Privacy and performance
+  url.searchParams.set('modestbranding', '1');
+  url.searchParams.set('showinfo', '0');
+  url.searchParams.set('rel', '0');
+  url.searchParams.set('enablejsapi', '1');
+
+  return url.toString();
 };
 
-const domain = privacyMode ? 'youtube-nocookie.com' : 'youtube.com';
-const params = new URLSearchParams({
-  ...(autoplay && { autoplay: '1' }),
-  ...(controls && { controls: '1' }),
-});
+const embedUrl = buildYouTubeEmbedUrl();
 
-const src = `https://www.${domain}/embed/${videoId}?${params.toString()}`;
+// Generate appropriate title and ARIA label
+const finalTitle = title || `YouTube video ${videoId}`;
+const finalAriaLabel =
+  ariaLabel || `YouTube video player${title ? `: ${title}` : ''}`;
 ---
 
-<div
-  class={`relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 ${ratioClasses[aspectRatio]} ${className}`.trim()}
->
-  <iframe
-    src={src}
-    title={title}
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-    class="absolute inset-0 h-full w-full border-0"></iframe>
-</div>
+<EmbedBase
+  src={embedUrl}
+  title={finalTitle}
+  aspectRatio={aspectRatio}
+  variant={variant}
+  showLoading={showLoading}
+  class={className}
+  ariaLabel={finalAriaLabel}
+  allowFullscreen={true}
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  {...props}
+/>

@@ -1,27 +1,68 @@
 ---
+import { cn } from '../utils/cn';
+
+/**
+ * Spacer - WCAG AAA compliant spacing component
+ * Provides semantic spacing between elements with responsive sizing
+ */
 interface Props {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'auto';
+  /** Size of the spacer */
+  size?:
+    | 'xs'
+    | 'sm'
+    | 'md'
+    | 'lg'
+    | 'xl'
+    | '2xl'
+    | '3xl'
+    | '4xl'
+    | '5xl'
+    | 'auto';
+  /** Direction of the spacing */
   axis?: 'horizontal' | 'vertical' | 'both';
-  className?: string;
+  /** Responsive size variations */
+  responsive?: {
+    sm?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+    md?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+    lg?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+    xl?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+  };
+  /** Show visual debug indicator */
+  debug?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+  /** Semantic role for accessibility */
+  role?: 'separator' | 'presentation' | 'none';
 }
 
-const { size = 'md', axis = 'vertical', className = '' } = Astro.props;
+const {
+  size = 'md',
+  axis = 'vertical',
+  responsive,
+  debug = false,
+  class: className = '',
+  role = 'presentation',
+} = Astro.props as Props;
 
 const sizeClasses = {
-  xs: '0.25rem',
-  sm: '0.5rem',
-  md: '1rem',
-  lg: '1.5rem',
-  xl: '2rem',
-  '2xl': '3rem',
-  '3xl': '4rem',
+  xs: '0.25rem', // 4px
+  sm: '0.5rem', // 8px
+  md: '1rem', // 16px
+  lg: '1.5rem', // 24px
+  xl: '2rem', // 32px
+  '2xl': '3rem', // 48px
+  '3xl': '4rem', // 64px
+  '4xl': '5rem', // 80px
+  '5xl': '6rem', // 96px
   auto: 'auto',
 };
 
 const spacerSize = sizeClasses[size];
 
+// Build responsive styles
 const styles: Record<string, string> = {};
 
+// Base size
 if (axis === 'vertical' || axis === 'both') {
   styles.height = spacerSize;
 }
@@ -35,14 +76,121 @@ if (axis === 'horizontal') {
   styles.height = '100%';
 }
 
+// Build responsive classes instead of inline styles
+const responsiveClasses = responsive
+  ? Object.entries(responsive)
+      .map(([breakpoint, responsiveSize]) => {
+        const prefix =
+          breakpoint === 'sm'
+            ? 'sm:'
+            : breakpoint === 'md'
+              ? 'md:'
+              : breakpoint === 'lg'
+                ? 'lg:'
+                : 'xl:';
+        if (axis === 'vertical') {
+          return `${prefix}h-${responsiveSize === 'xs' ? '1' : responsiveSize === 'sm' ? '2' : responsiveSize === 'md' ? '4' : responsiveSize === 'lg' ? '6' : responsiveSize === 'xl' ? '8' : responsiveSize === '2xl' ? '12' : responsiveSize === '3xl' ? '16' : responsiveSize === '4xl' ? '20' : responsiveSize === '5xl' ? '24' : '4'}`;
+        } else if (axis === 'horizontal') {
+          return `${prefix}w-${responsiveSize === 'xs' ? '1' : responsiveSize === 'sm' ? '2' : responsiveSize === 'md' ? '4' : responsiveSize === 'lg' ? '6' : responsiveSize === 'xl' ? '8' : responsiveSize === '2xl' ? '12' : responsiveSize === '3xl' ? '16' : responsiveSize === '4xl' ? '20' : responsiveSize === '5xl' ? '24' : '4'}`;
+        } else {
+          const heightClass = `${prefix}h-${responsiveSize === 'xs' ? '1' : responsiveSize === 'sm' ? '2' : responsiveSize === 'md' ? '4' : responsiveSize === 'lg' ? '6' : responsiveSize === 'xl' ? '8' : responsiveSize === '2xl' ? '12' : responsiveSize === '3xl' ? '16' : responsiveSize === '4xl' ? '20' : responsiveSize === '5xl' ? '24' : '4'}`;
+          const widthClass = `${prefix}w-${responsiveSize === 'xs' ? '1' : responsiveSize === 'sm' ? '2' : responsiveSize === 'md' ? '4' : responsiveSize === 'lg' ? '6' : responsiveSize === 'xl' ? '8' : responsiveSize === '2xl' ? '12' : responsiveSize === '3xl' ? '16' : responsiveSize === '4xl' ? '20' : responsiveSize === '5xl' ? '24' : '4'}`;
+          return `${heightClass} ${widthClass}`;
+        }
+      })
+      .join(' ')
+  : '';
+
 const styleString = Object.entries(styles)
   .map(([key, value]) => `${key}: ${value}`)
   .join('; ');
+
+// Debug styles for development
+const spacerClasses = cn(
+  'flex-shrink-0',
+  {
+    'spacer-debug': debug,
+  },
+  responsiveClasses,
+  className
+);
 ---
 
+<style>
+  .spacer-debug {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 0, 0, 0.1),
+      rgba(255, 0, 0, 0.1) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+    border: 1px dashed rgba(255, 0, 0, 0.3);
+    position: relative;
+  }
+
+  .spacer-debug::after {
+    content: attr(data-spacer-info);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-family: monospace;
+    border-radius: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Dark mode debug styles */
+  @media (prefers-color-scheme: dark) {
+    .spacer-debug {
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 0, 0.1),
+        rgba(255, 255, 0, 0.1) 2px,
+        transparent 2px,
+        transparent 6px
+      );
+      border: 1px dashed rgba(255, 255, 0, 0.4);
+    }
+
+    .spacer-debug::after {
+      background: rgba(255, 255, 0, 0.9);
+      color: black;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .spacer-debug {
+      border-width: 2px !important;
+    }
+
+    .spacer-debug::after {
+      font-weight: bold !important;
+    }
+  }
+</style>
+
 <div
-  class={`flex-shrink-0 ${className}`}
+  class={spacerClasses}
   style={styleString}
-  aria-hidden="true"
+  role={role}
+  aria-hidden={role === 'presentation' ? 'true' : undefined}
+  data-spacer-size={size}
+  data-spacer-axis={axis}
+  data-spacer-info={debug ? `${size} ${axis}` : undefined}
 >
+  {
+    debug && (
+      <span class="sr-only">
+        Spacer: {size} spacing in {axis} direction
+      </span>
+    )
+  }
 </div>

@@ -1,59 +1,360 @@
 ---
+import { cn } from '../utils/cn';
+
+interface Props {
+  variant?: 'default' | 'minimal' | 'bordered' | 'filled';
+  size?: 'sm' | 'md' | 'lg';
+  orientation?: 'horizontal' | 'vertical';
+  showLabels?: boolean;
+  className?: string;
+  ariaLabel?: string;
+}
+
+const {
+  variant = 'default',
+  size = 'md',
+  orientation = 'horizontal',
+  showLabels = true,
+  className = '',
+  ariaLabel = 'Theme selection',
+} = Astro.props;
+
 const modes = [
-  { value: 'light', label: 'Light', icon: '☀️' },
-  { value: 'dark', label: 'Dark', icon: '🌙' },
-  { value: 'system', label: 'Auto', icon: '🖥️' },
+  {
+    value: 'light',
+    label: 'Light',
+    icon: '☀️',
+    description: 'Use light theme',
+  },
+  { value: 'dark', label: 'Dark', icon: '🌙', description: 'Use dark theme' },
+  {
+    value: 'system',
+    label: 'Auto',
+    icon: '🖥️',
+    description: 'Use system theme preference',
+  },
 ];
+
+// Size configurations
+const sizeConfig = {
+  sm: {
+    container: 'text-xs',
+    button: 'min-w-[48px] px-2 py-1.5 gap-1',
+    icon: 'text-xs',
+    text: 'text-xs',
+  },
+  md: {
+    container: 'text-sm',
+    button: 'min-w-[64px] px-2.5 py-2 gap-1.5',
+    icon: 'text-sm',
+    text: 'text-sm',
+  },
+  lg: {
+    container: 'text-base',
+    button: 'min-w-[80px] px-3 py-2.5 gap-2',
+    icon: 'text-base',
+    text: 'text-base',
+  },
+};
+
+// Variant configurations with WCAG AAA contrast
+const variantConfig = {
+  default: {
+    container: [
+      'border border-slate-300 dark:border-slate-600',
+      'bg-white/95 dark:bg-slate-900/95',
+      'backdrop-blur-sm',
+      'shadow-sm',
+      'contrast-more:border-slate-800 contrast-more:dark:border-slate-200',
+      'contrast-more:bg-white contrast-more:dark:bg-slate-900',
+    ],
+    button: [
+      'text-slate-700 dark:text-slate-300',
+      'hover:bg-slate-100 dark:hover:bg-slate-800',
+      'contrast-more:text-slate-950 contrast-more:dark:text-white',
+      'contrast-more:hover:bg-slate-200 contrast-more:dark:hover:bg-slate-700',
+    ],
+    active: [
+      'bg-blue-600 dark:bg-blue-500',
+      'text-white dark:text-slate-950',
+      'shadow-md',
+      'contrast-more:bg-blue-800 contrast-more:dark:bg-blue-400',
+      'contrast-more:text-white contrast-more:dark:text-slate-950',
+    ],
+  },
+  minimal: {
+    container: ['bg-transparent', 'border-0'],
+    button: [
+      'text-slate-600 dark:text-slate-400',
+      'hover:text-slate-900 dark:hover:text-slate-100',
+      'hover:bg-slate-100 dark:hover:bg-slate-800',
+      'contrast-more:text-slate-950 contrast-more:dark:text-white',
+      'contrast-more:hover:bg-slate-200 contrast-more:dark:hover:bg-slate-700',
+    ],
+    active: [
+      'bg-blue-100 dark:bg-blue-900',
+      'text-blue-900 dark:text-blue-100',
+      'contrast-more:bg-blue-200 contrast-more:dark:bg-blue-800',
+      'contrast-more:text-blue-950 contrast-more:dark:text-blue-50',
+    ],
+  },
+  bordered: {
+    container: [
+      'border-2 border-slate-400 dark:border-slate-500',
+      'bg-white dark:bg-slate-900',
+      'shadow-md',
+      'contrast-more:border-slate-800 contrast-more:dark:border-slate-200',
+      'contrast-more:bg-white contrast-more:dark:bg-slate-900',
+    ],
+    button: [
+      'text-slate-800 dark:text-slate-200',
+      'hover:bg-slate-50 dark:hover:bg-slate-800',
+      'contrast-more:text-slate-950 contrast-more:dark:text-white',
+      'contrast-more:hover:bg-slate-100 contrast-more:dark:hover:bg-slate-700',
+    ],
+    active: [
+      'bg-blue-600 dark:bg-blue-500',
+      'text-white dark:text-slate-950',
+      'border-blue-600 dark:border-blue-500',
+      'contrast-more:bg-blue-800 contrast-more:dark:bg-blue-400',
+      'contrast-more:text-white contrast-more:dark:text-slate-950',
+    ],
+  },
+  filled: {
+    container: [
+      'bg-slate-100 dark:bg-slate-800',
+      'border border-slate-200 dark:border-slate-700',
+      'contrast-more:bg-slate-200 contrast-more:dark:bg-slate-700',
+      'contrast-more:border-slate-800 contrast-more:dark:border-slate-200',
+    ],
+    button: [
+      'text-slate-700 dark:text-slate-300',
+      'hover:bg-slate-200 dark:hover:bg-slate-700',
+      'contrast-more:text-slate-950 contrast-more:dark:text-white',
+      'contrast-more:hover:bg-slate-300 contrast-more:dark:hover:bg-slate-600',
+    ],
+    active: [
+      'bg-blue-600 dark:bg-blue-500',
+      'text-white dark:text-slate-950',
+      'shadow-sm',
+      'contrast-more:bg-blue-800 contrast-more:dark:bg-blue-400',
+      'contrast-more:text-white contrast-more:dark:text-slate-950',
+    ],
+  },
+};
+
+const currentSize = sizeConfig[size];
+const currentVariant = variantConfig[variant];
+
+// Generate unique IDs
+const toggleId = `theme-toggle-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 <div
-  class="inline-flex rounded-full border border-slate-300 bg-white/90 p-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200"
+  id={toggleId}
+  class={cn(
+    // Base layout
+    'inline-flex rounded-full p-1 font-medium transition-all duration-150',
+
+    // Orientation
+    orientation === 'vertical' ? 'flex-col' : 'flex-row',
+
+    // Size and variant styling
+    currentSize.container,
+    currentVariant.container,
+
+    // Motion preferences
+    'motion-safe:transition-all motion-reduce:transition-none',
+
+    // Focus management
+    'focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2',
+    'focus-within:ring-offset-white dark:focus-within:ring-offset-slate-950',
+    'contrast-more:focus-within:ring-blue-800 contrast-more:dark:focus-within:ring-blue-400',
+
+    className
+  )}
   role="radiogroup"
-  aria-label="Theme"
+  aria-label={ariaLabel}
+  aria-orientation={orientation}
   data-theme-toggle
 >
   {
-    modes.map((mode) => (
+    modes.map((mode, index) => (
       <button
         type="button"
-        class="flex min-w-[64px] items-center justify-center gap-1 rounded-full px-2.5 py-1.5 text-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white data-[active='true']:bg-blue-600 data-[active='true']:text-white dark:focus-visible:ring-offset-slate-900 dark:data-[active='true']:bg-blue-500 dark:data-[active='true']:text-slate-900"
+        class={cn(
+          // Base button styles
+          'flex items-center justify-center rounded-full transition-all duration-150',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
+          'focus-visible:ring-offset-1 focus-visible:z-10',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+
+          // Size and spacing
+          currentSize.button,
+
+          // Default state
+          currentVariant.button,
+
+          // Motion preferences
+          'motion-safe:transition-all motion-reduce:transition-none',
+
+          // High contrast focus
+          'contrast-more:focus-visible:ring-blue-800 contrast-more:dark:focus-visible:ring-blue-400',
+
+          // Active state (will be applied via data attribute)
+          'data-[active="true"]:' +
+            currentVariant.active.join(' data-[active="true"]:')
+        )}
         data-theme-option={mode.value}
         role="radio"
         aria-checked="false"
+        aria-describedby={showLabels ? undefined : `${toggleId}-desc-${index}`}
+        tabindex="-1"
+        title={mode.description}
       >
-        <span aria-hidden="true">{mode.icon}</span>
-        <span>{mode.label}</span>
+        {/* Icon */}
+        <span
+          class={cn(currentSize.icon, 'select-none', !showLabels && 'sr-only')}
+          aria-hidden={showLabels ? 'true' : 'false'}
+          role={showLabels ? undefined : 'img'}
+          aria-label={showLabels ? undefined : mode.label}
+        >
+          {mode.icon}
+        </span>
+
+        {/* Label */}
+        {showLabels && (
+          <span
+            class={cn(
+              currentSize.text,
+              'select-none font-medium',
+              'contrast-more:font-semibold'
+            )}
+          >
+            {mode.label}
+          </span>
+        )}
       </button>
     ))
   }
 </div>
 
-<script is:inline>
+{/* Hidden descriptions for icon-only mode */}
+{
+  !showLabels &&
+    modes.map((mode, index) => (
+      <span id={`${toggleId}-desc-${index}`} class="sr-only">
+        {mode.description}
+      </span>
+    ))
+}
+
+{/* Enhanced accessible status announcements */}
+<div
+  id={`${toggleId}-status`}
+  class="sr-only"
+  aria-live="polite"
+  aria-atomic="true"
+  data-theme-status
+>
+  Theme changed
+</div>
+
+<script is:inline define:vars={{ toggleId }}>
   (function () {
-    const scriptEl = document.currentScript;
-    if (!scriptEl) return;
-    const root = scriptEl.previousElementSibling;
-    if (
-      !(root instanceof HTMLElement) ||
-      !root.hasAttribute('data-theme-toggle')
-    )
-      return;
+    const root = document.getElementById(toggleId);
+    if (!root) return;
 
     const buttons = Array.from(
       root.querySelectorAll('[data-theme-option]')
     ).filter((el) => el instanceof HTMLElement);
     if (!buttons.length) return;
 
+    const statusEl = document.querySelector(`#${toggleId}-status`);
+
     const controller = window.__cometTheme;
     const media = window.matchMedia('(prefers-color-scheme: dark)');
 
+    // Enhanced state management with accessibility
     const applyState = (mode) => {
+      const activeIndex = buttons.findIndex(
+        (button) => button.dataset.themeOption === mode
+      );
+
       buttons.forEach((button) => {
         const isActive = button.dataset.themeOption === mode;
+
+        // Update visual state
         button.dataset.active = isActive ? 'true' : 'false';
         button.setAttribute('aria-checked', isActive ? 'true' : 'false');
+
+        // Manage focus and tab order
         button.tabIndex = isActive ? 0 : -1;
+
+        // Set roving tabindex for keyboard navigation
+        if (isActive) {
+          button.setAttribute('aria-selected', 'true');
+        } else {
+          button.removeAttribute('aria-selected');
+        }
       });
+
+      // Announce theme change
+      if (statusEl) {
+        const modeLabel = buttons[activeIndex]?.textContent?.trim() || mode;
+        statusEl.textContent = `Theme changed to ${modeLabel}`;
+      }
+    };
+
+    // Enhanced keyboard navigation
+    const handleKeyDown = (event) => {
+      const currentIndex = buttons.findIndex(
+        (button) => document.activeElement === button
+      );
+
+      if (currentIndex === -1) return;
+
+      let newIndex = currentIndex;
+
+      switch (event.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          event.preventDefault();
+          newIndex = (currentIndex + 1) % buttons.length;
+          break;
+
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          event.preventDefault();
+          newIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+          break;
+
+        case 'Home':
+          event.preventDefault();
+          newIndex = 0;
+          break;
+
+        case 'End':
+          event.preventDefault();
+          newIndex = buttons.length - 1;
+          break;
+
+        case 'Enter':
+        case ' ': {
+          event.preventDefault();
+          const mode = buttons[currentIndex].dataset.themeOption;
+          if (mode && mode !== currentMode) {
+            setMode(mode);
+          }
+          return;
+        }
+
+        default:
+          return;
+      }
+
+      // Focus new button
+      buttons[newIndex].focus();
     };
 
     const resolveMode = () => {
@@ -62,11 +363,12 @@ const modes = [
       }
       try {
         const stored = localStorage.getItem('comet-theme');
-        if (stored === 'light' || stored === 'dark') return stored;
+        if (stored === 'light' || stored === 'dark' || stored === 'system')
+          return stored;
       } catch {
         /* ignore persistence errors */
       }
-      return media.matches ? 'dark' : 'light';
+      return 'system';
     };
 
     let currentMode = resolveMode();
@@ -95,6 +397,7 @@ const modes = [
       applyState(mode);
     };
 
+    // Click handler
     root.addEventListener('click', (event) => {
       const target =
         event.target instanceof HTMLElement
@@ -107,24 +410,47 @@ const modes = [
       setMode(mode);
     });
 
-    root.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter' && event.key !== ' ') return;
-      const target =
-        event.target instanceof HTMLElement
-          ? event.target.closest('[data-theme-option]')
-          : null;
-      if (!(target instanceof HTMLElement)) return;
-      const mode = target.dataset.themeOption;
-      if (!mode || mode === currentMode) return;
-      event.preventDefault();
-      setMode(mode);
+    // Enhanced keyboard navigation
+    root.addEventListener('keydown', handleKeyDown);
+
+    // Focus management - ensure one button is always focusable
+    root.addEventListener('focusin', (event) => {
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        target.hasAttribute('data-theme-option')
+      ) {
+        // If user focuses on a radio button, make sure it's properly part of the tab order
+        if (target.tabIndex === -1) {
+          buttons.forEach((btn) => (btn.tabIndex = -1));
+          target.tabIndex = 0;
+        }
+      }
     });
 
+    // Handle system preference changes
+    media.addEventListener('change', () => {
+      if (currentMode === 'system') {
+        applyState('system');
+      }
+    });
+
+    // Subscribe to external controller changes
     if (controller && typeof controller.subscribe === 'function') {
       controller.subscribe((mode) => {
         currentMode = mode;
         applyState(mode);
       });
+    }
+
+    // Initialize focus management
+    const activeButton = buttons.find(
+      (btn) => btn.dataset.themeOption === currentMode
+    );
+    if (activeButton) {
+      activeButton.tabIndex = 0;
+    } else if (buttons.length > 0) {
+      buttons[0].tabIndex = 0;
     }
   })();
 </script>

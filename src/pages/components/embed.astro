@@ -22,14 +22,15 @@ import { Embed } from 'comet-astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      Embed provides accessible iframe containers with comprehensive keyboard navigation 
-      and focus management. The component maintains WCAG AAA contrast ratios and supports 
-      multiple aspect ratios for responsive design across all device sizes.
+      Embed provides accessible iframe containers with comprehensive keyboard
+      navigation and focus management. The component maintains WCAG AAA contrast
+      ratios and supports multiple aspect ratios for responsive design across
+      all device sizes.
     </p>
     <p class="text-base text-slate-200">
-      Enhanced focus indicators, proper ARIA labeling, and sandbox security ensure 
-      safe embedding of external content while maintaining optimal accessibility 
-      for screen readers and keyboard navigation.
+      Enhanced focus indicators, proper ARIA labeling, and sandbox security
+      ensure safe embedding of external content while maintaining optimal
+      accessibility for screen readers and keyboard navigation.
     </p>
   </section>
 
@@ -57,7 +58,9 @@ import { Embed } from 'comet-astro';
           title?
         </dt>
         <dd class="text-sm text-slate-200">
-          Accessible title for screen readers. Defaults to <code>"Embedded content"</code>.
+          Accessible title for screen readers. Defaults to <code
+            >"Embedded content"</code
+          >.
         </dd>
       </div>
       <div
@@ -69,7 +72,11 @@ import { Embed } from 'comet-astro';
           aspectRatio?
         </dt>
         <dd class="text-sm text-slate-200">
-          Responsive aspect ratio: <code>"16/9"</code>, <code>"4/3"</code>, <code>"1/1"</code>, <code>"21/9"</code>, or <code>"none"</code>. Defaults to <code>"16/9"</code>.
+          Responsive aspect ratio: <code>"16/9"</code>, <code>"4/3"</code>, <code
+            >"1/1"</code
+          >, <code>"21/9"</code>, or <code>"none"</code>. Defaults to <code
+            >"16/9"</code
+          >.
         </dd>
       </div>
       <div
@@ -81,7 +88,8 @@ import { Embed } from 'comet-astro';
           height?
         </dt>
         <dd class="text-sm text-slate-200">
-          Fixed height in pixels when <code>aspectRatio="none"</code>. Overrides aspect ratio behavior.
+          Fixed height in pixels when <code>aspectRatio="none"</code>. Overrides
+          aspect ratio behavior.
         </dd>
       </div>
       <div
@@ -93,7 +101,9 @@ import { Embed } from 'comet-astro';
           allowFullscreen?
         </dt>
         <dd class="text-sm text-slate-200">
-          Enable fullscreen capability for embedded content. Defaults to <code>true</code>.
+          Enable fullscreen capability for embedded content. Defaults to <code
+            >true</code
+          >.
         </dd>
       </div>
       <div
@@ -105,7 +115,8 @@ import { Embed } from 'comet-astro';
           loading?
         </dt>
         <dd class="text-sm text-slate-200">
-          Loading behavior: <code>"lazy"</code> or <code>"eager"</code>. Defaults to <code>"lazy"</code>.
+          Loading behavior: <code>"lazy"</code> or <code>"eager"</code>.
+          Defaults to <code>"lazy"</code>.
         </dd>
       </div>
       <div
@@ -117,7 +128,8 @@ import { Embed } from 'comet-astro';
           sandbox?
         </dt>
         <dd class="text-sm text-slate-200">
-          Sandbox restrictions for embedded content security. Optional security configuration.
+          Sandbox restrictions for embedded content security. Optional security
+          configuration.
         </dd>
       </div>
       <div
@@ -129,7 +141,8 @@ import { Embed } from 'comet-astro';
           allow?
         </dt>
         <dd class="text-sm text-slate-200">
-          Feature policy permissions for embedded content. Defaults include accelerometer, autoplay, clipboard access.
+          Feature policy permissions for embedded content. Defaults include
+          accelerometer, autoplay, clipboard access.
         </dd>
       </div>
       <div
@@ -153,7 +166,8 @@ import { Embed } from 'comet-astro';
           ariaDescribedby?
         </dt>
         <dd class="text-sm text-slate-200">
-          Reference to element that describes the embedded content for accessibility.
+          Reference to element that describes the embedded content for
+          accessibility.
         </dd>
       </div>
       <div
@@ -165,7 +179,8 @@ import { Embed } from 'comet-astro';
           className?
         </dt>
         <dd class="text-sm text-slate-200">
-          Additional CSS classes to apply to the embed wrapper for custom styling.
+          Additional CSS classes to apply to the embed wrapper for custom
+          styling.
         </dd>
       </div>
     </dl>
@@ -174,9 +189,10 @@ import { Embed } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Embed external content safely with responsive aspect ratios and accessibility features. 
-      The component automatically handles focus management and provides proper ARIA attributes 
-      for screen reader compatibility.
+      Embed external content safely with responsive aspect ratios and
+      accessibility features. The component automatically handles focus
+      management and provides proper ARIA attributes for screen reader
+      compatibility.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -233,7 +249,8 @@ import { Embed } from 'comet-astro';
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Ultra-wide (21:9)</h2>
     <p class="text-base text-slate-200">
-      Cinematic ultra-wide format for panoramic content and immersive experiences.
+      Cinematic ultra-wide format for panoramic content and immersive
+      experiences.
     </p>
     <div class="max-w-4xl">
       <EmbedComponent
@@ -248,7 +265,8 @@ import { Embed } from 'comet-astro';
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Fixed Height</h2>
     <p class="text-base text-slate-200">
-      Use fixed pixel height when aspect ratio constraints don't fit your content needs.
+      Use fixed pixel height when aspect ratio constraints don't fit your
+      content needs.
     </p>
     <div class="max-w-3xl">
       <EmbedComponent
@@ -268,7 +286,8 @@ import { Embed } from 'comet-astro';
     </p>
     <div class="max-w-2xl">
       <p id="embed-description" class="text-sm text-slate-300 mb-4">
-        This interactive map shows real-time data visualization with keyboard navigation support.
+        This interactive map shows real-time data visualization with keyboard
+        navigation support.
       </p>
       <EmbedComponent
         src="https://codepen.io/team/codepen/embed/preview/PNaGbb?height=400"
@@ -284,20 +303,21 @@ import { Embed } from 'comet-astro';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      Contrast ratios exceed WCAG AAA requirements (7:1+) for borders and focus indicators 
-      in both light and dark themes. Enhanced focus rings use strong blue colors with 
-      proper offset spacing for clear keyboard navigation visibility.
+      Contrast ratios exceed WCAG AAA requirements (7:1+) for borders and focus
+      indicators in both light and dark themes. Enhanced focus rings use strong
+      blue colors with proper offset spacing for clear keyboard navigation
+      visibility.
     </p>
     <p class="text-base text-slate-200">
-      Embedded iframes include proper <code>title</code> attributes and optional 
-      <code>aria-label</code> and <code>aria-describedby</code> for enhanced screen reader 
-      support. Keyboard focus management allows full navigation within embedded content 
-      using standard Tab navigation patterns.
+      Embedded iframes include proper <code>title</code> attributes and optional
+      <code>aria-label</code> and <code>aria-describedby</code> for enhanced screen
+      reader support. Keyboard focus management allows full navigation within embedded
+      content using standard Tab navigation patterns.
     </p>
     <p class="text-base text-slate-200">
-      Security features include configurable <code>sandbox</code> restrictions and 
-      <code>allow</code> policies for safe embedding of external content. Lazy loading 
-      is enabled by default to improve page performance while maintaining accessibility 
+      Security features include configurable <code>sandbox</code> restrictions and
+      <code>allow</code> policies for safe embedding of external content. Lazy loading
+      is enabled by default to improve page performance while maintaining accessibility
       for users with slower connections.
     </p>
   </section>

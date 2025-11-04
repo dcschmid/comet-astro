@@ -1,89 +1,153 @@
 ---
+import EmbedBase from './EmbedBase.astro';
+
+/**
+ * AppleMusicEmbed - WCAG AAA compliant Apple Music and Podcasts embed
+ * Provides accessible Apple media integration with proper loading states and error handling
+ */
 interface Props {
-  url: string; // Full Apple Music or Podcasts URL
+  /** Apple Music or Podcasts URL */
+  url: string;
+  /** Type of Apple content */
+  type?: 'song' | 'album' | 'playlist' | 'podcast' | 'episode' | 'auto';
+  /** Visual theme variant */
+  variant?: 'default' | 'minimal' | 'card';
+  /** Show loading state */
+  showLoading?: boolean;
+  /** Accessible title for screen readers */
   title?: string;
+  /** CSS class for styling */
+  class?: string;
+  /** Allow fullscreen playback */
   allowFullscreen?: boolean;
-  className?: string;
+  /** ARIA label for accessibility */
+  ariaLabel?: string;
+  /** Additional iframe attributes */
+  [key: string]: any;
 }
 
 const {
   url,
-  title = 'Apple media player',
+  type = 'auto',
+  variant = 'default',
+  showLoading = true,
+  title,
+  class: className = '',
   allowFullscreen = true,
-  className = '',
-} = Astro.props as Props;
+  ariaLabel,
+  ...props
+} = Astro.props;
 
-const embedUrl = (() => {
+// Build Apple Music/Podcasts embed URL
+const buildAppleEmbedUrl = (): string => {
   try {
     const target = new URL(url);
-    if (target.hostname.startsWith('embed.')) return target.toString();
+
+    // If already an embed URL, return as-is
+    if (target.hostname.startsWith('embed.')) {
+      return target.toString();
+    }
+
+    // Convert Apple Music URLs to embed format
     if (target.hostname.endsWith('music.apple.com')) {
       target.hostname = 'embed.music.apple.com';
       return target.toString();
     }
+
+    // Convert Apple Podcasts URLs to embed format
     if (target.hostname.endsWith('podcasts.apple.com')) {
       target.hostname = 'embed.podcasts.apple.com';
       return target.toString();
     }
+
+    // Return original URL if not a recognized Apple domain
     return target.toString();
-  } catch {
+  } catch (error) {
+    console.warn('Failed to parse Apple URL:', error);
     return url;
   }
-})();
+};
 
-const wrapperClass = className.trim();
-const defaults = (() => {
+// Determine content type and appropriate aspect ratio
+const getAppleContentType = (): string => {
+  if (type !== 'auto') return type;
+
   try {
-    const target = new URL(embedUrl);
-    const isPodcasts = target.hostname.includes('podcasts.apple.com');
-    const hasTrackParam = target.searchParams.has('i');
-    const isTrackPath =
-      target.pathname.includes('/song/') ||
-      target.pathname.includes('/track/') ||
-      target.pathname.includes('/episode/');
-    if (isPodcasts) {
-      return { width: '100%', height: '450' };
+    const target = new URL(url);
+
+    // Check for podcasts domain
+    if (target.hostname.includes('podcasts.apple.com')) {
+      return target.pathname.includes('/episode/') ? 'episode' : 'podcast';
     }
-    if (hasTrackParam || isTrackPath) {
-      return { width: '100%', height: '175' };
+
+    // Check for music domain patterns
+    if (target.hostname.includes('music.apple.com')) {
+      const path = target.pathname;
+      const hasTrackParam = target.searchParams.has('i');
+
+      if (
+        path.includes('/song/') ||
+        path.includes('/track/') ||
+        hasTrackParam
+      ) {
+        return 'song';
+      }
+      if (path.includes('/album/')) {
+        return 'album';
+      }
+      if (path.includes('/playlist/')) {
+        return 'playlist';
+      }
     }
-    return { width: '100%', height: '450' };
+
+    return 'album'; // Default fallback
   } catch {
-    return { width: '100%', height: '450' };
+    return 'album';
   }
-})();
-const finalWidth = defaults.width;
-const finalHeight = defaults.height;
+};
+
+// Get aspect ratio based on content type
+const getAppleAspectRatio = (): string => {
+  const contentType = getAppleContentType();
+
+  switch (contentType) {
+    case 'song':
+    case 'episode':
+      return '16/7'; // Compact player ~175px height
+    case 'album':
+    case 'playlist':
+    case 'podcast':
+      return '16/9'; // Standard player ~450px height
+    default:
+      return '16/9';
+  }
+};
+
+const embedUrl = buildAppleEmbedUrl();
+const contentType = getAppleContentType();
+const finalAspectRatio = getAppleAspectRatio();
+
+// Generate appropriate title
+const finalTitle =
+  title || `Apple ${contentType === 'episode' ? 'Podcast' : 'Music'} Embed`;
+
+// Generate ARIA label for screen readers
+const finalAriaLabel =
+  ariaLabel ||
+  `Apple ${contentType === 'episode' ? 'podcast' : 'music'} player${title ? `: ${title}` : ''}`;
 ---
 
-{
-  wrapperClass ? (
-    <div class={wrapperClass}>
-      <iframe
-        src={embedUrl}
-        width={finalWidth}
-        height={finalHeight}
-        title={title}
-        allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
-        sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
-        loading="lazy"
-        allowfullscreen={allowFullscreen ? 'true' : undefined}
-        referrerpolicy="strict-origin-when-cross-origin"
-        class="border-0"
-      />
-    </div>
-  ) : (
-    <iframe
-      src={embedUrl}
-      width={finalWidth}
-      height={finalHeight}
-      title={title}
-      allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
-      sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
-      loading="lazy"
-      allowfullscreen={allowFullscreen ? 'true' : undefined}
-      referrerpolicy="strict-origin-when-cross-origin"
-      class="border-0"
-    />
-  )
-}
+<EmbedBase
+  src={embedUrl}
+  title={finalTitle}
+  aspectRatio={finalAspectRatio}
+  variant={variant}
+  showLoading={showLoading}
+  class={className}
+  ariaLabel={finalAriaLabel}
+  allowFullscreen={allowFullscreen}
+  allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
+  sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+  referrerPolicy="strict-origin-when-cross-origin"
+  {...props}
+/>

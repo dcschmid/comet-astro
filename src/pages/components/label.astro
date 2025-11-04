@@ -105,20 +105,28 @@ import { Label, Input } from 'comet-astro';
   <!-- Overview -->
   <section class="space-y-4">
     <p class="text-lg text-slate-200">
-      A sophisticated form label component that provides excellent accessibility 
+      A sophisticated form label component that provides excellent accessibility
       support, visual hierarchy, and seamless integration with form controls.
     </p>
     <div class="flex flex-wrap gap-2">
-      <span class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20"
+      >
         WCAG AAA
       </span>
-      <span class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20"
+      >
         Form Ready
       </span>
-      <span class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20"
+      >
         Responsive
       </span>
-      <span class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20"
+      >
         Accessible
       </span>
     </div>
@@ -130,26 +138,36 @@ import { Label, Input } from 'comet-astro';
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Basic Labels</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+        >
           <LabelComponent for="demo-basic">Basic Label</LabelComponent>
-          <LabelComponent for="demo-required" required>Required Field</LabelComponent>
-          <LabelComponent for="demo-optional" optional>Optional Field</LabelComponent>
-          <LabelComponent for="demo-disabled" disabled>Disabled Field</LabelComponent>
+          <LabelComponent for="demo-required" required
+            >Required Field</LabelComponent
+          >
+          <LabelComponent for="demo-optional" optional
+            >Optional Field</LabelComponent
+          >
+          <LabelComponent for="demo-disabled" disabled
+            >Disabled Field</LabelComponent
+          >
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">With Descriptions</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
-          <LabelComponent 
-            for="demo-desc" 
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+        >
+          <LabelComponent
+            for="demo-desc"
             required
             description="This field is required and cannot be empty"
           >
             Username
           </LabelComponent>
-          <LabelComponent 
-            for="demo-help" 
+          <LabelComponent
+            for="demo-help"
             optional
             description="Optional: Add additional context or help text"
           >
@@ -163,10 +181,14 @@ import { Label, Input } from 'comet-astro';
   <!-- Size Variants -->
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
-    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+    <div
+      class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+    >
       <LabelComponent size="xs" for="size-xs">Extra Small Label</LabelComponent>
       <LabelComponent size="sm" for="size-sm">Small Label</LabelComponent>
-      <LabelComponent size="md" for="size-md">Medium Label (Default)</LabelComponent>
+      <LabelComponent size="md" for="size-md"
+        >Medium Label (Default)</LabelComponent
+      >
       <LabelComponent size="lg" for="size-lg">Large Label</LabelComponent>
       <LabelComponent size="xl" for="size-xl">Extra Large Label</LabelComponent>
     </div>
@@ -179,25 +201,33 @@ import { Label, Input } from 'comet-astro';
       <div class="space-y-3">
         <h3 class="text-sm font-medium text-slate-300">Normal</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LabelComponent weight="normal" for="weight-normal">Normal Weight</LabelComponent>
+          <LabelComponent weight="normal" for="weight-normal"
+            >Normal Weight</LabelComponent
+          >
         </div>
       </div>
       <div class="space-y-3">
         <h3 class="text-sm font-medium text-slate-300">Medium</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LabelComponent weight="medium" for="weight-medium">Medium Weight</LabelComponent>
+          <LabelComponent weight="medium" for="weight-medium"
+            >Medium Weight</LabelComponent
+          >
         </div>
       </div>
       <div class="space-y-3">
         <h3 class="text-sm font-medium text-slate-300">Semibold</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LabelComponent weight="semibold" for="weight-semibold">Semibold Weight</LabelComponent>
+          <LabelComponent weight="semibold" for="weight-semibold"
+            >Semibold Weight</LabelComponent
+          >
         </div>
       </div>
       <div class="space-y-3">
         <h3 class="text-sm font-medium text-slate-300">Bold</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LabelComponent weight="bold" for="weight-bold">Bold Weight</LabelComponent>
+          <LabelComponent weight="bold" for="weight-bold"
+            >Bold Weight</LabelComponent
+          >
         </div>
       </div>
     </div>
@@ -209,33 +239,45 @@ import { Label, Input } from 'comet-astro';
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Status Types</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
-          <LabelComponent status="default" for="status-default">Default Status</LabelComponent>
-          <LabelComponent status="error" for="status-error">Error Status</LabelComponent>
-          <LabelComponent status="warning" for="status-warning">Warning Status</LabelComponent>
-          <LabelComponent status="success" for="status-success">Success Status</LabelComponent>
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+        >
+          <LabelComponent status="default" for="status-default"
+            >Default Status</LabelComponent
+          >
+          <LabelComponent status="error" for="status-error"
+            >Error Status</LabelComponent
+          >
+          <LabelComponent status="warning" for="status-warning"
+            >Warning Status</LabelComponent
+          >
+          <LabelComponent status="success" for="status-success"
+            >Success Status</LabelComponent
+          >
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">With Descriptions</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
-          <LabelComponent 
-            status="error" 
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+        >
+          <LabelComponent
+            status="error"
             for="error-desc"
             description="This field contains an error that needs to be fixed"
           >
             Email Address
           </LabelComponent>
-          <LabelComponent 
-            status="warning" 
+          <LabelComponent
+            status="warning"
             for="warning-desc"
             description="Please verify this information before proceeding"
           >
             Phone Number
           </LabelComponent>
-          <LabelComponent 
-            status="success" 
+          <LabelComponent
+            status="success"
             for="success-desc"
             description="Great! This field looks good"
           >
@@ -252,17 +294,29 @@ import { Label, Input } from 'comet-astro';
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Block Layouts</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
-          <LabelComponent variant="default" for="layout-default">Default (Block)</LabelComponent>
-          <LabelComponent variant="stacked" for="layout-stacked">Stacked Layout</LabelComponent>
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+        >
+          <LabelComponent variant="default" for="layout-default"
+            >Default (Block)</LabelComponent
+          >
+          <LabelComponent variant="stacked" for="layout-stacked"
+            >Stacked Layout</LabelComponent
+          >
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Inline Layouts</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
-          <LabelComponent variant="inline" for="layout-inline">Inline Layout</LabelComponent>
-          <LabelComponent variant="floating" for="layout-floating">Floating Layout</LabelComponent>
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+        >
+          <LabelComponent variant="inline" for="layout-inline"
+            >Inline Layout</LabelComponent
+          >
+          <LabelComponent variant="floating" for="layout-floating"
+            >Floating Layout</LabelComponent
+          >
         </div>
       </div>
     </div>
@@ -275,59 +329,59 @@ import { Label, Input } from 'comet-astro';
       <div class="space-y-6 max-w-md">
         <div>
           <LabelComponent for="form-name" required>Full Name</LabelComponent>
-          <InputComponent 
-            id="form-name" 
-            name="name" 
+          <InputComponent
+            id="form-name"
+            name="name"
             placeholder="Enter your full name"
             className="mt-1"
           />
         </div>
-        
+
         <div>
-          <LabelComponent 
-            for="form-email" 
+          <LabelComponent
+            for="form-email"
             required
             description="We'll use this to send you important updates"
           >
             Email Address
           </LabelComponent>
-          <InputComponent 
-            id="form-email" 
-            name="email" 
+          <InputComponent
+            id="form-email"
+            name="email"
             type="email"
             placeholder="you@example.com"
             className="mt-1"
           />
         </div>
-        
+
         <div>
-          <LabelComponent 
-            for="form-bio" 
+          <LabelComponent
+            for="form-bio"
             optional
             description="Tell us about yourself (this is completely optional)"
           >
             Biography
           </LabelComponent>
-          <InputComponent 
-            id="form-bio" 
-            name="bio" 
+          <InputComponent
+            id="form-bio"
+            name="bio"
             placeholder="Optional bio..."
             className="mt-1"
           />
         </div>
-        
+
         <div>
-          <LabelComponent 
-            for="form-error" 
+          <LabelComponent
+            for="form-error"
             required
             status="error"
             description="This field is required and cannot be empty"
           >
             Password
           </LabelComponent>
-          <InputComponent 
-            id="form-error" 
-            name="password" 
+          <InputComponent
+            id="form-error"
+            name="password"
             type="password"
             error="Password is required"
             className="mt-1"
@@ -341,43 +395,60 @@ import { Label, Input } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Basic Props
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>for?</code>, <code>required?</code>, <code>optional?</code>, 
+          <code>for?</code>, <code>required?</code>, <code>optional?</code>,
           <code>disabled?</code>, <code>className?</code>
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Visual Style
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>size?</code>, <code>weight?</code>, <code>variant?</code>, 
+          <code>size?</code>, <code>weight?</code>, <code>variant?</code>,
           <code>status?</code> - Control appearance and layout.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Content
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>description?</code>, <code>requiredText?</code>, 
+          <code>description?</code>, <code>requiredText?</code>,
           <code>optionalText?</code> - Custom help text and indicators.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Customization
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>hideRequiredIndicator?</code>, <code>hideOptionalIndicator?</code> - 
-          Control indicator visibility.
+          <code>hideRequiredIndicator?</code>, <code
+            >hideOptionalIndicator?</code
+          > - Control indicator visibility.
         </dd>
       </div>
     </dl>
@@ -387,28 +458,31 @@ import { Label, Input } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      The Label component automatically handles accessibility attributes and 
-      provides seamless integration with form controls. It supports multiple 
+      The Label component automatically handles accessibility attributes and
+      provides seamless integration with form controls. It supports multiple
       layouts and comprehensive status indication.
     </p>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{basicUsage}</code>
       </pre>
     </div>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Advanced Features</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{advancedUsage}</code>
       </pre>
     </div>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Complete Form Example</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{formUsage}</code>
       </pre>
     </div>
@@ -421,31 +495,52 @@ import { Label, Input } from 'comet-astro';
       <ul class="space-y-3 text-sm text-slate-200">
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+ contrast ratios for optimal readability</span>
+          <span
+            ><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+
+            contrast ratios for optimal readability</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Semantic HTML:</strong> Proper <code>&lt;label&gt;</code> elements with correct <code>for</code> attributes</span>
+          <span
+            ><strong>Semantic HTML:</strong> Proper <code>&lt;label&gt;</code> elements
+            with correct <code>for</code> attributes</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Screen Reader Support:</strong> Descriptive aria-labels and proper role assignments</span>
+          <span
+            ><strong>Screen Reader Support:</strong> Descriptive aria-labels and
+            proper role assignments</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Status Communication:</strong> Error states with role="alert" and aria-live regions</span>
+          <span
+            ><strong>Status Communication:</strong> Error states with role="alert"
+            and aria-live regions</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Keyboard Navigation:</strong> Proper focus management and keyboard interaction</span>
+          <span
+            ><strong>Keyboard Navigation:</strong> Proper focus management and keyboard
+            interaction</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>High Contrast Mode:</strong> Enhanced styling for high contrast accessibility displays</span>
+          <span
+            ><strong>High Contrast Mode:</strong> Enhanced styling for high contrast
+            accessibility displays</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Responsive Design:</strong> Consistent experience across all device sizes and orientations</span>
+          <span
+            ><strong>Responsive Design:</strong> Consistent experience across all
+            device sizes and orientations</span
+          >
         </li>
       </ul>
     </div>

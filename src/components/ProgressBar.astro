@@ -1,13 +1,20 @@
 ---
 import { cn } from '../utils/cn';
 
-export interface Props {
+interface Props {
   /** Current progress value */
   value: number;
   /** Maximum value (default: 100) */
   max?: number;
   /** Visual variant of the progress bar */
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'gradient' | 'minimal';
+  variant?:
+    | 'default'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'gradient'
+    | 'minimal';
   /** Size of the progress bar */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   /** Whether to show percentage label */
@@ -43,11 +50,13 @@ const {
   class: className = '',
 } = Astro.props;
 
-const percentage = indeterminate ? 0 : Math.min(Math.max((value / max) * 100, 0), 100);
+const percentage = indeterminate
+  ? 0
+  : Math.min(Math.max((value / max) * 100, 0), 100);
 
 const sizeClasses = {
   xs: 'h-1',
-  sm: 'h-1.5', 
+  sm: 'h-1.5',
   md: 'h-2.5',
   lg: 'h-4',
   xl: 'h-6',
@@ -55,18 +64,19 @@ const sizeClasses = {
 
 const variantClasses = {
   default: 'bg-blue-600 dark:bg-blue-400',
-  success: 'bg-emerald-600 dark:bg-emerald-400', 
+  success: 'bg-emerald-600 dark:bg-emerald-400',
   warning: 'bg-amber-500 dark:bg-amber-400',
   error: 'bg-red-600 dark:bg-red-400',
   info: 'bg-cyan-600 dark:bg-cyan-400',
-  gradient: 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400',
+  gradient:
+    'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400',
   minimal: 'bg-gray-700 dark:bg-gray-300',
 };
 
 const backgroundClasses = {
   default: 'bg-gray-200 dark:bg-gray-700',
   success: 'bg-emerald-100 dark:bg-emerald-900/30',
-  warning: 'bg-amber-100 dark:bg-amber-900/30', 
+  warning: 'bg-amber-100 dark:bg-amber-900/30',
   error: 'bg-red-100 dark:bg-red-900/30',
   info: 'bg-cyan-100 dark:bg-cyan-900/30',
   gradient: 'bg-gray-200 dark:bg-gray-700',
@@ -76,7 +86,7 @@ const backgroundClasses = {
 const labelSizeClasses = {
   xs: 'text-xs',
   sm: 'text-xs',
-  md: 'text-sm', 
+  md: 'text-sm',
   lg: 'text-base',
   xl: 'text-lg',
 };
@@ -104,22 +114,63 @@ const labelClasses = cn(
 const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
 ---
 
-<div class={cn('w-full', className)} role="group" aria-labelledby={displayLabel ? 'progress-label' : undefined}>
-  {displayLabel && labelPosition === 'top' && (
-    <div class="mb-2 flex items-baseline justify-between">
-      <span id="progress-label" class={labelClasses}>
-        {label || 'Progress'}
-      </span>
-      {showLabel && (
-        <span class={cn(labelClasses, 'tabular-nums')}>
-          {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
+<div
+  class={cn('w-full', className)}
+  role="group"
+  aria-labelledby={displayLabel ? 'progress-label' : undefined}
+>
+  {
+    displayLabel && labelPosition === 'top' && (
+      <div class="mb-2 flex items-baseline justify-between">
+        <span id="progress-label" class={labelClasses}>
+          {label || 'Progress'}
         </span>
-      )}
-    </div>
-  )}
-  
-  {displayLabel && labelPosition === 'inline' && size !== 'xs' && size !== 'sm' && (
-    <div class="relative">
+        {showLabel && (
+          <span class={cn(labelClasses, 'tabular-nums')}>
+            {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
+          </span>
+        )}
+      </div>
+    )
+  }
+
+  {
+    displayLabel &&
+      labelPosition === 'inline' &&
+      size !== 'xs' &&
+      size !== 'sm' && (
+        <div class="relative">
+          <div class={progressBarClasses}>
+            <div
+              class={progressFillClasses}
+              style={indeterminate ? undefined : `width: ${percentage}%`}
+              role="progressbar"
+              aria-valuenow={indeterminate ? undefined : value}
+              aria-valuemin="0"
+              aria-valuemax={max}
+              aria-label={ariaLabel || displayLabel || 'Progress'}
+              aria-describedby={ariaDescribedBy}
+            />
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span
+                class={cn(
+                  labelClasses,
+                  'text-xs font-semibold mix-blend-difference'
+                )}
+              >
+                {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
+              </span>
+            </div>
+          </div>
+        </div>
+      )
+  }
+
+  {
+    (!displayLabel ||
+      labelPosition !== 'inline' ||
+      size === 'xs' ||
+      size === 'sm') && (
       <div class={progressBarClasses}>
         <div
           class={progressFillClasses}
@@ -131,54 +182,40 @@ const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
           aria-label={ariaLabel || displayLabel || 'Progress'}
           aria-describedby={ariaDescribedBy}
         />
-        <div class="absolute inset-0 flex items-center justify-center">
-          <span class={cn(labelClasses, 'text-xs font-semibold mix-blend-difference')}>
+        {indeterminate && (
+          <div
+            class={cn(
+              'absolute inset-0 rounded-full',
+              'bg-gradient-to-r from-transparent via-white/20 to-transparent',
+              'animate-[shimmer_1.5s_ease-in-out_infinite]'
+            )}
+          />
+        )}
+      </div>
+    )
+  }
+
+  {
+    displayLabel && labelPosition === 'bottom' && (
+      <div class="mt-2 flex items-baseline justify-between">
+        <span class={labelClasses}>{label || 'Progress'}</span>
+        {showLabel && (
+          <span class={cn(labelClasses, 'tabular-nums')}>
             {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
           </span>
-        </div>
+        )}
       </div>
-    </div>
-  )}
-  
-  {(!displayLabel || labelPosition !== 'inline' || size === 'xs' || size === 'sm') && (
-    <div class={progressBarClasses}>
-      <div
-        class={progressFillClasses}
-        style={indeterminate ? undefined : `width: ${percentage}%`}
-        role="progressbar"
-        aria-valuenow={indeterminate ? undefined : value}
-        aria-valuemin="0" 
-        aria-valuemax={max}
-        aria-label={ariaLabel || displayLabel || 'Progress'}
-        aria-describedby={ariaDescribedBy}
-      />
-      {indeterminate && (
-        <div class={cn(
-          'absolute inset-0 rounded-full',
-          'bg-gradient-to-r from-transparent via-white/20 to-transparent',
-          'animate-[shimmer_1.5s_ease-in-out_infinite]'
-        )} />
-      )}
-    </div>
-  )}
-  
-  {displayLabel && labelPosition === 'bottom' && (
-    <div class="mt-2 flex items-baseline justify-between">
-      <span class={labelClasses}>
-        {label || 'Progress'}
-      </span>
-      {showLabel && (
-        <span class={cn(labelClasses, 'tabular-nums')}>
-          {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
-        </span>
-      )}
-    </div>
-  )}
+    )
+  }
 </div>
 
 <style>
   @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
 </style>

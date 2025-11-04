@@ -63,7 +63,8 @@ const colorClasses = {
   textMuted: 'text-slate-600 dark:text-slate-300',
   loader: 'bg-blue-700 dark:bg-blue-400',
   error: 'text-red-700 dark:text-red-400',
-  button: 'text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200',
+  button:
+    'text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200',
   buttonFocus: 'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
 };
 
@@ -99,40 +100,51 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
     aria-label="Loading more content"
   >
     <span class={`flex items-center ${sizeClasses[size].gap} font-medium`}>
-      {loadingVariant === 'spinner' ? (
-        <svg
-          class={`${sizeClasses[size].loader} animate-spin ${colorClasses.loader}`}
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden="true"
-        >
-          <circle
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-            stroke-dasharray="31.416"
-            stroke-dashoffset="31.416"
-            class="opacity-25"
+      {
+        loadingVariant === 'spinner' ? (
+          <svg
+            class={`${sizeClasses[size].loader} animate-spin ${colorClasses.loader}`}
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-dasharray="31.416"
+              stroke-dashoffset="31.416"
+              class="opacity-25"
+            />
+            <path
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+        ) : loadingVariant === 'dots' ? (
+          <div class={`flex ${sizeClasses[size].gap}`} aria-hidden="true">
+            <span
+              class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`}
+              style="animation-delay: 0ms"
+            />
+            <span
+              class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`}
+              style="animation-delay: 150ms"
+            />
+            <span
+              class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`}
+              style="animation-delay: 300ms"
+            />
+          </div>
+        ) : (
+          <span
+            class={`${sizeClasses[size].loader} animate-pulse rounded-full ${colorClasses.loader}`}
+            aria-hidden="true"
           />
-          <path
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          />
-        </svg>
-      ) : loadingVariant === 'dots' ? (
-        <div class={`flex ${sizeClasses[size].gap}`} aria-hidden="true">
-          <span class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`} style="animation-delay: 0ms" />
-          <span class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`} style="animation-delay: 150ms" />
-          <span class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`} style="animation-delay: 300ms" />
-        </div>
-      ) : (
-        <span
-          class={`${sizeClasses[size].loader} animate-pulse rounded-full ${colorClasses.loader}`}
-          aria-hidden="true"
-        />
-      )}
+        )
+      }
       <span>{loaderText}</span>
     </span>
   </div>
@@ -159,31 +171,34 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
   </div>
 
   <!-- Announcement region for screen readers -->
-  {announceContent && (
-    <div
-      class="sr-only"
-      data-infinite-announcer
-      aria-live="polite"
-      aria-atomic="true"
-    />
-  )}
+  {
+    announceContent && (
+      <div
+        class="sr-only"
+        data-infinite-announcer
+        aria-live="polite"
+        aria-atomic="true"
+      />
+    )
+  }
 
   <!-- Intersection sentinel -->
   <div
     aria-hidden="true"
     data-infinite-sentinel
     class="absolute bottom-0 left-0 right-0 h-1"
-  />
+  >
+  </div>
 </div>
 
 <script is:inline>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     // Setup für alle InfiniteScroll-Komponenten auf der Seite
     const allRoots = document.querySelectorAll('[data-infinite-scroll]');
-    
-    allRoots.forEach(function(root) {
+
+    allRoots.forEach(function (root) {
       if (!(root instanceof HTMLElement)) return;
-      
+
       // Verhindere mehrfache Initialisierung
       if (root.dataset.infiniteInitialized === 'true') return;
       root.dataset.infiniteInitialized = 'true';
@@ -200,41 +215,53 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
       const announceContent = root.dataset.announceContent === 'true';
       const announceText = root.dataset.announceText || 'New content loaded';
       const errorText = root.dataset.errorText || 'Failed to load content';
-      
+
       let disabled = root.dataset.disabled === 'true';
       let isLoading = false;
       let hasError = false;
-      
-      const threshold = Number.parseFloat(root.dataset.threshold || '0.25') || 0.25;
+
+      const threshold =
+        Number.parseFloat(root.dataset.threshold || '0.25') || 0.25;
       const rootMargin = root.dataset.margin || '0px';
 
-      console.log('🔧 InfiniteScroll setup for:', root.id, 'threshold:', threshold, 'margin:', rootMargin);
+      console.log(
+        '🔧 InfiniteScroll setup for:',
+        root.id,
+        'threshold:',
+        threshold,
+        'margin:',
+        rootMargin
+      );
 
       // Enhanced state management
-      const setState = function(state) {
+      const setState = function (state) {
         isLoading = state.loading || false;
         hasError = state.error || false;
-        
+
         // Update loader
         if (loader instanceof HTMLElement) {
           loader.hidden = !isLoading;
           loader.setAttribute('aria-hidden', isLoading ? 'false' : 'true');
         }
-        
+
         // Update error state
         if (errorElement instanceof HTMLElement) {
           errorElement.hidden = !hasError;
           errorElement.setAttribute('aria-hidden', hasError ? 'false' : 'true');
         }
-        
+
         // Update busy state
         root.setAttribute('aria-busy', isLoading ? 'true' : 'false');
-        
+
         // Announce content loading
-        if (announceContent && announcer instanceof HTMLElement && state.announce) {
+        if (
+          announceContent &&
+          announcer instanceof HTMLElement &&
+          state.announce
+        ) {
           announcer.textContent = state.announce;
           // Clear after announcement
-          setTimeout(function() {
+          setTimeout(function () {
             if (announcer instanceof HTMLElement) {
               announcer.textContent = '';
             }
@@ -243,48 +270,53 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
       };
 
       const observer = new IntersectionObserver(
-        function(entries) {
+        function (entries) {
           if (disabled || isLoading || hasError) return;
-          const entry = entries.find(function(item) { return item.isIntersecting; });
+          const entry = entries.find(function (item) {
+            return item.isIntersecting;
+          });
           if (!entry) return;
 
           console.log('🚀 InfiniteScroll intersection detected for:', root.id);
 
           const detail = {
-            pause: function() {
+            pause: function () {
               disabled = true;
             },
-            resume: function() {
+            resume: function () {
               disabled = false;
               hasError = false;
               setState({ loading: false, error: false });
             },
-            loading: function(state) {
-              setState({ 
-                loading: state, 
+            loading: function (state) {
+              setState({
+                loading: state,
                 error: false,
-                announce: state ? 'Loading more content' : announceText
+                announce: state ? 'Loading more content' : announceText,
               });
             },
-            error: function(message) {
-              setState({ 
-                loading: false, 
+            error: function (message) {
+              setState({
+                loading: false,
                 error: true,
-                announce: message || errorText
+                announce: message || errorText,
               });
             },
-            done: function() {
+            done: function () {
               disabled = true;
               observer.disconnect();
-              setState({ 
-                loading: false, 
+              setState({
+                loading: false,
                 error: false,
-                announce: 'All content loaded'
+                announce: 'All content loaded',
               });
             },
           };
 
-          const customEvent = new CustomEvent(eventName, { bubbles: true, detail: detail });
+          const customEvent = new CustomEvent(eventName, {
+            bubbles: true,
+            detail: detail,
+          });
           console.log('📤 Dispatching event:', eventName, 'on:', root.id);
           root.dispatchEvent(customEvent);
         },
@@ -295,7 +327,7 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
 
       // Retry functionality
       if (retryButton instanceof HTMLElement) {
-        retryButton.addEventListener('click', function() {
+        retryButton.addEventListener('click', function () {
           hasError = false;
           disabled = false;
           setState({ loading: false, error: false });
@@ -306,18 +338,18 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
       }
 
       // External event listeners
-      root.addEventListener('infinite-scroll:disable', function() {
+      root.addEventListener('infinite-scroll:disable', function () {
         disabled = true;
         setState({ loading: false, error: false });
       });
 
-      root.addEventListener('infinite-scroll:enable', function() {
+      root.addEventListener('infinite-scroll:enable', function () {
         disabled = false;
         hasError = false;
         setState({ loading: false, error: false });
       });
 
-      root.addEventListener('infinite-scroll:destroy', function() {
+      root.addEventListener('infinite-scroll:destroy', function () {
         observer.disconnect();
         setState({ loading: false, error: false });
       });
@@ -328,7 +360,7 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
       } else {
         setState({ loading: false, error: false });
       }
-      
+
       console.log('✅ InfiniteScroll initialized for:', root.id);
     });
   });

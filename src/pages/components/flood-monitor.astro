@@ -1,0 +1,212 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import FloodMonitor from '../../components/FloodMonitor.astro';
+
+const usageSnippet = `---\nimport { FloodMonitor } from 'comet-astro';\n\n---\n<!-- Static demo (no fetch) -->\n<FloodMonitor location="Rhine Basin" riverName="Rhine" disableFetch />\n\n<!-- Auto Open-Meteo Flood API using coordinates -->\n<FloodMonitor\n  location="Rhine Basin"\n  riverName="Rhine"\n  latitude={50.94}\n  longitude={6.95}\n  thresholds={{ watch: 60, warning: 110, emergency: 180 }}\n  refreshInterval={30}\n/>\n\n<!-- Custom endpoint shape: { discharge, level?, trend?, updated? } -->\n<FloodMonitor\n  location="Rhine Basin"\n  riverName="Rhine"\n  apiUrl="/api/hydro/rhine-station-42"\n  stationId="rhine-42"\n  thresholds={{ watch: 60, warning: 110, emergency: 180 }}\n  refreshInterval={15}\n/>`;
+---
+
+<DocsLayout
+  title="FloodMonitor"
+  description="Minimal river discharge & level snapshot with live updates and AAA contrast."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      FloodMonitor provides a concise, high‑contrast snapshot of current river
+      discharge and level with optional live updates. It intentionally avoids
+      overengineering: no charts, no historical analytics, just the essentials
+      needed to convey present risk.
+    </p>
+    <p class="text-base text-slate-200">
+      Risk classification (Normal / Watch / Warning / Emergency) automatically
+      derives from threshold props. A live status line announces loading and
+      error states for assistive technologies.
+    </p>
+    <p class="text-base text-slate-200">
+      The component is fully Tailwind‑driven (no legacy CSS) and maintains ≥9:1
+      contrast across light & dark themes, including transient loading
+      skeletons. Motion is reduced automatically when the user requests it.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          location?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Human readable area or basin label. Defaults to “Demo Location”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          riverName?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Name displayed beneath the level metric. Defaults to “River”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          stationId?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional identifier forwarded for analytics or API selection.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          latitude? / longitude?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Coordinates enabling automatic Open‑Meteo Flood API fetch (daily
+          river_discharge). Provide both values.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          apiUrl?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom endpoint: &#123; discharge, level?, trend?, updated? &#125;
+          overrides lat/lon auto URL.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          thresholds?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Object: &#123; watch, warning, emergency &#125; controlling risk class
+          boundaries.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          refreshInterval?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Minutes between auto refresh attempts. 0 disables periodic fetch
+          (default).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disableFetch?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          If true, skips all network calls and shows static fallback values.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showTrend?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Toggles the trend metric card. Defaults to true.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom accessible region label. Falls back to “Flood monitor for
+          &#123;location&#125;”.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Provide either static fallback metrics (no props required) or connect to a
+      live endpoint via <code>apiUrl</code>. Risk classification updates
+      automatically when new discharge data arrives, preserving AAA contrast
+      states.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Demo</h2>
+    <div class="flex flex-wrap gap-6">
+      <FloodMonitor location="Demo Basin" riverName="Demo" disableFetch />
+      <FloodMonitor
+        location="Demo Basin"
+        riverName="Demo"
+        latitude={50.94}
+        longitude={6.95}
+        thresholds={{ watch: 20, warning: 40, emergency: 55 }}
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      The root container is a landmark <code>region</code> with an explicit label
+      so assistive tech can announce scope. Loading and error states are exposed
+      via <code>aria-busy</code> and a polite live region (<code
+        >aria-live="polite"</code
+      >) for status text.
+    </p>
+    <p class="text-base text-slate-200">
+      Each metric card uses semantic text nodes instead of role-heavy wrappers
+      keeping the DOM lean. Contrast of text vs. backgrounds remains ≥9:1 across
+      themes; risk colors apply only to text (not solid fills) to preserve
+      readability.
+    </p>
+    <p class="text-base text-slate-200">
+      Motion effects (loading shimmer) disable automatically under <code
+        >prefers-reduced-motion</code
+      >. High contrast mode adds a 2px outline. No color is the sole carrier of
+      information—labels (Normal/Watch/Warning/Emergency) are always present.
+    </p>
+  </section>
+</DocsLayout>

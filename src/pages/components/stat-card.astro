@@ -5,27 +5,473 @@ import StatCard from '../../components/StatCard.astro';
 
 <DocsLayout
   title="StatCard"
-  description="Highlight KPIs with optional icons, deltas, and gradient variant."
+  description="WCAG AAA compliant statistic cards for displaying KPIs, metrics, and data with optional trends, icons, and responsive design."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <StatCard
-        label="Total Users"
-        value="12,543"
-        icon="👥"
-        trend={12.5}
-        trendLabel="vs last month"
-      />
-      <StatCard
-        label="Revenue"
-        value="$45,231"
-        icon="💰"
-        trend={-3.2}
-        trendLabel="vs last month"
-        variant="gradient"
-      />
-      <StatCard label="Active Now" value="328" icon="⚡" />
+  <section class="space-y-6">
+    <div class="space-y-3">
+      <h2 class="text-xl font-semibold text-slate-100">Overview</h2>
+      <p class="text-base text-slate-200">
+        StatCard components provide an accessible and visually appealing way to
+        display key performance indicators, metrics, and statistical data. Built
+        with WCAG AAA compliance, they feature proper contrast ratios, semantic
+        HTML, and comprehensive screen reader support.
+      </p>
+      <p class="text-base text-slate-200">
+        The component supports multiple variants, sizes, trend indicators, and
+        responsive design patterns. All elements automatically adjust for high
+        contrast mode and respect user preferences for reduced motion.
+      </p>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          label
+        </dt>
+        <dd class="text-sm text-slate-200">
+          The label/title of the statistic. Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          value
+        </dt>
+        <dd class="text-sm text-slate-200">
+          The main value to display (string or number). Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          icon?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional icon to display (emoji or text).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          trend?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Trend percentage (positive/negative number).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          trendLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional context for the trend.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual variant: <code>default</code>, <code>gradient</code>, <code
+            >bordered</code
+          >, <code>elevated</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>sm</code>, <code>md</code>, <code>lg</code>.
+          Defaults to <code>md</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          as?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          HTML element to render: <code>div</code>, <code>article</code>, <code
+            >section</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          role?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ARIA role for accessibility context.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">ARIA label for screen readers.</dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabelledby?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ARIA labelledby reference for complex labeling.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          debug?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show visual debugging information. Defaults to <code>false</code>.
+        </dd>
+      </div>
+    </dl>
+    <p class="text-sm text-slate-400 mt-4">
+      Use semantic HTML elements for better accessibility.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Basic Usage -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <StatCard label="Total Users" value="12,543" />
+        <StatCard label="Revenue" value="$45,231" icon="💰" />
+        <StatCard
+          label="Active Sessions"
+          value="328"
+          icon="⚡"
+          trend={12.5}
+          trendLabel="vs last week"
+        />
+      </div>
+    </div>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Variants</h3>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Default" value="1,234" icon="📊" variant="default" />
+        <StatCard label="Gradient" value="5,678" icon="🌟" variant="gradient" />
+        <StatCard label="Bordered" value="9,012" icon="🔥" variant="bordered" />
+        <StatCard label="Elevated" value="3,456" icon="📈" variant="elevated" />
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sizes</h3>
+      <div class="grid gap-6 sm:grid-cols-3">
+        <StatCard
+          label="Small Card"
+          value="123"
+          icon="📱"
+          size="sm"
+          trend={5.2}
+          trendLabel="growth"
+        />
+        <StatCard
+          label="Medium Card"
+          value="4,567"
+          icon="💻"
+          size="md"
+          trend={-2.1}
+          trendLabel="vs target"
+        />
+        <StatCard
+          label="Large Card"
+          value="89,012"
+          icon="🖥️"
+          size="lg"
+          trend={15.8}
+          trendLabel="year over year"
+        />
+      </div>
+    </div>
+
+    <!-- Trends -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Trend Indicators</h3>
+      <div class="grid gap-6 sm:grid-cols-3">
+        <StatCard
+          label="Positive Trend"
+          value="2,456"
+          icon="📈"
+          trend={24.5}
+          trendLabel="vs last month"
+          variant="gradient"
+        />
+        <StatCard
+          label="Negative Trend"
+          value="1,234"
+          icon="📉"
+          trend={-8.2}
+          trendLabel="vs last month"
+          variant="bordered"
+        />
+        <StatCard
+          label="Neutral Trend"
+          value="5,000"
+          icon="➡️"
+          trend={0}
+          trendLabel="no change"
+          variant="elevated"
+        />
+      </div>
+    </div>
+
+    <!-- Semantic HTML -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Semantic HTML</h3>
+      <div class="grid gap-6 sm:grid-cols-2">
+        <StatCard
+          as="article"
+          label="Page Views"
+          value="15,432"
+          icon="👁️"
+          trend={7.3}
+          trendLabel="this week"
+          ariaLabel="Page views statistics showing 15,432 total views with a 7.3% increase this week"
+        />
+        <StatCard
+          as="section"
+          label="Conversion Rate"
+          value="3.2%"
+          icon="🎯"
+          trend={0.8}
+          trendLabel="improvement"
+          role="region"
+          ariaLabel="Conversion rate metric showing 3.2% with 0.8% improvement"
+        />
+      </div>
+    </div>
+
+    <!-- Real-world Dashboard -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Dashboard Example</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-slate-100 mb-2">
+            Analytics Overview
+          </h4>
+          <p class="text-sm text-slate-300">
+            Key performance indicators for the current period
+          </p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            label="Total Revenue"
+            value="$127,543"
+            icon="💰"
+            trend={18.2}
+            trendLabel="vs last quarter"
+            variant="gradient"
+            size="md"
+          />
+          <StatCard
+            label="New Customers"
+            value="2,847"
+            icon="👥"
+            trend={-4.1}
+            trendLabel="vs last month"
+            variant="bordered"
+            size="md"
+          />
+          <StatCard
+            label="Conversion Rate"
+            value="4.8%"
+            icon="🎯"
+            trend={12.3}
+            trendLabel="improvement"
+            variant="elevated"
+            size="md"
+          />
+          <StatCard
+            label="Avg. Order Value"
+            value="$89.42"
+            icon="🛒"
+            trend={2.7}
+            trendLabel="increase"
+            variant="default"
+            size="md"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Grid Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Responsive Grid Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div
+          class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+          <StatCard label="Users" value="12.5K" icon="👥" size="sm" />
+          <StatCard label="Sessions" value="45.2K" icon="📊" size="sm" />
+          <StatCard label="Revenue" value="$89.3K" icon="💰" size="sm" />
+          <StatCard label="Growth" value="+24%" icon="📈" size="sm" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Compact Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Compact Sidebar Stats</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-3 max-w-sm">
+          <StatCard
+            label="Active Users"
+            value="1,847"
+            icon="🟢"
+            size="sm"
+            variant="bordered"
+          />
+          <StatCard
+            label="Page Views"
+            value="23.4K"
+            icon="👁️"
+            size="sm"
+            variant="bordered"
+          />
+          <StatCard
+            label="Bounce Rate"
+            value="34.2%"
+            icon="⚡"
+            size="sm"
+            variant="bordered"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      StatCard components are designed with comprehensive accessibility features
+      and WCAG AAA compliance. All text maintains 9:1 contrast ratios and
+      adjusts automatically for high contrast mode and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Trend indicators use both color and directional arrows to convey
+      information, ensuring accessibility for users with color vision
+      differences. Screen readers receive detailed information about trends and
+      context through ARIA labels.
+    </p>
+    <p class="text-base text-slate-200">
+      The component respects user preferences for reduced motion and provides
+      semantic structure through proper HTML elements and ARIA roles. Focus
+      management is handled automatically for interactive content.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Design Tokens</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Size Scale</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">sm</span>
+            <span class="text-slate-400">Compact cards, sidebars</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">md</span>
+            <span class="text-slate-400">Standard dashboard cards</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">lg</span>
+            <span class="text-slate-400">Hero metrics, featured stats</span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Variants</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">default</span>
+            <span class="text-slate-400">Clean, minimal appearance</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">gradient</span>
+            <span class="text-slate-400">Enhanced visual appeal</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">bordered</span>
+            <span class="text-slate-400">Emphasized boundaries</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">elevated</span>
+            <span class="text-slate-400">Floating appearance</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </DocsLayout>

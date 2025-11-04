@@ -1,0 +1,380 @@
+---
+/**
+ * EnvironmentalDashboard – Minimal environmental snapshot.
+ * WCAG AAA (light & dark), Astro-only, Tailwind-only.
+ * Metrics: Temperature, Humidity, optional Wind, optional AQI & PM2.5, Updated time.
+ * Live fetch (Open‑Meteo) only if latitude & longitude provided; else static fallback.
+ */
+const {
+  latitude,
+  longitude,
+  location = 'Demo Location',
+  unit = 'c',
+  showAirQuality = true,
+  showWind = true,
+  refreshInterval = 0,
+  disableFetch = false,
+  ariaLabel,
+  class: className = '',
+} = Astro.props;
+
+const fallback = {
+  temperatureC: 18.2,
+  humidity: 55,
+  windKph: 12,
+  windDir: 'NW',
+  condition: 'Partly cloudy',
+  isDay: true,
+  aqi: 34,
+  pm25: 5.8,
+};
+
+const label = ariaLabel || `Environmental conditions for ${location}`;
+const tempDisplay =
+  unit === 'c'
+    ? `${Math.round(fallback.temperatureC)}°C`
+    : `${Math.round((fallback.temperatureC * 9) / 5 + 32)}°F`;
+
+const rootCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
+const gridCls =
+  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6';
+const cardCls =
+  'flex flex-col gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[86px]';
+const labelCls =
+  'text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400';
+const valueCls =
+  'text-base md:text-lg font-bold text-slate-900 dark:text-slate-50';
+const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+---
+
+<div
+  class={rootCls}
+  role="region"
+  aria-label={label}
+  aria-busy={latitude && longitude && !disableFetch ? 'true' : 'false'}
+  data-env-dashboard
+  data-unit={unit}
+  data-refresh={refreshInterval}
+  data-lat={latitude}
+  data-lon={longitude}
+  data-disable-fetch={disableFetch}
+  data-state={latitude && longitude && !disableFetch ? 'loading' : 'static'}
+>
+  <header
+    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
+  >
+    <h2
+      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+    >
+      <span aria-hidden="true" class="text-2xl">🌍</span>
+      <span class="truncate" data-location>{location}</span>
+    </h2>
+    <p
+      class="text-xs font-medium text-slate-600 dark:text-slate-300"
+      aria-live="polite"
+      data-status
+    >
+      {
+        latitude && longitude && !disableFetch
+          ? 'Loading live environmental data…'
+          : 'Static demo data'
+      }
+    </p>
+  </header>
+
+  <div class={gridCls} data-metrics>
+    <div class={cardCls} data-metric="temperature">
+      <span class={labelCls}>Temperature</span>
+      <span class={valueCls} data-temp>{tempDisplay}</span>
+      <span class={subCls} data-condition>{fallback.condition}</span>
+    </div>
+    <div class={cardCls} data-metric="humidity">
+      <span class={labelCls}>Humidity</span>
+      <span class={valueCls} data-humidity>{fallback.humidity}%</span>
+      <span class={subCls} data-daynight
+        >{fallback.isDay ? 'Daytime' : 'Night'}</span
+      >
+    </div>
+    {
+      showWind && (
+        <div class={cardCls} data-metric="wind">
+          <>
+            <span class={labelCls}>Wind</span>
+            <span class={valueCls} data-wind>
+              {fallback.windKph} km/h
+            </span>
+            <span class={subCls} data-winddir>
+              {fallback.windDir}
+            </span>
+          </>
+        </div>
+      )
+    }
+    {
+      showAirQuality && (
+        <div class={cardCls} data-metric="aqi">
+          <>
+            <span class={labelCls}>AQI</span>
+            <span class={valueCls} data-aqi>
+              {fallback.aqi}
+            </span>
+            <span class={subCls} data-aqi-cat>
+              Good
+            </span>
+          </>
+        </div>
+      )
+    }
+    {
+      showAirQuality && (
+        <div class={cardCls} data-metric="pm25">
+          <>
+            <span class={labelCls}>PM2.5</span>
+            <span class={valueCls} data-pm25>
+              {fallback.pm25}
+            </span>
+            <span class={subCls}>µg/m³</span>
+          </>
+        </div>
+      )
+    }
+    <div class={cardCls} data-metric="updated">
+      <span class={labelCls}>Updated</span>
+      <span class={valueCls} data-updated>Just now</span>
+      <span
+        class={`${subCls} hidden text-amber-700 dark:text-amber-300`}
+        data-loading>Loading…</span
+      >
+      <span
+        class={`${subCls} hidden text-rose-700 dark:text-rose-300`}
+        data-error>Error</span
+      >
+    </div>
+  </div>
+
+  <p
+    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
+    data-disclaimer
+  >
+    {
+      latitude && longitude && !disableFetch
+        ? 'Live Open‑Meteo data (weather + air quality). Fallback values retained on failure.'
+        : 'Demo fallback data. Add latitude & longitude to enable live fetch.'
+    } AAA contrast maintained.
+  </p>
+
+  <footer
+    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
+  >
+    <span
+      >Source: <a
+        href="https://open-meteo.com"
+        class="underline text-slate-800 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300"
+        >Open‑Meteo</a
+      ></span
+    >
+    <span class="ml-auto" data-refresh-indicator
+      >{
+        refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'No auto refresh'
+      }</span
+    >
+  </footer>
+</div>
+
+<script>
+  const codeToCondition = (code) =>
+    ({
+      0: 'Clear',
+      1: 'Mainly clear',
+      2: 'Partly cloudy',
+      3: 'Overcast',
+      45: 'Fog',
+      48: 'Fog',
+      51: 'Drizzle',
+      53: 'Drizzle',
+      55: 'Drizzle',
+      61: 'Rain',
+      63: 'Rain',
+      65: 'Rain',
+      71: 'Snow',
+      73: 'Snow',
+      75: 'Snow',
+      80: 'Rain showers',
+      81: 'Rain showers',
+      82: 'Rain showers',
+      95: 'Thunderstorm',
+      96: 'Thunderstorm',
+      99: 'Thunderstorm',
+    })[code] || 'Unknown';
+
+  function initEnvDashboard(el) {
+    const lat = parseFloat(el.dataset.lat);
+    const lon = parseFloat(el.dataset.lon);
+    const unit = el.dataset.unit || 'c';
+    const refresh = parseInt(el.dataset.refresh || '0');
+    const disableFetch = el.dataset.disableFetch === 'true';
+    const canFetch = !!lat && !!lon && !disableFetch;
+
+    const qs = (sel) => el.querySelector(sel);
+    const tempEl = qs('[data-temp]');
+    const condEl = qs('[data-condition]');
+    const humEl = qs('[data-humidity]');
+    const windEl = qs('[data-wind]');
+    const windDirEl = qs('[data-winddir]');
+    const dayNightEl = qs('[data-daynight]');
+    const aqiEl = qs('[data-aqi]');
+    const aqiCatEl = qs('[data-aqi-cat]');
+    const pm25El = qs('[data-pm25]');
+    const updEl = qs('[data-updated]');
+    const statusEl = qs('[data-status]');
+    const loadingEl = qs('[data-loading]');
+    const errorEl = qs('[data-error]');
+
+    const classifyAQI = (v) =>
+      v <= 50
+        ? 'Good'
+        : v <= 100
+          ? 'Moderate'
+          : v <= 150
+            ? 'USG'
+            : v <= 200
+              ? 'Unhealthy'
+              : v <= 300
+                ? 'Very Unhealthy'
+                : 'Hazardous';
+    const setState = (s) => {
+      el.dataset.state = s;
+      el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
+      if (loadingEl) loadingEl.classList.toggle('hidden', s !== 'loading');
+      if (errorEl) errorEl.classList.toggle('hidden', s !== 'error');
+    };
+
+    async function fetchData() {
+      if (!canFetch) return;
+      setState('loading');
+      if (statusEl) statusEl.textContent = 'Loading live environmental data…';
+      try {
+        const wRes = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,weather_code,is_day&timezone=auto`
+        );
+        if (!wRes.ok) throw 0;
+        const wData = await wRes.json();
+        const cur = wData.current;
+        if (cur) {
+          const condition = codeToCondition(cur.weather_code);
+          const cTemp = Math.round(cur.temperature_2m);
+          const fTemp = Math.round((cTemp * 9) / 5 + 32);
+          const tDisp = unit === 'f' ? `${fTemp}°F` : `${cTemp}°C`;
+          if (tempEl) tempEl.textContent = tDisp;
+          if (condEl) condEl.textContent = condition;
+          if (humEl) humEl.textContent = `${cur.relative_humidity_2m}%`;
+          if (dayNightEl)
+            dayNightEl.textContent = cur.is_day ? 'Daytime' : 'Night';
+          if (windEl)
+            windEl.textContent = `${Math.round(cur.wind_speed_10m)} km/h`;
+          if (windDirEl) {
+            const dirs = [
+              'N',
+              'NNE',
+              'NE',
+              'ENE',
+              'E',
+              'ESE',
+              'SE',
+              'SSE',
+              'S',
+              'SSW',
+              'SW',
+              'WSW',
+              'W',
+              'WNW',
+              'NW',
+              'NNW',
+            ];
+            windDirEl.textContent =
+              dirs[Math.round(cur.wind_direction_10m / 22.5) % 16];
+          }
+        }
+        if (aqiEl || pm25El) {
+          const aqRes = await fetch(
+            `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=us_aqi,pm2_5&timezone=auto`
+          );
+          if (aqRes.ok) {
+            const aq = await aqRes.json();
+            const idx = aq.hourly?.time?.length
+              ? aq.hourly.time.indexOf(aq.current?.time)
+              : 0;
+            const aqiVal = aq.hourly?.us_aqi?.[idx] ?? aq.hourly?.us_aqi?.[0];
+            const pmVal = aq.hourly?.pm2_5?.[idx] ?? aq.hourly?.pm2_5?.[0];
+            if (typeof aqiVal === 'number' && aqiEl) aqiEl.textContent = aqiVal;
+            if (typeof aqiVal === 'number' && aqiCatEl)
+              aqiCatEl.textContent = classifyAQI(aqiVal);
+            if (typeof pmVal === 'number' && pm25El)
+              pm25El.textContent = pmVal.toFixed(1);
+          }
+        }
+        if (updEl) {
+          updEl.textContent = new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        }
+        if (statusEl) statusEl.textContent = 'Live data loaded';
+        setState('ready');
+      } catch {
+        if (statusEl)
+          statusEl.textContent = 'Live update failed (fallback shown)';
+        setState('error');
+      }
+    }
+
+    fetchData();
+    if (refresh > 0 && canFetch) setInterval(fetchData, refresh * 60 * 1000);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-env-dashboard]').forEach(initEnvDashboard);
+  });
+</script>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-env-dashboard] * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    [data-env-dashboard] {
+      outline: 2px solid currentColor;
+    }
+  }
+
+  [data-env-dashboard][data-state='loading'] [data-metric] {
+    position: relative;
+  }
+  [data-env-dashboard][data-state='loading'] [data-metric]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.15),
+      rgba(148, 163, 184, 0.35),
+      rgba(148, 163, 184, 0.15)
+    );
+    animation: env-pulse 1.4s ease-in-out infinite;
+    opacity: 0.35;
+  }
+
+  @keyframes env-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.65;
+    }
+  }
+</style>

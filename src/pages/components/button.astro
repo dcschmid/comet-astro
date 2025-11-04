@@ -28,6 +28,12 @@ import { Button } from 'comet-astro';
       Each variant provides strong focus rings with theme-aware offsets so
       keyboard users never lose track of intent, even against busy backgrounds.
     </p>
+    <p class="text-base text-slate-200">
+      Built on top of <strong>ButtonBase</strong>, this component provides
+      intelligent rendering as either a button or anchor element based on the
+      presence of an href prop, with consistent styling and accessibility
+      features across all variants.
+    </p>
   </section>
 
   <section class="mt-10 space-y-6">
@@ -146,6 +152,38 @@ import { Button } from 'comet-astro';
       <Button href="#" variant="secondary">Docs home</Button>
       <Button href="https://astro.build" variant="ghost">Visit Astro</Button>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">
+      ButtonBase Architecture
+    </h2>
+    <p class="text-base text-slate-200">
+      This component is built on top of ButtonBase, providing:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Intelligent Rendering:</strong> Automatically renders as <code
+          >button</code
+        > or <code>a</code> element based on href prop
+      </li>
+      <li>
+        <strong>Consistent Styling:</strong> Unified appearance across all button
+        components with three variants and sizes
+      </li>
+      <li>
+        <strong>External Link Detection:</strong> Automatically adds external link
+        icon and proper attributes for absolute URLs
+      </li>
+      <li>
+        <strong>WCAG AAA Compliance:</strong> 9:1 contrast ratios and enhanced focus
+        indicators
+      </li>
+      <li>
+        <strong>Accessibility Features:</strong> Proper ARIA attributes, disabled
+        state handling, and keyboard navigation
+      </li>
+    </ul>
   </section>
 
   <section class="mt-10 space-y-4">

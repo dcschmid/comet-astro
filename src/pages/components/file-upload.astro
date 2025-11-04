@@ -25,15 +25,17 @@ import { FileUpload } from 'comet-astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      FileUpload provides accessible file upload interfaces with drag-and-drop functionality, 
-      comprehensive keyboard navigation, and focus management. The component maintains WCAG AAA 
-      contrast ratios across all interactive elements and supports multiple file selection with 
-      real-time validation and progress feedback.
+      FileUpload provides accessible file upload interfaces with drag-and-drop
+      functionality, comprehensive keyboard navigation, and focus management.
+      The component maintains WCAG AAA contrast ratios across all interactive
+      elements and supports multiple file selection with real-time validation
+      and progress feedback.
     </p>
     <p class="text-base text-slate-200">
-      Enhanced focus indicators, proper ARIA labeling, and semantic HTML structure ensure 
-      optimal accessibility for screen readers and keyboard navigation. Multiple size variants 
-      and comprehensive error handling adapt to any upload workflow.
+      Enhanced focus indicators, proper ARIA labeling, and semantic HTML
+      structure ensure optimal accessibility for screen readers and keyboard
+      navigation. Multiple size variants and comprehensive error handling adapt
+      to any upload workflow.
     </p>
   </section>
 
@@ -49,7 +51,9 @@ import { FileUpload } from 'comet-astro';
           label?
         </dt>
         <dd class="text-sm text-slate-200">
-          Main heading text for the upload area. Defaults to <code>"Upload files"</code>.
+          Main heading text for the upload area. Defaults to <code
+            >"Upload files"</code
+          >.
         </dd>
       </div>
       <div
@@ -61,7 +65,8 @@ import { FileUpload } from 'comet-astro';
           description?
         </dt>
         <dd class="text-sm text-slate-200">
-          Supporting text providing upload instructions. Defaults to drag & drop message.
+          Supporting text providing upload instructions. Defaults to drag & drop
+          message.
         </dd>
       </div>
       <div
@@ -73,7 +78,9 @@ import { FileUpload } from 'comet-astro';
           accept?
         </dt>
         <dd class="text-sm text-slate-200">
-          File type restrictions using MIME types or extensions (e.g., <code>"image/*,.pdf"</code>).
+          File type restrictions using MIME types or extensions (e.g., <code
+            >"image/*,.pdf"</code
+          >).
         </dd>
       </div>
       <div
@@ -97,7 +104,8 @@ import { FileUpload } from 'comet-astro';
           maxFileSizeMb?
         </dt>
         <dd class="text-sm text-slate-200">
-          Maximum file size in megabytes. Files exceeding this limit are rejected. Defaults to <code>10</code>.
+          Maximum file size in megabytes. Files exceeding this limit are
+          rejected. Defaults to <code>10</code>.
         </dd>
       </div>
       <div
@@ -109,7 +117,9 @@ import { FileUpload } from 'comet-astro';
           showFileList?
         </dt>
         <dd class="text-sm text-slate-200">
-          Display selected files with remove buttons. Defaults to <code>true</code>.
+          Display selected files with remove buttons. Defaults to <code
+            >true</code
+          >.
         </dd>
       </div>
       <div
@@ -145,7 +155,9 @@ import { FileUpload } from 'comet-astro';
           size?
         </dt>
         <dd class="text-sm text-slate-200">
-          Component size variant: <code>"sm"</code>, <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+          Component size variant: <code>"sm"</code>, <code>"md"</code>, or <code
+            >"lg"</code
+          >. Defaults to <code>"md"</code>.
         </dd>
       </div>
       <div
@@ -157,7 +169,8 @@ import { FileUpload } from 'comet-astro';
           variant?
         </dt>
         <dd class="text-sm text-slate-200">
-          Visual style variant: <code>"default"</code> or <code>"compact"</code>. Defaults to <code>"default"</code>.
+          Visual style variant: <code>"default"</code> or <code>"compact"</code
+          >. Defaults to <code>"default"</code>.
         </dd>
       </div>
       <div
@@ -169,7 +182,8 @@ import { FileUpload } from 'comet-astro';
           ariaLabel?
         </dt>
         <dd class="text-sm text-slate-200">
-          ARIA label for the upload container for enhanced screen reader support.
+          ARIA label for the upload container for enhanced screen reader
+          support.
         </dd>
       </div>
       <div
@@ -181,7 +195,8 @@ import { FileUpload } from 'comet-astro';
           className?
         </dt>
         <dd class="text-sm text-slate-200">
-          Additional CSS classes to apply to the upload container for custom styling.
+          Additional CSS classes to apply to the upload container for custom
+          styling.
         </dd>
       </div>
     </dl>
@@ -190,9 +205,10 @@ import { FileUpload } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Create accessible file upload interfaces with drag-and-drop functionality and validation. 
-      The component handles file selection, size validation, and provides clear feedback to users 
-      about upload status and any errors encountered.
+      Create accessible file upload interfaces with drag-and-drop functionality
+      and validation. The component handles file selection, size validation, and
+      provides clear feedback to users about upload status and any errors
+      encountered.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -236,7 +252,8 @@ import { FileUpload } from 'comet-astro';
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
     <p class="text-base text-slate-200">
-      Choose from small, medium, or large sizes to match your layout requirements.
+      Choose from small, medium, or large sizes to match your layout
+      requirements.
     </p>
     <div class="space-y-8">
       <div class="max-w-lg">
@@ -249,9 +266,11 @@ import { FileUpload } from 'comet-astro';
           maxFileSizeMb={2}
         />
       </div>
-      
+
       <div class="max-w-2xl">
-        <h3 class="text-lg font-medium text-slate-200 mb-4">Medium (Default)</h3>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">
+          Medium (Default)
+        </h3>
         <FileUploadComponent
           label="Upload documents"
           description="Drag & drop files here, or click to browse."
@@ -259,7 +278,7 @@ import { FileUpload } from 'comet-astro';
           maxFileSizeMb={10}
         />
       </div>
-      
+
       <div class="max-w-3xl">
         <h3 class="text-lg font-medium text-slate-200 mb-4">Large</h3>
         <FileUploadComponent
@@ -288,7 +307,7 @@ import { FileUpload } from 'comet-astro';
           maxFileSizeMb={10}
         />
       </div>
-      
+
       <div class="max-w-2xl">
         <h3 class="text-lg font-medium text-slate-200 mb-4">Compact</h3>
         <FileUploadComponent
@@ -355,16 +374,16 @@ import { FileUpload } from 'comet-astro';
           helpText="Accepted formats: PDF, Word documents, Excel files, ZIP archives"
           ariaLabel="Upload project attachment files"
         />
-        
+
         <div class="flex gap-4">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             class="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
           >
             Submit Files
           </button>
-          <button 
-            type="button" 
+          <button
+            type="button"
             class="rounded-lg border-2 border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-800"
           >
             Clear Files
@@ -377,25 +396,31 @@ import { FileUpload } from 'comet-astro';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      Contrast ratios exceed WCAG AAA requirements (7:1+) for all text elements, borders, 
-      and interactive components in both light and dark themes. Enhanced focus rings use 
-      strong color contrast with proper offset spacing for clear keyboard navigation visibility.
+      Contrast ratios exceed WCAG AAA requirements (7:1+) for all text elements,
+      borders, and interactive components in both light and dark themes.
+      Enhanced focus rings use strong color contrast with proper offset spacing
+      for clear keyboard navigation visibility.
     </p>
     <p class="text-base text-slate-200">
-      The component uses semantic HTML with proper form labels and supports comprehensive 
-      ARIA attributes including <code>aria-describedby</code>, <code>aria-live</code>, and 
-      <code>role="alert"</code> for error messages. Drag-and-drop interactions work seamlessly 
-      with keyboard navigation using standard Tab and Enter key patterns.
+      The component uses semantic HTML with proper form labels and supports
+      comprehensive ARIA attributes including <code>aria-describedby</code>, <code
+        >aria-live</code
+      >, and
+      <code>role="alert"</code> for error messages. Drag-and-drop interactions work
+      seamlessly with keyboard navigation using standard Tab and Enter key patterns.
     </p>
     <p class="text-base text-slate-200">
-      File validation errors are announced to screen readers immediately, and file list 
-      updates use proper ARIA live regions for real-time feedback. Remove buttons include 
-      descriptive labels that identify the specific file being removed for clarity.
+      File validation errors are announced to screen readers immediately, and
+      file list updates use proper ARIA live regions for real-time feedback.
+      Remove buttons include descriptive labels that identify the specific file
+      being removed for clarity.
     </p>
     <p class="text-base text-slate-200">
-      Custom events (<code>file-upload:change</code>, <code>file-upload:clear</code>) enable 
-      integration with form validation libraries while maintaining accessibility compliance. 
-      Touch targets meet minimum size requirements for mobile accessibility.
+      Custom events (<code>file-upload:change</code>, <code
+        >file-upload:clear</code
+      >) enable integration with form validation libraries while maintaining
+      accessibility compliance. Touch targets meet minimum size requirements for
+      mobile accessibility.
     </p>
   </section>
 </DocsLayout>

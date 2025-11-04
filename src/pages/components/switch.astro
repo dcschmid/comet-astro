@@ -5,14 +5,608 @@ import Switch from '../../components/Switch.astro';
 
 <DocsLayout
   title="Switch"
-  description="Toggle control with size variants and accessible labels."
+  description="WCAG AAA compliant toggle controls with responsive design, multiple variants, and comprehensive accessibility features for form interactions."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
+  <section class="space-y-6">
     <div class="space-y-3">
-      <Switch name="notifications" label="Enable notifications" checked />
-      <Switch name="darkmode" label="Dark mode" size="sm" />
-      <Switch name="public" label="Make profile public" size="lg" />
+      <h2 class="text-xl font-semibold text-slate-100">Overview</h2>
+      <p class="text-base text-slate-200">
+        Switch components provide accessible toggle controls for binary settings
+        and preferences. Built with WCAG AAA compliance, they feature proper
+        contrast ratios, keyboard navigation, screen reader support, and
+        comprehensive focus management.
+      </p>
+      <p class="text-base text-slate-200">
+        The component supports multiple sizes, color variants, label
+        positioning, and loading states. All elements automatically adjust for
+        high contrast mode and respect user preferences for reduced motion.
+      </p>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          name
+        </dt>
+        <dd class="text-sm text-slate-200">
+          The name attribute for the input. Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          label?
+        </dt>
+        <dd class="text-sm text-slate-200">Label text for the switch.</dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          checked?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether the switch is checked. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disabled?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether the switch is disabled. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>xs</code>, <code>sm</code>, <code>md</code>, <code
+            >lg</code
+          >, <code>xl</code>. Defaults to <code>md</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Color variant: <code>default</code>, <code>success</code>, <code
+            >warning</code
+          >, <code>danger</code>, <code>info</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          labelPosition?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Label position: <code>left</code>, <code>right</code>. Defaults to <code
+            >right</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          description?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Description text for additional context.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          loading?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to show loading state. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ARIA label for accessibility when no visible label.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaDescribedby?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ARIA describedby reference for additional description.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          debug?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show visual debugging information. Defaults to <code>false</code>.
+        </dd>
+      </div>
+    </dl>
+    <p class="text-sm text-slate-400 mt-4">
+      Always provide accessible labels through the label prop or ariaLabel.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Basic Usage -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <Switch name="notifications" label="Enable notifications" checked />
+          <Switch name="darkmode" label="Dark mode" />
+          <Switch name="public" label="Make profile public" disabled />
+        </div>
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sizes</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <Switch name="xs-switch" label="Extra Small" size="xs" checked />
+          <Switch name="sm-switch" label="Small" size="sm" checked />
+          <Switch name="md-switch" label="Medium (Default)" size="md" checked />
+          <Switch name="lg-switch" label="Large" size="lg" checked />
+          <Switch name="xl-switch" label="Extra Large" size="xl" checked />
+        </div>
+      </div>
+    </div>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Color Variants</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="grid gap-4 sm:grid-cols-2">
+          <Switch
+            name="default-variant"
+            label="Default"
+            variant="default"
+            checked
+          />
+          <Switch
+            name="success-variant"
+            label="Success"
+            variant="success"
+            checked
+          />
+          <Switch
+            name="warning-variant"
+            label="Warning"
+            variant="warning"
+            checked
+          />
+          <Switch
+            name="danger-variant"
+            label="Danger"
+            variant="danger"
+            checked
+          />
+          <Switch name="info-variant" label="Info" variant="info" checked />
+        </div>
+      </div>
+    </div>
+
+    <!-- Label Positioning -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Label Positioning</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">
+            Label on Right (Default)
+          </h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <div class="space-y-3">
+              <Switch
+                name="right-1"
+                label="Enable feature"
+                labelPosition="right"
+                checked
+              />
+              <Switch name="right-2" label="Auto-save" labelPosition="right" />
+            </div>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Label on Left</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <div class="space-y-3">
+              <Switch
+                name="left-1"
+                label="Enable feature"
+                labelPosition="left"
+                checked
+              />
+              <Switch name="left-2" label="Auto-save" labelPosition="left" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- With Descriptions -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">With Descriptions</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-6">
+          <Switch
+            name="notifications-detailed"
+            label="Push Notifications"
+            description="Receive push notifications for important updates and messages"
+            checked
+          />
+          <Switch
+            name="analytics"
+            label="Analytics & Performance"
+            description="Help us improve the app by sharing anonymous usage data"
+          />
+          <Switch
+            name="location"
+            label="Location Services"
+            description="Allow the app to access your location for personalized content"
+            variant="warning"
+            disabled
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading States -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Loading States</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <Switch
+            name="loading-1"
+            label="Syncing settings..."
+            loading
+            checked
+          />
+          <Switch
+            name="loading-2"
+            label="Updating preferences"
+            loading
+            variant="info"
+          />
+          <Switch
+            name="loading-3"
+            label="Processing request"
+            loading
+            size="lg"
+            variant="success"
+            checked
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Integration -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Form Integration</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <form class="space-y-6">
+          <div class="space-y-4">
+            <h4 class="text-lg font-semibold text-slate-100">
+              Account Preferences
+            </h4>
+
+            <Switch
+              name="email-notifications"
+              label="Email Notifications"
+              description="Receive email updates about your account activity"
+              checked
+            />
+
+            <Switch
+              name="sms-notifications"
+              label="SMS Notifications"
+              description="Get text messages for security alerts and important updates"
+              variant="info"
+            />
+
+            <Switch
+              name="marketing-emails"
+              label="Marketing Communications"
+              description="Receive promotional emails and product updates"
+            />
+
+            <Switch
+              name="public-profile"
+              label="Public Profile"
+              description="Make your profile visible to other users"
+              variant="warning"
+            />
+
+            <Switch
+              name="two-factor"
+              label="Two-Factor Authentication"
+              description="Add an extra layer of security to your account"
+              variant="success"
+              checked
+            />
+          </div>
+
+          <div class="flex gap-3 pt-4 border-t border-slate-700">
+            <button
+              type="submit"
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm transition-colors"
+            >
+              Save Changes
+            </button>
+            <button
+              type="button"
+              class="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-slate-100 rounded-lg text-sm transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Accessibility Examples -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Accessibility Features</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <Switch
+            name="aria-only"
+            ariaLabel="Enable dark mode for better accessibility"
+            checked
+          />
+          <Switch
+            name="with-aria-desc"
+            label="High Contrast Mode"
+            ariaDescribedby="contrast-description"
+            variant="info"
+          />
+          <p id="contrast-description" class="text-xs text-slate-400 ml-8">
+            Enhances visual contrast for better readability
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Settings Panel -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Settings Panel</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-6">
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100 mb-4">
+              Privacy & Security
+            </h4>
+            <div class="space-y-4">
+              <Switch
+                name="private-account"
+                label="Private Account"
+                description="Only approved followers can see your posts"
+                checked
+              />
+              <Switch
+                name="location-sharing"
+                label="Location Sharing"
+                description="Share your location in posts and stories"
+                variant="warning"
+              />
+              <Switch
+                name="contact-sync"
+                label="Contact Sync"
+                description="Find friends by syncing your contacts"
+                variant="info"
+              />
+            </div>
+          </div>
+
+          <div class="border-t border-slate-700 pt-6">
+            <h4 class="text-lg font-semibold text-slate-100 mb-4">
+              Notifications
+            </h4>
+            <div class="space-y-4">
+              <Switch
+                name="push-all"
+                label="All Notifications"
+                description="Receive all types of push notifications"
+                checked
+              />
+              <Switch
+                name="push-mentions"
+                label="Mentions & Tags"
+                description="When someone mentions you or tags you in content"
+                checked
+              />
+              <Switch
+                name="push-followers"
+                label="New Followers"
+                description="When someone starts following you"
+                variant="success"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compact Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Compact Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm max-w-sm"
+      >
+        <div class="space-y-3">
+          <Switch name="wifi" label="Wi-Fi" size="sm" checked />
+          <Switch name="bluetooth" label="Bluetooth" size="sm" checked />
+          <Switch name="cellular" label="Cellular Data" size="sm" />
+          <Switch
+            name="airplane"
+            label="Airplane Mode"
+            size="sm"
+            variant="warning"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Switch components are designed with comprehensive accessibility features
+      and WCAG AAA compliance. All elements maintain 9:1 contrast ratios and
+      adjust automatically for high contrast mode and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      The component supports full keyboard navigation with proper focus
+      management and visual focus indicators. Screen readers receive detailed
+      information about the switch state, labels, and descriptions through
+      semantic markup and ARIA attributes.
+    </p>
+    <p class="text-base text-slate-200">
+      Loading states provide visual feedback while maintaining accessibility,
+      and the component respects user preferences for reduced motion. All
+      interactive elements have appropriate hit targets and hover states for
+      improved usability.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Design Tokens</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Size Scale</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">xs</span>
+            <span class="text-slate-400">Compact interfaces</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">sm</span>
+            <span class="text-slate-400">Dense layouts</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">md</span>
+            <span class="text-slate-400">Standard forms</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">lg</span>
+            <span class="text-slate-400">Prominent settings</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">xl</span>
+            <span class="text-slate-400">Large interfaces</span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Color Variants</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">default</span>
+            <span class="text-slate-400">Standard switches</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">success</span>
+            <span class="text-slate-400">Positive actions</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">warning</span>
+            <span class="text-slate-400">Caution states</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">danger</span>
+            <span class="text-slate-400">Destructive actions</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">info</span>
+            <span class="text-slate-400">Informational toggles</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </DocsLayout>

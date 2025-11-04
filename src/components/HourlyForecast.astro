@@ -1,0 +1,622 @@
+---
+/**
+ * HourlyForecast – Minimal hourly snapshot (next few hours)
+ * Tailwind-only, Astro only. WCAG AAA.
+ * Shows: Time, Temperature, Precipitation %, Condition icon. Optional auto fetch (Open‑Meteo) by lat/lon.
+ */
+interface Props {
+  latitude?: number;
+  longitude?: number;
+  hours?: number; // default 6 (min 3, max 24)
+  disableFetch?: boolean;
+  location?: string;
+  ariaLabel?: string;
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const {
+  latitude,
+  longitude,
+  hours = 6,
+  disableFetch = false,
+  location = 'Demo Location',
+  ariaLabel,
+  class: className = '',
+} = props;
+
+const count = Math.min(Math.max(hours, 3), 24);
+const baseCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-5 md:p-6 flex flex-col gap-5 ${className}`;
+const listCls =
+  'grid gap-3 sm:gap-4 md:gap-5 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8';
+const itemCls =
+  'flex flex-col items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[92px]';
+const timeCls = 'text-xs font-semibold text-slate-700 dark:text-slate-200';
+const tempCls =
+  'text-base md:text-lg font-bold text-slate-900 dark:text-slate-50';
+const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+const label = ariaLabel || `Hourly forecast for ${location}`;
+
+// Fallback demo data (simple ascending temps + varied precipitation)
+const now = new Date();
+const fallback = Array.from({ length: count }).map((_, i) => {
+  const t = new Date(now.getTime() + i * 3600_000);
+  return {
+    time: t.toISOString(),
+    hourLabel: t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    temp: 12 + i, // simplistic trend
+    precip: (i * 7) % 100,
+    code: [0, 1, 2, 3, 61, 80][i % 6],
+  };
+});
+
+function iconFor(code: number) {
+  if (code === 0) return '☀️';
+  if (code <= 2) return '⛅';
+  if (code === 3) return '☁️';
+  if (code >= 61 && code < 70) return '🌧️';
+  if (code >= 80) return '🌦️';
+  return '❓';
+}
+function descFor(code: number) {
+  if (code === 0) return 'Clear';
+  if (code <= 2) return 'Partly cloudy';
+  if (code === 3) return 'Cloudy';
+  if (code >= 61 && code < 70) return 'Rain';
+  if (code >= 80) return 'Showers';
+  return 'Unknown';
+}
+---
+
+<div
+  class={baseCls}
+  role="region"
+  aria-label={label}
+  aria-busy={!disableFetch && latitude != null && longitude != null
+    ? 'true'
+    : 'false'}
+  data-hourly
+  data-lat={latitude}
+  data-lon={longitude}
+  data-count={count}
+  data-disable-fetch={disableFetch}
+  data-state={!disableFetch && latitude != null && longitude != null
+    ? 'loading'
+    : 'static'}
+>
+  <header class="flex items-center justify-between gap-4">
+    <h2
+      class="flex items-center gap-2 text-lg md:text-xl font-bold text-slate-900 dark:text-slate-50"
+    >
+      <span aria-hidden="true" class="text-xl">⏰</span>
+      <span class="truncate">Next {count} Hours</span>
+    </h2>
+    <p
+      class="text-xs font-medium text-slate-600 dark:text-slate-300"
+      aria-live="polite"
+      data-status
+    >
+      {
+        !disableFetch && latitude != null && longitude != null
+          ? 'Lade Stunden …'
+          : 'Statische Demodaten'
+      }
+    </p>
+  </header>
+  <div class={listCls} role="list" aria-label="Hourly forecast list" data-list>
+    {
+      fallback.map((h, i) => {
+        const ico = iconFor(h.code);
+        return (
+          <div role="listitem" class={itemCls} data-hour={i}>
+            <span class={timeCls} data-time>
+              {h.hourLabel}
+            </span>
+            <span
+              class="text-2xl"
+              aria-hidden="true"
+              data-icon
+              title={descFor(h.code)}
+            >
+              {ico}
+            </span>
+            <span class={tempCls} data-temp>
+              {h.temp}°C
+            </span>
+            <span class={subCls} data-precip>
+              {h.precip}%
+            </span>
+          </div>
+        );
+      })
+    }
+  </div>
+  <p
+    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
+    data-disclaimer
+  >
+    {
+      !disableFetch && latitude != null && longitude != null
+        ? 'Live Daten (Open‑Meteo Stunden). Fallback bei Fehler.'
+        : 'Demodaten. latitude+longitude setzen für Live-Aktualisierung.'
+    } AAA Kontrast eingehalten.
+  </p>
+  <footer
+    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
+  >
+    <span
+      >Quelle: <span class="underline text-slate-800 dark:text-slate-200"
+        >Open‑Meteo</span
+      ></span
+    >
+    <span class="ml-auto" data-refresh-indicator>Kein Auto-Refresh</span>
+  </footer>
+</div>
+
+<script>
+  // Icon & description helpers duplicated for client runtime (frontmatter not available client-side)
+  function iconFor(code) {
+    if (code === 0) return '☀️';
+    if (code <= 2) return '⛅';
+    if (code === 3) return '☁️';
+    if (code >= 61 && code < 70) return '🌧️';
+    if (code >= 80) return '🌦️';
+    return '❓';
+  }
+  function descFor(code) {
+    if (code === 0) return 'Clear';
+    if (code <= 2) return 'Partly cloudy';
+    if (code === 3) return 'Cloudy';
+    if (code >= 61 && code < 70) return 'Rain';
+    if (code >= 80) return 'Showers';
+    return 'Unknown';
+  }
+  function initHourly(el) {
+    const disableFetch = el.dataset.disableFetch === 'true';
+    const lat = el.dataset.lat ? parseFloat(el.dataset.lat) : undefined;
+    const lon = el.dataset.lon ? parseFloat(el.dataset.lon) : undefined;
+    const count = el.dataset.count ? parseInt(el.dataset.count) : 6;
+    const statusEl = el.querySelector('[data-status]');
+    const items = el.querySelectorAll('[data-hour]');
+    const setState = (s) => {
+      el.dataset.state = s;
+      el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
+    };
+    async function fetchData() {
+      if (disableFetch || lat == null || lon == null) {
+        if (statusEl) statusEl.textContent = 'Fallback Werte aktiv';
+        return;
+      }
+      setState('loading');
+      if (statusEl) statusEl.textContent = 'Lade Stunden …';
+      try {
+        const params = new URLSearchParams({
+          latitude: String(lat),
+          longitude: String(lon),
+          hourly: 'temperature_2m,precipitation_probability,weather_code',
+          forecast_days: '1',
+        });
+        const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+        const res = await fetch(url);
+        if (!res.ok) throw 0;
+        const data = await res.json();
+        const hrs = data.hourly?.time || [];
+        const temps = data.hourly?.temperature_2m || [];
+        const precs = data.hourly?.precipitation_probability || [];
+        const codes = data.hourly?.weather_code || [];
+        for (let i = 0; i < count && i < items.length && i < hrs.length; i++) {
+          const item = items[i];
+          const t = new Date(hrs[i]);
+          const timeEl = item.querySelector('[data-time]');
+          const tempEl = item.querySelector('[data-temp]');
+          const precipEl = item.querySelector('[data-precip]');
+          const iconEl = item.querySelector('[data-icon]');
+          if (timeEl)
+            timeEl.textContent = t.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          if (tempEl && temps[i] != null)
+            tempEl.textContent = `${Math.round(temps[i])}°C`;
+          if (precipEl && precs[i] != null)
+            precipEl.textContent = `${Math.round(precs[i])}%`;
+          if (iconEl) {
+            const code = codes[i];
+            iconEl.textContent =
+              typeof iconFor === 'function' ? iconFor(code) : '❓';
+            iconEl.title =
+              typeof descFor === 'function' ? descFor(code) : 'Unknown';
+          }
+        }
+        if (statusEl) statusEl.textContent = 'Live Daten geladen';
+        setState('ready');
+      } catch {
+        if (statusEl) statusEl.textContent = 'Live Fehler (Fallback angezeigt)';
+        setState('error');
+      }
+    }
+    fetchData();
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-hourly]').forEach(initHourly);
+  });
+</script>
+
+<style>
+  .hourly-forecast {
+    --hourly-bg: var(--weather-bg, #ffffff);
+    --hourly-text: var(--weather-text, #1f2937);
+    --hourly-border: var(--weather-border, #e5e7eb);
+    --hourly-accent: var(--weather-accent, #3b82f6);
+    --hourly-muted: var(--weather-muted, #6b7280);
+    --hourly-radius: var(--weather-radius, 12px);
+
+    background: var(--hourly-bg);
+    color: var(--hourly-text);
+    font-family: var(--weather-font, system-ui, -apple-system, sans-serif);
+  }
+
+  .hourly-forecast__container {
+    padding: 1.5rem;
+  }
+
+  .hourly-forecast__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .hourly-forecast__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--hourly-text);
+  }
+
+  .hourly-icon {
+    font-size: 1.125rem;
+    opacity: 0.8;
+  }
+
+  .forecast-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .scroll-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: var(--hourly-bg);
+    border: 1px solid var(--hourly-border);
+    border-radius: 50%;
+    color: var(--hourly-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .scroll-button:hover:not(:disabled) {
+    background: var(--hourly-accent);
+    color: white;
+    border-color: var(--hourly-accent);
+  }
+
+  .scroll-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .temperature-trend {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--hourly-border) 10%, transparent);
+    border-radius: 8px;
+  }
+
+  .trend-chart {
+    width: 100%;
+    height: auto;
+    max-height: 120px;
+  }
+
+  .trend-line {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .hourly-forecast__scroll-container {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hourly-muted) transparent;
+  }
+
+  .hourly-forecast__scroll-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .hourly-forecast__scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .hourly-forecast__scroll-container::-webkit-scrollbar-thumb {
+    background: var(--hourly-muted);
+    border-radius: 3px;
+  }
+
+  .hourly-forecast__grid {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Layout variants */
+  .hourly-forecast--grid .hourly-forecast__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .hourly-forecast--grid .hourly-forecast__scroll-container {
+    overflow: visible;
+  }
+
+  .hourly-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--hourly-bg);
+    border: 1px solid var(--hourly-border);
+    border-radius: 8px;
+    min-width: 100px;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .hourly-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .hourly-item__time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    text-align: center;
+  }
+
+  .time-display {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--hourly-text);
+  }
+
+  .time-period {
+    font-size: 0.625rem;
+    color: var(--hourly-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .hourly-item__weather {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .weather-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .hourly-item__precipitation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .precip-bar-container {
+    width: 20px;
+    height: 40px;
+    background: var(--hourly-border);
+    border-radius: 2px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .precip-bar {
+    width: 100%;
+    background: var(--hourly-accent);
+    border-radius: 2px 2px 0 0;
+    transition: height 0.3s ease;
+  }
+
+  .precip-percentage {
+    font-size: 0.625rem;
+    font-weight: 500;
+    color: var(--hourly-muted);
+  }
+
+  .hourly-item__temperature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    text-align: center;
+  }
+
+  .temp-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--hourly-text);
+  }
+
+  .feels-like {
+    font-size: 0.625rem;
+    color: var(--hourly-muted);
+  }
+
+  .hourly-item__wind {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .wind-direction-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .wind-arrow {
+    font-size: 1rem;
+    color: var(--hourly-muted);
+    transition: transform 0.3s ease;
+  }
+
+  .wind-speed {
+    font-size: 0.625rem;
+    color: var(--hourly-muted);
+    text-align: center;
+  }
+
+  /* Size variants */
+  .hourly-forecast--compact .hourly-forecast__container {
+    padding: 1rem;
+  }
+
+  .hourly-forecast--compact .hourly-item {
+    padding: 0.75rem;
+    min-width: 80px;
+  }
+
+  .hourly-forecast--compact .weather-icon {
+    font-size: 1.25rem;
+  }
+
+  .hourly-forecast--compact .temp-value {
+    font-size: 0.875rem;
+  }
+
+  .hourly-forecast--detailed .hourly-item {
+    padding: 1.25rem;
+    min-width: 140px;
+  }
+
+  .hourly-forecast--detailed .weather-icon {
+    font-size: 2rem;
+  }
+
+  .hourly-forecast--detailed .temp-value {
+    font-size: 1.125rem;
+  }
+
+  /* Responsive design */
+  @media (max-width: 640px) {
+    .hourly-forecast__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .hourly-item {
+      min-width: 90px;
+    }
+
+    .hourly-forecast--grid .hourly-forecast__grid {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .hourly-forecast {
+      --hourly-border: currentColor;
+    }
+
+    .hourly-item {
+      border-width: 2px;
+    }
+
+    .scroll-button {
+      border-width: 2px;
+    }
+  }
+
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    .hourly-forecast {
+      --hourly-bg: #1f2937;
+      --hourly-text: #f9fafb;
+      --hourly-border: #374151;
+      --hourly-muted: #9ca3af;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hourly-item {
+      transition: none;
+    }
+
+    .hourly-item:hover {
+      transform: none;
+    }
+
+    .wind-arrow,
+    .precip-bar {
+      transition: none;
+    }
+  }
+  <style > @media (prefers-reduced-motion: reduce) {
+    [data-hourly] * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    [data-hourly] {
+      outline: 2px solid currentColor;
+    }
+  }
+  [data-hourly][data-state='loading'] [data-hour] {
+    position: relative;
+  }
+  [data-hourly][data-state='loading'] [data-hour]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.15),
+      rgba(148, 163, 184, 0.35),
+      rgba(148, 163, 184, 0.15)
+    );
+    animation: hourly-pulse 1.4s ease-in-out infinite;
+    opacity: 0.35;
+  }
+  @keyframes hourly-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.65;
+    }
+  }
+</style>

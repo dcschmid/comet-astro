@@ -48,7 +48,9 @@ const {
         aria-haspopup="listbox"
         aria-controls="comet-cmd-list"
       />
-      <div class="absolute right-4 top-3.5 hidden gap-1 rounded-md border border-slate-300 bg-white px-2 py-1 text-[10px] font-semibold text-slate-600 sm:inline-flex dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300">
+      <div
+        class="absolute right-4 top-3.5 hidden gap-1 rounded-md border border-slate-300 bg-white px-2 py-1 text-[10px] font-semibold text-slate-600 sm:inline-flex dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300"
+      >
         <span class="text-xs">{shortcut}</span>
         <span class="opacity-60">Esc</span>
       </div>
@@ -61,36 +63,51 @@ const {
       role="listbox"
       aria-label="Available commands"
     >
-      {commands?.length ? (
-        commands.map((cmd, i) => (
-          <button
-            type="button"
-            data-command-item
-            data-command-id={cmd.id}
-            data-command-action={cmd.action}
-            data-command-keywords={cmd.keywords?.join(' ')}
-            role="option"
-            aria-selected="false"
-            tabindex={i === 0 ? 0 : -1}
-            class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors bg-transparent hover:bg-sky-50 focus-visible:bg-sky-100 focus-visible:outline-none dark:hover:bg-sky-800/30 dark:focus-visible:bg-sky-800/30"
-          >
-            {cmd.icon && (
-              <span class="shrink-0 text-lg text-sky-600 dark:text-sky-300" aria-hidden>{cmd.icon}</span>
-            )}
-            <div class="flex-1">
-              <div class="text-sm font-semibold text-slate-900 dark:text-slate-100">{cmd.label}</div>
-              {cmd.description && (
-                <p class="mt-0.5 text-xs text-slate-600 dark:text-slate-300">{cmd.description}</p>
+      {
+        commands?.length ? (
+          commands.map((cmd, i) => (
+            <button
+              type="button"
+              data-command-item
+              data-command-id={cmd.id}
+              data-command-action={cmd.action}
+              data-command-keywords={cmd.keywords?.join(' ')}
+              role="option"
+              aria-selected="false"
+              tabindex={i === 0 ? 0 : -1}
+              class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors bg-transparent hover:bg-sky-50 focus-visible:bg-sky-100 focus-visible:outline-none dark:hover:bg-sky-800/30 dark:focus-visible:bg-sky-800/30"
+            >
+              {cmd.icon && (
+                <span
+                  class="shrink-0 text-lg text-sky-600 dark:text-sky-300"
+                  aria-hidden
+                >
+                  {cmd.icon}
+                </span>
               )}
-            </div>
-          </button>
-        ))
-      ) : (
-        <div class="px-3 py-6 text-sm text-slate-600 dark:text-slate-400">No commands available</div>
-      )}
+              <div class="flex-1">
+                <div class="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {cmd.label}
+                </div>
+                {cmd.description && (
+                  <p class="mt-0.5 text-xs text-slate-600 dark:text-slate-300">
+                    {cmd.description}
+                  </p>
+                )}
+              </div>
+            </button>
+          ))
+        ) : (
+          <div class="px-3 py-6 text-sm text-slate-600 dark:text-slate-400">
+            No commands available
+          </div>
+        )
+      }
     </div>
 
-    <div class="border-t border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400">
+    <div
+      class="border-t border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400"
+    >
       Press {shortcut} or Esc to close
     </div>
   </div>
@@ -105,8 +122,17 @@ const {
     const list = menu.querySelector('[data-command-list]');
     if (!dialog || !input || !list) return;
 
-    const getItems = () => Array.from(list.querySelectorAll('[data-command-item]')).filter(function (el) { return el instanceof HTMLElement; });
-    const getVisibleItems = function () { return getItems().filter(function (item) { return !item.classList.contains('hidden'); }); };
+    const getItems = () =>
+      Array.from(list.querySelectorAll('[data-command-item]')).filter(
+        function (el) {
+          return el instanceof HTMLElement;
+        }
+      );
+    const getVisibleItems = function () {
+      return getItems().filter(function (item) {
+        return !item.classList.contains('hidden');
+      });
+    };
 
     var activeIndex = -1;
     var isOpen = false;
@@ -120,7 +146,9 @@ const {
     };
 
     var resetActive = function () {
-      getItems().forEach(function (item) { setAriaSelected(item, false); });
+      getItems().forEach(function (item) {
+        setAriaSelected(item, false);
+      });
       activeIndex = -1;
     };
 
@@ -128,7 +156,9 @@ const {
       var visible = getVisibleItems();
       if (!visible.length) return;
       var clamped = Math.max(0, Math.min(index, visible.length - 1));
-      visible.forEach(function (item, idx) { setAriaSelected(item, idx === clamped); });
+      visible.forEach(function (item, idx) {
+        setAriaSelected(item, idx === clamped);
+      });
       visible[clamped].focus({ preventScroll: true });
       activeIndex = clamped;
     };
@@ -137,9 +167,17 @@ const {
       var normalized = (query || '').trim().toLowerCase();
       getItems().forEach(function (item) {
         var labelEl = item.querySelector('.text-sm');
-        var label = labelEl && labelEl.textContent ? labelEl.textContent.toLowerCase() : '';
-        var keywords = (item.getAttribute('data-command-keywords') || '').toLowerCase();
-        var matches = !normalized || label.indexOf(normalized) !== -1 || keywords.indexOf(normalized) !== -1;
+        var label =
+          labelEl && labelEl.textContent
+            ? labelEl.textContent.toLowerCase()
+            : '';
+        var keywords = (
+          item.getAttribute('data-command-keywords') || ''
+        ).toLowerCase();
+        var matches =
+          !normalized ||
+          label.indexOf(normalized) !== -1 ||
+          keywords.indexOf(normalized) !== -1;
         item.classList.toggle('hidden', !matches);
       });
       resetActive();
@@ -150,13 +188,20 @@ const {
     var open = function () {
       if (isOpen) return;
       isOpen = true;
-      lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      lastFocused =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
       menu.classList.remove('invisible');
-      requestAnimationFrame(function () { menu.classList.remove('opacity-0'); });
+      requestAnimationFrame(function () {
+        menu.classList.remove('opacity-0');
+      });
       menu.setAttribute('aria-hidden', 'false');
       input.setAttribute('aria-expanded', 'true');
       document.body.style.setProperty('overflow', 'hidden');
-      setTimeout(function () { input.focus({ preventScroll: true }); }, 20);
+      setTimeout(function () {
+        input.focus({ preventScroll: true });
+      }, 20);
     };
 
     var close = function () {
@@ -168,11 +213,16 @@ const {
       input.value = '';
       filterCommands('');
       document.body.style.removeProperty('overflow');
-      setTimeout(function () { menu.classList.add('invisible'); }, 150);
-      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus({ preventScroll: true });
+      setTimeout(function () {
+        menu.classList.add('invisible');
+      }, 150);
+      if (lastFocused && typeof lastFocused.focus === 'function')
+        lastFocused.focus({ preventScroll: true });
     };
 
-    input.addEventListener('input', function () { filterCommands(input.value); });
+    input.addEventListener('input', function () {
+      filterCommands(input.value);
+    });
 
     input.addEventListener('keydown', function (event) {
       var visible = getVisibleItems();
@@ -212,17 +262,24 @@ const {
 
     list.addEventListener('click', function (event) {
       var el = event.target;
-      var item = el instanceof HTMLElement ? el.closest('[data-command-item]') : null;
+      var item =
+        el instanceof HTMLElement ? el.closest('[data-command-item]') : null;
       if (!(item instanceof HTMLElement)) return;
       var action = item.getAttribute('data-command-action');
       if (action) window.location.assign(action);
       close();
     });
 
-    menu.addEventListener('click', function (event) { if (event.target === menu) close(); });
+    menu.addEventListener('click', function (event) {
+      if (event.target === menu) close();
+    });
 
     document.addEventListener('keydown', function (event) {
-      if ((event.ctrlKey || event.metaKey) && event.key && event.key.toLowerCase() === 'k') {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key &&
+        event.key.toLowerCase() === 'k'
+      ) {
         event.preventDefault();
         open();
       } else if (event.key === 'Escape') {

@@ -4,9 +4,10 @@
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const normalized = hex.trim().toLowerCase();
   if (!/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(normalized)) return null;
-  const full = normalized.length === 4
-    ? `#${normalized[1]}${normalized[1]}${normalized[2]}${normalized[2]}${normalized[3]}${normalized[3]}`
-    : normalized;
+  const full =
+    normalized.length === 4
+      ? `#${normalized[1]}${normalized[1]}${normalized[2]}${normalized[2]}${normalized[3]}${normalized[3]}`
+      : normalized;
   const num = parseInt(full.slice(1), 16);
   return {
     r: (num >> 16) & 255,
@@ -28,7 +29,10 @@ function relativeLuminance(hex: string): number | null {
   return 0.2126 * R + 0.7152 * G + 0.0722 * B;
 }
 
-export function contrastRatio(foreground: string, background: string): number | null {
+export function contrastRatio(
+  foreground: string,
+  background: string
+): number | null {
   const L1 = relativeLuminance(foreground);
   const L2 = relativeLuminance(background);
   if (L1 == null || L2 == null) return null;

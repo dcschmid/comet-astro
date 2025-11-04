@@ -10,7 +10,7 @@ import { cn } from '../utils/cn';
  * - Ensures color contrast by relying on design-token CSS variables and fallback high-contrast values.
  * - Adds clear focus outline (2px) with sufficient contrast in both light and dark themes.
  */
-export interface Props {
+interface Props {
   /** Optional element tag name; defaults to 'article'. */
   as?: 'article' | 'section' | 'div' | 'li';
   /** Optional link target; turns card into an anchor element. */
@@ -78,6 +78,7 @@ if (!href && tabIndex !== undefined) {
   // no extra role needed unless click handler is added externally.
 }
 ---
+
 <Tag
   class={cn(base, focusStyles, interactive, className)}
   href={href}

@@ -5,20 +5,360 @@ import VimeoEmbed from '../../components/VimeoEmbed.astro';
 
 <DocsLayout
   title="VimeoEmbed"
-  description="Responsive Vimeo iframe with autoplay, loop, and muted controls."
+  description="WCAG AAA compliant Vimeo video embed component with privacy controls, responsive design, multiple layouts, loading states, and enhanced contrast ratios for optimal viewing in all modes."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <p class="text-gray-400 text-sm">
-      Pass the Vimeo video ID and optional <code>title</code> and <code
-        >byline</code
-      >
-      toggles for privacy.
-    </p>
-    <VimeoEmbed
-      videoId="76979871"
-      title="The New Vimeo Player"
-      className="mt-3"
-    />
+  <section>
+    <h2 class="text-xl font-bold mb-4">Props</h2>
+    <div class="space-y-3 text-sm">
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Core Properties</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>videoId: string</code> - Vimeo video ID (required)</li>
+          <li>
+            <code>title?: string</code> - Video title for accessibility (default:
+            'Vimeo video player')
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Layout & Appearance</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>variant?: 'default' | 'inline' | 'featured' | 'minimal'</code>
+            - Visual variant (default: 'default')
+          </li>
+          <li>
+            <code>size?: 'sm' | 'md' | 'lg' | 'xl'</code> - Component size (default:
+            'md')
+          </li>
+          <li>
+            <code
+              >aspectRatio?: '16:9' | '4:3' | '1:1' | '21:9' | '9:16' | 'auto'</code
+            > - Aspect ratio (default: '16:9')
+          </li>
+          <li>
+            <code>rounded?: boolean</code> - Rounded corners (default: true)
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Playback Controls</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>autoplay?: boolean</code> - Auto-play video (default: false)
+          </li>
+          <li>
+            <code>loop?: boolean</code> - Loop video playback (default: false)
+          </li>
+          <li><code>muted?: boolean</code> - Start muted (default: false)</li>
+          <li>
+            <code>color?: string</code> - Player accent color (hex without #)
+          </li>
+          <li>
+            <code>portrait?: boolean</code> - Show user portrait (default: true)
+          </li>
+          <li>
+            <code>byline?: boolean</code> - Show video byline (default: true)
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Privacy & Performance</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>dnt?: boolean</code> - Do Not Track mode (default: true)
+          </li>
+          <li><code>lazy?: boolean</code> - Lazy loading (default: true)</li>
+          <li>
+            <code
+              >quality?: 'auto' | '240p' | '360p' | '540p' | '720p' | '1080p'</code
+            > - Video quality (default: 'auto')
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Accessibility</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>description?: string</code> - Detailed description for assistive
+            technology
+          </li>
+          <li><code>ariaLabel?: string</code> - Custom ARIA label</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">States & Behavior</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>loading?: boolean</code> - Show loading state (default: false)
+          </li>
+          <li><code>error?: string</code> - Error message to display</li>
+          <li>
+            <code>responsive?: boolean</code> - Responsive behavior (default: true)
+          </li>
+          <li><code>maxWidth?: string</code> - Maximum width constraint</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Additional</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>className?: string</code> - Additional CSS classes</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">EmbedBase Architecture</h2>
+    <div class="space-y-2 text-sm text-slate-300">
+      <p>This component is built on top of EmbedBase, providing:</p>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>
+          <strong>Consistent Loading States:</strong> Unified loading spinner and
+          error handling across all embed components
+        </li>
+        <li>
+          <strong>5 Visual Variants:</strong> default, minimal, card, featured, and
+          inline styles
+        </li>
+        <li>
+          <strong>Accessibility:</strong> WCAG AAA compliance with 9:1 contrast ratios
+          and proper ARIA attributes
+        </li>
+        <li>
+          <strong>Responsive Design:</strong> Flexible aspect ratios and container
+          sizing
+        </li>
+        <li>
+          <strong>Performance:</strong> Lazy loading and optimized iframe attributes
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Accessibility Features</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>WCAG AAA compliant with 9:1 contrast ratios in all color schemes</li>
+      <li>
+        Enhanced video contrast (110%) and brightness (105%) for better
+        visibility
+      </li>
+      <li>Full keyboard navigation support with visible focus indicators</li>
+      <li>
+        Screen reader compatible with proper ARIA labels and semantic HTML
+      </li>
+      <li>Privacy-first approach with Do Not Track enabled by default</li>
+      <li>Loading and error states announced to assistive technologies</li>
+      <li>Descriptive fallback content for JavaScript-disabled browsers</li>
+      <li>High contrast mode compatibility</li>
+      <li>Lazy loading for improved performance</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Examples</h2>
+
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Basic Vimeo Embed</h3>
+        <VimeoEmbed
+          videoId="76979871"
+          title="The New Vimeo Player (Updated Demo)"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Different Variants</h3>
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-medium mb-2">Featured Variant</h4>
+            <VimeoEmbed
+              variant="featured"
+              videoId="76979871"
+              title="Featured Vimeo Video"
+              size="lg"
+              color="00adef"
+            />
+          </div>
+
+          <div>
+            <h4 class="font-medium mb-2">Inline Variant</h4>
+            <VimeoEmbed
+              variant="inline"
+              videoId="76979871"
+              title="Inline Vimeo Video"
+              size="sm"
+            />
+          </div>
+
+          <div>
+            <h4 class="font-medium mb-2">Minimal Variant</h4>
+            <VimeoEmbed
+              variant="minimal"
+              videoId="76979871"
+              title="Minimal Vimeo Video"
+              size="md"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Different Sizes</h3>
+        <div class="grid gap-4 md:grid-cols-2">
+          <VimeoEmbed videoId="76979871" title="Small Vimeo Video" size="sm" />
+          <VimeoEmbed videoId="76979871" title="Large Vimeo Video" size="lg" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Different Aspect Ratios</h3>
+        <div class="grid gap-4 md:grid-cols-3">
+          <VimeoEmbed
+            videoId="76979871"
+            title="Square Video"
+            aspectRatio="1:1"
+            size="sm"
+          />
+          <VimeoEmbed
+            videoId="76979871"
+            title="4:3 Video"
+            aspectRatio="4:3"
+            size="sm"
+          />
+          <VimeoEmbed
+            videoId="76979871"
+            title="Cinematic Video"
+            aspectRatio="21:9"
+            size="sm"
+          />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Custom Player Color</h3>
+        <VimeoEmbed
+          videoId="76979871"
+          title="Custom Colored Player"
+          color="ff6600"
+          size="md"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Privacy-Focused Embed</h3>
+        <VimeoEmbed
+          videoId="76979871"
+          title="Privacy-Focused Video"
+          dnt={true}
+          portrait={false}
+          byline={false}
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Autoplay Example</h3>
+        <VimeoEmbed
+          videoId="76979871"
+          title="Autoplay Video"
+          autoplay={true}
+          muted={true}
+          loop={true}
+          variant="minimal"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Loading State</h3>
+        <VimeoEmbed videoId="76979871" title="Loading Video" loading={true} />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Error State</h3>
+        <VimeoEmbed
+          videoId="invalid-id"
+          title="Error Example"
+          error="Video konnte nicht geladen werden"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Accessibility Features</h3>
+        <VimeoEmbed
+          videoId="76979871"
+          title="Accessible Vimeo Video"
+          description="This is a detailed description of the Vimeo video content for screen readers and assistive technologies"
+          ariaLabel="Vimeo player demonstration video"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Custom Max Width</h3>
+        <VimeoEmbed
+          videoId="76979871"
+          title="Constrained Video"
+          maxWidth="500px"
+          size="xl"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">High Quality</h3>
+        <VimeoEmbed
+          videoId="76979871"
+          title="HD Video"
+          quality="1080p"
+          lazy={false}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Slots</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li><code>caption</code> - Caption content below the video embed</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Privacy Features</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>
+        <strong>Do Not Track:</strong> Enabled by default to prevent tracking
+      </li>
+      <li><strong>Lazy Loading:</strong> Videos load only when needed</li>
+      <li>
+        <strong>Portrait/Byline Control:</strong> Hide user information for privacy
+      </li>
+      <li><strong>No Cookies:</strong> Minimal tracking when DNT is enabled</li>
+      <li>
+        <strong>Fallback Links:</strong> Direct Vimeo links for JavaScript-disabled
+        users
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Accessibility Best Practices</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>
+        Always provide a descriptive <code>title</code> for screen readers
+      </li>
+      <li>Use <code>description</code> for detailed content explanations</li>
+      <li>Keep autoplay videos muted to prevent audio surprises</li>
+      <li>Enable DNT for user privacy by default</li>
+      <li>Test with keyboard navigation and screen readers</li>
+      <li>Use appropriate aspect ratios for your content</li>
+      <li>Consider loading states for better user experience</li>
+      <li>Provide fallback content for accessibility</li>
+    </ul>
   </section>
 </DocsLayout>

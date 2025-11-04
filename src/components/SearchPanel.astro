@@ -38,7 +38,8 @@ const {
   class: className = '',
 } = Astro.props;
 
-const panelId = propId || `search-panel-${Math.random().toString(36).slice(2, 9)}`;
+const panelId =
+  propId || `search-panel-${Math.random().toString(36).slice(2, 9)}`;
 const inputId = `${panelId}-input`;
 const resultsId = `${panelId}-results`;
 
@@ -55,13 +56,11 @@ const baseClasses = open ? '' : 'hidden';
   aria-modal="true"
   aria-label={title}
 >
+  <div class="absolute inset-0" data-search-backdrop aria-hidden="true"></div>
+
   <div
-    class="absolute inset-0"
-    data-search-backdrop
-    aria-hidden="true"
-  ></div>
-  
-  <div class="relative z-10 w-full max-w-3xl bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl p-6">
+    class="relative z-10 w-full max-w-3xl bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl p-6"
+  >
     <!-- Header with search input and close button -->
     <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
       <div class="flex-1">
@@ -74,32 +73,40 @@ const baseClasses = open ? '' : 'hidden';
           aria-label={placeholder}
           data-testid="search-panel-input"
         />
-        
-        {helpText && (
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {helpText}
-          </p>
-        )}
-        
-        {error && (
-          <p class="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
-            {typeof error === 'string' ? error : 'Please check your search query.'}
-          </p>
-        )}
+
+        {
+          helpText && (
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              {helpText}
+            </p>
+          )
+        }
+
+        {
+          error && (
+            <p class="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
+              {typeof error === 'string'
+                ? error
+                : 'Please check your search query.'}
+            </p>
+          )
+        }
       </div>
-      
-      {showCloseButton && (
-        <button
-          type="button"
-          class="inline-flex min-h-11 items-center justify-center px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-          data-search-close
-          aria-label={closeLabel}
-        >
-          {closeLabel}
-        </button>
-      )}
+
+      {
+        showCloseButton && (
+          <button
+            type="button"
+            class="inline-flex min-h-11 items-center justify-center px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            data-search-close
+            aria-label={closeLabel}
+          >
+            {closeLabel}
+          </button>
+        )
+      }
     </div>
-    
+
     <!-- Search results -->
     <div
       id={resultsId}
@@ -109,59 +116,73 @@ const baseClasses = open ? '' : 'hidden';
     >
       <slot />
     </div>
-    
+
     <!-- Keyboard shortcuts -->
-    {showShortcuts && (
-      <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-3 mt-4">
-        <div class="flex items-center gap-4">
-          <div class="flex items-center gap-1">
-            <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">↑</kbd>
-            <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">↓</kbd>
-            <span>Navigate</span>
+    {
+      showShortcuts && (
+        <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-3 mt-4">
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1">
+              <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
+                ↑
+              </kbd>
+              <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
+                ↓
+              </kbd>
+              <span>Navigate</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
+                ↵
+              </kbd>
+              <span>Select</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
+                Esc
+              </kbd>
+              <span>Close</span>
+            </div>
           </div>
           <div class="flex items-center gap-1">
-            <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">↵</kbd>
-            <span>Select</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">Esc</kbd>
-            <span>Close</span>
+            <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
+              ⌘
+            </kbd>
+            <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
+              K
+            </kbd>
+            <span class="hidden sm:inline">to search</span>
           </div>
         </div>
-        <div class="flex items-center gap-1">
-          <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">⌘</kbd>
-          <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">K</kbd>
-          <span class="hidden sm:inline">to search</span>
-        </div>
-      </div>
-    )}
+      )
+    }
   </div>
 </div>
 
 <script define:vars={{ panelId }}>
-  (function() {
+  (function () {
     const panel = document.getElementById(panelId);
     if (!panel) return;
-    
+
     const input = panel.querySelector('[data-search-input]');
     const closeBtn = panel.querySelector('[data-search-close]');
     const backdrop = panel.querySelector('[data-search-backdrop]');
-    
+
     let isOpen = panel.getAttribute('data-open') === 'true';
-    
+
     function openPanel() {
       console.log('Opening panel:', panelId);
       panel.classList.remove('hidden');
       panel.setAttribute('data-open', 'true');
       isOpen = true;
-      
+
       if (input) {
         setTimeout(() => input.focus(), 100);
       }
-      
+
       document.body.style.overflow = 'hidden';
     }
-    
+
     function closePanel() {
       console.log('Closing panel:', panelId);
       panel.classList.add('hidden');
@@ -169,24 +190,24 @@ const baseClasses = open ? '' : 'hidden';
       isOpen = false;
       document.body.style.overflow = '';
     }
-    
+
     // Close button
     if (closeBtn) {
       closeBtn.addEventListener('click', closePanel);
     }
-    
+
     // Backdrop click
     if (backdrop) {
       backdrop.addEventListener('click', closePanel);
     }
-    
+
     // Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && isOpen) {
         closePanel();
       }
     });
-    
+
     // Global Cmd+K
     document.addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -194,18 +215,18 @@ const baseClasses = open ? '' : 'hidden';
         openPanel();
       }
     });
-    
+
     // Global registry
     if (!window.__cometSearchPanelRegistry) {
       window.__cometSearchPanelRegistry = new Map();
     }
-    
+
     window.__cometSearchPanelRegistry.set(panelId, {
       open: openPanel,
       close: closePanel,
-      toggle: () => isOpen ? closePanel() : openPanel()
+      toggle: () => (isOpen ? closePanel() : openPanel()),
     });
-    
+
     console.log('Panel registered:', panelId);
   })();
 </script>

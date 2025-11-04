@@ -41,8 +41,16 @@ const sizeClasses = {
           data-dialog-close
           aria-label="Close dialog"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M18 6L6 18M6 6l12 12"/>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
       )
@@ -127,7 +135,7 @@ const sizeClasses = {
       } catch {
         dialog.removeAttribute('open');
       }
-      
+
       // Restore focus to the element that opened the dialog
       if (focusedElementBeforeDialog) {
         focusedElementBeforeDialog.focus();
@@ -167,19 +175,19 @@ const sizeClasses = {
           ? event.target.closest('[data-dialog-trigger]')
           : null;
       if (!trigger) return;
-      
+
       const targetId = trigger.getAttribute('data-dialog-trigger');
       if (!targetId) return;
-      
+
       const dialog = document.getElementById(targetId);
       if (!(dialog instanceof HTMLDialogElement)) return;
-      
+
       // Store the focused element
       focusedElementBeforeDialog = document.activeElement;
-      
+
       try {
         dialog.showModal();
-        
+
         // Focus first focusable element or the dialog itself
         const focusableElements = getFocusableElements(dialog);
         const firstFocusable = focusableElements[0];
@@ -188,10 +196,9 @@ const sizeClasses = {
         } else {
           dialog.focus();
         }
-        
+
         // Setup focus trap
         trapFocus(dialog);
-        
       } catch {
         dialog.setAttribute('open', 'true');
       }

@@ -2,43 +2,695 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Table from '../../components/Table.astro';
 
-const columns = [
+const basicColumns = [
   { key: 'name', label: 'Name', sortable: true },
   { key: 'role', label: 'Role' },
   { key: 'status', label: 'Status', align: 'center' },
 ];
 
-const rows = [
+const basicData = [
   {
     name: 'John Doe',
-    role: 'Developer',
-    status: '<span class="text-green-400">●</span>',
+    role: 'Senior Developer',
+    status:
+      '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Active</span>',
   },
   {
     name: 'Jane Smith',
-    role: 'Designer',
-    status: '<span class="text-green-400">●</span>',
+    role: 'UX Designer',
+    status:
+      '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Active</span>',
   },
   {
     name: 'Bob Wilson',
-    role: 'Manager',
-    status: '<span class="text-gray-400">●</span>',
+    role: 'Project Manager',
+    status:
+      '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">Offline</span>',
+  },
+];
+
+const detailedColumns = [
+  { key: 'id', label: 'ID', align: 'right', width: '80px' },
+  { key: 'avatar', label: '', width: '60px' },
+  { key: 'name', label: 'Name', sortable: true },
+  { key: 'email', label: 'Email' },
+  { key: 'department', label: 'Department', sortable: true },
+  { key: 'joinDate', label: 'Join Date', align: 'center', sortable: true },
+  { key: 'actions', label: 'Actions', align: 'center' },
+];
+
+const detailedData = [
+  {
+    id: '001',
+    avatar:
+      '<div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">JD</div>',
+    name: 'John Doe',
+    email: 'john.doe@company.com',
+    department: 'Engineering',
+    joinDate: '2023-01-15',
+    actions:
+      '<button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>',
+  },
+  {
+    id: '002',
+    avatar:
+      '<div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">JS</div>',
+    name: 'Jane Smith',
+    email: 'jane.smith@company.com',
+    department: 'Design',
+    joinDate: '2023-03-22',
+    actions:
+      '<button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>',
+  },
+  {
+    id: '003',
+    avatar:
+      '<div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">BW</div>',
+    name: 'Bob Wilson',
+    email: 'bob.wilson@company.com',
+    department: 'Management',
+    joinDate: '2022-11-08',
+    actions:
+      '<button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>',
+  },
+  {
+    id: '004',
+    avatar:
+      '<div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">AM</div>',
+    name: 'Alice Miller',
+    email: 'alice.miller@company.com',
+    department: 'Marketing',
+    joinDate: '2023-06-10',
+    actions:
+      '<button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>',
+  },
+];
+
+const compactColumns = [
+  { key: 'metric', label: 'Metric' },
+  { key: 'value', label: 'Value', align: 'right' },
+  { key: 'change', label: 'Change', align: 'center' },
+];
+
+const compactData = [
+  {
+    metric: 'Users',
+    value: '12,543',
+    change: '<span class="text-green-600">+5.2%</span>',
+  },
+  {
+    metric: 'Revenue',
+    value: '$45,231',
+    change: '<span class="text-green-600">+12.1%</span>',
+  },
+  {
+    metric: 'Bounce Rate',
+    value: '34.2%',
+    change: '<span class="text-red-600">-2.3%</span>',
+  },
+];
+
+const stickyColumns = [
+  { key: 'name', label: 'Name', sticky: true, width: '200px' },
+  { key: 'jan', label: 'January', align: 'right' },
+  { key: 'feb', label: 'February', align: 'right' },
+  { key: 'mar', label: 'March', align: 'right' },
+  { key: 'apr', label: 'April', align: 'right' },
+  { key: 'may', label: 'May', align: 'right' },
+  { key: 'jun', label: 'June', align: 'right' },
+  { key: 'jul', label: 'July', align: 'right' },
+  { key: 'aug', label: 'August', align: 'right' },
+  { key: 'sep', label: 'September', align: 'right' },
+  { key: 'oct', label: 'October', align: 'right' },
+  { key: 'nov', label: 'November', align: 'right' },
+  { key: 'dec', label: 'December', align: 'right' },
+];
+
+const stickyData = [
+  {
+    name: 'Sales Revenue',
+    jan: '$12,345',
+    feb: '$13,456',
+    mar: '$14,567',
+    apr: '$15,678',
+    may: '$16,789',
+    jun: '$17,890',
+    jul: '$18,901',
+    aug: '$19,012',
+    sep: '$20,123',
+    oct: '$21,234',
+    nov: '$22,345',
+    dec: '$23,456',
+  },
+  {
+    name: 'Marketing Spend',
+    jan: '$3,456',
+    feb: '$3,567',
+    mar: '$3,678',
+    apr: '$3,789',
+    may: '$3,890',
+    jun: '$3,901',
+    jul: '$4,012',
+    aug: '$4,123',
+    sep: '$4,234',
+    oct: '$4,345',
+    nov: '$4,456',
+    dec: '$4,567',
   },
 ];
 ---
 
 <DocsLayout
   title="Table"
-  description="Responsive data grid with zebra stripes, hover states, and caption support."
+  description="WCAG AAA compliant data tables with responsive design, sorting capabilities, and comprehensive accessibility features for displaying structured data."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Demo</h2>
-    <Table
-      columns={columns}
-      data={rows}
-      striped
-      hoverable
-      caption="Team members"
-    />
+  <section class="space-y-6">
+    <div class="space-y-3">
+      <h2 class="text-xl font-semibold text-slate-100">Overview</h2>
+      <p class="text-base text-slate-200">
+        Table components provide accessible and responsive data display with
+        proper semantic markup, sorting capabilities, and comprehensive screen
+        reader support. Built with WCAG AAA compliance, they feature proper
+        contrast ratios, keyboard navigation, and flexible styling options.
+      </p>
+      <p class="text-base text-slate-200">
+        The component supports multiple sizes, variants, striped rows, hover
+        effects, sticky columns, and loading states. All elements automatically
+        adjust for high contrast mode and respect user preferences for reduced
+        motion.
+      </p>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          columns
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of column definitions with key, label, sortable, align, width,
+          and sticky properties. Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          data
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of data rows as objects. Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          striped?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Enable striped/zebra rows. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          hoverable?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Enable hover effects on rows. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          bordered?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show borders around cells. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>sm</code>, <code>md</code>, <code>lg</code>.
+          Defaults to <code>md</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual variant: <code>default</code>, <code>minimal</code>, <code
+            >elevated</code
+          >, <code>bordered</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          caption?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Table caption for accessibility and context.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          captionSrOnly?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Hide caption visually but keep for screen readers. Defaults to <code
+            >false</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          responsive?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Enable responsive horizontal scroll. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          loading?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show loading state. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          emptyMessage?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Message shown when no data is available. Defaults to "No data
+          available".
+        </dd>
+      </div>
+    </dl>
+    <p class="text-sm text-slate-400 mt-4">
+      Always provide meaningful captions and column headers for accessibility.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Basic Usage -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Table
+          columns={basicColumns}
+          data={basicData}
+          caption="Team member list"
+        />
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sizes</h3>
+      <div class="space-y-6">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Small</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={compactColumns}
+              data={compactData}
+              size="sm"
+              caption="Metrics overview (small)"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Medium (Default)</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={compactColumns}
+              data={compactData}
+              size="md"
+              caption="Metrics overview (medium)"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Large</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={compactColumns}
+              data={compactData}
+              size="lg"
+              caption="Metrics overview (large)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Variants</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Default</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={basicColumns}
+              data={basicData.slice(0, 2)}
+              variant="default"
+              caption="Default table style"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Minimal</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={basicColumns}
+              data={basicData.slice(0, 2)}
+              variant="minimal"
+              caption="Minimal table style"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Elevated</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={basicColumns}
+              data={basicData.slice(0, 2)}
+              variant="elevated"
+              caption="Elevated table style"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Bordered</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={basicColumns}
+              data={basicData.slice(0, 2)}
+              variant="bordered"
+              caption="Bordered table style"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Features -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Table Features</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Striped & Hover</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={basicColumns}
+              data={basicData}
+              striped
+              hoverable
+              caption="Striped table with hover effects"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Bordered</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Table
+              columns={basicColumns}
+              data={basicData}
+              bordered
+              caption="Table with cell borders"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Table -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">
+        Detailed Employee Table
+      </h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Table
+          columns={detailedColumns}
+          data={detailedData}
+          striped
+          hoverable
+          caption="Employee directory with detailed information"
+        />
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Loading State</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Table
+          columns={basicColumns}
+          data={basicData}
+          loading
+          caption="Table in loading state"
+        />
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Empty State</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Table
+          columns={basicColumns}
+          data={[]}
+          emptyMessage="No team members found"
+          caption="Empty table state"
+        />
+      </div>
+    </div>
+
+    <!-- Sticky Columns -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sticky Columns</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Table
+          columns={stickyColumns}
+          data={stickyData}
+          caption="Monthly financial data with sticky name column"
+          size="sm"
+        />
+        <p class="text-xs text-slate-400 mt-3">
+          The name column stays fixed while scrolling horizontally.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Data Dashboard -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Analytics Dashboard</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-slate-100">Key Metrics</h4>
+          <p class="text-sm text-slate-300 mt-1">
+            Performance indicators for the current period
+          </p>
+        </div>
+        <Table
+          columns={compactColumns}
+          data={compactData}
+          striped
+          size="sm"
+          variant="minimal"
+          caption="Key performance metrics"
+        />
+      </div>
+    </div>
+
+    <!-- User Management -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">
+        User Management Interface
+      </h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100">Team Members</h4>
+            <p class="text-sm text-slate-300 mt-1">
+              Manage your team and their permissions
+            </p>
+          </div>
+          <button
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm transition-colors"
+          >
+            Add Member
+          </button>
+        </div>
+        <Table
+          columns={detailedColumns}
+          data={detailedData}
+          striped
+          hoverable
+          bordered
+          caption="Team member management table"
+          captionSrOnly
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Table components are designed with comprehensive accessibility features
+      and WCAG AAA compliance. All text maintains 9:1 contrast ratios and
+      adjusts automatically for high contrast mode and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Proper semantic markup with table, thead, tbody, th, and td elements
+      ensures screen readers can navigate the data structure. Column headers
+      include scope attributes, and sortable columns provide appropriate ARIA
+      attributes for state.
+    </p>
+    <p class="text-base text-slate-200">
+      The component respects user preferences for reduced motion and provides
+      keyboard navigation for interactive elements. Captions provide context for
+      the table content, and can be hidden visually while remaining available to
+      assistive technology.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Design Tokens</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Size Scale</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">sm</span>
+            <span class="text-slate-400">Compact data tables</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">md</span>
+            <span class="text-slate-400">Standard tables</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">lg</span>
+            <span class="text-slate-400">Detailed data display</span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Variants</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">default</span>
+            <span class="text-slate-400">Standard appearance</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">minimal</span>
+            <span class="text-slate-400">Clean, borderless</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">elevated</span>
+            <span class="text-slate-400">Enhanced shadows</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">bordered</span>
+            <span class="text-slate-400">Emphasized boundaries</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </DocsLayout>

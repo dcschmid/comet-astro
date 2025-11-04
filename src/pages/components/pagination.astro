@@ -4,7 +4,8 @@ import Pagination from '../../components/Pagination.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const title = 'Pagination Component';
-const description = 'WCAG AAA compliant pagination component with multiple variants, responsive design, and comprehensive accessibility features.';
+const description =
+  'WCAG AAA compliant pagination component with multiple variants, responsive design, and comprehensive accessibility features.';
 ---
 
 <DocsLayout title={title} description={description}>
@@ -12,7 +13,10 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
     <!-- Introduction -->
     <section>
       <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-        The Pagination component provides accessible navigation between pages with multiple variants, customizable display options, and comprehensive keyboard and screen reader support. It automatically handles ellipsis for large page sets and maintains WCAG AAA compliance.
+        The Pagination component provides accessible navigation between pages
+        with multiple variants, customizable display options, and comprehensive
+        keyboard and screen reader support. It automatically handles ellipsis
+        for large page sets and maintains WCAG AAA compliance.
       </p>
     </section>
 
@@ -21,7 +25,7 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Basic Usage
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
@@ -41,31 +45,39 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Style Variants
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Default</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Default
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={5} totalPages={10} variant="default" />
           </div>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Minimal</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Minimal
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={5} totalPages={10} variant="minimal" />
           </div>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Outline</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Outline
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={5} totalPages={10} variant="outline" />
           </div>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Rounded</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Rounded
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={5} totalPages={10} variant="rounded" />
           </div>
@@ -93,24 +105,30 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Sizes
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Small</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Small
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={3} totalPages={8} size="sm" />
           </div>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Medium (Default)</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Medium (Default)
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={3} totalPages={8} size="md" />
           </div>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Large</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Large
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={3} totalPages={8} size="lg" />
           </div>
@@ -135,51 +153,51 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Display Options
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">With First/Last Buttons</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            With First/Last Buttons
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={15} 
-              totalPages={25} 
+            <Pagination
+              currentPage={15}
+              totalPages={25}
               showFirstLast={true}
               maxVisible={5}
             />
           </div>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Without Previous/Next</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Without Previous/Next
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={5} 
-              totalPages={10} 
-              showPrevNext={false}
-            />
+            <Pagination currentPage={5} totalPages={10} showPrevNext={false} />
           </div>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Only Navigation (No Page Numbers)</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Only Navigation (No Page Numbers)
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={5} 
-              totalPages={10} 
+            <Pagination
+              currentPage={5}
+              totalPages={10}
               showPageNumbers={false}
               showFirstLast={true}
             />
           </div>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Limited Visible Pages</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Limited Visible Pages
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={12} 
-              totalPages={20} 
-              maxVisible={3}
-            />
+            <Pagination currentPage={12} totalPages={20} maxVisible={3} />
           </div>
         </div>
       </div>
@@ -223,47 +241,46 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         URL Integration
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Query Parameter Pagination</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Query Parameter Pagination
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={3} 
-              totalPages={8}
-              baseUrl=""
-            />
+            <Pagination currentPage={3} totalPages={8} baseUrl="" />
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Generates URLs like: ?page=1, ?page=2, etc.
           </p>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Custom Base URL</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Custom Base URL
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={3} 
-              totalPages={8}
-              baseUrl="/blog"
-            />
+            <Pagination currentPage={3} totalPages={8} baseUrl="/blog" />
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Generates URLs like: /blog?page=1, /blog?page=2, etc.
           </p>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Existing Query Parameters</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Existing Query Parameters
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={3} 
+            <Pagination
+              currentPage={3}
               totalPages={8}
               baseUrl="/search?q=astro"
             />
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Generates URLs like: /search?q=astro&page=1, /search?q=astro&page=2, etc.
+            Generates URLs like: /search?q=astro&page=1, /search?q=astro&page=2,
+            etc.
           </p>
         </div>
       </div>
@@ -298,10 +315,12 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Edge Cases
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Single Page</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Single Page
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={1} totalPages={1} />
           </div>
@@ -309,9 +328,11 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
             Navigation buttons are disabled when there's only one page.
           </p>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">First Page</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            First Page
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={1} totalPages={10} showFirstLast={true} />
           </div>
@@ -319,9 +340,11 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
             Previous and First buttons are disabled on the first page.
           </p>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Last Page</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Last Page
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={10} totalPages={10} showFirstLast={true} />
           </div>
@@ -329,14 +352,17 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
             Next and Last buttons are disabled on the last page.
           </p>
         </div>
-        
+
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Many Pages with Ellipsis</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Many Pages with Ellipsis
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <Pagination currentPage={25} totalPages={50} maxVisible={5} />
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Ellipsis (…) automatically appears when there are too many pages to display.
+            Ellipsis (…) automatically appears when there are too many pages to
+            display.
           </p>
         </div>
       </div>
@@ -362,13 +388,15 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Custom Labels
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">Internationalization</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            Internationalization
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={3} 
+            <Pagination
+              currentPage={3}
               totalPages={8}
               showFirstLast={true}
               previousLabel="Vorherige"
@@ -403,14 +431,26 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Accessibility Features
       </h2>
-      
-      <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
-        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">WCAG AAA Compliance</h3>
+
+      <div
+        class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8"
+      >
+        <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-4">
+          WCAG AAA Compliance
+        </h3>
         <ul class="list-disc pl-6 space-y-2 text-blue-800 dark:text-blue-200">
           <li>Semantic HTML with proper nav element and role="navigation"</li>
-          <li>WCAG AAA contrast ratios (7:1+) for all text and interactive elements</li>
-          <li>Comprehensive ARIA labeling with aria-label, aria-current, and aria-disabled</li>
-          <li>Screen reader announcements for page context and disabled states</li>
+          <li>
+            WCAG AAA contrast ratios (7:1+) for all text and interactive
+            elements
+          </li>
+          <li>
+            Comprehensive ARIA labeling with aria-label, aria-current, and
+            aria-disabled
+          </li>
+          <li>
+            Screen reader announcements for page context and disabled states
+          </li>
           <li>Keyboard navigation support with proper focus management</li>
           <li>Responsive design that works across all device sizes</li>
           <li>High contrast mode support for users with visual impairments</li>
@@ -420,20 +460,34 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
 
       <div class="space-y-8 mb-8">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">ARIA Features</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
+            ARIA Features
+          </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-            <Pagination 
-              currentPage={5} 
+            <Pagination
+              currentPage={5}
               totalPages={10}
               ariaLabel="Product list pagination"
             />
           </div>
           <ul class="text-sm text-gray-600 dark:text-gray-400 mt-4 space-y-1">
-            <li>• <strong>aria-current="page"</strong> indicates the current page</li>
-            <li>• <strong>aria-disabled="true"</strong> for disabled navigation buttons</li>
-            <li>• <strong>aria-label</strong> provides context for each navigation element</li>
-            <li>• <strong>role="navigation"</strong> identifies the pagination as navigation</li>
-            <li>• <strong>sr-only</strong> text provides additional context for screen readers</li>
+            <li>
+              • <strong>aria-current="page"</strong> indicates the current page
+            </li>
+            <li>
+              • <strong>aria-disabled="true"</strong> for disabled navigation buttons
+            </li>
+            <li>
+              • <strong>aria-label</strong> provides context for each navigation
+              element
+            </li>
+            <li>
+              • <strong>role="navigation"</strong> identifies the pagination as navigation
+            </li>
+            <li>
+              • <strong>sr-only</strong> text provides additional context for screen
+              readers
+            </li>
           </ul>
         </div>
       </div>
@@ -456,233 +510,363 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Props Reference
       </h2>
-      
+
       <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table
+          class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+        >
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Prop
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Type
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Default
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Description
               </th>
             </tr>
           </thead>
           <tbody class="text-sm">
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-red-700 dark:text-red-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-red-700 dark:text-red-300"
+              >
                 currentPage
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 number
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 required
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 The currently active page number
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-red-700 dark:text-red-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-red-700 dark:text-red-300"
+              >
                 totalPages
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 number
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 required
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Total number of pages available
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 baseUrl
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 ''
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Base URL for page links
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 variant
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'default' | 'minimal' | 'outline' | 'rounded'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'default'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Visual style variant
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 size
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'sm' | 'md' | 'lg'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'md'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Button size and spacing
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 showPrevNext
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 true
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Show previous/next buttons
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 showFirstLast
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 false
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Show first/last page buttons
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 showPageNumbers
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 true
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Show numbered page buttons
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 maxVisible
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 number
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 7
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Maximum visible page numbers
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 ariaLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'Pagination Navigation'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 ARIA label for navigation
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 pageLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'Page'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Label for page context
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 previousLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'Previous'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Previous button label
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 nextLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'Next'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Next button label
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 firstLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'First'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 First page button label
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 lastLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'Last'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Last page button label
               </td>
             </tr>
@@ -696,20 +880,30 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Best Practices
       </h2>
-      
+
       <div class="space-y-6">
         <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
-          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+          <h3
+            class="text-lg font-medium text-green-900 dark:text-green-100 mb-3"
+          >
             ✅ Do
           </h3>
           <ul class="space-y-2 text-green-800 dark:text-green-200">
-            <li>• Provide clear context about the current page and total pages</li>
+            <li>
+              • Provide clear context about the current page and total pages
+            </li>
             <li>• Use appropriate maxVisible values (5-9) for optimal UX</li>
-            <li>• Test pagination with screen readers and keyboard navigation</li>
-            <li>• Use descriptive aria-label for different pagination contexts</li>
+            <li>
+              • Test pagination with screen readers and keyboard navigation
+            </li>
+            <li>
+              • Use descriptive aria-label for different pagination contexts
+            </li>
             <li>• Consider showing first/last buttons for large datasets</li>
             <li>• Integrate properly with your URL routing system</li>
-            <li>• Use consistent pagination patterns across your application</li>
+            <li>
+              • Use consistent pagination patterns across your application
+            </li>
             <li>• Test with both small and large page counts</li>
           </ul>
         </div>
@@ -730,12 +924,16 @@ const description = 'WCAG AAA compliant pagination component with multiple varia
         </div>
 
         <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
-          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+          <h3
+            class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3"
+          >
             💡 Tips
           </h3>
           <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
             <li>• Use 'outline' variant for secondary pagination sections</li>
-            <li>• 'minimal' variant works well in sidebars or compact layouts</li>
+            <li>
+              • 'minimal' variant works well in sidebars or compact layouts
+            </li>
             <li>• Consider disabling page numbers for very large datasets</li>
             <li>• Use smaller sizes (sm) for pagination in tables or lists</li>
             <li>• Customize labels for internationalization</li>

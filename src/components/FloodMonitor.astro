@@ -1,0 +1,377 @@
+---
+/**
+ * FloodMonitor – Minimal river level & discharge snapshot (WCAG AAA).
+ * Tailwind-only; shows: Discharge, Level, Trend (optional), Risk, Updated.
+ */
+interface Props {
+  stationId?: string;
+  apiUrl?: string; // optional custom endpoint returning { discharge, level?, trend?, updated? }
+  latitude?: number; // if apiUrl not provided, use lat/lon with Open‑Meteo flood API
+  longitude?: number;
+  location?: string;
+  riverName?: string;
+  thresholds?: { watch: number; warning: number; emergency: number };
+  refreshInterval?: number;
+  disableFetch?: boolean;
+  showTrend?: boolean;
+  ariaLabel?: string;
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const {
+  stationId,
+  apiUrl,
+  latitude,
+  longitude,
+  location = 'Demo Location',
+  riverName = 'River',
+  thresholds = { watch: 50, warning: 100, emergency: 200 },
+  refreshInterval = 0,
+  disableFetch = false,
+  showTrend = true,
+  ariaLabel,
+  class: className = '',
+} = props;
+
+const fallback = {
+  discharge: 42.3,
+  level: 2.18,
+  trend: 'stable',
+  updated: new Date().toISOString(),
+};
+const label = ariaLabel || `Flood monitor for ${location}`;
+const baseCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
+const gridCls =
+  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5';
+const cardCls =
+  'flex flex-col gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[86px]';
+const labelCls =
+  'text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400';
+const valueCls =
+  'text-base md:text-lg font-bold text-slate-900 dark:text-slate-50';
+const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+const riskLabelCls =
+  'text-[11px] font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-1';
+
+// Return only indicator color classes; text remains high-contrast neutral for AAA.
+function classify(d: number) {
+  if (d >= thresholds.emergency)
+    return { level: 'Emergency', indicator: 'bg-rose-700 dark:bg-rose-400' };
+  if (d >= thresholds.warning)
+    return { level: 'Warning', indicator: 'bg-orange-700 dark:bg-orange-400' };
+  if (d >= thresholds.watch)
+    return { level: 'Watch', indicator: 'bg-amber-700 dark:bg-amber-400' };
+  return { level: 'Normal', indicator: 'bg-emerald-700 dark:bg-emerald-400' };
+}
+const initialRisk = classify(fallback.discharge);
+---
+
+<div
+  class={baseCls}
+  role="region"
+  aria-label={label}
+  aria-busy={!disableFetch &&
+  (apiUrl || (latitude != null && longitude != null))
+    ? 'true'
+    : 'false'}
+  data-flood-monitor
+  data-api={apiUrl}
+  data-station={stationId}
+  data-lat={latitude}
+  data-lon={longitude}
+  data-refresh={refreshInterval}
+  data-disable-fetch={disableFetch}
+  data-state={!disableFetch &&
+  (apiUrl || (latitude != null && longitude != null))
+    ? 'loading'
+    : 'static'}
+  data-thresholds={JSON.stringify(thresholds)}
+>
+  <header
+    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
+  >
+    <h2
+      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+    >
+      <span aria-hidden="true" class="text-2xl">🌊</span>
+      <span class="truncate" data-location>{location}</span>
+    </h2>
+    <p
+      class="text-xs font-medium text-slate-600 dark:text-slate-300"
+      aria-live="polite"
+      data-status
+    >
+      {!disableFetch && apiUrl ? 'Lade Flussdaten …' : 'Statische Demodaten'}
+    </p>
+  </header>
+
+  <div class={gridCls} data-metrics>
+    <div class={cardCls} data-metric="discharge">
+      <span class={labelCls}>Discharge</span>
+      <span class={valueCls} data-discharge
+        >{fallback.discharge.toFixed(1)} m³/s</span
+      >
+      <span class={riskLabelCls} data-risk>
+        <span
+          class={`inline-block w-2 h-2 rounded-full ${initialRisk.indicator}`}
+          data-risk-indicator
+          aria-hidden="true"></span>
+        <span data-risk-text>{initialRisk.level}</span>
+      </span>
+    </div>
+    <div class={cardCls} data-metric="level">
+      <span class={labelCls}>Level</span>
+      <span class={valueCls} data-level>{fallback.level.toFixed(2)} m</span>
+      <span class={subCls}>{riverName}</span>
+    </div>
+    {
+      showTrend && (
+        <div class={cardCls} data-metric="trend">
+          <span class={labelCls}>Trend</span>
+          <span class={valueCls} data-trend>
+            {fallback.trend}
+          </span>
+          <span class={subCls} data-trend-arrow aria-hidden="true">
+            →
+          </span>
+        </div>
+      )
+    }
+    <div class={cardCls} data-metric="thresholds">
+      <span class={labelCls}>Thresholds</span>
+      <span class={valueCls} data-th
+        >{
+          `${thresholds.watch}/${thresholds.warning}/${thresholds.emergency}`
+        }</span
+      >
+      <span class={subCls}>watch/warn/emerg</span>
+    </div>
+    <div class={cardCls} data-metric="updated">
+      <span class={labelCls}>Updated</span>
+      <span class={valueCls} data-updated>Just now</span>
+      <span
+        class={`${subCls} hidden text-amber-700 dark:text-amber-300`}
+        data-loading>Lädt…</span
+      >
+      <span
+        class={`${subCls} hidden text-rose-700 dark:text-rose-300`}
+        data-error>Fehler</span
+      >
+    </div>
+  </div>
+
+  <p
+    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
+    data-disclaimer
+  >
+    {
+      !disableFetch && (apiUrl || (latitude != null && longitude != null))
+        ? 'Live Daten (Open‑Meteo Flood API oder benutzerdefinierter Endpunkt). Fallback bei Fehler.'
+        : 'Demodaten. apiUrl oder latitude+longitude setzen für Live-Aktualisierung.'
+    } AAA Kontrast eingehalten.
+  </p>
+
+  <footer
+    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
+  >
+    <span
+      >Quelle: <span class="underline text-slate-800 dark:text-slate-200"
+        >Hydro Service</span
+      ></span
+    >
+    <span class="ml-auto" data-refresh-indicator
+      >{
+        refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'Kein Auto-Refresh'
+      }</span
+    >
+  </footer>
+</div>
+
+<script>
+  function initFloodMonitor(el) {
+    let api = el.dataset.api;
+    const refresh = parseInt(el.dataset.refresh || '0');
+    const disableFetch = el.dataset.disableFetch === 'true';
+    const thresholds = (() => {
+      try {
+        return JSON.parse(el.dataset.thresholds || '{}');
+      } catch {
+        return {};
+      }
+    })();
+    const lat = el.dataset.lat ? parseFloat(el.dataset.lat) : undefined;
+    const lon = el.dataset.lon ? parseFloat(el.dataset.lon) : undefined;
+    const statusEl = el.querySelector('[data-status]');
+    const dischargeEl = el.querySelector('[data-discharge]');
+    const levelEl = el.querySelector('[data-level]');
+    const riskEl = el.querySelector('[data-risk]');
+    const trendEl = el.querySelector('[data-trend]');
+    const trendArrowEl = el.querySelector('[data-trend-arrow]');
+    const updEl = el.querySelector('[data-updated]');
+    const loadingEl = el.querySelector('[data-loading]');
+    const errorEl = el.querySelector('[data-error]');
+
+    const classify = (d) => {
+      if (d >= thresholds.emergency)
+        return ['Emergency', 'bg-rose-700 dark:bg-rose-400'];
+      if (d >= thresholds.warning)
+        return ['Warning', 'bg-orange-700 dark:bg-orange-400'];
+      if (d >= thresholds.watch)
+        return ['Watch', 'bg-amber-700 dark:bg-amber-400'];
+      return ['Normal', 'bg-emerald-700 dark:bg-emerald-400'];
+    };
+
+    const setState = (s) => {
+      el.dataset.state = s;
+      el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
+      if (loadingEl) loadingEl.classList.toggle('hidden', s !== 'loading');
+      if (errorEl) errorEl.classList.toggle('hidden', s !== 'error');
+    };
+
+    function buildAutoApi() {
+      if (api) return api; // custom overrides
+      if (typeof lat === 'number' && typeof lon === 'number') {
+        const params = new URLSearchParams({
+          latitude: String(lat),
+          longitude: String(lon),
+          daily: 'river_discharge',
+          past_days: '2', // for trend diff
+          forecast_days: '1',
+        });
+        return `https://flood-api.open-meteo.com/v1/flood?${params.toString()}`;
+      }
+      return undefined;
+    }
+
+    async function fetchData() {
+      api = buildAutoApi();
+      if (!api || disableFetch) {
+        if (statusEl) statusEl.textContent = 'Fallback Werte aktiv';
+        return;
+      }
+      setState('loading');
+      if (statusEl) statusEl.textContent = 'Lade Flussdaten …';
+      try {
+        const res = await fetch(api);
+        if (!res.ok) throw 0;
+        const data = await res.json();
+        // Open-Meteo flood API structure: daily.time[], daily.river_discharge[]
+        let discharge = null;
+        let trend = 'stable';
+        if (data.daily && Array.isArray(data.daily.river_discharge)) {
+          const arr = data.daily.river_discharge;
+          // latest non-null
+          for (let i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != null) {
+              discharge = arr[i];
+              break;
+            }
+          }
+          // trend from last two valid points
+          let prev = null;
+          for (let i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != null && arr[i] !== discharge) {
+              prev = arr[i];
+              break;
+            }
+          }
+          if (prev != null && discharge != null) {
+            const delta = discharge - prev;
+            if (Math.abs(delta) < 0.01) trend = 'stable';
+            else if (delta > 0) trend = 'rising';
+            else trend = 'falling';
+          }
+        }
+        // Level not provided by API → keep previous fallback level or hide label if desired
+        // fallback reference moved outside function scope → retrieve from attribute or inline constant
+        const level =
+          typeof data.level === 'number'
+            ? data.level
+            : window.__floodFallbackLevel || 2.18;
+        if (discharge !== null && dischargeEl) {
+          dischargeEl.textContent = `${discharge.toFixed(1)} m³/s`;
+          const [txt, indCls] = classify(discharge);
+          const riskTextEl = riskEl?.querySelector('[data-risk-text]');
+          const riskIndicatorEl = riskEl?.querySelector(
+            '[data-risk-indicator]'
+          );
+          if (riskTextEl) riskTextEl.textContent = txt;
+          if (riskIndicatorEl)
+            riskIndicatorEl.className = `inline-block w-2 h-2 rounded-full ${indCls}`;
+        }
+        if (levelEl) {
+          levelEl.textContent = `${level.toFixed(2)} m`;
+        }
+        if (trendEl) {
+          trendEl.textContent = trend;
+        }
+        if (trendArrowEl) {
+          trendArrowEl.textContent =
+            trend === 'rising' ? '↑' : trend === 'falling' ? '↓' : '→';
+        }
+        if (updEl) {
+          updEl.textContent = new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        }
+        if (statusEl) statusEl.textContent = 'Live Daten geladen';
+        setState('ready');
+      } catch {
+        if (statusEl) statusEl.textContent = 'Live Fehler (Fallback angezeigt)';
+        setState('error');
+      }
+    }
+
+    // expose fallback level for runtime (avoid closure issues after bundling)
+    if (!window.__floodFallbackLevel) window.__floodFallbackLevel = 2.18;
+    fetchData();
+    if (refresh > 0 && api && !disableFetch)
+      setInterval(fetchData, refresh * 60 * 1000);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-flood-monitor]').forEach(initFloodMonitor);
+  });
+</script>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-flood-monitor] * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    [data-flood-monitor] {
+      outline: 2px solid currentColor;
+    }
+  }
+  [data-flood-monitor][data-state='loading'] [data-metric] {
+    position: relative;
+  }
+  [data-flood-monitor][data-state='loading'] [data-metric]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.15),
+      rgba(148, 163, 184, 0.35),
+      rgba(148, 163, 184, 0.15)
+    );
+    animation: flood-pulse 1.4s ease-in-out infinite;
+    opacity: 0.35;
+  }
+  @keyframes flood-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.65;
+    }
+  }
+</style>

@@ -23,6 +23,7 @@ export const componentCategories: ComponentCategory[] = [
   { id: 'Advanced', icon: '🚀', color: 'from-fuchsia-500 to-purple-500' },
   { id: 'Media', icon: '🎬', color: 'from-rose-500 to-pink-500' },
   { id: 'Utilities', icon: '🛠️', color: 'from-red-500 to-rose-500' },
+  { id: 'Weather', icon: '🌦️', color: 'from-sky-500 to-blue-600' },
 ];
 
 export const componentCatalog: ComponentDoc[] = [
@@ -31,6 +32,90 @@ export const componentCatalog: ComponentDoc[] = [
     name: 'Accordion',
     description: 'Disclosure/accordion with single or multiple open sections.',
     category: 'Interactive',
+  },
+  {
+    slug: 'air-quality',
+    name: 'AirQuality',
+    description:
+      'Real-time air quality monitoring with AQI indices, pollutants, pollen forecasts, and health recommendations.',
+    category: 'Weather',
+  },
+  {
+    slug: 'climate-projections',
+    name: 'ClimateProjections',
+    description:
+      'Accessible summary of baseline vs projected climate metrics with confidence indicators and optional extremes.',
+    category: 'Weather',
+  },
+  {
+    slug: 'current-weather',
+    name: 'CurrentWeather',
+    description:
+      'Minimal current conditions (temp, humidity, wind) with optional live Open‑Meteo fetch.',
+    category: 'Weather',
+  },
+  {
+    slug: 'environmental-dashboard',
+    name: 'EnvironmentalDashboard',
+    description:
+      'Minimal environmental snapshot (weather + air quality) with optional live fetch.',
+    category: 'Weather',
+  },
+  {
+    slug: 'flood-monitor',
+    name: 'FloodMonitor',
+    description:
+      'Minimal river discharge & level snapshot with risk classification and optional live fetch.',
+    category: 'Weather',
+  },
+  {
+    slug: 'hourly-forecast',
+    name: 'HourlyForecast',
+    description:
+      'Minimal next-hours weather snapshot (time, temp, precip %, icon) with optional live fetch.',
+    category: 'Weather',
+  },
+  {
+    slug: 'marine-weather',
+    name: 'MarineWeather',
+    description:
+      'Minimal marine snapshot (wave height, sea temp, wind) with optional live fetch.',
+    category: 'Weather',
+  },
+  {
+    slug: 'solar-radiation',
+    name: 'SolarRadiation',
+    description:
+      'Minimal solar snapshot (radiation W/m², UV index, daylight) with optional live fetch.',
+    category: 'Weather',
+  },
+  {
+    slug: 'weather-forecast',
+    name: 'WeatherForecast',
+    description:
+      'Minimal multi-day daily forecast (icon, condition, high/low, precip %) with optional live fetch.',
+    category: 'Weather',
+  },
+  {
+    slug: 'weather-location-search',
+    name: 'WeatherLocationSearch',
+    description:
+      'Minimal geocoding location search (name, country, coordinates) with optional live fetch.',
+    category: 'Weather',
+  },
+  {
+    slug: 'weather-base',
+    name: 'WeatherBase',
+    description:
+      'Shared structural wrapper and utilities for weather components (layout + accessibility).',
+    category: 'Weather',
+  },
+  {
+    slug: 'weather-dashboard',
+    name: 'WeatherDashboard',
+    description:
+      'Composite dashboard surface aggregating multiple weather metrics/components.',
+    category: 'Weather',
   },
   {
     slug: 'alert',
@@ -71,13 +156,6 @@ export const componentCatalog: ComponentDoc[] = [
     description:
       'User avatars with size, status, and shape variations plus initials fallback.',
     category: 'Content',
-  },
-  {
-    slug: 'back-to-top',
-    name: 'BackToTop',
-    description:
-      'Floating button that appears after scrolling to return to the top.',
-    category: 'Navigation',
   },
   {
     slug: 'badge',

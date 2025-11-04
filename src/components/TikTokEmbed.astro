@@ -1,10 +1,39 @@
 ---
+import EmbedBase from './EmbedBase.astro';
+
+/**
+ * TikTokEmbed - WCAG AAA compliant TikTok video embed
+ * Provides accessible TikTok integration with proper loading states and error handling
+ */
 interface Props {
+  /** TikTok video ID */
   videoId: string;
+  /** Accessible title for screen readers */
   title?: string;
+  /** Language code for the player */
   lang?: string;
+  /** Caption text to display below video */
   caption?: string;
-  className?: string;
+  /** Visual theme variant */
+  variant?: 'default' | 'minimal' | 'card';
+  /** Size of the embed */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Aspect ratio - TikTok is typically 9:16 */
+  aspectRatio?: '9/16' | '1/1' | '16/9';
+  /** Show loading state */
+  showLoading?: boolean;
+  /** Privacy mode (affects URL structure) */
+  privacyMode?: boolean;
+  /** Show player controls */
+  showControls?: boolean;
+  /** Enable autoplay */
+  autoplay?: boolean;
+  /** CSS class for styling */
+  class?: string;
+  /** ARIA label for accessibility */
+  ariaLabel?: string;
+  /** Additional iframe attributes */
+  [key: string]: any;
 }
 
 const {
@@ -12,31 +41,94 @@ const {
   title = 'TikTok video player',
   lang = 'en',
   caption,
-  className = '',
+  variant = 'default',
+  size = 'md',
+  aspectRatio = '9/16',
+  showLoading = true,
+  privacyMode = false,
+  showControls = true,
+  autoplay = false,
+  class: className = '',
+  ariaLabel,
+  ...props
 } = Astro.props;
 
-const iframeSrc = `https://www.tiktok.com/embed/v2/${encodeURIComponent(
-  videoId
-)}?lang=${encodeURIComponent(lang)}`;
+// Validate videoId
+if (!videoId || typeof videoId !== 'string') {
+  throw new Error('TikTokEmbed: videoId is required and must be a string');
+}
+
+// Build TikTok embed URL
+const buildTikTokEmbedUrl = (): string => {
+  const baseUrl = `https://www.tiktok.com/embed/v2/${encodeURIComponent(videoId)}`;
+
+  const params = new URLSearchParams({
+    lang: encodeURIComponent(lang),
+    // Accessibility improvements
+    keyboard: '1',
+    cc_load_policy: '1',
+  });
+
+  if (showControls) {
+    params.set('controls', '1');
+  }
+
+  if (autoplay) {
+    params.set('autoplay', '1');
+  }
+
+  return `${baseUrl}?${params.toString()}`;
+};
+
+// Size configurations for container
+const getSizeClass = (): string => {
+  const sizeMap = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+  };
+  return sizeMap[size] || sizeMap.md;
+};
+
+const embedUrl = buildTikTokEmbedUrl();
+const sizeClass = getSizeClass();
+
+// Generate appropriate title and ARIA label
+const finalTitle = title || `TikTok video ${videoId}`;
+const finalAriaLabel =
+  ariaLabel || `TikTok video player${title ? `: ${title}` : ''}`;
+
+// Custom class with size constraint
+const finalClassName = `${sizeClass} mx-auto ${className}`.trim();
 ---
 
-<div
-  class={`relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 ${className}`.trim()}
+<EmbedBase
+  src={embedUrl}
+  title={finalTitle}
+  aspectRatio={aspectRatio}
+  variant={variant}
+  showLoading={showLoading}
+  class={finalClassName}
+  ariaLabel={finalAriaLabel}
+  allow="encrypted-media; clipboard-write; accelerometer; gyroscope; picture-in-picture"
+  allowFullscreen={true}
+  referrerPolicy={privacyMode
+    ? 'no-referrer'
+    : 'strict-origin-when-cross-origin'}
+  sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-presentation"
+  {...props}
 >
-  <div class="aspect-[9/16]">
-    <iframe
-      class="h-full w-full border-0"
-      src={iframeSrc}
-      title={title}
-      allow="encrypted-media; clipboard-write"
-      allowfullscreen
-      loading="lazy"></iframe>
-  </div>
   {
     caption && (
-      <div class="border-t border-slate-200 p-3 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+      <div
+        slot="caption"
+        class="p-3 text-sm font-medium leading-relaxed text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-slate-700"
+        role="complementary"
+        aria-label="Video caption"
+      >
         {caption}
       </div>
     )
   }
-</div>
+</EmbedBase>

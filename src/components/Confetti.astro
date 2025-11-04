@@ -41,7 +41,7 @@ const autoStartAttr = autoStart ? 'true' : 'false';
 >
   <canvas
     data-confetti-canvas
-  class="pointer-events-none absolute inset-0 h-full w-full z-0"
+    class="pointer-events-none absolute inset-0 h-full w-full z-0"
     aria-hidden="true"></canvas>
   {
     !autoStart && (
@@ -52,7 +52,9 @@ const autoStartAttr = autoStart ? 'true' : 'false';
         aria-label={buttonLabel}
         data-confetti-trigger
       >
-        <span aria-hidden class="text-lg">🎉</span>
+        <span aria-hidden class="text-lg">
+          🎉
+        </span>
         <span>{buttonLabel}</span>
       </button>
     )
@@ -62,34 +64,38 @@ const autoStartAttr = autoStart ? 'true' : 'false';
 <script is:inline>
   (function setupConfetti() {
     // Universal setup: find any confetti root and set it up
-    document.querySelectorAll('[data-confetti-root]').forEach(root => {
+    document.querySelectorAll('[data-confetti-root]').forEach((root) => {
       if (root.dataset.confettiSetup) return; // Already initialized
       root.dataset.confettiSetup = 'true';
 
-    const canvas = root.querySelector('[data-confetti-canvas]');
-    if (!(canvas instanceof HTMLCanvasElement)) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+      const canvas = root.querySelector('[data-confetti-canvas]');
+      if (!(canvas instanceof HTMLCanvasElement)) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-    const palette = root.dataset.confettiColors
-      ? JSON.parse(decodeURIComponent(root.dataset.confettiColors))
-      : [];
-    const durationMs = Number(root.dataset.confettiDuration) || 2000;
-    const particleTotal = Number(root.dataset.confettiParticles) || 160;
-    const autoStartEnabled = root.dataset.confettiAutoStart === 'true';
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    );
+      const palette = root.dataset.confettiColors
+        ? JSON.parse(decodeURIComponent(root.dataset.confettiColors))
+        : [];
+      const durationMs = Number(root.dataset.confettiDuration) || 2000;
+      const particleTotal = Number(root.dataset.confettiParticles) || 160;
+      const autoStartEnabled = root.dataset.confettiAutoStart === 'true';
+      const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      );
 
-    /** @type {Array<{x:number; y:number; angle:number; velocity:number; radius:number; color:string; tilt:number; tiltAngle:number}>} */
-    let particles = [];
-    let startTime = 0;
-    let animationFrame = null;
+      /** @type {Array<{x:number; y:number; angle:number; velocity:number; radius:number; color:string; tilt:number; tiltAngle:number}>} */
+      let particles = [];
+      let startTime = 0;
+      let animationFrame = null;
 
       const resize = () => {
         const fullscreen = root.dataset.confettiFullscreen === 'true';
-        const width = fullscreen ? window.innerWidth : Math.max(1, root.clientWidth || window.innerWidth);
-        const height = fullscreen ? window.innerHeight : Math.max(1, root.clientHeight || window.innerHeight);
+        const width = fullscreen
+          ? window.innerWidth
+          : Math.max(1, root.clientWidth || window.innerWidth);
+        const height = fullscreen
+          ? window.innerHeight
+          : Math.max(1, root.clientHeight || window.innerHeight);
         const dpr = Math.min(2, window.devicePixelRatio || 1); // limit DPR for perf
         canvas.width = width * dpr;
         canvas.height = height * dpr;
@@ -103,114 +109,114 @@ const autoStartAttr = autoStart ? 'true' : 'false';
         ctx.scale(dpr, dpr);
       };
 
-    const random = (min, max) => Math.random() * (max - min) + min;
+      const random = (min, max) => Math.random() * (max - min) + min;
 
-    const createParticles = () => {
-      const width = canvas.clientWidth || window.innerWidth;
-      const height = canvas.clientHeight || window.innerHeight;
-      particles = Array.from({ length: particleTotal }, () => ({
-        x: random(0, width),
-        y: random(-height, 0),
-        angle: random(0, Math.PI * 2),
-        velocity: random(2, 6),
-        radius: random(6, 12),
-        color: palette[Math.floor(Math.random() * palette.length)],
-        tilt: random(-10, 10),
-        tiltAngle: random(0, Math.PI * 2),
-      }));
-    };
+      const createParticles = () => {
+        const width = canvas.clientWidth || window.innerWidth;
+        const height = canvas.clientHeight || window.innerHeight;
+        particles = Array.from({ length: particleTotal }, () => ({
+          x: random(0, width),
+          y: random(-height, 0),
+          angle: random(0, Math.PI * 2),
+          velocity: random(2, 6),
+          radius: random(6, 12),
+          color: palette[Math.floor(Math.random() * palette.length)],
+          tilt: random(-10, 10),
+          tiltAngle: random(0, Math.PI * 2),
+        }));
+      };
 
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((particle) => {
-        ctx.beginPath();
-        ctx.fillStyle = particle.color;
-        ctx.ellipse(
-          particle.x + particle.tilt,
-          particle.y,
-          particle.radius,
-          particle.radius / 2,
-          particle.angle,
-          0,
-          Math.PI * 2
-        );
-        ctx.fill();
-      });
-    };
+      const draw = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((particle) => {
+          ctx.beginPath();
+          ctx.fillStyle = particle.color;
+          ctx.ellipse(
+            particle.x + particle.tilt,
+            particle.y,
+            particle.radius,
+            particle.radius / 2,
+            particle.angle,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        });
+      };
 
-    const update = () => {
-      const elapsed = performance.now() - startTime;
-      const progress = Math.min(elapsed / durationMs, 1);
+      const update = () => {
+        const elapsed = performance.now() - startTime;
+        const progress = Math.min(elapsed / durationMs, 1);
 
-      particles.forEach((particle) => {
-        particle.tiltAngle += 0.08;
-        particle.x += Math.sin(particle.tiltAngle) * 2;
-        particle.y += particle.velocity;
-        particle.tilt = Math.sin(particle.tiltAngle) * 10;
+        particles.forEach((particle) => {
+          particle.tiltAngle += 0.08;
+          particle.x += Math.sin(particle.tiltAngle) * 2;
+          particle.y += particle.velocity;
+          particle.tilt = Math.sin(particle.tiltAngle) * 10;
 
-        if (particle.y > canvas.height / (window.devicePixelRatio || 1)) {
-          particle.y = -20;
-          particle.x = random(0, canvas.width);
+          if (particle.y > canvas.height / (window.devicePixelRatio || 1)) {
+            particle.y = -20;
+            particle.x = random(0, canvas.width);
+          }
+        });
+
+        ctx.globalAlpha = 1 - progress * 0.5;
+        draw();
+        ctx.globalAlpha = 1;
+
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(update);
+        } else {
+          stop();
+        }
+      };
+
+      const start = () => {
+        if (prefersReducedMotion.matches) return;
+        // Debug log can be removed later
+        console.debug('[Confetti] start');
+        resize();
+        createParticles();
+        startTime = performance.now();
+        if (animationFrame) cancelAnimationFrame(animationFrame);
+        animationFrame = requestAnimationFrame(update);
+      };
+
+      const stop = () => {
+        if (animationFrame) {
+          cancelAnimationFrame(animationFrame);
+          animationFrame = null;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      };
+
+      window.addEventListener('resize', resize);
+      prefersReducedMotion.addEventListener?.('change', (event) => {
+        if (event.matches) {
+          stop();
         }
       });
 
-      ctx.globalAlpha = 1 - progress * 0.5;
-      draw();
-      ctx.globalAlpha = 1;
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(update);
-      } else {
+      root.addEventListener('confetti:start', start);
+      root.addEventListener('confetti:stop', stop);
+      root.addEventListener('confetti:burst', () => {
         stop();
-      }
-    };
-
-    const start = () => {
-      if (prefersReducedMotion.matches) return;
-      // Debug log can be removed later
-      console.debug('[Confetti] start');
-      resize();
-      createParticles();
-      startTime = performance.now();
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-      animationFrame = requestAnimationFrame(update);
-    };
-
-    const stop = () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-        animationFrame = null;
-      }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    };
-
-    window.addEventListener('resize', resize);
-    prefersReducedMotion.addEventListener?.('change', (event) => {
-      if (event.matches) {
-        stop();
-      }
-    });
-
-    root.addEventListener('confetti:start', start);
-    root.addEventListener('confetti:stop', stop);
-    root.addEventListener('confetti:burst', () => {
-      stop();
-      start();
-    });
-
-    const trigger = root.querySelector('[data-confetti-trigger]');
-    if (trigger) {
-      trigger.addEventListener('click', () => {
-        console.log('[Confetti] Button clicked!');
         start();
       });
-    }
 
-    if (autoStartEnabled && !prefersReducedMotion.matches) {
-      start();
-    }
+      const trigger = root.querySelector('[data-confetti-trigger]');
+      if (trigger) {
+        trigger.addEventListener('click', () => {
+          console.log('[Confetti] Button clicked!');
+          start();
+        });
+      }
 
-    resize();
+      if (autoStartEnabled && !prefersReducedMotion.matches) {
+        start();
+      }
+
+      resize();
     }); // End forEach
   })();
 </script>

@@ -8,7 +8,12 @@ interface Props {
   /** Scroll threshold in pixels before button appears */
   threshold?: number;
   /** Position of the button on screen */
-  position?: 'bottom-right' | 'bottom-left' | 'bottom-center' | 'top-right' | 'top-left';
+  position?:
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'top-right'
+    | 'top-left';
   /** Enable smooth scrolling animation */
   smooth?: boolean;
   /** Visual variant of the button */
@@ -134,13 +139,15 @@ const progressClasses = cn(
   disabled={disabled}
   data-testid="scroll-to-top"
 >
-  {showProgress && (
-    <div 
-      class={progressClasses}
-      data-progress-ring
-      style="background: conic-gradient(from 0deg, currentColor 0%, transparent 0%)"
-    ></div>
-  )}
+  {
+    showProgress && (
+      <div
+        class={progressClasses}
+        data-progress-ring
+        style="background: conic-gradient(from 0deg, currentColor 0%, transparent 0%)"
+      />
+    )
+  }
   <span class={cn('relative z-10', showProgress && 'text-sm')}>
     {iconMap[icon]}
   </span>
@@ -152,21 +159,21 @@ const progressClasses = cn(
     visibility: visible;
     transform: translateY(0);
   }
-  
+
   [data-progress-ring] {
     transition: background 150ms ease-out;
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
     [data-scroll-top] {
       transition-duration: 0s;
     }
-    
+
     [data-progress-ring] {
       transition-duration: 0s;
     }
   }
-  
+
   /* High contrast mode support */
   @media (prefers-contrast: high) {
     [data-scroll-top] {
@@ -178,15 +185,19 @@ const progressClasses = cn(
 <script is:inline>
   (function setupScrollToTop() {
     const buttons = document.querySelectorAll('[data-scroll-top]');
-    
-    buttons.forEach(button => {
+
+    buttons.forEach((button) => {
       if (!(button instanceof HTMLElement)) return;
 
-      const threshold = parseInt(button.getAttribute('data-threshold') || '300');
+      const threshold = parseInt(
+        button.getAttribute('data-threshold') || '300'
+      );
       const smooth = button.getAttribute('data-smooth') === 'true';
       const showProgress = button.getAttribute('data-show-progress') === 'true';
       const progressRing = button.querySelector('[data-progress-ring]');
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const reduceMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      );
 
       const setVisibility = (visible) => {
         button.classList.toggle('visible', visible);
@@ -196,18 +207,21 @@ const progressClasses = cn(
 
       const updateProgress = () => {
         if (!showProgress || !progressRing) return;
-        
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
         const scrollPercent = (scrollTop / docHeight) * 100;
-        
+
         const clampedPercent = Math.min(Math.max(scrollPercent, 0), 100);
         progressRing.style.background = `conic-gradient(from 0deg, currentColor ${clampedPercent}%, transparent ${clampedPercent}%)`;
       };
 
       const checkScroll = () => {
-        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-        
+        const scrollY =
+          window.pageYOffset || document.documentElement.scrollTop;
+
         if (scrollY > threshold) {
           setVisibility(true);
           updateProgress();
@@ -218,32 +232,33 @@ const progressClasses = cn(
 
       const scrollToTop = () => {
         const targetPosition = 0;
-        const startPosition = window.pageYOffset || document.documentElement.scrollTop;
+        const startPosition =
+          window.pageYOffset || document.documentElement.scrollTop;
         const distance = targetPosition - startPosition;
         const duration = smooth && !reduceMotion.matches ? 800 : 0;
-        
+
         if (duration === 0) {
           window.scrollTo(0, 0);
           return;
         }
-        
+
         let start = null;
-        
+
         const step = (timestamp) => {
           if (!start) start = timestamp;
           const progress = timestamp - start;
           const progressPercent = Math.min(progress / duration, 1);
-          
+
           // Easing function for smooth animation
           const easeOutCubic = 1 - Math.pow(1 - progressPercent, 3);
-          
+
           window.scrollTo(0, startPosition + distance * easeOutCubic);
-          
+
           if (progress < duration) {
             requestAnimationFrame(step);
           }
         };
-        
+
         requestAnimationFrame(step);
       };
 
@@ -251,7 +266,7 @@ const progressClasses = cn(
       button.addEventListener('click', (event) => {
         event.preventDefault();
         scrollToTop();
-        
+
         // Announce to screen readers
         const announcement = document.createElement('div');
         announcement.setAttribute('aria-live', 'polite');
@@ -259,7 +274,7 @@ const progressClasses = cn(
         announcement.className = 'sr-only';
         announcement.textContent = 'Scrolled to top of page';
         document.body.appendChild(announcement);
-        
+
         setTimeout(() => {
           document.body.removeChild(announcement);
         }, 1000);
@@ -286,14 +301,18 @@ const progressClasses = cn(
       };
 
       window.addEventListener('scroll', throttledScroll, { passive: true });
-      
+
       // Check initial state
       checkScroll();
-      
+
       // Handle resize for responsive behavior
-      window.addEventListener('resize', () => {
-        checkScroll();
-      }, { passive: true });
+      window.addEventListener(
+        'resize',
+        () => {
+          checkScroll();
+        },
+        { passive: true }
+      );
     });
   })();
 </script>

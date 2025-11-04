@@ -1,16 +1,39 @@
 ---
+import { cn } from '../utils/cn';
+
+/**
+ * Slider - WCAG AAA compliant range input component
+ * Provides accessible value selection with keyboard navigation and screen reader support
+ */
 interface Props {
+  /** Form input name attribute */
   name: string;
+  /** Accessible label for the slider */
   label?: string;
+  /** Minimum value */
   min?: number;
+  /** Maximum value */
   max?: number;
+  /** Step increment */
   step?: number;
+  /** Current value */
   value?: number;
+  /** Show current value display */
   showValue?: boolean;
+  /** Show min/max labels */
   showMinMax?: boolean;
+  /** Disable the slider */
   disabled?: boolean;
-  className?: string;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Color variant */
+  variant?: 'default' | 'success' | 'warning' | 'error';
+  /** Additional CSS classes */
+  class?: string;
+  /** HTML id attribute */
   id?: string;
+  /** ARIA description for screen readers */
+  ariaDescription?: string;
 }
 
 const {
@@ -23,28 +46,192 @@ const {
   showValue = true,
   showMinMax = false,
   disabled = false,
-  className = '',
+  size = 'md',
+  variant = 'default',
+  class: className = '',
   id = name,
-} = Astro.props;
+  ariaDescription,
+} = Astro.props as Props;
+
+const sizeClasses = {
+  sm: {
+    track: 'h-1.5',
+    thumb:
+      '[&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4',
+    label: 'text-xs',
+    value: 'text-xs',
+  },
+  md: {
+    track: 'h-2',
+    thumb:
+      '[&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5',
+    label: 'text-sm',
+    value: 'text-sm',
+  },
+  lg: {
+    track: 'h-2.5',
+    thumb:
+      '[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6',
+    label: 'text-base',
+    value: 'text-base',
+  },
+};
+
+const variantClasses = {
+  default: {
+    track: 'bg-slate-200 dark:bg-slate-800',
+    fill: 'bg-blue-600 dark:bg-blue-500',
+    thumb:
+      '[&::-webkit-slider-thumb]:bg-blue-600 dark:[&::-webkit-slider-thumb]:bg-blue-500 [&::-moz-range-thumb]:bg-blue-600 dark:[&::-moz-range-thumb]:bg-blue-500',
+    value: 'text-blue-700 dark:text-blue-300',
+    focus: 'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+  },
+  success: {
+    track: 'bg-slate-200 dark:bg-slate-800',
+    fill: 'bg-green-600 dark:bg-green-500',
+    thumb:
+      '[&::-webkit-slider-thumb]:bg-green-600 dark:[&::-webkit-slider-thumb]:bg-green-500 [&::-moz-range-thumb]:bg-green-600 dark:[&::-moz-range-thumb]:bg-green-500',
+    value: 'text-green-700 dark:text-green-300',
+    focus: 'focus-visible:ring-green-600 dark:focus-visible:ring-green-400',
+  },
+  warning: {
+    track: 'bg-slate-200 dark:bg-slate-800',
+    fill: 'bg-amber-600 dark:bg-amber-500',
+    thumb:
+      '[&::-webkit-slider-thumb]:bg-amber-600 dark:[&::-webkit-slider-thumb]:bg-amber-500 [&::-moz-range-thumb]:bg-amber-600 dark:[&::-moz-range-thumb]:bg-amber-500',
+    value: 'text-amber-700 dark:text-amber-300',
+    focus: 'focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400',
+  },
+  error: {
+    track: 'bg-slate-200 dark:bg-slate-800',
+    fill: 'bg-red-600 dark:bg-red-500',
+    thumb:
+      '[&::-webkit-slider-thumb]:bg-red-600 dark:[&::-webkit-slider-thumb]:bg-red-500 [&::-moz-range-thumb]:bg-red-600 dark:[&::-moz-range-thumb]:bg-red-500',
+    value: 'text-red-700 dark:text-red-300',
+    focus: 'focus-visible:ring-red-600 dark:focus-visible:ring-red-400',
+  },
+};
+
+const currentSize = sizeClasses[size];
+const currentVariant = variantClasses[variant];
+
+const sliderClasses = cn(
+  // Base styles
+  'w-full appearance-none rounded-lg transition-all duration-200',
+  'cursor-pointer',
+  // Disabled state
+  'disabled:cursor-not-allowed disabled:opacity-60',
+  // Focus styles for WCAG AAA
+  'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2',
+  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900',
+  // Track styles
+  currentSize.track,
+  currentVariant.track,
+  currentVariant.focus,
+  // WebKit thumb styles
+  '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full',
+  '[&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white',
+  '[&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:transition-all',
+  '[&::-webkit-slider-thumb]:duration-200 [&::-webkit-slider-thumb]:cursor-pointer',
+  '[&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:active:scale-105',
+  'dark:[&::-webkit-slider-thumb]:border-slate-900',
+  // Firefox thumb styles
+  '[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0',
+  '[&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:transition-all',
+  '[&::-moz-range-thumb]:duration-200 [&::-moz-range-thumb]:cursor-pointer',
+  '[&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:active:scale-105',
+  // Variant-specific thumb styles
+  currentSize.thumb,
+  currentVariant.thumb
+);
+
+const containerClasses = cn(
+  'space-y-2 text-slate-900 dark:text-slate-100',
+  className
+);
 ---
 
-<div
-  class={`space-y-2 text-slate-900 dark:text-slate-100 ${className}`.trim()}
-  data-slider-root
->
+<style>
+  .slider-container {
+    /* Enhanced contrast for WCAG AAA compliance */
+    --slider-track-contrast: 0 0 0 1px rgb(148 163 184 / 0.3);
+    --slider-thumb-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .slider-container input[type='range'] {
+    /* Enhanced focus indicator */
+    &:focus-visible {
+      box-shadow:
+        var(--slider-track-contrast),
+        0 0 0 4px var(--focus-ring-color);
+    }
+
+    /* WebKit specific enhancements */
+    &::-webkit-slider-thumb {
+      box-shadow: var(--slider-thumb-shadow);
+    }
+
+    /* Firefox specific enhancements */
+    &::-moz-range-thumb {
+      box-shadow: var(--slider-thumb-shadow);
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      &::-webkit-slider-thumb {
+        border-width: 3px !important;
+      }
+      &::-moz-range-thumb {
+        border: 3px solid white !important;
+      }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      &,
+      &::-webkit-slider-thumb,
+      &::-moz-range-thumb {
+        transition: none !important;
+      }
+    }
+  }
+
+  .slider-fill {
+    /* Smooth transition for fill animation */
+    transition: width 0.2s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slider-fill {
+      transition: none !important;
+    }
+  }
+</style>
+
+<div class={cn('slider-container', containerClasses)} data-slider-root>
   {
     label && (
       <div class="flex items-center justify-between">
         <label
           for={id}
-          class="text-sm font-medium text-slate-800 dark:text-slate-200"
+          class={cn(
+            'font-medium text-slate-800 dark:text-slate-200',
+            currentSize.label
+          )}
         >
           {label}
         </label>
         {showValue && (
           <span
-            class="text-sm font-semibold text-blue-700 tabular-nums dark:text-blue-300"
+            class={cn(
+              'font-semibold tabular-nums',
+              currentSize.value,
+              currentVariant.value
+            )}
             data-slider-value
+            aria-live="polite"
+            aria-label={`Current value: ${value}`}
           >
             {value}
           </span>
@@ -63,17 +250,25 @@ const {
       step={step}
       value={value}
       disabled={disabled}
-      class={`w-full h-2 appearance-none rounded-lg bg-slate-200 transition disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-800
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900
-        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow [&::-webkit-slider-thumb]:transition [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:hover:bg-blue-500 [&::-webkit-slider-thumb]:active:scale-110
-        [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-blue-600 [&::-moz-range-thumb]:shadow [&::-moz-range-thumb]:transition [&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:hover:bg-blue-500 [&::-moz-range-thumb]:active:scale-110
-        dark:[&::-webkit-slider-thumb]:border-slate-900 dark:[&::-webkit-slider-thumb]:bg-blue-500 dark:[&::-moz-range-thumb]:bg-blue-500`}
+      class={sliderClasses}
+      aria-label={label || `Slider from ${min} to ${max}`}
+      aria-describedby={ariaDescription ? `${id}-description` : undefined}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuenow={value}
+      aria-valuetext={`${value} out of ${max}`}
+      role="slider"
       data-slider
     />
     <div
-      class="pointer-events-none absolute left-0 top-1/2 h-2 -translate-y-1/2 rounded-lg bg-blue-600 dark:bg-blue-500"
+      class={cn(
+        'pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 rounded-lg slider-fill',
+        currentSize.track,
+        currentVariant.fill
+      )}
       data-slider-fill
       style={`width: ${max === min ? 0 : ((value - min) / (max - min)) * 100}%`}
+      aria-hidden="true"
     >
     </div>
   </div>
@@ -81,8 +276,16 @@ const {
   {
     showMinMax && (
       <div class="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-400">
-        <span>{min}</span>
-        <span>{max}</span>
+        <span aria-label={`Minimum value: ${min}`}>{min}</span>
+        <span aria-label={`Maximum value: ${max}`}>{max}</span>
+      </div>
+    )
+  }
+
+  {
+    ariaDescription && (
+      <div id={`${id}-description`} class="sr-only">
+        {ariaDescription}
       </div>
     )
   }
@@ -103,16 +306,82 @@ const {
       const maximum = Number.parseFloat(slider.max);
       const range = maximum - minimum;
       const percent = range <= 0 ? 0 : ((current - minimum) / range) * 100;
+
+      // Update value display
       if (valueDisplay instanceof HTMLElement) {
         valueDisplay.textContent = slider.value;
+        valueDisplay.setAttribute(
+          'aria-label',
+          `Current value: ${slider.value}`
+        );
       }
+
+      // Update fill bar
       if (fill instanceof HTMLElement) {
         fill.style.width = `${percent}%`;
+      }
+
+      // Update ARIA attributes
+      slider.setAttribute('aria-valuenow', slider.value);
+      slider.setAttribute(
+        'aria-valuetext',
+        `${slider.value} out of ${maximum}`
+      );
+    };
+
+    // Handle keyboard navigation
+    const handleKeyDown = (event) => {
+      const current = Number.parseFloat(slider.value);
+      const minimum = Number.parseFloat(slider.min);
+      const maximum = Number.parseFloat(slider.max);
+      const stepValue = Number.parseFloat(slider.step);
+
+      let newValue = current;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+        case 'ArrowDown':
+          event.preventDefault();
+          newValue = Math.max(minimum, current - stepValue);
+          break;
+        case 'ArrowRight':
+        case 'ArrowUp':
+          event.preventDefault();
+          newValue = Math.min(maximum, current + stepValue);
+          break;
+        case 'Home':
+          event.preventDefault();
+          newValue = minimum;
+          break;
+        case 'End':
+          event.preventDefault();
+          newValue = maximum;
+          break;
+        case 'PageDown':
+          event.preventDefault();
+          newValue = Math.max(minimum, current - stepValue * 10);
+          break;
+        case 'PageUp':
+          event.preventDefault();
+          newValue = Math.min(maximum, current + stepValue * 10);
+          break;
+      }
+
+      if (newValue !== current) {
+        slider.value = newValue.toString();
+        update();
+
+        // Dispatch change event for form handling
+        slider.dispatchEvent(new Event('input', { bubbles: true }));
+        slider.dispatchEvent(new Event('change', { bubbles: true }));
       }
     };
 
     slider.addEventListener('input', update);
     slider.addEventListener('change', update);
+    slider.addEventListener('keydown', handleKeyDown);
+
+    // Initial update
     update();
   })();
 </script>

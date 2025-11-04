@@ -1,23 +1,141 @@
 ---
+import { cn } from '../utils/cn';
+
 /**
- * SkipLink - accessible skip to content link
+ * SkipLink - WCAG AAA compliant skip navigation link
+ * Provides keyboard users quick access to main content areas
  */
 interface Props {
+  /** Target element ID to skip to */
   targetId?: string;
+  /** Accessible label for the skip link */
   label?: string;
-  className?: string;
+  /** Position of the skip link when focused */
+  position?: 'top-left' | 'top-right' | 'top-center';
+  /** Visual variant for different contexts */
+  variant?: 'default' | 'high-contrast' | 'minimal';
+  /** Size of the skip link */
+  size?: 'sm' | 'md' | 'lg';
+  /** Additional CSS classes */
+  class?: string;
 }
 
 const {
   targetId = 'main',
   label = 'Skip to content',
-  className = '',
+  position = 'top-left',
+  variant = 'default',
+  size = 'md',
+  class: className = '',
 } = Astro.props as Props;
+
+const positionClasses = {
+  'top-left': 'focus-visible:top-4 focus-visible:left-4',
+  'top-right': 'focus-visible:top-4 focus-visible:right-4',
+  'top-center':
+    'focus-visible:top-4 focus-visible:left-1/2 focus-visible:-translate-x-1/2',
+};
+
+const variantClasses = {
+  default:
+    'focus-visible:bg-slate-900 focus-visible:text-white focus-visible:border-2 focus-visible:border-white',
+  'high-contrast':
+    'focus-visible:bg-yellow-400 focus-visible:text-black focus-visible:border-2 focus-visible:border-black',
+  minimal:
+    'focus-visible:bg-white focus-visible:text-slate-900 focus-visible:border-2 focus-visible:border-slate-900',
+};
+
+const sizeClasses = {
+  sm: 'focus-visible:px-3 focus-visible:py-1.5 focus-visible:text-sm',
+  md: 'focus-visible:px-4 focus-visible:py-2 focus-visible:text-base',
+  lg: 'focus-visible:px-6 focus-visible:py-3 focus-visible:text-lg',
+};
+
+const skipLinkClasses = cn(
+  // Base styles - hidden by default
+  'sr-only',
+  // Focus styles - visible and positioned when focused
+  'focus-visible:not-sr-only',
+  'focus-visible:fixed',
+  'focus-visible:z-[9999]',
+  'focus-visible:rounded-lg',
+  'focus-visible:font-semibold',
+  'focus-visible:shadow-2xl',
+  'focus-visible:outline-none',
+  'focus-visible:ring-4',
+  'focus-visible:ring-blue-500/50',
+  'focus-visible:transform',
+  'focus-visible:transition-all',
+  'focus-visible:duration-200',
+  // Dark mode contrast improvements
+  'dark:focus-visible:ring-blue-400/50',
+  // High contrast mode support
+  '@media (prefers-contrast: high) { focus-visible:ring-4 focus-visible:ring-yellow-400 }',
+  // Position classes
+  positionClasses[position],
+  // Variant classes
+  variantClasses[variant],
+  // Size classes
+  sizeClasses[size],
+  // Custom classes
+  className
+);
 ---
+
+<style>
+  .skip-link {
+    /* Enhanced focus indicator for better visibility */
+    &:focus-visible {
+      /* Ensure minimum touch target size (44x44px) */
+      min-width: 44px;
+      min-height: 44px;
+
+      /* High contrast borders for WCAG AAA */
+      box-shadow:
+        0 0 0 2px currentColor,
+        0 4px 6px -1px rgb(0 0 0 / 0.1),
+        0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+      /* Ensure proper contrast ratios */
+      --tw-text-opacity: 1;
+      --tw-bg-opacity: 1;
+    }
+
+    /* Dark mode enhancements */
+    @media (prefers-color-scheme: dark) {
+      &:focus-visible {
+        box-shadow:
+          0 0 0 2px currentColor,
+          0 4px 6px -1px rgb(255 255 255 / 0.1),
+          0 2px 4px -2px rgb(255 255 255 / 0.1);
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      &:focus-visible {
+        border-width: 3px !important;
+        font-weight: 700 !important;
+      }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      &:focus-visible {
+        transition: none !important;
+        transform: none !important;
+      }
+    }
+  }
+</style>
 
 <a
   href={`#${targetId}`}
-  class={`sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-blue-700 focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:shadow-lg ${className}`.trim()}
+  class={cn('skip-link', skipLinkClasses)}
+  role="navigation"
+  aria-label={`${label} - Press Enter to skip to main content`}
+  tabindex="0"
 >
+  <span class="sr-only">Press Enter to </span>
   {label}
 </a>

@@ -1,60 +1,630 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Stack from '../../components/Stack.astro';
+
+const usageSnippet = `---
+import { Stack } from 'comet-astro';
+---
+
+<Stack 
+  direction="vertical" 
+  gap="md" 
+  align="stretch"
+  justify="start"
+>
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Stack>`;
 ---
 
 <DocsLayout
   title="Stack"
-  description="Flexbox utility for spacing elements vertically or horizontally."
+  description="WCAG AAA compliant flexbox layout component with responsive spacing and semantic HTML support."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li>
-        <code>direction?: 'vertical'|'horizontal'</code> – layout direction (default:
-        'vertical')
-      </li>
-      <li>
-        <code>gap?: 'none'|'xs'|'sm'|'md'|'lg'|'xl'|'2xl'</code> – spacing (default:
-        'md')
-      </li>
-      <li>
-        <code>align?: 'start'|'center'|'end'|'stretch'</code> – cross-axis alignment
-      </li>
-      <li>
-        <code>justify?: 'start'|'center'|'end'|'between'|'around'</code> – main-axis
-        alignment
-      </li>
-      <li><code>wrap?: boolean</code> – allow wrapping</li>
-      <li><code>className?: string</code></li>
-    </ul>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      Stack provides accessible flexbox layouts for arranging content vertically
+      or horizontally with consistent spacing. It supports semantic HTML
+      elements, ARIA labeling, and responsive design patterns.
+    </p>
+    <p class="text-base text-slate-200">
+      The component automatically handles focus management for interactive
+      content, provides visual debugging tools for development, and ensures
+      proper contrast ratios and borders in all themes.
+    </p>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          direction?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Layout direction. Choose <code>"vertical"</code> or <code
+            >"horizontal"</code
+          >. Defaults to <code>"vertical"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          gap?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Spacing between items. Choose <code>"none"</code>, <code>"xs"</code>, <code
+            >"sm"</code
+          >,
+          <code>"md"</code>, <code>"lg"</code>, <code>"xl"</code>, <code
+            >"2xl"</code
+          >,
+          <code>"3xl"</code>, or <code>"4xl"</code>. Defaults to <code
+            >"md"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          align?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Cross-axis alignment. Choose <code>"start"</code>, <code
+            >"center"</code
+          >,
+          <code>"end"</code>, <code>"stretch"</code>, or <code>"baseline"</code
+          >. Defaults to <code>"stretch"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          justify?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Main-axis alignment. Choose <code>"start"</code>, <code>"center"</code
+          >,
+          <code>"end"</code>, <code>"between"</code>, <code>"around"</code>, or
+          <code>"evenly"</code>. Defaults to <code>"start"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          wrap?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Allow flex wrapping. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          responsive?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Responsive gap variations. Object with <code>sm</code>, <code>md</code
+          >,
+          <code>lg</code>, <code>xl</code> breakpoint keys.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          as?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Semantic HTML element. Choose <code>"div"</code>, <code
+            >"section"</code
+          >,
+          <code>"article"</code>, <code>"nav"</code>, <code>"ul"</code>, <code
+            >"ol"</code
+          >, etc. Defaults to <code>"div"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          role?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ARIA role for accessibility context.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label for screen readers.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          debug?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show visual debugging information. Defaults to <code>false</code>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and wrap your content. Stack automatically applies
+      flexbox layout with the specified direction, spacing, and alignment. Use
+      semantic HTML elements for better accessibility.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Direction Examples</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <!-- Vertical Stack -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Vertical Stack</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <Stack direction="vertical" gap="md">
+            <div
+              class="bg-blue-500/20 p-4 rounded text-center text-sm text-slate-200"
+            >
+              Item 1
+            </div>
+            <div
+              class="bg-blue-500/20 p-4 rounded text-center text-sm text-slate-200"
+            >
+              Item 2
+            </div>
+            <div
+              class="bg-blue-500/20 p-4 rounded text-center text-sm text-slate-200"
+            >
+              Item 3
+            </div>
+          </Stack>
+        </div>
+      </div>
+
+      <!-- Horizontal Stack -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Horizontal Stack</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <Stack direction="horizontal" gap="md">
+            <div
+              class="bg-green-500/20 p-4 rounded text-center text-sm text-slate-200"
+            >
+              Item 1
+            </div>
+            <div
+              class="bg-green-500/20 p-4 rounded text-center text-sm text-slate-200"
+            >
+              Item 2
+            </div>
+            <div
+              class="bg-green-500/20 p-4 rounded text-center text-sm text-slate-200"
+            >
+              Item 3
+            </div>
+          </Stack>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Gap Sizes</h2>
     <div class="space-y-6">
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Vertical Stack</h3>
-        <Stack direction="vertical" gap="md">
-          <div class="bg-purple-500/20 p-4 rounded">Item 1</div>
-          <div class="bg-purple-500/20 p-4 rounded">Item 2</div>
-          <div class="bg-purple-500/20 p-4 rounded">Item 3</div>
+      <!-- Gap Size Demonstrations -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Gap Size Comparison</h3>
+        <div class="grid gap-4 lg:grid-cols-2">
+          {
+            ['none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'].map(
+              (gapSize) => (
+                <div key={gapSize} class="space-y-2">
+                  <h4 class="text-sm font-medium text-slate-200 capitalize">
+                    {gapSize}{' '}
+                    {gapSize === 'none'
+                      ? '(0px)'
+                      : gapSize === 'xs'
+                        ? '(4px)'
+                        : gapSize === 'sm'
+                          ? '(8px)'
+                          : gapSize === 'md'
+                            ? '(16px)'
+                            : gapSize === 'lg'
+                              ? '(24px)'
+                              : gapSize === 'xl'
+                                ? '(32px)'
+                                : gapSize === '2xl'
+                                  ? '(48px)'
+                                  : '(64px)'}
+                  </h4>
+                  <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+                    <Stack direction="vertical" gap={gapSize}>
+                      <div class="bg-purple-500/20 p-2 rounded text-center text-xs text-slate-200">
+                        Item
+                      </div>
+                      <div class="bg-purple-500/20 p-2 rounded text-center text-xs text-slate-200">
+                        Item
+                      </div>
+                      <div class="bg-purple-500/20 p-2 rounded text-center text-xs text-slate-200">
+                        Item
+                      </div>
+                    </Stack>
+                  </div>
+                </div>
+              )
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Alignment Examples</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <!-- Align Examples -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Cross-Axis Alignment</h3>
+        <div class="space-y-4">
+          {
+            ['start', 'center', 'end', 'stretch'].map((alignValue) => (
+              <div key={alignValue} class="space-y-2">
+                <h4 class="text-sm font-medium text-slate-200 capitalize">
+                  {alignValue}
+                </h4>
+                <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+                  <Stack
+                    direction="horizontal"
+                    gap="sm"
+                    align={alignValue}
+                    class="h-24"
+                  >
+                    <div class="bg-amber-500/20 p-2 rounded text-center text-xs text-slate-200 flex-shrink-0">
+                      Small
+                    </div>
+                    <div class="bg-amber-500/20 p-4 rounded text-center text-xs text-slate-200 flex-shrink-0">
+                      Medium
+                    </div>
+                    <div class="bg-amber-500/20 p-6 rounded text-center text-xs text-slate-200 flex-shrink-0">
+                      Large
+                    </div>
+                  </Stack>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Justify Examples -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Main-Axis Alignment</h3>
+        <div class="space-y-4">
+          {
+            ['start', 'center', 'end', 'between', 'around', 'evenly'].map(
+              (justifyValue) => (
+                <div key={justifyValue} class="space-y-2">
+                  <h4 class="text-sm font-medium text-slate-200 capitalize">
+                    {justifyValue}
+                  </h4>
+                  <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
+                    <Stack
+                      direction="horizontal"
+                      gap="none"
+                      justify={justifyValue}
+                    >
+                      <div class="bg-cyan-500/20 p-3 rounded text-center text-xs text-slate-200">
+                        A
+                      </div>
+                      <div class="bg-cyan-500/20 p-3 rounded text-center text-xs text-slate-200">
+                        B
+                      </div>
+                      <div class="bg-cyan-500/20 p-3 rounded text-center text-xs text-slate-200">
+                        C
+                      </div>
+                    </Stack>
+                  </div>
+                </div>
+              )
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Advanced Features</h2>
+
+    <!-- Responsive Gaps -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Responsive Gaps</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stack
+          direction="vertical"
+          gap="xs"
+          responsive={{ sm: 'sm', md: 'md', lg: 'lg', xl: 'xl' }}
+        >
+          <div
+            class="bg-indigo-500/20 p-4 rounded text-center text-sm text-slate-200"
+          >
+            Responsive Gap: xs → sm → md → lg → xl
+          </div>
+          <div
+            class="bg-indigo-500/20 p-4 rounded text-center text-sm text-slate-200"
+          >
+            Resize browser to see gap changes
+          </div>
+          <div
+            class="bg-indigo-500/20 p-4 rounded text-center text-sm text-slate-200"
+          >
+            Mobile-first responsive design
+          </div>
         </Stack>
       </div>
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Horizontal Stack (Centered)</h3>
-        <Stack direction="horizontal" gap="lg" justify="center" align="center">
-          <div class="bg-blue-500/20 p-4 rounded">Item 1</div>
-          <div class="bg-blue-500/20 p-4 rounded">Item 2</div>
-          <div class="bg-blue-500/20 p-4 rounded">Item 3</div>
+    </div>
+
+    <!-- Semantic HTML -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Semantic HTML</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stack
+          as="nav"
+          direction="horizontal"
+          gap="lg"
+          justify="between"
+          align="center"
+          ariaLabel="Main navigation"
+        >
+          <div class="font-semibold text-slate-100">Logo</div>
+          <Stack as="ul" direction="horizontal" gap="md" role="menubar">
+            <li>
+              <a href="#" class="text-slate-300 hover:text-slate-100 text-sm"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-slate-300 hover:text-slate-100 text-sm"
+                >About</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-slate-300 hover:text-slate-100 text-sm"
+                >Contact</a
+              >
+            </li>
+          </Stack>
         </Stack>
       </div>
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Space Between</h3>
-        <Stack direction="horizontal" justify="between" align="center">
-          <div class="bg-pink-500/20 p-4 rounded">Left</div>
-          <div class="bg-pink-500/20 p-4 rounded">Right</div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Card Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Card Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stack as="article" direction="vertical" gap="lg" class="max-w-md">
+          <div class="bg-slate-800/60 p-4 rounded-lg">
+            <Stack direction="vertical" gap="md">
+              <h4 class="text-lg font-semibold text-slate-100">Card Title</h4>
+              <p class="text-slate-300 text-sm">
+                Card description with proper spacing and hierarchy.
+              </p>
+              <Stack direction="horizontal" gap="sm" justify="end">
+                <button
+                  class="px-3 py-1 bg-slate-600 text-white text-xs rounded"
+                  >Cancel</button
+                >
+                <button class="px-3 py-1 bg-blue-600 text-white text-xs rounded"
+                  >Confirm</button
+                >
+              </Stack>
+            </Stack>
+          </div>
         </Stack>
+      </div>
+    </div>
+
+    <!-- Dashboard Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Dashboard Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stack as="main" direction="vertical" gap="xl">
+          <Stack
+            as="header"
+            direction="horizontal"
+            gap="md"
+            justify="between"
+            align="center"
+          >
+            <h1 class="text-xl font-bold text-slate-100">Dashboard</h1>
+            <button class="px-4 py-2 bg-blue-600 text-white text-sm rounded"
+              >New Item</button
+            >
+          </Stack>
+
+          <Stack direction="horizontal" gap="lg" wrap={true}>
+            {
+              Array.from({ length: 3 }, (_, index) => (
+                <div key={index} class="flex-1 min-w-48">
+                  <Stack
+                    direction="vertical"
+                    gap="sm"
+                    class="bg-slate-800/60 p-4 rounded-lg"
+                  >
+                    <h3 class="font-semibold text-slate-100">
+                      Widget {index + 1}
+                    </h3>
+                    <p class="text-slate-300 text-sm">
+                      Widget content with consistent spacing.
+                    </p>
+                    <div class="text-2xl font-bold text-blue-400">
+                      {(index + 1) * 24}
+                    </div>
+                  </Stack>
+                </div>
+              ))
+            }
+          </Stack>
+        </Stack>
+      </div>
+    </div>
+
+    <!-- Form Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Form Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stack as="form" direction="vertical" gap="lg" class="max-w-md">
+          <Stack direction="vertical" gap="sm">
+            <label class="text-sm font-medium text-slate-200">Email</label>
+            <input
+              type="email"
+              class="px-3 py-2 bg-slate-800 border border-slate-600 rounded text-slate-100 text-sm"
+            />
+          </Stack>
+
+          <Stack direction="vertical" gap="sm">
+            <label class="text-sm font-medium text-slate-200">Message</label>
+            <textarea
+              rows="4"
+              class="px-3 py-2 bg-slate-800 border border-slate-600 rounded text-slate-100 text-sm"
+            ></textarea>
+          </Stack>
+
+          <Stack direction="horizontal" gap="md" justify="end">
+            <button
+              type="button"
+              class="px-4 py-2 bg-slate-600 text-white text-sm rounded"
+              >Cancel</button
+            >
+            <button
+              type="submit"
+              class="px-4 py-2 bg-blue-600 text-white text-sm rounded"
+              >Submit</button
+            >
+          </Stack>
+        </Stack>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Stack components support semantic HTML elements and ARIA labeling for
+      proper accessibility, with appropriate contrast ratios that exceed WCAG
+      AAA requirements and adjust automatically for high contrast mode.
+    </p>
+    <p class="text-base text-slate-200">
+      Focus management is handled automatically for interactive content, and
+      debug mode provides visual feedback during development without affecting
+      production accessibility. All spacing follows consistent design tokens.
+    </p>
+    <p class="text-base text-slate-200">
+      The component respects user preferences for reduced motion and provides
+      semantic structure through proper HTML elements and ARIA roles. Responsive
+      gaps ensure proper spacing across all device sizes.
+    </p>
+
+    <div
+      class="mt-6 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+    >
+      <h3 class="text-sm font-semibold text-slate-200 mb-3">
+        Gap Size Reference
+      </h3>
+      <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">none</span>
+          <span class="text-slate-400">0px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">xs</span>
+          <span class="text-slate-400">4px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">sm</span>
+          <span class="text-slate-400">8px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">md</span>
+          <span class="text-slate-400">16px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">lg</span>
+          <span class="text-slate-400">24px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">xl</span>
+          <span class="text-slate-400">32px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">2xl</span>
+          <span class="text-slate-400">48px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">3xl</span>
+          <span class="text-slate-400">64px</span>
+        </div>
       </div>
     </div>
   </section>

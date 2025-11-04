@@ -24,16 +24,17 @@ const {
   background = 'none',
   className = '',
   as = 'div',
-  ariaLabel
+  ariaLabel,
 } = Astro.props as Props;
 
-const axisClass = axis === 'both'
-  ? 'items-center justify-center'
-  : axis === 'horizontal'
-    ? 'justify-center'
-    : axis === 'vertical'
-      ? 'items-center'
-      : '';
+const axisClass =
+  axis === 'both'
+    ? 'items-center justify-center'
+    : axis === 'horizontal'
+      ? 'justify-center'
+      : axis === 'vertical'
+        ? 'items-center'
+        : '';
 
 const displayClass = inline ? 'inline-flex' : 'flex';
 
@@ -43,7 +44,7 @@ const widthMap: Record<string, string> = {
   lg: 'max-w-lg',
   xl: 'max-w-xl',
   '2xl': 'max-w-2xl',
-  full: 'max-w-full'
+  full: 'max-w-full',
 };
 
 const widthClass = widthMap[maxWidth];
@@ -56,14 +57,23 @@ const bgMap: Record<string, string> = {
   none: '',
   subtle: 'bg-slate-800/30 dark:bg-slate-200/15 backdrop-blur-sm',
   soft: 'bg-slate-800/60 dark:bg-slate-200/25 backdrop-blur-sm',
-  solid: 'bg-slate-900 dark:bg-slate-100'
+  solid: 'bg-slate-900 dark:bg-slate-100',
 };
 const bgClass = bgMap[background];
 
 const padClass = padded ? 'p-4 md:p-6' : '';
 
 // Compose final classes. Avoid over-engineering: a single pass of concatenation.
-const classes = [displayClass, axisClass, widthClass, padClass, bgClass, 'mx-auto', 'w-full', className]
+const classes = [
+  displayClass,
+  axisClass,
+  widthClass,
+  padClass,
+  bgClass,
+  'mx-auto',
+  'w-full',
+  className,
+]
   .filter(Boolean)
   .join(' ');
 

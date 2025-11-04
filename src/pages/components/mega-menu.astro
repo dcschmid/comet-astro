@@ -4,7 +4,8 @@ import MegaMenu from '../../components/MegaMenu.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const title = 'MegaMenu Component';
-const description = 'WCAG AAA compliant multi-column dropdown navigation for comprehensive site navigation and product showcases.';
+const description =
+  'WCAG AAA compliant multi-column dropdown navigation for comprehensive site navigation and product showcases.';
 
 // Sample data for examples
 const productColumns = [
@@ -16,71 +17,71 @@ const productColumns = [
         href: '/products/design-system',
         description: 'Complete UI component library',
         icon: '🎨',
-        badge: 'Popular'
+        badge: 'Popular',
       },
       {
         label: 'Development Tools',
         href: '/products/dev-tools',
         description: 'Build and deploy faster',
-        icon: '🔧'
+        icon: '🔧',
       },
       {
         label: 'Analytics',
         href: '/products/analytics',
         description: 'Track user behavior',
-        icon: '📊'
-      }
-    ]
+        icon: '📊',
+      },
+    ],
   },
   {
     title: 'Resources',
     href: '/resources',
     description: 'Learning materials and guides',
     items: [
-      { 
-        label: 'Documentation', 
-        href: '/docs', 
-        description: 'Complete API reference', 
-        icon: '📚' 
+      {
+        label: 'Documentation',
+        href: '/docs',
+        description: 'Complete API reference',
+        icon: '📚',
       },
-      { 
-        label: 'Blog', 
-        href: '/blog', 
-        description: 'Latest updates and tutorials', 
-        icon: '📝' 
+      {
+        label: 'Blog',
+        href: '/blog',
+        description: 'Latest updates and tutorials',
+        icon: '📝',
       },
-      { 
-        label: 'Community', 
-        href: '/community', 
-        description: 'Join our Discord server', 
-        icon: '💬' 
-      }
-    ]
+      {
+        label: 'Community',
+        href: '/community',
+        description: 'Join our Discord server',
+        icon: '💬',
+      },
+    ],
   },
   {
     title: 'Company',
     items: [
-      { 
-        label: 'About Us', 
-        href: '/about', 
-        description: 'Our mission and team', 
-        icon: '🏢' 
+      {
+        label: 'About Us',
+        href: '/about',
+        description: 'Our mission and team',
+        icon: '🏢',
       },
-      { 
-        label: 'Careers', 
-        href: '/careers', 
-        description: 'Join our team', 
+      {
+        label: 'Careers',
+        href: '/careers',
+        description: 'Join our team',
         icon: '💼',
-        badge: 'Hiring'
+        badge: 'Hiring',
       },
-      { 
-        label: 'Contact', 
-        href: '/contact', 
-        description: 'Get in touch', 
-        icon: '📧' 
-      }
-    ]
-  }
+      {
+        label: 'Contact',
+        href: '/contact',
+        description: 'Get in touch',
+        icon: '📧',
+      },
+    ],
+  },
 ];
 
 const simpleColumns = [
@@ -89,16 +90,16 @@ const simpleColumns = [
     items: [
       { label: 'Home', href: '/', icon: '🏠' },
       { label: 'Products', href: '/products', icon: '📦' },
-      { label: 'Services', href: '/services', icon: '⚙️' }
-    ]
+      { label: 'Services', href: '/services', icon: '⚙️' },
+    ],
   },
   {
     title: 'Support',
     items: [
       { label: 'Help Center', href: '/help', icon: '❓' },
-      { label: 'Contact Us', href: '/contact', icon: '📧' }
-    ]
-  }
+      { label: 'Contact Us', href: '/contact', icon: '📧' },
+    ],
+  },
 ];
 ---
 
@@ -107,7 +108,10 @@ const simpleColumns = [
     <!-- Introduction -->
     <section>
       <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-        The MegaMenu component provides a powerful and accessible multi-column dropdown navigation solution. Perfect for complex site structures, product showcases, and comprehensive navigation systems with rich content and descriptions.
+        The MegaMenu component provides a powerful and accessible multi-column
+        dropdown navigation solution. Perfect for complex site structures,
+        product showcases, and comprehensive navigation systems with rich
+        content and descriptions.
       </p>
     </section>
 
@@ -116,7 +120,7 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Basic Usage
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -126,7 +130,7 @@ const simpleColumns = [
             <MegaMenu trigger="Products" columns={productColumns} />
           </div>
         </div>
-        
+
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
             Simple Two-Column Menu
@@ -183,14 +187,18 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Variants
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
             Default
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu variant="default" trigger="Default Style" columns={simpleColumns} />
+            <MegaMenu
+              variant="default"
+              trigger="Default Style"
+              columns={simpleColumns}
+            />
           </div>
         </div>
 
@@ -199,7 +207,11 @@ const simpleColumns = [
             Compact
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu variant="compact" trigger="Compact Style" columns={simpleColumns} />
+            <MegaMenu
+              variant="compact"
+              trigger="Compact Style"
+              columns={simpleColumns}
+            />
           </div>
         </div>
 
@@ -208,7 +220,11 @@ const simpleColumns = [
             Detailed
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu variant="detailed" trigger="Detailed Style" columns={productColumns} />
+            <MegaMenu
+              variant="detailed"
+              trigger="Detailed Style"
+              columns={productColumns}
+            />
           </div>
         </div>
 
@@ -217,7 +233,11 @@ const simpleColumns = [
             Minimal
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu variant="minimal" trigger="Minimal Style" columns={simpleColumns} />
+            <MegaMenu
+              variant="minimal"
+              trigger="Minimal Style"
+              columns={simpleColumns}
+            />
           </div>
         </div>
       </div>
@@ -243,7 +263,7 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Sizes
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -259,7 +279,11 @@ const simpleColumns = [
             Medium (Default)
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu size="md" trigger="Medium Menu" columns={productColumns} />
+            <MegaMenu
+              size="md"
+              trigger="Medium Menu"
+              columns={productColumns}
+            />
           </div>
         </div>
 
@@ -291,14 +315,18 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Width Options
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
             Auto Width (Default)
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu width="auto" trigger="Auto Width" columns={simpleColumns} />
+            <MegaMenu
+              width="auto"
+              trigger="Auto Width"
+              columns={simpleColumns}
+            />
           </div>
         </div>
 
@@ -307,7 +335,11 @@ const simpleColumns = [
             Full Width
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu width="full" trigger="Full Width" columns={productColumns} />
+            <MegaMenu
+              width="full"
+              trigger="Full Width"
+              columns={productColumns}
+            />
           </div>
         </div>
 
@@ -316,7 +348,11 @@ const simpleColumns = [
             Screen Width
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu width="screen" trigger="Screen Width" columns={productColumns} />
+            <MegaMenu
+              width="screen"
+              trigger="Screen Width"
+              columns={productColumns}
+            />
           </div>
         </div>
       </div>
@@ -339,26 +375,34 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Advanced Features
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
             Column Headers as Links
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu 
-              trigger="Linked Headers" 
+            <MegaMenu
+              trigger="Linked Headers"
               columns={[
                 {
                   title: 'Products',
                   href: '/products',
                   description: 'Browse all our products',
                   items: [
-                    { label: 'Featured Product', href: '/products/featured', icon: '⭐' },
-                    { label: 'New Releases', href: '/products/new', icon: '🆕' }
-                  ]
-                }
-              ]} 
+                    {
+                      label: 'Featured Product',
+                      href: '/products/featured',
+                      icon: '⭐',
+                    },
+                    {
+                      label: 'New Releases',
+                      href: '/products/new',
+                      icon: '🆕',
+                    },
+                  ],
+                },
+              ]}
             />
           </div>
         </div>
@@ -368,31 +412,31 @@ const simpleColumns = [
             External Links with Badges
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu 
-              trigger="External Links" 
+            <MegaMenu
+              trigger="External Links"
               columns={[
                 {
                   title: 'External Resources',
                   items: [
-                    { 
-                      label: 'GitHub Repository', 
-                      href: 'https://github.com/example/repo', 
+                    {
+                      label: 'GitHub Repository',
+                      href: 'https://github.com/example/repo',
                       target: '_blank',
                       description: 'View source code',
                       icon: '📦',
-                      badge: 'Open Source'
+                      badge: 'Open Source',
                     },
-                    { 
-                      label: 'API Documentation', 
-                      href: 'https://api.example.com/docs', 
+                    {
+                      label: 'API Documentation',
+                      href: 'https://api.example.com/docs',
                       target: '_blank',
                       description: 'Developer reference',
                       icon: '📖',
-                      badge: 'New'
-                    }
-                  ]
-                }
-              ]} 
+                      badge: 'New',
+                    },
+                  ],
+                },
+              ]}
             />
           </div>
         </div>
@@ -402,7 +446,11 @@ const simpleColumns = [
             Disabled State
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu disabled={true} trigger="Disabled Menu" columns={simpleColumns} />
+            <MegaMenu
+              disabled={true}
+              trigger="Disabled Menu"
+              columns={simpleColumns}
+            />
           </div>
         </div>
 
@@ -411,10 +459,10 @@ const simpleColumns = [
             Maximum Columns Limit
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-            <MegaMenu 
-              maxColumns={2} 
-              trigger="Max 2 Columns" 
-              columns={productColumns} 
+            <MegaMenu
+              maxColumns={2}
+              trigger="Max 2 Columns"
+              columns={productColumns}
             />
           </div>
         </div>
@@ -464,7 +512,7 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Accessibility Features
       </h2>
-      
+
       <div class="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg mb-6">
         <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
           WCAG AAA Compliance
@@ -476,7 +524,9 @@ const simpleColumns = [
           </li>
           <li class="flex items-start">
             <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
-            <span>Full keyboard navigation with arrow keys, Home, End, and Escape</span>
+            <span
+              >Full keyboard navigation with arrow keys, Home, End, and Escape</span
+            >
           </li>
           <li class="flex items-start">
             <span class="text-green-600 dark:text-green-400 mr-2">✓</span>
@@ -502,7 +552,7 @@ const simpleColumns = [
           Custom Accessibility Properties
         </h3>
         <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
-          <MegaMenu 
+          <MegaMenu
             trigger="Accessible Menu"
             ariaLabel="Main navigation menu with product information"
             ariaDescribedBy="menu-description"
@@ -532,149 +582,231 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Props Reference
       </h2>
-      
+
       <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table
+          class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+        >
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Prop
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Type
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Default
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Description
               </th>
             </tr>
           </thead>
           <tbody class="text-sm">
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 trigger
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 required
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Text displayed on the trigger button
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 columns
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Column[]
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 required
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Array of column data for the menu
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 variant
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'default' | 'compact' | 'detailed' | 'minimal'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'default'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Visual style variant
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 size
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'sm' | 'md' | 'lg'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'md'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Size of the menu elements
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 width
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'auto' | 'full' | 'screen'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'auto'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Width of the dropdown panel
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 maxColumns
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 number
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 4
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Maximum number of columns to display
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 disabled
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 false
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Disable the menu functionality
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 ariaLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Accessible label for the menu
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 class
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Additional CSS classes
               </td>
             </tr>
@@ -688,69 +820,101 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Data Interfaces
       </h2>
-      
+
       <div class="space-y-6">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
             Column Interface
           </h3>
           <div class="overflow-x-auto">
-            <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+            <table
+              class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+            >
               <thead>
                 <tr class="bg-gray-50 dark:bg-gray-800">
-                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                  <th
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+                  >
                     Property
                   </th>
-                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                  <th
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+                  >
                     Type
                   </th>
-                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                  <th
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+                  >
                     Description
                   </th>
                 </tr>
               </thead>
               <tbody class="text-sm">
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     title
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     string
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Column header text
                   </td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     items
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     MenuItem[]
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Array of menu items in this column
                   </td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     href
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     string
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Optional link for the column header
                   </td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     description
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     string
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Optional description for the column
                   </td>
                 </tr>
@@ -764,84 +928,128 @@ const simpleColumns = [
             MenuItem Interface
           </h3>
           <div class="overflow-x-auto">
-            <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+            <table
+              class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+            >
               <thead>
                 <tr class="bg-gray-50 dark:bg-gray-800">
-                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                  <th
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+                  >
                     Property
                   </th>
-                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                  <th
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+                  >
                     Type
                   </th>
-                  <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+                  <th
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+                  >
                     Description
                   </th>
                 </tr>
               </thead>
               <tbody class="text-sm">
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     label
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     string
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Display text for the menu item
                   </td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     href
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     string
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     URL for the menu item link
                   </td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     description
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     string
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Optional description text
                   </td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     icon
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     string
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Optional icon (emoji or symbol)
                   </td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     badge
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     string
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Optional badge text (e.g., "New", "Popular")
                   </td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+                  >
                     target
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     '_blank' | '_self' | '_parent' | '_top'
                   </td>
-                  <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <td
+                    class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+                  >
                     Link target (for external links)
                   </td>
                 </tr>
@@ -857,10 +1065,12 @@ const simpleColumns = [
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Best Practices
       </h2>
-      
+
       <div class="space-y-6">
         <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
-          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+          <h3
+            class="text-lg font-medium text-green-900 dark:text-green-100 mb-3"
+          >
             ✅ Do
           </h3>
           <ul class="space-y-2 text-green-800 dark:text-green-200">
@@ -892,16 +1102,27 @@ const simpleColumns = [
         </div>
 
         <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
-          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+          <h3
+            class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3"
+          >
             💡 Tips
           </h3>
           <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
-            <li>• Use hover states to activate menus on desktop for better UX</li>
-            <li>• Consider click-to-open on touch devices to prevent accidental activation</li>
+            <li>
+              • Use hover states to activate menus on desktop for better UX
+            </li>
+            <li>
+              • Consider click-to-open on touch devices to prevent accidental
+              activation
+            </li>
             <li>• Group frequently accessed items in the first column</li>
-            <li>• Use descriptive trigger text that clearly indicates content</li>
+            <li>
+              • Use descriptive trigger text that clearly indicates content
+            </li>
             <li>• Implement proper focus management for keyboard users</li>
-            <li>• Consider using the detailed variant for feature-rich products</li>
+            <li>
+              • Consider using the detailed variant for feature-rich products
+            </li>
           </ul>
         </div>
       </div>

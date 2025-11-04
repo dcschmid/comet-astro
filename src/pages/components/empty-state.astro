@@ -27,15 +27,16 @@ import { EmptyState } from 'comet-astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      EmptyState provides accessible placeholder interfaces for views without content. 
-      The component maintains WCAG AAA contrast ratios across all interactive elements 
-      and offers multiple size variants with customizable icon backgrounds and clear 
-      call-to-action buttons.
+      EmptyState provides accessible placeholder interfaces for views without
+      content. The component maintains WCAG AAA contrast ratios across all
+      interactive elements and offers multiple size variants with customizable
+      icon backgrounds and clear call-to-action buttons.
     </p>
     <p class="text-base text-slate-200">
-      Enhanced focus indicators, proper ARIA labeling, and semantic HTML structure 
-      ensure optimal accessibility for screen readers and keyboard navigation. 
-      Multiple color themes and responsive sizing adapt to any layout context.
+      Enhanced focus indicators, proper ARIA labeling, and semantic HTML
+      structure ensure optimal accessibility for screen readers and keyboard
+      navigation. Multiple color themes and responsive sizing adapt to any
+      layout context.
     </p>
   </section>
 
@@ -51,7 +52,8 @@ import { EmptyState } from 'comet-astro';
           title
         </dt>
         <dd class="text-sm text-slate-200">
-          Main heading text for the empty state. Required and should be descriptive.
+          Main heading text for the empty state. Required and should be
+          descriptive.
         </dd>
       </div>
       <div
@@ -75,7 +77,9 @@ import { EmptyState } from 'comet-astro';
           primary?
         </dt>
         <dd class="text-sm text-slate-200">
-          Primary action object with <code>href</code>, <code>label</code>, <code>target</code>, and <code>ariaLabel</code> properties.
+          Primary action object with <code>href</code>, <code>label</code>, <code
+            >target</code
+          >, and <code>ariaLabel</code> properties.
         </dd>
       </div>
       <div
@@ -87,7 +91,8 @@ import { EmptyState } from 'comet-astro';
           secondary?
         </dt>
         <dd class="text-sm text-slate-200">
-          Secondary action object with same structure as primary for additional navigation options.
+          Secondary action object with same structure as primary for additional
+          navigation options.
         </dd>
       </div>
       <div
@@ -99,7 +104,10 @@ import { EmptyState } from 'comet-astro';
           iconBg?
         </dt>
         <dd class="text-sm text-slate-200">
-          Icon background theme: <code>"blue"</code>, <code>"green"</code>, <code>"purple"</code>, <code>"red"</code>, <code>"orange"</code>, <code>"slate"</code>. Defaults to <code>"blue"</code>.
+          Icon background theme: <code>"blue"</code>, <code>"green"</code>, <code
+            >"purple"</code
+          >, <code>"red"</code>, <code>"orange"</code>, <code>"slate"</code>.
+          Defaults to <code>"blue"</code>.
         </dd>
       </div>
       <div
@@ -111,7 +119,9 @@ import { EmptyState } from 'comet-astro';
           size?
         </dt>
         <dd class="text-sm text-slate-200">
-          Component size variant: <code>"sm"</code>, <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+          Component size variant: <code>"sm"</code>, <code>"md"</code>, or <code
+            >"lg"</code
+          >. Defaults to <code>"md"</code>.
         </dd>
       </div>
       <div
@@ -123,7 +133,8 @@ import { EmptyState } from 'comet-astro';
           ariaLabelledby?
         </dt>
         <dd class="text-sm text-slate-200">
-          Reference to element that labels the empty state region for enhanced accessibility.
+          Reference to element that labels the empty state region for enhanced
+          accessibility.
         </dd>
       </div>
       <div
@@ -135,7 +146,8 @@ import { EmptyState } from 'comet-astro';
           ariaDescribedby?
         </dt>
         <dd class="text-sm text-slate-200">
-          Reference to element that describes the empty state content for screen readers.
+          Reference to element that describes the empty state content for screen
+          readers.
         </dd>
       </div>
       <div
@@ -147,7 +159,8 @@ import { EmptyState } from 'comet-astro';
           className?
         </dt>
         <dd class="text-sm text-slate-200">
-          Additional CSS classes to apply to the empty state container for custom styling.
+          Additional CSS classes to apply to the empty state container for
+          custom styling.
         </dd>
       </div>
     </dl>
@@ -156,9 +169,9 @@ import { EmptyState } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Create accessible empty states with clear messaging and actionable next steps. 
-      Use the icon slot for custom graphics and the default slot for additional 
-      content below the action buttons.
+      Create accessible empty states with clear messaging and actionable next
+      steps. Use the icon slot for custom graphics and the default slot for
+      additional content below the action buttons.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -179,7 +192,12 @@ import { EmptyState } from 'comet-astro';
         secondary={{ href: '#', label: 'View docs' }}
       >
         <svg slot="icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
         </svg>
       </EmptyStateComponent>
     </div>
@@ -188,7 +206,8 @@ import { EmptyState } from 'comet-astro';
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
     <p class="text-base text-slate-200">
-      Choose from small, medium, or large sizes to match your layout requirements.
+      Choose from small, medium, or large sizes to match your layout
+      requirements.
     </p>
     <div class="space-y-8">
       <div class="max-w-lg">
@@ -199,15 +218,29 @@ import { EmptyState } from 'comet-astro';
           primary={{ href: '#', label: 'Reset filters' }}
           size="sm"
         >
-          <svg slot="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg
+            slot="icon"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"
+            ></circle>
+            <path
+              d="m21 21-4.35-4.35"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
           </svg>
         </EmptyStateComponent>
       </div>
-      
+
       <div class="max-w-2xl">
-        <h3 class="text-lg font-medium text-slate-200 mb-4">Medium (Default)</h3>
+        <h3 class="text-lg font-medium text-slate-200 mb-4">
+          Medium (Default)
+        </h3>
         <EmptyStateComponent
           title="No messages"
           description="Start a conversation by sending your first message."
@@ -215,12 +248,23 @@ import { EmptyState } from 'comet-astro';
           secondary={{ href: '#', label: 'View contacts' }}
           size="md"
         >
-          <svg slot="icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg
+            slot="icon"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
           </svg>
         </EmptyStateComponent>
       </div>
-      
+
       <div class="max-w-3xl">
         <h3 class="text-lg font-medium text-slate-200 mb-4">Large</h3>
         <EmptyStateComponent
@@ -230,10 +274,30 @@ import { EmptyState } from 'comet-astro';
           secondary={{ href: '#', label: 'Take tour' }}
           size="lg"
         >
-          <svg slot="icon" width="32" height="32" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-            <circle cx="9" cy="9" r="2" stroke="currentColor" stroke-width="2"/>
-            <path d="m21 15-3.086-3.086a2 2 0 00-2.828 0L6 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg
+            slot="icon"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <rect
+              x="3"
+              y="3"
+              width="18"
+              height="18"
+              rx="2"
+              ry="2"
+              stroke="currentColor"
+              stroke-width="2"></rect>
+            <circle cx="9" cy="9" r="2" stroke="currentColor" stroke-width="2"
+            ></circle>
+            <path
+              d="m21 15-3.086-3.086a2 2 0 00-2.828 0L6 21"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
           </svg>
         </EmptyStateComponent>
       </div>
@@ -254,7 +318,12 @@ import { EmptyState } from 'comet-astro';
         size="sm"
       >
         <svg slot="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
         </svg>
       </EmptyStateComponent>
 
@@ -267,9 +336,24 @@ import { EmptyState } from 'comet-astro';
         size="sm"
       >
         <svg slot="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-          <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"
+          ></circle>
+          <line
+            x1="12"
+            y1="8"
+            x2="12"
+            y2="12"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
+          <line
+            x1="12"
+            y1="16"
+            x2="12.01"
+            y2="16"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
         </svg>
       </EmptyStateComponent>
 
@@ -281,9 +365,28 @@ import { EmptyState } from 'comet-astro';
         size="sm"
       >
         <svg slot="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path
+            d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <line
+            x1="12"
+            y1="9"
+            x2="12"
+            y2="13"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
+          <line
+            x1="12"
+            y1="17"
+            x2="12.01"
+            y2="17"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
         </svg>
       </EmptyStateComponent>
 
@@ -295,9 +398,31 @@ import { EmptyState } from 'comet-astro';
         size="sm"
       >
         <svg slot="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-          <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <rect
+            x="3"
+            y="3"
+            width="18"
+            height="18"
+            rx="2"
+            ry="2"
+            stroke="currentColor"
+            stroke-width="2"></rect>
+          <line
+            x1="9"
+            y1="9"
+            x2="15"
+            y2="15"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
+          <line
+            x1="15"
+            y1="9"
+            x2="9"
+            y2="15"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
         </svg>
       </EmptyStateComponent>
     </div>
@@ -315,18 +440,51 @@ import { EmptyState } from 'comet-astro';
         primary={{ href: '#', label: 'Choose files' }}
       >
         <svg slot="icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <line x1="12" y1="18" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="9" y1="15" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="15" y1="15" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path
+            d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <polyline
+            points="14,2 14,8 20,8"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></polyline>
+          <line
+            x1="12"
+            y1="18"
+            x2="12"
+            y2="12"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
+          <line
+            x1="9"
+            y1="15"
+            x2="12"
+            y2="12"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
+          <line
+            x1="15"
+            y1="15"
+            x2="12"
+            y2="12"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></line>
         </svg>
       </EmptyStateComponent>
     </div>
   </section>
 
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">With Additional Content</h2>
+    <h2 class="text-xl font-semibold text-slate-100">
+      With Additional Content
+    </h2>
     <p class="text-base text-slate-200">
       Add extra content below the actions using the default slot.
     </p>
@@ -338,16 +496,37 @@ import { EmptyState } from 'comet-astro';
         secondary={{ href: '#', label: 'API docs' }}
       >
         <svg slot="icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path
+            d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <path
+            d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
         </svg>
-        
-        <div class="flex items-center justify-center gap-4 text-sm text-slate-400 dark:text-slate-500">
+
+        <div
+          class="flex items-center justify-center gap-4 text-sm text-slate-400 dark:text-slate-500"
+        >
           <span>Popular:</span>
           <div class="flex gap-2">
-            <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-700 dark:text-slate-300">Slack</span>
-            <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-700 dark:text-slate-300">GitHub</span>
-            <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-700 dark:text-slate-300">Notion</span>
+            <span
+              class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+              >Slack</span
+            >
+            <span
+              class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+              >GitHub</span
+            >
+            <span
+              class="rounded-full bg-slate-100 px-3 py-1 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+              >Notion</span
+            >
           </div>
         </div>
       </EmptyStateComponent>
@@ -357,21 +536,21 @@ import { EmptyState } from 'comet-astro';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      Contrast ratios exceed WCAG AAA requirements (7:1+) for all text elements and 
-      interactive components in both light and dark themes. Enhanced focus rings use 
-      strong color contrast with proper offset spacing for clear keyboard navigation visibility.
+      Contrast ratios exceed WCAG AAA requirements (7:1+) for all text elements
+      and interactive components in both light and dark themes. Enhanced focus
+      rings use strong color contrast with proper offset spacing for clear
+      keyboard navigation visibility.
     </p>
     <p class="text-base text-slate-200">
-      The component uses semantic HTML with proper <code>role="region"</code> and 
-      supports <code>aria-labelledby</code> and <code>aria-describedby</code> for 
-      enhanced screen reader compatibility. Action buttons include proper 
+      The component uses semantic HTML with proper <code>role="region"</code> and
+      supports <code>aria-labelledby</code> and <code>aria-describedby</code> for
+      enhanced screen reader compatibility. Action buttons include proper
       <code>aria-label</code> attributes when provided for additional context.
     </p>
     <p class="text-base text-slate-200">
-      Icons are marked with <code>aria-hidden="true"</code> to prevent redundant 
-      announcements by screen readers. Responsive sizing ensures optimal touch 
-      targets on mobile devices while maintaining visual hierarchy across all 
-      viewport sizes.
+      Icons are marked with <code>aria-hidden="true"</code> to prevent redundant
+      announcements by screen readers. Responsive sizing ensures optimal touch targets
+      on mobile devices while maintaining visual hierarchy across all viewport sizes.
     </p>
   </section>
 </DocsLayout>

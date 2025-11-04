@@ -1,0 +1,161 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import SolarRadiation from '../../components/SolarRadiation.astro';
+
+const usageSnippet = `---\nimport { SolarRadiation } from 'comet-astro';\n\n---\n<!-- Static fallback (no fetch) -->\n<SolarRadiation location="Demo Site" disableFetch />\n\n<!-- Live snapshot using coordinates -->\n<SolarRadiation\n  location="Demo Site"\n  latitude={50.94}\n  longitude={6.95}\n  refreshInterval={30}\n/>\n\n<!-- Custom accessible label -->\n<SolarRadiation\n  location="Solar Farm"\n  latitude={50.94}\n  longitude={6.95}\n  ariaLabel="Solar radiation and UV for Solar Farm"\n/>`;
+---
+
+<DocsLayout
+  title="SolarRadiation"
+  description="Minimal solar snapshot (radiation W/m², UV index, daylight remaining) with AAA contrast and optional live fetch."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      SolarRadiation provides a concise, high‑contrast live (or static) view of
+      current shortwave radiation, UV index and remaining daylight. It
+      intentionally avoids historical charts, PV yield calculators, optimization
+      sliders, or extended energy analytics to remain fast and accessible.
+    </p>
+    <p class="text-base text-slate-200">
+      When coordinates are supplied, the component fetches hourly <code
+        >shortwave_radiation</code
+      > and <code>uv_index</code> plus daily
+      <code>sunrise</code>/<code>sunset</code> from Open‑Meteo. All dynamic states
+      are announced via a polite live region. Fallback demo values are shown when
+      fetching is disabled or fails.
+    </p>
+    <p class="text-base text-slate-200">
+      Classification labels (Low / Moderate / High / Very High / Extreme)
+      accompany colored indicators. Color is never the sole carrier of
+      information. AAA contrast (≥9:1) is preserved across light & dark themes,
+      including loading skeletons.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          location?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Human-readable place label. Defaults to “Demo Location”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          latitude? / longitude?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Coordinates enabling automatic Open‑Meteo fetch. Provide both values.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          refreshInterval?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Minutes between automatic refresh attempts. 0 disables periodic fetch
+          (default).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disableFetch?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Skips network calls; shows static fallback snapshot.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom accessible region label. Defaults to “Solar radiation for
+          &#123;location&#125;”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional Tailwind utility overrides appended to the root container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Provide coordinates for live data or omit them for a static demo. Auto
+      refresh (if enabled) periodically re-fetches current radiation & UV values
+      and updates daylight remaining. Assistive tech receives loading and error
+      status updates.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Demo</h2>
+    <div class="flex flex-wrap gap-6">
+      <SolarRadiation location="Demo Site" disableFetch />
+      <SolarRadiation
+        location="Demo Site"
+        latitude={50.94}
+        longitude={6.95}
+        refreshInterval={15}
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      The root is a landmark <code>region</code> with an explicit label. Loading
+      and error states toggle <code>aria-busy</code>
+      and are announced through a polite live status line. Skeleton shimmer respects
+      <code>prefers-reduced-motion</code>.
+    </p>
+    <p class="text-base text-slate-200">
+      Indicator dots supplement textual classification (e.g. “High”). Contrast
+      remains ≥9:1 for all textual content. High contrast mode applies an
+      outline; dark mode preserves luminance separation. No interactive controls
+      exist—this is a passive snapshot.
+    </p>
+    <p class="text-base text-slate-200">
+      Errors fall back to safe demo values with explicit status text (“Live
+      Fehler”). Color alone never conveys state.
+    </p>
+  </section>
+</DocsLayout>

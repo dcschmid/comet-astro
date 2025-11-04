@@ -14,15 +14,15 @@ interface Props {
   platform?: 'auto' | 'mac' | 'windows' | 'linux';
 }
 
-const { 
-  keys = [], 
-  size = 'md', 
+const {
+  keys = [],
+  size = 'md',
   variant = 'default',
   separator = 'plus',
   className = '',
   ariaLabel,
   description,
-  platform = 'auto'
+  platform = 'auto',
 } = Astro.props;
 
 // Enhanced size classes with responsive design
@@ -119,52 +119,52 @@ const separatorConfig = {
 // Platform-specific key mappings
 const keyMappings = {
   mac: {
-    'cmd': '⌘',
-    'option': '⌥',
-    'alt': '⌥',
-    'shift': '⇧',
-    'ctrl': '⌃',
-    'control': '⌃',
-    'enter': '↵',
-    'return': '↵',
-    'delete': '⌫',
-    'backspace': '⌫',
-    'tab': '⇥',
-    'space': '␣',
-    'esc': '⎋',
-    'escape': '⎋',
+    cmd: '⌘',
+    option: '⌥',
+    alt: '⌥',
+    shift: '⇧',
+    ctrl: '⌃',
+    control: '⌃',
+    enter: '↵',
+    return: '↵',
+    delete: '⌫',
+    backspace: '⌫',
+    tab: '⇥',
+    space: '␣',
+    esc: '⎋',
+    escape: '⎋',
   },
   windows: {
-    'cmd': 'Win',
-    'win': 'Win',
-    'alt': 'Alt',
-    'shift': 'Shift',
-    'ctrl': 'Ctrl',
-    'control': 'Ctrl',
-    'enter': 'Enter',
-    'return': 'Enter',
-    'delete': 'Del',
-    'backspace': 'Backspace',
-    'tab': 'Tab',
-    'space': 'Space',
-    'esc': 'Esc',
-    'escape': 'Esc',
+    cmd: 'Win',
+    win: 'Win',
+    alt: 'Alt',
+    shift: 'Shift',
+    ctrl: 'Ctrl',
+    control: 'Ctrl',
+    enter: 'Enter',
+    return: 'Enter',
+    delete: 'Del',
+    backspace: 'Backspace',
+    tab: 'Tab',
+    space: 'Space',
+    esc: 'Esc',
+    escape: 'Esc',
   },
   linux: {
-    'cmd': 'Super',
-    'super': 'Super',
-    'alt': 'Alt',
-    'shift': 'Shift',
-    'ctrl': 'Ctrl',
-    'control': 'Ctrl',
-    'enter': 'Enter',
-    'return': 'Enter',
-    'delete': 'Del',
-    'backspace': 'Backspace',
-    'tab': 'Tab',
-    'space': 'Space',
-    'esc': 'Esc',
-    'escape': 'Esc',
+    cmd: 'Super',
+    super: 'Super',
+    alt: 'Alt',
+    shift: 'Shift',
+    ctrl: 'Ctrl',
+    control: 'Ctrl',
+    enter: 'Enter',
+    return: 'Enter',
+    delete: 'Del',
+    backspace: 'Backspace',
+    tab: 'Tab',
+    space: 'Space',
+    esc: 'Esc',
+    escape: 'Esc',
   },
 };
 
@@ -188,14 +188,14 @@ const transformKey = (key: string) => {
 const generateDescription = () => {
   if (description) return description;
   if (keys.length === 0) return undefined;
-  
-  const keyNames = keys.map(key => transformKey(key));
+
+  const keyNames = keys.map((key) => transformKey(key));
   const separatorLabel = separatorConfig[separator].label;
-  
+
   if (keys.length === 1) {
     return `Press ${keyNames[0]} key`;
   }
-  
+
   return `Press ${keyNames.join(` ${separatorLabel} `)} keys`;
 };
 
@@ -211,76 +211,74 @@ const separatorSymbol = separatorConfig[separator].symbol;
 const accessibleDescription = generateDescription();
 
 // Generate unique ID for aria-describedby if needed
-const descriptionId = description ? `kbd-desc-${Math.random().toString(36).slice(2, 8)}` : undefined;
+const descriptionId = description
+  ? `kbd-desc-${Math.random().toString(36).slice(2, 8)}`
+  : undefined;
 ---
 
-{keys.length > 0 ? (
-  <span 
-    class={`inline-flex items-center ${sizeClasses[size].gap} ${className}`}
-    role="group"
-    aria-label={ariaLabel || accessibleDescription}
-    aria-describedby={descriptionId}
-  >
-    {keys.map((key, i) => (
-      <>
-        <kbd 
-          class={`
+{
+  keys.length > 0 ? (
+    <span
+      class={`inline-flex items-center ${sizeClasses[size].gap} ${className}`}
+      role="group"
+      aria-label={ariaLabel || accessibleDescription}
+      aria-describedby={descriptionId}
+    >
+      {keys.map((key, i) => (
+        <>
+          <kbd
+            class={`
             ${baseClasses} 
             ${sizeClasses[size].key} 
             ${variantClasses[variant]}
           `}
-          title={`${transformKey(key)} key`}
-        >
-          {transformKey(key)}
-        </kbd>
-        {i < keys.length - 1 && (
-          <span 
-            class={`
+            title={`${transformKey(key)} key`}
+          >
+            {transformKey(key)}
+          </kbd>
+          {i < keys.length - 1 && (
+            <span
+              class={`
               ${sizeClasses[size].separator} 
               ${colorClasses.textMuted} 
               mx-1 font-medium
             `}
-            aria-hidden="true"
-          >
-            {separatorSymbol}
-          </span>
-        )}
-      </>
-    ))}
-    
-    {description && (
-      <span 
-        id={descriptionId}
-        class="sr-only"
-      >
-        {description}
-      </span>
-    )}
-  </span>
-) : (
-  <kbd 
-    class={`
+              aria-hidden="true"
+            >
+              {separatorSymbol}
+            </span>
+          )}
+        </>
+      ))}
+
+      {description && (
+        <span id={descriptionId} class="sr-only">
+          {description}
+        </span>
+      )}
+    </span>
+  ) : (
+    <kbd
+      class={`
       ${baseClasses} 
       ${sizeClasses[size].key} 
       ${variantClasses[variant]} 
       ${className}
     `}
-    aria-label={ariaLabel}
-    aria-describedby={descriptionId}
-    title="Keyboard shortcut"
-  >
-    <slot />
-    
-    {description && (
-      <span 
-        id={descriptionId}
-        class="sr-only"
-      >
-        {description}
-      </span>
-    )}
-  </kbd>
-)}
+      aria-label={ariaLabel}
+      aria-describedby={descriptionId}
+      title="Keyboard shortcut"
+    >
+      <slot />
+
+      {description && (
+        <span id={descriptionId} class="sr-only">
+          {description}
+        </span>
+      )}
+    </kbd>
+  )
+}
 
 <style>
   /* Enhanced visual feedback for better accessibility */
@@ -288,13 +286,13 @@ const descriptionId = description ? `kbd-desc-${Math.random().toString(36).slice
     outline: 2px solid rgb(59 130 246);
     outline-offset: 2px;
   }
-  
+
   /* Subtle animation for key press effect */
   kbd:active {
     transform: translateY(1px);
     transition-duration: 50ms;
   }
-  
+
   /* High contrast mode support */
   @media (prefers-contrast: high) {
     kbd {
@@ -302,7 +300,7 @@ const descriptionId = description ? `kbd-desc-${Math.random().toString(36).slice
       font-weight: 700;
     }
   }
-  
+
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
     kbd {

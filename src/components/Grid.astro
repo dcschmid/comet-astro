@@ -84,65 +84,43 @@ const gridClasses = [
   alignClasses[align],
   justifyClasses[justify],
   className,
-].filter(Boolean).join(' ');
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-{as === 'section' ? (
-  <section 
-    class={gridClasses}
-    aria-label={ariaLabel}
-  >
-    <slot />
-  </section>
-) : as === 'main' ? (
-  <main 
-    class={gridClasses}
-    aria-label={ariaLabel}
-  >
-    <slot />
-  </main>
-) : as === 'article' ? (
-  <article 
-    class={gridClasses}
-    aria-label={ariaLabel}
-  >
-    <slot />
-  </article>
-) : as === 'aside' ? (
-  <aside 
-    class={gridClasses}
-    aria-label={ariaLabel}
-  >
-    <slot />
-  </aside>
-) : as === 'nav' ? (
-  <nav 
-    class={gridClasses}
-    aria-label={ariaLabel}
-  >
-    <slot />
-  </nav>
-) : as === 'ul' ? (
-  <ul 
-    class={gridClasses}
-    aria-label={ariaLabel}
-    role="list"
-  >
-    <slot />
-  </ul>
-) : as === 'ol' ? (
-  <ol 
-    class={gridClasses}
-    aria-label={ariaLabel}
-    role="list"
-  >
-    <slot />
-  </ol>
-) : (
-  <div 
-    class={gridClasses}
-    aria-label={ariaLabel}
-  >
-    <slot />
-  </div>
-)}
+{
+  as === 'section' ? (
+    <section class={gridClasses} aria-label={ariaLabel}>
+      <slot />
+    </section>
+  ) : as === 'main' ? (
+    <main class={gridClasses} aria-label={ariaLabel}>
+      <slot />
+    </main>
+  ) : as === 'article' ? (
+    <article class={gridClasses} aria-label={ariaLabel}>
+      <slot />
+    </article>
+  ) : as === 'aside' ? (
+    <aside class={gridClasses} aria-label={ariaLabel}>
+      <slot />
+    </aside>
+  ) : as === 'nav' ? (
+    <nav class={gridClasses} aria-label={ariaLabel}>
+      <slot />
+    </nav>
+  ) : as === 'ul' ? (
+    <ul class={gridClasses} aria-label={ariaLabel} role="list">
+      <slot />
+    </ul>
+  ) : as === 'ol' ? (
+    <ol class={gridClasses} aria-label={ariaLabel} role="list">
+      <slot />
+    </ol>
+  ) : (
+    <div class={gridClasses} aria-label={ariaLabel}>
+      <slot />
+    </div>
+  )
+}

@@ -12,18 +12,26 @@ import Card from '../../components/Card.astro';
     <!-- Intro -->
     <section class="space-y-4">
       <p class="max-w-3xl text-slate-600 dark:text-slate-400">
-        The <strong>CategoryImage</strong> component visually highlights a taxonomy entry using an image (or gradient fallback), overlaid text, and optional link navigation. It ensures <strong>WCAG AAA</strong> readable text by applying adjustable overlay strengths and high-contrast foreground colors.
+        The <strong>CategoryImage</strong> component visually highlights a taxonomy
+        entry using an image (or gradient fallback), overlaid text, and optional
+        link navigation. It ensures <strong>WCAG AAA</strong> readable text by applying
+        adjustable overlay strengths and high-contrast foreground colors.
       </p>
       <p class="max-w-3xl text-slate-600 dark:text-slate-400">
-        Provide an <code>alt</code> or <code>ariaLabel</code> for accessibility. When no image is present, a gradient tile with the category name is rendered using a semantic <code>role="img"</code> and label.
+        Provide an <code>alt</code> or <code>ariaLabel</code> for accessibility.
+        When no image is present, a gradient tile with the category name is rendered
+        using a semantic <code>role="img"</code> and label.
       </p>
     </section>
 
     <!-- Usage -->
     <section class="space-y-4">
       <h2 class="text-xl font-bold">Usage</h2>
-      <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-700 dark:bg-slate-900">
-  <pre class="overflow-x-auto"><code>{`import CategoryImage from '@/components/CategoryImage.astro';
+      <div
+        class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-700 dark:bg-slate-900"
+      >
+        <pre
+          class="overflow-x-auto"><code>{`import CategoryImage from '@/components/CategoryImage.astro';
 
 <CategoryImage title="Interface design" href="/design" alt="Interface design preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
 <CategoryImage title="Research playbook" size="sm" overlayStrength="strong" alt="Research playbook preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
@@ -32,9 +40,28 @@ import Card from '../../components/Card.astro';
 `}</code></pre>
       </div>
       <div class="grid gap-4 md:grid-cols-3">
-        <CategoryImageComp title="Interface design" href="#" alt="Interface design preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-        <CategoryImageComp title="Motion systems" href="#" alt="Motion systems preview" overlayStrength="soft" size="lg" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-        <CategoryImageComp title="Research playbook" href="#" alt="Research playbook preview" overlayStrength="strong" size="sm" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
+        <CategoryImageComp
+          title="Interface design"
+          href="#"
+          alt="Interface design preview"
+          image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+        />
+        <CategoryImageComp
+          title="Motion systems"
+          href="#"
+          alt="Motion systems preview"
+          overlayStrength="soft"
+          size="lg"
+          image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+        />
+        <CategoryImageComp
+          title="Research playbook"
+          href="#"
+          alt="Research playbook preview"
+          overlayStrength="strong"
+          size="sm"
+          image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+        />
       </div>
     </section>
 
@@ -42,20 +69,176 @@ import Card from '../../components/Card.astro';
     <section class="space-y-4">
       <h2 class="text-xl font-bold">Props</h2>
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">title<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Primary display heading. Falls back to category.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">category<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Used for fallback label & gradient heuristic.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">description<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Optional supporting text below title.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">image<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">url</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Background thumbnail. If absent a gradient tile renders.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">href<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Turns tile into link with focus-visible ring.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">alt<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Accessible text for image; fallback auto-generated.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">ariaLabel<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Override label when heading differs from alt context.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">size<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">enum</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">sm | md | lg defines preset heights (10/14/18rem).</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">height<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string|number</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Overrides size height with exact value (e.g. '22rem').</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">overlayStrength<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">enum</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">soft | medium | strong controls gradient opacity.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">rounded<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">boolean</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Choose large (2xl) or standard (lg) rounding.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">className<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Additional classes for layout adjustments.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">headingLevel<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">2|3|4|5|6</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Semantic heading tag used for the title (default 3). Choose based on document outline.</p></div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"><h3 class="font-medium">interactive<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">boolean</span></h3><p class="mt-1 text-slate-600 dark:text-slate-400">Enable hover motion & scale. Set false for static contexts or reduced motion surfaces.</p></div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            title<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Primary display heading. Falls back to category.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            category<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Used for fallback label & gradient heuristic.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            description<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Optional supporting text below title.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            image<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >url</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Background thumbnail. If absent a gradient tile renders.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            href<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Turns tile into link with focus-visible ring.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            alt<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Accessible text for image; fallback auto-generated.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            ariaLabel<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Override label when heading differs from alt context.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            size<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >enum</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            sm | md | lg defines preset heights (10/14/18rem).
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            height<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string|number</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Overrides size height with exact value (e.g. '22rem').
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            overlayStrength<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >enum</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            soft | medium | strong controls gradient opacity.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            rounded<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >boolean</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Choose large (2xl) or standard (lg) rounding.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            className<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Additional classes for layout adjustments.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            headingLevel<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >2|3|4|5|6</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Semantic heading tag used for the title (default 3). Choose based on
+            document outline.
+          </p>
+        </div>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            interactive<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >boolean</span
+            >
+          </h3><p class="mt-1 text-slate-600 dark:text-slate-400">
+            Enable hover motion & scale. Set false for static contexts or
+            reduced motion surfaces.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -66,32 +249,92 @@ import Card from '../../components/Card.astro';
         <Card elevation={1} class="space-y-3">
           <h3 class="font-semibold">Size presets</h3>
           <div class="grid gap-3">
-            <CategoryImageComp title="Small tile" size="sm" alt="Small tile preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-            <CategoryImageComp title="Medium tile" size="md" alt="Medium tile preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-            <CategoryImageComp title="Large tile" size="lg" alt="Large tile preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
+            <CategoryImageComp
+              title="Small tile"
+              size="sm"
+              alt="Small tile preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
+            <CategoryImageComp
+              title="Medium tile"
+              size="md"
+              alt="Medium tile preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
+            <CategoryImageComp
+              title="Large tile"
+              size="lg"
+              alt="Large tile preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
           </div>
         </Card>
         <Card elevation={1} class="space-y-3">
           <h3 class="font-semibold">Overlay strengths</h3>
           <div class="grid gap-3">
-            <CategoryImageComp title="Soft overlay" overlayStrength="soft" alt="Soft overlay preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-            <CategoryImageComp title="Medium overlay" overlayStrength="medium" alt="Medium overlay preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-            <CategoryImageComp title="Strong overlay" overlayStrength="strong" alt="Strong overlay preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
+            <CategoryImageComp
+              title="Soft overlay"
+              overlayStrength="soft"
+              alt="Soft overlay preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
+            <CategoryImageComp
+              title="Medium overlay"
+              overlayStrength="medium"
+              alt="Medium overlay preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
+            <CategoryImageComp
+              title="Strong overlay"
+              overlayStrength="strong"
+              alt="Strong overlay preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
           </div>
         </Card>
         <Card elevation={1} class="space-y-3">
           <h3 class="font-semibold">Interactive linked</h3>
           <div class="grid gap-3">
-            <CategoryImageComp title="Docs Hub" href="/docs" alt="Docs Hub preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-            <CategoryImageComp title="Style Guide" href="/style" alt="Style Guide preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
+            <CategoryImageComp
+              title="Docs Hub"
+              href="/docs"
+              alt="Docs Hub preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
+            <CategoryImageComp
+              title="Style Guide"
+              href="/style"
+              alt="Style Guide preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
           </div>
         </Card>
         <Card elevation={1} class="space-y-3">
           <h3 class="font-semibold">Heading levels & static mode</h3>
           <div class="grid gap-3">
-            <CategoryImageComp title="Platform Overview" headingLevel={2} href="#" alt="Platform overview preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-            <CategoryImageComp title="Design Tokens" interactive={false} size="sm" alt="Design tokens preview" overlayStrength="medium" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
-            <CategoryImageComp title="Changelog" headingLevel={4} interactive={false} overlayStrength="strong" alt="Changelog preview" image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70" />
+            <CategoryImageComp
+              title="Platform Overview"
+              headingLevel={2}
+              href="#"
+              alt="Platform overview preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
+            <CategoryImageComp
+              title="Design Tokens"
+              interactive={false}
+              size="sm"
+              alt="Design tokens preview"
+              overlayStrength="medium"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
+            <CategoryImageComp
+              title="Changelog"
+              headingLevel={4}
+              interactive={false}
+              overlayStrength="strong"
+              alt="Changelog preview"
+              image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70"
+            />
           </div>
         </Card>
       </div>
@@ -100,15 +343,39 @@ import Card from '../../components/Card.astro';
     <!-- Accessibility -->
     <section class="space-y-4">
       <h2 class="text-xl font-bold">Accessibility</h2>
-      <ul class="list-disc space-y-2 pl-5 text-sm text-slate-600 dark:text-slate-400">
-        <li>Images include descriptive <code>alt</code> text or generated fallback ("Title preview").</li>
-        <li>Text overlay uses gradient strength variants to maintain ≥ 7:1 contrast in all themes.</li>
-        <li>Focus-visible ring ensures keyboard users can identify linked tiles.</li>
-        <li>Motion uses subtle scale on hover; reduced-motion users get no animated scaling.</li>
-        <li>Fallback gradient tile marks itself with <code>role="img"</code> and an accessible label.</li>
-        <li>Provide <code>ariaLabel</code> if title alone is ambiguous (e.g., acronyms).</li>
-        <li>Select an appropriate <code>headingLevel</code> to preserve a logical document outline (avoid skipping levels).</li>
-        <li>Disable <code>interactive</code> for non-actionable or analytics-only surfaces to reduce distraction.</li>
+      <ul
+        class="list-disc space-y-2 pl-5 text-sm text-slate-600 dark:text-slate-400"
+      >
+        <li>
+          Images include descriptive <code>alt</code> text or generated fallback
+          ("Title preview").
+        </li>
+        <li>
+          Text overlay uses gradient strength variants to maintain ≥ 7:1
+          contrast in all themes.
+        </li>
+        <li>
+          Focus-visible ring ensures keyboard users can identify linked tiles.
+        </li>
+        <li>
+          Motion uses subtle scale on hover; reduced-motion users get no
+          animated scaling.
+        </li>
+        <li>
+          Fallback gradient tile marks itself with <code>role="img"</code> and an
+          accessible label.
+        </li>
+        <li>
+          Provide <code>ariaLabel</code> if title alone is ambiguous (e.g., acronyms).
+        </li>
+        <li>
+          Select an appropriate <code>headingLevel</code> to preserve a logical document
+          outline (avoid skipping levels).
+        </li>
+        <li>
+          Disable <code>interactive</code> for non-actionable or analytics-only surfaces
+          to reduce distraction.
+        </li>
       </ul>
     </section>
   </div>

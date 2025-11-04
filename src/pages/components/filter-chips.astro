@@ -55,15 +55,17 @@ const status = [
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      FilterChips provides accessible chip interfaces for filtering and selection with comprehensive 
-      keyboard navigation and focus management. The component maintains WCAG AAA contrast ratios 
-      across all interactive elements and supports both single and multi-select modes with proper 
-      ARIA semantics for screen readers.
+      FilterChips provides accessible chip interfaces for filtering and
+      selection with comprehensive keyboard navigation and focus management. The
+      component maintains WCAG AAA contrast ratios across all interactive
+      elements and supports both single and multi-select modes with proper ARIA
+      semantics for screen readers.
     </p>
     <p class="text-base text-slate-200">
-      Enhanced focus indicators, arrow key navigation, and proper checkbox/radio semantics ensure 
-      optimal accessibility. Multiple size variants and visual styles adapt to any filtering 
-      interface while maintaining consistent interaction patterns.
+      Enhanced focus indicators, arrow key navigation, and proper checkbox/radio
+      semantics ensure optimal accessibility. Multiple size variants and visual
+      styles adapt to any filtering interface while maintaining consistent
+      interaction patterns.
     </p>
   </section>
 
@@ -79,7 +81,8 @@ const status = [
           items
         </dt>
         <dd class="text-sm text-slate-200">
-          Array of chip objects with <code>id</code>, <code>label</code>, optional <code>count</code>, and <code>disabled</code> properties.
+          Array of chip objects with <code>id</code>, <code>label</code>,
+          optional <code>count</code>, and <code>disabled</code> properties.
         </dd>
       </div>
       <div
@@ -103,7 +106,8 @@ const status = [
           multi?
         </dt>
         <dd class="text-sm text-slate-200">
-          Enable multi-select mode (checkbox behavior). When <code>false</code>, uses radio button behavior. Defaults to <code>true</code>.
+          Enable multi-select mode (checkbox behavior). When <code>false</code>,
+          uses radio button behavior. Defaults to <code>true</code>.
         </dd>
       </div>
       <div
@@ -115,7 +119,9 @@ const status = [
           size?
         </dt>
         <dd class="text-sm text-slate-200">
-          Chip size variant: <code>"sm"</code>, <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+          Chip size variant: <code>"sm"</code>, <code>"md"</code>, or <code
+            >"lg"</code
+          >. Defaults to <code>"md"</code>.
         </dd>
       </div>
       <div
@@ -127,7 +133,9 @@ const status = [
           variant?
         </dt>
         <dd class="text-sm text-slate-200">
-          Visual style: <code>"default"</code>, <code>"outlined"</code>, or <code>"subtle"</code>. Defaults to <code>"default"</code>.
+          Visual style: <code>"default"</code>, <code>"outlined"</code>, or <code
+            >"subtle"</code
+          >. Defaults to <code>"default"</code>.
         </dd>
       </div>
       <div
@@ -163,7 +171,8 @@ const status = [
           className?
         </dt>
         <dd class="text-sm text-slate-200">
-          Additional CSS classes to apply to the chip container for custom styling.
+          Additional CSS classes to apply to the chip container for custom
+          styling.
         </dd>
       </div>
     </dl>
@@ -172,9 +181,10 @@ const status = [
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Create accessible filter interfaces with clear selection feedback and keyboard navigation. 
-      The component automatically handles focus management and emits change events with selected 
-      chip IDs for integration with filtering logic.
+      Create accessible filter interfaces with clear selection feedback and
+      keyboard navigation. The component automatically handles focus management
+      and emits change events with selected chip IDs for integration with
+      filtering logic.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -185,7 +195,8 @@ const status = [
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Basic Multi-Select</h2>
     <p class="text-base text-slate-200">
-      Standard multi-select filter chips with counts displaying the number of items in each category.
+      Standard multi-select filter chips with counts displaying the number of
+      items in each category.
     </p>
     <div class="max-w-2xl">
       <FilterChipsComponent
@@ -227,9 +238,11 @@ const status = [
           multi={true}
         />
       </div>
-      
+
       <div>
-        <h3 class="text-lg font-medium text-slate-200 mb-3">Medium (Default)</h3>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">
+          Medium (Default)
+        </h3>
         <FilterChipsComponent
           items={skills.slice(0, 4)}
           selected={['react', 'vue']}
@@ -237,7 +250,7 @@ const status = [
           multi={true}
         />
       </div>
-      
+
       <div>
         <h3 class="text-lg font-medium text-slate-200 mb-3">Large</h3>
         <FilterChipsComponent
@@ -265,7 +278,7 @@ const status = [
           multi={true}
         />
       </div>
-      
+
       <div>
         <h3 class="text-lg font-medium text-slate-200 mb-4">Outlined</h3>
         <FilterChipsComponent
@@ -275,7 +288,7 @@ const status = [
           multi={true}
         />
       </div>
-      
+
       <div>
         <h3 class="text-lg font-medium text-slate-200 mb-4">Subtle</h3>
         <FilterChipsComponent
@@ -291,7 +304,8 @@ const status = [
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">With Counts</h2>
     <p class="text-base text-slate-200">
-      Display item counts alongside filter labels to provide context about available content.
+      Display item counts alongside filter labels to provide context about
+      available content.
     </p>
     <div class="max-w-3xl">
       <FilterChipsComponent
@@ -306,7 +320,8 @@ const status = [
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Disabled States</h2>
     <p class="text-base text-slate-200">
-      Chips can be disabled to indicate unavailable options while maintaining visual context.
+      Chips can be disabled to indicate unavailable options while maintaining
+      visual context.
     </p>
     <div class="max-w-2xl">
       <FilterChipsComponent
@@ -321,7 +336,8 @@ const status = [
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Event Handling</h2>
     <p class="text-base text-slate-200">
-      Listen for selection changes to implement filtering logic or update application state.
+      Listen for selection changes to implement filtering logic or update
+      application state.
     </p>
     <div class="max-w-2xl">
       <FilterChipsComponent
@@ -330,17 +346,21 @@ const status = [
         multi={true}
         ariaLabel="Category filters"
       />
-      
+
       <div class="mt-4 p-4 rounded-lg bg-slate-800 border border-slate-600">
-        <p class="text-sm text-slate-200 mb-2">Selected filters will appear here:</p>
-        <div id="filter-display" class="text-sm text-slate-400">None selected</div>
+        <p class="text-sm text-slate-200 mb-2">
+          Selected filters will appear here:
+        </p>
+        <div id="filter-display" class="text-sm text-slate-400">
+          None selected
+        </div>
       </div>
-      
+
       <script is:inline>
         document.addEventListener('DOMContentLoaded', () => {
           const filterChips = document.querySelector('[data-multi="true"]');
           const display = document.getElementById('filter-display');
-          
+
           if (filterChips && display) {
             filterChips.addEventListener('change', (event) => {
               const selected = event.detail.selected;
@@ -361,25 +381,31 @@ const status = [
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      Contrast ratios exceed WCAG AAA requirements (7:1+) for all text elements and interactive 
-      states in both light and dark themes. Enhanced focus rings use strong color contrast with 
-      proper offset spacing for clear keyboard navigation visibility.
+      Contrast ratios exceed WCAG AAA requirements (7:1+) for all text elements
+      and interactive states in both light and dark themes. Enhanced focus rings
+      use strong color contrast with proper offset spacing for clear keyboard
+      navigation visibility.
     </p>
     <p class="text-base text-slate-200">
-      The component uses proper semantic HTML with <code>role="group"</code> for multi-select 
-      and <code>role="radiogroup"</code> for single-select modes. Individual chips use 
-      <code>role="checkbox"</code> or <code>role="radio"</code> with <code>aria-checked</code> 
+      The component uses proper semantic HTML with <code>role="group"</code> for
+      multi-select and <code>role="radiogroup"</code> for single-select modes. Individual
+      chips use
+      <code>role="checkbox"</code> or <code>role="radio"</code> with <code
+        >aria-checked</code
+      >
       attributes for accurate screen reader announcements.
     </p>
     <p class="text-base text-slate-200">
-      Keyboard navigation supports arrow keys (Left/Right) for moving between chips, Home/End 
-      for jumping to first/last chip, and Space/Enter for toggling selection. Disabled chips 
-      are properly excluded from keyboard navigation while remaining visible for context.
+      Keyboard navigation supports arrow keys (Left/Right) for moving between
+      chips, Home/End for jumping to first/last chip, and Space/Enter for
+      toggling selection. Disabled chips are properly excluded from keyboard
+      navigation while remaining visible for context.
     </p>
     <p class="text-base text-slate-200">
-      Custom change events include the complete selection state for seamless integration with 
-      filtering logic. ARIA labels and descriptions provide additional context for screen 
-      readers about the purpose and current state of the filter group.
+      Custom change events include the complete selection state for seamless
+      integration with filtering logic. ARIA labels and descriptions provide
+      additional context for screen readers about the purpose and current state
+      of the filter group.
     </p>
   </section>
 </DocsLayout>

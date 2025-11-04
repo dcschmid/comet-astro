@@ -1,22 +1,22 @@
 ---
 import { cn } from '../utils/cn';
 
-export interface Props {
+interface Props {
   // Core pagination props
   currentPage: number;
   totalPages: number;
   baseUrl?: string;
-  
+
   // Display options
   showPrevNext?: boolean;
   showFirstLast?: boolean;
   showPageNumbers?: boolean;
   maxVisible?: number;
-  
+
   // Variants and styling
   variant?: 'default' | 'minimal' | 'outline' | 'rounded';
   size?: 'sm' | 'md' | 'lg';
-  
+
   // Accessibility props
   ariaLabel?: string;
   pageLabel?: string;
@@ -24,7 +24,7 @@ export interface Props {
   nextLabel?: string;
   firstLabel?: string;
   lastLabel?: string;
-  
+
   // Custom styling
   class?: string;
 }
@@ -45,7 +45,7 @@ const {
   nextLabel = 'Next',
   firstLabel = 'First',
   lastLabel = 'Last',
-  class: className
+  class: className,
 } = Astro.props as Props;
 
 // Generate unique ID for this pagination instance
@@ -97,48 +97,57 @@ const hasLast = currentPage < totalPages;
 const variantStyles = {
   default: {
     container: 'gap-1',
-    button: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900',
+    button:
+      'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900',
     buttonHover: 'hover:bg-gray-50 dark:hover:bg-gray-800',
-    buttonActive: 'border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500 text-white',
-    buttonDisabled: 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+    buttonActive:
+      'border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500 text-white',
+    buttonDisabled:
+      'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed',
   },
   minimal: {
     container: 'gap-1',
     button: 'border-0 bg-transparent',
     buttonHover: 'hover:bg-gray-100 dark:hover:bg-gray-800',
     buttonActive: 'bg-blue-600 dark:bg-blue-500 text-white',
-    buttonDisabled: 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+    buttonDisabled: 'text-gray-400 dark:text-gray-500 cursor-not-allowed',
   },
   outline: {
     container: 'gap-2',
     button: 'border-2 border-gray-300 dark:border-gray-600 bg-transparent',
-    buttonHover: 'hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800',
-    buttonActive: 'border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500 text-white',
-    buttonDisabled: 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+    buttonHover:
+      'hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800',
+    buttonActive:
+      'border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500 text-white',
+    buttonDisabled:
+      'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed',
   },
   rounded: {
     container: 'gap-1',
-    button: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 rounded-full',
+    button:
+      'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 rounded-full',
     buttonHover: 'hover:bg-gray-50 dark:hover:bg-gray-800',
-    buttonActive: 'border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500 text-white',
-    buttonDisabled: 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-  }
+    buttonActive:
+      'border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500 text-white',
+    buttonDisabled:
+      'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed',
+  },
 };
 
 // Size styles
 const sizeStyles = {
   sm: {
     button: 'px-2 py-1 text-xs min-w-8 min-h-8',
-    text: 'text-xs'
+    text: 'text-xs',
   },
   md: {
     button: 'px-3 py-2 text-sm min-w-10 min-h-10',
-    text: 'text-sm'
+    text: 'text-sm',
   },
   lg: {
     button: 'px-4 py-3 text-base min-w-12 min-h-12',
-    text: 'text-base'
-  }
+    text: 'text-base',
+  },
 };
 
 const containerClasses = cn(
@@ -159,9 +168,9 @@ const baseButtonClasses = cn(
 const getButtonClasses = (isActive = false, isDisabled = false) => {
   return cn(
     baseButtonClasses,
-    isDisabled 
+    isDisabled
       ? variantStyles[variant].buttonDisabled
-      : isActive 
+      : isActive
         ? variantStyles[variant].buttonActive
         : cn(variantStyles[variant].button, variantStyles[variant].buttonHover)
   );
@@ -182,107 +191,116 @@ const ellipsisClasses = cn(
   aria-label={ariaLabel}
 >
   <!-- First Page Button -->
-  {showFirstLast && hasFirst && (
-    <a
-      href={getPageUrl(1)}
-      class={getButtonClasses()}
-      aria-label={`${firstLabel} - ${pageLabel} 1`}
-      title={`${firstLabel} - ${pageLabel} 1`}
-    >
-      <span aria-hidden="true">««</span>
-      <span class="sr-only">{firstLabel}</span>
-    </a>
-  )}
+  {
+    showFirstLast && hasFirst && (
+      <a
+        href={getPageUrl(1)}
+        class={getButtonClasses()}
+        aria-label={`${firstLabel} - ${pageLabel} 1`}
+        title={`${firstLabel} - ${pageLabel} 1`}
+      >
+        <span aria-hidden="true">««</span>
+        <span class="sr-only">{firstLabel}</span>
+      </a>
+    )
+  }
 
   <!-- Previous Page Button -->
-  {showPrevNext && (
-    hasPrev ? (
-      <a
-        href={getPageUrl(currentPage - 1)}
-        class={getButtonClasses()}
-        aria-label={`${previousLabel} - ${pageLabel} ${currentPage - 1}`}
-        title={`${previousLabel} - ${pageLabel} ${currentPage - 1}`}
-      >
-        <span aria-hidden="true">‹</span>
-        <span class="hidden sm:inline ml-1">{previousLabel}</span>
-        <span class="sr-only">{previousLabel}</span>
-      </a>
-    ) : (
-      <span
-        class={getButtonClasses(false, true)}
-        role="button"
-        aria-disabled="true"
-        aria-label={`${previousLabel} - disabled`}
-        title={`${previousLabel} - disabled`}
-      >
-        <span aria-hidden="true">‹</span>
-        <span class="hidden sm:inline ml-1">{previousLabel}</span>
-        <span class="sr-only">{previousLabel} - disabled</span>
-      </span>
-    )
-  )}
+  {
+    showPrevNext &&
+      (hasPrev ? (
+        <a
+          href={getPageUrl(currentPage - 1)}
+          class={getButtonClasses()}
+          aria-label={`${previousLabel} - ${pageLabel} ${currentPage - 1}`}
+          title={`${previousLabel} - ${pageLabel} ${currentPage - 1}`}
+        >
+          <span aria-hidden="true">‹</span>
+          <span class="hidden sm:inline ml-1">{previousLabel}</span>
+          <span class="sr-only">{previousLabel}</span>
+        </a>
+      ) : (
+        <span
+          class={getButtonClasses(false, true)}
+          role="button"
+          aria-disabled="true"
+          aria-label={`${previousLabel} - disabled`}
+          title={`${previousLabel} - disabled`}
+        >
+          <span aria-hidden="true">‹</span>
+          <span class="hidden sm:inline ml-1">{previousLabel}</span>
+          <span class="sr-only">{previousLabel} - disabled</span>
+        </span>
+      ))
+  }
 
   <!-- Page Numbers -->
-  {showPageNumbers && visiblePages.map((page) => 
-    page === '...' ? (
-      <span
-        class={ellipsisClasses}
-        aria-hidden="true"
-        role="separator"
-      >
-        …
-      </span>
-    ) : (
-      <a
-        href={getPageUrl(page as number)}
-        class={getButtonClasses(page === currentPage)}
-        aria-label={page === currentPage ? `${pageLabel} ${page} - current page` : `${pageLabel} ${page}`}
-        aria-current={page === currentPage ? 'page' : undefined}
-        title={`${pageLabel} ${page}`}
-      >
-        {page}
-      </a>
-    )
-  )}
+  {
+    showPageNumbers &&
+      visiblePages.map((page) =>
+        page === '...' ? (
+          <span class={ellipsisClasses} aria-hidden="true" role="separator">
+            …
+          </span>
+        ) : (
+          <a
+            href={getPageUrl(page as number)}
+            class={getButtonClasses(page === currentPage)}
+            aria-label={
+              page === currentPage
+                ? `${pageLabel} ${page} - current page`
+                : `${pageLabel} ${page}`
+            }
+            aria-current={page === currentPage ? 'page' : undefined}
+            title={`${pageLabel} ${page}`}
+          >
+            {page}
+          </a>
+        )
+      )
+  }
 
   <!-- Next Page Button -->
-  {showPrevNext && (
-    hasNext ? (
-      <a
-        href={getPageUrl(currentPage + 1)}
-        class={getButtonClasses()}
-        aria-label={`${nextLabel} - ${pageLabel} ${currentPage + 1}`}
-        title={`${nextLabel} - ${pageLabel} ${currentPage + 1}`}
-      >
-        <span class="hidden sm:inline mr-1">{nextLabel}</span>
-        <span aria-hidden="true">›</span>
-        <span class="sr-only">{nextLabel}</span>
-      </a>
-    ) : (
-      <span
-        class={getButtonClasses(false, true)}
-        role="button"
-        aria-disabled="true"
-        aria-label={`${nextLabel} - disabled`}
-        title={`${nextLabel} - disabled`}
-      >
-        <span class="hidden sm:inline mr-1">{nextLabel}</span>
-        <span aria-hidden="true">›</span>
-        <span class="sr-only">{nextLabel} - disabled</span>
-      </span>
-    )
-  )}
+  {
+    showPrevNext &&
+      (hasNext ? (
+        <a
+          href={getPageUrl(currentPage + 1)}
+          class={getButtonClasses()}
+          aria-label={`${nextLabel} - ${pageLabel} ${currentPage + 1}`}
+          title={`${nextLabel} - ${pageLabel} ${currentPage + 1}`}
+        >
+          <span class="hidden sm:inline mr-1">{nextLabel}</span>
+          <span aria-hidden="true">›</span>
+          <span class="sr-only">{nextLabel}</span>
+        </a>
+      ) : (
+        <span
+          class={getButtonClasses(false, true)}
+          role="button"
+          aria-disabled="true"
+          aria-label={`${nextLabel} - disabled`}
+          title={`${nextLabel} - disabled`}
+        >
+          <span class="hidden sm:inline mr-1">{nextLabel}</span>
+          <span aria-hidden="true">›</span>
+          <span class="sr-only">{nextLabel} - disabled</span>
+        </span>
+      ))
+  }
 
   <!-- Last Page Button -->
-  {showFirstLast && hasLast && (
-    <a
-      href={getPageUrl(totalPages)}
-      class={getButtonClasses()}
-      aria-label={`${lastLabel} - ${pageLabel} ${totalPages}`}
-      title={`${lastLabel} - ${pageLabel} ${totalPages}`}
-    >
-      <span aria-hidden="true">»»</span>
-      <span class="sr-only">{lastLabel}</span>
-    </a>
-  )}
+  {
+    showFirstLast && hasLast && (
+      <a
+        href={getPageUrl(totalPages)}
+        class={getButtonClasses()}
+        aria-label={`${lastLabel} - ${pageLabel} ${totalPages}`}
+        title={`${lastLabel} - ${pageLabel} ${totalPages}`}
+      >
+        <span aria-hidden="true">»»</span>
+        <span class="sr-only">{lastLabel}</span>
+      </a>
+    )
+  }
 </nav>

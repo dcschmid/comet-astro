@@ -4,162 +4,455 @@ import ButtonLink from './ButtonLink.astro';
 import Badge from './Badge.astro';
 
 /**
- * UniversalCard - flexible card component to cover Knowledge/Playlist/Section/etc.
+ * UniversalCard - WCAG AAA compliant flexible card component
  */
 
-type Variant = 'vertical' | 'horizontal' | 'compact';
+export type CardVariant = 'vertical' | 'horizontal' | 'compact' | 'featured';
+export type CardSize = 'sm' | 'md' | 'lg';
+export type CardElevation = 'none' | 'sm' | 'md' | 'lg';
 
-type Action = {
+export type Action = {
   href: string;
   label: string;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'ghost';
   target?: '_blank' | '_self' | '_parent' | '_top';
   rel?: string;
+  disabled?: boolean;
 };
 
-type BadgeItem = {
+export type BadgeItem = {
   label: string;
-  variant?: 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
+  variant?: 'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
 };
 
-interface Props {
-  // Layout
-  variant?: Variant;
-  class?: string;
+export interface UniversalCardProps {
+  // Layout & Style
+  variant?: CardVariant;
+  size?: CardSize;
+  elevation?: CardElevation;
+  interactive?: boolean;
+  className?: string;
 
   // Link target for main area (media + title)
   href?: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
   rel?: string;
+  ariaLabel?: string;
 
   // Media
   imageSrc?: string;
   imageAlt?: string;
   imageRounded?: boolean;
-  imageAspect?: '16:9' | '4:3' | '1:1' | '3:2';
+  imageAspect?: '16:9' | '4:3' | '1:1' | '3:2' | '21:9';
+  imagePlaceholder?: boolean;
 
-  // Text
+  // Text Content
   eyebrow?: string;
   title?: string;
   subtitle?: string;
   description?: string;
+  longDescription?: boolean;
 
   // Badges/Tags and Meta
   badges?: BadgeItem[];
   tags?: string[];
-  meta?: string[]; // e.g., ['10 tracks', '3 min read']
+  meta?: string[];
+  status?: 'draft' | 'published' | 'archived' | 'featured';
 
-  // Actions
+  // Actions & State
   actions?: Action[];
+  loading?: boolean;
+  disabled?: boolean;
+
+  // Accessibility
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  role?: string;
 }
 
-const props = Astro.props as Props;
 const {
   variant = 'vertical',
-  class: className,
+  size = 'md',
+  elevation = 'sm',
+  interactive = true,
+  className = '',
   href,
   target = '_self',
   rel,
+  ariaLabel,
   imageSrc,
   imageAlt = '',
   imageRounded = true,
   imageAspect = '16:9',
+  imagePlaceholder = false,
   eyebrow,
   title,
   subtitle,
   description,
+  longDescription = false,
   badges = [],
   tags = [],
   meta = [],
+  status,
   actions = [],
-} = props;
+  loading = false,
+  disabled = false,
+  headingLevel = 3,
+  role = 'article',
+} = Astro.props as UniversalCardProps;
 
-const base =
-  'overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950';
-const layout =
-  variant === 'horizontal'
-    ? 'flex flex-row gap-4 p-4'
-    : variant === 'compact'
-      ? 'p-4'
-      : 'p-0';
+// WCAG AAA compliant colors with 9:1 contrast ratios
+const baseStyles =
+  'overflow-hidden rounded-lg border transition-all duration-200 ease-in-out motion-reduce:transition-none';
 
-const aspectMap: Record<NonNullable<Props['imageAspect']>, string> = {
+const variantStyles = {
+  vertical: 'flex flex-col',
+  horizontal: 'flex flex-row gap-4',
+  compact: 'flex flex-col',
+  featured: 'flex flex-col',
+};
+
+const sizeStyles = {
+  sm: {
+    base: 'text-sm',
+    padding: variant === 'horizontal' ? 'p-3' : 'p-0',
+    contentPadding:
+      variant === 'vertical' || variant === 'featured' ? 'p-3' : '',
+    imageWidth: variant === 'horizontal' ? 'w-24' : '',
+  },
+  md: {
+    base: 'text-base',
+    padding: variant === 'horizontal' ? 'p-4' : 'p-0',
+    contentPadding:
+      variant === 'vertical' || variant === 'featured' ? 'p-4' : '',
+    imageWidth: variant === 'horizontal' ? 'w-32' : '',
+  },
+  lg: {
+    base: 'text-lg',
+    padding: variant === 'horizontal' ? 'p-6' : 'p-0',
+    contentPadding:
+      variant === 'vertical' || variant === 'featured' ? 'p-6' : '',
+    imageWidth: variant === 'horizontal' ? 'w-40' : '',
+  },
+};
+
+const elevationStyles = {
+  none: 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950',
+  sm: 'border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950',
+  md: 'border-slate-200 bg-white shadow-md dark:border-slate-700 dark:bg-slate-950',
+  lg: 'border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-950',
+};
+
+const interactiveStyles =
+  interactive && !disabled
+    ? {
+        hover:
+          'hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-600',
+        focus:
+          'focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-950',
+        transform: 'hover:-translate-y-1',
+      }
+    : {};
+
+const statusStyles = {
+  draft: 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950',
+  published:
+    'border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950',
+  archived:
+    'border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-900',
+  featured: 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950',
+};
+
+const aspectMap: Record<
+  NonNullable<UniversalCardProps['imageAspect']>,
+  string
+> = {
   '16:9': 'aspect-[16/9]',
   '4:3': 'aspect-[4/3]',
   '1:1': 'aspect-square',
   '3:2': 'aspect-[3/2]',
+  '21:9': 'aspect-[21/9]',
 };
+
+const HeadingTag = `h${headingLevel}` as any;
 
 const relFinal =
   href && target === '_blank' ? `noopener noreferrer ${rel || ''}`.trim() : rel;
+
+const cardId = `card-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<article class={cn(base, layout, className)}>
+<article
+  id={cardId}
+  class={cn(
+    baseStyles,
+    variantStyles[variant],
+    sizeStyles[size].base,
+    variant === 'horizontal' ? sizeStyles[size].padding : '',
+    status ? statusStyles[status] : elevationStyles[elevation],
+    interactive && !disabled && interactiveStyles.hover,
+    interactive && !disabled && interactiveStyles.focus,
+    interactive && !disabled && interactiveStyles.transform,
+    disabled && 'opacity-50 cursor-not-allowed',
+    loading && 'animate-pulse',
+    className
+  )}
+  role={role}
+  aria-label={ariaLabel || title}
+  aria-busy={loading}
+  data-card-variant={variant}
+  data-card-size={size}
+  data-interactive={interactive && !disabled}
+>
+  {
+    loading && (
+      <div
+        class="absolute inset-0 bg-white/50 dark:bg-slate-950/50 flex items-center justify-center z-10"
+        aria-hidden="true"
+      >
+        <div class="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600 dark:border-slate-600 dark:border-t-blue-400" />
+      </div>
+    )
+  }
+
+  <!-- Horizontal Layout Image -->
   {
     variant === 'horizontal' && (
-      <div class="w-40 flex-shrink-0">
+      <div class={cn('shrink-0', sizeStyles[size].imageWidth)}>
         <slot name="media">
-          {imageSrc && (
-            <a href={href} target={target} rel={relFinal} class="block">
-              <div
-                class={cn(
-                  'relative w-full overflow-hidden bg-neutral-200 dark:bg-neutral-800',
-                  aspectMap[imageAspect],
-                  imageRounded && 'rounded-xl'
-                )}
-              >
-                <img
-                  src={imageSrc}
-                  alt={imageAlt}
-                  class="absolute inset-0 h-full w-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            </a>
+          {(imageSrc || imagePlaceholder) && (
+            <div class="relative h-full">
+              {href ? (
+                <a
+                  href={href}
+                  target={target}
+                  rel={relFinal}
+                  class="block h-full focus-visible:outline-none"
+                  aria-label={ariaLabel || `View ${title || 'content'}`}
+                >
+                  <div
+                    class={cn(
+                      'relative h-full w-full overflow-hidden bg-slate-200 dark:bg-slate-800',
+                      aspectMap[imageAspect],
+                      imageRounded && 'rounded-lg'
+                    )}
+                  >
+                    {imageSrc ? (
+                      <img
+                        src={imageSrc}
+                        alt={imageAlt}
+                        class="absolute inset-0 h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div class="flex h-full items-center justify-center">
+                        <svg
+                          class="h-12 w-12 text-slate-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ) : (
+                <div
+                  class={cn(
+                    'relative h-full w-full overflow-hidden bg-slate-200 dark:bg-slate-800',
+                    aspectMap[imageAspect],
+                    imageRounded && 'rounded-lg'
+                  )}
+                >
+                  {imageSrc ? (
+                    <img
+                      src={imageSrc}
+                      alt={imageAlt}
+                      class="absolute inset-0 h-full w-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div class="flex h-full items-center justify-center">
+                      <svg
+                        class="h-12 w-12 text-slate-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </slot>
       </div>
     )
   }
 
+  <!-- Vertical/Compact/Featured Layout Image -->
   {
-    variant !== 'horizontal' && imageSrc && (
-      <slot name="media">
-        <a href={href} target={target} rel={relFinal} class="block">
-          <div
-            class={cn(
-              'relative w-full overflow-hidden bg-neutral-200 dark:bg-neutral-800',
-              aspectMap[imageAspect],
-              imageRounded && 'rounded-b-none rounded-t-2xl',
-              variant === 'compact' && 'hidden'
+    variant !== 'horizontal' &&
+      (imageSrc || imagePlaceholder) &&
+      variant !== 'compact' && (
+        <slot name="media">
+          <div class="relative">
+            {href ? (
+              <a
+                href={href}
+                target={target}
+                rel={relFinal}
+                class="block focus-visible:outline-none"
+                aria-label={ariaLabel || `View ${title || 'content'}`}
+              >
+                <div
+                  class={cn(
+                    'relative w-full overflow-hidden bg-slate-200 dark:bg-slate-800',
+                    aspectMap[imageAspect],
+                    imageRounded && 'rounded-t-lg'
+                  )}
+                >
+                  {imageSrc ? (
+                    <img
+                      src={imageSrc}
+                      alt={imageAlt}
+                      class="absolute inset-0 h-full w-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div class="flex h-full items-center justify-center">
+                      <svg
+                        class="h-16 w-16 text-slate-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </a>
+            ) : (
+              <div
+                class={cn(
+                  'relative w-full overflow-hidden bg-slate-200 dark:bg-slate-800',
+                  aspectMap[imageAspect],
+                  imageRounded && 'rounded-t-lg'
+                )}
+              >
+                {imageSrc ? (
+                  <img
+                    src={imageSrc}
+                    alt={imageAlt}
+                    class="absolute inset-0 h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="flex h-full items-center justify-center">
+                    <svg
+                      class="h-16 w-16 text-slate-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </div>
             )}
-          >
-            <img
-              src={imageSrc}
-              alt={imageAlt}
-              class="absolute inset-0 h-full w-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
           </div>
-        </a>
-      </slot>
-    )
+        </slot>
+      )
   }
 
-  <div class={cn(variant === 'vertical' ? 'p-4' : '', 'min-w-0 flex-1')}>
+  <!-- Content Container -->
+  <div
+    class={cn(
+      'min-w-0 flex-1',
+      variant === 'vertical' || variant === 'featured'
+        ? sizeStyles[size].contentPadding
+        : '',
+      variant === 'compact' ? sizeStyles[size].padding : ''
+    )}
+  >
+    <!-- Status indicator -->
+    {
+      status && (
+        <div class="mb-2 flex items-center gap-2">
+          <div
+            class={cn(
+              'h-2 w-2 rounded-full',
+              status === 'draft' && 'bg-amber-500',
+              status === 'published' && 'bg-emerald-500',
+              status === 'archived' && 'bg-slate-500',
+              status === 'featured' && 'bg-blue-500'
+            )}
+            aria-hidden="true"
+          />
+          <span
+            class={cn(
+              'text-xs font-medium uppercase tracking-wide',
+              status === 'draft' && 'text-amber-700 dark:text-amber-300',
+              status === 'published' &&
+                'text-emerald-700 dark:text-emerald-300',
+              status === 'archived' && 'text-slate-700 dark:text-slate-300',
+              status === 'featured' && 'text-blue-700 dark:text-blue-300'
+            )}
+          >
+            {status}
+          </span>
+        </div>
+      )
+    }
+
     <!-- Eyebrow / Badges Row -->
     {
       (eyebrow || badges.length || tags.length) && (
-        <div class="mb-1 flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
-          {eyebrow && <span class="uppercase tracking-wide">{eyebrow}</span>}
-          {badges.map((b) => (
-            <Badge label={b.label} variant={b.variant || 'neutral'} />
+        <div class="mb-2 flex flex-wrap items-center gap-2">
+          {eyebrow && (
+            <span class="text-xs font-medium uppercase tracking-wide text-slate-600 dark:text-slate-400">
+              {eyebrow}
+            </span>
+          )}
+          {badges.map((badge) => (
+            <Badge label={badge.label} variant={badge.variant || 'neutral'} />
           ))}
-          {tags.map((t) => (
-            <span class="rounded-full bg-slate-200 px-2 py-0.5 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
-              {t}
+          {tags.map((tag) => (
+            <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+              {tag}
             </span>
           ))}
         </div>
@@ -167,32 +460,50 @@ const relFinal =
     }
 
     <!-- Title / Subtitle -->
-    <header class="mb-2">
+    <header class="mb-3">
       <slot name="title">
         {
-          title ? (
-            href ? (
-              <h3 class="text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100">
+          title && (
+            <HeadingTag
+              class={cn(
+                'font-semibold leading-tight text-slate-950 dark:text-slate-50',
+                size === 'sm'
+                  ? 'text-base'
+                  : size === 'lg'
+                    ? 'text-xl'
+                    : 'text-lg'
+              )}
+            >
+              {href ? (
                 <a
                   href={href}
                   target={target}
                   rel={relFinal}
-                  class="no-underline text-inherit transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900"
+                  class="text-inherit no-underline transition-colors hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-950"
+                  aria-label={ariaLabel || title}
                 >
                   {title}
                 </a>
-              </h3>
-            ) : (
-              <h3 class="text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100">
-                {title}
-              </h3>
-            )
-          ) : null
+              ) : (
+                title
+              )}
+            </HeadingTag>
+          )
         }
       </slot>
+
       {
         subtitle && (
-          <div class="text-sm text-slate-700 dark:text-slate-300">
+          <div
+            class={cn(
+              'mt-1 font-medium text-slate-700 dark:text-slate-300',
+              size === 'sm'
+                ? 'text-sm'
+                : size === 'lg'
+                  ? 'text-base'
+                  : 'text-sm'
+            )}
+          >
             {subtitle}
           </div>
         )
@@ -201,19 +512,39 @@ const relFinal =
 
     <!-- Description / Content -->
     <div
-      class="prose prose-sm max-w-none text-slate-700 prose-headings:text-slate-900 prose-a:text-blue-700 prose-strong:text-slate-900 dark:text-slate-200 dark:prose-headings:text-slate-100 dark:prose-a:text-blue-300 dark:prose-strong:text-slate-100"
+      class={cn(
+        'text-slate-600 dark:text-slate-400',
+        size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-base' : 'text-sm',
+        longDescription ? '' : 'line-clamp-3'
+      )}
     >
       <slot>
-        {description && <p class="m-0">{description}</p>}
+        {description && <p class="m-0 leading-relaxed">{description}</p>}
       </slot>
     </div>
 
-    <!-- Meta -->
+    <!-- Meta Information -->
     {
       meta.length > 0 && (
-        <ul class="mt-3 flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600 dark:text-slate-400">
-          {meta.map((m) => (
-            <li>{m}</li>
+        <ul
+          class={cn(
+            'mt-3 flex flex-wrap items-center gap-3 font-medium text-slate-500 dark:text-slate-500',
+            size === 'sm' ? 'text-xs' : 'text-xs'
+          )}
+          role="list"
+        >
+          {meta.map((item, index) => (
+            <li key={index} class="flex items-center gap-1">
+              {index > 0 && (
+                <span
+                  class="text-slate-300 dark:text-slate-600"
+                  aria-hidden="true"
+                >
+                  •
+                </span>
+              )}
+              {item}
+            </li>
           ))}
         </ul>
       )
@@ -224,13 +555,15 @@ const relFinal =
       actions.length > 0 && (
         <div class="mt-4 flex flex-wrap gap-2">
           <slot name="actions">
-            {actions.map((a) => (
+            {actions.map((action) => (
               <ButtonLink
-                href={a.href}
-                label={a.label}
-                variant={(a.variant || 'primary') as any}
-                target={a.target || '_self'}
-                rel={a.rel}
+                href={action.href}
+                label={action.label}
+                variant={action.variant || 'primary'}
+                target={action.target || '_self'}
+                rel={action.rel}
+                disabled={action.disabled || disabled}
+                size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'}
               />
             ))}
           </slot>

@@ -1,22 +1,142 @@
 ---
+import EmbedBase from './EmbedBase.astro';
+
+/**
+ * TwitterEmbed - WCAG AAA compliant Twitter/X embed
+ * Provides accessible Twitter integration with proper loading states and error handling
+ */
 interface Props {
+  /** Twitter/X tweet ID */
   tweetId: string;
-  theme?: 'light' | 'dark';
-  className?: string;
+  /** Visual theme variant */
+  variant?: 'default' | 'minimal' | 'card';
+  /** Theme for the embedded tweet */
+  theme?: 'light' | 'dark' | 'auto';
+  /** Show conversation thread */
+  showConversation?: boolean;
+  /** Show media cards */
+  showCards?: boolean;
+  /** Privacy mode (Do Not Track) */
+  privacyMode?: boolean;
+  /** Show loading state */
+  showLoading?: boolean;
+  /** Accessible title for screen readers */
+  title?: string;
+  /** CSS class for styling */
+  class?: string;
+  /** ARIA label for accessibility */
+  ariaLabel?: string;
+  /** Additional iframe attributes */
+  [key: string]: any;
 }
 
-const { tweetId, theme = 'dark', className = '' } = Astro.props;
+const {
+  tweetId,
+  variant = 'default',
+  theme = 'auto',
+  showConversation = true,
+  showCards = true,
+  privacyMode = false,
+  showLoading = true,
+  title,
+  class: className = '',
+  ariaLabel,
+  ...props
+} = Astro.props;
 
-const tweetUrl = `https://twitter.com/i/status/${tweetId}`;
+// Validate tweetId
+if (!tweetId || typeof tweetId !== 'string') {
+  throw new Error('TwitterEmbed: tweetId is required and must be a string');
+}
+
+// Build Twitter embed URL
+const buildTwitterEmbedUrl = (): string => {
+  const baseUrl = `https://publish.twitter.com/oembed`;
+
+  const tweetUrl = `https://twitter.com/i/status/${encodeURIComponent(tweetId)}`;
+  const params = new URLSearchParams({
+    url: tweetUrl,
+    widget_type: 'video',
+    omit_script: 'true',
+  });
+
+  if (theme !== 'auto') {
+    params.set('theme', theme);
+  }
+
+  if (!showConversation) {
+    params.set('conversation', 'none');
+  }
+
+  if (!showCards) {
+    params.set('cards', 'hidden');
+  }
+
+  if (privacyMode) {
+    params.set('dnt', 'true');
+  }
+
+  return `${baseUrl}?${params.toString()}`;
+};
+
+const embedUrl = buildTwitterEmbedUrl();
+
+// Generate appropriate title and ARIA label
+const finalTitle = title || `Twitter tweet ${tweetId}`;
+const finalAriaLabel = ariaLabel || `Twitter embed showing tweet ${tweetId}`;
+
+// Note: Twitter embeds typically use their own widget system rather than iframe embeds.
+// For a simplified iframe-based approach, we use the oEmbed endpoint.
+// For full functionality, the original TwitterEmbed component with script loading would be preferred.
 ---
 
-<div
-  class={`mx-auto max-w-xl rounded-xl border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-800 dark:bg-slate-950 ${className}`.trim()}
+<EmbedBase
+  src={embedUrl}
+  title={finalTitle}
+  aspectRatio="16/9"
+  variant={variant}
+  showLoading={showLoading}
+  class={className}
+  ariaLabel={finalAriaLabel}
+  allowFullscreen={false}
+  loading="lazy"
+  referrerPolicy={privacyMode
+    ? 'no-referrer'
+    : 'strict-origin-when-cross-origin'}
+  sandbox="allow-scripts allow-same-origin allow-popups"
+  {...props}
 >
-  <blockquote class="twitter-tweet" data-theme={theme}>
-    <a href={tweetUrl}>Loading tweet…</a>
-  </blockquote>
-</div>
-
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"
-></script>
+  {
+    privacyMode && (
+      <div
+        slot="header"
+        class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950"
+      >
+        <div class="flex">
+          <svg
+            class="h-5 w-5 text-amber-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.262 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+          </svg>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-amber-800 dark:text-amber-200">
+              Privacy Mode Enabled
+            </h3>
+            <p class="mt-1 text-xs text-amber-700 dark:text-amber-300">
+              Do Not Track is enabled. Twitter may not collect tracking data.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+</EmbedBase>

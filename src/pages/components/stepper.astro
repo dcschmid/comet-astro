@@ -2,23 +2,525 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Stepper from '../../components/Stepper.astro';
 
-const steps = [
+const basicSteps = [
   { label: 'Account', description: 'Create your account' },
   { label: 'Profile', description: 'Add your details' },
   { label: 'Verify', description: 'Confirm email' },
   { label: 'Complete', description: 'All done!' },
 ];
+
+const iconSteps = [
+  { label: 'Setup', description: 'Initial configuration', icon: '⚙️' },
+  { label: 'Install', description: 'Download and install', icon: '📥' },
+  { label: 'Configure', description: 'Apply settings', icon: '🔧' },
+  { label: 'Launch', description: 'Start using', icon: '🚀' },
+];
+
+const processSteps = [
+  { label: 'Order Placed', description: 'We received your order' },
+  { label: 'Processing', description: 'Preparing your items' },
+  { label: 'Shipped', description: 'On the way to you' },
+  { label: 'Delivered', description: 'Package delivered' },
+];
+
+const complexSteps = [
+  {
+    label: 'Requirements',
+    description: 'Gather project requirements and scope',
+  },
+  { label: 'Design', description: 'Create wireframes and prototypes' },
+  { label: 'Development', description: 'Build and implement features' },
+  { label: 'Testing', description: 'Quality assurance and bug fixes' },
+  { label: 'Deployment', description: 'Launch to production environment' },
+  {
+    label: 'Maintenance',
+    description: 'Ongoing support and updates',
+    disabled: true,
+  },
+];
 ---
 
 <DocsLayout
   title="Stepper"
-  description="Horizontal or vertical stepper to indicate multi-step progress."
+  description="WCAG AAA compliant step indicators for multi-step processes, forms, and workflows with responsive design and comprehensive accessibility features."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-6">
-      <Stepper steps={steps} currentStep={2} />
-      <Stepper steps={steps} currentStep={3} orientation="vertical" />
+  <section class="space-y-6">
+    <div class="space-y-3">
+      <h2 class="text-xl font-semibold text-slate-100">Overview</h2>
+      <p class="text-base text-slate-200">
+        Stepper components provide accessible visual indicators for multi-step
+        processes, forms, and workflows. Built with WCAG AAA compliance, they
+        feature proper contrast ratios, semantic HTML, keyboard navigation, and
+        comprehensive screen reader support.
+      </p>
+      <p class="text-base text-slate-200">
+        The component supports both horizontal and vertical orientations,
+        multiple sizes, variants, and interactive navigation. All elements
+        automatically adjust for high contrast mode and respect user preferences
+        for reduced motion.
+      </p>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          steps
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of step objects with label, description, icon, and disabled
+          properties. Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          currentStep
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Current active step (1-based index). Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          orientation?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Layout orientation: <code>horizontal</code>, <code>vertical</code>.
+          Defaults to <code>horizontal</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>sm</code>, <code>md</code>, <code>lg</code>.
+          Defaults to <code>md</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual variant: <code>default</code>, <code>minimal</code>, <code
+            >outlined</code
+          >, <code>filled</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          as?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          HTML element to render: <code>nav</code>, <code>ol</code>, <code
+            >div</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ARIA label for the stepper. Defaults to "Progress steps".
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          interactive?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether steps are clickable/interactive. Defaults to <code>false</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          debug?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show visual debugging information. Defaults to <code>false</code>.
+        </dd>
+      </div>
+    </dl>
+    <p class="text-sm text-slate-400 mt-4">
+      Use semantic HTML elements and ARIA labels for better accessibility.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Basic Usage -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stepper steps={basicSteps} currentStep={2} />
+      </div>
+    </div>
+
+    <!-- Orientations -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Orientations</h3>
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Horizontal</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper
+              steps={basicSteps}
+              currentStep={3}
+              orientation="horizontal"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Vertical</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper
+              steps={basicSteps}
+              currentStep={3}
+              orientation="vertical"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sizes</h3>
+      <div class="space-y-6">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Small</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper steps={basicSteps} currentStep={2} size="sm" />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Medium (Default)</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper steps={basicSteps} currentStep={2} size="md" />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Large</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper steps={basicSteps} currentStep={2} size="lg" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Variants</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Default</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper steps={basicSteps} currentStep={2} variant="default" />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Minimal</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper steps={basicSteps} currentStep={2} variant="minimal" />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Outlined</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper steps={basicSteps} currentStep={2} variant="outlined" />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Filled</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper steps={basicSteps} currentStep={2} variant="filled" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- With Icons -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">With Icons</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stepper steps={iconSteps} currentStep={3} />
+      </div>
+    </div>
+
+    <!-- Interactive Stepper -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Interactive Navigation</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stepper steps={basicSteps} currentStep={2} interactive={true} />
+        <p class="mt-4 text-xs text-slate-400">
+          Note: Interactive functionality requires JavaScript implementation
+        </p>
+      </div>
+    </div>
+
+    <!-- Semantic HTML -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Semantic HTML</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">As Ordered List</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper
+              steps={basicSteps}
+              currentStep={2}
+              as="ol"
+              ariaLabel="Registration process steps"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">As Navigation</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Stepper
+              steps={basicSteps}
+              currentStep={2}
+              as="nav"
+              ariaLabel="Form navigation steps"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Complex Workflow -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Complex Workflow</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-4">
+          <h4 class="text-lg font-semibold text-slate-100">
+            Project Development Process
+          </h4>
+          <p class="text-sm text-slate-300 mt-1">
+            Track progress through the development lifecycle
+          </p>
+        </div>
+        <Stepper
+          steps={complexSteps}
+          currentStep={4}
+          orientation="vertical"
+          size="lg"
+          ariaLabel="Project development workflow"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Order Tracking -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Order Tracking</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-slate-100">Order #12345</h4>
+          <p class="text-sm text-slate-300">Track your order progress</p>
+        </div>
+        <Stepper
+          steps={processSteps}
+          currentStep={3}
+          size="md"
+          variant="filled"
+          ariaLabel="Order tracking progress"
+        />
+      </div>
+    </div>
+
+    <!-- Form Wizard -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Multi-Step Form</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Stepper
+          steps={basicSteps}
+          currentStep={2}
+          interactive={true}
+          ariaLabel="Registration form steps"
+        />
+        <div class="mt-8 p-4 bg-slate-800/50 rounded-lg">
+          <h4 class="font-semibold text-slate-100 mb-2">Step 2: Profile</h4>
+          <p class="text-sm text-slate-300">
+            Complete your profile information to continue.
+          </p>
+          <div class="flex gap-3 mt-4">
+            <button
+              class="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-slate-100 rounded-lg text-sm transition-colors"
+            >
+              Previous
+            </button>
+            <button
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm transition-colors"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compact Mobile -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Mobile-Optimized</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm max-w-sm"
+      >
+        <Stepper
+          steps={basicSteps}
+          currentStep={2}
+          size="sm"
+          variant="minimal"
+          orientation="horizontal"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Stepper components are designed with comprehensive accessibility features
+      and WCAG AAA compliance. All text maintains 9:1 contrast ratios and
+      adjusts automatically for high contrast mode and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Step indicators use both visual and textual cues to convey progress
+      information. Screen readers receive detailed context about the current
+      step, total steps, and completion status through ARIA attributes and
+      semantic markup.
+    </p>
+    <p class="text-base text-slate-200">
+      Interactive steppers support keyboard navigation with proper focus
+      management. The component respects user preferences for reduced motion and
+      provides semantic structure through HTML elements like ordered lists and
+      navigation.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Design Tokens</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Size Scale</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">sm</span>
+            <span class="text-slate-400">Compact forms, mobile</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">md</span>
+            <span class="text-slate-400">Standard steppers</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">lg</span>
+            <span class="text-slate-400">Complex workflows</span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Variants</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">default</span>
+            <span class="text-slate-400">Standard appearance</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">minimal</span>
+            <span class="text-slate-400">Clean, reduced styling</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">outlined</span>
+            <span class="text-slate-400">Outlined indicators</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">filled</span>
+            <span class="text-slate-400">Enhanced backgrounds</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </DocsLayout>

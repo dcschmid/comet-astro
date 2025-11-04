@@ -1,0 +1,256 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import WeatherDashboard from '../../components/WeatherDashboard.astro';
+
+const defaultLocation = {
+  name: 'Berlin, Germany',
+  latitude: 52.52,
+  longitude: 13.405,
+};
+
+const limitedComponents = {
+  weather: true,
+  airQuality: true,
+  marine: false,
+};
+
+const usageSnippet = `---
+import { WeatherDashboard } from 'comet-astro';
+
+---
+
+<div class="space-y-6">
+  <!-- Default dashboard -->
+  <WeatherDashboard />
+  
+  <!-- With default location -->
+  <WeatherDashboard defaultLocation={{
+    name: "Berlin, Germany",
+    latitude: 52.52,
+    longitude: 13.405
+  }} />
+  
+  <!-- Stacked layout -->
+  <WeatherDashboard 
+    layout="stacked"
+    defaultLocation={{
+      name: "Tokyo, Japan", 
+      latitude: 35.6762,
+      longitude: 139.6503
+    }}
+  />
+</div>`;
+---
+
+<DocsLayout
+  title="WeatherDashboard"
+  description="Comprehensive environmental monitoring dashboard with WCAG AAA compliance and responsive design."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      WeatherDashboard is a comprehensive environmental monitoring component
+      that provides current weather, air quality, and marine conditions in one
+      integrated view. It maintains WCAG AAA contrast ratios in both light and
+      dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      The dashboard offers three layout modes (grid, stacked, tabbed) and allows
+      selective component inclusion for customized environmental data displays.
+      Built-in location search provides global weather access.
+    </p>
+    <p class="text-base text-slate-200">
+      Each component within the dashboard provides accessible focus management
+      and keyboard navigation, ensuring environmental data is accessible to all
+      users.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          defaultLocation?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Default location to display. Object with <code>name</code>, <code
+            >latitude</code
+          >, and <code>longitude</code> properties.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          layout?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Dashboard layout mode. Choose <code>"grid"</code>, <code
+            >"stacked"</code
+          >, or <code>"tabbed"</code>. Defaults to <code>"grid"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          components?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Configuration object to enable/disable dashboard components.
+          Properties: <code>weather</code>, <code>airQuality</code>, <code
+            >marine</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the dashboard container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <div class="space-y-6">
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Default Dashboard</h3>
+        <p class="text-sm text-slate-200">
+          Basic dashboard with all components enabled and no default location.
+        </p>
+        <div class="rounded-lg border border-slate-700/75 bg-slate-900/20 p-6">
+          <WeatherDashboard />
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">
+          With Default Location
+        </h3>
+        <p class="text-sm text-slate-200">
+          Dashboard pre-loaded with a specific location for immediate data
+          display.
+        </p>
+        <div class="rounded-lg border border-slate-700/75 bg-slate-900/20 p-6">
+          <WeatherDashboard defaultLocation={defaultLocation} />
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Stacked Layout</h3>
+        <p class="text-sm text-slate-200">
+          Vertical layout optimized for mobile and narrow viewports.
+        </p>
+        <div class="rounded-lg border border-slate-700/75 bg-slate-900/20 p-6">
+          <WeatherDashboard
+            defaultLocation={defaultLocation}
+            layout="stacked"
+          />
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Limited Components</h3>
+        <p class="text-sm text-slate-200">
+          Dashboard with selective component inclusion for focused data views.
+        </p>
+        <div class="rounded-lg border border-slate-700/75 bg-slate-900/20 p-6">
+          <WeatherDashboard
+            defaultLocation={defaultLocation}
+            components={limitedComponents}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <pre
+      class="overflow-x-auto rounded-lg bg-slate-950 p-4 text-sm"><code class="text-slate-100">{usageSnippet}</code></pre>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <h3 class="text-lg font-medium text-slate-100">WCAG AAA Compliance</h3>
+        <ul class="space-y-1 text-sm text-slate-200">
+          <li>• Contrast ratios exceed 7:1 in both light and dark modes</li>
+          <li>
+            • All interactive elements meet enhanced contrast requirements
+          </li>
+          <li>• Color is never the sole means of conveying information</li>
+        </ul>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-lg font-medium text-slate-100">Keyboard Navigation</h3>
+        <ul class="space-y-1 text-sm text-slate-200">
+          <li>• Full keyboard accessibility with logical tab order</li>
+          <li>• Focus management within tabbed and modal interfaces</li>
+          <li>• Escape key closes overlays and returns focus appropriately</li>
+        </ul>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-lg font-medium text-slate-100">
+          Screen Reader Support
+        </h3>
+        <ul class="space-y-1 text-sm text-slate-200">
+          <li>• Semantic HTML structure with proper landmarks</li>
+          <li>• ARIA labels and descriptions for complex data</li>
+          <li>• Live regions announce dynamic weather updates</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Layout Modes</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <div
+        class="space-y-2 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4"
+      >
+        <h3 class="font-medium text-slate-100">Grid</h3>
+        <p class="text-sm text-slate-200">
+          Responsive grid layout that adapts from single column on mobile to
+          multi-column on desktop.
+        </p>
+      </div>
+      <div
+        class="space-y-2 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4"
+      >
+        <h3 class="font-medium text-slate-100">Stacked</h3>
+        <p class="text-sm text-slate-200">
+          Vertical layout that stacks all components in a single column for
+          focused reading.
+        </p>
+      </div>
+      <div
+        class="space-y-2 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4"
+      >
+        <h3 class="font-medium text-slate-100">Tabbed</h3>
+        <p class="text-sm text-slate-200">
+          Space-efficient tabbed interface for dense information displays with
+          quick switching.
+        </p>
+      </div>
+    </div>
+  </section>
+</DocsLayout>

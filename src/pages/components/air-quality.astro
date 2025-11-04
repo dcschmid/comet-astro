@@ -1,0 +1,561 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import AirQuality from '../../components/AirQuality.astro';
+
+const usageSnippet = `---
+import { AirQuality } from 'comet-astro';
+
+---
+
+<!-- Basic usage with location detection -->
+<AirQuality />
+
+<!-- With specific coordinates and location -->
+<AirQuality 
+  latitude={47.6062}
+  longitude={-122.3321}
+  location="Seattle, WA"
+  variant="default"
+  size="md"
+/>
+
+<!-- Minimal variant for dashboards -->
+<AirQuality 
+  latitude={51.5074}
+  longitude={-0.1278}
+  location="London, UK"
+  variant="minimal"
+  aqiSystem="european"
+  showPollutants={false}
+  showPollen={false}
+/>`;
+
+const coordinatesSnippet = `---
+// Using browser geolocation (requires user permission)
+<AirQuality />
+
+// With specific coordinates
+<AirQuality 
+  latitude={48.8566}
+  longitude={2.3522}
+  location="Paris, France"
+/>
+
+// Multiple locations
+<div class="grid gap-6 md:grid-cols-2">
+  <AirQuality 
+    latitude={40.7128}
+    longitude={-74.0060}
+    location="New York"
+    size="sm"
+  />
+  <AirQuality 
+    latitude={35.6762}
+    longitude={139.6503}
+    location="Tokyo"
+    size="sm"
+  />
+</div>`;
+
+const customizationSnippet = `---
+<!-- Dashboard variant with US AQI only -->
+<AirQuality 
+  variant="dashboard"
+  aqiSystem="us"
+  showHealthAdvice={false}
+  size="lg"
+  theme="blue"
+/>
+
+<!-- Alert variant for poor air quality areas -->
+<AirQuality 
+  variant="alert"
+  theme="red"
+  refreshInterval={15}
+  showPollen={true}
+/>
+
+<!-- Compact variant for mobile -->
+<AirQuality 
+  variant="compact"
+  size="xs"
+  showPollutants={true}
+  showPollen={false}
+  showHealthAdvice={false}
+/>`;
+---
+
+<DocsLayout
+  title="AirQuality"
+  description="Accessible air quality monitoring with WCAG AAA compliance, real-time data, and comprehensive health recommendations."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      AirQuality provides real-time air quality monitoring with comprehensive
+      data display including AQI indices, pollutant levels, pollen forecasts,
+      and health recommendations. Built with WCAG AAA compliance and 9:1
+      contrast ratios for maximum accessibility.
+    </p>
+    <p class="text-base text-slate-200">
+      Features automatic location detection or manual coordinate input, supports
+      both European and US AQI systems, and provides color-coded indicators with
+      proper contrast ratios in both light and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Data is sourced from the <strong>Open-Meteo Air Quality API</strong>,
+      providing accurate and up-to-date measurements for pollutants (PM2.5,
+      PM10, NO₂, O₃, CO, SO₂), AQI indices, and pollen forecasts for European
+      locations.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          latitude? / longitude?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Geographic coordinates for air quality data. If not provided, the
+          component will attempt to use browser geolocation (requires user
+          permission).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          location?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display name for the location. Used in the header and accessibility
+          labels. Improves user understanding of data context.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          aqiSystem?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Choose between <code>"european"</code>, <code>"us"</code>, or <code
+            >"both"</code
+          >
+          AQI systems. Defaults to <code>"both"</code> to show comparison.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Layout style: <code>"default"</code>, <code>"minimal"</code>, <code
+            >"dashboard"</code
+          >,
+          <code>"alert"</code>, or <code>"compact"</code>. Defaults to <code
+            >"default"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Component size: <code>"xs"</code>, <code>"sm"</code>, <code>"md"</code
+          >,
+          <code>"lg"</code>, or <code>"xl"</code>. Defaults to <code>"md"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          theme?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Color theme: <code>"default"</code>, <code>"blue"</code>, <code
+            >"green"</code
+          >,
+          <code>"orange"</code>, <code>"red"</code>, or <code>"purple"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showPollutants?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display individual pollutant measurements (PM2.5, PM10, NO₂, O₃, CO,
+          SO₂). Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showPollen?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display pollen forecast data (birch, grass, olive, ragweed). Only
+          available for European locations. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showHealthAdvice?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display health recommendations based on current AQI levels for general
+          population, sensitive individuals, and outdoor activities. Defaults to <code
+            >true</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          refreshInterval?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Auto-refresh interval in minutes. Set to <code>0</code> to disable automatic
+          updates. Defaults to <code>30</code> minutes for reasonable API usage.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and provide geographic coordinates for accurate data.
+      The component handles loading states, error handling, and automatic
+      refresh. All color indicators maintain WCAG AAA contrast ratios.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Live Example</h2>
+    <p class="text-base text-slate-200">
+      Real-time air quality data for Seattle, WA. Data updates automatically and
+      shows comprehensive information including AQI, pollutants, and health
+      advice.
+    </p>
+    <div class="max-w-4xl">
+      <AirQuality
+        latitude={47.6062}
+        longitude={-122.3321}
+        location="Seattle, WA"
+        size="md"
+        variant="default"
+        theme="default"
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">
+      Coordinates & Locations
+    </h2>
+    <p class="text-base text-slate-200">
+      The component supports automatic location detection via browser
+      geolocation or manual coordinate specification. Coordinates should use
+      decimal degrees format.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{coordinatesSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100 mb-3">Default</h3>
+        <p class="text-sm text-slate-200 mb-4">
+          Full featured display with all sections, borders, and backdrop blur.
+        </p>
+        <AirQuality
+          latitude={40.7128}
+          longitude={-74.006}
+          location="New York"
+          variant="default"
+          size="sm"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100 mb-3">Minimal</h3>
+        <p class="text-sm text-slate-200 mb-4">
+          Clean design without borders, ideal for embedded contexts.
+        </p>
+        <AirQuality
+          latitude={51.5074}
+          longitude={-0.1278}
+          location="London"
+          variant="minimal"
+          size="sm"
+          showPollen={false}
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-slate-100 mb-3">Compact</h3>
+        <p class="text-sm text-slate-200 mb-4">
+          Space-efficient layout for mobile or sidebar usage.
+        </p>
+        <AirQuality
+          latitude={48.8566}
+          longitude={2.3522}
+          location="Paris"
+          variant="compact"
+          size="xs"
+          showHealthAdvice={false}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="space-y-6">
+      <div class="flex flex-wrap items-start gap-6">
+        <div>
+          <h4 class="text-sm font-semibold text-slate-200 mb-2">Extra Small</h4>
+          <AirQuality
+            latitude={35.6762}
+            longitude={139.6503}
+            location="Tokyo"
+            size="xs"
+            variant="compact"
+            showPollutants={false}
+            showPollen={false}
+            showHealthAdvice={false}
+          />
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold text-slate-200 mb-2">Small</h4>
+          <AirQuality
+            latitude={-33.8688}
+            longitude={151.2093}
+            location="Sydney"
+            size="sm"
+            variant="minimal"
+            aqiSystem="us"
+            showPollutants={false}
+            showHealthAdvice={false}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">AQI Systems</h2>
+    <p class="text-base text-slate-200">
+      Support for both European and US Air Quality Index systems with proper
+      scaling and health recommendations.
+    </p>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div>
+        <h4 class="text-sm font-semibold text-slate-200 mb-2">
+          European AQI Only
+        </h4>
+        <AirQuality
+          latitude={52.52}
+          longitude={13.405}
+          location="Berlin"
+          aqiSystem="european"
+          size="sm"
+          variant="minimal"
+          showPollutants={false}
+          showHealthAdvice={false}
+        />
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold text-slate-200 mb-2">US AQI Only</h4>
+        <AirQuality
+          latitude={34.0522}
+          longitude={-118.2437}
+          location="Los Angeles"
+          aqiSystem="us"
+          size="sm"
+          variant="minimal"
+          showPollutants={false}
+          showHealthAdvice={false}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Customization</h2>
+    <p class="text-base text-slate-200">
+      Extensive customization options for different use cases, from dashboard
+      widgets to detailed monitoring displays.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{customizationSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Data Sources & API</h2>
+    <p class="text-base text-slate-200">
+      Air quality data is provided by the <strong
+        >Open-Meteo Air Quality API</strong
+      >, which offers:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Global Coverage:</strong> Worldwide air quality measurements with
+        high accuracy
+      </li>
+      <li>
+        <strong>Real-time Data:</strong> Current conditions updated hourly from monitoring
+        stations
+      </li>
+      <li>
+        <strong>Multiple Standards:</strong> Both European and US AQI calculations
+      </li>
+      <li>
+        <strong>Comprehensive Pollutants:</strong> PM2.5, PM10, NO₂, O₃, CO, SO₂
+        measurements
+      </li>
+      <li>
+        <strong>Pollen Forecasts:</strong> European pollen data for major allergens
+      </li>
+      <li>
+        <strong>High Reliability:</strong> Professional-grade meteorological data
+        sources
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Health Information</h2>
+    <p class="text-base text-slate-200">
+      Health recommendations are based on established air quality guidelines
+      from WHO, EPA, and European Environment Agency standards:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>General Population:</strong> Activity recommendations for healthy
+        individuals
+      </li>
+      <li>
+        <strong>Sensitive Groups:</strong> Guidance for children, elderly, and those
+        with respiratory/cardiovascular conditions
+      </li>
+      <li>
+        <strong>Outdoor Activities:</strong> Exercise and outdoor event recommendations
+      </li>
+      <li>
+        <strong>Evidence-Based:</strong> Recommendations aligned with current health
+        research
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      The AirQuality component maintains WCAG AAA accessibility standards with
+      9:1 contrast ratios and comprehensive screen reader support.
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Enhanced Contrast:</strong> 9:1 contrast ratios exceed WCAG AAA requirements
+      </li>
+      <li>
+        <strong>Screen Reader Support:</strong> Proper ARIA labels and live regions
+        for dynamic content
+      </li>
+      <li>
+        <strong>Keyboard Navigation:</strong> Full keyboard accessibility with enhanced
+        focus indicators
+      </li>
+      <li>
+        <strong>High Contrast Mode:</strong> Automatic adaptation to system high
+        contrast preferences
+      </li>
+      <li>
+        <strong>Reduced Motion:</strong> Respects user motion preferences with appropriate
+        fallbacks
+      </li>
+      <li>
+        <strong>Color Independence:</strong> Information conveyed through text and
+        patterns, not just color
+      </li>
+      <li>
+        <strong>Print Friendly:</strong> Optimized print styles with text-based indicators
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Responsive Design</h2>
+    <p class="text-base text-slate-200">
+      Fully responsive with mobile-first design principles and container query
+      support for optimal display across all device types and screen sizes.
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Mobile Optimized:</strong> Touch-friendly interface with appropriate
+        sizing
+      </li>
+      <li>
+        <strong>Flexible Layouts:</strong> Grid systems that adapt to available space
+      </li>
+      <li>
+        <strong>Container Queries:</strong> Advanced responsive behavior based on
+        container size
+      </li>
+      <li>
+        <strong>Typography Scaling:</strong> Responsive font sizes for optimal readability
+      </li>
+      <li>
+        <strong>Adaptive Spacing:</strong> Consistent spacing that scales appropriately
+      </li>
+    </ul>
+  </section>
+</DocsLayout>

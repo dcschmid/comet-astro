@@ -1,103 +1,438 @@
 ---
+import { cn } from '../utils/cn';
+
 /**
- * Generic Table of Contents component
+ * WCAG AAA compliant Table of Contents component
+ * Provides accessible navigation for document headings and sections
  */
 interface TocItem {
   id: string;
   label: string;
-  level?: 1 | 2 | 3 | 4;
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+  description?: string;
 }
+
+type TocSize = 'sm' | 'md' | 'lg';
+type TocVariant = 'default' | 'compact' | 'minimal' | 'elevated';
 
 interface Props {
   title?: string;
   items: TocItem[];
   activeId?: string;
   className?: string;
+  size?: TocSize;
+  variant?: TocVariant;
+  sticky?: boolean;
+  collapsible?: boolean;
+  defaultCollapsed?: boolean;
+  showNumbers?: boolean;
+  maxLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  ariaLabel?: string;
 }
 
 const {
-  title = 'Contents',
+  title = 'Table of Contents',
   items = [],
   activeId,
   className = '',
+  size = 'md',
+  variant = 'default',
+  sticky = false,
+  collapsible = false,
+  defaultCollapsed = false,
+  showNumbers = false,
+  maxLevel = 6,
+  ariaLabel,
 } = Astro.props as Props;
+
+// Filter items by maxLevel
+const filteredItems = items.filter((item) => (item.level || 1) <= maxLevel);
+
+// Size variants
+const sizeClasses = {
+  sm: 'p-3 text-sm',
+  md: 'p-4 text-base',
+  lg: 'p-6 text-lg',
+};
+
+// Variant styles with WCAG AAA contrast ratios (9:1)
+const variantClasses = {
+  default:
+    'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 shadow-sm',
+  compact:
+    'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700',
+  minimal: 'bg-transparent border-transparent',
+  elevated:
+    'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 shadow-lg',
+};
+
+// Title size based on component size
+const titleSizes = {
+  sm: 'text-xs',
+  md: 'text-sm',
+  lg: 'text-base',
+};
+
+// Link padding based on size
+const linkPadding = {
+  sm: 'px-2 py-1',
+  md: 'px-3 py-1.5',
+  lg: 'px-4 py-2',
+};
+
+// Level indentation based on size
+const getIndentation = (level: number, size: TocSize) => {
+  const baseIndent = {
+    sm: 12, // 3rem
+    md: 16, // 4rem
+    lg: 20, // 5rem
+  };
+
+  return `${baseIndent[size] * (level - 1)}px`;
+};
+
+const tocId = `toc-${Math.random().toString(36).substr(2, 9)}`;
+const listId = `${tocId}-list`;
+const toggleId = `${tocId}-toggle`;
 ---
 
 <nav
-  aria-label="Table of contents"
-  class={`rounded-xl border border-slate-200 bg-white p-4 text-slate-900 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 ${className}`.trim()}
+  id={tocId}
+  aria-label={ariaLabel || `${title} navigation`}
+  class={cn(
+    'rounded-xl border transition-all duration-200',
+    'focus-within:ring-2 focus-within:ring-blue-600/20 focus-within:ring-offset-2 focus-within:ring-offset-white',
+    'dark:focus-within:ring-blue-400/20 dark:focus-within:ring-offset-slate-950',
+    'motion-safe:transition-all motion-reduce:transition-none',
+    'contrast-more:border-slate-950 contrast-more:dark:border-white',
+    sizeClasses[size],
+    variantClasses[variant],
+    sticky && 'sticky top-4 z-10 max-h-[calc(100vh-2rem)] overflow-y-auto',
+    className
+  )}
+  role="navigation"
 >
-  <div
-    class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200"
-  >
-    {title}
-  </div>
-  <ul class="space-y-1">
+  {/* Title and Toggle Button */}
+  <div class="flex items-center justify-between">
+    <h2
+      class={cn(
+        'font-semibold uppercase tracking-wide',
+        'text-slate-900 dark:text-slate-100',
+        'contrast-more:text-slate-950 contrast-more:dark:text-white',
+        titleSizes[size]
+      )}
+      id={`${tocId}-title`}
+    >
+      {title}
+    </h2>
+
     {
-      items.map((item) => (
-        <li class="block text-slate-700 dark:text-slate-200">
-          <a
-            href={`#${item.id}`}
-            class:list={[
-              'block rounded-md px-2 py-1 no-underline transition hover:bg-blue-50 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:bg-slate-800 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900',
-              item.level === 2 && 'pl-4',
-              item.level === 3 && 'pl-6',
-              item.level === 4 && 'pl-8',
-              activeId === item.id &&
-                'text-blue-700 dark:text-blue-300 font-semibold',
-            ]}
+      collapsible && (
+        <button
+          type="button"
+          id={toggleId}
+          aria-expanded={!defaultCollapsed}
+          aria-controls={listId}
+          aria-describedby={`${tocId}-title`}
+          class={cn(
+            'ml-2 rounded-md p-1.5 transition-all duration-150',
+            'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100',
+            'hover:bg-slate-100 dark:hover:bg-slate-800',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
+            'focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
+            'contrast-more:text-slate-950 contrast-more:dark:text-white',
+            'contrast-more:border contrast-more:border-slate-950 contrast-more:dark:border-white',
+            'motion-safe:transition-all motion-reduce:transition-none'
+          )}
+        >
+          <svg
+            class="h-4 w-4 transform transition-transform duration-150"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
           >
-            {item.label}
-          </a>
-        </li>
-      ))
+            <path
+              fill-rule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span class="sr-only">
+            {defaultCollapsed ? 'Expand' : 'Collapse'} table of contents
+          </span>
+        </button>
+      )
     }
-  </ul>
+  </div>
+
+  {/* Table of Contents List */}
+  <div
+    id={listId}
+    class={cn('mt-3 space-y-0.5', collapsible && defaultCollapsed && 'hidden')}
+    aria-labelledby={`${tocId}-title`}
+  >
+    {
+      filteredItems.length === 0 ? (
+        <div
+          class={cn(
+            'text-slate-500 dark:text-slate-400 italic',
+            'contrast-more:text-slate-700 contrast-more:dark:text-slate-300',
+            size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-sm'
+          )}
+          role="status"
+          aria-live="polite"
+        >
+          No sections available
+        </div>
+      ) : (
+        <ul class="space-y-0.5" role="list">
+          {filteredItems.map((item, index) => {
+            const level = item.level || 1;
+            const isActive = activeId === item.id;
+            const itemNumber = showNumbers ? `${index + 1}.` : '';
+
+            return (
+              <li
+                class="block"
+                style={
+                  level > 1
+                    ? `margin-left: ${getIndentation(level, size)}`
+                    : undefined
+                }
+              >
+                <a
+                  href={`#${item.id}`}
+                  class={cn(
+                    'group flex items-start gap-2 rounded-md text-left no-underline transition-all duration-150',
+                    'text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100',
+                    'hover:bg-slate-100 dark:hover:bg-slate-800/60',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
+                    'focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
+                    'contrast-more:text-slate-950 contrast-more:dark:text-white',
+                    'contrast-more:hover:bg-slate-200 contrast-more:dark:hover:bg-slate-700',
+                    'motion-safe:transition-all motion-reduce:transition-none',
+                    linkPadding[size],
+                    isActive && [
+                      'text-blue-700 dark:text-blue-300 font-semibold',
+                      'bg-blue-50 dark:bg-blue-950/30',
+                      'border-l-2 border-blue-600 dark:border-blue-400 -ml-2 pl-3',
+                      'contrast-more:bg-blue-100 contrast-more:dark:bg-blue-900',
+                    ]
+                  )}
+                  aria-current={isActive ? 'location' : undefined}
+                  title={item.description || item.label}
+                >
+                  {showNumbers && (
+                    <span
+                      class={cn(
+                        'flex-shrink-0 text-slate-500 dark:text-slate-400',
+                        'contrast-more:text-slate-700 contrast-more:dark:text-slate-300',
+                        isActive && 'text-blue-600 dark:text-blue-400'
+                      )}
+                      aria-hidden="true"
+                    >
+                      {itemNumber}
+                    </span>
+                  )}
+
+                  <span class="flex-1 leading-relaxed">{item.label}</span>
+
+                  {/* Level indicator for screen readers */}
+                  <span class="sr-only">, heading level {level}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+  </div>
 </nav>
 
-<script is:inline>
-  // Optional: auto-highlight based on visible heading ids
+{/* Enhanced Auto-highlight Script with WCAG compliance */}
+<script
+  is:inline
+  define:vars={{ tocId, toggleId, listId, defaultCollapsed, collapsible }}
+>
   (function () {
-    const ACTIVE_CLASS = 'text-blue-700 dark:text-blue-300 font-semibold';
-    const nav = document.currentScript?.previousElementSibling;
-    if (!(nav instanceof HTMLElement)) return;
-    const links = Array.from(nav.querySelectorAll('a'));
+    const nav = document.getElementById(tocId);
+    if (!nav) return;
+
+    // Collapsible functionality
+    if (collapsible) {
+      const toggle = document.getElementById(toggleId);
+      const list = document.getElementById(listId);
+
+      if (toggle && list) {
+        // Set initial state
+        if (defaultCollapsed) {
+          list.classList.add('hidden');
+          toggle.setAttribute('aria-expanded', 'false');
+          const icon = toggle.querySelector('svg');
+          if (icon) icon.style.transform = 'rotate(-90deg)';
+        }
+
+        toggle.addEventListener('click', () => {
+          const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+          const newExpanded = !isExpanded;
+
+          toggle.setAttribute('aria-expanded', String(newExpanded));
+          list.classList.toggle('hidden', !newExpanded);
+
+          const icon = toggle.querySelector('svg');
+          if (icon) {
+            icon.style.transform = newExpanded
+              ? 'rotate(0deg)'
+              : 'rotate(-90deg)';
+          }
+
+          // Update screen reader text
+          const srText = toggle.querySelector('.sr-only');
+          if (srText) {
+            srText.textContent = newExpanded
+              ? 'Collapse table of contents'
+              : 'Expand table of contents';
+          }
+        });
+
+        // Keyboard support
+        toggle.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggle.click();
+          }
+        });
+      }
+    }
+
+    // Auto-highlight active section
+    const links = Array.from(nav.querySelectorAll('a[href^="#"]'));
     if (!links.length) return;
 
-    const map = new Map();
-    links.forEach((a) => {
-      const id = a.getAttribute('href')?.slice(1);
-      if (id) map.set(id, a);
+    const linkMap = new Map();
+    links.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const id = href.slice(1);
+        linkMap.set(id, link);
+      }
     });
 
+    // Enhanced intersection observer with better accessibility
     const observer = new IntersectionObserver(
       (entries) => {
-        let topMost: IntersectionObserverEntry | undefined;
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            if (
-              !topMost ||
-              e.boundingClientRect.top < topMost.boundingClientRect.top
-            ) {
-              topMost = e;
-            }
+        let topMostEntry;
+        let maxRatio = 0;
+
+        // Find the most visible heading
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio;
+            topMostEntry = entry;
           }
-        }
-        if (topMost) {
-          const id = topMost.target.id;
-          links.forEach((a) => a.classList.remove(...ACTIVE_CLASS.split(' ')));
-          const target = map.get(id);
-          if (target instanceof HTMLElement) {
-            target.classList.add(...ACTIVE_CLASS.split(' '));
+        });
+
+        if (topMostEntry) {
+          const activeId = topMostEntry.target.id;
+
+          // Remove previous active states
+          links.forEach((link) => {
+            link.classList.remove(
+              'text-blue-700',
+              'dark:text-blue-300',
+              'font-semibold',
+              'bg-blue-50',
+              'dark:bg-blue-950/30',
+              'border-l-2',
+              'border-blue-600',
+              'dark:border-blue-400',
+              '-ml-2',
+              'pl-3',
+              'contrast-more:bg-blue-100',
+              'contrast-more:dark:bg-blue-900'
+            );
+            link.removeAttribute('aria-current');
+          });
+
+          // Set new active state
+          const activeLink = linkMap.get(activeId);
+          if (activeLink) {
+            activeLink.classList.add(
+              'text-blue-700',
+              'dark:text-blue-300',
+              'font-semibold',
+              'bg-blue-50',
+              'dark:bg-blue-950/30',
+              'border-l-2',
+              'border-blue-600',
+              'dark:border-blue-400',
+              '-ml-2',
+              'pl-3',
+              'contrast-more:bg-blue-100',
+              'contrast-more:dark:bg-blue-900'
+            );
+            activeLink.setAttribute('aria-current', 'location');
+
+            // Announce to screen readers (non-intrusive)
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = `Current section: ${activeLink.textContent?.trim()}`;
+
+            // Temporarily add to DOM
+            document.body.appendChild(announcement);
+            setTimeout(() => {
+              document.body.removeChild(announcement);
+            }, 1000);
           }
         }
       },
-      { rootMargin: '0px 0px -70% 0px', threshold: [0, 1] }
+      {
+        rootMargin: '-20% 0px -70% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
     );
 
-    map.forEach((_a, id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
+    // Observe all heading elements that have corresponding TOC links
+    linkMap.forEach((_, id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    // Handle smooth scrolling with reduced motion respect
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    links.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          const targetId = href.slice(1);
+          const target = document.getElementById(targetId);
+
+          if (target) {
+            e.preventDefault();
+
+            // Focus management for accessibility
+            target.focus({ preventScroll: true });
+
+            // Smooth scroll with motion preference respect
+            target.scrollIntoView({
+              behavior: prefersReducedMotion ? 'auto' : 'smooth',
+              block: 'start',
+            });
+          }
+        }
+      });
+    });
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      observer.disconnect();
     });
   })();
 </script>

@@ -48,7 +48,9 @@ const baseClasses = [
   'leading-tight tracking-tight',
   balance ? 'text-balance' : '',
   'break-words hyphens-auto',
-].filter(Boolean).join(' ');
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Enhanced text size system with better responsive scaling
 const textSizeClasses: Record<NonNullable<Props['textSize']>, string> = {
@@ -120,9 +122,6 @@ const ariaAttributes = {
 };
 ---
 
-<Tag 
-  class={classes}
-  {...ariaAttributes}
->
+<Tag class={classes} {...ariaAttributes}>
   {title || <slot />}
 </Tag>

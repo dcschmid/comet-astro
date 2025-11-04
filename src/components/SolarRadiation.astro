@@ -1,0 +1,345 @@
+---
+/**
+ * SolarRadiation – Minimal solar snapshot (WCAG AAA)
+ * Astro-only, Tailwind-only, no overengineering.
+ * Metrics: Current shortwave radiation (W/m²), classification, UV index, daylight remaining, updated time.
+ * Optional live fetch via Open‑Meteo (hourly shortwave_radiation & uv_index + daily sunrise/sunset).
+ */
+interface Props {
+  latitude?: number;
+  longitude?: number;
+  location?: string;
+  disableFetch?: boolean;
+  refreshInterval?: number; // minutes; 0 = no auto refresh
+  ariaLabel?: string;
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const {
+  latitude,
+  longitude,
+  location = 'Demo Location',
+  disableFetch = false,
+  refreshInterval = 0,
+  ariaLabel,
+  class: className = '',
+} = props;
+
+const label = ariaLabel || `Solar radiation for ${location}`;
+const baseCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
+const gridCls =
+  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5';
+const cardCls =
+  'flex flex-col gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[86px]';
+const labelCls =
+  'text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400';
+const valueCls =
+  'text-base md:text-lg font-bold text-slate-900 dark:text-slate-50';
+const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+
+// Fallback demo values
+const fallback = {
+  radiation: 420, // W/m²
+  uv: 5, // moderate
+  sunrise: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+  sunset: new Date(Date.now() + 5 * 60 * 60 * 1000).toISOString(),
+};
+
+function classifyRadiation(v: number) {
+  if (v >= 900) return ['Extreme', 'bg-rose-700 dark:bg-rose-400'];
+  if (v >= 700) return ['Very High', 'bg-orange-700 dark:bg-orange-400'];
+  if (v >= 400) return ['High', 'bg-amber-700 dark:bg-amber-400'];
+  if (v >= 200) return ['Moderate', 'bg-emerald-700 dark:bg-emerald-400'];
+  return ['Low', 'bg-emerald-600 dark:bg-emerald-300'];
+}
+function classifyUV(v: number) {
+  if (v <= 2) return ['Low', 'bg-emerald-600 dark:bg-emerald-300'];
+  if (v <= 5) return ['Moderate', 'bg-amber-700 dark:bg-amber-400'];
+  if (v <= 7) return ['High', 'bg-orange-700 dark:bg-orange-400'];
+  if (v <= 10) return ['Very High', 'bg-rose-700 dark:bg-rose-400'];
+  return ['Extreme', 'bg-rose-800 dark:bg-rose-300'];
+}
+const initialRad = classifyRadiation(fallback.radiation);
+const initialUV = classifyUV(fallback.uv);
+---
+
+<div
+  class={baseCls}
+  role="region"
+  aria-label={label}
+  aria-busy={!disableFetch && latitude != null && longitude != null
+    ? 'true'
+    : 'false'}
+  data-solar
+  data-lat={latitude}
+  data-lon={longitude}
+  data-disable-fetch={disableFetch}
+  data-refresh={refreshInterval}
+  data-state={!disableFetch && latitude != null && longitude != null
+    ? 'loading'
+    : 'static'}
+>
+  <header
+    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
+  >
+    <h2
+      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+    >
+      <span aria-hidden="true" class="text-2xl">☀️</span>
+      <span class="truncate" data-location>{location}</span>
+    </h2>
+    <p
+      class="text-xs font-medium text-slate-600 dark:text-slate-300"
+      aria-live="polite"
+      data-status
+    >
+      {
+        !disableFetch && latitude != null && longitude != null
+          ? 'Lade Solardaten …'
+          : 'Statische Demodaten'
+      }
+    </p>
+  </header>
+  <div class={gridCls} data-metrics>
+    <div class={cardCls} data-metric="radiation">
+      <span class={labelCls}>Radiation</span>
+      <span class={valueCls} data-radiation>{fallback.radiation} W/m²</span>
+      <span
+        class="text-[11px] font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-1"
+        data-radiation-cond
+      >
+        <span
+          class={`inline-block w-2 h-2 rounded-full ${initialRad[1]}`}
+          data-radiation-ind
+          aria-hidden="true"></span>
+        <span data-radiation-label>{initialRad[0]}</span>
+      </span>
+    </div>
+    <div class={cardCls} data-metric="uv">
+      <span class={labelCls}>UV Index</span>
+      <span class={valueCls} data-uv>{fallback.uv}</span>
+      <span
+        class="text-[11px] font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-1"
+        data-uv-cond
+      >
+        <span
+          class={`inline-block w-2 h-2 rounded-full ${initialUV[1]}`}
+          data-uv-ind
+          aria-hidden="true"></span>
+        <span data-uv-label>{initialUV[0]}</span>
+      </span>
+    </div>
+    <div class={cardCls} data-metric="daylight">
+      <span class={labelCls}>Daylight Left</span>
+      <span class={valueCls} data-daylight>--h</span>
+      <span class={subCls} data-sunrise-sunset>Sunrise/Sunset</span>
+    </div>
+    <div class={cardCls} data-metric="updated">
+      <span class={labelCls}>Updated</span>
+      <span class={valueCls} data-updated>Just now</span>
+      <span
+        class={`${subCls} hidden text-amber-700 dark:text-amber-300`}
+        data-loading>Lädt…</span
+      >
+      <span
+        class={`${subCls} hidden text-rose-700 dark:text-rose-300`}
+        data-error>Fehler</span
+      >
+    </div>
+    <div class={cardCls} data-metric="notes">
+      <span class={labelCls}>Notes</span>
+      <span class={valueCls} data-note>Snapshot</span>
+      <span class={subCls}>Fallback safe</span>
+    </div>
+  </div>
+  <p
+    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
+    data-disclaimer
+  >
+    {
+      !disableFetch && latitude != null && longitude != null
+        ? `Live Daten (Open‑Meteo Solar). ${refreshInterval > 0 ? `Auto Refresh alle ${refreshInterval}m.` : ''} Fallback bei Fehler.`
+        : 'Demodaten. latitude+longitude setzen für Live-Aktualisierung.'
+    } AAA Kontrast eingehalten.
+  </p>
+  <footer
+    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
+  >
+    <span
+      >Quelle: <span class="underline text-slate-800 dark:text-slate-200"
+        >Open‑Meteo</span
+      ></span
+    >
+    <span class="ml-auto" data-refresh-indicator
+      >{
+        refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'Kein Auto-Refresh'
+      }</span
+    >
+  </footer>
+</div>
+
+<script>
+  // Helpers duplicated for client runtime
+  function classifyRadiation(v) {
+    if (v >= 900) return ['Extreme', 'bg-rose-700 dark:bg-rose-400'];
+    if (v >= 700) return ['Very High', 'bg-orange-700 dark:bg-orange-400'];
+    if (v >= 400) return ['High', 'bg-amber-700 dark:bg-amber-400'];
+    if (v >= 200) return ['Moderate', 'bg-emerald-700 dark:bg-emerald-400'];
+    return ['Low', 'bg-emerald-600 dark:bg-emerald-300'];
+  }
+  function classifyUV(v) {
+    if (v <= 2) return ['Low', 'bg-emerald-600 dark:bg-emerald-300'];
+    if (v <= 5) return ['Moderate', 'bg-amber-700 dark:bg-amber-400'];
+    if (v <= 7) return ['High', 'bg-orange-700 dark:bg-orange-400'];
+    if (v <= 10) return ['Very High', 'bg-rose-700 dark:bg-rose-400'];
+    return ['Extreme', 'bg-rose-800 dark:bg-rose-300'];
+  }
+  function initSolar(el) {
+    const disableFetch = el.dataset.disableFetch === 'true';
+    const lat = el.dataset.lat ? parseFloat(el.dataset.lat) : undefined;
+    const lon = el.dataset.lon ? parseFloat(el.dataset.lon) : undefined;
+    const refresh = parseInt(el.dataset.refresh || '0');
+    const statusEl = el.querySelector('[data-status]');
+    const radEl = el.querySelector('[data-radiation]');
+    const radLabelEl = el.querySelector('[data-radiation-label]');
+    const radIndEl = el.querySelector('[data-radiation-ind]');
+    const uvEl = el.querySelector('[data-uv]');
+    const uvLabelEl = el.querySelector('[data-uv-label]');
+    const uvIndEl = el.querySelector('[data-uv-ind]');
+    const daylightEl = el.querySelector('[data-daylight]');
+    const sunriseSunsetEl = el.querySelector('[data-sunrise-sunset]');
+    const updEl = el.querySelector('[data-updated]');
+    const loadingEl = el.querySelector('[data-loading]');
+    const errorEl = el.querySelector('[data-error]');
+    const setState = (s) => {
+      el.dataset.state = s;
+      el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
+      if (loadingEl) loadingEl.classList.toggle('hidden', s !== 'loading');
+      if (errorEl) errorEl.classList.toggle('hidden', s !== 'error');
+    };
+    function daylightRemaining(sunriseStr, sunsetStr) {
+      if (!sunriseStr || !sunsetStr) return '--h';
+      const now = Date.now();
+      const sunset = new Date(sunsetStr).getTime();
+      const diffH = Math.max(0, (sunset - now) / (1000 * 60 * 60));
+      return diffH < 0.25 ? '<0.3h' : `${diffH.toFixed(1)}h`;
+    }
+    async function fetchData() {
+      if (disableFetch || lat == null || lon == null) {
+        if (statusEl) statusEl.textContent = 'Fallback Werte aktiv';
+        return;
+      }
+      setState('loading');
+      if (statusEl) statusEl.textContent = 'Lade Solardaten …';
+      try {
+        const params = new URLSearchParams({
+          latitude: String(lat),
+          longitude: String(lon),
+          hourly: 'shortwave_radiation,uv_index',
+          daily: 'sunrise,sunset',
+          timezone: 'auto',
+        });
+        const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+        const res = await fetch(url);
+        if (!res.ok) throw 0;
+        const data = await res.json();
+        const h = data.hourly || {};
+        const d = data.daily || {};
+        const idx = 0; // first hour is near-term snapshot
+        const radiation = h.shortwave_radiation?.[idx];
+        const uv = h.uv_index?.[idx];
+        const sunrise = d.sunrise?.[0];
+        const sunset = d.sunset?.[0];
+        if (radiation != null && radEl) {
+          radEl.textContent = `${Math.round(radiation)} W/m²`;
+          const [lbl, cls] = classifyRadiation(radiation);
+          if (radLabelEl) radLabelEl.textContent = lbl;
+          if (radIndEl)
+            radIndEl.className = `inline-block w-2 h-2 rounded-full ${cls}`;
+        }
+        if (uv != null && uvEl) {
+          uvEl.textContent = `${Math.round(uv)}`;
+          const [ulbl, ucls] = classifyUV(uv);
+          if (uvLabelEl) uvLabelEl.textContent = ulbl;
+          if (uvIndEl)
+            uvIndEl.className = `inline-block w-2 h-2 rounded-full ${ucls}`;
+        }
+        if (daylightEl) {
+          daylightEl.textContent = daylightRemaining(sunrise, sunset);
+        }
+        if (sunriseSunsetEl && sunrise && sunset) {
+          const sr = new Date(sunrise).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          const ss = new Date(sunset).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          sunriseSunsetEl.textContent = `${sr} / ${ss}`;
+        }
+        if (updEl) {
+          updEl.textContent = new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        }
+        if (statusEl) statusEl.textContent = 'Live Daten geladen';
+        setState('ready');
+      } catch {
+        if (statusEl) statusEl.textContent = 'Live Fehler (Fallback gezeigt)';
+        setState('error');
+      }
+    }
+    fetchData();
+    if (refresh > 0 && !disableFetch && lat != null && lon != null) {
+      setInterval(fetchData, refresh * 60 * 1000);
+      const ind = el.querySelector('[data-refresh-indicator]');
+      if (ind) ind.textContent = `Auto ${refresh}m`;
+    }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-solar]').forEach(initSolar);
+  });
+</script>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-solar] * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    [data-solar] {
+      outline: 2px solid currentColor;
+    }
+  }
+  [data-solar][data-state='loading'] [data-metric] {
+    position: relative;
+  }
+  [data-solar][data-state='loading'] [data-metric]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.15),
+      rgba(148, 163, 184, 0.35),
+      rgba(148, 163, 184, 0.15)
+    );
+    animation: solar-pulse 1.4s ease-in-out infinite;
+    opacity: 0.35;
+  }
+  @keyframes solar-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.65;
+    }
+  }
+</style>

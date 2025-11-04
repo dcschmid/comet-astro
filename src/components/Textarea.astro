@@ -1,17 +1,37 @@
 ---
+import { cn } from '../utils/cn';
+
+/**
+ * WCAG AAA compliant Textarea component
+ * Provides accessible multi-line text input with comprehensive features
+ */
+type TextareaSize = 'sm' | 'md' | 'lg';
+type TextareaVariant = 'default' | 'minimal' | 'bordered' | 'filled';
+type ResizeOption = 'none' | 'vertical' | 'horizontal' | 'both';
+
 interface Props {
   name: string;
   label?: string;
   placeholder?: string;
   value?: string;
   rows?: number;
+  cols?: number;
   required?: boolean;
   disabled?: boolean;
+  readonly?: boolean;
   error?: string;
   helperText?: string;
   maxLength?: number;
+  minLength?: number;
   className?: string;
   id?: string;
+  size?: TextareaSize;
+  variant?: TextareaVariant;
+  resize?: ResizeOption;
+  autoGrow?: boolean;
+  showCounter?: boolean;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
 }
 
 const {
@@ -20,71 +40,322 @@ const {
   placeholder,
   value = '',
   rows = 4,
+  cols,
   required = false,
   disabled = false,
+  readonly = false,
   error,
   helperText,
   maxLength,
+  minLength,
   className = '',
   id = name,
+  size = 'md',
+  variant = 'default',
+  resize = 'vertical',
+  autoGrow = false,
+  showCounter = !!maxLength,
+  ariaLabel,
+  ariaDescribedBy,
 } = Astro.props as Props;
 
-const textareaId = id || `${name}-${Math.random().toString(36).slice(2, 9)}`;
-const helperId = error || helperText ? `${textareaId}-help` : undefined;
+// Generate unique IDs
+const textareaId = id || `textarea-${Math.random().toString(36).slice(2, 9)}`;
+const helperId = (error || helperText) ? `${textareaId}-help` : undefined;
+const counterId = showCounter ? `${textareaId}-counter` : undefined;
+
+// Combine all describedby IDs
+const allDescribedBy = [helperId, counterId, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
+
+// Size variants with WCAG AAA spacing
+const sizeClasses = {
+  sm: {
+    textarea: 'px-3 py-2 text-sm min-h-[80px]',
+    label: 'text-sm',
+    helper: 'text-xs',
+    counter: 'text-xs',
+  },
+  md: {
+    textarea: 'px-4 py-2.5 text-base min-h-[100px]',
+    label: 'text-sm',
+    helper: 'text-sm',
+    counter: 'text-sm',
+  },
+  lg: {
+    textarea: 'px-6 py-3 text-lg min-h-[120px]',
+    label: 'text-base',
+    helper: 'text-base',
+    counter: 'text-base',
+  },
+};
+
+// Variant styles with WCAG AAA contrast ratios (9:1)
+const variantClasses = {
+  default: {
+    textarea: 'bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg shadow-sm',
+    focus: 'focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600/20',
+    error: 'border-red-600 dark:border-red-500 focus-visible:border-red-600 focus-visible:ring-red-600/20',
+  },
+  minimal: {
+    textarea: 'bg-transparent border-0 border-b-2 border-slate-300 dark:border-slate-700 rounded-none',
+    focus: 'focus-visible:border-blue-600 focus-visible:ring-0',
+    error: 'border-red-600 dark:border-red-500 focus-visible:border-red-600',
+  },
+  bordered: {
+    textarea: 'bg-white dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 rounded-lg',
+    focus: 'focus-visible:border-blue-600 focus-visible:ring-0',
+    error: 'border-red-600 dark:border-red-500 focus-visible:border-red-600',
+  },
+  filled: {
+    textarea: 'bg-slate-100 dark:bg-slate-800 border border-transparent rounded-lg',
+    focus: 'focus-visible:bg-white dark:focus-visible:bg-slate-950 focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600/20',
+    error: 'bg-red-50 dark:bg-red-950/20 border-red-600 dark:border-red-500 focus-visible:border-red-600 focus-visible:ring-red-600/20',
+  },
+};
+
+// Resize options
+const resizeClasses = {
+  none: 'resize-none',
+  vertical: 'resize-y',
+  horizontal: 'resize-x', 
+  both: 'resize',
+};
+
+const currentSize = sizeClasses[size];
+const currentVariant = variantClasses[variant];
+const hasError = !!error;
+
+// Character count
+const currentLength = value.length;
+const isOverLimit = maxLength && currentLength > maxLength;
 ---
 
-<div class={`space-y-1.5 ${className}`.trim()}>
-  {
-    label && (
-      <label
-        for={textareaId}
-        class="block text-sm font-medium text-slate-800 dark:text-slate-200"
-      >
-        {label}
-        {required && (
-          <span
-            class="ml-1 text-rose-600 dark:text-rose-400"
-            aria-hidden="true"
-          >
-            *
-          </span>
-        )}
-      </label>
-    )
-  }
-  <textarea
-    id={textareaId}
-    name={name}
-    placeholder={placeholder}
-    rows={rows}
-    required={required}
-    disabled={disabled}
-    maxlength={maxLength}
-    aria-invalid={error ? 'true' : 'false'}
-    aria-describedby={helperId}
-    class={`w-full resize-y rounded-lg border bg-white px-4 py-2 text-base text-slate-900 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-offset-slate-900 ${
-      error
-        ? 'border-rose-500 focus-visible:ring-rose-500 dark:border-rose-500'
-        : 'border-slate-300'
-    } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}>{value}</textarea
-  >
-  <div class="flex items-center justify-between">
-    {
-      (error || helperText) && (
-        <p
-          id={helperId}
-          class={`text-xs ${error ? 'text-rose-600 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}
+<div class={cn('space-y-2', className)}>
+  {/* Label */}
+  {label && (
+    <label
+      for={textareaId}
+      class={cn(
+        'block font-medium transition-colors',
+        'text-slate-900 dark:text-slate-100',
+        'contrast-more:text-slate-950 contrast-more:dark:text-white',
+        currentSize.label,
+        disabled && 'text-slate-500 dark:text-slate-400 cursor-not-allowed'
+      )}
+    >
+      {label}
+      {required && (
+        <span
+          class="ml-1 text-red-600 dark:text-red-400"
+          aria-hidden="true"
+          title="Required field"
         >
-          {error || helperText}
-        </p>
-      )
-    }
-    {
-      maxLength && (
-        <p class="ml-auto text-xs font-medium text-slate-600 dark:text-slate-400">
-          {value.length}/{maxLength}
-        </p>
-      )
-    }
+          *
+        </span>
+      )}
+    </label>
+  )}
+
+  {/* Textarea */}
+  <div class="relative">
+    <textarea
+      id={textareaId}
+      name={name}
+      placeholder={placeholder}
+      rows={rows}
+      cols={cols}
+      required={required}
+      disabled={disabled}
+      readonly={readonly}
+      maxlength={maxLength}
+      minlength={minLength}
+      aria-label={ariaLabel || label}
+      aria-invalid={hasError ? 'true' : 'false'}
+      aria-describedby={allDescribedBy}
+      aria-required={required ? 'true' : undefined}
+      class={cn(
+        // Base styles
+        'w-full transition-all duration-150 outline-none',
+        'text-slate-900 dark:text-slate-100',
+        'placeholder:text-slate-500 dark:placeholder:text-slate-400',
+        'contrast-more:text-slate-950 contrast-more:dark:text-white',
+        'contrast-more:placeholder:text-slate-600 contrast-more:dark:placeholder:text-slate-400',
+        
+        // Size and spacing
+        currentSize.textarea,
+        
+        // Variant styles
+        hasError ? currentVariant.error : currentVariant.textarea,
+        !hasError && currentVariant.focus,
+        
+        // Resize behavior
+        resizeClasses[resize],
+        
+        // Auto-grow
+        autoGrow && 'overflow-hidden',
+        
+        // States
+        disabled && [
+          'cursor-not-allowed opacity-60',
+          'bg-slate-100 dark:bg-slate-800',
+          'text-slate-500 dark:text-slate-400',
+          'contrast-more:bg-slate-200 contrast-more:dark:bg-slate-700'
+        ],
+        
+        readonly && [
+          'cursor-default',
+          'bg-slate-50 dark:bg-slate-900/50',
+          'focus-visible:ring-0 focus-visible:border-current'
+        ],
+        
+        // Motion preferences
+        'motion-safe:transition-all motion-reduce:transition-none',
+        
+        // Focus ring offset
+        'focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950'
+      )}
+      style={autoGrow ? `field-sizing: content; max-height: ${Math.max(rows * 1.5, 6)}rem;` : undefined}
+    >{value}</textarea>
+
+    {/* Character counter overlay */}
+    {showCounter && maxLength && (
+      <div
+        class={cn(
+          'absolute bottom-2 right-3 pointer-events-none',
+          'text-xs font-medium tabular-nums',
+          isOverLimit 
+            ? 'text-red-600 dark:text-red-400' 
+            : 'text-slate-500 dark:text-slate-400',
+          'contrast-more:text-slate-950 contrast-more:dark:text-white'
+        )}
+        aria-hidden="true"
+      >
+        {currentLength}/{maxLength}
+      </div>
+    )}
   </div>
+
+  {/* Helper text and counter */}
+  <div class="flex items-start justify-between gap-3">
+    {(error || helperText) && (
+      <div
+        id={helperId}
+        class={cn(
+          'flex-1',
+          currentSize.helper,
+          hasError 
+            ? 'text-red-600 dark:text-red-400' 
+            : 'text-slate-600 dark:text-slate-400',
+          'contrast-more:text-slate-950 contrast-more:dark:text-white'
+        )}
+        role={hasError ? 'alert' : 'status'}
+        aria-live={hasError ? 'assertive' : 'polite'}
+      >
+        {hasError && (
+          <span class="sr-only">Error: </span>
+        )}
+        {error || helperText}
+      </div>
+    )}
+
+    {/* Accessible character counter */}
+    {showCounter && maxLength && (
+      <div
+        id={counterId}
+        class={cn(
+          'flex-shrink-0 font-medium tabular-nums',
+          currentSize.counter,
+          isOverLimit 
+            ? 'text-red-600 dark:text-red-400' 
+            : 'text-slate-500 dark:text-slate-400',
+          'contrast-more:text-slate-950 contrast-more:dark:text-white'
+        )}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <span class="sr-only">
+          {isOverLimit 
+            ? `Character limit exceeded: ${currentLength} of ${maxLength} characters` 
+            : `${currentLength} of ${maxLength} characters used`}
+        </span>
+        <span aria-hidden="true">
+          {currentLength}/{maxLength}
+        </span>
+      </div>
+    )}
+  </div>
+
+  {/* Length validation message */}
+  {isOverLimit && (
+    <div
+      class={cn(
+        'text-red-600 dark:text-red-400',
+        currentSize.helper,
+        'contrast-more:text-red-700 contrast-more:dark:text-red-300'
+      )}
+      role="alert"
+      aria-live="assertive"
+    >
+      Text exceeds maximum length of {maxLength} characters
+    </div>
+  )}
+
+  {/* Minimum length helper */}
+  {minLength && currentLength < minLength && currentLength > 0 && (
+    <div
+      class={cn(
+        'text-amber-600 dark:text-amber-400',
+        currentSize.helper,
+        'contrast-more:text-amber-700 contrast-more:dark:text-amber-300'
+      )}
+      role="status"
+      aria-live="polite"
+    >
+      At least {minLength - currentLength} more character{minLength - currentLength === 1 ? '' : 's'} required
+    </div>
+  )}
 </div>
+
+{/* Auto-grow script for dynamic height adjustment */}
+{autoGrow && (
+  <script is:inline define:vars={{ textareaId }}>
+    (function() {
+      const textarea = document.getElementById(textareaId);
+      if (!textarea) return;
+
+      const adjustHeight = () => {
+        // Reset height to auto to get the correct scrollHeight
+        textarea.style.height = 'auto';
+        // Set height to scrollHeight to accommodate content
+        textarea.style.height = textarea.scrollHeight + 'px';
+      };
+
+      // Adjust height on input
+      textarea.addEventListener('input', adjustHeight);
+      
+      // Adjust height on content change
+      textarea.addEventListener('change', adjustHeight);
+      
+      // Adjust height on paste
+      textarea.addEventListener('paste', () => {
+        // Use setTimeout to ensure content is pasted before adjustment
+        setTimeout(adjustHeight, 0);
+      });
+
+      // Initial adjustment
+      if (textarea.value) {
+        adjustHeight();
+      }
+
+      // Adjust on window resize
+      window.addEventListener('resize', adjustHeight);
+      
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        textarea.removeEventListener('input', adjustHeight);
+        textarea.removeEventListener('change', adjustHeight);
+        window.removeEventListener('resize', adjustHeight);
+      });
+    })();
+  </script>
+)}

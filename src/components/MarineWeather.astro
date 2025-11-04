@@ -1,0 +1,880 @@
+---
+/**
+ * MarineWeather – Minimal marine snapshot (WCAG AAA)
+ * Tailwind utilities only; Astro only. No overengineering.
+ * Shows: Wave Height, Sea Temp, Wind Speed, Condition + Updated time.
+ * Optional live fetch (Open‑Meteo Marine API) via latitude + longitude, else fallback demo values.
+ */
+
+interface Props {
+  latitude?: number;
+  longitude?: number;
+  location?: string;
+  disableFetch?: boolean;
+  refreshInterval?: number; // minutes; 0 = no auto refresh
+  ariaLabel?: string;
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const {
+  latitude,
+  longitude,
+  location = 'Demo Marine Location',
+  disableFetch = false,
+  refreshInterval = 0,
+  ariaLabel,
+  class: className = '',
+} = props;
+
+const label = ariaLabel || `Marine weather for ${location}`;
+const baseCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
+const gridCls =
+  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5';
+const cardCls =
+  'flex flex-col gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[86px]';
+const labelCls =
+  'text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400';
+const valueCls =
+  'text-base md:text-lg font-bold text-slate-900 dark:text-slate-50';
+const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+
+// Fallback demo values
+const fallback = {
+  waveHeight: 0.8, // m
+  seaTemp: 18.4, // °C
+  windSpeed: 12, // km/h
+  windDirection: 135, // degrees
+  updated: new Date().toISOString(),
+};
+
+function dirText(deg: number) {
+  const dirs = [
+    'N',
+    'NNE',
+    'NE',
+    'ENE',
+    'E',
+    'ESE',
+    'SE',
+    'SSE',
+    'S',
+    'SSW',
+    'SW',
+    'WSW',
+    'W',
+    'WNW',
+    'NW',
+    'NNW',
+  ];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+function waveClass(h: number) {
+  if (h >= 3) return ['Extreme', 'bg-rose-700 dark:bg-rose-400'];
+  if (h >= 2) return ['Rough', 'bg-orange-700 dark:bg-orange-400'];
+  if (h >= 1) return ['Moderate', 'bg-amber-700 dark:bg-amber-400'];
+  if (h >= 0.5) return ['Calm', 'bg-emerald-700 dark:bg-emerald-400'];
+  return ['Flat', 'bg-emerald-600 dark:bg-emerald-300'];
+}
+const initialWave = waveClass(fallback.waveHeight);
+---
+
+<div
+  class={baseCls}
+  role="region"
+  aria-label={label}
+  aria-busy={!disableFetch && latitude != null && longitude != null
+    ? 'true'
+    : 'false'}
+  data-marine
+  data-lat={latitude}
+  data-lon={longitude}
+  data-disable-fetch={disableFetch}
+  data-refresh={refreshInterval}
+  data-state={!disableFetch && latitude != null && longitude != null
+    ? 'loading'
+    : 'static'}
+>
+  <header
+    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
+  >
+    <h2
+      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+    >
+      <span aria-hidden="true" class="text-2xl">🌊</span>
+      <span class="truncate" data-location>{location}</span>
+    </h2>
+    <p
+      class="text-xs font-medium text-slate-600 dark:text-slate-300"
+      aria-live="polite"
+      data-status
+    >
+      {
+        !disableFetch && latitude != null && longitude != null
+          ? 'Lade Marinedaten …'
+          : 'Statische Demodaten'
+      }
+    </p>
+  </header>
+  <div class={gridCls} data-metrics>
+    <div class={cardCls} data-metric="wave">
+      <span class={labelCls}>Wave Height</span>
+      <span class={valueCls} data-wave>{fallback.waveHeight.toFixed(1)} m</span>
+      <span
+        class="text-[11px] font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-1"
+        data-wave-cond
+      >
+        <span
+          class={`inline-block w-2 h-2 rounded-full ${initialWave[1]}`}
+          data-wave-ind
+          aria-hidden="true"></span>
+        <span data-wave-label>{initialWave[0]}</span>
+      </span>
+    </div>
+    <div class={cardCls} data-metric="temp">
+      <span class={labelCls}>Sea Temp</span>
+      <span class={valueCls} data-sea-temp>{fallback.seaTemp.toFixed(1)}°C</span
+      >
+      <span class={subCls} data-sea-temp-desc>Comfortable</span>
+    </div>
+    <div class={cardCls} data-metric="wind">
+      <span class={labelCls}>Wind</span>
+      <span class={valueCls} data-wind>{fallback.windSpeed} km/h</span>
+      <span class={subCls} data-wind-dir>{dirText(fallback.windDirection)}</span
+      >
+    </div>
+    <div class={cardCls} data-metric="condition">
+      <span class={labelCls}>Condition</span>
+      <span class={valueCls} data-condition>Stable</span>
+      <span class={subCls}>Snapshot</span>
+    </div>
+    <div class={cardCls} data-metric="updated">
+      <span class={labelCls}>Updated</span>
+      <span class={valueCls} data-updated>Just now</span>
+      <span
+        class={`${subCls} hidden text-amber-700 dark:text-amber-300`}
+        data-loading>Lädt…</span
+      >
+      <span
+        class={`${subCls} hidden text-rose-700 dark:text-rose-300`}
+        data-error>Fehler</span
+      >
+    </div>
+  </div>
+  <p
+    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
+    data-disclaimer
+  >
+    {
+      !disableFetch && latitude != null && longitude != null
+        ? `Live Daten (Open‑Meteo Marine).${refreshInterval > 0 ? ` Auto Refresh alle ${refreshInterval}m.` : ''} Fallback bei Fehler.`
+        : 'Demodaten. latitude+longitude setzen für Live-Aktualisierung.'
+    } AAA Kontrast eingehalten.
+  </p>
+  <footer
+    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
+  >
+    <span
+      >Quelle: <span class="underline text-slate-800 dark:text-slate-200"
+        >Open‑Meteo</span
+      ></span
+    >
+    <span class="ml-auto" data-refresh-indicator
+      >{
+        refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'Kein Auto-Refresh'
+      }</span
+    >
+  </footer>
+</div>
+
+<script>
+  // Client-side copies of helpers (frontmatter scope not available in browser runtime)
+  function dirText(deg) {
+    const dirs = [
+      'N',
+      'NNE',
+      'NE',
+      'ENE',
+      'E',
+      'ESE',
+      'SE',
+      'SSE',
+      'S',
+      'SSW',
+      'SW',
+      'WSW',
+      'W',
+      'WNW',
+      'NW',
+      'NNW',
+    ];
+    return dirs[Math.round(deg / 22.5) % 16];
+  }
+  function waveClass(h) {
+    if (h >= 3) return ['Extreme', 'bg-rose-700 dark:bg-rose-400'];
+    if (h >= 2) return ['Rough', 'bg-orange-700 dark:bg-orange-400'];
+    if (h >= 1) return ['Moderate', 'bg-amber-700 dark:bg-amber-400'];
+    if (h >= 0.5) return ['Calm', 'bg-emerald-700 dark:bg-emerald-400'];
+    return ['Flat', 'bg-emerald-600 dark:bg-emerald-300'];
+  }
+  function initMarine(el) {
+    const disableFetch = el.dataset.disableFetch === 'true';
+    const lat = el.dataset.lat ? parseFloat(el.dataset.lat) : undefined;
+    const lon = el.dataset.lon ? parseFloat(el.dataset.lon) : undefined;
+    const refresh = parseInt(el.dataset.refresh || '0');
+    const statusEl = el.querySelector('[data-status]');
+    const waveEl = el.querySelector('[data-wave]');
+    const waveLabelEl = el.querySelector('[data-wave-label]');
+    const waveIndEl = el.querySelector('[data-wave-ind]');
+    const seaTempEl = el.querySelector('[data-sea-temp]');
+    const seaTempDescEl = el.querySelector('[data-sea-temp-desc]');
+    const windEl = el.querySelector('[data-wind]');
+    const windDirEl = el.querySelector('[data-wind-dir]');
+    const condEl = el.querySelector('[data-condition]');
+    const updEl = el.querySelector('[data-updated]');
+    const loadingEl = el.querySelector('[data-loading]');
+    const errorEl = el.querySelector('[data-error]');
+    const setState = (s) => {
+      el.dataset.state = s;
+      el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
+      if (loadingEl) loadingEl.classList.toggle('hidden', s !== 'loading');
+      if (errorEl) errorEl.classList.toggle('hidden', s !== 'error');
+    };
+    function comfort(t) {
+      if (t < 10) return 'Very Cold';
+      if (t < 15) return 'Cold';
+      if (t < 20) return 'Cool';
+      if (t < 25) return 'Comfortable';
+      if (t < 30) return 'Warm';
+      return 'Hot';
+    }
+    async function fetchData() {
+      if (disableFetch || lat == null || lon == null) {
+        if (statusEl) statusEl.textContent = 'Fallback Werte aktiv';
+        return;
+      }
+      setState('loading');
+      if (statusEl) statusEl.textContent = 'Lade Marinedaten …';
+      try {
+        const params = new URLSearchParams({
+          latitude: String(lat),
+          longitude: String(lon),
+          current:
+            'wave_height,wave_direction,sea_surface_temperature,wind_speed_10m,wind_direction_10m',
+          timezone: 'auto',
+        });
+        const url = `https://marine-api.open-meteo.com/v1/marine?${params.toString()}`;
+        const res = await fetch(url);
+        if (!res.ok) throw 0;
+        const data = await res.json();
+        const cur = data.current || {};
+        const wave = cur.wave_height;
+        // waveDir reserved for future directional display (not shown in minimal variant)
+        const seaT = cur.sea_surface_temperature;
+        const windSp = cur.wind_speed_10m;
+        const windDir = cur.wind_direction_10m;
+        if (wave != null && waveEl) {
+          waveEl.textContent = `${wave.toFixed(1)} m`;
+          const [lbl, cls] =
+            typeof waveClass === 'function'
+              ? waveClass(wave)
+              : ['Wave', 'bg-emerald-600 dark:bg-emerald-300'];
+          if (waveLabelEl) waveLabelEl.textContent = lbl;
+          if (waveIndEl)
+            waveIndEl.className = `inline-block w-2 h-2 rounded-full ${cls}`;
+        }
+        if (seaT != null && seaTempEl) {
+          seaTempEl.textContent = `${seaT.toFixed(1)}°C`;
+          if (seaTempDescEl) seaTempDescEl.textContent = comfort(seaT);
+        }
+        if (windSp != null && windEl) {
+          windEl.textContent = `${Math.round(windSp)} km/h`;
+        }
+        if (windDir != null && windDirEl) {
+          windDirEl.textContent =
+            typeof dirText === 'function' ? dirText(windDir) : 'N';
+        }
+        if (condEl) {
+          condEl.textContent = 'Live';
+        }
+        if (updEl) {
+          updEl.textContent = new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        }
+        if (statusEl) statusEl.textContent = 'Live Daten geladen';
+        setState('ready');
+      } catch {
+        if (statusEl) statusEl.textContent = 'Live Fehler (Fallback angezeigt)';
+        setState('error');
+      }
+    }
+    fetchData();
+    if (refresh > 0 && !disableFetch && lat != null && lon != null) {
+      setInterval(fetchData, refresh * 60 * 1000);
+      const ind = el.querySelector('[data-refresh-indicator]');
+      if (ind) ind.textContent = `Auto ${refresh}m`;
+    }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-marine]').forEach(initMarine);
+  });
+</script>
+
+<style>
+  .marine-weather {
+    --marine-bg: var(--weather-bg, #ffffff);
+    --marine-text: var(--weather-text, #1f2937);
+    --marine-border: var(--weather-border, #e5e7eb);
+    --marine-accent: var(--weather-accent, #0ea5e9);
+    --marine-muted: var(--weather-muted, #6b7280);
+    --marine-radius: var(--weather-radius, 12px);
+
+    /* Wave height colors */
+    --wave-calm: #10b981;
+    --wave-small: #84cc16;
+    --wave-moderate: #f59e0b;
+    --wave-large: #f97316;
+    --wave-extreme: #dc2626;
+
+    /* Safety level colors */
+    --safety-excellent: #10b981;
+    --safety-good: #84cc16;
+    --safety-moderate: #f59e0b;
+    --safety-poor: #f97316;
+    --safety-dangerous: #dc2626;
+
+    /* Water temperature colors */
+    --temp-very-cold: #3b82f6;
+    --temp-cold: #06b6d4;
+    --temp-cool: #10b981;
+    --temp-comfortable: #84cc16;
+    --temp-warm: #f59e0b;
+    --temp-very-warm: #f97316;
+
+    background: var(--marine-bg);
+    color: var(--marine-text);
+    border: 1px solid var(--marine-border);
+    border-radius: var(--marine-radius);
+    font-family: var(--weather-font, system-ui, -apple-system, sans-serif);
+    overflow: hidden;
+  }
+
+  .marine-weather__container {
+    padding: 1.5rem;
+  }
+
+  .marine-weather__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  .marine-weather__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--marine-text);
+  }
+
+  .marine-icon {
+    font-size: 1.125rem;
+    opacity: 0.8;
+  }
+
+  .last-updated {
+    font-size: 0.75rem;
+    color: var(--marine-muted);
+    text-align: right;
+  }
+
+  .marine-weather__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    gap: 0.75rem;
+    color: var(--marine-muted);
+  }
+
+  .loading-spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--marine-border);
+    border-top: 2px solid var(--marine-accent);
+    border-radius: 50%;
+    animation: marine-spin 1s linear infinite;
+  }
+
+  @keyframes marine-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .marine-weather__error {
+    padding: 2rem;
+    text-align: center;
+    color: var(--wave-extreme);
+  }
+
+  .error-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .retry-button {
+    background: var(--marine-accent);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .retry-button:hover {
+    background: var(--marine-accent);
+    filter: brightness(0.9);
+  }
+
+  .conditions-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .condition-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: color-mix(in srgb, var(--marine-border) 5%, transparent);
+    border: 1px solid var(--marine-border);
+    border-radius: 8px;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .condition-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .condition-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+    flex-shrink: 0;
+  }
+
+  .condition-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .condition-label {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--marine-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .condition-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--marine-text);
+    line-height: 1;
+  }
+
+  .condition-subtitle {
+    font-size: 0.75rem;
+    color: var(--marine-muted);
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: var(--marine-text);
+  }
+
+  .wave-analysis {
+    margin-bottom: 2rem;
+  }
+
+  .wave-components {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .wave-component {
+    background: var(--marine-bg);
+    border: 1px solid var(--marine-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .component-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--marine-text);
+  }
+
+  .component-icon {
+    font-size: 1.25rem;
+    opacity: 0.8;
+  }
+
+  .component-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .detail-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--marine-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--marine-text);
+  }
+
+  .safety-advice {
+    background: color-mix(in srgb, var(--marine-border) 5%, transparent);
+    border: 1px solid var(--marine-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .safety-level {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 6px;
+  }
+
+  .safety-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .safety-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .safety-status {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .safety-description {
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+
+  .safety-recommendations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .recommendation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--marine-bg);
+    border: 1px solid var(--marine-border);
+    border-radius: 6px;
+  }
+
+  .rec-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .rec-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .rec-content strong {
+    font-weight: 600;
+    color: var(--marine-text);
+  }
+
+  /* Wave height colors */
+  .wave-calm {
+    color: var(--wave-calm);
+  }
+  .wave-small {
+    color: var(--wave-small);
+  }
+  .wave-moderate {
+    color: var(--wave-moderate);
+  }
+  .wave-large {
+    color: var(--wave-large);
+  }
+  .wave-extreme {
+    color: var(--wave-extreme);
+  }
+
+  /* Safety level colors */
+  .safety-excellent {
+    background: color-mix(in srgb, var(--safety-excellent) 10%, transparent);
+    border-color: var(--safety-excellent);
+    color: var(--safety-excellent);
+  }
+  .safety-good {
+    background: color-mix(in srgb, var(--safety-good) 10%, transparent);
+    border-color: var(--safety-good);
+    color: var(--safety-good);
+  }
+  .safety-moderate {
+    background: color-mix(in srgb, var(--safety-moderate) 10%, transparent);
+    border-color: var(--safety-moderate);
+    color: var(--safety-moderate);
+  }
+  .safety-poor {
+    background: color-mix(in srgb, var(--safety-poor) 10%, transparent);
+    border-color: var(--safety-poor);
+    color: var(--safety-poor);
+  }
+  .safety-dangerous {
+    background: color-mix(in srgb, var(--safety-dangerous) 10%, transparent);
+    border-color: var(--safety-dangerous);
+    color: var(--safety-dangerous);
+  }
+
+  /* Recommendation colors */
+  .rec-excellent {
+    color: var(--safety-excellent);
+  }
+  .rec-good {
+    color: var(--safety-good);
+  }
+  .rec-fair {
+    color: var(--safety-moderate);
+  }
+  .rec-caution {
+    color: var(--safety-poor);
+  }
+  .rec-danger {
+    color: var(--safety-dangerous);
+  }
+  .rec-poor {
+    color: var(--safety-poor);
+  }
+
+  /* Water temperature colors */
+  .sst-very-cold {
+    color: var(--temp-very-cold);
+  }
+  .sst-cold {
+    color: var(--temp-cold);
+  }
+  .sst-cool {
+    color: var(--temp-cool);
+  }
+  .sst-comfortable {
+    color: var(--temp-comfortable);
+  }
+  .sst-warm {
+    color: var(--temp-warm);
+  }
+  .sst-very-warm {
+    color: var(--temp-very-warm);
+  }
+
+  /* Size variants */
+  .marine-weather--compact .marine-weather__container {
+    padding: 1rem;
+  }
+
+  .marine-weather--compact .condition-card {
+    padding: 1rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .marine-weather--compact .condition-value {
+    font-size: 1.25rem;
+  }
+
+  .marine-weather--compact .conditions-overview {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .marine-weather--detailed .condition-value {
+    font-size: 2rem;
+  }
+
+  .marine-weather--detailed .conditions-overview {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+  }
+
+  /* Variant styles */
+  .marine-weather--minimal .wave-analysis,
+  .marine-weather--minimal .safety-advice {
+    display: none;
+  }
+
+  .marine-weather--surfing .surfing-rec {
+    order: -1;
+    background: color-mix(in srgb, var(--marine-accent) 10%, transparent);
+    border-color: var(--marine-accent);
+  }
+
+  .marine-weather--sailing .boating-rec {
+    order: -1;
+    background: color-mix(in srgb, var(--marine-accent) 10%, transparent);
+    border-color: var(--marine-accent);
+  }
+
+  .marine-weather--fishing .safety-recommendations {
+    grid-template-columns: 1fr;
+  }
+
+  /* Responsive design */
+  @media (max-width: 640px) {
+    .conditions-overview {
+      grid-template-columns: 1fr;
+    }
+
+    .condition-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .wave-components {
+      grid-template-columns: 1fr;
+    }
+
+    .safety-recommendations {
+      grid-template-columns: 1fr;
+    }
+
+    .marine-weather__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .marine-weather {
+      --marine-border: currentColor;
+      border-width: 2px;
+    }
+
+    .condition-card,
+    .wave-component,
+    .recommendation-item {
+      border-width: 2px;
+    }
+  }
+
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    .marine-weather {
+      --marine-bg: #1f2937;
+      --marine-text: #f9fafb;
+      --marine-border: #374151;
+      --marine-muted: #9ca3af;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .loading-spinner {
+      animation: none;
+    }
+
+    .condition-card {
+      transition: none;
+    }
+
+    .condition-card:hover {
+      transform: none;
+    }
+  }
+  <style > @media (prefers-reduced-motion: reduce) {
+    [data-marine] * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    [data-marine] {
+      outline: 2px solid currentColor;
+    }
+  }
+  [data-marine][data-state='loading'] [data-metric] {
+    position: relative;
+  }
+  [data-marine][data-state='loading'] [data-metric]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.15),
+      rgba(148, 163, 184, 0.35),
+      rgba(148, 163, 184, 0.15)
+    );
+    animation: marine-pulse 1.4s ease-in-out infinite;
+    opacity: 0.35;
+  }
+  @keyframes marine-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.65;
+    }
+  }
+</style>

@@ -1,8 +1,6 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import ProgressBar from '../../components/ProgressBar.astro';
-import Button from '../../components/Button.astro';
-import Badge from '../../components/Badge.astro';
 import Card from '../../components/Card.astro';
 ---
 
@@ -16,12 +14,22 @@ import Card from '../../components/Card.astro';
       <div>
         <h2 class="text-2xl font-bold mb-4">Overview</h2>
         <div class="prose prose-lg max-w-none dark:prose-invert">
-          <p>Progress bars provide visual feedback about the completion status of a task or process. They help users understand how much work has been completed and how much remains, improving perceived performance and user experience.</p>
-          
-          <p>Built with comprehensive WCAG AAA accessibility features including proper ARIA attributes, high contrast ratios for dark and light modes, and keyboard navigation support for screen reader compatibility.</p>
+          <p>
+            Progress bars provide visual feedback about the completion status of
+            a task or process. They help users understand how much work has been
+            completed and how much remains, improving perceived performance and
+            user experience.
+          </p>
+
+          <p>
+            Built with comprehensive WCAG AAA accessibility features including
+            proper ARIA attributes, high contrast ratios for dark and light
+            modes, and keyboard navigation support for screen reader
+            compatibility.
+          </p>
         </div>
       </div>
-      
+
       <!-- Basic Usage -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Basic Usage</h3>
@@ -31,7 +39,8 @@ import Card from '../../components/Card.astro';
               <ProgressBar value={45} showLabel />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar value={45} showLabel /&gt;</code></pre>
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar value={45} showLabel /&gt;</code></pre>
         </div>
       </div>
     </section>
@@ -40,104 +49,148 @@ import Card from '../../components/Card.astro';
     <section id="variants" class="space-y-6">
       <div>
         <h2 class="text-2xl font-bold mb-4">Variants</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Seven distinct visual styles for different contexts and semantic meanings.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Seven distinct visual styles for different contexts and semantic
+          meanings.
+        </p>
       </div>
 
       <!-- Default Variant -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Default</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Standard blue variant for general progress indication.</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Standard blue variant for general progress indication.
+        </p>
         <div class="grid gap-6">
           <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div class="space-y-4">
               <ProgressBar variant="default" value={30} showLabel />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="default" value={30} showLabel /&gt;</code></pre>
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="default" value={30} showLabel /&gt;</code></pre>
         </div>
       </div>
 
       <!-- Success Variant -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Success</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Green variant for successful operations and completed tasks.</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Green variant for successful operations and completed tasks.
+        </p>
         <div class="grid gap-6">
           <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div class="space-y-4">
-              <ProgressBar variant="success" value={85} label="Upload Complete" showLabel />
+              <ProgressBar
+                variant="success"
+                value={85}
+                label="Upload Complete"
+                showLabel
+              />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="success" value={85} label="Upload Complete" showLabel /&gt;</code></pre>
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="success" value={85} label="Upload Complete" showLabel /&gt;</code></pre>
         </div>
       </div>
 
       <!-- Warning Variant -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Warning</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Amber variant for cautionary states and attention-required processes.</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Amber variant for cautionary states and attention-required processes.
+        </p>
         <div class="grid gap-6">
           <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div class="space-y-4">
-              <ProgressBar variant="warning" value={60} label="Processing with warnings" showLabel />
+              <ProgressBar
+                variant="warning"
+                value={60}
+                label="Processing with warnings"
+                showLabel
+              />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="warning" value={60} label="Processing with warnings" showLabel /&gt;</code></pre>
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="warning" value={60} label="Processing with warnings" showLabel /&gt;</code></pre>
         </div>
       </div>
 
       <!-- Error Variant -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Error</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Red variant for error states and failed operations.</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Red variant for error states and failed operations.
+        </p>
         <div class="grid gap-6">
           <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div class="space-y-4">
-              <ProgressBar variant="error" value={25} label="Upload Failed" showLabel />
+              <ProgressBar
+                variant="error"
+                value={25}
+                label="Upload Failed"
+                showLabel
+              />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="error" value={25} label="Upload Failed" showLabel /&gt;</code></pre>
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="error" value={25} label="Upload Failed" showLabel /&gt;</code></pre>
         </div>
       </div>
 
       <!-- Info Variant -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Info</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Cyan variant for informational progress and data operations.</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Cyan variant for informational progress and data operations.
+        </p>
         <div class="grid gap-6">
           <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div class="space-y-4">
-              <ProgressBar variant="info" value={70} label="Data Sync" showLabel />
+              <ProgressBar
+                variant="info"
+                value={70}
+                label="Data Sync"
+                showLabel
+              />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="info" value={70} label="Data Sync" showLabel /&gt;</code></pre>
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="info" value={70} label="Data Sync" showLabel /&gt;</code></pre>
         </div>
       </div>
 
       <!-- Gradient Variant -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Gradient</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Vibrant gradient variant for engaging visual appeal.</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Vibrant gradient variant for engaging visual appeal.
+        </p>
         <div class="grid gap-6">
           <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div class="space-y-4">
               <ProgressBar variant="gradient" value={90} showLabel />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="gradient" value={90} showLabel /&gt;</code></pre>
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="gradient" value={90} showLabel /&gt;</code></pre>
         </div>
       </div>
 
       <!-- Minimal Variant -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Minimal</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Subtle grayscale variant for minimal visual weight.</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Subtle grayscale variant for minimal visual weight.
+        </p>
         <div class="grid gap-6">
           <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div class="space-y-4">
               <ProgressBar variant="minimal" value={40} showLabel />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="minimal" value={40} showLabel /&gt;</code></pre>
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar variant="minimal" value={40} showLabel /&gt;</code></pre>
         </div>
       </div>
     </section>
@@ -146,13 +199,18 @@ import Card from '../../components/Card.astro';
     <section id="sizes" class="space-y-6">
       <div>
         <h2 class="text-2xl font-bold mb-4">Sizes</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Five size options from extra small to extra large for different contexts and emphasis levels.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Five size options from extra small to extra large for different
+          contexts and emphasis levels.
+        </p>
       </div>
 
       <div class="grid gap-8">
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Extra Small</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Minimal height for compact interfaces and table rows.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Minimal height for compact interfaces and table rows.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
@@ -161,59 +219,82 @@ import Card from '../../components/Card.astro';
                 <ProgressBar size="xs" value={75} variant="gradient" />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="xs" value={25} /&gt;</code></pre>
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="xs" value={25} /&gt;</code></pre>
           </div>
         </div>
 
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Small</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Compact size for secondary progress indicators.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Compact size for secondary progress indicators.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
                 <ProgressBar size="sm" value={35} showLabel />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="sm" value={35} showLabel /&gt;</code></pre>
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="sm" value={35} showLabel /&gt;</code></pre>
           </div>
         </div>
 
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Medium (Default)</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Standard size suitable for most use cases.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Standard size suitable for most use cases.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
-                <ProgressBar size="md" value={65} label="Processing" showLabel />
+                <ProgressBar
+                  size="md"
+                  value={65}
+                  label="Processing"
+                  showLabel
+                />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="md" value={65} label="Processing" showLabel /&gt;</code></pre>
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="md" value={65} label="Processing" showLabel /&gt;</code></pre>
           </div>
         </div>
 
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Large</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Prominent size for primary progress displays.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Prominent size for primary progress displays.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
                 <ProgressBar size="lg" value={80} variant="success" showLabel />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="lg" value={80} variant="success" showLabel /&gt;</code></pre>
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="lg" value={80} variant="success" showLabel /&gt;</code></pre>
           </div>
         </div>
 
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Extra Large</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Maximum size for hero sections and prominent displays.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Maximum size for hero sections and prominent displays.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
-                <ProgressBar size="xl" value={95} variant="gradient" showLabel />
+                <ProgressBar
+                  size="xl"
+                  value={95}
+                  variant="gradient"
+                  showLabel
+                />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="xl" value={95} variant="gradient" showLabel /&gt;</code></pre>
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar size="xl" value={95} variant="gradient" showLabel /&gt;</code></pre>
           </div>
         </div>
       </div>
@@ -223,25 +304,30 @@ import Card from '../../components/Card.astro';
     <section id="labels" class="space-y-6">
       <div>
         <h2 class="text-2xl font-bold mb-4">Label Positions</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Flexible label positioning for different layout requirements.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Flexible label positioning for different layout requirements.
+        </p>
       </div>
 
       <div class="grid gap-6">
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Top Position (Default)</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Label positioned above the progress bar.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Label positioned above the progress bar.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
-                <ProgressBar 
-                  value={42} 
-                  label="File Upload" 
-                  labelPosition="top" 
-                  showLabel 
+                <ProgressBar
+                  value={42}
+                  label="File Upload"
+                  labelPosition="top"
+                  showLabel
                 />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
   value={42} 
   label="File Upload" 
   labelPosition="top" 
@@ -252,20 +338,23 @@ import Card from '../../components/Card.astro';
 
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Bottom Position</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Label positioned below the progress bar.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Label positioned below the progress bar.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
-                <ProgressBar 
-                  value={73} 
-                  label="Data Processing" 
-                  labelPosition="bottom" 
+                <ProgressBar
+                  value={73}
+                  label="Data Processing"
+                  labelPosition="bottom"
                   variant="info"
-                  showLabel 
+                  showLabel
                 />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
   value={73} 
   label="Data Processing" 
   labelPosition="bottom" 
@@ -277,20 +366,24 @@ import Card from '../../components/Card.astro';
 
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Inline Position</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Percentage displayed inside the progress bar (requires medium size or larger).</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Percentage displayed inside the progress bar (requires medium size
+            or larger).
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
-                <ProgressBar 
-                  value={88} 
-                  labelPosition="inline" 
+                <ProgressBar
+                  value={88}
+                  labelPosition="inline"
                   size="lg"
                   variant="success"
-                  showLabel 
+                  showLabel
                 />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
   value={88} 
   labelPosition="inline" 
   size="lg"
@@ -306,33 +399,38 @@ import Card from '../../components/Card.astro';
     <section id="states" class="space-y-6">
       <div>
         <h2 class="text-2xl font-bold mb-4">Special States</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Indeterminate and disabled states for different use cases.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Indeterminate and disabled states for different use cases.
+        </p>
       </div>
 
       <div class="grid gap-6">
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Indeterminate Progress</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">For unknown duration tasks and loading states.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            For unknown duration tasks and loading states.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
-                <ProgressBar 
-                  value={0} 
+                <ProgressBar
+                  value={0}
                   indeterminate={true}
-                  label="Loading..." 
-                  showLabel 
+                  label="Loading..."
+                  showLabel
                 />
-                <ProgressBar 
-                  value={0} 
+                <ProgressBar
+                  value={0}
                   indeterminate={true}
                   variant="info"
                   size="lg"
-                  label="Processing..." 
-                  showLabel 
+                  label="Processing..."
+                  showLabel
                 />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
   value={0} 
   indeterminate={true}
   label="Loading..." 
@@ -343,26 +441,29 @@ import Card from '../../components/Card.astro';
 
         <div class="space-y-4">
           <h3 class="text-lg font-semibold">Disabled State</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Visually disabled progress bars for inactive states.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Visually disabled progress bars for inactive states.
+          </p>
           <div class="grid gap-6">
             <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div class="space-y-4">
-                <ProgressBar 
-                  value={60} 
+                <ProgressBar
+                  value={60}
                   disabled={true}
-                  label="Paused" 
-                  showLabel 
+                  label="Paused"
+                  showLabel
                 />
-                <ProgressBar 
-                  value={30} 
+                <ProgressBar
+                  value={30}
                   disabled={true}
                   variant="warning"
-                  label="Task Stopped" 
-                  showLabel 
+                  label="Task Stopped"
+                  showLabel
                 />
               </div>
             </div>
-            <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
+            <pre
+              class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
   value={60} 
   disabled={true}
   label="Paused" 
@@ -377,91 +478,217 @@ import Card from '../../components/Card.astro';
     <section id="props" class="space-y-6">
       <div>
         <h2 class="text-2xl font-bold mb-4">Props Reference</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Complete API reference for all available properties and their configurations.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Complete API reference for all available properties and their
+          configurations.
+        </p>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table
+          class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+        >
           <thead>
             <tr class="bg-gray-100 dark:bg-gray-700">
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Prop</th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Type</th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Default</th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold">Description</th>
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold"
+                >Prop</th
+              >
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold"
+                >Type</th
+              >
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold"
+                >Default</th
+              >
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold"
+                >Description</th
+              >
             </tr>
           </thead>
           <tbody class="text-sm">
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">value</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">number</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">required</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Current progress value</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >value</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >number</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >required</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Current progress value</td
+              >
             </tr>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">max</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">number</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">100</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Maximum value for progress calculation</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >max</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >number</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >100</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Maximum value for progress calculation</td
+              >
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">variant</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default' | 'success' | 'warning' | 'error' | 'info' | 'gradient' | 'minimal'</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'default'</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Visual style variant</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >variant</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >'default' | 'success' | 'warning' | 'error' | 'info' |
+                'gradient' | 'minimal'</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >'default'</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Visual style variant</td
+              >
             </tr>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">size</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'xs' | 'sm' | 'md' | 'lg' | 'xl'</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'md'</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Height size of the progress bar</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >size</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >'xs' | 'sm' | 'md' | 'lg' | 'xl'</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >'md'</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Height size of the progress bar</td
+              >
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">showLabel</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Whether to show percentage label</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >showLabel</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >boolean</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >false</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Whether to show percentage label</td
+              >
             </tr>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">label</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Custom label text</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >label</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >string</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >undefined</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Custom label text</td
+              >
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">labelPosition</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'top' | 'bottom' | 'inline'</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">'top'</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Position of the label relative to progress bar</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >labelPosition</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >'top' | 'bottom' | 'inline'</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >'top'</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Position of the label relative to progress bar</td
+              >
             </tr>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">indeterminate</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Whether progress bar is in loading state</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >indeterminate</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >boolean</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >false</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Whether progress bar is in loading state</td
+              >
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">disabled</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">boolean</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">false</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Disable the progress bar</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >disabled</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >boolean</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >false</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Disable the progress bar</td
+              >
             </tr>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">ariaLabel</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Custom aria-label for accessibility</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >ariaLabel</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >string</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >undefined</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Custom aria-label for accessibility</td
+              >
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">ariaDescribedBy</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">ID of element that describes the progress bar</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >ariaDescribedBy</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >string</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >undefined</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >ID of element that describes the progress bar</td
+              >
             </tr>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono">class</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">string</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">undefined</td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Additional CSS classes for customization</td>
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-2 font-mono"
+                >class</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >string</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >undefined</td
+              >
+              <td class="border border-gray-300 dark:border-gray-600 px-4 py-2"
+                >Additional CSS classes for customization</td
+              >
             </tr>
           </tbody>
         </table>
@@ -472,18 +699,28 @@ import Card from '../../components/Card.astro';
     <section id="accessibility" class="space-y-6">
       <div>
         <h2 class="text-2xl font-bold mb-4">Accessibility Features</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Comprehensive WCAG AAA compliance with enhanced screen reader support and visual accessibility.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Comprehensive WCAG AAA compliance with enhanced screen reader support
+          and visual accessibility.
+        </p>
       </div>
 
       <div class="grid gap-6 md:grid-cols-2">
         <Card class="p-6">
           <h3 class="font-semibold mb-3 flex items-center gap-2">
-            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            <span
+              class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs"
+              >✓</span
+            >
             Screen Reader Support
           </h3>
           <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
             <li>• Proper <code>role="progressbar"</code> semantic markup</li>
-            <li>• <code>aria-valuenow</code>, <code>aria-valuemin</code>, <code>aria-valuemax</code></li>
+            <li>
+              • <code>aria-valuenow</code>, <code>aria-valuemin</code>, <code
+                >aria-valuemax</code
+              >
+            </li>
             <li>• Custom <code>aria-label</code> support</li>
             <li>• <code>aria-describedby</code> for additional context</li>
           </ul>
@@ -491,7 +728,10 @@ import Card from '../../components/Card.astro';
 
         <Card class="p-6">
           <h3 class="font-semibold mb-3 flex items-center gap-2">
-            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            <span
+              class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs"
+              >✓</span
+            >
             Visual Accessibility
           </h3>
           <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -504,7 +744,10 @@ import Card from '../../components/Card.astro';
 
         <Card class="p-6">
           <h3 class="font-semibold mb-3 flex items-center gap-2">
-            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            <span
+              class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs"
+              >✓</span
+            >
             Cognitive Accessibility
           </h3>
           <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -517,7 +760,10 @@ import Card from '../../components/Card.astro';
 
         <Card class="p-6">
           <h3 class="font-semibold mb-3 flex items-center gap-2">
-            <span class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
+            <span
+              class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs"
+              >✓</span
+            >
             Technical Features
           </h3>
           <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -534,15 +780,16 @@ import Card from '../../components/Card.astro';
         <div class="grid gap-6">
           <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div class="space-y-4">
-              <ProgressBar 
-                value={67} 
+              <ProgressBar
+                value={67}
                 label="File Upload Progress"
                 ariaLabel="Upload progress: 67% complete"
-                showLabel 
+                showLabel
               />
             </div>
           </div>
-          <pre class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
+          <pre
+            class="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-900 rounded text-sm"><code>&lt;ProgressBar 
   value={67} 
   label="File Upload Progress"
   ariaLabel="Upload progress: 67% complete"
@@ -556,12 +803,17 @@ import Card from '../../components/Card.astro';
     <section id="best-practices" class="space-y-6">
       <div>
         <h2 class="text-2xl font-bold mb-4">Best Practices</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Guidelines for effective progress bar implementation and optimal user experience.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Guidelines for effective progress bar implementation and optimal user
+          experience.
+        </p>
       </div>
 
       <div class="space-y-6">
         <Card class="p-6">
-          <h3 class="font-semibold mb-3 text-green-600 dark:text-green-400">✓ Do</h3>
+          <h3 class="font-semibold mb-3 text-green-600 dark:text-green-400">
+            ✓ Do
+          </h3>
           <ul class="space-y-2 text-sm">
             <li>• Use descriptive labels to provide context</li>
             <li>• Choose appropriate variants based on the task status</li>
@@ -574,10 +826,14 @@ import Card from '../../components/Card.astro';
         </Card>
 
         <Card class="p-6">
-          <h3 class="font-semibold mb-3 text-red-600 dark:text-red-400">✗ Don't</h3>
+          <h3 class="font-semibold mb-3 text-red-600 dark:text-red-400">
+            ✗ Don't
+          </h3>
           <ul class="space-y-2 text-sm">
             <li>• Use progress bars for indefinite waiting periods</li>
-            <li>• Mix different variants inconsistently for the same process</li>
+            <li>
+              • Mix different variants inconsistently for the same process
+            </li>
             <li>• Make progress bars too small to be clearly visible</li>
             <li>• Use progress bars without providing any context</li>
             <li>• Animate progress bars too quickly or erratically</li>
@@ -587,7 +843,9 @@ import Card from '../../components/Card.astro';
         </Card>
 
         <Card class="p-6">
-          <h3 class="font-semibold mb-3 text-blue-600 dark:text-blue-400">💡 Tips</h3>
+          <h3 class="font-semibold mb-3 text-blue-600 dark:text-blue-400">
+            💡 Tips
+          </h3>
           <ul class="space-y-2 text-sm">
             <li>• Use success variant when operations complete successfully</li>
             <li>• Use warning variant for processes that need attention</li>
@@ -605,25 +863,36 @@ import Card from '../../components/Card.astro';
     <section id="related" class="space-y-6">
       <div>
         <h2 class="text-2xl font-bold mb-4">Related Components</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Other components that work well with or serve similar purposes as progress bars.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Other components that work well with or serve similar purposes as
+          progress bars.
+        </p>
       </div>
 
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card class="p-4 hover:shadow-md transition-shadow">
           <h3 class="font-semibold mb-2">Spinner</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-300">For indeterminate loading states</p>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            For indeterminate loading states
+          </p>
         </Card>
         <Card class="p-4 hover:shadow-md transition-shadow">
           <h3 class="font-semibold mb-2">Skeleton</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-300">For content loading placeholders</p>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            For content loading placeholders
+          </p>
         </Card>
         <Card class="p-4 hover:shadow-md transition-shadow">
           <h3 class="font-semibold mb-2">Badge</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-300">For status indicators and counts</p>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            For status indicators and counts
+          </p>
         </Card>
         <Card class="p-4 hover:shadow-md transition-shadow">
           <h3 class="font-semibold mb-2">Toast</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-300">For completion notifications</p>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            For completion notifications
+          </p>
         </Card>
       </div>
     </section>

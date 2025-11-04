@@ -15,17 +15,17 @@ interface Props {
   items?: NavItem[];
   brand?: string;
   brandHref?: string;
-  
+
   // Styling
   variant?: 'default' | 'minimal' | 'glass';
   position?: 'static' | 'sticky' | 'fixed';
-  
+
   // Layout
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  
+
   // Accessibility
   ariaLabel?: string;
-  
+
   // Classes
   class?: string;
   className?: string;
@@ -40,7 +40,7 @@ const {
   maxWidth = 'xl',
   ariaLabel = 'Main navigation',
   class: className,
-  className: legacyClassName
+  className: legacyClassName,
 } = Astro.props;
 
 const finalClassName = className || legacyClassName || '';
@@ -52,7 +52,7 @@ const navId = `comet-nav-${Math.random().toString(36).slice(2, 9)}`;
 const positionClasses = {
   static: '',
   sticky: 'sticky top-0 z-40',
-  fixed: 'fixed top-0 left-0 right-0 z-40'
+  fixed: 'fixed top-0 left-0 right-0 z-40',
 };
 
 // Max width classes
@@ -61,32 +61,46 @@ const maxWidthClasses = {
   md: 'max-w-4xl',
   lg: 'max-w-6xl',
   xl: 'max-w-7xl',
-  full: 'max-w-none'
+  full: 'max-w-none',
 };
 
 // Variant styles with WCAG AAA contrast ratios
 const variantClasses = {
   default: {
-    header: 'border-b border-gray-200 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-50',
-    brand: 'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
-    toggleButton: 'border-gray-300 bg-white text-gray-900 hover:bg-gray-50 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-700 dark:hover:border-gray-500',
-    navLink: 'text-gray-700 hover:text-blue-700 hover:bg-gray-50 focus:text-blue-700 focus:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800 dark:focus:text-blue-300 dark:focus:bg-gray-800',
-    activeNavLink: 'text-blue-700 bg-blue-50 dark:text-blue-300 dark:bg-blue-950'
+    header:
+      'border-b border-gray-200 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-50',
+    brand:
+      'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
+    toggleButton:
+      'border-gray-300 bg-white text-gray-900 hover:bg-gray-50 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-700 dark:hover:border-gray-500',
+    navLink:
+      'text-gray-700 hover:text-blue-700 hover:bg-gray-50 focus:text-blue-700 focus:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800 dark:focus:text-blue-300 dark:focus:bg-gray-800',
+    activeNavLink:
+      'text-blue-700 bg-blue-50 dark:text-blue-300 dark:bg-blue-950',
   },
   minimal: {
     header: 'bg-transparent text-gray-900 dark:text-gray-50',
-    brand: 'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
-    toggleButton: 'border-gray-300 bg-white/80 backdrop-blur text-gray-900 hover:bg-white hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-50 dark:hover:bg-gray-800 dark:hover:border-gray-500',
-    navLink: 'text-gray-700 hover:text-blue-700 hover:bg-white/50 focus:text-blue-700 focus:bg-white/50 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800/50 dark:focus:text-blue-300 dark:focus:bg-gray-800/50',
-    activeNavLink: 'text-blue-700 bg-white/70 dark:text-blue-300 dark:bg-gray-800/70'
+    brand:
+      'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
+    toggleButton:
+      'border-gray-300 bg-white/80 backdrop-blur text-gray-900 hover:bg-white hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-50 dark:hover:bg-gray-800 dark:hover:border-gray-500',
+    navLink:
+      'text-gray-700 hover:text-blue-700 hover:bg-white/50 focus:text-blue-700 focus:bg-white/50 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800/50 dark:focus:text-blue-300 dark:focus:bg-gray-800/50',
+    activeNavLink:
+      'text-blue-700 bg-white/70 dark:text-blue-300 dark:bg-gray-800/70',
   },
   glass: {
-    header: 'border-b border-gray-200/20 bg-white/70 backdrop-blur-md text-gray-900 dark:border-gray-700/20 dark:bg-gray-900/70 dark:text-gray-50',
-    brand: 'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
-    toggleButton: 'border-gray-300/50 bg-white/60 backdrop-blur text-gray-900 hover:bg-white/80 hover:border-gray-400/70 dark:border-gray-600/50 dark:bg-gray-800/60 dark:text-gray-50 dark:hover:bg-gray-800/80 dark:hover:border-gray-500/70',
-    navLink: 'text-gray-700 hover:text-blue-700 hover:bg-white/30 focus:text-blue-700 focus:bg-white/30 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800/30 dark:focus:text-blue-300 dark:focus:bg-gray-800/30',
-    activeNavLink: 'text-blue-700 bg-white/50 dark:text-blue-300 dark:bg-gray-800/50'
-  }
+    header:
+      'border-b border-gray-200/20 bg-white/70 backdrop-blur-md text-gray-900 dark:border-gray-700/20 dark:bg-gray-900/70 dark:text-gray-50',
+    brand:
+      'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
+    toggleButton:
+      'border-gray-300/50 bg-white/60 backdrop-blur text-gray-900 hover:bg-white/80 hover:border-gray-400/70 dark:border-gray-600/50 dark:bg-gray-800/60 dark:text-gray-50 dark:hover:bg-gray-800/80 dark:hover:border-gray-500/70',
+    navLink:
+      'text-gray-700 hover:text-blue-700 hover:bg-white/30 focus:text-blue-700 focus:bg-white/30 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800/30 dark:focus:text-blue-300 dark:focus:bg-gray-800/30',
+    activeNavLink:
+      'text-blue-700 bg-white/50 dark:text-blue-300 dark:bg-gray-800/50',
+  },
 };
 
 const currentVariant = variantClasses[variant];
@@ -96,7 +110,9 @@ const currentVariant = variantClasses[variant];
   class={`w-full ${positionClasses[position]} ${currentVariant.header} ${finalClassName}`.trim()}
   role="banner"
 >
-  <div class={`mx-auto flex items-center justify-between gap-4 px-4 py-3 sm:px-6 ${maxWidthClasses[maxWidth]}`}>
+  <div
+    class={`mx-auto flex items-center justify-between gap-4 px-4 py-3 sm:px-6 ${maxWidthClasses[maxWidth]}`}
+  >
     <!-- Brand/Logo -->
     <a
       href={brandHref}
@@ -105,7 +121,9 @@ const currentVariant = variantClasses[variant];
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
         dark:focus:ring-offset-gray-900 rounded-md px-2 py-1 -mx-2 -my-1
         ${currentVariant.brand}
-      `.trim().replace(/\s+/g, ' ')}
+      `
+        .trim()
+        .replace(/\s+/g, ' ')}
       aria-label={`${brand} - Go to homepage`}
     >
       {brand}
@@ -121,14 +139,20 @@ const currentVariant = variantClasses[variant];
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
         dark:focus:ring-offset-gray-900
         ${currentVariant.toggleButton}
-      `.trim().replace(/\s+/g, ' ')}
+      `
+        .trim()
+        .replace(/\s+/g, ' ')}
       data-nav-toggle
       aria-controls={navId}
       aria-expanded="false"
       aria-label="Toggle navigation menu"
     >
       <span class="text-sm font-medium">Menu</span>
-      <span class="text-base transition-transform duration-200" aria-hidden="true" data-nav-icon>☰</span>
+      <span
+        class="text-base transition-transform duration-200"
+        aria-hidden="true"
+        data-nav-icon>☰</span
+      >
     </button>
 
     <!-- Navigation -->
@@ -139,33 +163,41 @@ const currentVariant = variantClasses[variant];
       role="navigation"
       aria-label={ariaLabel}
     >
-      <ul class="mt-3 flex flex-col gap-1 md:mt-0 md:flex-row md:items-center md:gap-2">
-        {items.map((item) => (
-          <li>
-            <a
-              href={item.href}
-              target={item.external ? '_blank' : undefined}
-              rel={item.external ? 'noopener noreferrer' : undefined}
-              class={`
+      <ul
+        class="mt-3 flex flex-col gap-1 md:mt-0 md:flex-row md:items-center md:gap-2"
+      >
+        {
+          items.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noopener noreferrer' : undefined}
+                class={`
                 inline-flex min-h-11 items-center rounded-lg px-3 py-2 
                 text-sm font-medium no-underline transition-all duration-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
                 dark:focus:ring-offset-gray-900
                 ${item.active ? currentVariant.activeNavLink : currentVariant.navLink}
-              `.trim().replace(/\s+/g, ' ')}
-              aria-current={item.active ? 'page' : undefined}
-            >
-              {item.label}
-              {item.external && (
-                <>
-                  <span class="ml-1 text-xs" aria-hidden="true">↗</span>
-                  <span class="sr-only"> (opens in new window)</span>
-                </>
-              )}
-            </a>
-          </li>
-        ))}
-        
+              `
+                  .trim()
+                  .replace(/\s+/g, ' ')}
+                aria-current={item.active ? 'page' : undefined}
+              >
+                {item.label}
+                {item.external && (
+                  <>
+                    <span class="ml-1 text-xs" aria-hidden="true">
+                      ↗
+                    </span>
+                    <span class="sr-only"> (opens in new window)</span>
+                  </>
+                )}
+              </a>
+            </li>
+          ))
+        }
+
         <!-- Actions Slot -->
         <li class="mt-3 md:mt-0 md:ml-4">
           <slot name="actions" />
@@ -179,34 +211,35 @@ const currentVariant = variantClasses[variant];
   document.addEventListener('DOMContentLoaded', () => {
     // Find all navbar instances
     const navbars = document.querySelectorAll('header[role="banner"]');
-    
-    navbars.forEach(navbar => {
+
+    navbars.forEach((navbar) => {
       const toggle = navbar.querySelector('[data-nav-toggle]');
       const nav = navbar.querySelector('[data-nav]');
       const icon = navbar.querySelector('[data-nav-icon]');
-      
-      if (!(toggle instanceof HTMLElement) || !(nav instanceof HTMLElement)) return;
+
+      if (!(toggle instanceof HTMLElement) || !(nav instanceof HTMLElement))
+        return;
 
       let isOpen = false;
 
       const updateVisibility = (nextOpen) => {
         isOpen = nextOpen;
         toggle.setAttribute('aria-expanded', String(nextOpen));
-        
+
         // Update icon
         if (icon) {
           icon.textContent = nextOpen ? '✕' : '☰';
           icon.style.transform = nextOpen ? 'rotate(180deg)' : 'rotate(0deg)';
         }
-        
+
         // Handle mobile/desktop visibility
         if (window.innerWidth >= 768) {
           nav.classList.remove('hidden');
           return;
         }
-        
+
         nav.classList.toggle('hidden', !nextOpen);
-        
+
         // Focus management
         if (nextOpen) {
           // Focus first nav link when menu opens
@@ -233,10 +266,11 @@ const currentVariant = variantClasses[variant];
 
       // Close menu when clicking nav links on mobile
       nav.addEventListener('click', (event) => {
-        const link = event.target instanceof HTMLElement 
-          ? event.target.closest('a[href]') 
-          : null;
-          
+        const link =
+          event.target instanceof HTMLElement
+            ? event.target.closest('a[href]')
+            : null;
+
         if (link && window.innerWidth < 768) {
           updateVisibility(false);
         }
@@ -245,7 +279,7 @@ const currentVariant = variantClasses[variant];
       // Handle window resize
       const handleResize = () => {
         const isDesktop = window.innerWidth >= 768;
-        
+
         if (isDesktop) {
           nav.classList.remove('hidden');
           updateVisibility(false);
@@ -255,7 +289,7 @@ const currentVariant = variantClasses[variant];
       };
 
       window.addEventListener('resize', handleResize);
-      
+
       // Initialize
       updateVisibility(false);
     });

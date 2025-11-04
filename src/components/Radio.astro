@@ -1,7 +1,7 @@
 ---
 import { cn } from '../utils/cn';
 
-export interface Props {
+interface Props {
   /** Name attribute for radio group */
   name: string;
   /** Value of this radio option */
@@ -81,7 +81,8 @@ const variantClasses = {
       'text-blue-600 dark:text-blue-400',
       'checked:border-blue-600 dark:checked:border-blue-400',
       'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-      error && 'border-red-500 dark:border-red-400 checked:border-red-600 dark:checked:border-red-400 focus-visible:ring-red-500 dark:focus-visible:ring-red-400'
+      error &&
+        'border-red-500 dark:border-red-400 checked:border-red-600 dark:checked:border-red-400 focus-visible:ring-red-500 dark:focus-visible:ring-red-400'
     ),
     label: 'text-gray-900 dark:text-gray-100',
     description: 'text-gray-600 dark:text-gray-300',
@@ -122,7 +123,8 @@ const variantClasses = {
       'text-gray-700 dark:text-gray-300',
       'checked:border-gray-700 dark:checked:border-gray-300',
       'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400',
-      error && 'border-red-500 dark:border-red-400 checked:border-red-600 dark:checked:border-red-400 focus-visible:ring-red-500 dark:focus-visible:ring-red-400'
+      error &&
+        'border-red-500 dark:border-red-400 checked:border-red-600 dark:checked:border-red-400 focus-visible:ring-red-500 dark:focus-visible:ring-red-400'
     ),
     label: 'text-gray-700 dark:text-gray-300',
     description: 'text-gray-500 dark:text-gray-400',
@@ -137,7 +139,9 @@ const radioClasses = cn(
   'focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
   sizeClasses[size],
   variantClasses[variant].radio,
-  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-opacity-80',
+  disabled
+    ? 'cursor-not-allowed opacity-50'
+    : 'cursor-pointer hover:border-opacity-80',
   labelPosition === 'right' ? 'mt-0.5' : 'mt-0.5'
 );
 
@@ -147,7 +151,8 @@ const labelClasses = cn(
   labelSizeClasses[size],
   variantClasses[variant].label,
   disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-  required && 'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
+  required &&
+    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
 );
 
 // Description classes
@@ -168,7 +173,8 @@ const containerClasses = cn(
 );
 
 const descriptionId = description ? `${id}-description` : undefined;
-const finalAriaDescribedBy = [ariaDescribedBy, descriptionId].filter(Boolean).join(' ') || undefined;
+const finalAriaDescribedBy =
+  [ariaDescribedBy, descriptionId].filter(Boolean).join(' ') || undefined;
 ---
 
 <div class={containerClasses}>
@@ -185,20 +191,22 @@ const finalAriaDescribedBy = [ariaDescribedBy, descriptionId].filter(Boolean).jo
     aria-invalid={error ? 'true' : undefined}
     class={radioClasses}
   />
-  
-  {(label || description) && (
-    <div class="flex-1 min-w-0">
-      {label && (
-        <label for={id} class={labelClasses}>
-          {label}
-        </label>
-      )}
-      
-      {description && (
-        <div id={descriptionId} class={descriptionClasses}>
-          {description}
-        </div>
-      )}
-    </div>
-  )}
+
+  {
+    (label || description) && (
+      <div class="flex-1 min-w-0">
+        {label && (
+          <label for={id} class={labelClasses}>
+            {label}
+          </label>
+        )}
+
+        {description && (
+          <div id={descriptionId} class={descriptionClasses}>
+            {description}
+          </div>
+        )}
+      </div>
+    )
+  }
 </div>

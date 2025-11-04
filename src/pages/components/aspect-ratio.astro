@@ -6,19 +6,22 @@ const ratioSamples = [
   {
     ratio: '16/9',
     label: '16:9 video frame',
-    description: 'Perfect for product trailers, webinar teasers, or embedded screen recordings.',
+    description:
+      'Perfect for product trailers, webinar teasers, or embedded screen recordings.',
     gradient: 'from-indigo-500/20 via-sky-500/10 to-transparent',
   },
   {
     ratio: '4/3',
     label: '4:3 presentation',
-    description: 'Use for slide previews or legacy video content that needs padding on widescreen layouts.',
+    description:
+      'Use for slide previews or legacy video content that needs padding on widescreen layouts.',
     gradient: 'from-amber-500/20 via-orange-500/10 to-transparent',
   },
   {
     ratio: '1/1',
     label: 'Square thumbnail',
-    description: 'Ideal for avatars, album covers, or grid cards where symmetry matters.',
+    description:
+      'Ideal for avatars, album covers, or grid cards where symmetry matters.',
     gradient: 'from-fuchsia-500/20 via-rose-500/10 to-transparent',
   },
 ];
@@ -27,7 +30,8 @@ const portraitSamples = [
   {
     ratio: '2/3',
     label: '2:3 portrait',
-    description: 'Showcase photography, posters, or mobile UI mockups without stretching.',
+    description:
+      'Showcase photography, posters, or mobile UI mockups without stretching.',
   },
   {
     ratio: '3/2',
@@ -69,31 +73,50 @@ const frameClass =
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      Wrap any content in <code>&lt;AspectRatio&gt;</code> to preserve a fixed shape as the layout
-      resizes. The component relies on Tailwind&apos;s native <code>aspect-*</code> utilities, so the slot
-      scales fluidly while keeping its width-to-height ratio intact.
+      Wrap any content in <code>&lt;AspectRatio&gt;</code> to preserve a fixed shape
+      as the layout resizes. The component relies on Tailwind&apos;s native <code
+        >aspect-*</code
+      > utilities, so the slot scales fluidly while keeping its width-to-height ratio
+      intact.
     </p>
     <p class="text-base text-slate-200">
-      Use it for responsive video embeds, marketing cards, or preview skeletons—anywhere you want the
-      layout to stay steady while content loads in.
+      Use it for responsive video embeds, marketing cards, or preview
+      skeletons—anywhere you want the layout to stay steady while content loads
+      in.
     </p>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">ratio?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ratio?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Preset string (<code>"16/9"</code>, <code>"4/3"</code>, etc.) or numeric value representing
-          width ÷ height. Defaults to <code>"16/9"</code>.
+          Preset string (<code>"16/9"</code>, <code>"4/3"</code>, etc.) or
+          numeric value representing width ÷ height. Defaults to <code
+            >"16/9"</code
+          >.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">className?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Extra Tailwind classes merged onto the outer wrapper. Handy for rounded corners, borders, or
-          overflow control (for example, <code>overflow-hidden</code> with media).
+          Extra Tailwind classes merged onto the outer wrapper. Handy for
+          rounded corners, borders, or overflow control (for example, <code
+            >overflow-hidden</code
+          > with media).
         </dd>
       </div>
     </dl>
@@ -102,11 +125,13 @@ const frameClass =
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Pick the ratio that matches your media, then slot in any element—images, videos, maps, or even
-      custom skeletons. When working with numeric ratios, pass the width divided by height (for example,
+      Pick the ratio that matches your media, then slot in any element—images,
+      videos, maps, or even custom skeletons. When working with numeric ratios,
+      pass the width divided by height (for example,
       <code>ratio=&#123;2.39&#125;</code> for anamorphic video).
     </p>
-    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{usageSnippet}</code>
     </pre>
   </section>
@@ -116,10 +141,12 @@ const frameClass =
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">Standard media ratios</h3>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Standard media ratios
+        </h3>
         <p class="text-base text-slate-200">
-          Popular video and thumbnail shapes rendered with soft placeholders. Swap in live embeds or
-          images to match your production assets.
+          Popular video and thumbnail shapes rendered with soft placeholders.
+          Swap in live embeds or images to match your production assets.
         </p>
       </div>
       <div class="grid gap-6 sm:grid-cols-3">
@@ -137,7 +164,9 @@ const frameClass =
                   {item.label}
                 </div>
               </AspectRatio>
-              <p class="text-sm text-slate-400 dark:text-slate-300">{item.description}</p>
+              <p class="text-sm text-slate-400 dark:text-slate-300">
+                {item.description}
+              </p>
             </div>
           ))
         }
@@ -146,10 +175,13 @@ const frameClass =
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">Portrait and specialty content</h3>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Portrait and specialty content
+        </h3>
         <p class="text-base text-slate-200">
-          Showcase tall imagery, print previews, or cinematic crops without manually calculating padding.
-          The slot always stretches to fill the available height.
+          Showcase tall imagery, print previews, or cinematic crops without
+          manually calculating padding. The slot always stretches to fill the
+          available height.
         </p>
       </div>
       <div class="grid gap-6 sm:grid-cols-3">
@@ -160,11 +192,16 @@ const frameClass =
                 ratio={item.ratio}
                 className="overflow-hidden rounded-xl border border-slate-700/40 bg-slate-800/30"
               >
-                <div class={`${frameClass} bg-gradient-to-br from-slate-500/10 to-slate-300/10`} aria-hidden="true">
+                <div
+                  class={`${frameClass} bg-gradient-to-br from-slate-500/10 to-slate-300/10`}
+                  aria-hidden="true"
+                >
                   {item.label}
                 </div>
               </AspectRatio>
-              <p class="text-sm text-slate-400 dark:text-slate-300">{item.description}</p>
+              <p class="text-sm text-slate-400 dark:text-slate-300">
+                {item.description}
+              </p>
             </div>
           ))
         }
@@ -173,21 +210,29 @@ const frameClass =
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">Custom numeric ratio</h3>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Custom numeric ratio
+        </h3>
         <p class="text-base text-slate-200">
-          Supply a decimal or fractional string for uncommon dimensions. This example uses <code>ratio="239/100"</code> to
-          mimic widescreen cinema artwork while rounding the outer frame and clipping overflow.
+          Supply a decimal or fractional string for uncommon dimensions. This
+          example uses <code>ratio="239/100"</code> to mimic widescreen cinema artwork
+          while rounding the outer frame and clipping overflow.
         </p>
       </div>
       <AspectRatio
         ratio={cinemaRatio}
         className="overflow-hidden rounded-2xl border border-purple-500/40 bg-purple-500/10 shadow-lg"
       >
-        <div class="flex h-full w-full flex-col justify-end bg-gradient-to-br from-purple-600/60 via-indigo-600/40 to-slate-900/80 p-6 text-white">
-          <span class="text-xs uppercase tracking-wide text-purple-100/80">Case study</span>
+        <div
+          class="flex h-full w-full flex-col justify-end bg-gradient-to-br from-purple-600/60 via-indigo-600/40 to-slate-900/80 p-6 text-white"
+        >
+          <span class="text-xs uppercase tracking-wide text-purple-100/80"
+            >Case study</span
+          >
           <h4 class="mt-2 text-lg font-semibold">Design system launch</h4>
           <p class="mt-2 text-sm text-purple-100/90">
-            Keep your hero artwork sharp on any screen by locking the canvas to the final aspect ratio.
+            Keep your hero artwork sharp on any screen by locking the canvas to
+            the final aspect ratio.
           </p>
         </div>
       </AspectRatio>

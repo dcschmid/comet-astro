@@ -1,14 +1,162 @@
 ---
-interface Props {
-  as?: 'span' | 'div' | 'p';
+import { cn } from '../utils/cn';
+
+export interface VisuallyHiddenProps {
+  // Element Type
+  as?:
+    | 'span'
+    | 'div'
+    | 'p'
+    | 'h1'
+    | 'h2'
+    | 'h3'
+    | 'h4'
+    | 'h5'
+    | 'h6'
+    | 'label'
+    | 'legend'
+    | 'caption';
+
+  // Behavior
+  focusable?: boolean;
+  skipLink?: boolean;
+  debug?: boolean;
+
+  // Accessibility
+  ariaLive?: 'off' | 'polite' | 'assertive';
+  ariaLabel?: string;
+  role?: string;
+
+  // Additional
   className?: string;
 }
 
-const { as: Tag = 'span', className = '' } = Astro.props;
+interface Props extends VisuallyHiddenProps {}
+
+const {
+  as: Tag = 'span',
+  focusable = false,
+  skipLink = false,
+  debug = false,
+  ariaLive,
+  ariaLabel,
+  role,
+  className = '',
+} = Astro.props;
+
+// Base visually hidden classes with WCAG AAA compliance
+const baseClasses = [
+  // Core visually hidden styling
+  'absolute',
+  '-m-px',
+  'h-px',
+  'w-px',
+  'overflow-hidden',
+  'whitespace-nowrap',
+  'border-0',
+  'p-0',
+  // Ensure content is still accessible to screen readers
+  'clip-rect-0',
+];
+
+// Focus behavior classes
+const focusClasses = focusable
+  ? [
+      // Make visible when focused (WCAG AAA compliant)
+      'focus:not-sr-only',
+      'focus:static',
+      'focus:h-auto',
+      'focus:w-auto',
+      'focus:p-2',
+      'focus:overflow-visible',
+      'focus:whitespace-normal',
+      'focus:clip-auto',
+      // Enhanced focus styling for WCAG AAA (9:1 contrast)
+      'focus:bg-blue-600',
+      'focus:text-white',
+      'focus:border-2',
+      'focus:border-blue-800',
+      'focus:shadow-lg',
+      'focus:shadow-blue-900/50',
+      'focus:outline-none',
+      'focus:ring-4',
+      'focus:ring-blue-500/30',
+      'focus:ring-offset-2',
+      'focus:rounded-md',
+      'focus:z-50',
+      // Dark mode support
+      'dark:focus:bg-blue-500',
+      'dark:focus:border-blue-300',
+      'dark:focus:shadow-blue-800/50',
+      'dark:focus:ring-blue-400/30',
+    ]
+  : [];
+
+// Skip link specific styles
+const skipLinkClasses = skipLink
+  ? [
+      // Position at top of page
+      'focus:fixed',
+      'focus:top-4',
+      'focus:left-4',
+      'focus:z-[9999]',
+      // Enhanced styling for skip links
+      'focus:font-medium',
+      'focus:text-sm',
+      'focus:px-4',
+      'focus:py-2',
+    ]
+  : [];
+
+// Debug mode classes (only in development)
+const debugClasses = debug
+  ? [
+      '!static',
+      '!h-auto',
+      '!w-auto',
+      '!p-2',
+      '!overflow-visible',
+      '!whitespace-normal',
+      '!clip-auto',
+      'bg-yellow-200',
+      'text-yellow-900',
+      'border-2',
+      'border-yellow-500',
+      'rounded',
+      'text-xs',
+      'font-mono',
+      'dark:bg-yellow-900',
+      'dark:text-yellow-200',
+      'dark:border-yellow-400',
+    ]
+  : [];
+
+const combinedClasses = cn(
+  ...baseClasses,
+  ...focusClasses,
+  ...skipLinkClasses,
+  ...debugClasses,
+  className
+);
+---
+
 ---
 
 <Tag
-  class={`sr-only absolute -m-px h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 focus:not-sr-only focus:static focus:h-auto focus:w-auto focus:p-0 focus:overflow-visible ${className}`.trim()}
+  class={combinedClasses}
+  aria-live={ariaLive}
+  aria-label={ariaLabel}
+  role={role}
+  tabindex={focusable ? 0 : undefined}
+  data-visually-hidden={debug ? 'debug' : 'true'}
 >
   <slot />
+
+  {
+    debug && (
+      <span class="ml-2 text-xs opacity-75">
+        [Visually Hidden - Debug Mode]
+      </span>
+    )
+  }
 </Tag>

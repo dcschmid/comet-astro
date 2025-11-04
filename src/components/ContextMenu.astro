@@ -48,7 +48,11 @@ const { items, targetId, className = '' } = Astro.props;
           tabindex="-1"
           aria-selected="false"
         >
-          {item.icon && <span class="text-base shrink-0" aria-hidden="true">{item.icon}</span>}
+          {item.icon && (
+            <span class="text-base shrink-0" aria-hidden="true">
+              {item.icon}
+            </span>
+          )}
           <span class="truncate">{item.label}</span>
         </button>
       )
@@ -118,7 +122,7 @@ const { items, targetId, className = '' } = Astro.props;
         event.preventDefault();
         event.stopPropagation();
         hideAllMenus();
-        
+
         // Show menu with animation
         menu.classList.remove('invisible');
         menu.style.pointerEvents = 'auto';
@@ -128,7 +132,7 @@ const { items, targetId, className = '' } = Astro.props;
         menu.setAttribute('aria-hidden', 'false');
         positionMenu(menu, event.pageX, event.pageY);
         openMenu = menu;
-        
+
         // Focus first item after animation completes
         setTimeout(() => {
           focusFirstItem(menu);

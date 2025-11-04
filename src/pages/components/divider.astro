@@ -30,14 +30,15 @@ import { Divider } from 'comet-astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      Divider provides semantic content separation with multiple visual styles and orientations. 
-      The component maintains WCAG AAA contrast ratios across all variants and includes optional 
-      text labels for enhanced semantic meaning and accessibility.
+      Divider provides semantic content separation with multiple visual styles
+      and orientations. The component maintains WCAG AAA contrast ratios across
+      all variants and includes optional text labels for enhanced semantic
+      meaning and accessibility.
     </p>
     <p class="text-base text-slate-200">
-      Horizontal and vertical orientations support responsive spacing with automatic adjustments 
-      for different screen sizes. Label variants improve content structure and provide clear 
-      section boundaries for screen readers.
+      Horizontal and vertical orientations support responsive spacing with
+      automatic adjustments for different screen sizes. Label variants improve
+      content structure and provide clear section boundaries for screen readers.
     </p>
   </section>
 
@@ -53,7 +54,9 @@ import { Divider } from 'comet-astro';
           orientation?
         </dt>
         <dd class="text-sm text-slate-200">
-          Direction of the divider: <code>"horizontal"</code> or <code>"vertical"</code>. Defaults to <code>"horizontal"</code>.
+          Direction of the divider: <code>"horizontal"</code> or <code
+            >"vertical"</code
+          >. Defaults to <code>"horizontal"</code>.
         </dd>
       </div>
       <div
@@ -65,7 +68,9 @@ import { Divider } from 'comet-astro';
           variant?
         </dt>
         <dd class="text-sm text-slate-200">
-          Visual style: <code>"solid"</code>, <code>"dashed"</code>, <code>"dotted"</code>, or <code>"gradient"</code>. Defaults to <code>"solid"</code>.
+          Visual style: <code>"solid"</code>, <code>"dashed"</code>, <code
+            >"dotted"</code
+          >, or <code>"gradient"</code>. Defaults to <code>"solid"</code>.
         </dd>
       </div>
       <div
@@ -77,7 +82,9 @@ import { Divider } from 'comet-astro';
           spacing?
         </dt>
         <dd class="text-sm text-slate-200">
-          Margin spacing around divider: <code>"none"</code>, <code>"sm"</code>, <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+          Margin spacing around divider: <code>"none"</code>, <code>"sm"</code>, <code
+            >"md"</code
+          >, or <code>"lg"</code>. Defaults to <code>"md"</code>.
         </dd>
       </div>
       <div
@@ -89,7 +96,8 @@ import { Divider } from 'comet-astro';
           label?
         </dt>
         <dd class="text-sm text-slate-200">
-          Optional text label centered on horizontal dividers for semantic separation.
+          Optional text label centered on horizontal dividers for semantic
+          separation.
         </dd>
       </div>
       <div
@@ -101,7 +109,8 @@ import { Divider } from 'comet-astro';
           className?
         </dt>
         <dd class="text-sm text-slate-200">
-          Additional CSS classes to apply to the divider element for custom styling.
+          Additional CSS classes to apply to the divider element for custom
+          styling.
         </dd>
       </div>
     </dl>
@@ -110,8 +119,9 @@ import { Divider } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Use dividers to create visual separation between content sections. Choose orientations 
-      and variants based on your layout needs, and add labels for enhanced semantic meaning.
+      Use dividers to create visual separation between content sections. Choose
+      orientations and variants based on your layout needs, and add labels for
+      enhanced semantic meaning.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -126,19 +136,21 @@ import { Divider } from 'comet-astro';
     </p>
     <div class="space-y-6">
       <div>
-        <h3 class="mb-3 text-lg font-semibold text-slate-100">Solid (default)</h3>
+        <h3 class="mb-3 text-lg font-semibold text-slate-100">
+          Solid (default)
+        </h3>
         <p class="text-slate-200">Content above the divider</p>
         <DividerComponent />
         <p class="text-slate-200">Content below the divider</p>
       </div>
-      
+
       <div>
         <h3 class="mb-3 text-lg font-semibold text-slate-100">Dashed</h3>
         <p class="text-slate-200">Content above</p>
         <DividerComponent variant="dashed" />
         <p class="text-slate-200">Content below</p>
       </div>
-      
+
       <div>
         <h3 class="mb-3 text-lg font-semibold text-slate-100">Gradient</h3>
         <p class="text-slate-200">Content above</p>
@@ -159,7 +171,7 @@ import { Divider } from 'comet-astro';
         <DividerComponent label="or" />
         <p class="text-slate-200">Continue as guest</p>
       </div>
-      
+
       <div>
         <p class="text-slate-200">Basic plan features</p>
         <DividerComponent label="Premium Features" spacing="lg" />
@@ -171,7 +183,8 @@ import { Divider } from 'comet-astro';
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Vertical Orientation</h2>
     <p class="text-base text-slate-200">
-      Use vertical dividers for inline content separation and navigation elements.
+      Use vertical dividers for inline content separation and navigation
+      elements.
     </p>
     <div class="space-y-6">
       <div class="flex h-20 items-center gap-4">
@@ -181,12 +194,20 @@ import { Divider } from 'comet-astro';
         <DividerComponent orientation="vertical" />
         <span class="text-slate-200">Right Section</span>
       </div>
-      
+
       <div class="flex h-16 items-center gap-6">
         <span class="text-slate-200">Home</span>
-        <DividerComponent orientation="vertical" variant="dashed" spacing="none" />
+        <DividerComponent
+          orientation="vertical"
+          variant="dashed"
+          spacing="none"
+        />
         <span class="text-slate-200">About</span>
-        <DividerComponent orientation="vertical" variant="dashed" spacing="none" />
+        <DividerComponent
+          orientation="vertical"
+          variant="dashed"
+          spacing="none"
+        />
         <span class="text-slate-200">Contact</span>
       </div>
     </div>
@@ -199,14 +220,18 @@ import { Divider } from 'comet-astro';
     </p>
     <div class="space-y-8">
       <div>
-        <h3 class="mb-2 text-base font-semibold text-slate-100">Small spacing</h3>
+        <h3 class="mb-2 text-base font-semibold text-slate-100">
+          Small spacing
+        </h3>
         <p class="text-slate-200">Content with tight spacing</p>
         <DividerComponent spacing="sm" />
         <p class="text-slate-200">Following content</p>
       </div>
-      
+
       <div>
-        <h3 class="mb-2 text-base font-semibold text-slate-100">Large spacing</h3>
+        <h3 class="mb-2 text-base font-semibold text-slate-100">
+          Large spacing
+        </h3>
         <p class="text-slate-200">Content with generous spacing</p>
         <DividerComponent spacing="lg" />
         <p class="text-slate-200">Well-separated content</p>
@@ -217,18 +242,21 @@ import { Divider } from 'comet-astro';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      Contrast ratios exceed WCAG AAA requirements (7:1+) across all divider variants in both 
-      light and dark themes. Visual separators maintain sufficient visibility while remaining 
-      unobtrusive to content flow.
+      Contrast ratios exceed WCAG AAA requirements (7:1+) across all divider
+      variants in both light and dark themes. Visual separators maintain
+      sufficient visibility while remaining unobtrusive to content flow.
     </p>
     <p class="text-base text-slate-200">
-      Semantic HTML uses proper <code>hr</code> elements with <code>role="separator"</code> 
-      for labeled variants. Screen readers understand content structure through appropriate 
+      Semantic HTML uses proper <code>hr</code> elements with <code
+        >role="separator"</code
+      >
+      for labeled variants. Screen readers understand content structure through appropriate
       ARIA attributes and can navigate section boundaries effectively.
     </p>
     <p class="text-base text-slate-200">
-      Responsive spacing automatically adjusts for different screen sizes, maintaining 
-      proportional separation while optimizing content density for mobile and desktop viewing.
+      Responsive spacing automatically adjusts for different screen sizes,
+      maintaining proportional separation while optimizing content density for
+      mobile and desktop viewing.
     </p>
   </section>
 </DocsLayout>

@@ -25,7 +25,11 @@ const parseRatioValue = (value: Props['ratio']): number | null => {
     if (ratioClasses[trimmed]) return null;
     if (trimmed.includes('/')) {
       const [numerator, denominator] = trimmed.split('/').map(Number);
-      if (Number.isFinite(numerator) && Number.isFinite(denominator) && denominator !== 0) {
+      if (
+        Number.isFinite(numerator) &&
+        Number.isFinite(denominator) &&
+        denominator !== 0
+      ) {
         return numerator / denominator;
       }
       return null;
@@ -43,11 +47,17 @@ const tailwindClass =
     : undefined;
 const numericRatio = tailwindClass ? null : parseRatioValue(trimmedRatio);
 const fallbackClass = ratioClasses['16/9'];
-const containerClass = ['relative', tailwindClass ?? (numericRatio ? '' : fallbackClass), className]
+const containerClass = [
+  'relative',
+  tailwindClass ?? (numericRatio ? '' : fallbackClass),
+  className,
+]
   .filter(Boolean)
   .join(' ');
 const aspectStyle =
-  tailwindClass || numericRatio === null ? undefined : `aspect-ratio: ${numericRatio};`;
+  tailwindClass || numericRatio === null
+    ? undefined
+    : `aspect-ratio: ${numericRatio};`;
 ---
 
 <div class={containerClass} style={aspectStyle}>

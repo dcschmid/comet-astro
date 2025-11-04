@@ -11,70 +11,149 @@ const usageSnippet = `---\nimport { Center } from 'comet-astro';\n\n---\n\n<Cent
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      The <code>Center</code> component constrains and aligns arbitrary content without introducing visual noise. It supports horizontal, vertical, or dual-axis centering while preserving responsive width presets and optional internal padding.
+      The <code>Center</code> component constrains and aligns arbitrary content without
+      introducing visual noise. It supports horizontal, vertical, or dual-axis centering
+      while preserving responsive width presets and optional internal padding.
     </p>
     <p class="text-base text-slate-200">
-      Background variants are tuned to maintain WCAG AAA contrast for typical foreground text (<code>text-slate-100</code> / <code>text-slate-900</code>) across light and dark themes.
+      Background variants are tuned to maintain WCAG AAA contrast for typical
+      foreground text (<code>text-slate-100</code> / <code>text-slate-900</code
+      >) across light and dark themes.
     </p>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">axis?</dt>
-        <dd class="text-sm text-slate-200">Alignment axis. <code>"horizontal"</code>, <code>"vertical"</code>, or <code>"both"</code>. Defaults to <code>"both"</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          axis?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Alignment axis. <code>"horizontal"</code>, <code>"vertical"</code>, or <code
+            >"both"</code
+          >. Defaults to <code>"both"</code>.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">inline?</dt>
-        <dd class="text-sm text-slate-200">Render as <code>inline-flex</code> for inline flow contexts. Defaults to <code>false</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          inline?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Render as <code>inline-flex</code> for inline flow contexts. Defaults to
+          <code>false</code>.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">maxWidth?</dt>
-        <dd class="text-sm text-slate-200">Responsive width cap. <code>"sm"</code>, <code>"md"</code>, <code>"lg"</code>, <code>"xl"</code>, <code>"2xl"</code>, or <code>"full"</code>. Defaults to <code>"full"</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          maxWidth?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Responsive width cap. <code>"sm"</code>, <code>"md"</code>, <code
+            >"lg"</code
+          >, <code>"xl"</code>, <code>"2xl"</code>, or <code>"full"</code>.
+          Defaults to <code>"full"</code>.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">padded?</dt>
-        <dd class="text-sm text-slate-200">Adds internal padding (<code>p-4 md:p-6</code>) for breathing room. Defaults to <code>false</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          padded?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Adds internal padding (<code>p-4 md:p-6</code>) for breathing room.
+          Defaults to <code>false</code>.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">background?</dt>
-        <dd class="text-sm text-slate-200">Surface contrast style: <code>"none"</code>, <code>"subtle"</code>, <code>"soft"</code>, <code>"solid"</code>. Defaults to <code>"none"</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          background?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Surface contrast style: <code>"none"</code>, <code>"subtle"</code>, <code
+            >"soft"</code
+          >, <code>"solid"</code>. Defaults to <code>"none"</code>.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">as?</dt>
-        <dd class="text-sm text-slate-200">Semantic wrapper tag (<code>div</code>, <code>section</code>, <code>article</code>, <code>main</code>, <code>aside</code>). Defaults to <code>"div"</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          as?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Semantic wrapper tag (<code>div</code>, <code>section</code>, <code
+            >article</code
+          >, <code>main</code>, <code>aside</code>). Defaults to <code
+            >"div"</code
+          >.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">ariaLabel?</dt>
-        <dd class="text-sm text-slate-200">Descriptive label when using landmark semantics (e.g. <code>main</code> or <code>aside</code>) to clarify purpose.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Descriptive label when using landmark semantics (e.g. <code>main</code
+          > or <code>aside</code>) to clarify purpose.
+        </dd>
       </div>
     </dl>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">Import and wrap content. Choose axis alignment and optional width/padding/background variants. Foreground text will remain AAA legible on provided background surfaces.</p>
-    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+    <p class="text-base text-slate-200">
+      Import and wrap content. Choose axis alignment and optional
+      width/padding/background variants. Foreground text will remain AAA legible
+      on provided background surfaces.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
   </section>
 
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Axis variants</h2>
     <div class="grid gap-6 md:grid-cols-3">
       <div class="h-32 rounded-lg bg-slate-800/40 p-2">
-  <CenterComp axis="horizontal" background="subtle" padded>
+        <CenterComp axis="horizontal" background="subtle" padded>
           <span class="text-slate-100 text-sm">Horizontal</span>
-  </CenterComp>
+        </CenterComp>
       </div>
       <div class="h-32 rounded-lg bg-slate-800/40 p-2">
-  <CenterComp axis="vertical" background="subtle" padded>
+        <CenterComp axis="vertical" background="subtle" padded>
           <span class="text-slate-100 text-sm">Vertical</span>
-  </CenterComp>
+        </CenterComp>
       </div>
       <div class="h-32 rounded-lg bg-slate-800/40 p-2">
-  <CenterComp axis="both" background="subtle" padded>
+        <CenterComp axis="both" background="subtle" padded>
           <span class="text-slate-100 text-sm">Both</span>
-  </CenterComp>
+        </CenterComp>
       </div>
     </div>
   </section>
@@ -82,29 +161,62 @@ const usageSnippet = `---\nimport { Center } from 'comet-astro';\n\n---\n\n<Cent
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Width presets</h2>
     <div class="space-y-4">
-  <CenterComp maxWidth="sm" background="soft" padded><p class="text-slate-100 text-sm">sm</p></CenterComp>
-  <CenterComp maxWidth="md" background="soft" padded><p class="text-slate-100 text-sm">md</p></CenterComp>
-  <CenterComp maxWidth="lg" background="soft" padded><p class="text-slate-100 text-sm">lg</p></CenterComp>
-  <CenterComp maxWidth="xl" background="soft" padded><p class="text-slate-100 text-sm">xl</p></CenterComp>
-  <CenterComp maxWidth="2xl" background="soft" padded><p class="text-slate-100 text-sm">2xl</p></CenterComp>
-  <CenterComp maxWidth="full" background="soft" padded><p class="text-slate-100 text-sm">full</p></CenterComp>
+      <CenterComp maxWidth="sm" background="soft" padded
+        ><p class="text-slate-100 text-sm">sm</p></CenterComp
+      >
+      <CenterComp maxWidth="md" background="soft" padded
+        ><p class="text-slate-100 text-sm">md</p></CenterComp
+      >
+      <CenterComp maxWidth="lg" background="soft" padded
+        ><p class="text-slate-100 text-sm">lg</p></CenterComp
+      >
+      <CenterComp maxWidth="xl" background="soft" padded
+        ><p class="text-slate-100 text-sm">xl</p></CenterComp
+      >
+      <CenterComp maxWidth="2xl" background="soft" padded
+        ><p class="text-slate-100 text-sm">2xl</p></CenterComp
+      >
+      <CenterComp maxWidth="full" background="soft" padded
+        ><p class="text-slate-100 text-sm">full</p></CenterComp
+      >
     </div>
   </section>
 
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Background variants</h2>
     <div class="grid gap-6 md:grid-cols-4">
-  <CenterComp background="none" padded><p class="text-slate-100 text-sm">none</p></CenterComp>
-  <CenterComp background="subtle" padded><p class="text-slate-100 text-sm">subtle</p></CenterComp>
-  <CenterComp background="soft" padded><p class="text-slate-100 text-sm">soft</p></CenterComp>
-  <CenterComp background="solid" padded><p class="text-slate-100 text-sm">solid</p></CenterComp>
+      <CenterComp background="none" padded
+        ><p class="text-slate-100 text-sm">none</p></CenterComp
+      >
+      <CenterComp background="subtle" padded
+        ><p class="text-slate-100 text-sm">subtle</p></CenterComp
+      >
+      <CenterComp background="soft" padded
+        ><p class="text-slate-100 text-sm">soft</p></CenterComp
+      >
+      <CenterComp background="solid" padded
+        ><p class="text-slate-100 text-sm">solid</p></CenterComp
+      >
     </div>
   </section>
 
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
-    <p class="text-base text-slate-200">Axis alignment uses flexbox without altering document order, preserving reading flow for assistive tech. Width presets cap line length to aid readability (ideal ~60–80 characters).</p>
-    <p class="text-base text-slate-200">Background variants maintain ≥7:1 contrast for standard UI foreground text in light and dark themes. Avoid placing low-contrast custom text colors inside subtle/soft surfaces.</p>
-    <p class="text-base text-slate-200">When using landmark tags (<code>main</code>, <code>aside</code>, <code>section</code>), supply <code>ariaLabel</code> if additional context is needed beyond surrounding headings.</p>
+    <p class="text-base text-slate-200">
+      Axis alignment uses flexbox without altering document order, preserving
+      reading flow for assistive tech. Width presets cap line length to aid
+      readability (ideal ~60–80 characters).
+    </p>
+    <p class="text-base text-slate-200">
+      Background variants maintain ≥7:1 contrast for standard UI foreground text
+      in light and dark themes. Avoid placing low-contrast custom text colors
+      inside subtle/soft surfaces.
+    </p>
+    <p class="text-base text-slate-200">
+      When using landmark tags (<code>main</code>, <code>aside</code>, <code
+        >section</code
+      >), supply <code>ariaLabel</code> if additional context is needed beyond surrounding
+      headings.
+    </p>
   </section>
 </DocsLayout>

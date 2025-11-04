@@ -195,8 +195,9 @@ const inactiveClasses = variantClasses[variant].inactive;
           ? event.target.closest('button[data-id]')
           : null;
       if (!(button instanceof HTMLElement)) return;
-      if (button.disabled || button.getAttribute('aria-disabled') === 'true') return;
-      
+      if (button.disabled || button.getAttribute('aria-disabled') === 'true')
+        return;
+
       const id = button.getAttribute('data-id');
       if (!id) return;
 
@@ -218,15 +219,20 @@ const inactiveClasses = variantClasses[variant].inactive;
 
     // Keyboard navigation
     root.addEventListener('keydown', (event) => {
-      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-      
-      const buttons = Array.from(root.querySelectorAll('button[data-id]:not([disabled])'));
-      const currentIndex = buttons.findIndex(btn => btn === document.activeElement);
-      
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key))
+        return;
+
+      const buttons = Array.from(
+        root.querySelectorAll('button[data-id]:not([disabled])')
+      );
+      const currentIndex = buttons.findIndex(
+        (btn) => btn === document.activeElement
+      );
+
       if (currentIndex === -1) return;
-      
+
       event.preventDefault();
-      
+
       let nextIndex;
       switch (event.key) {
         case 'ArrowLeft':
@@ -244,7 +250,7 @@ const inactiveClasses = variantClasses[variant].inactive;
         default:
           return;
       }
-      
+
       if (buttons[nextIndex] instanceof HTMLElement) {
         buttons[nextIndex].focus();
       }

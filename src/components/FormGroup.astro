@@ -45,7 +45,8 @@ const {
 } = Astro.props as Props;
 
 // Generate unique IDs for accessibility
-const baseId = labelFor || `form-group-${Math.random().toString(36).substr(2, 9)}`;
+const baseId =
+  labelFor || `form-group-${Math.random().toString(36).substr(2, 9)}`;
 const generatedDescriptionId = descriptionId || `${baseId}-description`;
 const generatedErrorId = errorId || `${baseId}-error`;
 const generatedHelpTextId = helpTextId || `${baseId}-help`;
@@ -55,21 +56,23 @@ const describedByParts = [
   description ? generatedDescriptionId : null,
   helpText ? generatedHelpTextId : null,
   error ? generatedErrorId : null,
-  ariaDescribedby || null
+  ariaDescribedby || null,
 ].filter(Boolean);
-const combinedDescribedBy = describedByParts.length > 0 ? describedByParts.join(' ') : undefined;
+const combinedDescribedBy =
+  describedByParts.length > 0 ? describedByParts.join(' ') : undefined;
 
 // Size-based spacing classes
 const sizeClasses = {
   sm: 'space-y-1',
-  md: 'space-y-2', 
-  lg: 'space-y-3'
+  md: 'space-y-2',
+  lg: 'space-y-3',
 };
 
 // Layout classes
-const layoutClasses = layout === 'horizontal' 
-  ? 'md:flex md:items-start md:gap-6' 
-  : sizeClasses[size];
+const layoutClasses =
+  layout === 'horizontal'
+    ? 'md:flex md:items-start md:gap-6'
+    : sizeClasses[size];
 
 const Element = fieldsetMode ? 'fieldset' : 'div';
 ---
@@ -83,89 +86,113 @@ const Element = fieldsetMode ? 'fieldset' : 'div';
   aria-describedby={combinedDescribedBy}
 >
   {/* Legend for fieldset mode */}
-  {fieldsetMode && legend && (
-    <legend class={`block text-sm font-semibold text-slate-800 dark:text-slate-100 mb-2 ${labelClassName}`}>
-      {legend}
-      {required && (
-        <span class="ml-1 text-red-700 dark:text-red-400" aria-label="required">*</span>
-      )}
-      {!required && optionalText && (
-        <span class="ml-2 text-xs font-normal uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          {optionalText}
-        </span>
-      )}
-    </legend>
-  )}
-
-  {/* Label section for regular mode */}
-  {!fieldsetMode && label && (
-    <div class={`${layout === 'horizontal' ? 'md:w-48 md:shrink-0' : ''} ${sizeClasses[size]}`}>
-      <label
-        class={`block text-sm font-semibold text-slate-800 dark:text-slate-100 ${hideLabel ? 'sr-only' : ''} ${labelClassName}`.trim()}
-        for={labelFor}
+  {
+    fieldsetMode && legend && (
+      <legend
+        class={`block text-sm font-semibold text-slate-800 dark:text-slate-100 mb-2 ${labelClassName}`}
       >
-        {label}
+        {legend}
         {required && (
-          <span class="ml-1 text-red-700 dark:text-red-400" aria-label="required">*</span>
+          <span
+            class="ml-1 text-red-700 dark:text-red-400"
+            aria-label="required"
+          >
+            *
+          </span>
         )}
         {!required && optionalText && (
           <span class="ml-2 text-xs font-normal uppercase tracking-wide text-slate-500 dark:text-slate-400">
             {optionalText}
           </span>
         )}
-      </label>
-      
-      {description && (
-        <p 
-          id={generatedDescriptionId}
-          class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
+      </legend>
+    )
+  }
+
+  {/* Label section for regular mode */}
+  {
+    !fieldsetMode && label && (
+      <div
+        class={`${layout === 'horizontal' ? 'md:w-48 md:shrink-0' : ''} ${sizeClasses[size]}`}
+      >
+        <label
+          class={`block text-sm font-semibold text-slate-800 dark:text-slate-100 ${hideLabel ? 'sr-only' : ''} ${labelClassName}`.trim()}
+          for={labelFor}
         >
-          {description}
-        </p>
-      )}
-    </div>
-  )}
+          {label}
+          {required && (
+            <span
+              class="ml-1 text-red-700 dark:text-red-400"
+              aria-label="required"
+            >
+              *
+            </span>
+          )}
+          {!required && optionalText && (
+            <span class="ml-2 text-xs font-normal uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {optionalText}
+            </span>
+          )}
+        </label>
+
+        {description && (
+          <p
+            id={generatedDescriptionId}
+            class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
+          >
+            {description}
+          </p>
+        )}
+      </div>
+    )
+  }
 
   {/* Content section */}
-  <div class={`${layout === 'horizontal' ? 'md:flex-1 md:min-w-0' : ''} ${sizeClasses[size]}`}>
+  <div
+    class={`${layout === 'horizontal' ? 'md:flex-1 md:min-w-0' : ''} ${sizeClasses[size]}`}
+  >
     <div class={sizeClasses[size]}>
       <slot />
-      
+
       {/* Help text */}
-      {helpText && (
-        <p 
-          id={generatedHelpTextId}
-          class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
-        >
-          {helpText}
-        </p>
-      )}
-      
-      {/* Error message */}
-      {error && (
-        <div
-          id={generatedErrorId}
-          class="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-800/50"
-          role="alert"
-          aria-live="assertive"
-        >
-          <svg 
-            class="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0" 
-            fill="currentColor" 
-            viewBox="0 0 20 20"
-            aria-hidden="true"
+      {
+        helpText && (
+          <p
+            id={generatedHelpTextId}
+            class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
           >
-            <path 
-              fill-rule="evenodd" 
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" 
-              clip-rule="evenodd"
-            />
-          </svg>
-          <p class="text-sm font-medium text-red-700 dark:text-red-300">
-            {error}
+            {helpText}
           </p>
-        </div>
-      )}
+        )
+      }
+
+      {/* Error message */}
+      {
+        error && (
+          <div
+            id={generatedErrorId}
+            class="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-800/50"
+            role="alert"
+            aria-live="assertive"
+          >
+            <svg
+              class="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <p class="text-sm font-medium text-red-700 dark:text-red-300">
+              {error}
+            </p>
+          </div>
+        )
+      }
     </div>
   </div>
 </Element>

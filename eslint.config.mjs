@@ -6,7 +6,17 @@ import prettier from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['.astro/', 'dist/', 'node_modules/', '*.d.ts'],
+    ignores: [
+      '.astro/',
+      'dist/',
+      'node_modules/',
+      '*.d.ts',
+      // Files with complex template strings that ESLint can't parse
+      'src/components/OptimizedImage.astro',
+      'src/components/Textarea.astro',
+      'src/components/LanguageSwitcher.astro',
+      'src/components/MapEmbed.astro',
+    ],
   },
   js.configs.recommended,
   {

@@ -34,6 +34,12 @@ import { ButtonLink } from 'comet-astro';
       screen reader copy automatically. Override the behaviour with props when
       you need explicit control.
     </p>
+    <p class="text-base text-slate-200">
+      Built on top of <strong>ButtonBase</strong>, this component now supports
+      all three size variants (sm, md, lg) and provides consistent styling with
+      the Button component while maintaining dedicated anchor-only
+      functionality.
+    </p>
   </section>
 
   <section class="mt-10 space-y-6">
@@ -68,12 +74,26 @@ import { ButtonLink } from 'comet-astro';
         <dt
           class="text-sm font-semibold uppercase tracking-wide text-slate-200"
         >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Adjusts height and padding. Options are <code>"sm"</code>, <code
+            >"md"</code
+          >, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           variant?
         </dt>
         <dd class="text-sm text-slate-200">
-          Visual treatment. Choose <code>"primary"</code> or <code
+          Visual treatment. Choose <code>"primary"</code>, <code
             >"secondary"</code
-          >. Defaults to <code>"primary"</code>.
+          >, or <code>"ghost"</code>. Defaults to <code>"primary"</code>.
         </dd>
       </div>
       <div
@@ -132,6 +152,55 @@ import { ButtonLink } from 'comet-astro';
   </section>
 
   <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">
+      ButtonBase Architecture
+    </h2>
+    <p class="text-base text-slate-200">
+      This component is built on top of ButtonBase, providing:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Always Anchor:</strong> Consistently renders as <code>a</code> element
+        with <code>as="a"</code>
+      </li>
+      <li>
+        <strong>Three Size Variants:</strong> Now supports sm, md, and lg sizes (previously
+        had fixed size)
+      </li>
+      <li>
+        <strong>Unified Styling:</strong> Consistent appearance with Button component
+        through shared ButtonBase
+      </li>
+      <li>
+        <strong>External Link Handling:</strong> Automatic detection and proper attributes
+        for external URLs
+      </li>
+      <li>
+        <strong>Enhanced Accessibility:</strong> Proper ARIA attributes and screen
+        reader support
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
+    <div class="flex flex-wrap items-center gap-3">
+      <ButtonLink href="#" size="sm" label="Small ButtonLink" />
+      <ButtonLink href="#" size="md" label="Medium ButtonLink" />
+      <ButtonLink href="#" size="lg" label="Large ButtonLink" />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="flex flex-wrap gap-3">
+      <ButtonLink href="#" variant="primary" label="Primary ButtonLink" />
+      <ButtonLink href="#" variant="secondary" label="Secondary ButtonLink" />
+      <ButtonLink href="#" variant="ghost" label="Ghost ButtonLink" />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
     <div class="flex flex-wrap gap-3">
       <ButtonLink href="/docs/design-system" label="Primary link" />
@@ -144,6 +213,12 @@ import { ButtonLink } from 'comet-astro';
         href="https://example.com/privacy"
         target="_blank"
         label="Privacy policy"
+      />
+      <ButtonLink
+        href="/docs/components"
+        label="Small link"
+        size="sm"
+        variant="ghost"
       />
     </div>
   </section>

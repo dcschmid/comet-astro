@@ -1,23 +1,554 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Toast from '../../components/Toast.astro';
+
+const usageSnippet = `---
+import { Toast } from 'comet-astro';
+---
+
+<div class="space-y-4">
+  <Toast variant="success" title="Success!" dismissible>
+    Your changes have been saved successfully.
+  </Toast>
+  
+  <Toast variant="error" title="Error" dismissible>
+    Something went wrong. Please try again.
+  </Toast>
+  
+  <Toast variant="info" showProgress duration={3000}>
+    Processing your request...
+  </Toast>
+</div>`;
 ---
 
 <DocsLayout
   title="Toast"
-  description="Stackable notification with status variants and auto-dismiss support."
+  description="Accessible notification component with AAA contrast, multiple variants, and comprehensive positioning options."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-2 relative" style="min-height: 320px;">
-      <Toast variant="info" title="Info">This is an info message</Toast>
-      <Toast variant="success" title="Success">
-        Operation completed successfully
-      </Toast>
-      <Toast variant="warning" title="Warning">
-        Please review before continuing
-      </Toast>
-      <Toast variant="error" title="Error">Something went wrong</Toast>
+    <p class="text-base text-slate-100">
+      Toast notifications provide non-intrusive feedback to users about system
+      status, completed actions, or important information. Our Toast component
+      follows WCAG AAA guidelines with proper contrast ratios, screen reader
+      support, and keyboard navigation.
+    </p>
+    <p class="text-base text-slate-200">
+      Each variant includes semantic color coding, optional progress indicators,
+      and comprehensive positioning options for flexible placement across your
+      interface.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style for the notification. Choose <code>"default"</code>, <code
+            >"success"</code
+          >, <code>"warning"</code>, <code>"error"</code>, or <code>"info"</code
+          >. Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size of the toast notification. Choose <code>"sm"</code>, <code
+            >"md"</code
+          >, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          position?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Screen position for the toast. Choose <code>"top-right"</code>, <code
+            >"top-left"</code
+          >, <code>"bottom-right"</code>, <code>"bottom-left"</code>, <code
+            >"top-center"</code
+          >, <code>"bottom-center"</code>, or <code>"static"</code> for documentation
+          examples. Defaults to <code>"bottom-right"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional title text for the notification. Displays prominently above
+          the main content.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          description?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Optional description text. Use either description prop or slot content
+          for the message.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          duration?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Auto-dismiss duration in milliseconds. Set to <code>0</code> for no auto-dismiss.
+          Defaults to <code>5000</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          dismissible?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to show a close button. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          persistent?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Prevents auto-dismiss. Overrides duration setting. Defaults to <code
+            >false</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showIcon?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to display the variant-specific icon. Defaults to <code
+            >true</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showProgress?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to show progress bar for auto-dismiss timing. Defaults to <code
+            >false</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the toast container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <div class="rounded-lg bg-slate-900/60 p-4">
+      <pre class="text-sm text-slate-200"><code>{usageSnippet}</code></pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Variants</h3>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Default</h4>
+          <Toast
+            variant="default"
+            title="Default"
+            description="This is a default notification."
+            position="static"
+            persistent
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Success</h4>
+          <Toast
+            variant="success"
+            title="Success!"
+            description="Operation completed successfully."
+            position="static"
+            persistent
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Warning</h4>
+          <Toast
+            variant="warning"
+            title="Warning"
+            description="Please review before continuing."
+            position="static"
+            persistent
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Error</h4>
+          <Toast
+            variant="error"
+            title="Error"
+            description="Something went wrong."
+            position="static"
+            persistent
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Info</h4>
+          <Toast
+            variant="info"
+            title="Info"
+            description="Here's some useful information."
+            position="static"
+            persistent
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Sizes</h3>
+      <div class="grid gap-4 md:grid-cols-3">
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Small</h4>
+          <Toast
+            size="sm"
+            variant="info"
+            title="Small Toast"
+            description="Compact notification."
+            position="static"
+            persistent
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Medium</h4>
+          <Toast
+            size="md"
+            variant="success"
+            title="Medium Toast"
+            description="Standard size notification."
+            position="static"
+            persistent
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Large</h4>
+          <Toast
+            size="lg"
+            variant="warning"
+            title="Large Toast"
+            description="Expanded notification with more space."
+            position="static"
+            persistent
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Features</h3>
+      <div class="grid gap-4 md:grid-cols-2">
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">
+            With Progress Bar
+          </h4>
+          <Toast
+            variant="info"
+            title="Processing"
+            description="Please wait..."
+            showProgress
+            duration={30000}
+            position="static"
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Without Icon</h4>
+          <Toast
+            variant="success"
+            title="Simple Message"
+            description="No icon shown."
+            showIcon={false}
+            position="static"
+            persistent
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">
+            Non-dismissible
+          </h4>
+          <Toast
+            variant="warning"
+            title="Persistent"
+            description="Cannot be dismissed manually."
+            dismissible={false}
+            position="static"
+            persistent
+          />
+        </div>
+        <div
+          class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300 mb-2">Persistent</h4>
+          <Toast
+            variant="error"
+            title="Critical Error"
+            description="Requires manual dismissal."
+            persistent
+            position="static"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Slot Content -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">With Slot Content</h3>
+      <div
+        class="relative p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+      >
+        <Toast variant="info" title="Rich Content" position="static" persistent>
+          <p>
+            You can use <strong>rich HTML content</strong> in the toast body.
+          </p>
+          <p class="mt-2">
+            <a href="#" class="text-blue-400 underline hover:text-blue-300"
+              >Learn more</a
+            > about this feature.
+          </p>
+        </Toast>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="space-y-4 text-sm text-slate-200">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Screen Reader Support</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• Uses <code>role="alert"</code> for immediate announcement</li>
+          <li>
+            • Configurable <code>aria-live</code> regions (assertive for errors,
+            polite for others)
+          </li>
+          <li>
+            • Proper labeling with <code>aria-labelledby</code> and <code
+              >aria-describedby</code
+            >
+          </li>
+          <li>• Announces dismissal events to screen readers</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Keyboard Navigation</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>
+            • <kbd class="px-1 py-0.5 bg-slate-700 rounded text-xs">Escape</kbd>
+            - Dismiss focused toast
+          </li>
+          <li>
+            • <kbd class="px-1 py-0.5 bg-slate-700 rounded text-xs">Tab</kbd> - Navigate
+            to close button when dismissible
+          </li>
+          <li>
+            • <kbd class="px-1 py-0.5 bg-slate-700 rounded text-xs"
+              >Enter/Space</kbd
+            > - Activate close button
+          </li>
+          <li>• Auto-focus on appearance for keyboard users</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Visual Accessibility</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• WCAG AAA contrast ratios (9:1) in all themes and states</li>
+          <li>• Color-blind friendly variant colors with semantic icons</li>
+          <li>• High contrast mode support with enhanced borders</li>
+          <li>• Reduced motion support disables animations</li>
+          <li>• Forced colors mode compatibility</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Timing Controls</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• Pause auto-dismiss on hover for reading time</li>
+          <li>• Pause on focus for keyboard users</li>
+          <li>• Optional progress indicators show remaining time</li>
+          <li>• Persistent mode for critical messages</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+    <div class="space-y-4">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">
+          Form Submission Feedback
+        </h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;Toast variant="success" title="Form Submitted" showProgress&gt;
+  Your form has been submitted successfully.
+&lt;/Toast&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Error Handling</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;Toast variant="error" title="Upload Failed" persistent&gt;
+  File upload failed. Please check your connection and try again.
+&lt;/Toast&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Process Status</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;Toast variant="info" title="Processing" showProgress duration={0} dismissible={false}&gt;
+  Your request is being processed...
+&lt;/Toast&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">
+          Multiple Toasts Stacking
+        </h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;Toast variant="info" position="top-right"&gt;First notification&lt;/Toast&gt;
+&lt;Toast variant="success" position="top-right"&gt;Second notification&lt;/Toast&gt;
+&lt;Toast variant="warning" position="top-right"&gt;Third notification&lt;/Toast&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Best Practices</h2>
+    <div class="space-y-3 text-sm text-slate-200">
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span
+          >Use appropriate variants that match the semantic meaning of your
+          message</span
+        >
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Provide clear, concise titles and descriptions</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span
+          >Use persistent toasts for critical errors that require user action</span
+        >
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Enable progress bars for long-running processes</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Consider positioning based on your layout and user workflow</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span>Don't stack too many toasts at once (limit to 3-4)</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span
+          >Avoid very short durations that don't give users time to read</span
+        >
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span
+          >Don't use toasts for critical system errors (use modals instead)</span
+        >
+      </div>
     </div>
   </section>
 </DocsLayout>

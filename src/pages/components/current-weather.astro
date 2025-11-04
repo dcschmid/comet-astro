@@ -1,0 +1,139 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CurrentWeather from '../../components/CurrentWeather.astro';
+
+const usageSnippet = `---\nimport { CurrentWeather } from 'comet-astro';\n\n---\n<!-- Basic fallback demo (static) -->\n<CurrentWeather />\n\n<!-- Live fetch with loading + auto refresh every 10 minutes -->\n<CurrentWeather latitude={52.52} longitude={13.405} location="Berlin" unit="c" refreshInterval={10} />\n\n<!-- Fahrenheit (manual refresh) -->\n<CurrentWeather latitude={34.05} longitude={-118.24} location="Los Angeles" unit="f" />\n\n<!-- Static mode even with coordinates (disable fetch) -->\n<CurrentWeather latitude={40.71} longitude={-74.00} location="NYC (Static)" disableFetch={true} />\n\n<!-- Compact (no details) -->\n<CurrentWeather location="Demo" showDetails={false} />`;
+
+const dataProps = [
+  { name: 'latitude?', desc: 'Decimal latitude for live fetch (optional).' },
+  { name: 'longitude?', desc: 'Decimal longitude for live fetch (optional).' },
+  {
+    name: 'location?',
+    desc: 'Display label; used in accessible region label.',
+  },
+  { name: 'unit?', desc: 'Temperature unit: "c" or "f". Defaults to "c".' },
+  {
+    name: 'showDetails?',
+    desc: 'Show humidity, wind, feels like. Defaults true.',
+  },
+  {
+    name: 'refreshInterval?',
+    desc: 'Auto refresh minutes (0 disables). Defaults 0.',
+  },
+  {
+    name: 'disableFetch?',
+    desc: 'Force static fallback even if coordinates are supplied.',
+  },
+  { name: 'class?', desc: 'Extra utility classes.' },
+  { name: 'ariaLabel?', desc: 'Override generated aria-label for region.' },
+];
+---
+
+<DocsLayout
+  title="CurrentWeather"
+  description="Minimal, accessible current weather summary with optional live data from Open‑Meteo. High-contrast, responsive, Astro-only implementation."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      The <strong>CurrentWeather</strong> component presents a concise snapshot of
+      present conditions (temperature, humidity, wind) with WCAG AAA contrast and
+      semantic markup. It avoids overengineering: no large data graphs, no heavy
+      client bundles—just essentials.
+    </p>
+    <p class="text-base text-slate-200">
+      If you provide <code>latitude</code> and <code>longitude</code>, it
+      fetches live data from <a href="https://open-meteo.com" class="underline"
+        >Open‑Meteo</a
+      >. Without coordinates, it displays fallback demo values. Progressive
+      enhancement only—server HTML remains meaningful.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      {
+        dataProps.map((p) => (
+          <div class="space-y-1 rounded-lg border border-slate-700/70 bg-slate-900/60 p-4 shadow-sm">
+            <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+              {p.name}
+            </dt>
+            <dd class="text-sm text-slate-300">{p.desc}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import and drop the component. Provide coordinates for live fetch or omit
+      for static demo state.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Live Example</h2>
+    <p class="text-base text-slate-200">
+      Berlin (lat/long provided) in Celsius with auto refresh (demo: 10m). Shows
+      loading pulse then real data. If the network fails you will see a fallback
+      notice and retained demo values.
+    </p>
+    <div class="max-w-xl">
+      <CurrentWeather
+        latitude={52.52}
+        longitude={13.405}
+        location="Berlin"
+        unit="c"
+        showDetails={true}
+        refreshInterval={10}
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>WCAG AAA:</strong> Text colors (slate-900 on white, slate-50 on slate-900)
+        exceed 7:1 contrast.
+      </li>
+      <li>
+        <strong>Semantic Region:</strong>
+        <code>role="region"</code> with generated <code>aria-label</code>.
+      </li>
+      <li>
+        <strong>No Color Reliance:</strong> All data conveyed via text; decorative
+        emoji have accessible labels.
+      </li>
+      <li>
+        <strong>Reduced Motion:</strong> Media query removes transitions for users
+        preferring reduced motion.
+      </li>
+      <li>
+        <strong>High Contrast Mode:</strong> Forced contrast outlines the component
+        for stronger separation.
+      </li>
+      <li>
+        <strong>Responsive Layout:</strong> Grid reflows naturally; text scales with
+        viewport without hidden content.
+      </li>
+      <li>
+        <strong>Live Updates:</strong> Only the timestamp line uses <code
+          >aria-live="polite"</code
+        >; loading state uses <code>aria-busy</code> on the region.
+      </li>
+      <li>
+        <strong>Loading State:</strong> Applies a subtle pulse animation to key figures;
+        announced as “Loading live data…” in the timestamp line.
+      </li>
+      <li>
+        <strong>Error State:</strong> Non-intrusive inline message “Live update failed”
+        while keeping accessible fallback values.
+      </li>
+    </ul>
+  </section>
+</DocsLayout>

@@ -10,53 +10,97 @@ import Input from '../../components/Input.astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      FormGroup is a semantic wrapper for form controls that provides proper labeling, descriptions,
-      help text, and error messaging. Built with WCAG AAA compliance in mind, it ensures
-      optimal accessibility with screen readers and keyboard navigation.
+      FormGroup is a semantic wrapper for form controls that provides proper
+      labeling, descriptions, help text, and error messaging. Built with WCAG
+      AAA compliance in mind, it ensures optimal accessibility with screen
+      readers and keyboard navigation.
     </p>
     <p class="text-base text-slate-200">
-      The component supports both vertical and horizontal layouts, multiple sizes,
-      and can be used as a fieldset for grouped form controls.
+      The component supports both vertical and horizontal layouts, multiple
+      sizes, and can be used as a fieldset for grouped form controls.
     </p>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">label?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          label?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Label text for the form group. Automatically associates with form controls via <code>labelFor</code>.
+          Label text for the form group. Automatically associates with form
+          controls via <code>labelFor</code>.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">description?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          description?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Descriptive text that provides additional context about the form field.
+          Descriptive text that provides additional context about the form
+          field.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">error?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          error?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Error message to display. Automatically adds ARIA alert attributes and visual styling.
+          Error message to display. Automatically adds ARIA alert attributes and
+          visual styling.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">required?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          required?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Marks the field as required with a visual asterisk indicator. Defaults to <code>false</code>.
+          Marks the field as required with a visual asterisk indicator. Defaults
+          to <code>false</code>.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">layout?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          layout?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Layout orientation. Choose <code>"vertical"</code> or <code>"horizontal"</code>. Defaults to <code>"vertical"</code>.
+          Layout orientation. Choose <code>"vertical"</code> or <code
+            >"horizontal"</code
+          >. Defaults to <code>"vertical"</code>.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">labelFor?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          labelFor?
+        </dt>
         <dd class="text-sm text-slate-200">
-          ID of the form control this label is associated with. Essential for accessibility.
+          ID of the form control this label is associated with. Essential for
+          accessibility.
         </dd>
       </div>
     </dl>
@@ -64,12 +108,16 @@ import Input from '../../components/Input.astro';
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+    <div
+      class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6"
+    >
       <p class="text-sm text-slate-300">
-        Import the FormGroup component and wrap your form controls. The component automatically
-        handles accessibility attributes and proper labeling relationships.
+        Import the FormGroup component and wrap your form controls. The
+        component automatically handles accessibility attributes and proper
+        labeling relationships.
       </p>
-      <pre class="rounded bg-slate-950/50 p-4 text-sm text-slate-300 overflow-x-auto"><code>{`---
+      <pre
+        class="rounded bg-slate-950/50 p-4 text-sm text-slate-300 overflow-x-auto"><code>{`---
 import FormGroup from '../../components/FormGroup.astro';
 import Input from '../../components/Input.astro';
 ---
@@ -94,7 +142,9 @@ import Input from '../../components/Input.astro';
     <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
 
     <div class="space-y-8">
-      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+      <div
+        class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6"
+      >
         <h3 class="text-lg font-medium text-slate-100">Basic Form Group</h3>
         <p class="text-sm text-slate-300">
           Simple form group with label, description, and required indicator.
@@ -117,8 +167,12 @@ import Input from '../../components/Input.astro';
         </div>
       </div>
 
-      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
-        <h3 class="text-lg font-medium text-slate-100">Form Group with Error</h3>
+      <div
+        class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6"
+      >
+        <h3 class="text-lg font-medium text-slate-100">
+          Form Group with Error
+        </h3>
         <p class="text-sm text-slate-300">
           Form group displaying an error message with proper ARIA attributes.
         </p>
@@ -141,7 +195,9 @@ import Input from '../../components/Input.astro';
         </div>
       </div>
 
-      <div class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6">
+      <div
+        class="space-y-3 rounded-lg border border-slate-700/50 bg-slate-900/30 p-6"
+      >
         <h3 class="text-lg font-medium text-slate-100">Horizontal Layout</h3>
         <p class="text-sm text-slate-300">
           Form group with horizontal layout for wider forms.
@@ -171,23 +227,46 @@ import Input from '../../components/Input.astro';
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <div class="space-y-4">
       <p class="text-base text-slate-200">
-        The FormGroup component is built with comprehensive accessibility features:
+        The FormGroup component is built with comprehensive accessibility
+        features:
       </p>
       <ul class="space-y-2 text-sm text-slate-300 list-disc list-inside ml-4">
-        <li>Proper label associations using <code>for</code> attribute or <code>&lt;legend&gt;</code> for fieldsets</li>
-        <li>Automatic generation of <code>aria-describedby</code> for descriptions, help text, and errors</li>
-        <li>Enhanced contrast ratios (7:1+) for WCAG AAA compliance in both light and dark modes</li>
-        <li>Error messages with <code>role="alert"</code> and <code>aria-live="assertive"</code></li>
+        <li>
+          Proper label associations using <code>for</code> attribute or <code
+            >&lt;legend&gt;</code
+          > for fieldsets
+        </li>
+        <li>
+          Automatic generation of <code>aria-describedby</code> for descriptions,
+          help text, and errors
+        </li>
+        <li>
+          Enhanced contrast ratios (7:1+) for WCAG AAA compliance in both light
+          and dark modes
+        </li>
+        <li>
+          Error messages with <code>role="alert"</code> and <code
+            >aria-live="assertive"</code
+          >
+        </li>
         <li>Visual and semantic indication of required fields</li>
-        <li>Support for screen reader-only labels with <code>hideLabel</code></li>
-        <li>Proper semantic structure with fieldset/legend for grouped controls</li>
+        <li>
+          Support for screen reader-only labels with <code>hideLabel</code>
+        </li>
+        <li>
+          Proper semantic structure with fieldset/legend for grouped controls
+        </li>
         <li>Keyboard navigation support with logical tab order</li>
       </ul>
-      <div class="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4">
+      <div
+        class="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4"
+      >
         <p class="text-sm text-amber-200">
-          <strong>Best Practice:</strong> Always provide a meaningful <code>label</code> and ensure 
-          the <code>labelFor</code> prop matches the <code>id</code> of your form control. 
-          Use <code>fieldsetMode</code> for grouped controls like radio buttons or checkboxes.
+          <strong>Best Practice:</strong> Always provide a meaningful <code
+            >label</code
+          > and ensure the <code>labelFor</code> prop matches the <code>id</code
+          > of your form control. Use <code>fieldsetMode</code> for grouped controls
+          like radio buttons or checkboxes.
         </p>
       </div>
     </div>

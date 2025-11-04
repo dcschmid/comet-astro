@@ -1,0 +1,504 @@
+---
+/**
+ * AirQuality - Accessible air quality monitoring component
+ * WCAG AAA compliant air quality display with real-time data
+ */
+
+interface Props {
+  latitude?: number;
+  longitude?: number;
+  location?: string;
+  aqiSystem?: 'european' | 'us' | 'both';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'minimal' | 'dashboard';
+  showHealthAdvice?: boolean;
+  class?: string;
+}
+
+const {
+  latitude,
+  longitude,
+  location,
+  aqiSystem = 'both',
+  size = 'md',
+  showHealthAdvice = true,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const sizeClasses = {
+  xs: 'text-xs p-3',
+  sm: 'text-sm p-4',
+  md: 'text-base p-6',
+  lg: 'text-lg p-8',
+  xl: 'text-xl p-10',
+};
+---
+
+<div
+  class={`air-quality-widget bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-lg ${sizeClasses[size]} ${className}`}
+  role="region"
+  aria-label={`Air quality information for ${location || 'your location'}`}
+  data-air-quality-widget
+  data-latitude={latitude}
+  data-longitude={longitude}
+  data-location={location}
+  data-aqi-system={aqiSystem}
+  {...rest}
+>
+  <div class="space-y-6">
+    <!-- Header -->
+    <header class="flex items-center justify-between">
+      <h2
+        class="flex items-center gap-3 text-xl font-bold text-gray-900 dark:text-gray-100"
+      >
+        <span class="text-2xl" aria-hidden="true">🫁</span>
+        <span>Air Quality</span>
+        {
+          location && (
+            <span class="text-lg font-medium text-gray-600 dark:text-gray-400">
+              • {location}
+            </span>
+          )
+        }
+      </h2>
+      <div
+        class="text-sm text-gray-500 dark:text-gray-400 update-time"
+        aria-live="polite"
+      >
+        Updating...
+      </div>
+    </header>
+
+    <!-- Loading State -->
+    <div
+      class="flex items-center justify-center gap-4 py-12 air-quality__loading"
+      aria-live="polite"
+    >
+      <div
+        class="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin dark:border-gray-600 dark:border-t-blue-400"
+        aria-hidden="true"
+      >
+      </div>
+      <span class="text-lg font-semibold text-gray-700 dark:text-gray-300"
+        >Loading air quality data...</span
+      >
+    </div>
+
+    <!-- Error State -->
+    <div
+      class="text-center space-y-4 py-12 air-quality__error hidden"
+      role="alert"
+    >
+      <div class="text-4xl" aria-hidden="true">⚠️</div>
+      <h3 class="text-lg font-bold text-red-800 dark:text-red-300">
+        Air quality data unavailable
+      </h3>
+      <p class="text-red-700 dark:text-red-400 error-message"></p>
+      <button
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors retry-button"
+        type="button"
+      >
+        Try again
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="space-y-6 air-quality__content hidden">
+      <!-- AQI Display -->
+      <div
+        class={`grid gap-6 ${aqiSystem === 'both' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}
+      >
+        {
+          (aqiSystem === 'european' || aqiSystem === 'both') && (
+            <div
+              class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4"
+              role="group"
+              aria-labelledby="eu-aqi-label"
+            >
+              <h3
+                id="eu-aqi-label"
+                class="text-lg font-bold text-gray-900 dark:text-gray-100"
+              >
+                European AQI
+              </h3>
+              <div
+                class="text-4xl font-black text-center eu-aqi-value"
+                aria-label="European Air Quality Index"
+              >
+                --
+              </div>
+              <div class="text-center text-gray-600 dark:text-gray-300 eu-aqi-desc">
+                Loading...
+              </div>
+              <div class="h-3 bg-linear-to-r from-green-500 to-red-500 rounded-full relative">
+                <div
+                  class="absolute w-3 h-3 bg-white border-2 border-gray-800 rounded-full transform translate-y-0 eu-indicator"
+                  style="left: 0%;"
+                />
+              </div>
+            </div>
+          )
+        }
+
+        {
+          (aqiSystem === 'us' || aqiSystem === 'both') && (
+            <div
+              class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4"
+              role="group"
+              aria-labelledby="us-aqi-label"
+            >
+              <h3
+                id="us-aqi-label"
+                class="text-lg font-bold text-gray-900 dark:text-gray-100"
+              >
+                US AQI
+              </h3>
+              <div
+                class="text-4xl font-black text-center us-aqi-value"
+                aria-label="US Air Quality Index"
+              >
+                --
+              </div>
+              <div class="text-center text-gray-600 dark:text-gray-300 us-aqi-desc">
+                Loading...
+              </div>
+              <div class="h-3 bg-linear-to-r from-green-500 to-red-900 rounded-full relative">
+                <div
+                  class="absolute w-3 h-3 bg-white border-2 border-gray-800 rounded-full transform translate-y-0 us-indicator"
+                  style="left: 0%;"
+                />
+              </div>
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Health Advice -->
+      {
+        showHealthAdvice && (
+          <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-4">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">
+              Health Recommendations
+            </h3>
+            <div class="space-y-3">
+              <div class="flex gap-3">
+                <div class="text-lg mt-0.5" aria-hidden="true">
+                  👥
+                </div>
+                <div>
+                  <div class="font-medium text-gray-900 dark:text-gray-100">
+                    General Population
+                  </div>
+                  <div class="text-sm text-gray-700 dark:text-gray-300 general-text">
+                    Air quality is being assessed...
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <div class="text-lg mt-0.5" aria-hidden="true">
+                  🤧
+                </div>
+                <div>
+                  <div class="font-medium text-gray-900 dark:text-gray-100">
+                    Sensitive Individuals
+                  </div>
+                  <div class="text-sm text-gray-700 dark:text-gray-300 sensitive-text">
+                    Air quality is being assessed...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  class AirQuality {
+    constructor(element) {
+      this.element = element;
+      this.latitude = parseFloat(element.dataset.latitude) || null;
+      this.longitude = parseFloat(element.dataset.longitude) || null;
+      this.location = element.dataset.location || null;
+      this.aqiSystem = element.dataset.aqiSystem || 'both';
+
+      this.loadingEl = element.querySelector('.air-quality__loading');
+      this.errorEl = element.querySelector('.air-quality__error');
+      this.contentEl = element.querySelector('.air-quality__content');
+      this.retryButton = element.querySelector('.retry-button');
+
+      this.init();
+    }
+
+    async init() {
+      this.retryButton?.addEventListener('click', () => this.fetchData());
+      await this.getCoordinates();
+      await this.fetchData();
+    }
+
+    async getCoordinates() {
+      if (this.latitude && this.longitude) return;
+
+      if ('geolocation' in navigator) {
+        try {
+          const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              timeout: 10000,
+            });
+          });
+          this.latitude = position.coords.latitude;
+          this.longitude = position.coords.longitude;
+        } catch {
+          this.showError('Location access denied. Please provide coordinates.');
+        }
+      }
+    }
+
+    async fetchData() {
+      if (!this.latitude || !this.longitude) {
+        this.showError('No location provided.');
+        return;
+      }
+
+      this.showLoading();
+
+      try {
+        const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&current=european_aqi,us_aqi&timezone=auto`;
+        const response = await fetch(url);
+
+        if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+        const data = await response.json();
+        this.handleData(data);
+        this.showContent();
+      } catch {
+        this.showError('Failed to fetch air quality data.');
+      }
+    }
+
+    handleData(data) {
+      const current = data.current;
+      if (!current) return;
+
+      // Update European AQI
+      if (current.european_aqi != null) {
+        const value = Math.round(current.european_aqi);
+        const level = this.getEuropeanAQILevel(value);
+
+        const valueEl = this.element.querySelector('.eu-aqi-value');
+        const descEl = this.element.querySelector('.eu-aqi-desc');
+        const indicatorEl = this.element.querySelector('.eu-indicator');
+
+        if (valueEl) {
+          valueEl.textContent = value.toString();
+          valueEl.className = `text-4xl font-black text-center eu-aqi-value aqi-${level.class}`;
+        }
+
+        if (descEl) {
+          descEl.textContent = level.description;
+          descEl.className = `text-center text-gray-600 dark:text-gray-300 eu-aqi-desc aqi-${level.class}`;
+        }
+
+        if (indicatorEl) {
+          indicatorEl.style.left = `${Math.min(value, 100)}%`;
+        }
+      }
+
+      // Update US AQI
+      if (current.us_aqi != null) {
+        const value = Math.round(current.us_aqi);
+        const level = this.getUSAQILevel(value);
+
+        const valueEl = this.element.querySelector('.us-aqi-value');
+        const descEl = this.element.querySelector('.us-aqi-desc');
+        const indicatorEl = this.element.querySelector('.us-indicator');
+
+        if (valueEl) {
+          valueEl.textContent = value.toString();
+          valueEl.className = `text-4xl font-black text-center us-aqi-value aqi-${level.class}`;
+        }
+
+        if (descEl) {
+          descEl.textContent = level.description;
+          descEl.className = `text-center text-gray-600 dark:text-gray-300 us-aqi-desc aqi-${level.class}`;
+        }
+
+        if (indicatorEl) {
+          indicatorEl.style.left = `${Math.min(value / 5, 100)}%`;
+        }
+      }
+
+      // Update health advice
+      this.updateHealthAdvice(current.european_aqi || current.us_aqi || 0);
+      this.updateLastUpdated();
+    }
+
+    getEuropeanAQILevel(aqi) {
+      if (aqi <= 20) return { class: 'good', description: 'Good' };
+      if (aqi <= 40) return { class: 'fair', description: 'Fair' };
+      if (aqi <= 60) return { class: 'moderate', description: 'Moderate' };
+      if (aqi <= 80) return { class: 'poor', description: 'Poor' };
+      return { class: 'very-poor', description: 'Very Poor' };
+    }
+
+    getUSAQILevel(aqi) {
+      if (aqi <= 50) return { class: 'good', description: 'Good' };
+      if (aqi <= 100) return { class: 'moderate', description: 'Moderate' };
+      if (aqi <= 150)
+        return {
+          class: 'unhealthy-sensitive',
+          description: 'Unhealthy for Sensitive Groups',
+        };
+      if (aqi <= 200) return { class: 'unhealthy', description: 'Unhealthy' };
+      if (aqi <= 300)
+        return { class: 'very-unhealthy', description: 'Very Unhealthy' };
+      return { class: 'hazardous', description: 'Hazardous' };
+    }
+
+    updateHealthAdvice(aqi) {
+      const generalEl = this.element.querySelector('.general-text');
+      const sensitiveEl = this.element.querySelector('.sensitive-text');
+
+      let advice;
+      if (aqi <= 50) {
+        advice = {
+          general: 'Air quality is excellent. Perfect for outdoor activities.',
+          sensitive: 'Air quality is safe for everyone.',
+        };
+      } else if (aqi <= 100) {
+        advice = {
+          general: 'Air quality is acceptable for most people.',
+          sensitive: 'Consider reducing prolonged outdoor exertion.',
+        };
+      } else {
+        advice = {
+          general: 'Consider reducing outdoor activities.',
+          sensitive: 'Avoid outdoor activities. Stay indoors.',
+        };
+      }
+
+      if (generalEl) generalEl.textContent = advice.general;
+      if (sensitiveEl) sensitiveEl.textContent = advice.sensitive;
+    }
+
+    updateLastUpdated() {
+      const updateEl = this.element.querySelector('.update-time');
+      if (updateEl) {
+        const now = new Date();
+        updateEl.textContent = `Updated: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      }
+    }
+
+    showLoading() {
+      this.loadingEl?.classList.remove('hidden');
+      this.errorEl?.classList.add('hidden');
+      this.contentEl?.classList.add('hidden');
+    }
+
+    showError(message) {
+      this.loadingEl?.classList.add('hidden');
+      this.errorEl?.classList.remove('hidden');
+      this.contentEl?.classList.add('hidden');
+
+      const messageEl = this.errorEl?.querySelector('.error-message');
+      if (messageEl) messageEl.textContent = message;
+    }
+
+    showContent() {
+      this.loadingEl?.classList.add('hidden');
+      this.errorEl?.classList.add('hidden');
+      this.contentEl?.classList.remove('hidden');
+    }
+  }
+
+  // Initialize components
+  document.addEventListener('DOMContentLoaded', () => {
+    document
+      .querySelectorAll('[data-air-quality-widget]')
+      .forEach((element) => {
+        new AirQuality(element);
+      });
+  });
+</script>
+
+<style>
+  @layer components {
+    .air-quality-widget {
+      /* Tailwind theme() requires quoted keys; provide fallbacks for robustness */
+      --aqi-good: theme('colors.green.700', #166534);
+      --aqi-fair: theme('colors.lime.600', #65a30d);
+      --aqi-moderate: theme('colors.yellow.600', #ca8a04);
+      --aqi-poor: theme('colors.orange.600', #ea580c);
+      --aqi-very-poor: theme('colors.red.700', #b91c1c);
+      --aqi-unhealthy-sensitive: theme('colors.orange.700', #c2410c);
+      --aqi-unhealthy: theme('colors.red.700', #b91c1c);
+      --aqi-very-unhealthy: theme('colors.purple.700', #6d28d9);
+      --aqi-hazardous: theme('colors.red.900', #7f1d1d);
+    }
+
+    .dark .air-quality-widget {
+      --aqi-good: theme('colors.green.400', #4ade80);
+      --aqi-fair: theme('colors.lime.400', #a3e635);
+      --aqi-moderate: theme('colors.yellow.400', #facc15);
+      --aqi-poor: theme('colors.orange.400', #fb923c);
+      --aqi-very-poor: theme('colors.red.400', #f87171);
+      --aqi-unhealthy-sensitive: theme('colors.orange.400', #fb923c);
+      --aqi-unhealthy: theme('colors.red.400', #f87171);
+      --aqi-very-unhealthy: theme('colors.purple.400', #c084fc);
+      --aqi-hazardous: theme('colors.red.300', #fca5a5);
+    }
+
+    .aqi-good {
+      color: var(--aqi-good) !important;
+    }
+    .aqi-fair {
+      color: var(--aqi-fair) !important;
+    }
+    .aqi-moderate {
+      color: var(--aqi-moderate) !important;
+    }
+    .aqi-poor {
+      color: var(--aqi-poor) !important;
+    }
+    .aqi-very-poor {
+      color: var(--aqi-very-poor) !important;
+    }
+    .aqi-unhealthy-sensitive {
+      color: var(--aqi-unhealthy-sensitive) !important;
+    }
+    .aqi-unhealthy {
+      color: var(--aqi-unhealthy) !important;
+    }
+    .aqi-very-unhealthy {
+      color: var(--aqi-very-unhealthy) !important;
+    }
+    .aqi-hazardous {
+      color: var(--aqi-hazardous) !important;
+    }
+
+    .eu-indicator,
+    .us-indicator {
+      transition: left 0.5s ease-in-out;
+      top: 0;
+    }
+
+    @media (prefers-contrast: high) {
+      .air-quality-widget {
+        border-width: 3px !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .air-quality-widget .animate-spin {
+        animation: none;
+      }
+      .eu-indicator,
+      .us-indicator {
+        transition: none !important;
+      }
+    }
+  }
+</style>

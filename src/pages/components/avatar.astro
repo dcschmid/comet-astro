@@ -51,63 +51,118 @@ const user = {
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      The avatar component displays people, teams, or entities with automatic initials fallback, high
-      contrast surfaces, and screen-reader-friendly status descriptions. Every variant maintains 44&nbsp;px
-      minimum touch targets and AAA color contrast in both light and dark themes.
+      The avatar component displays people, teams, or entities with automatic
+      initials fallback, high contrast surfaces, and screen-reader-friendly
+      status descriptions. Every variant maintains 44&nbsp;px minimum touch
+      targets and AAA color contrast in both light and dark themes.
     </p>
     <p class="text-base text-slate-200">
-      Use it anywhere you need a recognisable identity treatment: navigation bars, lists, profile cards, or
-      comment threads. Pair it with presence indicators, group stacks, or tooltips for richer experiences.
+      Use it anywhere you need a recognisable identity treatment: navigation
+      bars, lists, profile cards, or comment threads. Pair it with presence
+      indicators, group stacks, or tooltips for richer experiences.
     </p>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">src?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          src?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Image URL. When omitted, the component renders initials inside an accessible fallback surface.
+          Image URL. When omitted, the component renders initials inside an
+          accessible fallback surface.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">alt?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          alt?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Custom alt text for the image. Defaults to the <code>name</code> or a generic “Avatar” label.
+          Custom alt text for the image. Defaults to the <code>name</code> or a generic
+          “Avatar” label.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">name?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          name?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Person or entity name used for initials, title attribute, and accessible labelling.
+          Person or entity name used for initials, title attribute, and
+          accessible labelling.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">size?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
         <dd class="text-sm text-slate-200">
-          One of <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code>, <code>xl</code>, or
-          <code>2xl</code>. Controls both the container dimensions and typography scale. Defaults to
+          One of <code>xs</code>, <code>sm</code>, <code>md</code>, <code
+            >lg</code
+          >, <code>xl</code>, or
+          <code>2xl</code>. Controls both the container dimensions and
+          typography scale. Defaults to
           <code>"md"</code>.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">variant?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Shape style: <code>"circle"</code>, <code>"rounded"</code>, or <code>"square"</code>. Rounded
-          variants use large radii to honour accessibility tap targets.
+          Shape style: <code>"circle"</code>, <code>"rounded"</code>, or <code
+            >"square"</code
+          >. Rounded variants use large radii to honour accessibility tap
+          targets.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">status?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          status?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Optional presence indicator (<code>"online"</code>, <code>"away"</code>, <code>"busy"</code>,
-          <code>"offline"</code>). Adds a labelled dot with high-contrast border and screen-reader text.
+          Optional presence indicator (<code>"online"</code>, <code>"away"</code
+          >, <code>"busy"</code>,
+          <code>"offline"</code>). Adds a labelled dot with high-contrast border
+          and screen-reader text.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">className?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Extra Tailwind utilities merged onto the wrapper, ideal for margins, stacking, or animations.
+          Extra Tailwind utilities merged onto the wrapper, ideal for margins,
+          stacking, or animations.
         </dd>
       </div>
     </dl>
@@ -116,10 +171,12 @@ const user = {
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Provide the image source and name to get a polished avatar with fallback initials. Presence badges
-      include off-screen text so screen readers announce the current status.
+      Provide the image source and name to get a polished avatar with fallback
+      initials. Presence badges include off-screen text so screen readers
+      announce the current status.
     </p>
-    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{usageSnippet}</code>
     </pre>
   </section>
@@ -131,8 +188,9 @@ const user = {
       <div>
         <h3 class="text-lg font-semibold text-slate-100">Team roster</h3>
         <p class="text-base text-slate-200">
-          Avatars with images and labelled status indicators. Hover or focus to see the accessible title,
-          while screen readers detect the “Status” announcement automatically.
+          Avatars with images and labelled status indicators. Hover or focus to
+          see the accessible title, while screen readers detect the “Status”
+          announcement automatically.
         </p>
       </div>
       <div class="flex flex-wrap gap-6">
@@ -158,8 +216,9 @@ const user = {
       <div>
         <h3 class="text-lg font-semibold text-slate-100">Initials fallback</h3>
         <p class="text-base text-slate-200">
-          When no image is provided, the component renders uppercase initials on a high-contrast backdrop,
-          ensuring the label remains legible at small sizes.
+          When no image is provided, the component renders uppercase initials on
+          a high-contrast backdrop, ensuring the label remains legible at small
+          sizes.
         </p>
       </div>
       <div class="flex flex-wrap gap-4">
@@ -175,8 +234,8 @@ const user = {
       <div>
         <h3 class="text-lg font-semibold text-slate-100">Shapes &amp; sizes</h3>
         <p class="text-base text-slate-200">
-          Mix geometric variants and responsive sizes to match different UI contexts—navigation bars, cards,
-          or hero sections.
+          Mix geometric variants and responsive sizes to match different UI
+          contexts—navigation bars, cards, or hero sections.
         </p>
       </div>
       <div class="flex flex-wrap items-center gap-4">

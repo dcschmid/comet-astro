@@ -4,7 +4,8 @@ import MediaCard from '../../components/MediaCard.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const title = 'MediaCard Component';
-const description = 'WCAG AAA compliant card component for displaying media content with titles, descriptions, and actions.';
+const description =
+  'WCAG AAA compliant card component for displaying media content with titles, descriptions, and actions.';
 ---
 
 <DocsLayout title={title} description={description}>
@@ -12,7 +13,10 @@ const description = 'WCAG AAA compliant card component for displaying media cont
     <!-- Introduction -->
     <section>
       <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-        The MediaCard component provides a flexible and accessible way to display media content with titles, descriptions, and interactive actions. It supports multiple variants, sizes, and maintains WCAG AAA compliance standards.
+        The MediaCard component provides a flexible and accessible way to
+        display media content with titles, descriptions, and interactive
+        actions. It supports multiple variants, sizes, and maintains WCAG AAA
+        compliance standards.
       </p>
     </section>
 
@@ -21,7 +25,7 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Basic Usage
       </h2>
-      
+
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -34,12 +38,16 @@ const description = 'WCAG AAA compliant card component for displaying media cont
             description="Learn how to build modern websites with Astro's component-based architecture."
             href="/blog/getting-started"
             actions={[
-              { label: 'Read More', href: '/blog/getting-started', variant: 'primary' },
-              { label: 'Share', href: '#', variant: 'secondary' }
+              {
+                label: 'Read More',
+                href: '/blog/getting-started',
+                variant: 'primary',
+              },
+              { label: 'Share', href: '#', variant: 'secondary' },
             ]}
           />
         </div>
-        
+
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
             Horizontal Layout
@@ -52,7 +60,11 @@ const description = 'WCAG AAA compliant card component for displaying media cont
             description="Essential tips for modern web developers."
             href="/blog/web-dev-tips"
             actions={[
-              { label: 'Learn More', href: '/blog/web-dev-tips', variant: 'primary' }
+              {
+                label: 'Learn More',
+                href: '/blog/web-dev-tips',
+                variant: 'primary',
+              },
             ]}
           />
         </div>
@@ -79,7 +91,7 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Variants
       </h2>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -159,7 +171,7 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Sizes
       </h2>
-      
+
       <div class="space-y-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -228,7 +240,7 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Action Types
       </h2>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -242,7 +254,12 @@ const description = 'WCAG AAA compliant card component for displaying media cont
             actions={[
               { label: 'Home', href: '/', variant: 'primary' },
               { label: 'About', href: '/about', variant: 'secondary' },
-              { label: 'External', href: 'https://example.com', variant: 'secondary', target: '_blank' }
+              {
+                label: 'External',
+                href: 'https://example.com',
+                variant: 'secondary',
+                target: '_blank',
+              },
             ]}
           />
         </div>
@@ -257,9 +274,24 @@ const description = 'WCAG AAA compliant card component for displaying media cont
             title="Interactive Card"
             description="Actions that trigger JavaScript functions."
             actions={[
-              { label: 'Like', onClick: 'alert("Liked!")', variant: 'primary', icon: '❤️' },
-              { label: 'Share', onClick: 'navigator.share({title: "Card"})', variant: 'secondary', icon: '📤' },
-              { label: 'Delete', onClick: 'confirm("Delete?")', variant: 'danger', icon: '🗑️' }
+              {
+                label: 'Like',
+                onClick: 'alert("Liked!")',
+                variant: 'primary',
+                icon: '❤️',
+              },
+              {
+                label: 'Share',
+                onClick: 'navigator.share({title: "Card"})',
+                variant: 'secondary',
+                icon: '📤',
+              },
+              {
+                label: 'Delete',
+                onClick: 'confirm("Delete?")',
+                variant: 'danger',
+                icon: '🗑️',
+              },
             ]}
           />
         </div>
@@ -290,7 +322,7 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         States
       </h2>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -336,7 +368,7 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Accessibility Features
       </h2>
-      
+
       <div class="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg mb-6">
         <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
           WCAG AAA Compliance
@@ -376,7 +408,9 @@ const description = 'WCAG AAA compliant card component for displaying media cont
           description="This card demonstrates accessibility features."
           ariaLabel="Featured article about accessibility"
           ariaDescribedBy="accessibility-description"
-          actions={[{ label: 'Learn More', href: '/accessibility', variant: 'primary' }]}
+          actions={[
+            { label: 'Learn More', href: '/accessibility', variant: 'primary' },
+          ]}
         />
       </div>
 
@@ -397,219 +431,341 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Props Reference
       </h2>
-      
+
       <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table
+          class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+        >
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Prop
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Type
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Default
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Description
               </th>
             </tr>
           </thead>
           <tbody class="text-sm">
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 image
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 URL of the image to display
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 alt
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 ''
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Alternative text for the image
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 title
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 required
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Title text for the card
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 href
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 URL to link the title to
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 description
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Description text for the card
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 variant
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'default' | 'horizontal' | 'minimal' | 'featured'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'default'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Visual variant of the card
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 size
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'sm' | 'md' | 'lg'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'md'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Size of the card
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 actions
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Action[]
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 []
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Array of action buttons/links
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 loading
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 false
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Show loading state
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 disabled
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 false
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Disable card interactions
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 showImage
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 true
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Whether to show the image
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 showActions
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 true
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Whether to show action buttons
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 ariaLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Accessible label for the card
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 class
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Additional CSS classes
               </td>
             </tr>
@@ -623,86 +779,130 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Action Interface
       </h2>
-      
+
       <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table
+          class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+        >
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Property
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Type
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Description
               </th>
             </tr>
           </thead>
           <tbody class="text-sm">
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 label
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Text displayed on the action button
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 href
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 URL for link actions (renders as anchor tag)
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 onClick
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 JavaScript code for button actions
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 variant
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'primary' | 'secondary' | 'danger'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Visual style of the action button
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 icon
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Icon to display before the label text
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 target
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 '_blank' | '_self' | '_parent' | '_top'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Target for link actions (only applies to href)
               </td>
             </tr>
@@ -716,15 +916,20 @@ const description = 'WCAG AAA compliant card component for displaying media cont
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Best Practices
       </h2>
-      
+
       <div class="space-y-6">
         <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
-          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+          <h3
+            class="text-lg font-medium text-green-900 dark:text-green-100 mb-3"
+          >
             ✅ Do
           </h3>
           <ul class="space-y-2 text-green-800 dark:text-green-200">
             <li>• Always provide meaningful alt text for images</li>
-            <li>• Use descriptive action labels that clearly indicate the action outcome</li>
+            <li>
+              • Use descriptive action labels that clearly indicate the action
+              outcome
+            </li>
             <li>• Keep descriptions concise but informative</li>
             <li>• Use appropriate variants for the context and importance</li>
             <li>• Consider horizontal layout for narrow containers</li>
@@ -739,7 +944,9 @@ const description = 'WCAG AAA compliant card component for displaying media cont
           <ul class="space-y-2 text-red-800 dark:text-red-200">
             <li>• Use vague action labels like "Click here" or "Read more"</li>
             <li>• Mix href and onClick properties in the same action</li>
-            <li>• Overload cards with too many actions (3-4 maximum recommended)</li>
+            <li>
+              • Overload cards with too many actions (3-4 maximum recommended)
+            </li>
             <li>• Use images without alt text for decorative purposes</li>
             <li>• Force content into inappropriate card variants</li>
             <li>• Ignore loading and disabled states for dynamic content</li>

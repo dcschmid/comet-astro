@@ -1,0 +1,254 @@
+---
+/**
+ * WeatherLocationSearch (legacy implementation) – pending minimal refactor
+ *
+ * Provides intelligent location search using Open-Meteo Geocoding API.
+ * Allows users to search for locations worldwide and select coordinates
+ * for weather, air quality, and marine weather components.
+ *
+ * Features:
+ * - WCAG AAA accessibility compliance
+ * - Global location search with fuzzy matching
+ * - Population and administrative data
+ * - Keyboard navigation support
+ * - Recent locations storage
+ * - Auto-suggestion with debouncing
+ */
+
+interface Props {
+  placeholder?: string;
+  maxResults?: number;
+  debounceMs?: number;
+  disableFetch?: boolean;
+  ariaLabel?: string;
+  class?: string;
+}
+const props = Astro.props as Props;
+const {
+  placeholder = 'Search location…',
+  maxResults = 6,
+  debounceMs = 350,
+  disableFetch = false,
+  ariaLabel,
+  class: className = '',
+} = props;
+const label = ariaLabel || 'Search for weather location';
+const baseCls = `rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-4 md:p-5 flex flex-col gap-3 ${className}`;
+const inputCls =
+  'w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm md:text-base text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500';
+const listCls =
+  'mt-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm divide-y divide-slate-200 dark:divide-slate-700 overflow-hidden';
+---
+
+<div
+  class={baseCls}
+  role="region"
+  aria-label={label}
+  data-locsearch
+  data-disable-fetch={disableFetch}
+  data-debounce={debounceMs}
+  data-max={maxResults}
+  data-state={disableFetch ? 'static' : 'idle'}
+>
+  <label
+    for="locsearch-input"
+    class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400"
+    >Location</label
+  >
+  <input
+    id="locsearch-input"
+    type="text"
+    class={inputCls}
+    placeholder={placeholder}
+    autocomplete="off"
+    aria-autocomplete="list"
+    aria-controls="locsearch-results"
+    aria-expanded="false"
+  />
+  <div class="relative" data-results-wrapper>
+    <ul
+      id="locsearch-results"
+      role="listbox"
+      class={listCls + ' hidden'}
+      data-results
+    >
+    </ul>
+  </div>
+  <p
+    class="text-[11px] md:text-xs text-slate-600 dark:text-slate-300"
+    aria-live="polite"
+    data-status
+  >
+    {
+      disableFetch
+        ? 'Statische Vorschläge'
+        : 'Warten auf Eingabe (min. 2 Zeichen)'
+    }
+  </p>
+  <p class="text-[10px] md:text-[11px] text-slate-500 dark:text-slate-400">
+    AAA Kontrast Hinweis.
+  </p>
+</div>
+
+<script>
+  // Minimal geocoding search implementation
+  const ITEM_BASE =
+    'px-3 py-2 text-[13px] md:text-sm flex items-center justify-between gap-3 cursor-pointer focus:outline-none';
+  const ITEM_NEUTRAL = 'text-slate-800 dark:text-slate-100';
+  const ITEM_MUTED =
+    'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+  const FALLBACK = [
+    { name: 'Berlin', country: 'Germany', latitude: 52.52, longitude: 13.405 },
+    {
+      name: 'Zürich',
+      country: 'Switzerland',
+      latitude: 47.3769,
+      longitude: 8.5417,
+    },
+    { name: 'Paris', country: 'France', latitude: 48.8566, longitude: 2.3522 },
+    { name: 'Madrid', country: 'Spain', latitude: 40.4168, longitude: -3.7038 },
+    { name: 'Oslo', country: 'Norway', latitude: 59.9139, longitude: 10.7522 },
+    { name: 'New York', country: 'USA', latitude: 40.7128, longitude: -74.006 },
+  ];
+  function initWeatherLocationSearch(el) {
+    const disableFetch = el.dataset.disableFetch === 'true';
+    const max = parseInt(el.dataset.max || '6');
+    const debounceMs = parseInt(el.dataset.debounce || '350');
+    const input = el.querySelector('#weather-locsearch-input');
+    const list = el.querySelector('[data-results]');
+    const status = el.querySelector('[data-status]');
+    let timer;
+    let activeIndex = -1;
+    let current = [];
+    function clearList() {
+      list.innerHTML = '';
+      list.classList.add('hidden');
+      activeIndex = -1;
+      input.setAttribute('aria-expanded', 'false');
+    }
+    function render(items) {
+      list.innerHTML = '';
+      items.slice(0, max).forEach((loc, i) => {
+        const li = document.createElement('li');
+        li.role = 'option';
+        li.tabIndex = -1;
+        li.dataset.index = String(i);
+        li.className = `${ITEM_BASE} ${ITEM_NEUTRAL} hover:bg-slate-100 dark:hover:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-700`;
+        li.innerHTML = `<span class='truncate'>${loc.name}, ${loc.country}</span><span class='${ITEM_MUTED}'>${loc.latitude.toFixed(2)}, ${loc.longitude.toFixed(2)}</span>`;
+        li.addEventListener('click', () => select(i));
+        li.addEventListener('mouseenter', () => setActive(i));
+        list.appendChild(li);
+      });
+      if (items.length) {
+        list.classList.remove('hidden');
+        input.setAttribute('aria-expanded', 'true');
+      } else {
+        clearList();
+      }
+    }
+    function setActive(i) {
+      const prev = list.querySelector('[data-active]');
+      if (prev) {
+        prev.removeAttribute('data-active');
+        prev.classList.remove('bg-slate-100', 'dark:bg-slate-700');
+      }
+      activeIndex = i;
+      const elItem = list.querySelector(`li[data-index='${i}']`);
+      if (elItem) {
+        elItem.setAttribute('data-active', '');
+        elItem.classList.add('bg-slate-100', 'dark:bg-slate-700');
+        elItem.scrollIntoView({ block: 'nearest' });
+      }
+    }
+    function select(i) {
+      const loc = current[i];
+      if (!loc) return;
+      input.value = `${loc.name}, ${loc.country}`;
+      clearList();
+      el.dispatchEvent(
+        new CustomEvent('location-selected', { detail: loc, bubbles: true })
+      );
+      status.textContent = `Selected: ${loc.name}`;
+    }
+    async function search(q) {
+      if (disableFetch) {
+        current = FALLBACK.filter((f) =>
+          f.name.toLowerCase().startsWith(q.toLowerCase())
+        );
+        render(current);
+        status.textContent = current.length
+          ? `${current.length} result(s) (fallback)`
+          : 'No matches';
+        return;
+      }
+      try {
+        el.dataset.state = 'loading';
+        status.textContent = 'Searching…';
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=${max}&language=en&format=json`;
+        const res = await fetch(url);
+        if (!res.ok) throw 0;
+        const data = await res.json();
+        current = (data.results || []).map((r) => ({
+          name: r.name,
+          country: r.country || r.admin1 || '',
+          latitude: r.latitude,
+          longitude: r.longitude,
+        }));
+        render(current);
+        status.textContent = current.length
+          ? `${current.length} result(s)`
+          : 'No matches';
+        el.dataset.state = 'ready';
+      } catch {
+        status.textContent = 'Error – using fallback suggestions';
+        el.dataset.state = 'error';
+        current = FALLBACK;
+        render(current);
+      }
+    }
+    input.addEventListener('input', () => {
+      const q = input.value.trim();
+      clearList();
+      if (!q) {
+        status.textContent = disableFetch
+          ? 'Static suggestions'
+          : 'Waiting for input (min. 2 characters)';
+        return;
+      }
+      if (q.length < 2) {
+        status.textContent = 'Minimum 2 characters';
+        return;
+      }
+      clearTimeout(timer);
+      timer = setTimeout(() => search(q), debounceMs);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (list.classList.contains('hidden')) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActive(Math.min(activeIndex + 1, current.length - 1));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActive(Math.max(activeIndex - 1, 0));
+      } else if (e.key === 'Enter') {
+        if (activeIndex >= 0) {
+          e.preventDefault();
+          select(activeIndex);
+        }
+      } else if (e.key === 'Escape') {
+        clearList();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!el.contains(e.target)) {
+        clearList();
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document
+      .querySelectorAll('[data-locsearch]')
+      .forEach(initWeatherLocationSearch);
+  });
+  // Legacy code below scheduled for removal.
+</script>

@@ -1,113 +1,49 @@
 ---
+import ButtonBase from './ButtonBase.astro';
+import type { ButtonBaseProps } from './ButtonBase.astro';
+
 /**
- * Generic, accessible anchor-style button.
+ * ButtonLink - Dedicated anchor-style button component
+ * Always renders as anchor element with link styling
  */
-
-type ButtonVariant = 'primary' | 'secondary';
-
-interface Props {
+interface Props extends ButtonBaseProps {
+  /** Link URL (required) */
   href: string;
-  label?: string; // visible text when no slot is provided
-  ariaLabel?: string;
-  className?: string;
+  /** Visible text when no slot is provided */
+  label?: string;
+  /** Link target */
   target?: '_blank' | '_self' | '_parent' | '_top';
+  /** Link rel attribute */
   rel?: string;
-  variant?: ButtonVariant;
-  externalLabel?: string; // sr-only text appended for external links
+  /** Force external link behavior */
+  external?: boolean;
+  /** Screen reader text for external links */
+  externalLabel?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
 }
 
-const props = Astro.props as Props & Record<string, unknown>;
 const {
   href,
   label,
-  ariaLabel,
-  className = '',
-  target = '_self',
+  target,
   rel,
-  variant = 'primary',
-  externalLabel = 'opens in new window',
-} = props;
-
-const isExternal = target === '_blank';
-const finalRel = isExternal ? `noopener noreferrer ${rel || ''}`.trim() : rel;
-
-const baseClasses = [
-  'inline-flex items-center justify-center gap-2 rounded-lg',
-  'min-h-[44px] min-w-[44px] px-4 py-3 text-base',
-  'font-semibold no-underline transition-colors duration-150',
-  'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900',
-].join(' ');
-
-const variantClasses: Record<ButtonVariant, string> = {
-  primary: [
-    'border border-blue-900 bg-blue-950 text-blue-50 shadow-sm',
-    'hover:bg-blue-900',
-    'focus-visible:ring-blue-200',
-    'dark:border-blue-200 dark:bg-blue-100 dark:text-blue-950 dark:hover:bg-blue-200 dark:focus-visible:ring-blue-300',
-  ].join(' '),
-  secondary: [
-    'border border-slate-800 bg-slate-900 text-slate-50 shadow-sm',
-    'hover:bg-slate-800',
-    'focus-visible:ring-slate-200',
-    'dark:border-slate-200 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200 dark:focus-visible:ring-slate-400',
-  ].join(' '),
-};
-
-const classes = [baseClasses, variantClasses[variant], className]
-  .filter(Boolean)
-  .join(' ');
-
-const forwardedAttrs = (() => {
-  const rest: Record<string, unknown> = { ...props };
-  for (const key of [
-    'href',
-    'label',
-    'ariaLabel',
-    'className',
-    'target',
-    'rel',
-    'variant',
-    'externalLabel',
-  ]) {
-    delete (rest as Record<string, unknown>)[key];
-  }
-  return rest;
-})();
-
-const resolvedAriaLabel =
-  ariaLabel || (typeof label === 'string' ? undefined : undefined);
+  external,
+  externalLabel,
+  ...buttonBaseProps
+} = Astro.props;
 ---
 
-<a
-  href={href}
-  class={classes}
-  aria-label={resolvedAriaLabel}
-  target={target}
-  rel={finalRel}
-  {...forwardedAttrs}
+<ButtonBase
+  as="a"
+  {href}
+  {target}
+  {rel}
+  {external}
+  {externalLabel}
+  {...buttonBaseProps}
 >
-  <slot name="iconLeft" />
+  <slot name="iconLeft" slot="iconLeft" />
   {typeof label === 'string' ? label : <slot />}
-  {
-    isExternal && (
-      <>
-        <span class="sr-only"> ({externalLabel})</span>
-        <svg
-          aria-hidden="true"
-          class="ml-2 h-3.5 w-3.5 shrink-0 text-inherit"
-          viewBox="0 0 20 20"
-          fill="none"
-        >
-          <path
-            d="M5 5h4m0 0h6m-6 0v6m6-6-9.5 9.5"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </>
-    )
-  }
-  <slot name="iconRight" />
-</a>
+  <slot name="iconRight" slot="iconRight" />
+</ButtonBase>

@@ -12,71 +12,187 @@ const usageSnippet = `---\nimport { Card } from 'comet-astro';\n\n---\n\n<Card c
   description="Flexible surface for dashboard metrics or marketing teasers."
 >
   <section class="space-y-4">
-    <p class="text-base text-slate-100">Cards provide flexible surfaces for content grouping—teasers, metrics, media previews. The component balances shadow, border, and background tokens to maintain AAA contrast in light and dark mode.</p>
-    <p class="text-base text-slate-200">Use elevation for visual hierarchy; interactive cards adopt hover and focus treatments without sacrificing readability.</p>
+    <p class="text-base text-slate-100">
+      Cards provide flexible surfaces for content grouping—teasers, metrics,
+      media previews. The component balances shadow, border, and background
+      tokens to maintain AAA contrast in light and dark mode.
+    </p>
+    <p class="text-base text-slate-200">
+      Use elevation for visual hierarchy; interactive cards adopt hover and
+      focus treatments without sacrificing readability.
+    </p>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">as?</dt>
-        <dd class="text-sm text-slate-200">Semantic element (<code>article</code>, <code>section</code>, <code>div</code>, <code>li</code>). Defaults to <code>article</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          as?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Semantic element (<code>article</code>, <code>section</code>, <code
+            >div</code
+          >, <code>li</code>). Defaults to <code>article</code>.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">href?</dt>
-        <dd class="text-sm text-slate-200">Renders an anchor styled as a card—adds hover & focus states automatically.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          href?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Renders an anchor styled as a card—adds hover & focus states
+          automatically.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">elevation?</dt>
-        <dd class="text-sm text-slate-200">Shadow intensity (0–3). Defaults to <code>1</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          elevation?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Shadow intensity (0–3). Defaults to <code>1</code>.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">flat?</dt>
-        <dd class="text-sm text-slate-200">Removes shadow for a minimal surface.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          flat?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Removes shadow for a minimal surface.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">ariaLabel?</dt>
-        <dd class="text-sm text-slate-200">Label for cards without a visible heading.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Label for cards without a visible heading.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">tabIndex?</dt>
-        <dd class="text-sm text-slate-200">Makes a non-interactive card focusable for keyboard exploration.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          tabIndex?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Makes a non-interactive card focusable for keyboard exploration.
+        </dd>
       </div>
     </dl>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">Wrap structured content (heading, meta, actions) inside the card. Provide semantic headings for screen reader navigation. Adjust padding responsively.</p>
-    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+    <p class="text-base text-slate-200">
+      Wrap structured content (heading, meta, actions) inside the card. Provide
+      semantic headings for screen reader navigation. Adjust padding
+      responsively.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
   </section>
 
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
     <div class="grid gap-4 md:grid-cols-3">
-  <CardComp class="p-4 space-y-3"><h3 class="text-lg font-semibold">Baseline card</h3><p class="text-sm text-neutral-600 dark:text-neutral-300">Default elevation for general content.</p><Button variant="ghost" size="sm">Action</Button></CardComp>
-  <CardComp elevation={2} class="p-4 space-y-3"><h3 class="text-lg font-semibold">Elevated</h3><p class="text-sm text-neutral-600 dark:text-neutral-300">Stronger shadow for emphasis.</p></CardComp>
-  <CardComp elevation={3} class="p-0 overflow-hidden"><OptimizedImage src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=800&q=80" alt="Laptop on desk" rounded className="w-full" /><div class="p-4 space-y-2"><h3 class="text-lg font-semibold">Media preview</h3><p class="text-sm text-neutral-600 dark:text-neutral-300">Mixed image + text layout.</p></div></CardComp>
+      <CardComp class="p-4 space-y-3"
+        ><h3 class="text-lg font-semibold">Baseline card</h3><p
+          class="text-sm text-neutral-600 dark:text-neutral-300"
+        >
+          Default elevation for general content.
+        </p><Button variant="ghost" size="sm">Action</Button></CardComp
+      >
+      <CardComp elevation={2} class="p-4 space-y-3"
+        ><h3 class="text-lg font-semibold">Elevated</h3><p
+          class="text-sm text-neutral-600 dark:text-neutral-300"
+        >
+          Stronger shadow for emphasis.
+        </p></CardComp
+      >
+      <CardComp elevation={3} class="p-0 overflow-hidden"
+        ><OptimizedImage
+          src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=800&q=80"
+          alt="Laptop on desk"
+          rounded
+          className="w-full"
+        /><div class="p-4 space-y-2">
+          <h3 class="text-lg font-semibold">Media preview</h3><p
+            class="text-sm text-neutral-600 dark:text-neutral-300"
+          >
+            Mixed image + text layout.
+          </p>
+        </div></CardComp
+      >
     </div>
   </section>
 
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Interactive</h2>
     <div class="grid gap-4 md:grid-cols-2">
-  <CardComp href="#" elevation={2} class="p-5 space-y-2" ariaLabel="Accessibility audit teaser"><h3 class="text-lg font-semibold">Accessibility audit</h3><p class="text-sm text-neutral-600 dark:text-neutral-300">Gap analysis for AAA compliance.</p></CardComp>
-  <CardComp href="#" elevation={2} class="p-5 space-y-2"><h3 class="text-lg font-semibold">Design tokens guide</h3><p class="text-sm text-neutral-600 dark:text-neutral-300">Scaling semantic palettes.</p></CardComp>
+      <CardComp
+        href="#"
+        elevation={2}
+        class="p-5 space-y-2"
+        ariaLabel="Accessibility audit teaser"
+        ><h3 class="text-lg font-semibold">Accessibility audit</h3><p
+          class="text-sm text-neutral-600 dark:text-neutral-300"
+        >
+          Gap analysis for AAA compliance.
+        </p></CardComp
+      >
+      <CardComp href="#" elevation={2} class="p-5 space-y-2"
+        ><h3 class="text-lg font-semibold">Design tokens guide</h3><p
+          class="text-sm text-neutral-600 dark:text-neutral-300"
+        >
+          Scaling semantic palettes.
+        </p></CardComp
+      >
     </div>
   </section>
 
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
-    <p class="text-base text-slate-200">Default semantic element is <code>article</code>, aiding landmark-like navigation for standalone items. Provide a visible heading or add <code>ariaLabel</code> when omitted.</p>
-    <p class="text-base text-slate-200">Focus-visible outline (2px) maintains ≥ 7:1 contrast. Interactive cards expose hover states without lowering text readability.</p>
+    <p class="text-base text-slate-200">
+      Default semantic element is <code>article</code>, aiding landmark-like
+      navigation for standalone items. Provide a visible heading or add <code
+        >ariaLabel</code
+      > when omitted.
+    </p>
+    <p class="text-base text-slate-200">
+      Focus-visible outline (2px) maintains ≥ 7:1 contrast. Interactive cards
+      expose hover states without lowering text readability.
+    </p>
   </section>
 
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Theming & Contrast</h2>
-    <p class="text-base text-slate-200">Override via <code>--card-bg</code>, <code>--card-fg</code> (and dark counterparts). Maintain ≥ 7:1 for body text and ≥ 4.5:1 for large headings. Tinted surfaces should still preserve legible foreground color.</p>
+    <p class="text-base text-slate-200">
+      Override via <code>--card-bg</code>, <code>--card-fg</code> (and dark counterparts).
+      Maintain ≥ 7:1 for body text and ≥ 4.5:1 for large headings. Tinted surfaces
+      should still preserve legible foreground color.
+    </p>
   </section>
 </DocsLayout>

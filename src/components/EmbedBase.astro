@@ -1,0 +1,272 @@
+---
+import { cn } from '../utils/cn';
+import LoadingSpinner from './LoadingSpinner.astro';
+
+export interface EmbedBaseProps {
+  // Core Properties
+  src: string;
+  title: string;
+
+  // Layout & Appearance
+  variant?: 'default' | 'inline' | 'featured' | 'minimal' | 'card';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  aspectRatio?: '16:9' | '4:3' | '1:1' | '21:9' | '9:16' | 'auto' | 'none';
+  rounded?: boolean;
+
+  // Privacy & Performance
+  privacyMode?: boolean;
+  lazy?: boolean;
+
+  // Accessibility
+  description?: string;
+  ariaLabel?: string;
+  ariaDescribedby?: string;
+
+  // States
+  loading?: boolean;
+  error?: string;
+
+  // Layout
+  responsive?: boolean;
+  maxWidth?: string;
+
+  // iframe specific
+  allowFullscreen?: boolean;
+  sandbox?: string;
+  allow?: string;
+
+  // Additional
+  className?: string;
+}
+
+interface Props extends EmbedBaseProps {}
+
+const {
+  src,
+  title,
+  variant = 'default',
+  size = 'md',
+  aspectRatio = '16:9',
+  rounded = true,
+  lazy = true,
+  description,
+  ariaLabel,
+  ariaDescribedby,
+  loading = false,
+  error,
+  responsive = true,
+  maxWidth,
+  allowFullscreen = true,
+  sandbox,
+  allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+  className = '',
+} = Astro.props;
+
+// Aspect ratio classes
+const aspectRatioClasses = {
+  '16:9': 'aspect-video',
+  '4:3': 'aspect-[4/3]',
+  '1:1': 'aspect-square',
+  '21:9': 'aspect-[21/9]',
+  '9:16': 'aspect-[9/16]',
+  auto: 'aspect-video',
+  none: '',
+};
+
+// Size classes
+const sizeClasses = {
+  sm: 'max-w-sm',
+  md: 'max-w-2xl',
+  lg: 'max-w-4xl',
+  xl: 'max-w-6xl',
+};
+
+// Variant styles with WCAG AAA compliance
+const variantClasses = {
+  default: cn(
+    'relative overflow-hidden rounded-xl',
+    'border-2 border-slate-300/90 dark:border-slate-600/90',
+    'bg-slate-50 dark:bg-slate-800',
+    'shadow-lg dark:shadow-slate-950/30',
+    'ring-1 ring-slate-950/10 dark:ring-white/10'
+  ),
+  inline: cn(
+    'relative overflow-hidden rounded-lg',
+    'border border-slate-200 dark:border-slate-700',
+    'bg-white dark:bg-slate-900',
+    'shadow-sm'
+  ),
+  featured: cn(
+    'relative overflow-hidden rounded-2xl',
+    'border-2 border-blue-200 dark:border-blue-800',
+    'bg-gradient-to-br from-blue-50 to-slate-50 dark:from-blue-950/20 dark:to-slate-900',
+    'shadow-xl shadow-blue-500/10 dark:shadow-blue-500/5',
+    'ring-1 ring-blue-500/20 dark:ring-blue-400/20'
+  ),
+  minimal: cn(
+    'relative overflow-hidden rounded',
+    'border border-slate-200 dark:border-slate-700'
+  ),
+  card: cn(
+    'relative overflow-hidden rounded-xl',
+    'border border-slate-200 dark:border-slate-700',
+    'bg-white dark:bg-slate-900',
+    'shadow-md hover:shadow-lg transition-shadow'
+  ),
+};
+
+const hasAspectRatio = aspectRatio !== 'none';
+
+const containerClasses = cn(
+  'w-full',
+  responsive && 'mx-auto',
+  responsive && sizeClasses[size],
+  !responsive && maxWidth && `max-w-[${maxWidth}]`,
+  className
+);
+
+const wrapperClasses = cn(
+  variantClasses[variant],
+  hasAspectRatio && aspectRatioClasses[aspectRatio],
+  !rounded && 'rounded-none'
+);
+
+const iframeClasses = cn(
+  hasAspectRatio ? 'absolute inset-0 w-full h-full' : 'w-full',
+  'border-0',
+  rounded ? 'rounded-lg' : 'rounded-none',
+  'focus-visible:outline-none focus-visible:ring-4',
+  'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+  'focus-visible:ring-offset-2',
+  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-800'
+);
+
+// Loading state classes
+const loadingOverlayClasses = cn(
+  'absolute inset-0 z-10',
+  'flex items-center justify-center',
+  'bg-slate-100/80 dark:bg-slate-800/80',
+  'backdrop-blur-sm',
+  loading ? 'opacity-100' : 'opacity-0 pointer-events-none',
+  'transition-opacity duration-300'
+);
+
+// Error state classes
+const errorClasses = cn(
+  'absolute inset-0 z-10',
+  'flex flex-col items-center justify-center gap-3 p-6',
+  'bg-red-50 dark:bg-red-950/20',
+  'border-2 border-red-200 dark:border-red-800',
+  'text-center'
+);
+
+const uniqueId = Math.random().toString(36).substr(2, 9);
+---
+
+<div class={containerClasses}>
+  <div
+    class={wrapperClasses}
+    role="region"
+    aria-label={ariaLabel || `${title} embed`}
+    aria-describedby={description ? `embed-desc-${uniqueId}` : ariaDescribedby}
+  >
+    {
+      error ? (
+        <div class={errorClasses} role="alert">
+          <svg
+            class="w-12 h-12 text-red-500 dark:text-red-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+          </svg>
+          <div>
+            <h3 class="text-lg font-semibold text-red-900 dark:text-red-100">
+              Content could not be loaded
+            </h3>
+            <p class="text-sm text-red-700 dark:text-red-300 mt-1">{error}</p>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div class={loadingOverlayClasses} aria-hidden={!loading}>
+            <LoadingSpinner
+              size="lg"
+              variant="primary"
+              label="Loading content..."
+              showLabel={true}
+            />
+          </div>
+
+          <iframe
+            src={src}
+            title={title}
+            class={iframeClasses}
+            allowfullscreen={allowFullscreen}
+            loading={lazy ? 'lazy' : 'eager'}
+            sandbox={sandbox}
+            allow={allow}
+            aria-label={ariaLabel || title}
+            aria-describedby={
+              description ? `embed-desc-${uniqueId}` : ariaDescribedby
+            }
+            data-embed-type="generic"
+          />
+        </div>
+      )
+    }
+
+    <!-- Description (hidden but accessible) -->
+    {
+      description && (
+        <div id={`embed-desc-${uniqueId}`} class="sr-only">
+          {description}
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  /* Ensure iframe responsiveness */
+  iframe {
+    max-width: 100%;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .relative {
+      border-width: 3px;
+    }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .transition-opacity,
+    .transition-shadow {
+      transition-duration: 0s;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    iframe {
+      display: none;
+    }
+    .relative::after {
+      content: 'Embedded content: ' attr(title);
+      display: block;
+      padding: 1rem;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      text-align: center;
+    }
+  }
+</style>

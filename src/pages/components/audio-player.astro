@@ -66,91 +66,166 @@ const track = {
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      The audio player wraps the native <code>&lt;audio&gt;</code> element with stylised controls that
-      respect reduced-motion preferences, expose clear focus states, and meet WCAG AAA contrast targets in
-      both themes. It is fully keyboard accessible and announces playback state changes to assistive tech.
+      The audio player wraps the native <code>&lt;audio&gt;</code> element with stylised
+      controls that respect reduced-motion preferences, expose clear focus states,
+      and meet WCAG AAA contrast targets in both themes. It is fully keyboard accessible
+      and announces playback state changes to assistive tech.
     </p>
     <p class="text-base text-slate-200">
-      Supply metadata to create a full album-style layout or flip to the compact variant when you only
-      need essential controls. Attach a WebVTT file to expose a collapsible, clickable transcript that
-      stays synchronised with playback.
+      Supply metadata to create a full album-style layout or flip to the compact
+      variant when you only need essential controls. Attach a WebVTT file to
+      expose a collapsible, clickable transcript that stays synchronised with
+      playback.
     </p>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">src</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          src
+        </dt>
         <dd class="text-sm text-slate-200">
-          Audio URL passed straight to the <code>audio</code> element. Supports streamed MP3, OGG, or other
-          browser-compatible formats.
+          Audio URL passed straight to the <code>audio</code> element. Supports streamed
+          MP3, OGG, or other browser-compatible formats.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">title?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Track title displayed above the controls and used as part of the accessible label.
+          Track title displayed above the controls and used as part of the
+          accessible label.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">artist?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          artist?
+        </dt>
         <dd class="text-sm text-slate-200">
           Secondary text for the performer, podcast, or album name.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">cover?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          cover?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Cover art URL rendered as rounded media. Provide an <code>alt</code> description by setting
+          Cover art URL rendered as rounded media. Provide an <code>alt</code> description
+          by setting
           <code>title</code>; otherwise a generic label is used.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">autoplay?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          autoplay?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Boolean flag that forwards to <code>audio</code>. Disabled by default for respect of user
-          preferences.
+          Boolean flag that forwards to <code>audio</code>. Disabled by default
+          for respect of user preferences.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">loop?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          loop?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Plays the audio on repeat when true. Ideal for background ambience or short clips.
+          Plays the audio on repeat when true. Ideal for background ambience or
+          short clips.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">variant?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Choose <code>"full"</code> (default) for artwork and metadata or <code>"compact"</code> for a
-          streamlined bar layout.
+          Choose <code>"full"</code> (default) for artwork and metadata or <code
+            >"compact"</code
+          > for a streamlined bar layout.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">coverAspect?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          coverAspect?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Set to <code>"wide"</code> to render 16&thinsp;:&thinsp;9 media on the full variant. Defaults to
+          Set to <code>"wide"</code> to render 16&thinsp;:&thinsp;9 media on the
+          full variant. Defaults to
           <code>"square"</code>.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">captionsSrc?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          captionsSrc?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Optional WebVTT source used to populate a collapsible transcript beneath the controls. Clickable
-          cues keep playback in sync.
+          Optional WebVTT source used to populate a collapsible transcript
+          beneath the controls. Clickable cues keep playback in sync.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">captionsLabel?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          captionsLabel?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Custom text for the transcript toggle button. Defaults to <code>"Transcript"</code>.
+          Custom text for the transcript toggle button. Defaults to <code
+            >"Transcript"</code
+          >.
         </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">className?</dt>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
         <dd class="text-sm text-slate-200">
-          Extra Tailwind utilities merged onto the root element. Use this to cap width or align the player
-          within your layout.
+          Extra Tailwind utilities merged onto the root element. Use this to cap
+          width or align the player within your layout.
         </dd>
       </div>
     </dl>
@@ -159,11 +234,13 @@ const track = {
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Import the component, pass the audio source, and optionally supply metadata for visual context. The
-      player surfaces elapsed time, allows seeking, and exposes mute/play buttons that are keyboard
-      accessible with clear focus rings.
+      Import the component, pass the audio source, and optionally supply
+      metadata for visual context. The player surfaces elapsed time, allows
+      seeking, and exposes mute/play buttons that are keyboard accessible with
+      clear focus rings.
     </p>
-    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{usageSnippet}</code>
     </pre>
   </section>
@@ -173,10 +250,12 @@ const track = {
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">Full player with artwork</h3>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Full player with artwork
+        </h3>
         <p class="text-base text-slate-200">
-          Pair title, artist, and cover art to create a rich album layout. The surface adapts seamlessly to
-          dark mode while maintaining AAA contrast.
+          Pair title, artist, and cover art to create a rich album layout. The
+          surface adapts seamlessly to dark mode while maintaining AAA contrast.
         </p>
       </div>
       <AudioPlayer
@@ -192,9 +271,9 @@ const track = {
       <div>
         <h3 class="text-lg font-semibold text-slate-100">Compact variant</h3>
         <p class="text-base text-slate-200">
-          Switch to <code>variant="compact"</code> when horizontal space is limited—such as episode lists or
-          sticky footers. Add a cover to surface a square thumbnail ahead of the controls while keeping each
-          button finger-friendly.
+          Switch to <code>variant="compact"</code> when horizontal space is limited—such
+          as episode lists or sticky footers. Add a cover to surface a square thumbnail
+          ahead of the controls while keeping each button finger-friendly.
         </p>
       </div>
       <AudioPlayer
@@ -211,8 +290,9 @@ const track = {
       <div>
         <h3 class="text-lg font-semibold text-slate-100">Wide hero embed</h3>
         <p class="text-base text-slate-200">
-          Use <code>coverAspect="wide"</code> to feature a 16&thinsp;:&thinsp;9 banner above the controls—ideal
-          for live sessions, podcasts, or video highlights with cinematic artwork.
+          Use <code>coverAspect="wide"</code> to feature a 16&thinsp;:&thinsp;9 banner
+          above the controls—ideal for live sessions, podcasts, or video highlights
+          with cinematic artwork.
         </p>
       </div>
       <AudioPlayer
@@ -227,10 +307,13 @@ const track = {
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">Transcript-enabled player</h3>
+        <h3 class="text-lg font-semibold text-slate-100">
+          Transcript-enabled player
+        </h3>
         <p class="text-base text-slate-200">
-          Provide a WebVTT file to unlock a collapsible transcript. Active lines highlight as the audio
-          plays and users can click any cue to jump to that moment.
+          Provide a WebVTT file to unlock a collapsible transcript. Active lines
+          highlight as the audio plays and users can click any cue to jump to
+          that moment.
         </p>
       </div>
       <AudioPlayer
@@ -248,8 +331,10 @@ const track = {
       <div>
         <h3 class="text-lg font-semibold text-slate-100">Minimal player</h3>
         <p class="text-base text-slate-200">
-          Omit artwork and artist for lightweight embeds. The player still announces the track title to
-          assistive technology via the internal <code>audio</code> label.
+          Omit artwork and artist for lightweight embeds. The player still
+          announces the track title to assistive technology via the internal <code
+            >audio</code
+          > label.
         </p>
       </div>
       <AudioPlayer

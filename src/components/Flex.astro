@@ -6,7 +6,15 @@ interface Props {
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline';
   inline?: boolean;
-  as?: 'div' | 'section' | 'article' | 'aside' | 'nav' | 'main' | 'header' | 'footer';
+  as?:
+    | 'div'
+    | 'section'
+    | 'article'
+    | 'aside'
+    | 'nav'
+    | 'main'
+    | 'header'
+    | 'footer';
   role?: string;
   ariaLabel?: string;
   ariaLabelledby?: string;
@@ -89,13 +97,12 @@ const classNames = [
   gapClasses[gap],
   justifyClasses[justify],
   alignClasses[align],
-  className
-].filter(Boolean).join(' ');
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<Element
-  class={classNames}
-  {...accessibilityProps}
->
+<Element class={classNames} {...accessibilityProps}>
   <slot />
 </Element>

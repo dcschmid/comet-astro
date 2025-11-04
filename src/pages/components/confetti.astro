@@ -9,35 +9,83 @@ import PageHeader from '../../components/PageHeader.astro';
   description="Celebratory particle burst that can be triggered by hover or click."
 >
   <section class="space-y-4">
-    <p class="text-base text-slate-100">Confetti renders a canvas-based celebration animation that you can trigger via user action or programmatically. The component respects the user's reduced-motion preference and exposes events for programmatic control.</p>
+    <p class="text-base text-slate-100">
+      Confetti renders a canvas-based celebration animation that you can trigger
+      via user action or programmatically. The component respects the user's
+      reduced-motion preference and exposes events for programmatic control.
+    </p>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">autoStart?</dt>
-        <dd class="text-sm text-slate-200">Start the animation automatically when rendered. Defaults to <code>false</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          autoStart?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Start the animation automatically when rendered. Defaults to <code
+            >false</code
+          >.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">duration?</dt>
-        <dd class="text-sm text-slate-200">Duration in ms for the confetti animation. Defaults to <code>2000</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          duration?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Duration in ms for the confetti animation. Defaults to <code
+            >2000</code
+          >.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">particleCount?</dt>
-        <dd class="text-sm text-slate-200">Number of particles created. Defaults to <code>160</code>.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          particleCount?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Number of particles created. Defaults to <code>160</code>.
+        </dd>
       </div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">colors?</dt>
-        <dd class="text-sm text-slate-200">Array of color hex values used for particles. Defaults to a theme-aware set.</dd>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          colors?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of color hex values used for particles. Defaults to a
+          theme-aware set.
+        </dd>
       </div>
     </dl>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">Render the component inside any container. Provide <code>autoStart</code> to run immediately or omit it and render the built-in trigger button for manual control. The component emits custom events (<code>confetti:start</code>, <code>confetti:stop</code>, <code>confetti:burst</code>).</p>
-    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+    <p class="text-base text-slate-200">
+      Render the component inside any container. Provide <code>autoStart</code> to
+      run immediately or omit it and render the built-in trigger button for manual
+      control. The component emits custom events (<code>confetti:start</code>, <code
+        >confetti:stop</code
+      >, <code>confetti:burst</code>).
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{`<Confetti />`}</code>
     </pre>
   </section>
@@ -45,15 +93,24 @@ import PageHeader from '../../components/PageHeader.astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Example</h2>
     <div class="rounded-lg border border-slate-700/60 bg-slate-900/40 p-4">
-      <PageHeader title="Milestone unlocked" subtitle="Ship a celebratory confetti effect when the user reaches key goals." />
+      <PageHeader
+        title="Milestone unlocked"
+        subtitle="Ship a celebratory confetti effect when the user reaches key goals."
+      />
       <div class="mt-4">
-  <CF />
+        <CF />
       </div>
     </div>
   </section>
 
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
-    <p class="text-base text-slate-200">Canvas is hidden from assistive technology (<code>aria-hidden</code>) since the effect is decorative. The trigger button is accessible, labeled, keyboard-focusable, and uses a clear focus ring. The component respects <code>prefers-reduced-motion</code> and will not animate when reduced motion is enabled.</p>
+    <p class="text-base text-slate-200">
+      Canvas is hidden from assistive technology (<code>aria-hidden</code>)
+      since the effect is decorative. The trigger button is accessible, labeled,
+      keyboard-focusable, and uses a clear focus ring. The component respects <code
+        >prefers-reduced-motion</code
+      > and will not animate when reduced motion is enabled.
+    </p>
   </section>
 </DocsLayout>

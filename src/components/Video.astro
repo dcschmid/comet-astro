@@ -1,15 +1,38 @@
 ---
 interface Props {
+  // Core video properties
   src: string;
   poster?: string;
+
+  // Playback behavior
   autoplay?: boolean;
   loop?: boolean;
   muted?: boolean;
   controls?: boolean;
   playsInline?: boolean;
-  aspectRatio?: '16/9' | '4/3' | '1/1' | '21/9';
-  className?: string;
+  preload?: 'none' | 'metadata' | 'auto';
+
+  // Layout and appearance
+  variant?: 'default' | 'inline' | 'featured' | 'minimal';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  aspectRatio?: '16/9' | '4/3' | '1/1' | '21/9' | '9/16' | 'auto';
+  rounded?: boolean;
+
+  // Accessibility
+  title?: string;
+  description?: string;
   caption?: string;
+  ariaLabel?: string;
+
+  // States
+  loading?: boolean;
+  error?: string;
+
+  // Responsive
+  responsive?: boolean;
+  maxWidth?: string;
+
+  className?: string;
 }
 
 const {
@@ -20,47 +43,220 @@ const {
   muted = false,
   controls = true,
   playsInline = true,
+  preload = 'metadata',
+  variant = 'default',
+  size = 'md',
   aspectRatio = '16/9',
-  className = '',
+  rounded = true,
+  title,
+  description,
   caption,
+  ariaLabel,
+  loading = false,
+  error,
+  responsive = true,
+  maxWidth,
+  className = '',
 } = Astro.props as Props;
 
+// Generate unique ID
+const videoId = `video-${Math.random().toString(36).substr(2, 9)}`;
+
+// Aspect ratio classes
 const aspectRatioClasses = {
   '16/9': 'aspect-video',
   '4/3': 'aspect-[4/3]',
   '1/1': 'aspect-square',
   '21/9': 'aspect-[21/9]',
+  '9/16': 'aspect-[9/16]',
+  auto: '',
 };
+
+// Variant styles with WCAG AAA contrast
+const variantStyles = {
+  default:
+    'bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm',
+  inline: 'bg-transparent',
+  featured:
+    'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-800 shadow-md',
+  minimal:
+    'bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800',
+};
+
+// Size styles
+const sizeStyles = {
+  sm: 'max-w-sm p-1.5',
+  md: 'max-w-2xl p-2',
+  lg: 'max-w-4xl p-3',
+  xl: 'max-w-6xl p-4',
+};
+
+// Container classes with WCAG AAA compliance
+const containerClass = [
+  'relative',
+  responsive && 'w-full',
+  !maxWidth && sizeStyles[size],
+  variant !== 'inline' && variantStyles[variant],
+  rounded && variant !== 'inline' && 'rounded-2xl',
+  loading && 'animate-pulse',
+
+  // Focus management for accessibility
+  'focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2',
+  'dark:focus-within:ring-blue-400 dark:focus-within:ring-offset-slate-950',
+
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+// Video container classes
+const videoContainerClass = [
+  'relative overflow-hidden',
+  aspectRatio !== 'auto' && aspectRatioClasses[aspectRatio],
+  'bg-slate-950', // Ensures high contrast backdrop
+  rounded && (variant === 'inline' ? 'rounded-2xl' : 'rounded-xl'),
+]
+  .filter(Boolean)
+  .join(' ');
+
+// Video element classes with enhanced contrast
+const videoClass = [
+  'w-full h-full',
+  aspectRatio !== 'auto' ? 'absolute inset-0 object-cover' : 'block',
+
+  // Enhanced contrast for WCAG AAA
+  'contrast-110 brightness-105',
+
+  // Smooth transitions
+  'transition-all duration-200',
+].join(' ');
+
+// Caption classes with 9:1 contrast ratio
+const captionClass = [
+  'mt-3 text-sm leading-relaxed font-medium',
+
+  // WCAG AAA contrast ratios
+  'text-slate-800 dark:text-slate-200',
+
+  // Better readability
+  'max-w-prose',
+].join(' ');
 ---
 
 <figure
-  class={`rounded-2xl border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-800 dark:bg-slate-950 ${className}`.trim()}
+  class={containerClass}
+  style={maxWidth ? `max-width: ${maxWidth}` : undefined}
+  data-video-variant={variant}
+  data-video-size={size}
 >
-  <div
-    class={`relative overflow-hidden rounded-xl bg-slate-900 ${aspectRatioClasses[aspectRatio]}`}
-  >
-    <video
-      src={src}
-      poster={poster}
-      autoplay={autoplay}
-      loop={loop}
-      muted={muted}
-      controls={controls}
-      playsinline={playsInline}
-      class="absolute inset-0 h-full w-full object-cover"
-    >
-      <slot name="fallback">
-        <p class="p-4 text-sm font-medium text-slate-100">
-          Your browser does not support the video tag.
-        </p>
-      </slot>
-    </video>
+  <!-- Screen reader description -->
+  {
+    description && (
+      <div id={`${videoId}-description`} class="sr-only">
+        {description}
+      </div>
+    )
+  }
+
+  <div class={videoContainerClass}>
+    {
+      loading && (
+        <div
+          class="absolute inset-0 flex items-center justify-center bg-slate-200 dark:bg-slate-800"
+          aria-hidden="true"
+        >
+          <div class="flex flex-col items-center gap-3">
+            <div class="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600 dark:border-slate-600 dark:border-t-blue-400" />
+            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">
+              Loading video...
+            </span>
+          </div>
+        </div>
+      )
+    }
+
+    {
+      error && (
+        <div
+          class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 p-6 text-center"
+          role="alert"
+          aria-live="polite"
+        >
+          <svg
+            class="h-12 w-12 text-slate-500 dark:text-slate-400 mb-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+            />
+          </svg>
+          <p class="font-semibold text-sm mb-2 text-slate-800 dark:text-slate-200">
+            Video nicht verfügbar
+          </p>
+          <p class="text-xs text-slate-600 dark:text-slate-400">{error}</p>
+        </div>
+      )
+    }
+
+    {
+      !loading && !error && (
+        <video
+          id={videoId}
+          class={videoClass}
+          src={src}
+          poster={poster}
+          autoplay={autoplay}
+          loop={loop}
+          muted={muted}
+          controls={controls}
+          playsinline={playsInline}
+          preload={preload}
+          aria-label={ariaLabel || title}
+          aria-describedby={description ? `${videoId}-description` : undefined}
+          title={title}
+        >
+          <slot name="fallback">
+            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 p-6">
+              <svg
+                class="h-16 w-16 mb-4 text-slate-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p class="font-semibold text-sm text-center max-w-xs text-slate-800 dark:text-slate-200">
+                Ihr Browser unterstützt das Video-Element nicht. Bitte
+                aktualisieren Sie Ihren Browser.
+              </p>
+            </div>
+          </slot>
+        </video>
+      )
+    }
   </div>
+
+  <!-- Caption with WCAG AAA contrast -->
   {
     (caption || Astro.slots.has('caption')) && (
-      <figcaption class="mt-3 text-sm text-slate-700 dark:text-slate-300">
+      <figcaption id={`${videoId}-caption`} class={captionClass}>
         <slot name="caption">{caption}</slot>
       </figcaption>
     )
   }
+
+  <!-- Additional slot for custom content -->
+  <slot name="overlay" />
 </figure>

@@ -21,13 +21,13 @@ import { ContactCard } from 'comet-astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      ContactCard displays person information in a clean, accessible format. 
-      Each card includes avatar handling with initials fallback, contact actions, 
-      and maintains AAA contrast ratios across light and dark themes.
+      ContactCard displays person information in a clean, accessible format.
+      Each card includes avatar handling with initials fallback, contact
+      actions, and maintains AAA contrast ratios across light and dark themes.
     </p>
     <p class="text-base text-slate-200">
-      Links include proper ARIA labels and screen reader context, while the 
-      responsive layout adapts from vertical stacking on mobile to horizontal 
+      Links include proper ARIA labels and screen reader context, while the
+      responsive layout adapts from vertical stacking on mobile to horizontal
       layout on larger screens.
     </p>
   </section>
@@ -44,7 +44,7 @@ import { ContactCard } from 'comet-astro';
           name
         </dt>
         <dd class="text-sm text-slate-200">
-          Full name of the person. Required. Used for display and generating 
+          Full name of the person. Required. Used for display and generating
           initials when no avatar is provided.
         </dd>
       </div>
@@ -57,8 +57,8 @@ import { ContactCard } from 'comet-astro';
           role?
         </dt>
         <dd class="text-sm text-slate-200">
-          Job title or role description. Optional. Displays below the name 
-          in a subdued color.
+          Job title or role description. Optional. Displays below the name in a
+          subdued color.
         </dd>
       </div>
       <div
@@ -70,7 +70,7 @@ import { ContactCard } from 'comet-astro';
           email?
         </dt>
         <dd class="text-sm text-slate-200">
-          Email address. Optional. When provided, renders as a clickable 
+          Email address. Optional. When provided, renders as a clickable
           <code>mailto:</code> link with proper ARIA labeling.
         </dd>
       </div>
@@ -83,7 +83,9 @@ import { ContactCard } from 'comet-astro';
           website?
         </dt>
         <dd class="text-sm text-slate-200">
-          Website URL. Optional. Opens in new tab with <code>rel="noopener noreferrer"</code> 
+          Website URL. Optional. Opens in new tab with <code
+            >rel="noopener noreferrer"</code
+          >
           and includes screen reader context.
         </dd>
       </div>
@@ -96,8 +98,8 @@ import { ContactCard } from 'comet-astro';
           avatar?
         </dt>
         <dd class="text-sm text-slate-200">
-          Profile image URL. Optional. Falls back to initials with 
-          gradient background when not provided.
+          Profile image URL. Optional. Falls back to initials with gradient
+          background when not provided.
         </dd>
       </div>
       <div
@@ -118,8 +120,8 @@ import { ContactCard } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Import the component and provide at minimum a name. Add optional contact 
-      information and avatar as needed. The component handles responsive layout 
+      Import the component and provide at minimum a name. Add optional contact
+      information and avatar as needed. The component handles responsive layout
       and accessibility automatically.
     </p>
     <pre
@@ -130,7 +132,7 @@ import { ContactCard } from 'comet-astro';
 
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
-    
+
     <div class="space-y-6">
       <div>
         <h3 class="text-lg font-medium text-slate-200 mb-3">With Avatar</h3>
@@ -142,22 +144,23 @@ import { ContactCard } from 'comet-astro';
           avatar="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=240&q=80"
         />
       </div>
-      
+
       <div>
-        <h3 class="text-lg font-medium text-slate-200 mb-3">Initials Fallback</h3>
+        <h3 class="text-lg font-medium text-slate-200 mb-3">
+          Initials Fallback
+        </h3>
         <ContactCardComponent
           name="Jordan Martinez"
           role="Frontend Developer"
           email="jordan@example.com"
         />
       </div>
-      
+
       <div>
-        <h3 class="text-lg font-medium text-slate-200 mb-3">Minimal Information</h3>
-        <ContactCardComponent
-          name="Alex Chen"
-          website="https://alexchen.dev"
-        />
+        <h3 class="text-lg font-medium text-slate-200 mb-3">
+          Minimal Information
+        </h3>
+        <ContactCardComponent name="Alex Chen" website="https://alexchen.dev" />
       </div>
     </div>
   </section>
@@ -165,18 +168,18 @@ import { ContactCard } from 'comet-astro';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      Text contrast ratios exceed WCAG AAA standards (7:1+) for both light and 
-      dark themes. Focus rings are prominent and theme-aware with 4px ring width 
+      Text contrast ratios exceed WCAG AAA standards (7:1+) for both light and
+      dark themes. Focus rings are prominent and theme-aware with 4px ring width
       and proper offset colors.
     </p>
     <p class="text-base text-slate-200">
-      Email and website links include descriptive ARIA labels that identify the 
-      person and action ("Send email to Leslie Alexander"). External links 
+      Email and website links include descriptive ARIA labels that identify the
+      person and action ("Send email to Leslie Alexander"). External links
       communicate their behavior through screen reader text.
     </p>
     <p class="text-base text-slate-200">
-      The avatar is decorative and marked with <code>aria-hidden="true"</code>. 
-      Initials are unselectable to prevent copy confusion. The responsive layout 
+      The avatar is decorative and marked with <code>aria-hidden="true"</code>.
+      Initials are unselectable to prevent copy confusion. The responsive layout
       maintains usability across all device sizes.
     </p>
   </section>

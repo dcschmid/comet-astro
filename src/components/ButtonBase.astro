@@ -1,0 +1,189 @@
+---
+import { cn } from '../utils/cn';
+
+/**
+ * ButtonBase - Shared styling and logic for Button and ButtonLink components
+ * Provides consistent appearance, accessibility, and behavior across button variants
+ */
+
+export interface ButtonBaseProps {
+  /** Visual style variant */
+  variant?: 'primary' | 'secondary' | 'ghost';
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Additional CSS classes */
+  class?: string;
+  /** ARIA label for accessibility */
+  ariaLabel?: string;
+  /** Whether the component is disabled */
+  disabled?: boolean;
+}
+
+interface Props extends ButtonBaseProps {
+  /** Element type to render - 'button' or 'a' */
+  as: 'button' | 'a';
+  /** Button type (only for button elements) */
+  type?: 'button' | 'submit' | 'reset';
+  /** Link href (only for anchor elements) */
+  href?: string;
+  /** Link target */
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  /** Link rel attribute */
+  rel?: string;
+  /** Whether to force external link behavior */
+  external?: boolean;
+  /** Screen reader text for external links */
+  externalLabel?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+const {
+  as,
+  variant = 'primary',
+  size = 'md',
+  class: className = '',
+  ariaLabel,
+  disabled = false,
+  type = 'button',
+  href,
+  target,
+  rel,
+  external,
+  externalLabel = 'opens in new window',
+  ...rest
+} = Astro.props;
+
+// Base styling classes
+const baseClasses = [
+  'inline-flex items-center justify-center rounded-lg',
+  'font-semibold no-underline transition-colors duration-150',
+  'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2',
+  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900',
+  'disabled:pointer-events-none disabled:opacity-50',
+].join(' ');
+
+// Size variants
+const sizeClasses: Record<string, string> = {
+  sm: 'h-9 px-3 text-sm min-h-[36px] min-w-[36px]',
+  md: 'h-10 px-4 text-sm min-h-[40px] min-w-[40px]',
+  lg: 'h-12 px-6 text-base min-h-[48px] min-w-[48px]',
+};
+
+// Visual variants with WCAG AAA compliant colors
+const variantClasses: Record<string, string> = {
+  primary: [
+    'border border-blue-900 bg-blue-950 text-blue-50 shadow-sm',
+    'hover:bg-blue-900 hover:border-blue-800',
+    'focus-visible:ring-blue-200',
+    'dark:border-blue-200 dark:bg-blue-100 dark:text-blue-950',
+    'dark:hover:bg-blue-200 dark:hover:border-blue-300',
+    'dark:focus-visible:ring-blue-300',
+  ].join(' '),
+  secondary: [
+    'border border-slate-800 bg-slate-900 text-slate-50 shadow-sm',
+    'hover:bg-slate-800 hover:border-slate-700',
+    'focus-visible:ring-slate-200',
+    'dark:border-slate-200 dark:bg-slate-100 dark:text-slate-950',
+    'dark:hover:bg-slate-200 dark:hover:border-slate-300',
+    'dark:focus-visible:ring-slate-400',
+  ].join(' '),
+  ghost: [
+    'border border-transparent bg-transparent',
+    'text-slate-900 hover:bg-slate-100 hover:border-slate-200',
+    'focus-visible:ring-slate-300',
+    'dark:text-slate-50 dark:hover:bg-slate-800 dark:hover:border-slate-700',
+    'dark:focus-visible:ring-slate-500',
+  ].join(' '),
+};
+
+// Combine all classes
+const finalClasses = cn(
+  baseClasses,
+  sizeClasses[size],
+  variantClasses[variant],
+  className
+);
+
+// External link detection and configuration
+const isExternalByUrl = href && /^https?:\/\//i.test(href);
+const isExternal =
+  external !== undefined ? external : target === '_blank' || isExternalByUrl;
+const finalTarget = isExternal ? '_blank' : target || '_self';
+const finalRel = isExternal
+  ? `noopener noreferrer${rel ? ` ${rel}` : ''}`
+  : rel;
+
+// Remove component-specific props from forwarded attributes
+const forwardedAttrs = (() => {
+  const excluded = [
+    'as',
+    'variant',
+    'size',
+    'class',
+    'ariaLabel',
+    'disabled',
+    'type',
+    'href',
+    'target',
+    'rel',
+    'external',
+    'externalLabel',
+  ];
+  const result: Record<string, any> = {};
+  for (const [key, value] of Object.entries(rest)) {
+    if (!excluded.includes(key)) {
+      result[key] = value;
+    }
+  }
+  return result;
+})();
+---
+
+{
+  as === 'a' ? (
+    <a
+      href={href}
+      class={finalClasses}
+      aria-label={ariaLabel}
+      target={finalTarget}
+      rel={finalRel}
+      {...forwardedAttrs}
+    >
+      <slot name="iconLeft" />
+      <slot />
+      {isExternal && (
+        <>
+          <span class="sr-only"> ({externalLabel})</span>
+          <svg
+            aria-hidden="true"
+            class="ml-2 h-3.5 w-3.5 shrink-0 text-inherit"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <path
+              d="M5 5h4m0 0h6m-6 0v6m6-6-9.5 9.5"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </>
+      )}
+      <slot name="iconRight" />
+    </a>
+  ) : (
+    <button
+      type={type}
+      class={finalClasses}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      {...forwardedAttrs}
+    >
+      <slot name="iconLeft" />
+      <slot />
+      <slot name="iconRight" />
+    </button>
+  )
+}

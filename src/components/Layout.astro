@@ -1,7 +1,7 @@
 ---
 import { cn } from '../utils/cn';
 
-export interface Props {
+interface Props {
   /** Custom CSS classes */
   class?: string;
   /** Apply container styling to main content */
@@ -43,7 +43,7 @@ const {
   skipToMainLabel = 'Skip to main content',
   mainAriaLabel = 'Main content',
   headerAriaLabel = 'Site header',
-  footerAriaLabel = 'Site footer'
+  footerAriaLabel = 'Site footer',
 } = Astro.props as Props;
 
 // Background variants with WCAG AAA compliant colors
@@ -51,14 +51,15 @@ const backgroundClasses = {
   default: 'bg-white dark:bg-slate-950',
   muted: 'bg-slate-50 dark:bg-slate-900',
   accent: 'bg-blue-50 dark:bg-blue-950/30',
-  gradient: 'bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/50'
+  gradient:
+    'bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/50',
 };
 
 // Spacing variants
 const spacingClasses = {
   tight: 'gap-4',
   normal: 'gap-6 lg:gap-8',
-  loose: 'gap-8 lg:gap-12'
+  loose: 'gap-8 lg:gap-12',
 };
 
 // Container max-width classes
@@ -68,13 +69,13 @@ const maxWidthClasses = {
   lg: 'max-w-7xl',
   xl: 'max-w-screen-xl',
   '2xl': 'max-w-screen-2xl',
-  full: 'max-w-none'
+  full: 'max-w-none',
 };
 
 // Layout variant styles
 const getLayoutClasses = () => {
   const base = 'min-h-screen flex';
-  
+
   switch (variant) {
     case 'wide':
       return `${base} flex-col`;
@@ -90,9 +91,9 @@ const getLayoutClasses = () => {
 // Container classes based on variant
 const getContainerClasses = () => {
   if (!container) return 'flex-1';
-  
+
   const baseContainer = `container mx-auto px-4 sm:px-6 lg:px-8 flex-1 ${maxWidthClasses[maxWidth]}`;
-  
+
   switch (variant) {
     case 'narrow':
       return `${baseContainer} max-w-4xl`;
@@ -107,8 +108,10 @@ const getContainerClasses = () => {
 const getHeaderClasses = () => {
   const base = 'w-full';
   const sticky = stickyHeader ? 'sticky top-0 z-40' : '';
-  const bg = stickyHeader ? 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800' : '';
-  
+  const bg = stickyHeader
+    ? 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800'
+    : '';
+
   return cn(base, sticky, bg);
 };
 
@@ -116,8 +119,10 @@ const getHeaderClasses = () => {
 const getFooterClasses = () => {
   const base = 'w-full';
   const sticky = stickyFooter ? 'sticky bottom-0 z-40' : '';
-  const bg = stickyFooter ? 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-800' : '';
-  
+  const bg = stickyFooter
+    ? 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-800'
+    : '';
+
   return cn(base, sticky, bg);
 };
 
@@ -147,31 +152,31 @@ const skipLinkId = `main-content-${Math.random().toString(36).substr(2, 9)}`;
   {skipToMainLabel}
 </a>
 
-<div class={cn(
-  getLayoutClasses(),
-  backgroundClasses[background],
-  spacingClasses[spacing],
-  'text-slate-900 dark:text-slate-100',
-  className
-)}>
-  <header
-    class={getHeaderClasses()}
-    aria-label={headerAriaLabel}
-    role="banner"
-  >
+<div
+  class={cn(
+    getLayoutClasses(),
+    backgroundClasses[background],
+    spacingClasses[spacing],
+    'text-slate-900 dark:text-slate-100',
+    className
+  )}
+>
+  <header class={getHeaderClasses()} aria-label={headerAriaLabel} role="banner">
     <slot name="header" />
   </header>
-  
-  {variant === 'sidebar' && (
-    <aside
-      class={getSidebarClasses()}
-      aria-label="Sidebar navigation"
-      role="complementary"
-    >
-      <slot name="sidebar" />
-    </aside>
-  )}
-  
+
+  {
+    variant === 'sidebar' && (
+      <aside
+        class={getSidebarClasses()}
+        aria-label="Sidebar navigation"
+        role="complementary"
+      >
+        <slot name="sidebar" />
+      </aside>
+    )
+  }
+
   <main
     id={skipLinkId}
     class={cn(
@@ -188,7 +193,7 @@ const skipLinkId = `main-content-${Math.random().toString(36).substr(2, 9)}`;
   >
     <slot />
   </main>
-  
+
   <footer
     class={getFooterClasses()}
     aria-label={footerAriaLabel}
@@ -205,21 +210,21 @@ const skipLinkId = `main-content-${Math.random().toString(36).substr(2, 9)}`;
       background-image: none;
       background-color: white;
     }
-    
+
     .dark .bg-gradient-to-br {
       background-color: black;
     }
   }
-  
+
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
     .transition-colors {
       transition-duration: 0.01ms;
     }
   }
-  
+
   /* Focus management for skip link */
-  [tabindex="-1"]:focus {
+  [tabindex='-1']:focus {
     outline: 2px solid transparent;
   }
 </style>

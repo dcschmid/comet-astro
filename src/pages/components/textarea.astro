@@ -1,50 +1,950 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Textarea from '../../components/Textarea.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import Tabs from '../../components/Tabs.astro';
+import Card from '../../components/Card.astro';
+import Badge from '../../components/Badge.astro';
+import Callout from '../../components/Callout.astro';
 ---
 
-<DocsLayout
-  title="Textarea"
-  description="Multi-line text input with character counter."
->
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300 text-sm space-y-1">
-      <li><code>name: string</code> – textarea name (required)</li>
-      <li><code>label?: string</code></li>
-      <li><code>placeholder?: string</code></li>
-      <li><code>value?: string</code></li>
-      <li><code>rows?: number</code> – default: 4</li>
-      <li><code>required?: boolean</code></li>
-      <li><code>disabled?: boolean</code></li>
-      <li><code>error?: string</code></li>
-      <li><code>helperText?: string</code></li>
-      <li><code>maxLength?: number</code> – shows character counter</li>
-      <li><code>className?: string</code></li>
-    </ul>
-  </section>
-
-  <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="space-y-4">
-      <Textarea
-        name="bio"
-        label="Bio"
-        placeholder="Tell us about yourself"
-        rows={3}
-      />
-      <Textarea
-        name="message"
-        label="Message"
-        maxLength={200}
-        helperText="Max 200 characters"
-      />
-      <Textarea
-        name="disabled"
-        label="Disabled"
-        disabled
-        value="Cannot edit this text"
-      />
+<DocsLayout title="Textarea Component">
+  <div class="space-y-8">
+    <!-- Header -->
+    <div class="border-b border-slate-200 dark:border-slate-800 pb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">
+          Textarea
+        </h1>
+        <Badge variant="outline">Form</Badge>
+      </div>
+      <p class="text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
+        A WCAG AAA compliant multi-line text input component with comprehensive
+        accessibility features, multiple variants, size options, auto-grow
+        functionality, and character counting support.
+      </p>
     </div>
-  </section>
+
+    <!-- Quick Start -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Quick Start
+      </h2>
+      <div class="grid gap-6">
+        <Card>
+          <div class="space-y-4">
+            <Textarea
+              label="Message"
+              placeholder="Enter your message..."
+              helperText="Please provide detailed information"
+            />
+          </div>
+        </Card>
+        <CodeBlock
+          language="astro"
+          code={`---
+import Textarea from './components/Textarea.astro';
+---
+
+<Textarea
+  label="Message"
+  placeholder="Enter your message..."
+  helperText="Please provide detailed information"
+/>`}
+        />
+      </div>
+    </section>
+
+    <!-- Variants -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Variants
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Four distinct visual styles optimized for different design contexts.
+      </p>
+
+      <Tabs variant="pills" size="sm">
+        <div slot="tab-1">
+          <span>Default</span>
+        </div>
+        <div slot="panel-1">
+          <Card>
+            <div class="space-y-6">
+              <Textarea
+                variant="default"
+                label="Default Textarea"
+                placeholder="Standard bordered textarea..."
+                helperText="Clean and professional design"
+              />
+            </div>
+          </Card>
+          <CodeBlock
+            language="astro"
+            code={`<Textarea
+  variant="default"
+  label="Default Textarea"
+  placeholder="Standard bordered textarea..."
+  helperText="Clean and professional design"
+/>`}
+          />
+        </div>
+
+        <div slot="tab-2">
+          <span>Minimal</span>
+        </div>
+        <div slot="panel-2">
+          <Card>
+            <div class="space-y-6">
+              <Textarea
+                variant="minimal"
+                label="Minimal Textarea"
+                placeholder="Minimal bottom-border style..."
+                helperText="Subtle and space-efficient"
+              />
+            </div>
+          </Card>
+          <CodeBlock
+            language="astro"
+            code={`<Textarea
+  variant="minimal"
+  label="Minimal Textarea"
+  placeholder="Minimal bottom-border style..."
+  helperText="Subtle and space-efficient"
+/>`}
+          />
+        </div>
+
+        <div slot="tab-3">
+          <span>Bordered</span>
+        </div>
+        <div slot="panel-3">
+          <Card>
+            <div class="space-y-6">
+              <Textarea
+                variant="bordered"
+                label="Bordered Textarea"
+                placeholder="Enhanced border design..."
+                helperText="Prominent border styling"
+              />
+            </div>
+          </Card>
+          <CodeBlock
+            language="astro"
+            code={`<Textarea
+  variant="bordered"
+  label="Bordered Textarea"
+  placeholder="Enhanced border design..."
+  helperText="Prominent border styling"
+/>`}
+          />
+        </div>
+
+        <div slot="tab-4">
+          <span>Filled</span>
+        </div>
+        <div slot="panel-4">
+          <Card>
+            <div class="space-y-6">
+              <Textarea
+                variant="filled"
+                label="Filled Textarea"
+                placeholder="Filled background style..."
+                helperText="Enhanced visual presence"
+              />
+            </div>
+          </Card>
+          <CodeBlock
+            language="astro"
+            code={`<Textarea
+  variant="filled"
+  label="Filled Textarea"
+  placeholder="Filled background style..."
+  helperText="Enhanced visual presence"
+/>`}
+          />
+        </div>
+      </Tabs>
+    </section>
+
+    <!-- Sizes -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Sizes
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Three size options to match your interface hierarchy.
+      </p>
+
+      <Card>
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Small
+            </h3>
+            <Textarea
+              size="sm"
+              label="Small Textarea"
+              placeholder="Compact size for dense layouts..."
+              rows={3}
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Medium (Default)
+            </h3>
+            <Textarea
+              size="md"
+              label="Medium Textarea"
+              placeholder="Standard size for most use cases..."
+              rows={4}
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Large
+            </h3>
+            <Textarea
+              size="lg"
+              label="Large Textarea"
+              placeholder="Large size for prominent forms..."
+              rows={5}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <CodeBlock
+        language="astro"
+        code={`<!-- Size variants -->
+<Textarea size="sm" label="Small" placeholder="Compact..." />
+<Textarea size="md" label="Medium" placeholder="Standard..." />
+<Textarea size="lg" label="Large" placeholder="Prominent..." />`}
+      />
+    </section>
+
+    <!-- Resize Options -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Resize Options
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Control how users can resize the textarea element.
+      </p>
+
+      <Card>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              No Resize
+            </h3>
+            <Textarea
+              resize="none"
+              label="Fixed Size"
+              placeholder="Cannot be resized..."
+              rows={3}
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Vertical Only
+            </h3>
+            <Textarea
+              resize="vertical"
+              label="Vertical Resize"
+              placeholder="Can resize vertically..."
+              rows={3}
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Horizontal Only
+            </h3>
+            <Textarea
+              resize="horizontal"
+              label="Horizontal Resize"
+              placeholder="Can resize horizontally..."
+              rows={3}
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Both Directions
+            </h3>
+            <Textarea
+              resize="both"
+              label="Both Directions"
+              placeholder="Can resize in both directions..."
+              rows={3}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <CodeBlock
+        language="astro"
+        code={`<!-- Resize options -->
+<Textarea resize="none" label="Fixed" />
+<Textarea resize="vertical" label="Vertical Only" />
+<Textarea resize="horizontal" label="Horizontal Only" />
+<Textarea resize="both" label="Both Directions" />`}
+      />
+    </section>
+
+    <!-- Auto-Grow -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Auto-Grow
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Automatically adjust height based on content with maximum height limits.
+      </p>
+
+      <Card>
+        <div class="space-y-6">
+          <Textarea
+            autoGrow
+            label="Auto-Growing Textarea"
+            placeholder="Start typing to see auto-grow in action..."
+            helperText="Height adjusts automatically as you type"
+            rows={2}
+          />
+        </div>
+      </Card>
+
+      <CodeBlock
+        language="astro"
+        code={`<Textarea
+  autoGrow
+  label="Auto-Growing Textarea"
+  placeholder="Start typing to see auto-grow in action..."
+  rows={2}
+/>`}
+      />
+    </section>
+
+    <!-- Character Counting -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Character Counting
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Display character counts with accessible limit validation.
+      </p>
+
+      <Card>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Character Counter
+            </h3>
+            <Textarea
+              label="With Counter"
+              placeholder="Type to see character count..."
+              maxLength={100}
+              showCounter
+              helperText="Maximum 100 characters"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Minimum Length
+            </h3>
+            <Textarea
+              label="Minimum Required"
+              placeholder="Must be at least 20 characters..."
+              minLength={20}
+              maxLength={150}
+              showCounter
+              helperText="Minimum 20 characters required"
+            />
+          </div>
+        </div>
+      </Card>
+
+      <CodeBlock
+        language="astro"
+        code={`<!-- Character counting -->
+<Textarea
+  maxLength={100}
+  showCounter
+  label="With Counter"
+  placeholder="Type to see character count..."
+/>
+
+<Textarea
+  minLength={20}
+  maxLength={150}
+  showCounter
+  label="Min/Max Length"
+  placeholder="Validation example..."
+/>`}
+      />
+    </section>
+
+    <!-- States -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        States
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Various states for different interaction contexts.
+      </p>
+
+      <Card>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Required Field
+            </h3>
+            <Textarea
+              required
+              label="Required Textarea"
+              placeholder="This field is required..."
+              helperText="Required for form submission"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Disabled State
+            </h3>
+            <Textarea
+              disabled
+              label="Disabled Textarea"
+              value="This field is disabled"
+              helperText="Cannot be modified"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Read-Only
+            </h3>
+            <Textarea
+              readonly
+              label="Read-Only Textarea"
+              value="This content is read-only and cannot be edited"
+              helperText="Display only, no editing allowed"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Error State
+            </h3>
+            <Textarea
+              label="Error Example"
+              value="Invalid content"
+              error="This field contains invalid information"
+            />
+          </div>
+        </div>
+      </Card>
+
+      <CodeBlock
+        language="astro"
+        code={`<!-- Different states -->
+<Textarea required label="Required" />
+<Textarea disabled label="Disabled" value="Disabled content" />
+<Textarea readonly label="Read-Only" value="Read-only content" />
+<Textarea error="Error message" label="Error State" />`}
+      />
+    </section>
+
+    <!-- Props -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Props
+      </h2>
+      <div class="overflow-x-auto">
+        <table
+          class="w-full border-collapse border border-slate-300 dark:border-slate-700"
+        >
+          <thead>
+            <tr class="bg-slate-50 dark:bg-slate-800">
+              <th
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                >Prop</th
+              >
+              <th
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                >Type</th
+              >
+              <th
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                >Default</th
+              >
+              <th
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                >Description</th
+              >
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >variant</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >default | minimal | bordered | filled</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >default</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Visual style variant</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >size</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >sm | md | lg</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >md</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Size of the textarea</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >label</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >string</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >-</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Label text for the textarea</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >placeholder</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >string</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >-</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Placeholder text</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >value</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >string</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >''</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Current value</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >resize</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >none | vertical | horizontal | both</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >vertical</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Resize behavior</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >autoGrow</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >boolean</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >false</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Auto-adjust height</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >rows</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >number</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >4</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Number of visible rows</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >maxLength</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >number</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >-</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Maximum character limit</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >minLength</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >number</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >-</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Minimum character requirement</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >showCounter</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >boolean</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >false</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Show character counter</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >required</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >boolean</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >false</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Required field</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >disabled</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >boolean</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >false</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Disabled state</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >readonly</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >boolean</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >false</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Read-only state</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >error</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >string</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >-</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Error message</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >helperText</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >string</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >-</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Helper/description text</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >ariaLabel</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >string</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >-</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Accessibility label</td
+              >
+            </tr>
+            <tr>
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                >className</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >string</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >''</td
+              >
+              <td
+                class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                >Additional CSS classes</td
+              >
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Accessibility -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Accessibility Features
+      </h2>
+      <div class="grid gap-4">
+        <Callout variant="info">
+          <strong>WCAG AAA Compliance:</strong> This component meets the highest
+          accessibility standards with comprehensive keyboard navigation, screen
+          reader support, and enhanced contrast ratios.
+        </Callout>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <Card>
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Keyboard Navigation
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                • <kbd
+                  class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs"
+                  >Tab</kbd
+                > - Focus textarea
+              </li>
+              <li>
+                • <kbd
+                  class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs"
+                  >Shift + Tab</kbd
+                > - Focus previous element
+              </li>
+              <li>
+                • <kbd
+                  class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs"
+                  >Ctrl/Cmd + A</kbd
+                > - Select all text
+              </li>
+              <li>
+                • <kbd
+                  class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs"
+                  >Arrow Keys</kbd
+                > - Navigate within text
+              </li>
+            </ul>
+          </Card>
+
+          <Card>
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Screen Reader Support
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>• Proper ARIA labeling and descriptions</li>
+              <li>• Character count announcements</li>
+              <li>• Error state announcements</li>
+              <li>• Required field indicators</li>
+              <li>• Live region updates</li>
+            </ul>
+          </Card>
+
+          <Card>
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Visual Accessibility
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>• 9:1 contrast ratio (AAA level)</li>
+              <li>• High contrast mode support</li>
+              <li>• Reduced motion preferences</li>
+              <li>• Clear focus indicators</li>
+              <li>• Color-blind friendly design</li>
+            </ul>
+          </Card>
+
+          <Card>
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Form Integration
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>• Native form validation</li>
+              <li>• Proper name attributes</li>
+              <li>• Required field handling</li>
+              <li>• Error associations</li>
+              <li>• Label relationships</li>
+            </ul>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Best Practices
+      </h2>
+      <div class="space-y-4">
+        <Callout variant="success">
+          <strong>Do:</strong> Always provide clear labels and helpful placeholder
+          text
+        </Callout>
+        <Callout variant="success">
+          <strong>Do:</strong> Use character counters for length-limited fields
+        </Callout>
+        <Callout variant="success">
+          <strong>Do:</strong> Provide clear error messages and helper text
+        </Callout>
+        <Callout variant="warning">
+          <strong>Consider:</strong> Auto-grow for dynamic content areas
+        </Callout>
+        <Callout variant="error">
+          <strong>Don't:</strong> Use placeholders as the only form of labeling
+        </Callout>
+        <Callout variant="error">
+          <strong>Don't:</strong> Set overly restrictive character limits without
+          indication
+        </Callout>
+      </div>
+    </section>
+
+    <!-- Related Components -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Related Components
+      </h2>
+      <div class="flex flex-wrap gap-2">
+        <Badge variant="outline">Input</Badge>
+        <Badge variant="outline">Select</Badge>
+        <Badge variant="outline">FormGroup</Badge>
+        <Badge variant="outline">Label</Badge>
+        <Badge variant="outline">Button</Badge>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

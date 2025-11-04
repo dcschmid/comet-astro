@@ -34,32 +34,35 @@ const {
 const sizeClasses = {
   sm: 'gap-2 py-6',
   md: 'gap-4 py-8',
-  lg: 'gap-6 py-12'
+  lg: 'gap-6 py-12',
 };
 
 // Text size for labels
 const labelSizes = {
   sm: 'text-xs',
   md: 'text-sm',
-  lg: 'text-base'
+  lg: 'text-base',
 };
 
 // Spinner sizes
 const spinnerSizes = {
   sm: 'xs',
-  md: 'sm', 
-  lg: 'md'
+  md: 'sm',
+  lg: 'md',
 };
 
 // Variant styles with WCAG AAA compliant colors
 const variantClasses = {
-  default: 'flex flex-col items-center justify-center text-slate-700 dark:text-slate-200',
+  default:
+    'flex flex-col items-center justify-center text-slate-700 dark:text-slate-200',
   minimal: 'flex items-center gap-3 text-slate-600 dark:text-slate-300',
   card: 'flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-8 text-slate-700 dark:text-slate-200',
-  fullscreen: 'fixed inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 z-50'
+  fullscreen:
+    'fixed inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 z-50',
 };
 
-const containerClasses = `${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
+const containerClasses =
+  `${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
 ---
 
 <div
@@ -68,38 +71,84 @@ const containerClasses = `${variantClasses[variant]} ${sizeClasses[size]} ${clas
   aria-live="polite"
   aria-label={label}
 >
-  {variant === 'minimal' ? (
-    <>
-      <LoadingSpinner 
-        size={spinnerSizes[size] as 'xs' | 'sm' | 'md'}
-        animation={animation}
-        variant="default"
-        aria-hidden="true"
-      />
-      <span class={`font-medium ${labelSizes[size]}`}>{label}</span>
-    </>
-  ) : (
-    <>
-      <LoadingSpinner 
-        size={spinnerSizes[size] as 'xs' | 'sm' | 'md'}
-        animation={animation}
-        variant="default"
-        aria-hidden="true"
-      />
-      {label && (
-        <div class={`font-medium ${labelSizes[size]} text-center`}>{label}</div>
-      )}
-      
-      {skeletonRows > 0 && (
-        <div class="w-full max-w-2xl space-y-2 mt-2">
-          {skeletonRows >= 1 && <Skeleton width="100%" height={size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'} />}
-          {skeletonRows >= 2 && <Skeleton width="85%" height={size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'} />}
-          {skeletonRows >= 3 && <Skeleton width="92%" height={size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'} />}
-          {skeletonRows >= 4 && <Skeleton width="78%" height={size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'} />}
-          {skeletonRows >= 5 && <Skeleton width="88%" height={size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'} />}
-          {skeletonRows >= 6 && <Skeleton width="82%" height={size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'} />}
-        </div>
-      )}
-    </>
-  )}
+  {
+    variant === 'minimal' ? (
+      <>
+        <LoadingSpinner
+          size={spinnerSizes[size] as 'xs' | 'sm' | 'md'}
+          animation={animation}
+          variant="default"
+          aria-hidden="true"
+        />
+        <span class={`font-medium ${labelSizes[size]}`}>{label}</span>
+      </>
+    ) : (
+      <>
+        <LoadingSpinner
+          size={spinnerSizes[size] as 'xs' | 'sm' | 'md'}
+          animation={animation}
+          variant="default"
+          aria-hidden="true"
+        />
+        {label && (
+          <div class={`font-medium ${labelSizes[size]} text-center`}>
+            {label}
+          </div>
+        )}
+
+        {skeletonRows > 0 && (
+          <div class="w-full max-w-2xl space-y-2 mt-2">
+            {skeletonRows >= 1 && (
+              <Skeleton
+                width="100%"
+                height={
+                  size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'
+                }
+              />
+            )}
+            {skeletonRows >= 2 && (
+              <Skeleton
+                width="85%"
+                height={
+                  size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'
+                }
+              />
+            )}
+            {skeletonRows >= 3 && (
+              <Skeleton
+                width="92%"
+                height={
+                  size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'
+                }
+              />
+            )}
+            {skeletonRows >= 4 && (
+              <Skeleton
+                width="78%"
+                height={
+                  size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'
+                }
+              />
+            )}
+            {skeletonRows >= 5 && (
+              <Skeleton
+                width="88%"
+                height={
+                  size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'
+                }
+              />
+            )}
+            {skeletonRows >= 6 && (
+              <Skeleton
+                width="82%"
+                height={
+                  size === 'sm' ? '12px' : size === 'md' ? '16px' : '20px'
+                }
+              />
+            )}
+          </div>
+        )}
+      </>
+    )
+  }
 </div>

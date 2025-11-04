@@ -82,21 +82,29 @@ import { Layout } from 'comet-astro';
   <!-- Overview -->
   <section class="space-y-4">
     <p class="text-lg text-slate-200">
-      A comprehensive layout component that provides the foundation for accessible 
-      page structures with multiple variants, responsive design, and enhanced 
-      accessibility features including skip links and proper landmarks.
+      A comprehensive layout component that provides the foundation for
+      accessible page structures with multiple variants, responsive design, and
+      enhanced accessibility features including skip links and proper landmarks.
     </p>
     <div class="flex flex-wrap gap-2">
-      <span class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20"
+      >
         WCAG AAA
       </span>
-      <span class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20"
+      >
         Semantic HTML
       </span>
-      <span class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20"
+      >
         Responsive
       </span>
-      <span class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20"
+      >
         Skip Links
       </span>
     </div>
@@ -109,7 +117,9 @@ import { Layout } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Basic Layout</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LayoutComponent class="border border-slate-600 rounded-lg overflow-hidden min-h-[300px]">
+          <LayoutComponent
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[300px]"
+          >
             <div
               slot="header"
               class="bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-100 border-b border-slate-600"
@@ -131,11 +141,14 @@ import { Layout } from 'comet-astro';
           </LayoutComponent>
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Narrow Layout</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LayoutComponent variant="narrow" class="border border-slate-600 rounded-lg overflow-hidden min-h-[300px]">
+          <LayoutComponent
+            variant="narrow"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[300px]"
+          >
             <div
               slot="header"
               class="bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-100 border-b border-slate-600"
@@ -167,47 +180,113 @@ import { Layout } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Default</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Header</div>
-            <div class="py-4 text-center text-sm text-slate-100">Standard layout</div>
-            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Footer</div>
+          <LayoutComponent
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100"
+            >
+              Header
+            </div>
+            <div class="py-4 text-center text-sm text-slate-100">
+              Standard layout
+            </div>
+            <div
+              slot="footer"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-400"
+            >
+              Footer
+            </div>
           </LayoutComponent>
         </div>
-        <p class="text-xs text-slate-400">Standard responsive layout with container</p>
+        <p class="text-xs text-slate-400">
+          Standard responsive layout with container
+        </p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Wide</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent variant="wide" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Wide Header</div>
-            <div class="py-4 text-center text-sm text-slate-100">Full-width content</div>
-            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Wide Footer</div>
+          <LayoutComponent
+            variant="wide"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100"
+            >
+              Wide Header
+            </div>
+            <div class="py-4 text-center text-sm text-slate-100">
+              Full-width content
+            </div>
+            <div
+              slot="footer"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-400"
+            >
+              Wide Footer
+            </div>
           </LayoutComponent>
         </div>
         <p class="text-xs text-slate-400">Full-width layout for dashboards</p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Narrow</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent variant="narrow" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Narrow Header</div>
-            <div class="py-4 text-center text-sm text-slate-100">Focused content</div>
-            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Narrow Footer</div>
+          <LayoutComponent
+            variant="narrow"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100"
+            >
+              Narrow Header
+            </div>
+            <div class="py-4 text-center text-sm text-slate-100">
+              Focused content
+            </div>
+            <div
+              slot="footer"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-400"
+            >
+              Narrow Footer
+            </div>
           </LayoutComponent>
         </div>
         <p class="text-xs text-slate-400">Constrained width for reading</p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Sidebar</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent variant="sidebar" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">App Header</div>
-            <div slot="sidebar" class="bg-slate-700 px-3 py-2 text-xs text-slate-200">Sidebar</div>
-            <div class="py-4 text-center text-sm text-slate-100">Main with sidebar</div>
-            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">App Footer</div>
+          <LayoutComponent
+            variant="sidebar"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100"
+            >
+              App Header
+            </div>
+            <div
+              slot="sidebar"
+              class="bg-slate-700 px-3 py-2 text-xs text-slate-200"
+            >
+              Sidebar
+            </div>
+            <div class="py-4 text-center text-sm text-slate-100">
+              Main with sidebar
+            </div>
+            <div
+              slot="footer"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-400"
+            >
+              App Footer
+            </div>
           </LayoutComponent>
         </div>
         <p class="text-xs text-slate-400">Layout with navigation sidebar</p>
@@ -222,38 +301,66 @@ import { Layout } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Default</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent background="default" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
-            <div class="py-4 text-center text-sm text-slate-900 dark:text-slate-100">Clean background</div>
+          <LayoutComponent
+            background="default"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]"
+          >
+            <div
+              class="py-4 text-center text-sm text-slate-900 dark:text-slate-100"
+            >
+              Clean background
+            </div>
           </LayoutComponent>
         </div>
         <p class="text-xs text-slate-400">Standard white/dark background</p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Muted</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent background="muted" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
-            <div class="py-4 text-center text-sm text-slate-900 dark:text-slate-100">Subtle background</div>
+          <LayoutComponent
+            background="muted"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]"
+          >
+            <div
+              class="py-4 text-center text-sm text-slate-900 dark:text-slate-100"
+            >
+              Subtle background
+            </div>
           </LayoutComponent>
         </div>
         <p class="text-xs text-slate-400">Subtle gray background</p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Accent</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent background="accent" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
-            <div class="py-4 text-center text-sm text-slate-900 dark:text-slate-100">Colored background</div>
+          <LayoutComponent
+            background="accent"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]"
+          >
+            <div
+              class="py-4 text-center text-sm text-slate-900 dark:text-slate-100"
+            >
+              Colored background
+            </div>
           </LayoutComponent>
         </div>
         <p class="text-xs text-slate-400">Blue accent background</p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Gradient</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent background="gradient" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
-            <div class="py-4 text-center text-sm text-slate-900 dark:text-slate-100">Gradient background</div>
+          <LayoutComponent
+            background="gradient"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]"
+          >
+            <div
+              class="py-4 text-center text-sm text-slate-900 dark:text-slate-100"
+            >
+              Gradient background
+            </div>
           </LayoutComponent>
         </div>
         <p class="text-xs text-slate-400">Subtle gradient effect</p>
@@ -268,32 +375,77 @@ import { Layout } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Tight</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent spacing="tight" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Header</div>
-            <div class="py-2 text-center text-sm text-slate-100">Compact spacing</div>
-            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Footer</div>
+          <LayoutComponent
+            spacing="tight"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100"
+            >
+              Header
+            </div>
+            <div class="py-2 text-center text-sm text-slate-100">
+              Compact spacing
+            </div>
+            <div
+              slot="footer"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-400"
+            >
+              Footer
+            </div>
           </LayoutComponent>
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Normal</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent spacing="normal" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Header</div>
-            <div class="py-4 text-center text-sm text-slate-100">Standard spacing</div>
-            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Footer</div>
+          <LayoutComponent
+            spacing="normal"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100"
+            >
+              Header
+            </div>
+            <div class="py-4 text-center text-sm text-slate-100">
+              Standard spacing
+            </div>
+            <div
+              slot="footer"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-400"
+            >
+              Footer
+            </div>
           </LayoutComponent>
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Loose</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent spacing="loose" class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Header</div>
-            <div class="py-6 text-center text-sm text-slate-100">Generous spacing</div>
-            <div slot="footer" class="bg-slate-800 px-3 py-2 text-xs text-slate-400">Footer</div>
+          <LayoutComponent
+            spacing="loose"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[150px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100"
+            >
+              Header
+            </div>
+            <div class="py-6 text-center text-sm text-slate-100">
+              Generous spacing
+            </div>
+            <div
+              slot="footer"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-400"
+            >
+              Footer
+            </div>
           </LayoutComponent>
         </div>
       </div>
@@ -307,8 +459,14 @@ import { Layout } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Sticky Header</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent stickyHeader class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100 border-b border-slate-600">
+          <LayoutComponent
+            stickyHeader
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100 border-b border-slate-600"
+            >
               Sticky Header
             </div>
             <div class="py-8 text-center text-sm text-slate-100">
@@ -316,14 +474,24 @@ import { Layout } from 'comet-astro';
             </div>
           </LayoutComponent>
         </div>
-        <p class="text-xs text-slate-400">Header remains visible during scroll</p>
+        <p class="text-xs text-slate-400">
+          Header remains visible during scroll
+        </p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Max Width Control</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LayoutComponent maxWidth="sm" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
-            <div slot="header" class="bg-slate-800 px-3 py-2 text-xs text-slate-100">Constrained Header</div>
+          <LayoutComponent
+            maxWidth="sm"
+            class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]"
+          >
+            <div
+              slot="header"
+              class="bg-slate-800 px-3 py-2 text-xs text-slate-100"
+            >
+              Constrained Header
+            </div>
             <div class="py-8 text-center text-sm text-slate-100">
               Content width limited to small
             </div>
@@ -338,22 +506,37 @@ import { Layout } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility Features</h2>
     <div class="space-y-4">
-      <h3 class="text-base font-medium text-slate-200">Skip Link (Press Tab to see)</h3>
+      <h3 class="text-base font-medium text-slate-200">
+        Skip Link (Press Tab to see)
+      </h3>
       <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-        <LayoutComponent skipToMainLabel="Zum Hauptinhalt springen" class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]">
-          <div slot="header" class="bg-slate-800 px-4 py-3 text-sm text-slate-100">
+        <LayoutComponent
+          skipToMainLabel="Zum Hauptinhalt springen"
+          class="border border-slate-600 rounded-lg overflow-hidden min-h-[200px]"
+        >
+          <div
+            slot="header"
+            class="bg-slate-800 px-4 py-3 text-sm text-slate-100"
+          >
             Accessible Header - Press Tab to see skip link
           </div>
           <div class="py-8 text-center space-y-2">
-            <p class="text-sm text-slate-100">Press Tab to reveal the skip link</p>
+            <p class="text-sm text-slate-100">
+              Press Tab to reveal the skip link
+            </p>
             <Button variant="outline" size="sm">Focusable element</Button>
           </div>
-          <div slot="footer" class="bg-slate-800 px-4 py-3 text-xs text-slate-400">
+          <div
+            slot="footer"
+            class="bg-slate-800 px-4 py-3 text-xs text-slate-400"
+          >
             Accessible Footer
           </div>
         </LayoutComponent>
       </div>
-      <p class="text-xs text-slate-400">Skip links appear when focused for keyboard navigation</p>
+      <p class="text-xs text-slate-400">
+        Skip links appear when focused for keyboard navigation
+      </p>
     </div>
   </section>
 
@@ -361,43 +544,61 @@ import { Layout } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Structure
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>variant?</code>, <code>container?</code>, <code>sidebarPosition?</code> - 
-          Control layout structure and positioning.
+          <code>variant?</code>, <code>container?</code>, <code
+            >sidebarPosition?</code
+          > - Control layout structure and positioning.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Visual Style
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>background?</code>, <code>spacing?</code>, <code>maxWidth?</code> - 
-          Control appearance and content width.
+          <code>background?</code>, <code>spacing?</code>, <code>maxWidth?</code
+          > - Control appearance and content width.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Behavior
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>stickyHeader?</code>, <code>stickyFooter?</code> - 
-          Enable sticky positioning for header/footer.
+          <code>stickyHeader?</code>, <code>stickyFooter?</code> - Enable sticky
+          positioning for header/footer.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Accessibility
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>skipToMainLabel?</code>, <code>mainAriaLabel?</code>, <code>headerAriaLabel?</code>, <code>footerAriaLabel?</code> - 
-          Customize accessibility labels.
+          <code>skipToMainLabel?</code>, <code>mainAriaLabel?</code>, <code
+            >headerAriaLabel?</code
+          >, <code>footerAriaLabel?</code> - Customize accessibility labels.
         </dd>
       </div>
     </dl>
@@ -429,7 +630,8 @@ import { Layout } from 'comet-astro';
             <code>default</code>
           </dt>
           <dd class="text-sm text-slate-200">
-            Main content area with proper main landmark role and skip link target
+            Main content area with proper main landmark role and skip link
+            target
           </dd>
         </div>
         <div class="flex flex-col sm:flex-row sm:gap-4">
@@ -448,28 +650,31 @@ import { Layout } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      The Layout component provides a complete page structure foundation with 
-      proper semantic landmarks, accessibility features, and responsive design. 
+      The Layout component provides a complete page structure foundation with
+      proper semantic landmarks, accessibility features, and responsive design.
       Use it as the base for all your pages.
     </p>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Basic Layout</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{basicUsage}</code>
       </pre>
     </div>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Sidebar Layout</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{sidebarUsage}</code>
       </pre>
     </div>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Advanced Features</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{advancedUsage}</code>
       </pre>
     </div>
@@ -482,31 +687,52 @@ import { Layout } from 'comet-astro';
       <ul class="space-y-3 text-sm text-slate-200">
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+ contrast ratios with high contrast mode support</span>
+          <span
+            ><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+
+            contrast ratios with high contrast mode support</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Semantic Structure:</strong> Proper HTML5 landmarks (banner, main, contentinfo, complementary)</span>
+          <span
+            ><strong>Semantic Structure:</strong> Proper HTML5 landmarks (banner,
+            main, contentinfo, complementary)</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Skip Links:</strong> Keyboard users can skip directly to main content with customizable labels</span>
+          <span
+            ><strong>Skip Links:</strong> Keyboard users can skip directly to main
+            content with customizable labels</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Focus Management:</strong> Proper focus handling and visible focus indicators throughout</span>
+          <span
+            ><strong>Focus Management:</strong> Proper focus handling and visible
+            focus indicators throughout</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Screen Reader Support:</strong> Descriptive ARIA labels and proper role assignments</span>
+          <span
+            ><strong>Screen Reader Support:</strong> Descriptive ARIA labels and
+            proper role assignments</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Responsive Design:</strong> Adaptive layouts that work on all device sizes and orientations</span>
+          <span
+            ><strong>Responsive Design:</strong> Adaptive layouts that work on all
+            device sizes and orientations</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Reduced Motion:</strong> Respects user's motion preferences for animations</span>
+          <span
+            ><strong>Reduced Motion:</strong> Respects user's motion preferences
+            for animations</span
+          >
         </li>
       </ul>
     </div>

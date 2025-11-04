@@ -23,14 +23,15 @@ import { LoadingState } from 'comet-astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      LoadingState provides a consistent way to display loading states across your application.
-      It includes multiple variants from minimal inline loaders to full-screen overlays,
-      all maintaining WCAG AAA contrast ratios and proper semantic markup.
+      LoadingState provides a consistent way to display loading states across
+      your application. It includes multiple variants from minimal inline
+      loaders to full-screen overlays, all maintaining WCAG AAA contrast ratios
+      and proper semantic markup.
     </p>
     <p class="text-base text-slate-200">
-      Each variant includes proper ARIA labels and live regions so screen readers
-      announce loading states appropriately. Skeleton content provides visual
-      placeholders while maintaining accessibility best practices.
+      Each variant includes proper ARIA labels and live regions so screen
+      readers announce loading states appropriately. Skeleton content provides
+      visual placeholders while maintaining accessibility best practices.
     </p>
   </section>
 
@@ -46,8 +47,9 @@ import { LoadingState } from 'comet-astro';
           label?
         </dt>
         <dd class="text-sm text-slate-200">
-          Loading message displayed to users and screen readers. 
-          Defaults to <code>"Loading…"</code>.
+          Loading message displayed to users and screen readers. Defaults to <code
+            >"Loading…"</code
+          >.
         </dd>
       </div>
       <div
@@ -59,9 +61,10 @@ import { LoadingState } from 'comet-astro';
           variant?
         </dt>
         <dd class="text-sm text-slate-200">
-          Visual style for the loading state. Choose <code>"default"</code>, 
-          <code>"minimal"</code>, <code>"card"</code>, or <code>"fullscreen"</code>. 
-          Defaults to <code>"default"</code>.
+          Visual style for the loading state. Choose <code>"default"</code>,
+          <code>"minimal"</code>, <code>"card"</code>, or <code
+            >"fullscreen"</code
+          >. Defaults to <code>"default"</code>.
         </dd>
       </div>
       <div
@@ -73,8 +76,9 @@ import { LoadingState } from 'comet-astro';
           size?
         </dt>
         <dd class="text-sm text-slate-200">
-          Adjusts spacing and text size. Options are <code>"sm"</code>, 
-          <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+          Adjusts spacing and text size. Options are <code>"sm"</code>,
+          <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code
+          >.
         </dd>
       </div>
       <div
@@ -86,8 +90,10 @@ import { LoadingState } from 'comet-astro';
           animation?
         </dt>
         <dd class="text-sm text-slate-200">
-          Spinner animation type. Choose <code>"spin"</code>, <code>"pulse"</code>, 
-          <code>"bounce"</code>, <code>"dots"</code>, <code>"bars"</code>, or 
+          Spinner animation type. Choose <code>"spin"</code>, <code
+            >"pulse"</code
+          >,
+          <code>"bounce"</code>, <code>"dots"</code>, <code>"bars"</code>, or
           <code>"orbit"</code>. Defaults to <code>"spin"</code>.
         </dd>
       </div>
@@ -113,8 +119,8 @@ import { LoadingState } from 'comet-astro';
           className?
         </dt>
         <dd class="text-sm text-slate-200">
-          Additional CSS classes to apply to the loading state container.
-          Useful for custom positioning or spacing adjustments.
+          Additional CSS classes to apply to the loading state container. Useful
+          for custom positioning or spacing adjustments.
         </dd>
       </div>
     </dl>
@@ -124,8 +130,9 @@ import { LoadingState } from 'comet-astro';
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
       Import the component and configure the variant, size, and skeleton content
-      to match your loading context. The component automatically handles accessibility
-      and maintains proper contrast ratios in both light and dark themes.
+      to match your loading context. The component automatically handles
+      accessibility and maintains proper contrast ratios in both light and dark
+      themes.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -135,11 +142,13 @@ import { LoadingState } from 'comet-astro';
 
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
-    
+
     <div class="space-y-6">
       <div class="space-y-2">
         <h3 class="text-lg font-medium text-slate-200">Default</h3>
-        <p class="text-sm text-slate-300">Centered loading state with spinner and label</p>
+        <p class="text-sm text-slate-300">
+          Centered loading state with spinner and label
+        </p>
         <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-6">
           <LoadingState label="Loading content…" variant="default" size="md" />
         </div>
@@ -147,7 +156,9 @@ import { LoadingState } from 'comet-astro';
 
       <div class="space-y-2">
         <h3 class="text-lg font-medium text-slate-200">Minimal</h3>
-        <p class="text-sm text-slate-300">Inline loading state for smaller spaces</p>
+        <p class="text-sm text-slate-300">
+          Inline loading state for smaller spaces
+        </p>
         <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-6">
           <LoadingState label="Loading…" variant="minimal" size="sm" />
         </div>
@@ -157,7 +168,12 @@ import { LoadingState } from 'comet-astro';
         <h3 class="text-lg font-medium text-slate-200">Card</h3>
         <p class="text-sm text-slate-300">Loading state with card background</p>
         <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-6">
-          <LoadingState label="Processing data…" variant="card" size="md" skeletonRows={2} />
+          <LoadingState
+            label="Processing data…"
+            variant="card"
+            size="md"
+            skeletonRows={2}
+          />
         </div>
       </div>
     </div>
@@ -188,10 +204,10 @@ import { LoadingState } from 'comet-astro';
       Skeleton rows automatically adjust their size based on the component size.
     </p>
     <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-6">
-      <LoadingState 
-        label="Loading article…" 
-        variant="default" 
-        size="md" 
+      <LoadingState
+        label="Loading article…"
+        variant="default"
+        size="md"
         skeletonRows={4}
       />
     </div>
@@ -204,16 +220,24 @@ import { LoadingState } from 'comet-astro';
       All animations respect the user's reduced motion preferences.
     </p>
     <div class="grid grid-cols-2 gap-4">
-      <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4 text-center">
+      <div
+        class="rounded-lg border border-slate-700 bg-slate-800/50 p-4 text-center"
+      >
         <LoadingState label="Spin" variant="minimal" animation="spin" />
       </div>
-      <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4 text-center">
+      <div
+        class="rounded-lg border border-slate-700 bg-slate-800/50 p-4 text-center"
+      >
         <LoadingState label="Pulse" variant="minimal" animation="pulse" />
       </div>
-      <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4 text-center">
+      <div
+        class="rounded-lg border border-slate-700 bg-slate-800/50 p-4 text-center"
+      >
         <LoadingState label="Dots" variant="minimal" animation="dots" />
       </div>
-      <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4 text-center">
+      <div
+        class="rounded-lg border border-slate-700 bg-slate-800/50 p-4 text-center"
+      >
         <LoadingState label="Bars" variant="minimal" animation="bars" />
       </div>
     </div>
@@ -223,20 +247,20 @@ import { LoadingState } from 'comet-astro';
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
       LoadingState uses semantic markup with proper ARIA labels and live regions
-      to announce loading states to screen readers. Contrast ratios exceed WCAG AAA
-      requirements (7:1+) in both light and dark themes.
+      to announce loading states to screen readers. Contrast ratios exceed WCAG
+      AAA requirements (7:1+) in both light and dark themes.
     </p>
     <p class="text-base text-slate-200">
-      All animations respect the <code>prefers-reduced-motion</code> setting,
-      providing static alternatives for users who prefer reduced animation.
-      Skeleton content uses neutral colors to avoid drawing attention while
-      maintaining sufficient contrast for visibility.
+      All animations respect the <code>prefers-reduced-motion</code> setting, providing
+      static alternatives for users who prefer reduced animation. Skeleton content
+      uses neutral colors to avoid drawing attention while maintaining sufficient
+      contrast for visibility.
     </p>
     <p class="text-base text-slate-200">
-      Use descriptive labels that clearly communicate what is being loaded,
-      such as "Loading user profile" instead of generic "Loading" text.
-      The fullscreen variant automatically traps focus and provides proper
-      backdrop semantics.
+      Use descriptive labels that clearly communicate what is being loaded, such
+      as "Loading user profile" instead of generic "Loading" text. The
+      fullscreen variant automatically traps focus and provides proper backdrop
+      semantics.
     </p>
   </section>
 </DocsLayout>

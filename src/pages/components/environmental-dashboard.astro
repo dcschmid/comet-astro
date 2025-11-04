@@ -1,0 +1,118 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import EnvironmentalDashboard from '../../components/EnvironmentalDashboard.astro';
+
+const usageSnippet = `---\nimport { EnvironmentalDashboard } from 'comet-astro';\n\n---\n<!-- Static demo (fallback values) -->\n<EnvironmentalDashboard />\n\n<!-- Live weather + air quality (auto refresh every 15 min) -->\n<EnvironmentalDashboard latitude={52.52} longitude={13.405} location="Berlin" refreshInterval={15} />\n\n<!-- Fahrenheit and no wind -->\n<EnvironmentalDashboard latitude={34.05} longitude={-118.24} location="Los Angeles" unit="f" showWind={false} />\n\n<!-- Disable fetch (force static even with coords) -->\n<EnvironmentalDashboard latitude={40.71} longitude={-74.00} disableFetch={true} location="NYC (Static)" />`;
+
+const props = [
+  { name: 'latitude?', desc: 'Decimal latitude for live fetch.' },
+  { name: 'longitude?', desc: 'Decimal longitude for live fetch.' },
+  { name: 'location?', desc: 'Display label used in accessible region label.' },
+  { name: 'unit?', desc: '"c" or "f" (default "c").' },
+  { name: 'showAirQuality?', desc: 'Show AQI + PM2.5 cards (default true).' },
+  { name: 'showWind?', desc: 'Show wind speed + direction (default true).' },
+  { name: 'refreshInterval?', desc: 'Auto refresh in minutes (0 = disabled).' },
+  {
+    name: 'disableFetch?',
+    desc: 'Force static fallback even when coordinates present.',
+  },
+  { name: 'class?', desc: 'Extra Tailwind utility classes.' },
+  { name: 'ariaLabel?', desc: 'Custom accessible label override.' },
+];
+---
+
+<DocsLayout
+  title="EnvironmentalDashboard"
+  description="Minimal aggregated snapshot (temperature, humidity, wind, AQI, PM2.5) with optional live fetch from Open‑Meteo. High contrast & responsive without overengineering."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      The <strong>EnvironmentalDashboard</strong> component provides a unified glance
+      at current atmospheric + air quality conditions. It intentionally avoids complex
+      layouts, tabs, heavy scripting or secondary visualizations—only essential figures
+      with clear labels.
+    </p>
+    <p class="text-base text-slate-200">
+      Live data is fetched client-side if you supply <code>latitude</code> and <code
+        >longitude</code
+      >. Without coordinates, meaningful static fallback values render
+      server-side for progressive enhancement.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        props.map((p) => (
+          <div class="space-y-1 rounded-lg border border-slate-700/70 bg-slate-900/60 p-4 shadow-sm">
+            <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+              {p.name}
+            </dt>
+            <dd class="text-sm text-slate-300">{p.desc}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Drop in the component; configure only the metrics you need. Provide
+      coordinates for real data, or omit to keep a static placeholder.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Live Example</h2>
+    <p class="text-base text-slate-200">
+      Berlin example (auto refresh disabled for demo).
+    </p>
+    <div class="max-w-full">
+      <EnvironmentalDashboard
+        latitude={52.52}
+        longitude={13.405}
+        location="Berlin"
+        refreshInterval={0}
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Semantic Region:</strong>
+        <code>role="region"</code> + generated accessible label.
+      </li>
+      <li>
+        <strong>WCAG AAA Contrast:</strong> Slate palette pairings exceed 7:1 (text
+        vs background) in light & dark.
+      </li>
+      <li>
+        <strong>Meaningful Without Color:</strong> Each card exposes value + textual
+        unit/category.
+      </li>
+      <li>
+        <strong>Live Updates:</strong> Single polite status line instead of multiple
+        aria-live regions.
+      </li>
+      <li>
+        <strong>Loading / Error States:</strong>
+        <code>aria-busy</code> on container; inline “Loading…” / “Error” badges.
+      </li>
+      <li>
+        <strong>Reduced Motion Safe:</strong> Shimmer/pulse removed under <code
+          >prefers-reduced-motion</code
+        >.
+      </li>
+      <li>
+        <strong>No Overengineering:</strong> No nested tabs, charts, or complex interactions—pure
+        snapshot.
+      </li>
+    </ul>
+  </section>
+</DocsLayout>

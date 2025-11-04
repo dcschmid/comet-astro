@@ -1,0 +1,282 @@
+---
+/**
+ * ClimateProjections – Minimal, accessible Astro + Tailwind component.
+ * WCAG AAA focused: high contrast text, clear semantics, no overengineering.
+ */
+interface Props {
+  location?: string;
+  scenario?: 'SSP2-4.5' | 'SSP5-8.5' | 'RCP8.5';
+  startYear?: number;
+  endYear?: number;
+  region?: string;
+  showExtremes?: boolean;
+  variant?: 'default' | 'compact';
+  class?: string;
+  ariaLabel?: string;
+  data?: ClimateDatum[];
+}
+interface ClimateDatum {
+  metric: string;
+  baseline: string;
+  projected: string;
+  change: string; // Include leading + or - (ASCII hyphen) for detection
+  confidence: 'high' | 'medium' | 'low';
+}
+const {
+  location,
+  scenario = 'SSP5-8.5',
+  startYear = 1990,
+  endYear = 2050,
+  region = 'Selected Region',
+  showExtremes = true,
+  variant = 'default',
+  class: className = '',
+  ariaLabel,
+  data = [] as ClimateDatum[],
+  ...rest
+} = Astro.props as Props;
+
+// Fallback demo dataset (multi‑model mean style placeholders)
+const fallback: ClimateDatum[] = [
+  {
+    metric: 'Mean Temp',
+    baseline: '13.1°C',
+    projected: '15.2°C',
+    change: '+2.1°C',
+    confidence: 'high',
+  },
+  {
+    metric: 'Max Temp',
+    baseline: '28.4°C',
+    projected: '31.1°C',
+    change: '+2.7°C',
+    confidence: 'high',
+  },
+  {
+    metric: 'Min Temp',
+    baseline: '2.9°C',
+    projected: '4.4°C',
+    change: '+1.5°C',
+    confidence: 'medium',
+  },
+  {
+    metric: 'Annual Precip',
+    baseline: '650 mm',
+    projected: '665 mm',
+    change: '+15 mm',
+    confidence: 'medium',
+  },
+  {
+    metric: 'Summer Rain',
+    baseline: '180 mm',
+    projected: '160 mm',
+    change: '-20 mm',
+    confidence: 'low',
+  },
+];
+const rows = data.length ? data : fallback;
+
+const sizeClasses = variant === 'compact' ? 'p-4 text-sm' : 'p-6 md:p-8';
+const containerClasses = `rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm ${sizeClasses} ${className}`;
+
+const confidenceBadge = (c: ClimateDatum['confidence']) => {
+  const base =
+    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold tracking-wide';
+  if (c === 'high')
+    return `${base} bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100`;
+  if (c === 'medium')
+    return `${base} bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100`;
+  return `${base} bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-100`;
+};
+
+// Utility: derive color class for change cell
+const changeClass = (val: string) => {
+  if (val.startsWith('+'))
+    return 'text-rose-700 dark:text-rose-300 font-semibold';
+  if (val.startsWith('-'))
+    return 'text-sky-700 dark:text-sky-300 font-semibold';
+  return 'text-slate-700 dark:text-slate-300';
+};
+
+const label = ariaLabel || `Climate projections for ${location || region}`;
+---
+
+<div
+  class={containerClasses}
+  role="region"
+  aria-label={label}
+  data-climate-projections
+  data-scenario={scenario}
+  {...rest}
+>
+  <header class="flex flex-col gap-4 mb-6">
+    <div
+      class="flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+    >
+      <h2
+        class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+      >
+        <span aria-hidden="true" class="text-2xl md:text-3xl">🌡️</span>
+        <span>Climate Projections</span>
+      </h2>
+      <div
+        class="flex flex-wrap items-center gap-2 text-xs md:text-sm"
+        aria-label="Projection horizon and scenario"
+      >
+        <span
+          class="rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 font-medium text-slate-700 dark:text-slate-200"
+          >Baseline {startYear}</span
+        >
+        <span
+          class="rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 font-medium text-slate-700 dark:text-slate-200"
+          >Horizon {endYear}</span
+        >
+        <span
+          class="rounded-md bg-indigo-100 dark:bg-indigo-900 px-2 py-1 font-semibold text-indigo-700 dark:text-indigo-100"
+          >Scenario {scenario}</span
+        >
+      </div>
+    </div>
+    <p
+      class="text-sm md:text-base leading-relaxed text-slate-700 dark:text-slate-200 max-w-prose"
+    >
+      Summary for <strong class="text-slate-900 dark:text-slate-100"
+        >{location || region}</strong
+      >. Placeholder multi‑model mean under <code
+        class="font-mono text-indigo-700 dark:text-indigo-300">{scenario}</code
+      >. Confidence badges use simple evidence agreement.
+    </p>
+  </header>
+
+  <div
+    class="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700"
+  >
+    <table
+      class="w-full text-sm md:text-base border-collapse"
+      aria-describedby="climate-caption"
+    >
+      <caption id="climate-caption" class="sr-only"
+        >Baseline vs projected climate metrics and changes for {
+          location || region
+        } under {scenario} scenario.</caption
+      >
+      <thead
+        class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wide"
+      >
+        <tr>
+          <th scope="col" class="px-3 py-2 text-left">Metric</th>
+          <th scope="col" class="px-3 py-2 text-left">Baseline</th>
+          <th scope="col" class="px-3 py-2 text-left">Projected {endYear}</th>
+          <th scope="col" class="px-3 py-2 text-left">Change</th>
+          <th scope="col" class="px-3 py-2 text-left">Confidence</th>
+        </tr>
+      </thead>
+      <tbody
+        class="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-900"
+      >
+        {
+          rows.map((r) => (
+            <tr>
+              <th
+                scope="row"
+                class="px-3 py-2 font-semibold text-slate-900 dark:text-slate-100"
+              >
+                {r.metric}
+              </th>
+              <td class="px-3 py-2 text-slate-700 dark:text-slate-200">
+                {r.baseline}
+              </td>
+              <td class="px-3 py-2 text-slate-700 dark:text-slate-200">
+                {r.projected}
+              </td>
+              <td class={`px-3 py-2 ${changeClass(r.change)}`}>{r.change}</td>
+              <td class="px-3 py-2">
+                <span class={confidenceBadge(r.confidence)}>
+                  {r.confidence}
+                </span>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {
+    showExtremes && (
+      <section class="mt-8" aria-labelledby="extremes-heading">
+        <h3
+          id="extremes-heading"
+          class="text-sm font-bold tracking-wide text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2"
+        >
+          <span aria-hidden="true">⚠️</span> Extremes (illustrative)
+        </h3>
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-800">
+            <p class="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
+              Hot Days &gt;30°C
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-200">
+              Baseline: 5 → Projected: 12
+            </p>
+          </div>
+          <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-800">
+            <p class="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
+              Heavy Rain Events
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-200">
+              Baseline: 7 → Projected: 9
+            </p>
+          </div>
+          <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-800">
+            <p class="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
+              Frost Days
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-200">
+              Baseline: 20 → Projected: 14
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <footer class="mt-8 space-y-3" aria-labelledby="confidence-heading">
+    <h3 id="confidence-heading" class="sr-only">Confidence legend</h3>
+    <div class="flex flex-wrap gap-2 text-xs">
+      <span
+        class="rounded-md bg-emerald-100 dark:bg-emerald-900 px-2 py-1 font-medium text-emerald-800 dark:text-emerald-100"
+        >High: robust agreement</span
+      >
+      <span
+        class="rounded-md bg-amber-100 dark:bg-amber-900 px-2 py-1 font-medium text-amber-800 dark:text-amber-100"
+        >Medium: moderate agreement</span
+      >
+      <span
+        class="rounded-md bg-slate-200 dark:bg-slate-700 px-2 py-1 font-medium text-slate-800 dark:text-slate-100"
+        >Low: limited evidence</span
+      >
+    </div>
+    <p
+      class="text-xs md:text-sm leading-relaxed text-slate-600 dark:text-slate-400"
+    >
+      Illustrative values only. Use authoritative datasets for planning.
+      Scenario <code class="font-mono text-indigo-700 dark:text-indigo-300"
+        >{scenario}</code
+      >.
+    </p>
+  </footer>
+</div>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-climate-projections] * {
+      transition: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    [data-climate-projections] {
+      outline: 2px solid currentColor;
+    }
+  }
+</style>

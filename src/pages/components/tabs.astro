@@ -1,27 +1,841 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Tabs from '../../components/Tabs.astro';
-const demoTabs = [
-  { id: 'a', label: 'A', content: '<p>Pane A</p>' },
-  { id: 'b', label: 'B', content: '<p>Pane B</p>' },
+
+// Basic tabs - simpler content to avoid crashes
+const basicTabs = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    content:
+      '<h3 class="text-lg font-semibold mb-2">Project Overview</h3><p>This section provides an introduction to the project.</p>',
+  },
+  {
+    id: 'features',
+    label: 'Features',
+    content:
+      '<h3 class="text-lg font-semibold mb-2">Key Features</h3><p>Modern architecture, responsive design, and accessibility compliance.</p>',
+  },
+];
+
+// Simple tabs for demos
+const simpleTabs = [
+  {
+    id: 'tab1',
+    label: 'Tab 1',
+    content: '<p class="py-4">Content for the first tab.</p>',
+  },
+  {
+    id: 'tab2',
+    label: 'Tab 2',
+    content: '<p class="py-4">Content for the second tab.</p>',
+  },
+];
+
+// Small demo with badges
+const badgeTabs = [
+  {
+    id: 'inbox',
+    label: 'Inbox',
+    badge: 12,
+    content: '<p class="py-4">You have 12 new messages.</p>',
+  },
+  {
+    id: 'sent',
+    label: 'Sent',
+    content: '<p class="py-4">Your sent messages.</p>',
+  },
+  {
+    id: 'drafts',
+    label: 'Drafts',
+    badge: 3,
+    content: '<p class="py-4">You have 3 draft messages.</p>',
+  },
+];
+
+// Disabled tabs demo
+const disabledTabs = [
+  {
+    id: 'available',
+    label: 'Available',
+    content: '<p class="py-4">This content is available.</p>',
+  },
+  {
+    id: 'premium',
+    label: 'Premium',
+    disabled: true,
+    content: '<p class="py-4">Premium content.</p>',
+  },
+];
+
+// Vertical demo
+const verticalTabs = [
+  {
+    id: 'general',
+    label: 'General',
+    content:
+      '<div class="py-4"><h4 class="font-semibold">General Settings</h4><p>Configure general options.</p></div>',
+  },
+  {
+    id: 'security',
+    label: 'Security',
+    content:
+      '<div class="py-4"><h4 class="font-semibold">Security Settings</h4><p>Manage your security preferences.</p></div>',
+  },
+];
+
+// Icon tabs demo
+const iconTabs = [
+  {
+    id: 'profile',
+    label: 'Profile',
+    icon: '👤',
+    content:
+      '<div class="py-4"><h4 class="font-semibold">Profile Settings</h4><p>Manage your profile information.</p></div>',
+  },
+  {
+    id: 'notifications',
+    label: 'Notifications',
+    icon: '🔔',
+    content:
+      '<div class="py-4"><h4 class="font-semibold">Notification Settings</h4><p>Configure your notification preferences.</p></div>',
+  },
+  {
+    id: 'billing',
+    label: 'Billing',
+    icon: '💳',
+    content:
+      '<div class="py-4"><h4 class="font-semibold">Billing Information</h4><p>Manage your billing and subscription.</p></div>',
+  },
+];
+
+// Content tabs demo
+const contentTabs = [
+  {
+    id: 'articles',
+    label: 'Articles',
+    content:
+      '<div class="py-4"><h4 class="font-semibold">Help Articles</h4><p>Browse our comprehensive help articles and guides.</p></div>',
+  },
+  {
+    id: 'tutorials',
+    label: 'Tutorials',
+    content:
+      '<div class="py-4"><h4 class="font-semibold">Video Tutorials</h4><p>Watch step-by-step video tutorials.</p></div>',
+  },
+  {
+    id: 'faqs',
+    label: 'FAQs',
+    content:
+      '<div class="py-4"><h4 class="font-semibold">Frequently Asked Questions</h4><p>Find answers to common questions.</p></div>',
+  },
 ];
 ---
 
 <DocsLayout
   title="Tabs"
-  description="Accessible tabbed interface with keyboard-friendly behaviour."
+  description="WCAG AAA compliant tabbed interface with keyboard navigation, multiple variants, and comprehensive accessibility features."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>tabs: &#123;id,label,content?&#125;[]</code></li>
-      <li><code>activeId?: string</code></li>
-      <li><code>className?: string</code></li>
-    </ul>
+  <section class="space-y-6">
+    <div class="space-y-3">
+      <h2 class="text-xl font-semibold text-slate-100">Overview</h2>
+      <p class="text-base text-slate-200">
+        Tabs components provide accessible content organization with automatic
+        keyboard navigation, proper ARIA attributes, and screen reader support.
+        Built with WCAG AAA compliance, they feature proper contrast ratios and
+        comprehensive accessibility features.
+      </p>
+    </div>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Example</h2>
-    <Tabs tabs={demoTabs} activeId="a" />
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          tabs
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of tab objects with id, label, content, and optional disabled,
+          icon, badge properties. Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          activeId?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ID of initially active tab. Defaults to first enabled tab.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>sm</code>, <code>md</code>, <code>lg</code>.
+          Defaults to <code>md</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual variant: <code>default</code>, <code>minimal</code>, <code
+            >pills</code
+          >, <code>cards</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          orientation?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Layout orientation: <code>horizontal</code>, <code>vertical</code>.
+          Defaults to <code>horizontal</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          centered?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Center tabs horizontally. Defaults to <code>false</code>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Basic Usage -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs tabs={basicTabs} ariaLabel="Project information" />
+      </div>
+    </div>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Variants</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Default</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={simpleTabs}
+              variant="default"
+              ariaLabel="Default tabs"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Pills</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs tabs={simpleTabs} variant="pills" ariaLabel="Pills tabs" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs with Badges -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Tabs with Badges</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs
+          tabs={badgeTabs}
+          variant="default"
+          ariaLabel="Message categories"
+        />
+      </div>
+    </div>
+
+    <!-- Disabled States -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Disabled States</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs
+          tabs={disabledTabs}
+          variant="cards"
+          ariaLabel="Content access levels"
+        />
+      </div>
+    </div>
+
+    <!-- Vertical Orientation -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Vertical Orientation</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs
+          tabs={verticalTabs}
+          orientation="vertical"
+          variant="minimal"
+          ariaLabel="Settings"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Tabs components are designed with comprehensive accessibility features and
+      WCAG AAA compliance. All text maintains 9:1 contrast ratios and adjusts
+      automatically for high contrast mode and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Proper semantic markup with tablist, tab, and tabpanel roles ensures
+      screen readers can navigate the interface. The component includes complete
+      keyboard navigation with arrow keys, Home/End keys, and Enter/Space
+      activation.
+    </p>
+  </section>
+</DocsLayout>
+---
+
+<DocsLayout
+  title="Tabs"
+  description="WCAG AAA compliant tabbed interface with keyboard navigation, multiple variants, and comprehensive accessibility features for organizing content sections."
+>
+  <section class="space-y-6">
+    <div class="space-y-3">
+      <h2 class="text-xl font-semibold text-slate-100">Overview</h2>
+      <p class="text-base text-slate-200">
+        Tabs components provide accessible content organization with automatic
+        keyboard navigation, proper ARIA attributes, and screen reader support.
+        Built with WCAG AAA compliance, they feature proper contrast ratios and
+        comprehensive accessibility features.
+      </p>
+      <p class="text-base text-slate-200">
+        The component supports multiple variants, sizes, orientations, disabled
+        states, icons, and badges. All interactions respect user preferences for
+        reduced motion and provide clear focus indicators for keyboard
+        navigation.
+      </p>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          tabs
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of tab objects with id, label, content, and optional disabled,
+          icon, badge properties. Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          activeId?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ID of initially active tab. Defaults to first enabled tab.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>sm</code>, <code>md</code>, <code>lg</code>.
+          Defaults to <code>md</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual variant: <code>default</code>, <code>minimal</code>, <code
+            >pills</code
+          >, <code>cards</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          orientation?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Layout orientation: <code>horizontal</code>, <code>vertical</code>.
+          Defaults to <code>horizontal</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          centered?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Center tabs horizontally. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          fullWidth?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Make tabs fill available width. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          destroyInactive?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Remove inactive panels from DOM. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom ARIA label for the tab list. Defaults to <code>"Tabs"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">Additional CSS classes to apply.</dd>
+      </div>
+    </dl>
+    <p class="text-sm text-slate-400 mt-4">
+      Each tab object should have unique IDs and meaningful labels for
+      accessibility.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Basic Usage -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs tabs={basicTabs} ariaLabel="Project information" />
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sizes</h3>
+      <div class="space-y-6">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Small</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 2)}
+              size="sm"
+              ariaLabel="Small tabs example"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Medium (Default)</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 2)}
+              size="md"
+              ariaLabel="Medium tabs example"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Large</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 2)}
+              size="lg"
+              ariaLabel="Large tabs example"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Variants</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Default</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 2)}
+              variant="default"
+              ariaLabel="Default tabs"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Minimal</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 2)}
+              variant="minimal"
+              ariaLabel="Minimal tabs"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Pills</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 2)}
+              variant="pills"
+              ariaLabel="Pills tabs"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Cards</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 2)}
+              variant="cards"
+              ariaLabel="Cards tabs"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs with Icons -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Tabs with Icons</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs
+          tabs={iconTabs}
+          variant="cards"
+          ariaLabel="User account navigation"
+        />
+      </div>
+    </div>
+
+    <!-- Tabs with Badges -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Tabs with Badges</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs
+          tabs={badgeTabs}
+          variant="default"
+          ariaLabel="Message categories"
+        />
+      </div>
+    </div>
+
+    <!-- Layout Options -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Layout Options</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Centered</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 3)}
+              variant="pills"
+              centered
+              size="sm"
+              ariaLabel="Centered tabs"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Full Width</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <Tabs
+              tabs={basicTabs.slice(0, 3)}
+              variant="default"
+              fullWidth
+              size="sm"
+              ariaLabel="Full width tabs"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disabled States -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Disabled States</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs
+          tabs={disabledTabs}
+          variant="cards"
+          ariaLabel="Content access levels"
+        />
+        <p class="text-xs text-slate-400 mt-3">
+          Some tabs are disabled to show different access levels.
+        </p>
+      </div>
+    </div>
+
+    <!-- Vertical Orientation -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Vertical Orientation</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <Tabs
+          tabs={verticalTabs}
+          orientation="vertical"
+          variant="minimal"
+          ariaLabel="Application settings"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Content Organization -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Content Organization</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-slate-100">Knowledge Base</h4>
+          <p class="text-sm text-slate-300 mt-1">
+            Organize different types of content for easy discovery
+          </p>
+        </div>
+        <Tabs
+          tabs={contentTabs}
+          variant="default"
+          ariaLabel="Knowledge base content"
+        />
+      </div>
+    </div>
+
+    <!-- Settings Interface -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Settings Interface</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100">
+              Account Settings
+            </h4>
+            <p class="text-sm text-slate-300 mt-1">
+              Manage your account preferences and security
+            </p>
+          </div>
+          <button
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm transition-colors"
+          >
+            Save Changes
+          </button>
+        </div>
+        <Tabs
+          tabs={verticalTabs}
+          orientation="vertical"
+          variant="minimal"
+          size="sm"
+          ariaLabel="Account settings navigation"
+        />
+      </div>
+    </div>
+
+    <!-- Dashboard Navigation -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Dashboard Navigation</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-slate-100">User Dashboard</h4>
+          <p class="text-sm text-slate-300 mt-1">
+            Navigate between different sections of your account
+          </p>
+        </div>
+        <Tabs
+          tabs={iconTabs}
+          variant="pills"
+          size="md"
+          ariaLabel="Dashboard navigation"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Tabs components are designed with comprehensive accessibility features and
+      WCAG AAA compliance. All text maintains 9:1 contrast ratios and adjusts
+      automatically for high contrast mode and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Proper semantic markup with tablist, tab, and tabpanel roles ensures
+      screen readers can navigate the interface. The component includes complete
+      keyboard navigation with arrow keys, Home/End keys, and Enter/Space
+      activation.
+    </p>
+    <p class="text-base text-slate-200">
+      Focus management automatically moves between tabs and provides clear
+      visual indicators. State changes are announced to screen readers
+      non-intrusively, and all interactions respect user preferences for reduced
+      motion.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Design Tokens</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Size Scale</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">sm</span>
+            <span class="text-slate-400">Compact interfaces</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">md</span>
+            <span class="text-slate-400">Standard navigation</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">lg</span>
+            <span class="text-slate-400">Prominent sections</span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Variants</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">default</span>
+            <span class="text-slate-400">Underlined active state</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">minimal</span>
+            <span class="text-slate-400">Clean background highlight</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">pills</span>
+            <span class="text-slate-400">Rounded container style</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">cards</span>
+            <span class="text-slate-400">Elevated button appearance</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </DocsLayout>

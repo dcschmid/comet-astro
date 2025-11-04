@@ -4,7 +4,8 @@ import MediaListItem from '../../components/MediaListItem.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const title = 'MediaListItem Component';
-const description = 'WCAG AAA compliant list item component for displaying media content in organized lists with thumbnails, metadata, and actions.';
+const description =
+  'WCAG AAA compliant list item component for displaying media content in organized lists with thumbnails, metadata, and actions.';
 ---
 
 <DocsLayout title={title} description={description}>
@@ -12,7 +13,10 @@ const description = 'WCAG AAA compliant list item component for displaying media
     <!-- Introduction -->
     <section>
       <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-        The MediaListItem component provides a flexible and accessible way to display media content in list formats. Perfect for articles, videos, podcasts, or any content that benefits from a structured list presentation with thumbnails and metadata.
+        The MediaListItem component provides a flexible and accessible way to
+        display media content in list formats. Perfect for articles, videos,
+        podcasts, or any content that benefits from a structured list
+        presentation with thumbnails and metadata.
       </p>
     </section>
 
@@ -21,7 +25,7 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Basic Usage
       </h2>
-      
+
       <div class="space-y-4 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -35,12 +39,16 @@ const description = 'WCAG AAA compliant list item component for displaying media
             href="/workshops/team-rituals"
             meta={['By Leslie Alexander', 'Updated 2 days ago']}
             actions={[
-              { label: 'Watch', href: '/workshops/team-rituals', variant: 'primary' },
-              { label: 'Share', href: '#', variant: 'secondary', icon: '📤' }
+              {
+                label: 'Watch',
+                href: '/workshops/team-rituals',
+                variant: 'primary',
+              },
+              { label: 'Share', href: '#', variant: 'secondary', icon: '📤' },
             ]}
           />
         </div>
-        
+
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
             Without Image
@@ -50,7 +58,13 @@ const description = 'WCAG AAA compliant list item component for displaying media
             subtitle="Newsletter • Issue 18"
             href="/newsletter/design-ops-18"
             meta={['32k readers', 'Sent every Friday']}
-            actions={[{ label: 'Subscribe', href: '/newsletter/subscribe', variant: 'primary' }]}
+            actions={[
+              {
+                label: 'Subscribe',
+                href: '/newsletter/subscribe',
+                variant: 'primary',
+              },
+            ]}
           />
         </div>
       </div>
@@ -78,7 +92,7 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Variants
       </h2>
-      
+
       <div class="space-y-6 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -120,10 +134,19 @@ const description = 'WCAG AAA compliant list item component for displaying media
             imageAlt="Programming"
             title="Detailed Variant"
             subtitle="Spacious layout with enhanced metadata display"
-            meta={['More vertical space', 'Better for longer content', 'Enhanced readability']}
+            meta={[
+              'More vertical space',
+              'Better for longer content',
+              'Enhanced readability',
+            ]}
             actions={[
               { label: 'Read', href: '#', variant: 'primary' },
-              { label: 'Bookmark', href: '#', variant: 'secondary', icon: '🔖' }
+              {
+                label: 'Bookmark',
+                href: '#',
+                variant: 'secondary',
+                icon: '🔖',
+              },
             ]}
           />
         </div>
@@ -165,7 +188,7 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Sizes
       </h2>
-      
+
       <div class="space-y-6 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -207,10 +230,14 @@ const description = 'WCAG AAA compliant list item component for displaying media
             imageAlt="Team work"
             title="Large List Item"
             subtitle="Spacious size for featured content and detailed information"
-            meta={['Enhanced visibility', 'Desktop optimal', 'Featured content']}
+            meta={[
+              'Enhanced visibility',
+              'Desktop optimal',
+              'Featured content',
+            ]}
             actions={[
               { label: 'View Details', href: '#', variant: 'primary' },
-              { label: 'Share', href: '#', variant: 'secondary' }
+              { label: 'Share', href: '#', variant: 'secondary' },
             ]}
           />
         </div>
@@ -234,7 +261,7 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Image Aspect Ratios
       </h2>
-      
+
       <div class="space-y-6 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -262,7 +289,9 @@ const description = 'WCAG AAA compliant list item component for displaying media
             title="Widescreen Video Format"
             subtitle="Modern 16:9 aspect ratio for video content"
             meta={['Great for videos', 'Modern standard', 'YouTube format']}
-            actions={[{ label: 'Play', href: '#', variant: 'primary', icon: '▶️' }]}
+            actions={[
+              { label: 'Play', href: '#', variant: 'primary', icon: '▶️' },
+            ]}
           />
         </div>
 
@@ -277,7 +306,14 @@ const description = 'WCAG AAA compliant list item component for displaying media
             title="Classic Photo Format"
             subtitle="Traditional 4:3 aspect ratio for photographs"
             meta={['Classic photography', 'Old TV format', 'Photo albums']}
-            actions={[{ label: 'View Photo', href: '#', variant: 'primary', icon: '📷' }]}
+            actions={[
+              {
+                label: 'View Photo',
+                href: '#',
+                variant: 'primary',
+                icon: '📷',
+              },
+            ]}
           />
         </div>
 
@@ -292,7 +328,9 @@ const description = 'WCAG AAA compliant list item component for displaying media
             title="Photography Standard"
             subtitle="Professional 3:2 aspect ratio for DSLR cameras"
             meta={['DSLR standard', 'Professional photography', 'Print ready']}
-            actions={[{ label: 'Download', href: '#', variant: 'primary', icon: '⬇️' }]}
+            actions={[
+              { label: 'Download', href: '#', variant: 'primary', icon: '⬇️' },
+            ]}
           />
         </div>
       </div>
@@ -318,7 +356,7 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Action Types
       </h2>
-      
+
       <div class="space-y-6 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -333,7 +371,13 @@ const description = 'WCAG AAA compliant list item component for displaying media
             actions={[
               { label: 'Read Article', href: '/article', variant: 'primary' },
               { label: 'View Profile', href: '/profile', variant: 'secondary' },
-              { label: 'External Link', href: 'https://example.com', variant: 'secondary', target: '_blank', icon: '🔗' }
+              {
+                label: 'External Link',
+                href: 'https://example.com',
+                variant: 'secondary',
+                target: '_blank',
+                icon: '🔗',
+              },
             ]}
           />
         </div>
@@ -349,9 +393,24 @@ const description = 'WCAG AAA compliant list item component for displaying media
             subtitle="JavaScript-powered actions for dynamic behavior"
             meta={['Interactive actions']}
             actions={[
-              { label: 'Like', onClick: 'alert("Liked!")', variant: 'primary', icon: '❤️' },
-              { label: 'Bookmark', onClick: 'toggleBookmark()', variant: 'secondary', icon: '🔖' },
-              { label: 'Delete', onClick: 'confirmDelete()', variant: 'danger', icon: '🗑️' }
+              {
+                label: 'Like',
+                onClick: 'alert("Liked!")',
+                variant: 'primary',
+                icon: '❤️',
+              },
+              {
+                label: 'Bookmark',
+                onClick: 'toggleBookmark()',
+                variant: 'secondary',
+                icon: '🔖',
+              },
+              {
+                label: 'Delete',
+                onClick: 'confirmDelete()',
+                variant: 'danger',
+                icon: '🗑️',
+              },
             ]}
           />
         </div>
@@ -382,7 +441,7 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         States
       </h2>
-      
+
       <div class="space-y-6 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -448,7 +507,7 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Visibility Options
       </h2>
-      
+
       <div class="space-y-6 mb-8">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-50 mb-4">
@@ -490,7 +549,9 @@ const description = 'WCAG AAA compliant list item component for displaying media
             title="Read-Only Item"
             subtitle="List item without action buttons"
             meta={['No actions available']}
-            actions={[{ label: 'Hidden Action', href: '#', variant: 'primary' }]}
+            actions={[
+              { label: 'Hidden Action', href: '#', variant: 'primary' },
+            ]}
           />
         </div>
       </div>
@@ -509,7 +570,7 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Accessibility Features
       </h2>
-      
+
       <div class="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg mb-6">
         <h3 class="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
           WCAG AAA Compliance
@@ -554,7 +615,9 @@ const description = 'WCAG AAA compliant list item component for displaying media
           ariaLabel="Featured article about accessibility best practices"
           ariaDescribedBy="accessibility-description"
           meta={['Accessibility focused']}
-          actions={[{ label: 'Learn More', href: '/accessibility', variant: 'primary' }]}
+          actions={[
+            { label: 'Learn More', href: '/accessibility', variant: 'primary' },
+          ]}
         />
       </div>
 
@@ -576,275 +639,429 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Props Reference
       </h2>
-      
+
       <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table
+          class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+        >
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Prop
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Type
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Default
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Description
               </th>
             </tr>
           </thead>
           <tbody class="text-sm">
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 imageSrc
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 URL of the thumbnail image
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 imageAlt
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 ''
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Alternative text for the image
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 imageAspectRatio
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'square' | '16:9' | '4:3' | '3:2'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'square'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Aspect ratio format for the thumbnail image
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 href
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 URL to link the title and image to
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 title
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 required
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Primary title text
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 subtitle
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Secondary description text
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 meta
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string[]
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 []
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Array of metadata strings
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 variant
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'default' | 'compact' | 'detailed' | 'minimal'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'default'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Visual variant of the list item
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 size
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'sm' | 'md' | 'lg'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'md'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Size of the list item
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 actions
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Action[]
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 []
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Array of action buttons/links
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 loading
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 false
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Show loading state
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 disabled
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 false
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Disable item interactions
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 selected
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 false
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Show selected state with visual emphasis
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 showImage
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 true
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Whether to show the thumbnail image
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 showMeta
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 true
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Whether to show metadata
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 showActions
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 boolean
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 true
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Whether to show action buttons
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 ariaLabel
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Accessible label for the list item
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 class
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 undefined
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Additional CSS classes
               </td>
             </tr>
@@ -858,86 +1075,130 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Action Interface
       </h2>
-      
+
       <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <table
+          class="w-full border-collapse border border-gray-300 dark:border-gray-600"
+        >
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-800">
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Property
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Type
               </th>
-              <th class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <th
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50"
+              >
                 Description
               </th>
             </tr>
           </thead>
           <tbody class="text-sm">
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 label
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Text displayed on the action button
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 href
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 URL for link actions (renders as anchor tag)
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 onClick
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 JavaScript code for button actions
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 variant
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 'primary' | 'secondary' | 'danger'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Visual style of the action button
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 icon
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 string
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Icon to display before the label text
               </td>
             </tr>
             <tr>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 font-mono text-blue-700 dark:text-blue-300"
+              >
                 target
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 '_blank' | '_self' | '_parent' | '_top'
               </td>
-              <td class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
+              <td
+                class="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 Target for link actions (only applies to href)
               </td>
             </tr>
@@ -951,10 +1212,12 @@ const description = 'WCAG AAA compliant list item component for displaying media
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-6">
         Best Practices
       </h2>
-      
+
       <div class="space-y-6">
         <div class="bg-green-50 dark:bg-green-950 p-6 rounded-lg">
-          <h3 class="text-lg font-medium text-green-900 dark:text-green-100 mb-3">
+          <h3
+            class="text-lg font-medium text-green-900 dark:text-green-100 mb-3"
+          >
             ✅ Do
           </h3>
           <ul class="space-y-2 text-green-800 dark:text-green-200">
@@ -965,7 +1228,10 @@ const description = 'WCAG AAA compliant list item component for displaying media
             <li>• Consider compact variant for sidebar or mobile layouts</li>
             <li>• Implement proper selection states for interactive lists</li>
             <li>• Group related metadata logically</li>
-            <li>• Choose aspect ratios that match your content type (16:9 for videos, square for avatars)</li>
+            <li>
+              • Choose aspect ratios that match your content type (16:9 for
+              videos, square for avatars)
+            </li>
           </ul>
         </div>
 
@@ -974,9 +1240,13 @@ const description = 'WCAG AAA compliant list item component for displaying media
             ❌ Don't
           </h3>
           <ul class="space-y-2 text-red-800 dark:text-red-200">
-            <li>• Overcrowd the item with too many actions (3 maximum recommended)</li>
+            <li>
+              • Overcrowd the item with too many actions (3 maximum recommended)
+            </li>
             <li>• Use generic action labels like "Click here"</li>
-            <li>• Mix essential and optional metadata without clear hierarchy</li>
+            <li>
+              • Mix essential and optional metadata without clear hierarchy
+            </li>
             <li>• Ignore loading states for dynamic content lists</li>
             <li>• Use detailed variant when space is constrained</li>
             <li>• Forget to provide fallback alt text for images</li>
@@ -985,16 +1255,28 @@ const description = 'WCAG AAA compliant list item component for displaying media
         </div>
 
         <div class="bg-yellow-50 dark:bg-yellow-950 p-6 rounded-lg">
-          <h3 class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3">
+          <h3
+            class="text-lg font-medium text-yellow-900 dark:text-yellow-100 mb-3"
+          >
             💡 Tips
           </h3>
           <ul class="space-y-2 text-yellow-800 dark:text-yellow-200">
             <li>• Use consistent sizing across lists for visual harmony</li>
-            <li>• Consider the compact variant for long lists to improve scanning</li>
-            <li>• Leverage metadata separators (•) for visual clarity in non-compact variants</li>
+            <li>
+              • Consider the compact variant for long lists to improve scanning
+            </li>
+            <li>
+              • Leverage metadata separators (•) for visual clarity in
+              non-compact variants
+            </li>
             <li>• Use selected states to indicate current or active items</li>
-            <li>• Combine with proper list semantics (ul, ol) for screen readers</li>
-            <li>• Match aspect ratios to content type: 16:9 for videos, square for profiles, 4:3 for photos</li>
+            <li>
+              • Combine with proper list semantics (ul, ol) for screen readers
+            </li>
+            <li>
+              • Match aspect ratios to content type: 16:9 for videos, square for
+              profiles, 4:3 for photos
+            </li>
           </ul>
         </div>
       </div>

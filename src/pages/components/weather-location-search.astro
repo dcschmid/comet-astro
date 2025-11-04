@@ -1,0 +1,159 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import WeatherLocationSearch from '../../components/WeatherLocationSearch.astro';
+
+const usageSnippet = `---\nimport { WeatherLocationSearch } from 'comet-astro';\n\n---\n<!-- Static demo (no network) -->\n<WeatherLocationSearch disableFetch />\n\n<!-- Live geocoding (debounce 300ms, max 8 results) -->\n<WeatherLocationSearch debounceMs={300} maxResults={8} placeholder="Search city" />\n\n<!-- Custom accessible region label -->\n<WeatherLocationSearch ariaLabel="Select a location for weather components" />\n\n<!-- Tight debounce & fewer results for minimal lists -->\n<WeatherLocationSearch debounceMs={200} maxResults={4} />`;
+---
+
+<DocsLayout
+  title="WeatherLocationSearch"
+  description="Minimal geocoding location search (name, country, coordinates) with optional live Open‑Meteo fetch and AAA contrast."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      WeatherLocationSearch provides an accessible, minimal combobox for
+      selecting a location. It uses the Open‑Meteo Geocoding API when fetching
+      is enabled; otherwise it filters a small static fallback list. The
+      component intentionally omits advanced features (recent storage,
+      geolocation, population metadata, size variants) to remain fast, clear,
+      and WCAG AAA compliant.
+    </p>
+    <p class="text-base text-slate-200">
+      Keyboard navigation (Arrow Up/Down, Enter, Escape) works on the generated
+      result list. A polite status line announces states: waiting, searching,
+      errors, and selection. On success it dispatches a <code
+        >location-selected</code
+      > CustomEvent containing
+      <code>&#123; name, country, latitude, longitude &#125;</code> for other weather
+      components.
+    </p>
+    <p class="text-base text-slate-200">
+      Color is never the sole indicator of state; high contrast mode adds an
+      outline and reduced motion preference removes subtle transitions. All text
+      exceeds ≥9:1 contrast in light and dark themes.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          placeholder?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Input placeholder text. Defaults to “Search location…”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          maxResults?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Maximum list items rendered (default 6).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          debounceMs?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Delay before fetch (ms). Defaults to 350 for balanced responsiveness.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disableFetch?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          When true, skips network calls and filters a small static fallback
+          list.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible region label. Defaults to “Search for weather location”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Tailwind overrides appended to root container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Provide no props for defaults, or adjust <code>debounceMs</code> / <code
+        >maxResults</code
+      > to tune responsiveness & list density. Listen for the <code
+        >location-selected</code
+      > event to integrate with forecast or air quality components.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Demo</h2>
+    <div class="flex flex-wrap gap-6">
+      <WeatherLocationSearch disableFetch />
+      <WeatherLocationSearch debounceMs={250} maxResults={4} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      The root element is a labeled <code>region</code>. The input behaves as a
+      simple listbox pattern: it owns the list via
+      <code>aria-controls</code> and toggles <code>aria-expanded</code>. A
+      polite live region announces search status, errors, and selections.
+    </p>
+    <p class="text-base text-slate-200">
+      Arrow keys move a highlight without shifting focus; Enter selects; Escape
+      closes the list. The highlight is purely a background treatment—text
+      remains neutral for maximum contrast. High contrast mode adds an outline.
+      All motion is suppressed under
+      <code>prefers-reduced-motion</code>.
+    </p>
+    <p class="text-base text-slate-200">
+      Minimum input length (2 characters) prevents noisy queries and is conveyed
+      via status text rather than color. No color-only cues.
+    </p>
+  </section>
+</DocsLayout>

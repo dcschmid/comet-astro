@@ -97,7 +97,9 @@ const id = `carousel-${Math.random().toString(36).slice(2, 10)}`;
                 {(slide.title || slide.description) && (
                   <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-4 sm:p-6 text-white">
                     {slide.title && (
-                      <h3 class="text-lg sm:text-xl font-semibold leading-tight">{slide.title}</h3>
+                      <h3 class="text-lg sm:text-xl font-semibold leading-tight">
+                        {slide.title}
+                      </h3>
                     )}
                     {slide.description && (
                       <p class="mt-1 sm:mt-2 text-sm text-white/85 leading-relaxed">
@@ -119,7 +121,9 @@ const id = `carousel-${Math.random().toString(36).slice(2, 10)}`;
               data-carousel-prev
               aria-label="Previous slide"
             >
-              <span aria-hidden="true" class="text-lg sm:text-xl">‹</span>
+              <span aria-hidden="true" class="text-lg sm:text-xl">
+                ‹
+              </span>
             </button>
             <button
               type="button"
@@ -127,7 +131,9 @@ const id = `carousel-${Math.random().toString(36).slice(2, 10)}`;
               data-carousel-next
               aria-label="Next slide"
             >
-              <span aria-hidden="true" class="text-lg sm:text-xl">›</span>
+              <span aria-hidden="true" class="text-lg sm:text-xl">
+                ›
+              </span>
             </button>
           </>
         )}
@@ -168,123 +174,137 @@ const id = `carousel-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 <script is:inline>
-document.addEventListener('DOMContentLoaded', function() {
-  const carousels = document.querySelectorAll('[data-carousel-root]');
-  
-  carousels.forEach(function(root) {
-    if (root.dataset.initialized === 'true') return;
-    root.dataset.initialized = 'true';
+  document.addEventListener('DOMContentLoaded', function () {
+    const carousels = document.querySelectorAll('[data-carousel-root]');
 
-    const track = root.querySelector('[data-carousel-track]');
-    if (!track) {
-      console.warn('[Carousel] Track not found');
-      return;
-    }
+    carousels.forEach(function (root) {
+      if (root.dataset.initialized === 'true') return;
+      root.dataset.initialized = 'true';
 
-    const slideCount = parseInt(root.dataset.slideCount || '0', 10);
-    if (slideCount <= 0) {
-      console.warn('[Carousel] No slides found');
-      return;
-    }
-
-    const shouldAutoplay = root.dataset.autoplay === 'true' && 
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const loop = root.dataset.loop === 'true';
-    const interval = parseInt(root.dataset.interval || '5000', 10);
-
-    const indicators = Array.from(root.querySelectorAll('[data-carousel-indicator]'));
-    const prevButton = root.querySelector('[data-carousel-prev]');
-    const nextButton = root.querySelector('[data-carousel-next]');
-
-    let currentIndex = 0;
-    let timer = null;
-    let paused = false;
-    root.dataset.currentIndex = String(currentIndex);
-
-    function update() {
-      track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
-      indicators.forEach(function(indicator, index) {
-        const isActive = index === currentIndex;
-        indicator.style.opacity = isActive ? '1' : '0.45';
-        indicator.dataset.active = isActive ? 'true' : 'false';
-        indicator.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        indicator.setAttribute('tabindex', isActive ? '0' : '-1');
-      });
-    }
-
-    function goTo(index) {
-      if (index < 0) {
-        currentIndex = loop ? (slideCount + index) % slideCount : 0;
-      } else if (index >= slideCount) {
-        currentIndex = loop ? index % slideCount : slideCount - 1;
-      } else {
-        currentIndex = index;
+      const track = root.querySelector('[data-carousel-track]');
+      if (!track) {
+        console.warn('[Carousel] Track not found');
+        return;
       }
+
+      const slideCount = parseInt(root.dataset.slideCount || '0', 10);
+      if (slideCount <= 0) {
+        console.warn('[Carousel] No slides found');
+        return;
+      }
+
+      const shouldAutoplay =
+        root.dataset.autoplay === 'true' &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const loop = root.dataset.loop === 'true';
+      const interval = parseInt(root.dataset.interval || '5000', 10);
+
+      const indicators = Array.from(
+        root.querySelectorAll('[data-carousel-indicator]')
+      );
+      const prevButton = root.querySelector('[data-carousel-prev]');
+      const nextButton = root.querySelector('[data-carousel-next]');
+
+      let currentIndex = 0;
+      let timer = null;
+      let paused = false;
       root.dataset.currentIndex = String(currentIndex);
-      update();
-    }
 
-    function next() { goTo(currentIndex + 1); }
-    function prev() { goTo(currentIndex - 1); }
-
-    // Attach event listeners
-    if (prevButton) {
-      prevButton.addEventListener('click', function() {
-        console.log('[Carousel] Prev clicked');
-        prev();
-      });
-    }
-    if (nextButton) {
-      nextButton.addEventListener('click', function() {
-        console.log('[Carousel] Next clicked');
-        next();
-      });
-    }
-
-    indicators.forEach(function(indicator, index) {
-      indicator.addEventListener('click', function() {
-        console.log('[Carousel] Indicator clicked:', index);
-        goTo(index);
-      });
-    });
-
-    const pauseButton = root.querySelector('[data-carousel-pause]');
-
-    if (shouldAutoplay) {
-      function stop() {
-        if (timer) {
-          clearInterval(timer);
-          timer = null;
-        }
-      }
-      function start() {
-        stop();
-        if (!paused) {
-          timer = setInterval(next, interval);
-        }
-      }
-
-      root.addEventListener('mouseenter', stop);
-      root.addEventListener('mouseleave', start);
-      
-      if (pauseButton) {
-        pauseButton.addEventListener('click', function() {
-          paused = !paused;
-          pauseButton.setAttribute('aria-pressed', String(paused));
-          pauseButton.textContent = paused ? 'Resume' : 'Pause';
-          pauseButton.setAttribute('aria-label', paused ? 'Resume autoplay' : 'Pause autoplay');
-          if (paused) {
-            stop();
-          } else {
-            start();
-          }
+      function update() {
+        track.style.transform = 'translateX(-' + currentIndex * 100 + '%)';
+        indicators.forEach(function (indicator, index) {
+          const isActive = index === currentIndex;
+          indicator.style.opacity = isActive ? '1' : '0.45';
+          indicator.dataset.active = isActive ? 'true' : 'false';
+          indicator.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          indicator.setAttribute('tabindex', isActive ? '0' : '-1');
         });
       }
-      start();
-    }
 
-    update();
-    console.log('[Carousel] Initialized successfully with', slideCount, 'slides');
+      function goTo(index) {
+        if (index < 0) {
+          currentIndex = loop ? (slideCount + index) % slideCount : 0;
+        } else if (index >= slideCount) {
+          currentIndex = loop ? index % slideCount : slideCount - 1;
+        } else {
+          currentIndex = index;
+        }
+        root.dataset.currentIndex = String(currentIndex);
+        update();
+      }
+
+      function next() {
+        goTo(currentIndex + 1);
+      }
+      function prev() {
+        goTo(currentIndex - 1);
+      }
+
+      // Attach event listeners
+      if (prevButton) {
+        prevButton.addEventListener('click', function () {
+          console.log('[Carousel] Prev clicked');
+          prev();
+        });
+      }
+      if (nextButton) {
+        nextButton.addEventListener('click', function () {
+          console.log('[Carousel] Next clicked');
+          next();
+        });
+      }
+
+      indicators.forEach(function (indicator, index) {
+        indicator.addEventListener('click', function () {
+          console.log('[Carousel] Indicator clicked:', index);
+          goTo(index);
+        });
+      });
+
+      const pauseButton = root.querySelector('[data-carousel-pause]');
+
+      if (shouldAutoplay) {
+        function stop() {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+        function start() {
+          stop();
+          if (!paused) {
+            timer = setInterval(next, interval);
+          }
+        }
+
+        root.addEventListener('mouseenter', stop);
+        root.addEventListener('mouseleave', start);
+
+        if (pauseButton) {
+          pauseButton.addEventListener('click', function () {
+            paused = !paused;
+            pauseButton.setAttribute('aria-pressed', String(paused));
+            pauseButton.textContent = paused ? 'Resume' : 'Pause';
+            pauseButton.setAttribute(
+              'aria-label',
+              paused ? 'Resume autoplay' : 'Pause autoplay'
+            );
+            if (paused) {
+              stop();
+            } else {
+              start();
+            }
+          });
+        }
+        start();
+      }
+
+      update();
+      console.log(
+        '[Carousel] Initialized successfully with',
+        slideCount,
+        'slides'
+      );
+    });
   });
-});
 </script>

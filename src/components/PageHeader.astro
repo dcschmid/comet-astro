@@ -1,33 +1,33 @@
 ---
 import { cn } from '../utils/cn';
 
-export interface Props {
+interface Props {
   // Content props
   title: string;
   subtitle?: string;
   eyebrow?: string;
-  
+
   // Visual variants
   variant?: 'default' | 'centered' | 'minimal' | 'hero';
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  
+
   // Layout props
   alignment?: 'left' | 'center' | 'right';
   background?: 'none' | 'subtle' | 'pattern';
-  
+
   // Accessibility props
   titleLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   role?: string;
   ariaLabel?: string;
   ariaDescribedBy?: string;
-  
+
   // Styling
   class?: string;
 }
 
-const { 
-  title, 
-  subtitle, 
+const {
+  title,
+  subtitle,
   eyebrow,
   variant = 'default',
   size = 'md',
@@ -37,19 +37,21 @@ const {
   role,
   ariaLabel,
   ariaDescribedBy,
-  class: className 
+  class: className,
 } = Astro.props as Props;
 
 // Generate unique IDs for ARIA relationships
 const headerId = `page-header-${Math.random().toString(36).substr(2, 9)}`;
-const subtitleId = subtitle ? `subtitle-${Math.random().toString(36).substr(2, 9)}` : undefined;
+const subtitleId = subtitle
+  ? `subtitle-${Math.random().toString(36).substr(2, 9)}`
+  : undefined;
 
 // Variant styles
 const variantStyles = {
   default: 'py-8 lg:py-12',
   centered: 'py-12 lg:py-16 text-center',
   minimal: 'py-6 lg:py-8',
-  hero: 'py-16 lg:py-24 text-center'
+  hero: 'py-16 lg:py-24 text-center',
 };
 
 // Size styles for title
@@ -57,7 +59,7 @@ const titleSizeStyles = {
   sm: 'text-2xl lg:text-3xl',
   md: 'text-3xl lg:text-4xl',
   lg: 'text-4xl lg:text-5xl xl:text-6xl',
-  xl: 'text-5xl lg:text-6xl xl:text-7xl'
+  xl: 'text-5xl lg:text-6xl xl:text-7xl',
 };
 
 // Size styles for subtitle
@@ -65,21 +67,22 @@ const subtitleSizeStyles = {
   sm: 'text-sm lg:text-base',
   md: 'text-base lg:text-lg',
   lg: 'text-lg lg:text-xl',
-  xl: 'text-xl lg:text-2xl'
+  xl: 'text-xl lg:text-2xl',
 };
 
 // Background styles
 const backgroundStyles = {
   none: '',
   subtle: 'bg-gray-50/50 dark:bg-gray-900/50',
-  pattern: 'bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden before:absolute before:inset-0 before:bg-grid-gray-100/50 dark:before:bg-grid-gray-800/50 before:bg-[size:20px_20px] before:opacity-40'
+  pattern:
+    'bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden before:absolute before:inset-0 before:bg-grid-gray-100/50 dark:before:bg-grid-gray-800/50 before:bg-[size:20px_20px] before:opacity-40',
 };
 
 // Alignment styles
 const alignmentStyles = {
   left: 'text-left',
   center: 'text-center',
-  right: 'text-right'
+  right: 'text-right',
 };
 
 // Dynamic title tag
@@ -130,7 +133,7 @@ const getMaxWidth = () => {
 };
 ---
 
-<header 
+<header
   class={containerClasses}
   role={role}
   aria-label={ariaLabel}
@@ -138,61 +141,72 @@ const getMaxWidth = () => {
 >
   <div class={cn('px-4 sm:px-6 lg:px-8', getMaxWidth())}>
     <div class="space-y-1">
-      {eyebrow && (
-        <div class={eyebrowClasses}>
-          {eyebrow}
-        </div>
-      )}
-      
-      {titleLevel === 1 && (
-        <h1 id={headerId} class={titleClasses}>
-          {title}
-        </h1>
-      )}
-      {titleLevel === 2 && (
-        <h2 id={headerId} class={titleClasses}>
-          {title}
-        </h2>
-      )}
-      {titleLevel === 3 && (
-        <h3 id={headerId} class={titleClasses}>
-          {title}
-        </h3>
-      )}
-      {titleLevel === 4 && (
-        <h4 id={headerId} class={titleClasses}>
-          {title}
-        </h4>
-      )}
-      {titleLevel === 5 && (
-        <h5 id={headerId} class={titleClasses}>
-          {title}
-        </h5>
-      )}
-      {titleLevel === 6 && (
-        <h6 id={headerId} class={titleClasses}>
-          {title}
-        </h6>
-      )}
-      
-      {subtitle && (
-        <p 
-          id={subtitleId}
-          class={subtitleClasses}
-        >
-          {subtitle}
-        </p>
-      )}
-      
-      {Astro.slots.has('default') && (
-        <div class={cn(
-          'pt-4 lg:pt-6',
-          alignment === 'center' ? 'flex justify-center' : '',
-          alignment === 'right' ? 'flex justify-end' : ''
-        )}>
-          <slot />
-        </div>
-      )}
+      {eyebrow && <div class={eyebrowClasses}>{eyebrow}</div>}
+
+      {
+        titleLevel === 1 && (
+          <h1 id={headerId} class={titleClasses}>
+            {title}
+          </h1>
+        )
+      }
+      {
+        titleLevel === 2 && (
+          <h2 id={headerId} class={titleClasses}>
+            {title}
+          </h2>
+        )
+      }
+      {
+        titleLevel === 3 && (
+          <h3 id={headerId} class={titleClasses}>
+            {title}
+          </h3>
+        )
+      }
+      {
+        titleLevel === 4 && (
+          <h4 id={headerId} class={titleClasses}>
+            {title}
+          </h4>
+        )
+      }
+      {
+        titleLevel === 5 && (
+          <h5 id={headerId} class={titleClasses}>
+            {title}
+          </h5>
+        )
+      }
+      {
+        titleLevel === 6 && (
+          <h6 id={headerId} class={titleClasses}>
+            {title}
+          </h6>
+        )
+      }
+
+      {
+        subtitle && (
+          <p id={subtitleId} class={subtitleClasses}>
+            {subtitle}
+          </p>
+        )
+      }
+
+      {
+        Astro.slots.has('default') && (
+          <div
+            class={cn(
+              'pt-4 lg:pt-6',
+              alignment === 'center' ? 'flex justify-center' : '',
+              alignment === 'right' ? 'flex justify-end' : ''
+            )}
+          >
+            <slot />
+          </div>
+        )
+      }
     </div>
   </div>
 </header>

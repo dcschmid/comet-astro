@@ -5,16 +5,315 @@ import Video from '../../components/Video.astro';
 
 <DocsLayout
   title="Video"
-  description="Responsive video player with caption support and custom poster."
+  description="WCAG AAA compliant video player component with comprehensive accessibility features, responsive design, multiple layouts, and enhanced contrast ratios for optimal viewing in all modes."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Video
-      src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
-      poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
-      controls
-      className="mt-3"
-      caption="Mt. Baker sunrise — video courtesy of Coverr"
-    />
+  <section>
+    <h2 class="text-xl font-bold mb-4">Props</h2>
+    <div class="space-y-3 text-sm">
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Core Video Properties</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>src: string</code> - Video source URL (required)</li>
+          <li>
+            <code>poster?: string</code> - Poster image URL shown before video loads
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Playback Behavior</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>autoplay?: boolean</code> - Auto-play video (default: false)
+          </li>
+          <li>
+            <code>loop?: boolean</code> - Loop video playback (default: false)
+          </li>
+          <li><code>muted?: boolean</code> - Start muted (default: false)</li>
+          <li>
+            <code>controls?: boolean</code> - Show video controls (default: true)
+          </li>
+          <li>
+            <code>playsInline?: boolean</code> - Play inline on mobile (default:
+            true)
+          </li>
+          <li>
+            <code>preload?: 'none' | 'metadata' | 'auto'</code> - Preload behavior
+            (default: 'metadata')
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Layout & Appearance</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>variant?: 'default' | 'inline' | 'featured' | 'minimal'</code>
+            - Visual variant (default: 'default')
+          </li>
+          <li>
+            <code>size?: 'sm' | 'md' | 'lg' | 'xl'</code> - Component size (default:
+            'md')
+          </li>
+          <li>
+            <code
+              >aspectRatio?: '16:9' | '4:3' | '1:1' | '21:9' | '9:16' | 'auto'</code
+            > - Aspect ratio (default: '16:9')
+          </li>
+          <li>
+            <code>rounded?: boolean</code> - Rounded corners (default: true)
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Accessibility</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>title?: string</code> - Video title for screen readers</li>
+          <li>
+            <code>description?: string</code> - Detailed description for assistive
+            technology
+          </li>
+          <li><code>caption?: string</code> - Visible caption text</li>
+          <li><code>ariaLabel?: string</code> - Custom ARIA label</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">States & Behavior</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>loading?: boolean</code> - Show loading state (default: false)
+          </li>
+          <li><code>error?: string</code> - Error message to display</li>
+          <li>
+            <code>responsive?: boolean</code> - Responsive behavior (default: true)
+          </li>
+          <li><code>maxWidth?: string</code> - Maximum width constraint</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Additional</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>className?: string</code> - Additional CSS classes</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Accessibility Features</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>WCAG AAA compliant with 9:1 contrast ratios in all color schemes</li>
+      <li>
+        Enhanced video contrast (110%) and brightness (105%) for better
+        visibility
+      </li>
+      <li>Full keyboard navigation support with visible focus indicators</li>
+      <li>
+        Screen reader compatible with proper ARIA labels and semantic HTML
+      </li>
+      <li>Descriptive fallback content for unsupported browsers</li>
+      <li>Loading and error states announced to assistive technologies</li>
+      <li>Proper video controls accessibility with native browser support</li>
+      <li>High contrast mode compatibility</li>
+      <li>Responsive design for all screen sizes and devices</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Examples</h2>
+
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Basic Video</h3>
+        <Video
+          src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+          poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+          title="Mt. Baker Sunrise"
+          caption="Beautiful sunrise over Mt. Baker — video courtesy of Coverr"
+          controls
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Different Variants</h3>
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-medium mb-2">Featured Variant</h4>
+            <Video
+              variant="featured"
+              src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+              poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+              title="Featured Video"
+              caption="Enhanced styling for important content"
+              size="lg"
+            />
+          </div>
+
+          <div>
+            <h4 class="font-medium mb-2">Inline Variant</h4>
+            <Video
+              variant="inline"
+              src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+              poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=80"
+              title="Inline Video"
+              caption="Clean inline video without container styling"
+              size="sm"
+            />
+          </div>
+
+          <div>
+            <h4 class="font-medium mb-2">Minimal Variant</h4>
+            <Video
+              variant="minimal"
+              src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+              poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80"
+              title="Minimal Video"
+              caption="Subtle styling for understated presentation"
+              size="md"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Different Sizes</h3>
+        <div class="grid gap-4 md:grid-cols-2">
+          <Video
+            src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+            poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=80"
+            title="Small Video"
+            caption="Small size (sm)"
+            size="sm"
+          />
+          <Video
+            src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+            poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+            title="Large Video"
+            caption="Large size (lg)"
+            size="lg"
+          />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Different Aspect Ratios</h3>
+        <div class="grid gap-4 md:grid-cols-3">
+          <Video
+            src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+            poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=80"
+            title="Square Video"
+            caption="1:1 aspect ratio"
+            aspectRatio="1:1"
+            size="sm"
+          />
+          <Video
+            src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+            poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=80"
+            title="4:3 Video"
+            caption="4:3 classic ratio"
+            aspectRatio="4:3"
+            size="sm"
+          />
+          <Video
+            src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+            poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=80"
+            title="Cinematic Video"
+            caption="21:9 cinematic ratio"
+            aspectRatio="21:9"
+            size="sm"
+          />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Loading State</h3>
+        <Video
+          src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+          title="Loading Video"
+          caption="Video with loading spinner"
+          loading={true}
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Error State</h3>
+        <Video
+          src="/nonexistent-video.mp4"
+          title="Error Example"
+          caption="Video with error message"
+          error="Video konnte nicht geladen werden"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Accessibility Features</h3>
+        <Video
+          src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+          poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+          title="Accessible Video Example"
+          description="This is a detailed description of the video content for screen readers and assistive technologies"
+          caption="Video with comprehensive accessibility features including screen reader support"
+          ariaLabel="Mt. Baker sunrise nature video"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Custom Max Width</h3>
+        <Video
+          src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+          poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+          title="Constrained Video"
+          caption="Video with custom maximum width of 500px"
+          maxWidth="500px"
+          size="xl"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Autoplay Example</h3>
+        <Video
+          src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"
+          poster="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+          title="Autoplay Video"
+          caption="Muted autoplay video (best practice for accessibility)"
+          autoplay={true}
+          muted={true}
+          loop={true}
+          variant="minimal"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Slots</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>
+        <code>fallback</code> - Custom content shown when video is not supported
+      </li>
+      <li>
+        <code>caption</code> - Custom caption content replacing the caption prop
+      </li>
+      <li>
+        <code>overlay</code> - Additional content overlaid on the video container
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Accessibility Best Practices</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>Always provide a <code>title</code> for screen readers</li>
+      <li>Use <code>description</code> for detailed content explanations</li>
+      <li>Include <code>poster</code> images for better loading experience</li>
+      <li>Keep autoplay videos muted to prevent audio surprises</li>
+      <li>Provide captions or transcripts for important content</li>
+      <li>Use appropriate aspect ratios for your content type</li>
+      <li>Test with keyboard navigation and screen readers</li>
+      <li>Consider reduced motion preferences for autoplay content</li>
+    </ul>
   </section>
 </DocsLayout>

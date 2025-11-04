@@ -1,0 +1,692 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import WeatherBase from '../../components/WeatherBase.astro';
+
+const usageSnippet = `---
+import { WeatherBase } from 'comet-astro';
+---
+
+<!-- Basic usage with auto-location detection -->
+<WeatherBase variant="current" />
+
+<!-- Specific location with coordinates -->
+<WeatherBase 
+  latitude={52.52}
+  longitude={13.41}
+  location="Berlin, Deutschland"
+  variant="current"
+  size="md"
+  theme="default"
+/>
+
+<!-- Detailed weather dashboard -->
+<WeatherBase
+  latitude={40.7128}
+  longitude={-74.0060}
+  location="New York, USA"
+  variant="detailed"
+  size="lg"
+  theme="blue"
+  temperatureUnit="fahrenheit"
+  windSpeedUnit="mph"
+  showAlerts={true}
+  showForecast={true}
+  showDetails={true}
+  refreshInterval={15}
+>
+  <!-- Custom weather content -->
+  <div class="weather-custom-content">
+    <p>Additional weather information...</p>
+  </div>
+</WeatherBase>`;
+
+const advancedExample = `---
+import WeatherBase from '../components/WeatherBase.astro';
+---
+
+<!-- Multi-location weather comparison -->
+<div class="weather-grid grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+  <WeatherBase
+    latitude={51.5074}
+    longitude={-0.1278}
+    location="London, UK"
+    variant="current"
+    size="md"
+    theme="blue"
+    class="weather-card"
+  />
+  
+  <WeatherBase
+    latitude={48.8566}
+    longitude={2.3522}
+    location="Paris, France"
+    variant="current"
+    size="md"
+    theme="green"
+    class="weather-card"
+  />
+  
+  <WeatherBase
+    latitude={35.6762}
+    longitude={139.6503}
+    location="Tokyo, Japan"
+    variant="current"
+    size="md"
+    theme="orange"
+    temperatureUnit="celsius"
+    class="weather-card"
+  />
+</div>`;
+
+const customizationExample = `<!-- Theme customization with CSS custom properties -->
+<style>
+  .custom-weather {
+    --weather-bg: theme(colors.purple.50);
+    --weather-border: theme(colors.purple.200);
+    --weather-text: theme(colors.purple.900);
+    --weather-info: theme(colors.purple.600);
+  }
+  
+  .dark .custom-weather {
+    --weather-bg: theme(colors.purple.900 / 20%);
+    --weather-border: theme(colors.purple.800);
+    --weather-text: theme(colors.purple.100);
+    --weather-info: theme(colors.purple.400);
+  }
+</style>
+
+<WeatherBase
+  variant="current"
+  size="lg"
+  class="custom-weather"
+  ariaLabel="Custom styled weather display"
+/>`;
+---
+
+<DocsLayout
+  title="WeatherBase"
+  description="Comprehensive weather component foundation with Open-Meteo API integration, WCAG AAA accessibility, and Tailwind 4 styling."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      WeatherBase is the foundational weather component that provides unified
+      weather data display with full accessibility compliance, responsive
+      design, and modern Tailwind 4 styling. It serves as the base for all
+      weather-related components in Comet.
+    </p>
+    <p class="text-base text-slate-200">
+      Built on the Open-Meteo API, it offers real-time weather data without
+      requiring an API key, automatic location detection, and comprehensive
+      weather information including current conditions, forecasts, and detailed
+      meteorological data.
+    </p>
+    <p class="text-base text-slate-200">
+      All weather variants maintain WCAG AAA contrast ratios (9:1+) across
+      themes and states, with intelligent focus management and screen reader
+      optimization.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="space-y-4">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          latitude?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Latitude coordinate (-90 to 90). Auto-detected via geolocation if not
+          provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          longitude?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Longitude coordinate (-180 to 180). Auto-detected via geolocation if
+          not provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          location?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display name for the location. Defaults to <code
+            >"Current Location"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Weather data type to display. Options are <code>"current"</code>, <code
+            >"forecast"</code
+          >,
+          <code>"detailed"</code>, <code>"minimal"</code>, or <code
+            >"dashboard"</code
+          >. Defaults to <code>"current"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Component size variant. Options are <code>"xs"</code>, <code
+            >"sm"</code
+          >,
+          <code>"md"</code>, <code>"lg"</code>, or <code>"xl"</code>. Defaults
+          to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          theme?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Color theme variant. Options are <code>"default"</code>, <code
+            >"blue"</code
+          >,
+          <code>"green"</code>, <code>"orange"</code>, <code>"red"</code>, or <code
+            >"purple"</code
+          >. Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          temperatureUnit?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Temperature unit preference. Options are <code>"celsius"</code> or <code
+            >"fahrenheit"</code
+          >. Defaults to <code>"celsius"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          windSpeedUnit?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Wind speed unit preference. Options are <code>"kmh"</code>, <code
+            >"ms"</code
+          >,
+          <code>"mph"</code>, or <code>"kn"</code>. Defaults to <code
+            >"kmh"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          refreshInterval?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Auto-refresh interval in minutes. Set to <code>0</code> to disable. Defaults
+          to <code>15</code> minutes.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the component.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ARIA label for screen readers. Auto-generated based on location if not
+          provided.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, specify location coordinates or rely on
+      auto-detection, choose a variant and theme, then let WeatherBase handle
+      the API integration and accessibility features automatically.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="space-y-6">
+      <!-- Current Weather -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Current Weather</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <WeatherBase
+            latitude={52.52}
+            longitude={13.41}
+            location="Berlin, Deutschland"
+            variant="current"
+            size="md"
+            theme="blue"
+          />
+        </div>
+      </div>
+
+      <!-- Minimal Display -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Minimal Display</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <WeatherBase
+            latitude={48.8566}
+            longitude={2.3522}
+            location="Paris, France"
+            variant="minimal"
+            size="sm"
+            theme="green"
+          />
+        </div>
+      </div>
+
+      <!-- Dashboard View -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Dashboard View</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <WeatherBase
+            latitude={40.7128}
+            longitude={-74.006}
+            location="New York, USA"
+            variant="dashboard"
+            size="lg"
+            theme="orange"
+            temperatureUnit="fahrenheit"
+            windSpeedUnit="mph"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Extra Small</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={35.6762}
+            longitude={139.6503}
+            location="Tokyo"
+            variant="current"
+            size="xs"
+            theme="purple"
+          />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Small</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={35.6762}
+            longitude={139.6503}
+            location="Tokyo"
+            variant="current"
+            size="sm"
+            theme="purple"
+          />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Medium</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={35.6762}
+            longitude={139.6503}
+            location="Tokyo"
+            variant="current"
+            size="md"
+            theme="purple"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Themes</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Default</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={51.5074}
+            longitude={-0.1278}
+            location="London"
+            variant="current"
+            size="sm"
+            theme="default"
+          />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Blue</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={51.5074}
+            longitude={-0.1278}
+            location="London"
+            variant="current"
+            size="sm"
+            theme="blue"
+          />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Green</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={51.5074}
+            longitude={-0.1278}
+            location="London"
+            variant="current"
+            size="sm"
+            theme="green"
+          />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Orange</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={51.5074}
+            longitude={-0.1278}
+            location="London"
+            variant="current"
+            size="sm"
+            theme="orange"
+          />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Red</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={51.5074}
+            longitude={-0.1278}
+            location="London"
+            variant="current"
+            size="sm"
+            theme="red"
+          />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h4 class="text-sm font-medium text-slate-200">Purple</h4>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 shadow-sm"
+        >
+          <WeatherBase
+            latitude={51.5074}
+            longitude={-0.1278}
+            location="London"
+            variant="current"
+            size="sm"
+            theme="purple"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Advanced Examples</h2>
+
+    <!-- Multi-location Grid -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">
+        Multi-location Weather Grid
+      </h3>
+      <p class="text-base text-slate-200">
+        Display weather for multiple locations in a responsive grid layout.
+      </p>
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{advancedExample}</code>
+      </pre>
+    </div>
+
+    <!-- Custom Styling -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">
+        Custom Theme with CSS Properties
+      </h3>
+      <p class="text-base text-slate-200">
+        Customize the appearance using CSS custom properties for complete design
+        control.
+      </p>
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+        <code class="language-astro">{customizationExample}</code>
+      </pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Features</h2>
+    <div
+      class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+    >
+      <ul class="space-y-3 text-base text-slate-200">
+        <li>
+          <strong>🆓 Free API:</strong> No API key required, powered by Open-Meteo
+        </li>
+        <li>
+          <strong>🌍 Global Coverage:</strong> Worldwide weather data with automatic
+          timezone detection
+        </li>
+        <li>
+          <strong>♿ WCAG AAA Accessibility:</strong> Full screen reader support
+          and high contrast (9:1+ ratio)
+        </li>
+        <li>
+          <strong>📱 Responsive Design:</strong> Works perfectly on all device sizes
+        </li>
+        <li>
+          <strong>🎨 Themeable:</strong> Dark mode and custom styling support with
+          Tailwind 4
+        </li>
+        <li>
+          <strong>⚡ Real-time Updates:</strong> Auto-refresh with configurable intervals
+        </li>
+        <li>
+          <strong>📊 Comprehensive Data:</strong> Temperature, precipitation, wind,
+          pressure, and more
+        </li>
+        <li>
+          <strong>🎯 Auto-location:</strong> Automatic geolocation detection with
+          fallback
+        </li>
+        <li>
+          <strong>⌨️ Keyboard Navigation:</strong> Full keyboard accessibility with
+          proper focus management
+        </li>
+        <li>
+          <strong>🔄 Error Handling:</strong> Graceful error states with retry functionality
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      WeatherBase maintains WCAG AAA compliance with contrast ratios exceeding
+      9:1 across all themes and states. Focus-visible rings expand to 4px with
+      theme-aware offsets for clear keyboard navigation indication.
+    </p>
+    <p class="text-base text-slate-200">
+      All weather data is properly labeled with ARIA attributes, including
+      temperature readings, weather conditions, and forecast information. The
+      component automatically generates contextual labels and descriptions for
+      screen readers.
+    </p>
+    <div class="rounded-lg border border-blue-500/20 bg-blue-500/10 p-4 mt-4">
+      <p class="text-sm text-blue-200">
+        <strong>Best Practice:</strong> Use descriptive <code>location</code> names
+        and provide
+        <code>ariaLabel</code> when the weather display serves a specific purpose.
+        The component handles reduced motion preferences and high contrast mode automatically.
+      </p>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">API Integration</h2>
+    <p class="text-base text-slate-200">
+      WeatherBase integrates with the Open-Meteo API, providing free access to
+      global weather data without requiring API keys. The service offers
+      high-resolution forecasts updated every 15 minutes.
+    </p>
+    <div
+      class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+    >
+      <h4 class="text-base font-medium text-slate-200 mb-3">Data Sources</h4>
+      <ul class="space-y-2 text-sm text-slate-300">
+        <li>• NOAA (United States)</li>
+        <li>• DWD (Germany)</li>
+        <li>• Météo-France (France)</li>
+        <li>• ECMWF (European Union)</li>
+        <li>• UK Met Office</li>
+        <li>• And many more regional providers</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Browser Support</h2>
+    <p class="text-base text-slate-200">
+      WeatherBase works in all modern browsers with comprehensive feature
+      support:
+    </p>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <h4 class="text-sm font-medium text-slate-200 mb-2">Desktop</h4>
+        <ul class="space-y-1 text-sm text-slate-300">
+          <li>• Chrome/Edge 88+</li>
+          <li>• Firefox 78+</li>
+          <li>• Safari 14+</li>
+        </ul>
+      </div>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <h4 class="text-sm font-medium text-slate-200 mb-2">Mobile</h4>
+        <ul class="space-y-1 text-sm text-slate-300">
+          <li>• iOS Safari 14+</li>
+          <li>• Chrome Mobile 88+</li>
+          <li>• Samsung Internet 15+</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Performance</h2>
+    <div
+      class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+    >
+      <ul class="space-y-3 text-base text-slate-200">
+        <li><strong>Lightweight Bundle:</strong> ~8KB minified and gzipped</li>
+        <li>
+          <strong>Lazy Loading:</strong> Weather data fetched only when component
+          initializes
+        </li>
+        <li>
+          <strong>API Caching:</strong> Browser caches responses for 15 minutes
+        </li>
+        <li>
+          <strong>Optimized Animations:</strong> Respects <code
+            >prefers-reduced-motion</code
+          >
+        </li>
+        <li>
+          <strong>Minimal Re-renders:</strong> Efficient state management and updates
+        </li>
+      </ul>
+    </div>
+  </section>
+</DocsLayout>

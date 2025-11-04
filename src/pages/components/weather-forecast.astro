@@ -1,0 +1,177 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import WeatherForecast from '../../components/WeatherForecast.astro';
+
+const usageSnippet = `---\nimport { WeatherForecast } from 'comet-astro';\n\n---\n<!-- Static demo (no fetch) -->\n<WeatherForecast location="Demo Location" disableFetch />\n\n<!-- Live daily forecast using coordinates (5 days default) -->\n<WeatherForecast\n  location="Berlin"\n  latitude={52.52}\n  longitude={13.40}\n/>\n\n<!-- 7 days, auto refresh every 60 minutes -->\n<WeatherForecast\n  location="Berlin"\n  latitude={52.52}\n  longitude={13.40}\n  days={7}\n  refreshInterval={60}\n/>\n\n<!-- Custom accessible label -->\n<WeatherForecast\n  location="Alpine Camp"\n  latitude={46.95}\n  longitude={7.44}\n  ariaLabel="Daily forecast for Alpine Camp"\n/>`;
+---
+
+<DocsLayout
+  title="WeatherForecast"
+  description="Minimal daily forecast snapshot (icon, condition, high/low, precip %) with optional live Open‑Meteo fetch and AAA contrast."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      WeatherForecast shows a concise multi‑day outlook (default 5 days) with
+      only essential details: day label, symbol, condition text, high/low
+      temperatures, and precipitation probability. No charts, wind roses,
+      sunrise grids, or complex variant systems—kept intentionally lean for
+      performance and clarity.
+    </p>
+    <p class="text-base text-slate-200">
+      If coordinates are provided it fetches daily <code
+        >temperature_2m_max</code
+      >, <code>temperature_2m_min</code>,
+      <code>precipitation_probability_max</code> and <code>weather_code</code> from
+      Open‑Meteo. Fallback demo data renders when fetching is disabled or fails.
+      Auto refresh (minutes) is optional and off by default.
+    </p>
+    <p class="text-base text-slate-200">
+      Condition colors are applied only to a small indicator dot—text itself
+      remains neutral for guaranteed WCAG AAA contrast in light and dark themes.
+      Motion (loading shimmer) is suppressed under <code
+        >prefers-reduced-motion</code
+      > and high contrast mode adds an outline.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          location?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Human readable place label. Defaults to “Demo Location”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          latitude? / longitude?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Coordinates enabling automatic Open‑Meteo daily fetch. Provide both
+          values.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          days?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Number of days (1–7) to display. Defaults to 5.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disableFetch?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Skips network calls; shows static fallback forecast cards.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          refreshInterval?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Minutes between automatic updates. 0 disables auto refresh (default).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom accessible region label. Defaults to “Daily forecast for
+          &#123;location&#125;”.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Tailwind utility overrides appended to the root container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Supply coordinates for live data or omit them for a static demo snapshot.
+      Auto refresh keeps values current at the chosen interval. All dynamic
+      states (loading / error) are announced through a polite status line and <code
+        >aria-busy</code
+      > toggling.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Demo</h2>
+    <div class="flex flex-wrap gap-6">
+      <WeatherForecast location="Demo Location" disableFetch />
+      <WeatherForecast
+        location="Berlin"
+        latitude={52.52}
+        longitude={13.4}
+        days={7}
+        refreshInterval={120}
+      />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      The root container is a labeled <code>region</code> so assistive tech can identify
+      the scope of the forecast. A polite live region announces loading and error
+      messages; <code>aria-busy</code> reflects network activity. Indicator dots
+      are supplemental only—text always conveys condition.
+    </p>
+    <p class="text-base text-slate-200">
+      All text meets ≥9:1 contrast in both light and dark themes; colored dots
+      are small enough not to reduce readability. High contrast mode adds an
+      outline around the component. Motion (skeleton shimmer) disables
+      automatically under <code>prefers-reduced-motion</code>.
+    </p>
+    <p class="text-base text-slate-200">
+      No nested interactive controls—cards are static content. Screen readers
+      receive semantic text without extraneous roles.
+    </p>
+  </section>
+</DocsLayout>

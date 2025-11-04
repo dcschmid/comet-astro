@@ -2,7 +2,16 @@
 interface Props {
   category?: string;
   label?: string;
-  tone?: 'purple' | 'blue' | 'emerald' | 'amber' | 'rose' | 'sky' | 'indigo' | 'slate' | 'neutral';
+  tone?:
+    | 'purple'
+    | 'blue'
+    | 'emerald'
+    | 'amber'
+    | 'rose'
+    | 'sky'
+    | 'indigo'
+    | 'slate'
+    | 'neutral';
   /** Optional semantic element; defaults to span */
   as?: 'span' | 'div';
   /** Optional link target turning badge into anchor */
@@ -14,7 +23,16 @@ interface Props {
   className?: string;
 }
 
-const { category, label, tone, as = 'span', href, ariaLabel, size = 'md', className = '' } = Astro.props as Props;
+const {
+  category,
+  label,
+  tone,
+  as = 'span',
+  href,
+  ariaLabel,
+  size = 'md',
+  className = '',
+} = Astro.props as Props;
 
 const display = label ?? category ?? '';
 const normalizedDisplay = typeof display === 'string' ? display.trim() : '';
@@ -26,21 +44,27 @@ const normalizedTone =
 // WCAG AAA friendly color pairs: ensure small text contrast >= 7:1
 // Using slightly darker/lighter adjustments in dark mode.
 const toneStyles: Record<string, string> = {
-  purple: 'border-purple-700 bg-purple-700 text-white dark:border-purple-500 dark:bg-purple-500 dark:text-white',
+  purple:
+    'border-purple-700 bg-purple-700 text-white dark:border-purple-500 dark:bg-purple-500 dark:text-white',
   blue: 'border-blue-700 bg-blue-700 text-white dark:border-blue-500 dark:bg-blue-500 dark:text-white',
-  emerald: 'border-emerald-700 bg-emerald-700 text-white dark:border-emerald-600 dark:bg-emerald-600 dark:text-white',
-  amber: 'border-amber-600 bg-amber-500 text-slate-900 dark:border-amber-500 dark:bg-amber-400 dark:text-slate-900',
+  emerald:
+    'border-emerald-700 bg-emerald-700 text-white dark:border-emerald-600 dark:bg-emerald-600 dark:text-white',
+  amber:
+    'border-amber-600 bg-amber-500 text-slate-900 dark:border-amber-500 dark:bg-amber-400 dark:text-slate-900',
   rose: 'border-rose-700 bg-rose-600 text-white dark:border-rose-500 dark:bg-rose-500 dark:text-white',
   sky: 'border-sky-700 bg-sky-700 text-white dark:border-sky-600 dark:bg-sky-600 dark:text-white',
-  indigo: 'border-indigo-700 bg-indigo-700 text-white dark:border-indigo-500 dark:bg-indigo-500 dark:text-white',
-  slate: 'border-slate-600 bg-slate-600 text-white dark:border-slate-500 dark:bg-slate-500 dark:text-white',
-  neutral: 'border-neutral-600 bg-neutral-600 text-white dark:border-neutral-500 dark:bg-neutral-500 dark:text-white'
+  indigo:
+    'border-indigo-700 bg-indigo-700 text-white dark:border-indigo-500 dark:bg-indigo-500 dark:text-white',
+  slate:
+    'border-slate-600 bg-slate-600 text-white dark:border-slate-500 dark:bg-slate-500 dark:text-white',
+  neutral:
+    'border-neutral-600 bg-neutral-600 text-white dark:border-neutral-500 dark:bg-neutral-500 dark:text-white',
 };
 
 const heuristicColor = () => {
   const key = normalizedCategory || normalizedDisplay.toLowerCase();
   if (!key) {
-  return toneStyles.slate;
+    return toneStyles.slate;
   }
   if (key.includes('rock')) {
     return toneStyles.purple;
@@ -60,33 +84,54 @@ const heuristicColor = () => {
   return toneStyles.slate;
 };
 
-const color = (normalizedTone && toneStyles[normalizedTone]) || heuristicColor();
+const color =
+  (normalizedTone && toneStyles[normalizedTone]) || heuristicColor();
 const text = normalizedDisplay || 'Category';
 
 const sizeStyles: Record<string, string> = {
   sm: 'text-[10px] px-2 py-0.5',
   md: 'text-xs px-2.5 py-1',
-  lg: 'text-sm px-3 py-1.5'
+  lg: 'text-sm px-3 py-1.5',
 };
 const finalSize = sizeStyles[size] || sizeStyles.md;
-const base = 'inline-flex items-center rounded-full border font-semibold uppercase tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400';
-const interactive = href ? 'transition-colors hover:brightness-110 focus-visible:brightness-110' : '';
+const base =
+  'inline-flex items-center rounded-full border font-semibold uppercase tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400';
+const interactive = href
+  ? 'transition-colors hover:brightness-110 focus-visible:brightness-110'
+  : '';
 const ariaAttrs: Record<string, string> = {};
 if (ariaLabel) ariaAttrs['aria-label'] = ariaLabel;
 if (href) ariaAttrs['href'] = href;
 ---
-{href && (
-  <a class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()} aria-label={ariaAttrs['aria-label']} href={href}>
-    <span class="leading-none">{text}</span>
-  </a>
-)}
-{!href && as === 'div' && (
-  <div class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()} aria-label={ariaAttrs['aria-label']}>
-    <span class="leading-none">{text}</span>
-  </div>
-)}
-{!href && as !== 'div' && (
-  <span class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()} aria-label={ariaAttrs['aria-label']}>
-    <span class="leading-none">{text}</span>
-  </span>
-)}
+
+{
+  href && (
+    <a
+      class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()}
+      aria-label={ariaAttrs['aria-label']}
+      href={href}
+    >
+      <span class="leading-none">{text}</span>
+    </a>
+  )
+}
+{
+  !href && as === 'div' && (
+    <div
+      class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()}
+      aria-label={ariaAttrs['aria-label']}
+    >
+      <span class="leading-none">{text}</span>
+    </div>
+  )
+}
+{
+  !href && as !== 'div' && (
+    <span
+      class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()}
+      aria-label={ariaAttrs['aria-label']}
+    >
+      <span class="leading-none">{text}</span>
+    </span>
+  )
+}

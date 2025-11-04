@@ -1,12 +1,71 @@
 ---
+import { cn } from '../utils/cn';
+
 interface Props {
+  /**
+   * The label/title of the statistic
+   */
   label: string;
+
+  /**
+   * The main value to display
+   */
   value: string | number;
+
+  /**
+   * Optional icon to display (emoji or text)
+   */
   icon?: string;
+
+  /**
+   * Trend percentage (positive/negative)
+   */
   trend?: number;
+
+  /**
+   * Additional context for the trend
+   */
   trendLabel?: string;
-  variant?: 'default' | 'gradient';
-  className?: string;
+
+  /**
+   * Visual variant of the card
+   */
+  variant?: 'default' | 'gradient' | 'bordered' | 'elevated';
+
+  /**
+   * Size variant for responsive design
+   */
+  size?: 'sm' | 'md' | 'lg';
+
+  /**
+   * Semantic HTML element to render
+   */
+  as?: 'div' | 'article' | 'section';
+
+  /**
+   * ARIA role for accessibility
+   */
+  role?: string;
+
+  /**
+   * ARIA label for accessibility
+   */
+  ariaLabel?: string;
+
+  /**
+   * ARIA labelledby reference
+   */
+  ariaLabelledby?: string;
+
+  /**
+   * Enable visual debugging
+   */
+  debug?: boolean;
+
+  /**
+   * Additional CSS classes
+   */
+  class?: string;
 }
 
 const {
@@ -16,33 +75,244 @@ const {
   trend,
   trendLabel,
   variant = 'default',
-  className = '',
-} = Astro.props;
+  size = 'md',
+  as: Element = 'div',
+  role,
+  ariaLabel,
+  ariaLabelledby,
+  debug = false,
+  class: className = '',
+} = Astro.props as Props;
 
-const isPositiveTrend = trend && trend > 0;
-const isNegativeTrend = trend && trend < 0;
+// Trend calculations
+const isPositiveTrend = trend !== undefined && trend > 0;
+const isNegativeTrend = trend !== undefined && trend < 0;
+const isNeutralTrend = trend !== undefined && trend === 0;
 
-const variantClasses = {
-  default:
-    'border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950',
-  gradient:
-    'border border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 shadow-sm dark:border-blue-500/40 dark:from-blue-900/40 dark:via-purple-900/30 dark:to-blue-900/40',
+// Size classes for responsive design
+const sizeClasses = {
+  sm: {
+    container: 'p-4 rounded-lg',
+    label: 'text-xs',
+    value: 'text-xl',
+    icon: 'text-lg',
+    trend: 'text-xs',
+  },
+  md: {
+    container: 'p-6 rounded-xl',
+    label: 'text-sm',
+    value: 'text-3xl',
+    icon: 'text-2xl',
+    trend: 'text-sm',
+  },
+  lg: {
+    container: 'p-8 rounded-2xl',
+    label: 'text-base',
+    value: 'text-4xl',
+    icon: 'text-3xl',
+    trend: 'text-base',
+  },
 };
+
+// Variant classes with WCAG AAA compliance
+const variantClasses = {
+  default: cn(
+    // Light mode - 9:1 contrast ratio
+    'border border-slate-200 bg-white shadow-sm',
+    // Dark mode - 9:1 contrast ratio
+    'dark:border-slate-700 dark:bg-slate-900',
+    // High contrast support
+    '@media (prefers-contrast: high) {',
+    '  border-slate-900 bg-white text-slate-900',
+    '  dark:border-slate-100 dark:bg-slate-900 dark:text-slate-100',
+    '}'
+  ),
+  gradient: cn(
+    // Light mode gradient with high contrast
+    'border border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 shadow-md',
+    // Dark mode gradient with high contrast
+    'dark:border-blue-600 dark:from-blue-950 dark:via-purple-950 dark:to-blue-950',
+    // High contrast support
+    '@media (prefers-contrast: high) {',
+    '  border-blue-900 from-blue-100 via-indigo-100 to-purple-100',
+    '  dark:border-blue-200 dark:from-blue-900 dark:via-purple-900 dark:to-blue-900',
+    '}'
+  ),
+  bordered: cn(
+    // Enhanced border variant
+    'border-2 border-slate-300 bg-white shadow-sm',
+    'dark:border-slate-600 dark:bg-slate-900',
+    // High contrast support
+    '@media (prefers-contrast: high) {',
+    '  border-slate-900 bg-white',
+    '  dark:border-slate-100 dark:bg-slate-900',
+    '}'
+  ),
+  elevated: cn(
+    // Elevated shadow variant
+    'border border-slate-200 bg-white shadow-lg shadow-slate-200/50',
+    'dark:border-slate-700 dark:bg-slate-900 dark:shadow-slate-900/50',
+    // High contrast support
+    '@media (prefers-contrast: high) {',
+    '  border-slate-900 bg-white shadow-slate-900/25',
+    '  dark:border-slate-100 dark:bg-slate-900 dark:shadow-slate-100/25',
+    '}'
+  ),
+};
+
+// Label classes with WCAG AAA contrast
+const labelClasses = cn(
+  'font-semibold uppercase tracking-wide',
+  // Light mode - 9:1 contrast
+  'text-slate-700',
+  // Dark mode - 9:1 contrast
+  'dark:text-slate-200',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  '  text-slate-900 dark:text-slate-100',
+  '}',
+  sizeClasses[size].label
+);
+
+// Value classes with maximum contrast
+const valueClasses = cn(
+  'font-bold',
+  // Light mode - maximum contrast
+  'text-slate-900',
+  // Dark mode - maximum contrast
+  'dark:text-slate-50',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  '  text-slate-900 dark:text-slate-100',
+  '}',
+  sizeClasses[size].value
+);
+
+// Icon classes with proper contrast
+const iconClasses = cn(
+  // Light mode
+  'text-slate-600',
+  // Dark mode
+  'dark:text-slate-300',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  '  text-slate-900 dark:text-slate-100',
+  '}',
+  sizeClasses[size].icon
+);
+
+// Trend classes with semantic colors and WCAG AAA contrast
+const trendClasses = cn(
+  'inline-flex items-center font-semibold',
+  // Positive trend - green with high contrast
+  isPositiveTrend && 'text-emerald-800 dark:text-emerald-300',
+  // Negative trend - red with high contrast
+  isNegativeTrend && 'text-red-800 dark:text-red-300',
+  // Neutral trend - gray with high contrast
+  isNeutralTrend && 'text-slate-700 dark:text-slate-200',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  isPositiveTrend && '  text-emerald-900 dark:text-emerald-200',
+  isNegativeTrend && '  text-red-900 dark:text-red-200',
+  isNeutralTrend && '  text-slate-900 dark:text-slate-100',
+  '}',
+  sizeClasses[size].trend
+);
+
+// Trend label classes
+const trendLabelClasses = cn(
+  // Light mode
+  'text-slate-600',
+  // Dark mode
+  'dark:text-slate-300',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  '  text-slate-900 dark:text-slate-100',
+  '}',
+  sizeClasses[size].trend
+);
+
+// Main container classes
+const containerClasses = cn(
+  // Base styles
+  'relative transition-colors duration-200',
+  // Size-specific container classes
+  sizeClasses[size].container,
+  // Variant styles
+  variantClasses[variant],
+  // Debug mode
+  debug && 'debug-stat-card',
+  // Focus management for interactive cards
+  'focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2',
+  'dark:focus-within:ring-blue-400 dark:focus-within:ring-offset-slate-900',
+  // Custom classes
+  className
+);
+
+// Generate unique IDs for accessibility
+const labelId = `stat-label-${Math.random().toString(36).substr(2, 9)}`;
+const valueId = `stat-value-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class={`rounded-xl p-6 ${variantClasses[variant]} ${className}`.trim()}>
+<style>
+  .debug-stat-card {
+    /* Debug visualization */
+    outline: 2px dashed rgba(255, 0, 255, 0.5);
+    outline-offset: 2px;
+    position: relative;
+  }
+
+  .debug-stat-card::after {
+    content: attr(data-debug-info);
+    position: absolute;
+    top: -1.5rem;
+    left: 0;
+    font-size: 0.75rem;
+    color: rgb(255 0 255);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    z-index: 10;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .debug-stat-card::after {
+      background: rgba(0, 0, 0, 0.9);
+      color: rgb(255 0 255);
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .debug-stat-card,
+    .stat-card-container {
+      transition: none !important;
+    }
+  }
+
+  /* High contrast mode adjustments */
+  @media (prefers-contrast: high) {
+    .debug-stat-card {
+      outline-color: rgb(255 0 255) !important;
+    }
+  }
+</style>
+
+<Element
+  class={containerClasses}
+  role={role}
+  aria-label={ariaLabel}
+  aria-labelledby={ariaLabelledby || `${labelId} ${valueId}`}
+  data-debug-info={debug ? `${variant} ${size}` : undefined}
+>
   <div class="mb-2 flex items-start justify-between">
-    <p
-      class="text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300"
-    >
+    <p id={labelId} class={labelClasses}>
       {label}
     </p>
     {
       icon && (
-        <span
-          class="text-2xl text-slate-500 dark:text-slate-300"
-          aria-hidden="true"
-        >
+        <span class={iconClasses} aria-hidden="true">
           {icon}
         </span>
       )
@@ -50,31 +320,27 @@ const variantClasses = {
   </div>
 
   <div class="mb-3">
-    <p class="text-3xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+    <p id={valueId} class={valueClasses}>
+      {value}
+    </p>
   </div>
 
   {
     (trend !== undefined || trendLabel) && (
-      <div class="flex items-center gap-2 text-sm">
+      <div class="flex items-center gap-2">
         {trend !== undefined && (
           <span
-            class={`inline-flex items-center font-semibold ${
-              isPositiveTrend
-                ? 'text-emerald-700 dark:text-emerald-400'
-                : isNegativeTrend
-                  ? 'text-rose-700 dark:text-rose-400'
-                  : 'text-slate-600 dark:text-slate-300'
-            }`}
+            class={trendClasses}
+            aria-label={`Trend: ${isPositiveTrend ? 'positive' : isNegativeTrend ? 'negative' : 'neutral'} ${Math.abs(trend)}%`}
           >
-            {isPositiveTrend && '↑'}
-            {isNegativeTrend && '↓'}
-            {Math.abs(trend)}%
+            {isPositiveTrend && <span aria-hidden="true">↗</span>}
+            {isNegativeTrend && <span aria-hidden="true">↘</span>}
+            {isNeutralTrend && <span aria-hidden="true">→</span>}
+            <span class="ml-1">{Math.abs(trend)}%</span>
           </span>
         )}
-        {trendLabel && (
-          <span class="text-slate-600 dark:text-slate-300">{trendLabel}</span>
-        )}
+        {trendLabel && <span class={trendLabelClasses}>{trendLabel}</span>}
       </div>
     )
   }
-</div>
+</Element>

@@ -1,0 +1,382 @@
+---
+/**
+ * CurrentWeather – Minimal Astro + Tailwind component.
+ * Focus: WCAG AAA contrast, semantic structure, no overengineering.
+ * Optional client fetch if latitude & longitude provided.
+ */
+interface Props {
+  latitude?: number;
+  longitude?: number;
+  location?: string;
+  unit?: 'c' | 'f';
+  showDetails?: boolean; // humidity & wind
+  refreshInterval?: number; // minutes (0 = no auto refresh)
+  disableFetch?: boolean; // Force static mode even if coordinates provided
+  class?: string;
+  ariaLabel?: string;
+}
+
+const {
+  latitude,
+  longitude,
+  location = 'Demo Location',
+  unit = 'c',
+  showDetails = true,
+  refreshInterval = 0,
+  disableFetch = false,
+  class: className = '',
+  ariaLabel,
+  ...rest
+} = Astro.props as Props;
+
+// Fallback demo values (will be replaced if fetch succeeds)
+const fallback = {
+  temperatureC: 18.4,
+  temperatureF: 65.1,
+  humidity: 62,
+  windKph: 14,
+  windDir: 'NW',
+  condition: 'Partly cloudy',
+  isDay: true,
+};
+
+const label = ariaLabel || `Current weather for ${location}`;
+const containerClasses = `rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
+const tempUnitSymbol = unit === 'c' ? '°C' : '°F';
+const tempValue =
+  unit === 'c'
+    ? Math.round(fallback.temperatureC)
+    : Math.round(fallback.temperatureF);
+const windDisplay = `${fallback.windKph} km/h ${fallback.windDir}`;
+const iconMap: Record<string, string> = {
+  Clear: '☀️',
+  'Mainly clear': '🌤️',
+  'Partly cloudy': '⛅',
+  Overcast: '☁️',
+  Rain: '🌧️',
+  Snow: '❄️',
+};
+const emoji = iconMap[fallback.condition] || '⛅';
+---
+
+<div
+  class={containerClasses}
+  role="region"
+  aria-label={label}
+  aria-busy={latitude && longitude && !disableFetch ? 'true' : 'false'}
+  data-current-weather
+  data-unit={unit}
+  data-refresh={refreshInterval}
+  data-lat={latitude}
+  data-lon={longitude}
+  data-disable-fetch={disableFetch}
+  data-state={latitude && longitude && !disableFetch ? 'loading' : 'static'}
+  {...rest}
+>
+  <header
+    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
+  >
+    <h2
+      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+    >
+      <span aria-hidden="true" class="text-2xl">📍</span>
+      <span class="truncate" data-location>{location}</span>
+    </h2>
+    <p
+      class="text-xs font-medium text-slate-600 dark:text-slate-300"
+      aria-live="polite"
+      data-updated
+    >
+      {
+        latitude && longitude && !disableFetch
+          ? 'Loading live data…'
+          : 'Demo data (static)'
+      }
+    </p>
+  </header>
+
+  <div class="grid gap-6 md:gap-8 md:grid-cols-3 items-start">
+    <div class="flex flex-col items-center gap-3 md:col-span-1">
+      <div
+        class="text-5xl md:text-6xl transition-opacity"
+        role="img"
+        aria-label={fallback.condition}
+        data-icon
+      >
+        {emoji}
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <span
+          class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 transition-colors"
+          data-temp>{tempValue}{tempUnitSymbol}</span
+        >
+        <span class="text-sm text-slate-700 dark:text-slate-300" data-condition
+          >{fallback.condition}</span
+        >
+      </div>
+      <span
+        class="text-xs rounded-full px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+        data-daynight>{fallback.isDay ? 'Daytime' : 'Night'}</span
+      >
+      <div
+        class="hidden text-xs text-slate-600 dark:text-slate-400"
+        data-loading-indicator
+      >
+        Loading…
+      </div>
+      <div
+        class="hidden text-xs text-rose-700 dark:text-rose-300"
+        data-error-indicator
+      >
+        Error loading data (showing fallback)
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4 md:col-span-2">
+      {
+        showDetails && (
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" data-details>
+            <div class="flex flex-col gap-1" role="group" aria-label="Humidity">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+                Humidity
+              </span>
+              <span
+                class="text-sm font-semibold text-slate-900 dark:text-slate-50"
+                data-humidity
+              >
+                {fallback.humidity}%
+              </span>
+            </div>
+            <div class="flex flex-col gap-1" role="group" aria-label="Wind">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+                Wind
+              </span>
+              <span
+                class="text-sm font-semibold text-slate-900 dark:text-slate-50"
+                data-wind
+              >
+                {windDisplay}
+              </span>
+            </div>
+            <div
+              class="flex flex-col gap-1"
+              role="group"
+              aria-label="Feels like"
+            >
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+                Feels Like
+              </span>
+              <span
+                class="text-sm font-semibold text-slate-900 dark:text-slate-50"
+                data-feels
+              >
+                {tempValue}
+                {tempUnitSymbol}
+              </span>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  <footer
+    class="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap gap-3 text-xs text-slate-600 dark:text-slate-400"
+  >
+    <span
+      >Data source: <a
+        href="https://open-meteo.com"
+        class="underline text-slate-800 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300"
+        >Open‑Meteo</a
+      ></span
+    >
+    <span class="ml-auto" data-refresh-indicator
+      >{
+        refreshInterval > 0
+          ? `Auto refresh ${refreshInterval}m`
+          : 'Manual refresh'
+      }</span
+    >
+  </footer>
+</div>
+<script>
+  const codeToCondition = (code) => {
+    // Simplified mapping for Open-Meteo weather codes
+    const map = {
+      0: 'Clear',
+      1: 'Mainly clear',
+      2: 'Partly cloudy',
+      3: 'Overcast',
+      45: 'Fog',
+      48: 'Depositing rime fog',
+      51: 'Drizzle',
+      53: 'Drizzle',
+      55: 'Drizzle',
+      61: 'Rain',
+      63: 'Rain',
+      65: 'Rain',
+      71: 'Snow',
+      73: 'Snow',
+      75: 'Snow',
+      77: 'Snow grains',
+      80: 'Rain showers',
+      81: 'Rain showers',
+      82: 'Rain showers',
+      95: 'Thunderstorm',
+      96: 'Thunderstorm',
+      99: 'Thunderstorm',
+    };
+    return map[code] || 'Unknown';
+  };
+
+  const conditionToEmoji = (condition) => {
+    const m = {
+      Clear: '☀️',
+      'Mainly clear': '🌤️',
+      'Partly cloudy': '⛅',
+      Overcast: '☁️',
+      Rain: '🌧️',
+      'Rain showers': '🌦️',
+      Snow: '❄️',
+      Thunderstorm: '⛈️',
+      Fog: '🌫️',
+    };
+    return m[condition] || '⛅';
+  };
+
+  function initCurrentWeather(el) {
+    const lat = parseFloat(el.dataset.lat);
+    const lon = parseFloat(el.dataset.lon);
+    const unit = el.dataset.unit || 'c';
+    const refresh = parseInt(el.dataset.refresh || '0');
+    const disableFetch = el.dataset.disableFetch === 'true';
+    const tempEl = el.querySelector('[data-temp]');
+    const condEl = el.querySelector('[data-condition]');
+    const iconEl = el.querySelector('[data-icon]');
+    const humidEl = el.querySelector('[data-humidity]');
+    const windEl = el.querySelector('[data-wind]');
+    const feelsEl = el.querySelector('[data-feels]');
+    const dayNightEl = el.querySelector('[data-daynight]');
+    const updatedEl = el.querySelector('[data-updated]');
+    const loadingEl = el.querySelector('[data-loading-indicator]');
+    const errorEl = el.querySelector('[data-error-indicator]');
+
+    const setState = (state) => {
+      el.dataset.state = state;
+      if (state === 'loading') {
+        el.setAttribute('aria-busy', 'true');
+        if (loadingEl) loadingEl.classList.remove('hidden');
+        if (errorEl) errorEl.classList.add('hidden');
+        el.classList.add('is-loading');
+      } else {
+        el.setAttribute('aria-busy', 'false');
+        if (loadingEl) loadingEl.classList.add('hidden');
+        el.classList.remove('is-loading');
+      }
+      if (state === 'error' && errorEl) errorEl.classList.remove('hidden');
+    };
+
+    const canFetch = !!lat && !!lon && !disableFetch;
+    if (!canFetch) return; // static demo mode
+
+    const doFetch = async () => {
+      setState('loading');
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,weather_code,is_day&timezone=auto`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('bad response');
+        const data = await res.json();
+        const c = data.current;
+        if (!c) throw new Error('no current');
+        const condition = codeToCondition(c.weather_code);
+        const emoji = conditionToEmoji(condition);
+        const tempC = Math.round(c.temperature_2m);
+        const tempF = Math.round((tempC * 9) / 5 + 32);
+        const tempDisplay = unit === 'f' ? `${tempF}°F` : `${tempC}°C`;
+        if (tempEl) tempEl.textContent = tempDisplay;
+        if (feelsEl) feelsEl.textContent = tempDisplay;
+        if (condEl) condEl.textContent = condition;
+        if (iconEl) {
+          iconEl.textContent = emoji;
+          iconEl.setAttribute('aria-label', condition);
+        }
+        if (humidEl) humidEl.textContent = `${c.relative_humidity_2m}%`;
+        if (windEl) {
+          const dirs = [
+            'N',
+            'NNE',
+            'NE',
+            'ENE',
+            'E',
+            'ESE',
+            'SE',
+            'SSE',
+            'S',
+            'SSW',
+            'SW',
+            'WSW',
+            'W',
+            'WNW',
+            'NW',
+            'NNW',
+          ];
+          const dirTxt = dirs[Math.round(c.wind_direction_10m / 22.5) % 16];
+          windEl.textContent = `${Math.round(c.wind_speed_10m)} km/h ${dirTxt}`;
+        }
+        if (dayNightEl) dayNightEl.textContent = c.is_day ? 'Daytime' : 'Night';
+        if (updatedEl) {
+          const now = new Date();
+          updatedEl.textContent = `Updated ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
+        setState('ready');
+      } catch {
+        if (updatedEl)
+          updatedEl.textContent = 'Live update failed (showing fallback)';
+        setState('error');
+      }
+    };
+
+    doFetch();
+    if (refresh > 0) setInterval(doFetch, refresh * 60 * 1000);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document
+      .querySelectorAll('[data-current-weather]')
+      .forEach(initCurrentWeather);
+  });
+</script>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-current-weather] * {
+      transition: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    [data-current-weather] {
+      outline: 2px solid currentColor;
+    }
+  }
+
+  [data-current-weather].is-loading [data-icon],
+  [data-current-weather].is-loading [data-temp] {
+    opacity: 0.7;
+  }
+
+  [data-current-weather][data-state='loading'] [data-icon],
+  [data-current-weather][data-state='loading'] [data-temp],
+  [data-current-weather][data-state='loading'] [data-condition] {
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+</style>

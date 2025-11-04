@@ -47,82 +47,104 @@ const {
     class={`mx-auto max-w-7xl px-4 ${variant === 'detailed' ? 'space-y-8' : 'flex flex-col gap-6 md:flex-row md:items-center md:justify-between'}`}
   >
     {/* Brand and Copyright Section */}
-    {showBrand && (
-      <div class="text-center md:text-left">
-        {brandUrl ? (
-          <a 
-            href={brandUrl}
-            class="inline-flex items-center font-semibold text-slate-800 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:text-slate-100 dark:hover:text-slate-300 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-950 transition-colors duration-200"
-            aria-label={`${brand} homepage`}
-          >
-            &copy; {showYear ? year : ''} {brand}
-          </a>
-        ) : (
-          <span class="font-semibold text-slate-800 dark:text-slate-100">
-            &copy; {showYear ? year : ''} {brand}
-          </span>
-        )}
-      </div>
-    )}
+    {
+      showBrand && (
+        <div class="text-center md:text-left">
+          {brandUrl ? (
+            <a
+              href={brandUrl}
+              class="inline-flex items-center font-semibold text-slate-800 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:text-slate-100 dark:hover:text-slate-300 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-950 transition-colors duration-200"
+              aria-label={`${brand} homepage`}
+            >
+              &copy; {showYear ? year : ''} {brand}
+            </a>
+          ) : (
+            <span class="font-semibold text-slate-800 dark:text-slate-100">
+              &copy; {showYear ? year : ''} {brand}
+            </span>
+          )}
+        </div>
+      )
+    }
 
     {/* Social Links Section */}
-    {socialLinks.length > 0 && (
-      <nav aria-label="Social media links" class="flex flex-wrap justify-center gap-3 md:justify-start">
-        {socialLinks.map((link) => (
-          <a
-            href={link.href}
-            target={link.external ? '_blank' : undefined}
-            rel={link.external ? 'noopener noreferrer' : undefined}
-            aria-label={link.ariaLabel || `${link.label} (opens in new window)`}
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-300/50 bg-white/50 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-600/50 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:border-blue-500 dark:hover:bg-blue-500/10 dark:hover:text-blue-300 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-950"
-          >
-            {link.label}
-            {link.external && (
-              <span class="sr-only"> (opens in new window)</span>
-            )}
-          </a>
-        ))}
-      </nav>
-    )}
+    {
+      socialLinks.length > 0 && (
+        <nav
+          aria-label="Social media links"
+          class="flex flex-wrap justify-center gap-3 md:justify-start"
+        >
+          {socialLinks.map((link) => (
+            <a
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
+              aria-label={
+                link.ariaLabel || `${link.label} (opens in new window)`
+              }
+              class="inline-flex items-center gap-2 rounded-lg border border-slate-300/50 bg-white/50 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-600/50 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:border-blue-500 dark:hover:bg-blue-500/10 dark:hover:text-blue-300 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-950"
+            >
+              {link.label}
+              {link.external && (
+                <span class="sr-only"> (opens in new window)</span>
+              )}
+            </a>
+          ))}
+        </nav>
+      )
+    }
 
     {/* Legal Links Section */}
-    {legalLinks.length > 0 && (
-      <nav aria-label="Legal and policy links" class="flex flex-wrap justify-center gap-3 md:justify-end">
-        {legalLinks.map((link) => (
-          <a
-            href={link.href}
-            target={link.external ? '_blank' : undefined}
-            rel={link.external ? 'noopener noreferrer' : undefined}
-            aria-label={link.ariaLabel || link.label}
-            class="inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-slate-100 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-950"
-          >
-            {link.label}
-            {link.external && (
-              <span class="sr-only"> (opens in new window)</span>
-            )}
-          </a>
-        ))}
-      </nav>
-    )}
+    {
+      legalLinks.length > 0 && (
+        <nav
+          aria-label="Legal and policy links"
+          class="flex flex-wrap justify-center gap-3 md:justify-end"
+        >
+          {legalLinks.map((link) => (
+            <a
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
+              aria-label={link.ariaLabel || link.label}
+              class="inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-slate-100 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-950"
+            >
+              {link.label}
+              {link.external && (
+                <span class="sr-only"> (opens in new window)</span>
+              )}
+            </a>
+          ))}
+        </nav>
+      )
+    }
 
     {/* External Links Section */}
-    {externalLinks.length > 0 && (
-      <nav aria-label="External links" class="flex flex-wrap justify-center gap-3">
-        {externalLinks.map((link) => (
-          <a
-            href={link.href}
-            target={link.external ? '_blank' : undefined}
-            rel={link.external ? 'noopener noreferrer' : undefined}
-            aria-label={link.ariaLabel || `${link.label}${link.external ? ' (opens in new window)' : ''}`}
-            class="inline-flex items-center gap-1 rounded-lg border border-slate-300/50 bg-slate-50/50 px-3 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-800 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-600/50 dark:bg-slate-800/30 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:bg-slate-700/50 dark:hover:text-slate-100 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-950"
-          >
-            {link.label}
-            {link.external && (
-              <span class="sr-only"> (opens in new window)</span>
-            )}
-          </a>
-        ))}
-      </nav>
-    )}
+    {
+      externalLinks.length > 0 && (
+        <nav
+          aria-label="External links"
+          class="flex flex-wrap justify-center gap-3"
+        >
+          {externalLinks.map((link) => (
+            <a
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
+              aria-label={
+                link.ariaLabel ||
+                `${link.label}${link.external ? ' (opens in new window)' : ''}`
+              }
+              class="inline-flex items-center gap-1 rounded-lg border border-slate-300/50 bg-slate-50/50 px-3 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-800 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-600/50 dark:bg-slate-800/30 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:bg-slate-700/50 dark:hover:text-slate-100 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-950"
+            >
+              {link.label}
+              {link.external && (
+                <span class="sr-only"> (opens in new window)</span>
+              )}
+            </a>
+          ))}
+        </nav>
+      )
+    }
   </div>
 </footer>

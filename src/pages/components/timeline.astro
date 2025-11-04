@@ -1,12 +1,17 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Timeline from '../../components/Timeline.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import Tabs from '../../components/Tabs.astro';
+import Card from '../../components/Card.astro';
+import Badge from '../../components/Badge.astro';
+import Callout from '../../components/Callout.astro';
 
-const events = [
+const basicEvents = [
   {
     date: '2025-01-15',
-    title: 'Project Started',
-    description: 'Initial kickoff meeting',
+    title: 'Project Kickoff',
+    description: 'Initial meeting and project planning',
     variant: 'success',
     icon: '🚀',
   },
@@ -14,30 +19,1061 @@ const events = [
     date: '2025-02-01',
     title: 'Design Phase',
     description: 'Created mockups and wireframes',
+    variant: 'default',
+    icon: '🎨',
   },
   {
     date: '2025-03-10',
     title: 'Development',
     description: 'Started implementation',
-    variant: 'default',
+    variant: 'info',
     icon: '💻',
   },
   {
     date: '2025-04-20',
-    title: 'Testing',
-    description: 'QA and bug fixes',
+    title: 'Testing Phase',
+    description: 'QA testing and bug fixes',
     variant: 'warning',
     icon: '🧪',
   },
 ];
+
+const linkEvents = [
+  {
+    date: '2025-01-01',
+    title: 'Company Founded',
+    description: 'The beginning of our journey',
+    variant: 'success',
+    icon: '🏢',
+    href: '#founding',
+  },
+  {
+    date: '2025-06-15',
+    title: 'Product Launch',
+    description: 'First major product release',
+    variant: 'default',
+    icon: '🚀',
+    href: '#launch',
+  },
+  {
+    date: '2025-12-01',
+    title: 'Documentation',
+    description: 'External documentation link',
+    variant: 'info',
+    icon: '📚',
+    href: 'https://example.com',
+    target: '_blank',
+  },
+];
+
+const statusEvents = [
+  {
+    date: '2025-01-01',
+    title: 'Planning Complete',
+    description: 'All requirements gathered',
+    variant: 'success',
+    icon: '✅',
+  },
+  {
+    date: '2025-02-01',
+    title: 'In Progress',
+    description: 'Development is ongoing',
+    variant: 'info',
+    icon: '🔄',
+  },
+  {
+    date: '2025-03-01',
+    title: 'Under Review',
+    description: 'Awaiting stakeholder feedback',
+    variant: 'warning',
+    icon: '⏳',
+  },
+  {
+    date: '2025-04-01',
+    title: 'Blocked',
+    description: 'Waiting for external dependencies',
+    variant: 'error',
+    icon: '🚫',
+  },
+];
 ---
 
-<DocsLayout
-  title="Timeline"
-  description="Chronological event display with icons and status variants."
->
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <Timeline events={events} />
-  </section>
+<DocsLayout title="Timeline Component">
+  <div class="space-y-8">
+    <!-- Header -->
+    <div class="border-b border-slate-200 dark:border-slate-800 pb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">
+          Timeline
+        </h1>
+        <Badge variant="outline">Display</Badge>
+      </div>
+      <p class="text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
+        A WCAG AAA compliant timeline component for displaying chronological
+        events with icons, status variants, interactive elements, and
+        comprehensive accessibility features.
+      </p>
+    </div>
+
+    <!-- Quick Start -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Quick Start
+      </h2>
+      <div class="grid gap-6">
+        <Card>
+          <div class="p-6">
+            <Timeline events={basicEvents} />
+          </div>
+        </Card>
+        <CodeBlock
+          language="astro"
+          code={`---
+import Timeline from './components/Timeline.astro';
+
+const events = [
+  {
+    date: '2025-01-15',
+    title: 'Project Kickoff',
+    description: 'Initial meeting and project planning',
+    variant: 'success',
+    icon: '🚀',
+  },
+  {
+    date: '2025-02-01',
+    title: 'Design Phase',
+    description: 'Created mockups and wireframes',
+    variant: 'default',
+    icon: '🎨',
+  }
+];
+---
+
+<Timeline events={events} />`}
+        />
+      </div>
+    </section>
+
+    <!-- Variants -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Variants
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Four distinct visual styles optimized for different design contexts.
+      </p>
+
+      <Tabs variant="pills" size="sm">
+        <div slot="tab-1">
+          <span>Default</span>
+        </div>
+        <div slot="panel-1">
+          <Card>
+            <div class="p-6">
+              <Timeline
+                variant="default"
+                events={basicEvents.slice(0, 3)}
+                size="sm"
+              />
+            </div>
+          </Card>
+          <CodeBlock
+            language="astro"
+            code={`<Timeline variant="default" events={events} />`}
+          />
+        </div>
+
+        <div slot="tab-2">
+          <span>Minimal</span>
+        </div>
+        <div slot="panel-2">
+          <Card>
+            <div class="p-6">
+              <Timeline
+                variant="minimal"
+                events={basicEvents.slice(0, 3)}
+                size="sm"
+              />
+            </div>
+          </Card>
+          <CodeBlock
+            language="astro"
+            code={`<Timeline variant="minimal" events={events} />`}
+          />
+        </div>
+
+        <div slot="tab-3">
+          <span>Bordered</span>
+        </div>
+        <div slot="panel-3">
+          <Card>
+            <div class="p-6">
+              <Timeline
+                variant="bordered"
+                events={basicEvents.slice(0, 3)}
+                size="sm"
+              />
+            </div>
+          </Card>
+          <CodeBlock
+            language="astro"
+            code={`<Timeline variant="bordered" events={events} />`}
+          />
+        </div>
+
+        <div slot="tab-4">
+          <span>Filled</span>
+        </div>
+        <div slot="panel-4">
+          <Card>
+            <div class="p-6">
+              <Timeline
+                variant="filled"
+                events={basicEvents.slice(0, 3)}
+                size="sm"
+              />
+            </div>
+          </Card>
+          <CodeBlock
+            language="astro"
+            code={`<Timeline variant="filled" events={events} />`}
+          />
+        </div>
+      </Tabs>
+    </section>
+
+    <!-- Sizes -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Sizes
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Three size options to match your interface hierarchy.
+      </p>
+
+      <div class="grid gap-6">
+        <div>
+          <h3
+            class="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Small
+          </h3>
+          <Card>
+            <div class="p-4">
+              <Timeline size="sm" events={basicEvents.slice(0, 2)} />
+            </div>
+          </Card>
+        </div>
+
+        <div>
+          <h3
+            class="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Medium (Default)
+          </h3>
+          <Card>
+            <div class="p-6">
+              <Timeline size="md" events={basicEvents.slice(0, 2)} />
+            </div>
+          </Card>
+        </div>
+
+        <div>
+          <h3
+            class="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Large
+          </h3>
+          <Card>
+            <div class="p-8">
+              <Timeline size="lg" events={basicEvents.slice(0, 2)} />
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      <CodeBlock
+        language="astro"
+        code={`<!-- Size variants -->
+<Timeline size="sm" events={events} />
+<Timeline size="md" events={events} />
+<Timeline size="lg" events={events} />`}
+      />
+    </section>
+
+    <!-- Event Variants -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Event Status Variants
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Different event status types with distinct colors and meaning.
+      </p>
+
+      <Card>
+        <div class="p-6">
+          <Timeline events={statusEvents} size="sm" />
+        </div>
+      </Card>
+
+      <CodeBlock
+        language="astro"
+        code={`const events = [
+  {
+    date: '2025-01-01',
+    title: 'Planning Complete',
+    description: 'All requirements gathered',
+    variant: 'success', // Green - completed/positive
+    icon: '✅',
+  },
+  {
+    date: '2025-02-01',
+    title: 'In Progress',
+    description: 'Development is ongoing',
+    variant: 'info', // Cyan - informational
+    icon: '🔄',
+  },
+  {
+    date: '2025-03-01',
+    title: 'Under Review',
+    description: 'Awaiting stakeholder feedback',
+    variant: 'warning', // Amber - needs attention
+    icon: '⏳',
+  },
+  {
+    date: '2025-04-01',
+    title: 'Blocked',
+    description: 'Waiting for external dependencies',
+    variant: 'error', // Red - problem/blocked
+    icon: '🚫',
+  },
+];`}
+      />
+    </section>
+
+    <!-- Interactive Events -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Interactive Events
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Timeline events can be interactive with links to internal pages or
+        external resources.
+      </p>
+
+      <Card>
+        <div class="p-6">
+          <Timeline events={linkEvents} size="sm" />
+        </div>
+      </Card>
+
+      <CodeBlock
+        language="astro"
+        code={`const events = [
+  {
+    date: '2025-01-01',
+    title: 'Company Founded',
+    description: 'The beginning of our journey',
+    variant: 'success',
+    icon: '🏢',
+    href: '#founding', // Internal link
+  },
+  {
+    date: '2025-12-01',
+    title: 'Documentation',
+    description: 'External documentation link',
+    variant: 'info',
+    icon: '📚',
+    href: 'https://example.com',
+    target: '_blank', // External link
+  },
+];`}
+      />
+    </section>
+
+    <!-- Orientation -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Orientation
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Support for both vertical and horizontal timeline layouts.
+      </p>
+
+      <div class="grid gap-6">
+        <div>
+          <h3
+            class="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Vertical (Default)
+          </h3>
+          <Card>
+            <div class="p-6">
+              <Timeline
+                orientation="vertical"
+                events={basicEvents.slice(0, 3)}
+                size="sm"
+              />
+            </div>
+          </Card>
+        </div>
+
+        <div>
+          <h3
+            class="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Horizontal
+          </h3>
+          <Card>
+            <div class="p-6 overflow-x-auto">
+              <Timeline
+                orientation="horizontal"
+                events={basicEvents.slice(0, 3)}
+                size="sm"
+              />
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      <CodeBlock
+        language="astro"
+        code={`<!-- Orientation options -->
+<Timeline orientation="vertical" events={events} />
+<Timeline orientation="horizontal" events={events} />`}
+      />
+    </section>
+
+    <!-- Customization -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Customization Options
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Additional options for customizing the timeline appearance and behavior.
+      </p>
+
+      <Card>
+        <div class="grid md:grid-cols-2 gap-6 p-6">
+          <div>
+            <h3
+              class="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3"
+            >
+              No Connector Line
+            </h3>
+            <Timeline
+              events={basicEvents.slice(0, 3)}
+              showConnector={false}
+              size="sm"
+            />
+          </div>
+
+          <div>
+            <h3
+              class="text-sm font-medium text-slate-900 dark:text-slate-100 mb-3"
+            >
+              Dense Layout
+            </h3>
+            <Timeline events={basicEvents.slice(0, 3)} dense={true} size="sm" />
+          </div>
+        </div>
+      </Card>
+
+      <CodeBlock
+        language="astro"
+        code={`<!-- Customization options -->
+<Timeline showConnector={false} events={events} />
+<Timeline dense={true} events={events} />
+<Timeline ariaLabel="Project milestones" events={events} />`}
+      />
+    </section>
+
+    <!-- Props -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Props
+      </h2>
+
+      <div class="space-y-6">
+        <div>
+          <h3
+            class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Timeline Props
+          </h3>
+          <div class="overflow-x-auto">
+            <table
+              class="w-full border-collapse border border-slate-300 dark:border-slate-700"
+            >
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800">
+                  <th
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                    >Prop</th
+                  >
+                  <th
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                    >Type</th
+                  >
+                  <th
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                    >Default</th
+                  >
+                  <th
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                    >Description</th
+                  >
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >events</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Event[]</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >required</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Array of timeline events</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >variant</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >default | minimal | bordered | filled</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >default</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Visual style variant</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >size</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >sm | md | lg</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >md</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Size of timeline elements</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >orientation</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >vertical | horizontal</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >vertical</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Timeline layout direction</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >showConnector</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >boolean</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >true</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Show connecting line</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >dense</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >boolean</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >false</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Compact spacing</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >ariaLabel</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >string</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Timeline of events</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Accessibility label</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >className</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >string</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >''</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Additional CSS classes</td
+                  >
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3
+            class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Event Object Properties
+          </h3>
+          <div class="overflow-x-auto">
+            <table
+              class="w-full border-collapse border border-slate-300 dark:border-slate-700"
+            >
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800">
+                  <th
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                    >Property</th
+                  >
+                  <th
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                    >Type</th
+                  >
+                  <th
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                    >Required</th
+                  >
+                  <th
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 text-left"
+                    >Description</th
+                  >
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >date</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >string</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Yes</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >ISO date string (YYYY-MM-DD)</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >title</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >string</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Yes</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Event title</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >description</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >string</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >No</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Event description</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >variant</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >default | success | warning | error | info</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >No</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Event status type</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >icon</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >string</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >No</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Icon or emoji for event</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >href</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >string</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >No</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Link URL for interactive events</td
+                  >
+                </tr>
+                <tr>
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2 font-mono text-sm"
+                    >target</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >_blank | _self</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >No</td
+                  >
+                  <td
+                    class="border border-slate-300 dark:border-slate-700 px-4 py-2"
+                    >Link target (used with href)</td
+                  >
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Accessibility -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Accessibility Features
+      </h2>
+      <div class="grid gap-4">
+        <Callout variant="info">
+          <strong>WCAG AAA Compliance:</strong> This component meets the highest
+          accessibility standards with comprehensive keyboard navigation, screen
+          reader support, and enhanced contrast ratios.
+        </Callout>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <Card>
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Keyboard Navigation
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                • <kbd
+                  class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs"
+                  >Tab</kbd
+                > - Focus interactive events
+              </li>
+              <li>
+                • <kbd
+                  class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs"
+                  >Arrow Keys</kbd
+                > - Navigate between events
+              </li>
+              <li>
+                • <kbd
+                  class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs"
+                  >Enter/Space</kbd
+                > - Activate links
+              </li>
+              <li>
+                • <kbd
+                  class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs"
+                  >Home/End</kbd
+                > - Jump to first/last event
+              </li>
+            </ul>
+          </Card>
+
+          <Card>
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Screen Reader Support
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>• Semantic timeline structure with proper roles</li>
+              <li>• Event position announcements</li>
+              <li>• ISO date format with accessible labels</li>
+              <li>• Link indicators for interactive events</li>
+              <li>• Status variant announcements</li>
+            </ul>
+          </Card>
+
+          <Card>
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Visual Accessibility
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>• 9:1 contrast ratio (AAA level)</li>
+              <li>• High contrast mode support</li>
+              <li>• Reduced motion preferences</li>
+              <li>• Clear focus indicators</li>
+              <li>• Color-blind friendly status variants</li>
+            </ul>
+          </Card>
+
+          <Card>
+            <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Interactive Elements
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>• Touch-friendly target sizes</li>
+              <li>• External link indicators</li>
+              <li>• Proper link relationships</li>
+              <li>• Focus management</li>
+              <li>• Click target optimization</li>
+            </ul>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Best Practices
+      </h2>
+      <div class="space-y-4">
+        <Callout variant="success">
+          <strong>Do:</strong> Use ISO date format (YYYY-MM-DD) for consistent date
+          parsing
+        </Callout>
+        <Callout variant="success">
+          <strong>Do:</strong> Provide meaningful icons that reinforce the event
+          meaning
+        </Callout>
+        <Callout variant="success">
+          <strong>Do:</strong> Use appropriate status variants to convey event significance
+        </Callout>
+        <Callout variant="warning">
+          <strong>Consider:</strong> Horizontal orientation for mobile-friendly scrolling
+        </Callout>
+        <Callout variant="warning">
+          <strong>Consider:</strong> Dense layout for timelines with many events
+        </Callout>
+        <Callout variant="error">
+          <strong>Don't:</strong> Mix internal and external links without clear indicators
+        </Callout>
+        <Callout variant="error">
+          <strong>Don't:</strong> Use too many different status variants in one timeline
+        </Callout>
+      </div>
+    </section>
+
+    <!-- Usage Examples -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Usage Examples
+      </h2>
+      <div class="space-y-6">
+        <div>
+          <h3
+            class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3"
+          >
+            Project Timeline
+          </h3>
+          <CodeBlock
+            language="astro"
+            code={`---
+const projectEvents = [
+  {
+    date: '2025-01-01',
+    title: 'Project Planning',
+    description: 'Requirements gathering and initial planning',
+    variant: 'success',
+    icon: '📋',
+  },
+  {
+    date: '2025-02-15',
+    title: 'Development Start',
+    description: 'Begin implementation phase',
+    variant: 'info',
+    icon: '🚀',
+  },
+  {
+    date: '2025-04-01',
+    title: 'Beta Release',
+    description: 'Internal testing and feedback collection',
+    variant: 'warning',
+    icon: '🧪',
+  },
+  {
+    date: '2025-06-01',
+    title: 'Production Launch',
+    description: 'Public release and monitoring',
+    variant: 'success',
+    icon: '🎉',
+  },
+];
+---
+
+<Timeline 
+  events={projectEvents}
+  variant="bordered"
+  ariaLabel="Project development timeline"
+/>`}
+          />
+        </div>
+
+        <div>
+          <h3
+            class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3"
+          >
+            Company History
+          </h3>
+          <CodeBlock
+            language="astro"
+            code={`---
+const companyHistory = [
+  {
+    date: '2020-01-01',
+    title: 'Company Founded',
+    description: 'Started with a vision to change the industry',
+    variant: 'success',
+    icon: '🏢',
+    href: '/about/founding',
+  },
+  {
+    date: '2021-06-15',
+    title: 'Series A Funding',
+    description: 'Raised $10M to accelerate growth',
+    variant: 'info',
+    icon: '💰',
+    href: '/news/series-a',
+  },
+  {
+    date: '2023-03-20',
+    title: 'IPO Filing',
+    description: 'Filed for initial public offering',
+    variant: 'default',
+    icon: '📈',
+    href: 'https://sec.gov/filing',
+    target: '_blank',
+  },
+];
+---
+
+<Timeline 
+  events={companyHistory}
+  variant="filled"
+  size="lg"
+  ariaLabel="Company milestone history"
+/>`}
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Components -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+        Related Components
+      </h2>
+      <div class="flex flex-wrap gap-2">
+        <Badge variant="outline">Stepper</Badge>
+        <Badge variant="outline">Card</Badge>
+        <Badge variant="outline">Badge</Badge>
+        <Badge variant="outline">ProgressBar</Badge>
+        <Badge variant="outline">Accordion</Badge>
+      </div>
+    </section>
+  </div>
 </DocsLayout>

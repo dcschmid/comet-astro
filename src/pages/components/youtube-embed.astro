@@ -5,18 +5,352 @@ import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 
 <DocsLayout
   title="YouTubeEmbed"
-  description="Responsive YouTube iframe with privacy-enhanced mode."
+  description="WCAG AAA compliant YouTube video embed component with privacy controls, responsive design, multiple layouts, loading states, and enhanced contrast ratios for optimal viewing in all modes."
 >
-  <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <p class="text-gray-400 text-sm">
-      Provide the video ID and optional params like <code>start</code>,
-      <code>autoplay</code>, or <code>rel</code>.
-    </p>
-    <YouTubeEmbed
-      videoId="dQw4w9WgXcQ"
-      title="Never Gonna Give You Up"
-      className="mt-3"
-    />
+  <section>
+    <h2 class="text-xl font-bold mb-4">Props</h2>
+    <div class="space-y-3 text-sm">
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Core Properties</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>videoId: string</code> - YouTube video ID (required)</li>
+          <li>
+            <code>title?: string</code> - Video title for accessibility (default:
+            'YouTube video player')
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Layout & Appearance</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code
+              >variant?: 'default' | 'minimal' | 'card' | 'featured' | 'inline'</code
+            >
+            - Visual variant (default: 'default')
+          </li>
+          <li>
+            <code
+              >aspectRatio?: '16:9' | '4:3' | '1:1' | '21:9' | '9:16' | 'auto'</code
+            >
+            - Aspect ratio (default: '16:9')
+          </li>
+          <li><code>class?: string</code> - Additional CSS classes</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Playback Controls</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>autoplay?: boolean</code> - Auto-play video (default: false)
+          </li>
+          <li>
+            <code>controls?: boolean</code> - Show video controls (default: true)
+          </li>
+          <li>
+            <code>loop?: boolean</code> - Loop video playback (default: false)
+          </li>
+          <li><code>muted?: boolean</code> - Start muted (default: false)</li>
+          <li><code>start?: number</code> - Start time in seconds</li>
+          <li><code>end?: number</code> - End time in seconds</li>
+          <li>
+            <code>playlist?: string</code> - Playlist ID for continuous playback
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Privacy & Performance</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>privacyMode?: boolean</code> - Use youtube-nocookie.com domain
+            (default: true)
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Accessibility</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>ariaLabel?: string</code> - Custom ARIA label</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">States & Behavior</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>showLoading?: boolean</code> - Show loading state (default: true)
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">EmbedBase Architecture</h2>
+    <div class="space-y-2 text-sm text-slate-300">
+      <p>This component is built on top of EmbedBase, providing:</p>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>
+          <strong>Consistent Loading States:</strong> Unified loading spinner and
+          error handling across all embed components
+        </li>
+        <li>
+          <strong>5 Visual Variants:</strong> default, minimal, card, featured, and
+          inline styles
+        </li>
+        <li>
+          <strong>Accessibility:</strong> WCAG AAA compliance with 9:1 contrast ratios
+          and proper ARIA attributes
+        </li>
+        <li>
+          <strong>Responsive Design:</strong> Flexible aspect ratios and container
+          sizing
+        </li>
+        <li>
+          <strong>Performance:</strong> Lazy loading and optimized iframe attributes
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Accessibility Features</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>WCAG AAA compliant with 9:1 contrast ratios in all color schemes</li>
+      <li>Full keyboard navigation support with visible focus indicators</li>
+      <li>
+        Screen reader compatible with proper ARIA labels and semantic HTML
+      </li>
+      <li>Privacy-first approach with nocookie domain enabled by default</li>
+      <li>Loading and error states announced to assistive technologies</li>
+      <li>Descriptive fallback content for JavaScript-disabled browsers</li>
+      <li>High contrast mode compatibility</li>
+      <li>Lazy loading for improved performance</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Examples</h2>
+
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Basic YouTube Embed</h3>
+        <YouTubeEmbed
+          videoId="dQw4w9WgXcQ"
+          title="Rick Astley - Never Gonna Give You Up (Official Music Video)"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Different Variants</h3>
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-medium mb-2">Featured Variant</h4>
+            <YouTubeEmbed
+              variant="featured"
+              videoId="dQw4w9WgXcQ"
+              title="Featured YouTube Video"
+            />
+          </div>
+
+          <div>
+            <h4 class="font-medium mb-2">Inline Variant</h4>
+            <YouTubeEmbed
+              variant="inline"
+              videoId="dQw4w9WgXcQ"
+              title="Inline YouTube Video"
+            />
+          </div>
+
+          <div>
+            <h4 class="font-medium mb-2">Minimal Variant</h4>
+            <YouTubeEmbed
+              variant="minimal"
+              videoId="dQw4w9WgXcQ"
+              title="Minimal YouTube Video"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Different Aspect Ratios</h3>
+        <div class="grid gap-4 md:grid-cols-3">
+          <YouTubeEmbed
+            videoId="dQw4w9WgXcQ"
+            title="Square Video"
+            aspectRatio="1:1"
+          />
+          <YouTubeEmbed
+            videoId="dQw4w9WgXcQ"
+            title="4:3 Video"
+            aspectRatio="4:3"
+          />
+          <YouTubeEmbed
+            videoId="dQw4w9WgXcQ"
+            title="Cinematic Video"
+            aspectRatio="21:9"
+          />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Time-based Playback</h3>
+        <YouTubeEmbed
+          videoId="dQw4w9WgXcQ"
+          title="Video starting at 30 seconds"
+          start={30}
+          end={90}
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Privacy Mode Comparison</h3>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <h4 class="font-medium mb-2">Privacy Mode (Default)</h4>
+            <YouTubeEmbed
+              videoId="dQw4w9WgXcQ"
+              title="Privacy-Enhanced Video"
+              privacyMode={true}
+            />
+            <p class="text-xs text-slate-400 mt-1">Uses youtube-nocookie.com</p>
+          </div>
+          <div>
+            <h4 class="font-medium mb-2">Standard Mode</h4>
+            <YouTubeEmbed
+              videoId="dQw4w9WgXcQ"
+              title="Standard YouTube Video"
+              privacyMode={false}
+            />
+            <p class="text-xs text-slate-400 mt-1">Uses standard youtube.com</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Autoplay Example</h3>
+        <YouTubeEmbed
+          videoId="dQw4w9WgXcQ"
+          title="Autoplay Video"
+          autoplay={true}
+          muted={true}
+          variant="minimal"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Loading State</h3>
+        <YouTubeEmbed
+          videoId="dQw4w9WgXcQ"
+          title="Loading Video"
+          showLoading={true}
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Accessibility Features</h3>
+        <YouTubeEmbed
+          videoId="dQw4w9WgXcQ"
+          title="Accessible YouTube Video"
+          ariaLabel="Rick Astley music video player"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Loop Playback</h3>
+        <YouTubeEmbed
+          videoId="dQw4w9WgXcQ"
+          title="Looping Video"
+          loop={true}
+          autoplay={true}
+          muted={true}
+          variant="minimal"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Privacy Features</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>
+        <strong>Privacy Mode:</strong> Uses youtube-nocookie.com domain by default
+      </li>
+      <li>
+        <strong>Reduced Tracking:</strong> Minimal cookies when privacy mode is enabled
+      </li>
+      <li>
+        <strong>Modest Branding:</strong> YouTube branding is minimized automatically
+      </li>
+      <li>
+        <strong>No Related Videos:</strong> Related content suggestions are disabled
+      </li>
+      <li><strong>Lazy Loading:</strong> Videos load only when needed</li>
+      <li>
+        <strong>No Info Display:</strong> Video info is hidden for cleaner interface
+      </li>
+      <li>
+        <strong>Fallback Links:</strong> Direct YouTube links for JavaScript-disabled
+        users
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">YouTube URL Parameters</h2>
+    <div class="space-y-2 text-sm text-slate-300">
+      <p>The component automatically handles these YouTube embed parameters:</p>
+      <ul class="list-disc pl-6 space-y-1">
+        <li><code>autoplay</code> - Automatically start video playback</li>
+        <li><code>controls</code> - Show or hide video controls</li>
+        <li><code>loop</code> - Loop video playback</li>
+        <li><code>mute</code> - Start video muted</li>
+        <li><code>start</code> - Start time in seconds</li>
+        <li><code>end</code> - End time in seconds</li>
+        <li><code>playlist</code> - Playlist ID for continuous playback</li>
+        <li><code>modestbranding</code> - Reduce YouTube branding</li>
+        <li><code>showinfo</code> - Show video information</li>
+        <li><code>rel</code> - Show related videos</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Accessibility Best Practices</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>
+        Always provide a descriptive <code>title</code> for screen readers
+      </li>
+      <li>Use <code>description</code> for detailed content explanations</li>
+      <li>Keep autoplay videos muted to prevent audio surprises</li>
+      <li>Enable privacy mode for user privacy by default</li>
+      <li>Test with keyboard navigation and screen readers</li>
+      <li>Use appropriate aspect ratios for your content</li>
+      <li>Consider loading states for better user experience</li>
+      <li>Provide fallback content for accessibility</li>
+      <li>Use time-based parameters to link to specific content</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Performance Tips</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>
+        EmbedBase provides lazy loading automatically for better page
+        performance
+      </li>
+      <li>Privacy mode reduces tracking overhead and improves loading speed</li>
+      <li>
+        Optimized YouTube parameters are set automatically for best performance
+      </li>
+      <li>Use appropriate aspect ratios to prevent layout shifts</li>
+      <li>Set start/end times to focus on relevant content sections</li>
+      <li>Consider using minimal variant for faster rendering in lists</li>
+    </ul>
   </section>
 </DocsLayout>

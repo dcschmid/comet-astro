@@ -1,28 +1,719 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
-const tocItems = [
-  { id: 'intro', label: 'Introduction' },
-  { id: 'api', label: 'API', level: 2 },
+
+// Basic table of contents
+const basicTocItems = [
+  { id: 'introduction', label: 'Introduction', level: 1 },
+  { id: 'getting-started', label: 'Getting Started', level: 2 },
+  { id: 'installation', label: 'Installation', level: 3 },
+  { id: 'configuration', label: 'Configuration', level: 3 },
+  { id: 'api-reference', label: 'API Reference', level: 2 },
+  { id: 'components', label: 'Components', level: 3 },
+  { id: 'utilities', label: 'Utilities', level: 3 },
+  { id: 'examples', label: 'Examples', level: 2 },
+  { id: 'troubleshooting', label: 'Troubleshooting', level: 2 },
+];
+
+// Detailed table of contents with descriptions
+const detailedTocItems = [
+  {
+    id: 'overview',
+    label: 'Project Overview',
+    level: 1,
+    description:
+      'High-level introduction to the project goals and architecture',
+  },
+  {
+    id: 'architecture',
+    label: 'System Architecture',
+    level: 2,
+    description: 'Detailed explanation of the system design and components',
+  },
+  {
+    id: 'frontend',
+    label: 'Frontend Layer',
+    level: 3,
+    description: 'User interface components and their interactions',
+  },
+  {
+    id: 'backend',
+    label: 'Backend Services',
+    level: 3,
+    description: 'API endpoints and server-side logic',
+  },
+  {
+    id: 'database',
+    label: 'Database Design',
+    level: 3,
+    description: 'Data models and storage architecture',
+  },
+  {
+    id: 'deployment',
+    label: 'Deployment Strategy',
+    level: 2,
+    description: 'Infrastructure setup and deployment procedures',
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring & Analytics',
+    level: 2,
+    description: 'Performance monitoring and user analytics',
+  },
+];
+
+// Long document TOC for sticky demo
+const longDocTocItems = [
+  { id: 'exec-summary', label: 'Executive Summary', level: 1 },
+  { id: 'introduction', label: 'Introduction', level: 1 },
+  { id: 'background', label: 'Background', level: 2 },
+  { id: 'objectives', label: 'Objectives', level: 2 },
+  { id: 'methodology', label: 'Methodology', level: 1 },
+  { id: 'data-collection', label: 'Data Collection', level: 2 },
+  { id: 'analysis-methods', label: 'Analysis Methods', level: 2 },
+  { id: 'quality-assurance', label: 'Quality Assurance', level: 3 },
+  { id: 'validation', label: 'Validation Process', level: 3 },
+  { id: 'results', label: 'Results', level: 1 },
+  { id: 'key-findings', label: 'Key Findings', level: 2 },
+  { id: 'performance-metrics', label: 'Performance Metrics', level: 2 },
+  { id: 'user-feedback', label: 'User Feedback', level: 3 },
+  { id: 'technical-analysis', label: 'Technical Analysis', level: 3 },
+  { id: 'discussion', label: 'Discussion', level: 1 },
+  { id: 'implications', label: 'Implications', level: 2 },
+  { id: 'limitations', label: 'Limitations', level: 2 },
+  { id: 'recommendations', label: 'Recommendations', level: 1 },
+  { id: 'short-term', label: 'Short-term Actions', level: 2 },
+  { id: 'long-term', label: 'Long-term Strategy', level: 2 },
+  { id: 'conclusion', label: 'Conclusion', level: 1 },
+  { id: 'acknowledgments', label: 'Acknowledgments', level: 1 },
+  { id: 'references', label: 'References', level: 1 },
+  { id: 'appendices', label: 'Appendices', level: 1 },
+];
+
+// Article table of contents
+const articleTocItems = [
+  {
+    id: 'what-is-accessibility',
+    label: 'What is Web Accessibility?',
+    level: 2,
+  },
+  { id: 'why-it-matters', label: 'Why Accessibility Matters', level: 2 },
+  { id: 'wcag-guidelines', label: 'WCAG Guidelines', level: 2 },
+  { id: 'perceivable', label: 'Perceivable', level: 3 },
+  { id: 'operable', label: 'Operable', level: 3 },
+  { id: 'understandable', label: 'Understandable', level: 3 },
+  { id: 'robust', label: 'Robust', level: 3 },
+  { id: 'implementation', label: 'Implementation Strategies', level: 2 },
+  { id: 'testing', label: 'Testing for Accessibility', level: 2 },
+  { id: 'tools', label: 'Useful Tools', level: 3 },
+  { id: 'checklist', label: 'Accessibility Checklist', level: 3 },
+];
+
+// Compact tutorial TOC
+const tutorialTocItems = [
+  { id: 'step-1', label: 'Setup Environment' },
+  { id: 'step-2', label: 'Create Project' },
+  { id: 'step-3', label: 'Add Components' },
+  { id: 'step-4', label: 'Style Interface' },
+  { id: 'step-5', label: 'Add Functionality' },
+  { id: 'step-6', label: 'Test & Deploy' },
 ];
 ---
 
 <DocsLayout
-  title="TableOfContents"
-  description="TOC for in-page headings with optional active highlighting."
+  title="Table of Contents"
+  description="WCAG AAA compliant navigation component for document sections with auto-highlighting, collapsible states, and comprehensive accessibility features."
 >
-  <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>title?: string</code></li>
-      <li><code>items: &#123;id,label,level?&#125;[]</code></li>
-      <li><code>activeId?: string</code></li>
-      <li><code>className?: string</code></li>
-    </ul>
+  <section class="space-y-6">
+    <div class="space-y-3">
+      <h2 class="text-xl font-semibold text-slate-100">Overview</h2>
+      <p class="text-base text-slate-200">
+        Table of Contents components provide accessible navigation for document
+        sections with automatic active section highlighting, keyboard
+        navigation, and proper semantic markup. Built with WCAG AAA compliance,
+        they feature proper contrast ratios and comprehensive screen reader
+        support.
+      </p>
+      <p class="text-base text-slate-200">
+        The component supports multiple sizes, variants, collapsible states, and
+        sticky positioning. All interactions respect user preferences for
+        reduced motion and provide clear focus indicators for keyboard
+        navigation.
+      </p>
+    </div>
   </section>
 
-  <section>
-    <h2 class="text-xl font-bold">Example</h2>
-    <TableOfContents title="On this page" items={tocItems} />
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          items
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Array of TOC items with id, label, level, and optional description.
+          Required.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Navigation title. Defaults to <code>"Table of Contents"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          activeId?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          ID of currently active section for manual highlighting.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant: <code>sm</code>, <code>md</code>, <code>lg</code>.
+          Defaults to <code>md</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual variant: <code>default</code>, <code>compact</code>, <code
+            >minimal</code
+          >, <code>elevated</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          sticky?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Enable sticky positioning. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          collapsible?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Add collapse/expand functionality. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          defaultCollapsed?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Start in collapsed state when collapsible. Defaults to <code
+            >false</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showNumbers?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display numbered list. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          maxLevel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Maximum heading level to show (1-6). Defaults to <code>6</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom ARIA label for the navigation.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">Additional CSS classes to apply.</dd>
+      </div>
+    </dl>
+    <p class="text-sm text-slate-400 mt-4">
+      Items array should include meaningful labels and proper heading levels for
+      accessibility.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Basic Usage -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <TableOfContents title="Documentation" items={basicTocItems} />
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sizes</h3>
+      <div class="grid gap-6 lg:grid-cols-3">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Small</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Quick Guide"
+              items={tutorialTocItems}
+              size="sm"
+              showNumbers
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Medium (Default)</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="User Manual"
+              items={basicTocItems.slice(0, 5)}
+              size="md"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Large</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Complete Guide"
+              items={articleTocItems.slice(0, 4)}
+              size="lg"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Variants</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Default</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Article Sections"
+              items={articleTocItems.slice(0, 6)}
+              variant="default"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Compact</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Quick Navigation"
+              items={articleTocItems.slice(0, 6)}
+              variant="compact"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Minimal</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Page Contents"
+              items={articleTocItems.slice(0, 6)}
+              variant="minimal"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Elevated</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Chapter Overview"
+              items={articleTocItems.slice(0, 6)}
+              variant="elevated"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Features</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Numbered List</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Tutorial Steps"
+              items={tutorialTocItems}
+              showNumbers
+              size="sm"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Collapsible</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Expandable Contents"
+              items={basicTocItems}
+              collapsible
+              size="sm"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed TOC with Descriptions -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">
+        Detailed Table of Contents
+      </h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <TableOfContents
+          title="Technical Documentation"
+          items={detailedTocItems}
+          variant="elevated"
+        />
+        <p class="text-xs text-slate-400 mt-3">
+          Hover over items to see descriptions in the title attribute.
+        </p>
+      </div>
+    </div>
+
+    <!-- Level Filtering -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Level Filtering</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">Level 1-2 Only</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Main Sections"
+              items={longDocTocItems}
+              maxLevel={2}
+              size="sm"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-200">All Levels</h4>
+          <div
+            class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+          >
+            <TableOfContents
+              title="Complete Outline"
+              items={articleTocItems}
+              size="sm"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky Navigation -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Sticky Navigation</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="grid gap-6 lg:grid-cols-3">
+          <div class="lg:col-span-2">
+            <div class="space-y-6">
+              <p class="text-sm text-slate-300">
+                This example shows a sticky table of contents that would remain
+                visible while scrolling through a long document.
+              </p>
+              <div
+                class="h-64 overflow-y-auto rounded border border-slate-600 bg-slate-800/50 p-4"
+              >
+                <div class="space-y-4">
+                  <div
+                    class="h-16 rounded bg-slate-700/50 flex items-center px-4"
+                  >
+                    <span class="text-slate-300 text-sm"
+                      >Document content section 1</span
+                    >
+                  </div>
+                  <div
+                    class="h-16 rounded bg-slate-700/50 flex items-center px-4"
+                  >
+                    <span class="text-slate-300 text-sm"
+                      >Document content section 2</span
+                    >
+                  </div>
+                  <div
+                    class="h-16 rounded bg-slate-700/50 flex items-center px-4"
+                  >
+                    <span class="text-slate-300 text-sm"
+                      >Document content section 3</span
+                    >
+                  </div>
+                  <div
+                    class="h-16 rounded bg-slate-700/50 flex items-center px-4"
+                  >
+                    <span class="text-slate-300 text-sm"
+                      >Document content section 4</span
+                    >
+                  </div>
+                  <div
+                    class="h-16 rounded bg-slate-700/50 flex items-center px-4"
+                  >
+                    <span class="text-slate-300 text-sm"
+                      >Document content section 5</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <TableOfContents
+              title="Navigation"
+              items={longDocTocItems.slice(0, 8)}
+              sticky
+              size="sm"
+              variant="compact"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Documentation Site -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Documentation Site</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-slate-100">
+            API Documentation
+          </h4>
+          <p class="text-sm text-slate-300 mt-1">
+            Comprehensive guide with nested sections
+          </p>
+        </div>
+        <TableOfContents
+          title="API Guide"
+          items={basicTocItems}
+          variant="default"
+          showNumbers={false}
+        />
+      </div>
+    </div>
+
+    <!-- Article Navigation -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Article Navigation</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100">
+              Understanding Web Accessibility
+            </h4>
+            <p class="text-sm text-slate-300 mt-1">
+              A comprehensive guide to WCAG compliance
+            </p>
+          </div>
+          <div class="text-xs text-slate-400 flex items-center gap-2">
+            <span>15 min read</span>
+            <span>•</span>
+            <span>Updated today</span>
+          </div>
+        </div>
+        <TableOfContents
+          title="Article Contents"
+          items={articleTocItems}
+          variant="minimal"
+          size="sm"
+        />
+      </div>
+    </div>
+
+    <!-- Tutorial Navigation -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Tutorial Navigation</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-slate-100">
+            Building Your First App
+          </h4>
+          <p class="text-sm text-slate-300 mt-1">
+            Step-by-step tutorial for beginners
+          </p>
+        </div>
+        <TableOfContents
+          title="Tutorial Steps"
+          items={tutorialTocItems}
+          variant="elevated"
+          showNumbers
+          size="md"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Table of Contents components are designed with comprehensive accessibility
+      features and WCAG AAA compliance. All text maintains 9:1 contrast ratios
+      and adjusts automatically for high contrast mode and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Proper semantic markup with nav and role attributes ensures screen readers
+      can understand the navigation purpose. The component includes ARIA labels,
+      current location indicators, and keyboard navigation support with clear
+      focus indicators.
+    </p>
+    <p class="text-base text-slate-200">
+      Auto-highlighting respects user preferences for reduced motion and
+      provides non-intrusive announcements to screen readers. All interactive
+      elements support keyboard navigation and provide appropriate feedback for
+      state changes.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Design Tokens</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Size Scale</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">sm</span>
+            <span class="text-slate-400">Compact sidebar navigation</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">md</span>
+            <span class="text-slate-400">Standard document TOC</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">lg</span>
+            <span class="text-slate-400">Prominent article navigation</span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <h3 class="text-lg font-medium text-slate-100 mb-4">Variants</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">default</span>
+            <span class="text-slate-400">Standard appearance</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">compact</span>
+            <span class="text-slate-400">Reduced spacing</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">minimal</span>
+            <span class="text-slate-400">Clean, borderless</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-300">elevated</span>
+            <span class="text-slate-400">Enhanced shadows</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </DocsLayout>

@@ -9,21 +9,21 @@ interface Props {
   open?: boolean;
   title?: string;
   closeLabel?: string;
-  
+
   // Variants
   variant?: 'default' | 'danger' | 'success' | 'warning';
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen';
-  
+
   // Layout
   position?: 'center' | 'top' | 'bottom';
   backdrop?: 'default' | 'blur' | 'dark' | 'none';
   closable?: boolean;
-  
+
   // Accessibility
   ariaLabel?: string;
   ariaDescribedBy?: string;
   preventBodyScroll?: boolean;
-  
+
   // Classes
   class?: string;
   className?: string;
@@ -42,7 +42,7 @@ const {
   ariaDescribedBy,
   preventBodyScroll = true,
   class: className,
-  className: legacyClassName
+  className: legacyClassName,
 } = Astro.props;
 
 const hasFooter = Astro.slots.has('footer');
@@ -50,7 +50,8 @@ const hasFooter = Astro.slots.has('footer');
 // Generate unique IDs for accessibility
 const modalId = `comet-modal-${Math.random().toString(36).slice(2, 9)}`;
 const titleId = title ? `${modalId}-title` : undefined;
-const descriptionId = ariaDescribedBy || (hasFooter ? `${modalId}-footer` : undefined);
+const descriptionId =
+  ariaDescribedBy || (hasFooter ? `${modalId}-footer` : undefined);
 
 // Variant styles with WCAG AAA contrast
 const variantClasses = {
@@ -59,29 +60,36 @@ const variantClasses = {
     header: 'border-gray-200 dark:border-gray-700',
     title: 'text-gray-900 dark:text-gray-50',
     content: 'text-gray-700 dark:text-gray-300',
-    footer: 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300'
+    footer:
+      'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300',
   },
   danger: {
-    dialog: 'border-red-200 dark:border-red-800 bg-white dark:bg-gray-900 ring-1 ring-red-100 dark:ring-red-900',
+    dialog:
+      'border-red-200 dark:border-red-800 bg-white dark:bg-gray-900 ring-1 ring-red-100 dark:ring-red-900',
     header: 'border-red-200 dark:border-red-800',
     title: 'text-red-900 dark:text-red-100',
     content: 'text-gray-700 dark:text-gray-300',
-    footer: 'border-red-200 dark:border-red-800 text-gray-700 dark:text-gray-300'
+    footer:
+      'border-red-200 dark:border-red-800 text-gray-700 dark:text-gray-300',
   },
   success: {
-    dialog: 'border-green-200 dark:border-green-800 bg-white dark:bg-gray-900 ring-1 ring-green-100 dark:ring-green-900',
+    dialog:
+      'border-green-200 dark:border-green-800 bg-white dark:bg-gray-900 ring-1 ring-green-100 dark:ring-green-900',
     header: 'border-green-200 dark:border-green-800',
     title: 'text-green-900 dark:text-green-100',
     content: 'text-gray-700 dark:text-gray-300',
-    footer: 'border-green-200 dark:border-green-800 text-gray-700 dark:text-gray-300'
+    footer:
+      'border-green-200 dark:border-green-800 text-gray-700 dark:text-gray-300',
   },
   warning: {
-    dialog: 'border-yellow-200 dark:border-yellow-800 bg-white dark:bg-gray-900 ring-1 ring-yellow-100 dark:ring-yellow-900',
+    dialog:
+      'border-yellow-200 dark:border-yellow-800 bg-white dark:bg-gray-900 ring-1 ring-yellow-100 dark:ring-yellow-900',
     header: 'border-yellow-200 dark:border-yellow-800',
     title: 'text-yellow-900 dark:text-yellow-100',
     content: 'text-gray-700 dark:text-gray-300',
-    footer: 'border-yellow-200 dark:border-yellow-800 text-gray-700 dark:text-gray-300'
-  }
+    footer:
+      'border-yellow-200 dark:border-yellow-800 text-gray-700 dark:text-gray-300',
+  },
 };
 
 // Size styles with responsive design
@@ -90,14 +98,15 @@ const sizeClasses = {
   md: 'max-w-md sm:max-w-lg',
   lg: 'max-w-lg sm:max-w-2xl',
   xl: 'max-w-xl sm:max-w-4xl',
-  fullscreen: 'max-w-full h-full m-0 sm:max-w-[calc(100vw-2rem)] sm:max-h-[calc(100vh-2rem)] sm:m-4'
+  fullscreen:
+    'max-w-full h-full m-0 sm:max-w-[calc(100vw-2rem)] sm:max-h-[calc(100vh-2rem)] sm:m-4',
 };
 
 // Position styles
 const positionClasses = {
   center: 'items-center justify-center',
   top: 'items-start justify-center pt-16 sm:pt-20',
-  bottom: 'items-end justify-center pb-16 sm:pb-20'
+  bottom: 'items-end justify-center pb-16 sm:pb-20',
 };
 
 // Backdrop styles with WCAG AAA transparency
@@ -105,7 +114,7 @@ const backdropClasses = {
   default: 'bg-gray-900/80',
   blur: 'bg-gray-900/80 backdrop-blur-sm',
   dark: 'bg-black/90',
-  none: 'bg-transparent pointer-events-none'
+  none: 'bg-transparent pointer-events-none',
 };
 
 const currentVariant = variantClasses[variant];
@@ -133,7 +142,7 @@ const finalClassName = className || legacyClassName || '';
     aria-hidden="true"
   >
   </div>
-  
+
   <!-- Dialog -->
   <div
     class={`
@@ -142,26 +151,33 @@ const finalClassName = className || legacyClassName || '';
       ${currentVariant.dialog}
       ${size === 'fullscreen' ? 'rounded-none sm:rounded-2xl' : ''}
       ${finalClassName}
-    `.trim().replace(/\s+/g, ' ')}
+    `
+      .trim()
+      .replace(/\s+/g, ' ')}
     data-modal-dialog
     role="document"
     tabindex="-1"
   >
     <!-- Header -->
-    <header class={`flex items-start justify-between gap-4 p-6 ${title || closable ? `border-b ${currentVariant.header}` : ''}`}>
-      {title && (
-        <h2
-          id={titleId}
-          class={`text-xl font-semibold ${currentVariant.title}`}
-        >
-          {title}
-        </h2>
-      )}
-      
-      {closable && (
-        <button
-          type="button"
-          class={`
+    <header
+      class={`flex items-start justify-between gap-4 p-6 ${title || closable ? `border-b ${currentVariant.header}` : ''}`}
+    >
+      {
+        title && (
+          <h2
+            id={titleId}
+            class={`text-xl font-semibold ${currentVariant.title}`}
+          >
+            {title}
+          </h2>
+        )
+      }
+
+      {
+        closable && (
+          <button
+            type="button"
+            class={`
             inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border 
             text-sm font-semibold transition-all duration-200
             border-gray-300 dark:border-gray-600 
@@ -171,35 +187,44 @@ const finalClassName = className || legacyClassName || '';
             hover:border-gray-400 dark:hover:border-gray-500
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
             dark:focus:ring-offset-gray-900
-          `.trim().replace(/\s+/g, ' ')}
-          data-modal-close
-          aria-label={closeLabel}
-        >
-          <span aria-hidden="true" class="text-lg leading-none">×</span>
-        </button>
-      )}
+          `
+              .trim()
+              .replace(/\s+/g, ' ')}
+            data-modal-close
+            aria-label={closeLabel}
+          >
+            <span aria-hidden="true" class="text-lg leading-none">
+              ×
+            </span>
+          </button>
+        )
+      }
     </header>
-    
+
     <!-- Content -->
     <div
       class={`
         px-6 ${title || closable ? 'pt-0' : 'pt-6'} ${hasFooter ? 'pb-0' : 'pb-6'}
         ${size === 'fullscreen' ? 'max-h-none overflow-auto' : 'max-h-[65vh] overflow-auto'}
         ${currentVariant.content}
-      `.trim().replace(/\s+/g, ' ')}
+      `
+        .trim()
+        .replace(/\s+/g, ' ')}
     >
       <slot />
     </div>
-    
+
     <!-- Footer -->
-    {hasFooter && (
-      <footer 
-        id={ariaDescribedBy ? undefined : `${modalId}-footer`}
-        class={`border-t p-6 ${currentVariant.footer}`}
-      >
-        <slot name="footer" />
-      </footer>
-    )}
+    {
+      hasFooter && (
+        <footer
+          id={ariaDescribedBy ? undefined : `${modalId}-footer`}
+          class={`border-t p-6 ${currentVariant.footer}`}
+        >
+          <slot name="footer" />
+        </footer>
+      )
+    }
   </div>
 </div>
 
@@ -208,7 +233,7 @@ const finalClassName = className || legacyClassName || '';
     // Handle all click events
     document.addEventListener('click', (e) => {
       const target = e.target;
-      
+
       // Open modal
       if (target.hasAttribute('data-modal-open')) {
         e.preventDefault();
@@ -222,9 +247,12 @@ const finalClassName = className || legacyClassName || '';
         }
         return;
       }
-      
+
       // Close modal
-      if (target.hasAttribute('data-modal-close') || target.closest('[data-modal-close]')) {
+      if (
+        target.hasAttribute('data-modal-close') ||
+        target.closest('[data-modal-close]')
+      ) {
         e.preventDefault();
         const modal = target.closest('[data-modal-root]');
         console.log('Closing modal:', modal); // Debug
@@ -235,7 +263,7 @@ const finalClassName = className || legacyClassName || '';
         }
         return;
       }
-      
+
       // Close on backdrop click
       if (target.hasAttribute('data-modal-backdrop')) {
         e.preventDefault();
@@ -248,11 +276,13 @@ const finalClassName = className || legacyClassName || '';
         return;
       }
     });
-    
+
     // Handle Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        const openModal = document.querySelector('[data-modal-root][data-open="true"]');
+        const openModal = document.querySelector(
+          '[data-modal-root][data-open="true"]'
+        );
         if (openModal) {
           openModal.classList.add('hidden');
           openModal.setAttribute('data-open', 'false');
@@ -262,5 +292,3 @@ const finalClassName = className || legacyClassName || '';
     });
   });
 </script>
-
-

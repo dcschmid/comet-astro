@@ -33,18 +33,25 @@ const slides = [
     <!-- Intro -->
     <section class="space-y-4">
       <p class="text-slate-600 dark:text-slate-400 max-w-3xl">
-        The <strong>Carousel</strong> component lets you showcase a sequence of visual or content slides, supporting touch / pointer dragging, autoplay with pause control, and accessible labels for assistive technologies.
+        The <strong>Carousel</strong> component lets you showcase a sequence of visual
+        or content slides, supporting touch / pointer dragging, autoplay with pause
+        control, and accessible labels for assistive technologies.
       </p>
       <p class="text-slate-600 dark:text-slate-400 max-w-3xl">
-        It is built to meet <strong>WCAG AAA</strong> considerations for contrast (controls, overlays, indicators) and provides keyboard navigation for users who cannot or choose not to use a pointing device.
+        It is built to meet <strong>WCAG AAA</strong> considerations for contrast
+        (controls, overlays, indicators) and provides keyboard navigation for users
+        who cannot or choose not to use a pointing device.
       </p>
     </section>
 
     <!-- Usage -->
     <section class="space-y-4">
       <h2 class="text-xl font-bold">Usage</h2>
-      <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-700 dark:bg-slate-900">
-        <pre class="overflow-x-auto"><code>{`import Carousel from '@/components/Carousel.astro';
+      <div
+        class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-700 dark:bg-slate-900"
+      >
+        <pre
+          class="overflow-x-auto"><code>{`import Carousel from '@/components/Carousel.astro';
 
 const slides = [
   { title: 'Design systems that scale', description: 'Create a durable design system.', image: 'https://images.unsplash.com/photo-1514790193030-c89d266d5a9d?auto=format&fit=crop&w=1200&q=80' },
@@ -60,7 +67,12 @@ const slides = [
 />`}</code></pre>
       </div>
       <div class="max-w-4xl">
-  <CarouselComp slides={slides} autoplay interval={7000} ariaLabel="Featured case studies" />
+        <CarouselComp
+          slides={slides}
+          autoplay
+          interval={7000}
+          ariaLabel="Featured case studies"
+        />
       </div>
     </section>
 
@@ -68,45 +80,136 @@ const slides = [
     <section class="space-y-4">
       <h2 class="text-xl font-bold">Props</h2>
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">slides<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">Slide[]</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Array of slide objects with: title, description, image URL, optional href.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            slides<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >Slide[]</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Array of slide objects with: title, description, image URL, optional
+            href.
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">autoplay<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">boolean</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Starts automatic rotation of slides when mounted. Pausable.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            autoplay<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >boolean</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Starts automatic rotation of slides when mounted. Pausable.
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">interval<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">number</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Milliseconds between automatic transitions. Default 5000.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            interval<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >number</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Milliseconds between automatic transitions. Default 5000.
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">loop<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">boolean</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Wraps around from last to first (and vice versa) when navigating.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            loop<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >boolean</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Wraps around from last to first (and vice versa) when navigating.
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">showIndicators<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">boolean</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Render clickable pagination dots / tabs for each slide.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            showIndicators<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >boolean</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Render clickable pagination dots / tabs for each slide.
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">showControls<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">boolean</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Render previous / next buttons (and pause when autoplay enabled).</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            showControls<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >boolean</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Render previous / next buttons (and pause when autoplay enabled).
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">ariaLabel<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Accessible label describing the carousel's content purpose.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            ariaLabel<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Accessible label describing the carousel's content purpose.
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">slideLabelFormat<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">fn</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Custom function to generate accessible slide labels.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            slideLabelFormat<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >fn</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Custom function to generate accessible slide labels.
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">pauseLabel<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Accessible label for the pause/resume autoplay button.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            pauseLabel<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Accessible label for the pause/resume autoplay button.
+          </p>
         </div>
-        <div class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950">
-          <h3 class="font-medium">className<span class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800">string</span></h3>
-          <p class="mt-1 text-slate-600 dark:text-slate-400">Additional classes for root container.</p>
+        <div
+          class="rounded-md border border-slate-200 bg-white p-4 text-sm dark:border-slate-700 dark:bg-slate-950"
+        >
+          <h3 class="font-medium">
+            className<span
+              class="ml-1 rounded bg-slate-100 px-1 py-0.5 text-xs dark:bg-slate-800"
+              >string</span
+            >
+          </h3>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">
+            Additional classes for root container.
+          </p>
         </div>
       </div>
     </section>
@@ -115,25 +218,48 @@ const slides = [
     <section class="space-y-4">
       <h2 class="text-xl font-bold">Variants</h2>
       <div class="grid gap-6 lg:grid-cols-2">
-  <Card elevation={1} class="space-y-3">
+        <Card elevation={1} class="space-y-3">
           <h3 class="font-semibold">Manual navigation</h3>
-          <p class="text-sm text-slate-600 dark:text-slate-400">Disable autoplay for full manual control.</p>
-          <CarouselComp slides={slides} showIndicators showControls autoplay={false} ariaLabel="Manual carousel" />
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Disable autoplay for full manual control.
+          </p>
+          <CarouselComp
+            slides={slides}
+            showIndicators
+            showControls
+            autoplay={false}
+            ariaLabel="Manual carousel"
+          />
         </Card>
-  <Card elevation={1} class="space-y-3">
+        <Card elevation={1} class="space-y-3">
           <h3 class="font-semibold">Minimal (no indicators)</h3>
-          <p class="text-sm text-slate-600 dark:text-slate-400">Hide indicators for a cleaner visual presentation.</p>
-          <CarouselComp slides={slides} autoplay interval={6000} showIndicators={false} ariaLabel="Minimal autoplay carousel" />
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Hide indicators for a cleaner visual presentation.
+          </p>
+          <CarouselComp
+            slides={slides}
+            autoplay
+            interval={6000}
+            showIndicators={false}
+            ariaLabel="Minimal autoplay carousel"
+          />
         </Card>
-  <Card elevation={1} class="space-y-3 lg:col-span-2">
+        <Card elevation={1} class="space-y-3 lg:col-span-2">
           <h3 class="font-semibold">Custom slide labels</h3>
-          <p class="text-sm text-slate-600 dark:text-slate-400">Provide richer accessible labels including slide titles.</p>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Provide richer accessible labels including slide titles.
+          </p>
           <CarouselComp
             slides={slides}
             autoplay
             interval={6500}
             ariaLabel="Showcase carousel"
-            slideLabelFormat={(_index: number, _length: number, slide: { title?: string }) => `${slide.title ?? 'Untitled'} – Slide ${_index + 1} of ${_length}`}
+            slideLabelFormat={(
+              _index: number,
+              _length: number,
+              slide: { title?: string }
+            ) =>
+              `${slide.title ?? 'Untitled'} – Slide ${_index + 1} of ${_length}`}
           />
         </Card>
       </div>
@@ -142,14 +268,37 @@ const slides = [
     <!-- Accessibility -->
     <section class="space-y-4">
       <h2 class="text-xl font-bold">Accessibility</h2>
-      <ul class="list-disc space-y-2 pl-5 text-sm text-slate-600 dark:text-slate-400">
-        <li>Root uses <code>role="region"</code> and an <code>aria-label</code> to describe purpose.</li>
-        <li>Slides announce changes politely via <code>aria-live="polite"</code>.</li>
-        <li>Indicators are proper tabs with <code>role="tablist"</code>, <code>aria-selected</code>, and keyboard support (ArrowLeft / ArrowRight / Home / End).</li>
-        <li>Prev/Next/Pause controls are buttons with visible focus states and descriptive labels.</li>
-        <li>Contrast of control surfaces and indicator focus rings meets AAA for small text (≥ 7:1).</li>
-        <li>A pause/resume button is provided when autoplay is enabled to respect user control.</li>
-        <li>Pointer, keyboard, and swipe interactions co-exist without blocking each other.</li>
+      <ul
+        class="list-disc space-y-2 pl-5 text-sm text-slate-600 dark:text-slate-400"
+      >
+        <li>
+          Root uses <code>role="region"</code> and an <code>aria-label</code> to
+          describe purpose.
+        </li>
+        <li>
+          Slides announce changes politely via <code>aria-live="polite"</code>.
+        </li>
+        <li>
+          Indicators are proper tabs with <code>role="tablist"</code>, <code
+            >aria-selected</code
+          >, and keyboard support (ArrowLeft / ArrowRight / Home / End).
+        </li>
+        <li>
+          Prev/Next/Pause controls are buttons with visible focus states and
+          descriptive labels.
+        </li>
+        <li>
+          Contrast of control surfaces and indicator focus rings meets AAA for
+          small text (≥ 7:1).
+        </li>
+        <li>
+          A pause/resume button is provided when autoplay is enabled to respect
+          user control.
+        </li>
+        <li>
+          Pointer, keyboard, and swipe interactions co-exist without blocking
+          each other.
+        </li>
       </ul>
     </section>
   </div>

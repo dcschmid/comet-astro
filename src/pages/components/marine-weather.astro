@@ -1,0 +1,164 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import MarineWeather from '../../components/MarineWeather.astro';
+
+const liveSnippet = `<MarineWeather latitude={53.55} longitude={9.99} location="North Sea" />`;
+const staticSnippet = `<MarineWeather disableFetch />`;
+const minimalSnippet = `<MarineWeather latitude={48.14} longitude={11.58} />`;
+---
+
+<DocsLayout
+  title="MarineWeather"
+  description="Minimal marine snapshot: wave height class, sea temperature comfort, wind speed & direction, condition tag."
+>
+  <div class="prose max-w-none">
+    <h1>MarineWeather</h1>
+    <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
+      Minimal maritimer Zustands-Snapshot. Zeigt nur essentielle Kennzahlen:
+      Wellenhöhe (klassifiziert), Meerestemperatur (Komfortlabel), Wind (km/h +
+      Richtung), einfache Zustandsanzeige und Zeitstempel. Keine Tiden-,
+      Strömungs- oder Mehrkomponenten-Analyse. Astro + Tailwind only. WCAG AAA
+      Kontrast.
+    </p>
+
+    <h2>Live Beispiel</h2>
+    <div class="my-4">
+      <MarineWeather latitude={53.55} longitude={9.99} location="North Sea" />
+    </div>
+    <pre
+      class="text-xs bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto"
+      aria-label="Live usage code"><code>{liveSnippet}</code></pre>
+
+    <h2>Props</h2>
+    <dl class="grid md:grid-cols-2 gap-4 text-sm">
+      <div>
+        <dt class="font-semibold text-slate-900 dark:text-slate-50">
+          latitude?
+        </dt>
+        <dd class="text-slate-600 dark:text-slate-300">
+          Breitengrad für Live Abruf (Open‑Meteo Marine). Zusammen mit longitude
+          erforderlich.
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 dark:text-slate-50">
+          longitude?
+        </dt>
+        <dd class="text-slate-600 dark:text-slate-300">
+          Längengrad für Live Abruf. Muss gesetzt sein wenn latitude gesetzt
+          ist.
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 dark:text-slate-50">
+          location?
+        </dt>
+        <dd class="text-slate-600 dark:text-slate-300">
+          Angezeigter Ortsname und Teil des automatischen aria Labels.
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 dark:text-slate-50">
+          disableFetch?
+        </dt>
+        <dd class="text-slate-600 dark:text-slate-300">
+          Zeigt statische Fallback Demodaten, unterdrückt jede Netzwerkabfrage.
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 dark:text-slate-50">
+          refreshInterval?
+        </dt>
+        <dd class="text-slate-600 dark:text-slate-300">
+          Minuten für automatischen Re-Fetch (0 = kein Auto Refresh).
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 dark:text-slate-50">
+          ariaLabel?
+        </dt>
+        <dd class="text-slate-600 dark:text-slate-300">
+          Überschreibt automatisch generiertes Region Label. Standard: "Marine
+          weather for &#123;location&#125;".
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 dark:text-slate-50">class?</dt>
+        <dd class="text-slate-600 dark:text-slate-300">
+          Zusätzliche Tailwind Utility Klassen für den Root Container.
+        </dd>
+      </div>
+    </dl>
+
+    <h2>Weitere Beispiele</h2>
+    <h3>Statisch (Demodaten)</h3>
+    <div class="my-3"><MarineWeather disableFetch /></div>
+    <pre
+      class="text-xs bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto"><code>{staticSnippet}</code></pre>
+
+    <h3>Minimal mit Auto Fetch + Intervall</h3>
+    <div class="my-3">
+      <MarineWeather latitude={48.14} longitude={11.58} refreshInterval={30} />
+    </div>
+    <pre
+      class="text-xs bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto"><code>{minimalSnippet}</code></pre>
+
+    <h2>Design & Accessibility</h2>
+    <ul
+      class="list-disc pl-6 text-sm text-slate-700 dark:text-slate-300 space-y-1"
+    >
+      <li>
+        Root: <code>role="region"</code> mit sprechendem <code>aria-label</code
+        >.
+      </li>
+      <li>
+        <code>aria-busy</code> während Live Laden; Statuszeile mit <code
+          >aria-live="polite"</code
+        >.
+      </li>
+      <li>
+        Wellenklassifizierung: Farbiger Indikatorpunkt + Klartextlabel (Farbe
+        nie alleinige Information).
+      </li>
+      <li>
+        Kontrast AAA durch neutrale Textfarben (#0F172A / #F8FAFC) auf
+        hell/dunkel Hintergründen.
+      </li>
+      <li>
+        Skelett-Shimmer nur bei aktivem Laden und deaktiviert unter <code
+          >prefers-reduced-motion</code
+        >.
+      </li>
+      <li>
+        High Contrast Mode (<code>prefers-contrast: high</code>) erzwingt
+        deutliche Outline.
+      </li>
+    </ul>
+
+    <h2>Grenzen / Nicht enthalten</h2>
+    <ul
+      class="list-disc pl-6 text-sm text-slate-700 dark:text-slate-300 space-y-1"
+    >
+      <li>Keine detaillierte Swell vs. Wind-Wellen Analyse.</li>
+      <li>Keine Tiden, Strömungen, Sicherheits-Empfehlungslisten.</li>
+      <li>Kein Auto-Refresh Intervall über initialen Abruf hinaus.</li>
+      <li>Keine Umrechnung in °F (leicht erweiterbar).</li>
+    </ul>
+
+    <h2>Optionale Erweiterungen</h2>
+    <ul
+      class="list-disc pl-6 text-sm text-slate-700 dark:text-slate-300 space-y-1"
+    >
+      <li><code>refreshInterval</code> für periodische Aktualisierung.</li>
+      <li>Einheitenswitch (°C/°F).</li>
+      <li>Zusätzliche Karte für Lufttemperatur oder Sichtweite.</li>
+    </ul>
+
+    <h2>Usage Hinweise</h2>
+    <p class="text-sm text-slate-700 dark:text-slate-300">
+      Für Szenarien in denen NutzerInnen nur einen schnellen maritimen Snapshot
+      benötigen ohne tiefe Analyse. Ersetzt ältere komplexe Marine Komponente
+      mit hoher Wartungslast.
+    </p>
+  </div>
+</DocsLayout>

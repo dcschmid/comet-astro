@@ -199,8 +199,8 @@ const errorScript = errorFallback ? `
 )}
 
 {placeholder && (
-  <style>
-    #{imageId} {
+  <style set:html={`
+    #${imageId} {
       background-color: #f3f4f6;
       background-image: 
         linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
@@ -211,7 +211,7 @@ const errorScript = errorFallback ? `
       background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     }
     
-    .dark #{imageId} {
+    .dark #${imageId} {
       background-color: #374151;
       background-image: 
         linear-gradient(45deg, #4b5563 25%, transparent 25%),
@@ -220,11 +220,11 @@ const errorScript = errorFallback ? `
         linear-gradient(-45deg, transparent 75%, #4b5563 75%);
     }
     
-    #{imageId}.loaded {
+    #${imageId}.loaded {
       background-image: none;
       background-color: transparent;
     }
-  </style>
+  `} />
 )}
 
 {placeholder && (

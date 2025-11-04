@@ -1,0 +1,203 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ClimateProjections from '../../components/ClimateProjections.astro';
+
+const usageSnippet = `---\nimport { ClimateProjections } from 'comet-astro';\n\n---\n<ClimateProjections />\n\n<ClimateProjections\n  location="Berlin"\n  scenario="SSP2-4.5"\n  startYear={1990}\n  endYear={2050}\n  variant="default"\n  showExtremes={true}\n/>\n\n<ClimateProjections\n  location="Alpine Region"\n  scenario="RCP8.5"\n  variant="compact"\n  showExtremes={false}\n/>`;
+
+const dataSnippet = `---\nconst custom = [\n  { metric: 'Mean Temp', baseline: '12.4°C', projected: '14.6°C', change: '+2.2°C', confidence: 'high' },\n  { metric: 'Annual Precip', baseline: '800 mm', projected: '780 mm', change: '-20 mm', confidence: 'medium' },\n  { metric: 'Summer Rain', baseline: '200 mm', projected: '170 mm', change: '-30 mm', confidence: 'low' },\n];\n\n<ClimateProjections data={custom} location="Central Valley" scenario="SSP5-8.5" />`;
+---
+
+<DocsLayout
+  title="ClimateProjections"
+  description="Minimal, accessible climate projection summary table with confidence indicators and optional extremes section."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      The <strong>ClimateProjections</strong> component presents a concise summary
+      of baseline vs projected climate metrics (temperature, precipitation, etc.)
+      together with an indicative change and confidence level. It is intentionally
+      minimal—no charts, heavy interactivity, or complex data fetching—to keep focus
+      on accessibility and clarity.
+    </p>
+    <p class="text-base text-slate-200">
+      Confidence badges reflect simple categories (<code>high</code>, <code
+        >medium</code
+      >, <code>low</code>) useful for surfacing agreement or evidence strength.
+      An optional extremes section offers illustrative counts for hot days,
+      heavy rain events, or frost days. All values are placeholders; integrate
+      real datasets externally as needed.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          location?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display label for the geography. Used in headers and accessible region
+          labels.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          region?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Fallback region name if <code>location</code> not provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          scenario?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Emission scenario code: <code>"SSP2-4.5"</code>, <code
+            >"SSP5-8.5"</code
+          >, or <code>"RCP8.5"</code>. Defaults to <code>"SSP5-8.5"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          startYear? / endYear?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Baseline start and projection horizon years. Defaults: 1990 → 2050.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showExtremes?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show illustrative extremes section. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Layout density: <code>"default"</code> or <code>"compact"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom accessible label for the region wrapper. Generated
+          automatically if omitted.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          data?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Supply your own array of metric objects: <code
+            >{`{ metric, baseline, projected, change, confidence }`}</code
+          >. Falls back to demo rows.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Basic and customized component usage examples.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Custom Data</h2>
+    <p class="text-base text-slate-200">
+      Provide your own projection rows via the <code>data</code> prop.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{dataSnippet}</code></pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Live Example</h2>
+    <p class="text-base text-slate-200">
+      Default component rendering with demo fallback metrics and extremes
+      section.
+    </p>
+    <div class="max-w-3xl">
+      <ClimateProjections location="Demo Region" />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>WCAG AAA Contrast:</strong> Text uses slate colors with ≥ 7:1 contrast
+        against backgrounds in light & dark.
+      </li>
+      <li>
+        <strong>Semantic Table:</strong> Caption (visually hidden) plus proper <code
+          >scope="col"</code
+        > and <code>scope="row"</code> headers.
+      </li>
+      <li>
+        <strong>Color Independence:</strong> Change direction expressed by +/- and
+        color; confidence shown as text labels.
+      </li>
+      <li>
+        <strong>Reduced Motion:</strong> Respects user motion preference—no transitions
+        when reduced motion is active.
+      </li>
+      <li>
+        <strong>High Contrast Mode:</strong> Adds outline to component region for
+        stronger focus in forced contrast settings.
+      </li>
+      <li>
+        <strong>ARIA Region Label:</strong> Generated from <code>location</code
+        >/<code>region</code> unless overridden via <code>ariaLabel</code>.
+      </li>
+      <li>
+        <strong>Compact Variant:</strong> Enables tighter spacing for dense dashboards
+        while retaining readable sizes.
+      </li>
+    </ul>
+  </section>
+</DocsLayout>

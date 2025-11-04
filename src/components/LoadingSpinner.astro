@@ -10,7 +10,14 @@ interface Props {
   /** Spinner size */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   /** Visual variant */
-  variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'neutral';
+  variant?:
+    | 'default'
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'neutral';
   /** Spinner animation type */
   animation?: 'spin' | 'pulse' | 'bounce' | 'dots' | 'bars' | 'orbit';
   /** Speed of animation */
@@ -52,7 +59,7 @@ const {
   disableAnimation = false,
   inline = false,
   progress,
-  showProgress = false
+  showProgress = false,
 } = Astro.props as Props;
 
 // Size mappings with WCAG AAA compliant minimum touch targets
@@ -61,7 +68,7 @@ const sizeClasses = {
   sm: 'w-5 h-5',
   md: 'w-6 h-6',
   lg: 'w-8 h-8',
-  xl: 'w-12 h-12'
+  xl: 'w-12 h-12',
 };
 
 const sizeDimensions = {
@@ -69,7 +76,7 @@ const sizeDimensions = {
   sm: 20,
   md: 24,
   lg: 32,
-  xl: 48
+  xl: 48,
 };
 
 // Text size classes for labels
@@ -78,7 +85,7 @@ const textSizeClasses = {
   sm: 'text-sm',
   md: 'text-base',
   lg: 'text-lg',
-  xl: 'text-xl'
+  xl: 'text-xl',
 };
 
 // Color variants with WCAG AAA compliant colors (7:1+ contrast)
@@ -86,52 +93,52 @@ const variantClasses = {
   default: {
     spinner: 'text-slate-600 dark:text-slate-400',
     background: 'text-slate-200 dark:text-slate-600',
-    text: 'text-slate-700 dark:text-slate-300'
+    text: 'text-slate-700 dark:text-slate-300',
   },
   primary: {
     spinner: 'text-blue-600 dark:text-blue-400',
     background: 'text-blue-200 dark:text-blue-200/40',
-    text: 'text-blue-700 dark:text-blue-300'
+    text: 'text-blue-700 dark:text-blue-300',
   },
   secondary: {
     spinner: 'text-slate-600 dark:text-slate-400',
     background: 'text-slate-200 dark:text-slate-600',
-    text: 'text-slate-700 dark:text-slate-300'
+    text: 'text-slate-700 dark:text-slate-300',
   },
   success: {
     spinner: 'text-green-600 dark:text-green-400',
     background: 'text-green-200 dark:text-green-200/40',
-    text: 'text-green-700 dark:text-green-300'
+    text: 'text-green-700 dark:text-green-300',
   },
   warning: {
     spinner: 'text-amber-600 dark:text-amber-400',
     background: 'text-amber-200 dark:text-amber-200/40',
-    text: 'text-amber-700 dark:text-amber-300'
+    text: 'text-amber-700 dark:text-amber-300',
   },
   error: {
     spinner: 'text-red-600 dark:text-red-400',
     background: 'text-red-200 dark:text-red-200/40',
-    text: 'text-red-700 dark:text-red-300'
+    text: 'text-red-700 dark:text-red-300',
   },
   neutral: {
     spinner: 'text-slate-600 dark:text-slate-400',
     background: 'text-slate-300 dark:text-slate-600',
-    text: 'text-slate-700 dark:text-slate-300'
-  }
+    text: 'text-slate-700 dark:text-slate-300',
+  },
 };
 
 // Animation speed classes
 const speedClasses = {
   slow: 'duration-2000',
   normal: 'duration-1000',
-  fast: 'duration-500'
+  fast: 'duration-500',
 };
 
 // Stroke thickness
 const thicknessValues = {
   thin: '2',
   normal: '3',
-  thick: '4'
+  thick: '4',
 };
 
 // Animation classes
@@ -141,7 +148,7 @@ const animationClasses = {
   bounce: 'animate-bounce',
   dots: 'animate-pulse',
   bars: 'animate-pulse',
-  orbit: 'animate-spin'
+  orbit: 'animate-spin',
 };
 
 const colors = variantClasses[variant] || variantClasses.default;
@@ -149,29 +156,33 @@ const dimension = sizeDimensions[size];
 const strokeWidth = thicknessValues[thickness];
 
 // Calculate progress for determinate loading
-const isProgress = typeof progress === 'number' && progress >= 0 && progress <= 100;
+const isProgress =
+  typeof progress === 'number' && progress >= 0 && progress <= 100;
 const circumference = 2 * Math.PI * 10; // radius = 10
 const strokeDasharray = isProgress ? circumference : undefined;
-const strokeDashoffset = isProgress ? circumference - (progress / 100) * circumference : undefined;
+const strokeDashoffset = isProgress
+  ? circumference - (progress / 100) * circumference
+  : undefined;
 ---
 
-<!-- Overlay version -->
-{overlay && (
-  <div 
-    class={cn(
-      'fixed inset-0 z-50 flex items-center justify-center',
-      'bg-white/80 backdrop-blur-sm dark:bg-slate-950/80',
-      'transition-opacity duration-300'
-    )}
-    role="status"
-    aria-live="polite"
-    aria-label={label}
-  >
-    <div class="flex flex-col items-center gap-4 p-6 rounded-xl bg-white shadow-xl dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-      <!-- Spinner content will be rendered here -->
+<!-- Overlay version -->{
+  overlay && (
+    <div
+      class={cn(
+        'fixed inset-0 z-50 flex items-center justify-center',
+        'bg-white/80 backdrop-blur-sm dark:bg-slate-950/80',
+        'transition-opacity duration-300'
+      )}
+      role="status"
+      aria-live="polite"
+      aria-label={label}
+    >
+      <div class="flex flex-col items-center gap-4 p-6 rounded-xl bg-white shadow-xl dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+        {/* Spinner content will be rendered here */}
+      </div>
     </div>
-  </div>
-)}
+  )
+}
 
 <!-- Main spinner container -->
 <div
@@ -180,10 +191,10 @@ const strokeDashoffset = isProgress ? circumference - (progress / 100) * circumf
     inline ? 'inline-flex' : 'flex',
     'items-center',
     showLabel ? 'gap-3' : 'gap-0',
-    
+
     // Centering
     centered && !overlay && 'justify-center',
-    
+
     // Custom classes
     className
   )}
@@ -192,240 +203,269 @@ const strokeDashoffset = isProgress ? circumference - (progress / 100) * circumf
   aria-label={label}
 >
   <!-- Spinner SVG -->
-  <div 
-    class={cn('relative', sizeClasses[size])}
-    data-animation={animation}
-  >
-    {animation === 'spin' && (
-      <svg
-        class={cn(
-          'w-full h-full',
-          !disableAnimation && animationClasses[animation],
-          !disableAnimation && speedClasses[speed],
-          color || colors.spinner
-        )}
-        width={dimension}
-        height={dimension}
-        viewBox="0 0 24 24"
-        fill="none"
-        aria-hidden="true"
-        style={disableAnimation ? { animation: 'none' } : {}}
-      >
-        {isProgress ? (
-          <g>
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width={strokeWidth}
-              class={cn('opacity-25', colors.background)}
-              fill="none"
-            />
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width={strokeWidth}
-              class="opacity-90"
-              fill="none"
-              stroke-dasharray={strokeDasharray}
-              stroke-dashoffset={strokeDashoffset}
-              stroke-linecap="round"
-              transform="rotate(-90 12 12)"
-              style={{ transition: 'stroke-dashoffset 0.3s ease' }}
-            />
-          </g>
-        ) : (
-          <g>
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width={strokeWidth}
-              class={cn('opacity-25', colors.background)}
-            />
-            <path
-              class="opacity-90"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
-          </g>
-        )}
-      </svg>
-    )}
+  <div class={cn('relative', sizeClasses[size])} data-animation={animation}>
+    {
+      animation === 'spin' && (
+        <svg
+          class={cn(
+            'w-full h-full',
+            !disableAnimation && animationClasses[animation],
+            !disableAnimation && speedClasses[speed],
+            color || colors.spinner
+          )}
+          width={dimension}
+          height={dimension}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+          style={disableAnimation ? { animation: 'none' } : {}}
+        >
+          {isProgress ? (
+            <g>
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width={strokeWidth}
+                class={cn('opacity-25', colors.background)}
+                fill="none"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width={strokeWidth}
+                class="opacity-90"
+                fill="none"
+                stroke-dasharray={strokeDasharray}
+                stroke-dashoffset={strokeDashoffset}
+                stroke-linecap="round"
+                transform="rotate(-90 12 12)"
+                style={{ transition: 'stroke-dashoffset 0.3s ease' }}
+              />
+            </g>
+          ) : (
+            <g>
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width={strokeWidth}
+                class={cn('opacity-25', colors.background)}
+              />
+              <path
+                class="opacity-90"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              />
+            </g>
+          )}
+        </svg>
+      )
+    }
 
-    {animation === 'pulse' && (
-      <div
-        class={cn(
-          'w-full h-full rounded-full bg-current',
-          !disableAnimation && 'animate-pulse',
-          !disableAnimation && speedClasses[speed],
-          color || colors.spinner
-        )}
-        style={disableAnimation ? { animation: 'none' } : {}}
-        aria-hidden="true"
-      />
-    )}
+    {
+      animation === 'pulse' && (
+        <div
+          class={cn(
+            'w-full h-full rounded-full bg-current',
+            !disableAnimation && 'animate-pulse',
+            !disableAnimation && speedClasses[speed],
+            color || colors.spinner
+          )}
+          style={disableAnimation ? { animation: 'none' } : {}}
+          aria-hidden="true"
+        />
+      )
+    }
 
-    {animation === 'dots' && (
-      <div class="flex items-center justify-center gap-1 w-full h-full" aria-hidden="true">
+    {
+      animation === 'dots' && (
         <div
-          class={cn(
-            'w-2 h-2 rounded-full bg-current',
-            !disableAnimation && 'animate-pulse',
-            color || colors.spinner
-          )}
-          style={disableAnimation ? { animation: 'none' } : { animationDelay: '0s' }}
-        />
-        <div
-          class={cn(
-            'w-2 h-2 rounded-full bg-current',
-            !disableAnimation && 'animate-pulse',
-            color || colors.spinner
-          )}
-          style={disableAnimation ? { animation: 'none' } : { animationDelay: '0.2s' }}
-        />
-        <div
-          class={cn(
-            'w-2 h-2 rounded-full bg-current',
-            !disableAnimation && 'animate-pulse',
-            color || colors.spinner
-          )}
-          style={disableAnimation ? { animation: 'none' } : { animationDelay: '0.4s' }}
-        />
-      </div>
-    )}
+          class="flex items-center justify-center gap-1 w-full h-full"
+          aria-hidden="true"
+        >
+          <div
+            class={cn(
+              'w-2 h-2 rounded-full bg-current',
+              !disableAnimation && 'animate-pulse',
+              color || colors.spinner
+            )}
+            style={
+              disableAnimation
+                ? { animation: 'none' }
+                : { animationDelay: '0s' }
+            }
+          />
+          <div
+            class={cn(
+              'w-2 h-2 rounded-full bg-current',
+              !disableAnimation && 'animate-pulse',
+              color || colors.spinner
+            )}
+            style={
+              disableAnimation
+                ? { animation: 'none' }
+                : { animationDelay: '0.2s' }
+            }
+          />
+          <div
+            class={cn(
+              'w-2 h-2 rounded-full bg-current',
+              !disableAnimation && 'animate-pulse',
+              color || colors.spinner
+            )}
+            style={
+              disableAnimation
+                ? { animation: 'none' }
+                : { animationDelay: '0.4s' }
+            }
+          />
+        </div>
+      )
+    }
 
-    {animation === 'bars' && (
-      <div class="flex items-end justify-center gap-1 w-full h-full" aria-hidden="true">
+    {
+      animation === 'bars' && (
         <div
-          class={cn(
-            'w-1 bg-current rounded-sm',
-            !disableAnimation && 'animate-pulse',
-            color || colors.spinner
-          )}
-          style={
-            disableAnimation 
-              ? { animation: 'none', height: '60%' } 
-              : { 
-                  animationDelay: '0s',
-                  height: '40%'
-                }
-          }
-        />
-        <div
-          class={cn(
-            'w-1 bg-current rounded-sm',
-            !disableAnimation && 'animate-pulse',
-            color || colors.spinner
-          )}
-          style={
-            disableAnimation 
-              ? { animation: 'none', height: '60%' } 
-              : { 
-                  animationDelay: '0.1s',
-                  height: '70%'
-                }
-          }
-        />
-        <div
-          class={cn(
-            'w-1 bg-current rounded-sm',
-            !disableAnimation && 'animate-pulse',
-            color || colors.spinner
-          )}
-          style={
-            disableAnimation 
-              ? { animation: 'none', height: '60%' } 
-              : { 
-                  animationDelay: '0.2s',
-                  height: '50%'
-                }
-          }
-        />
-        <div
-          class={cn(
-            'w-1 bg-current rounded-sm',
-            !disableAnimation && 'animate-pulse',
-            color || colors.spinner
-          )}
-          style={
-            disableAnimation 
-              ? { animation: 'none', height: '60%' } 
-              : { 
-                  animationDelay: '0.3s',
-                  height: '80%'
-                }
-          }
-        />
-      </div>
-    )}
+          class="flex items-end justify-center gap-1 w-full h-full"
+          aria-hidden="true"
+        >
+          <div
+            class={cn(
+              'w-1 bg-current rounded-sm',
+              !disableAnimation && 'animate-pulse',
+              color || colors.spinner
+            )}
+            style={
+              disableAnimation
+                ? { animation: 'none', height: '60%' }
+                : {
+                    animationDelay: '0s',
+                    height: '40%',
+                  }
+            }
+          />
+          <div
+            class={cn(
+              'w-1 bg-current rounded-sm',
+              !disableAnimation && 'animate-pulse',
+              color || colors.spinner
+            )}
+            style={
+              disableAnimation
+                ? { animation: 'none', height: '60%' }
+                : {
+                    animationDelay: '0.1s',
+                    height: '70%',
+                  }
+            }
+          />
+          <div
+            class={cn(
+              'w-1 bg-current rounded-sm',
+              !disableAnimation && 'animate-pulse',
+              color || colors.spinner
+            )}
+            style={
+              disableAnimation
+                ? { animation: 'none', height: '60%' }
+                : {
+                    animationDelay: '0.2s',
+                    height: '50%',
+                  }
+            }
+          />
+          <div
+            class={cn(
+              'w-1 bg-current rounded-sm',
+              !disableAnimation && 'animate-pulse',
+              color || colors.spinner
+            )}
+            style={
+              disableAnimation
+                ? { animation: 'none', height: '60%' }
+                : {
+                    animationDelay: '0.3s',
+                    height: '80%',
+                  }
+            }
+          />
+        </div>
+      )
+    }
 
-    {animation === 'bounce' && (
-      <div
-        class={cn(
-          'w-full h-full rounded-full bg-current flex items-center justify-center',
-          !disableAnimation && 'animate-bounce',
-          color || colors.spinner
-        )}
-        style={disableAnimation ? { animation: 'none' } : {}}
-        aria-hidden="true"
-      >
-        <div class="w-1/2 h-1/2 rounded-full bg-current opacity-80"></div>
-      </div>
-    )}
-
-    {animation === 'orbit' && (
-      <div
-        class={cn(
-          'relative w-full h-full',
-          !disableAnimation && 'animate-spin',
-          !disableAnimation && speedClasses[speed]
-        )}
-        style={disableAnimation ? { animation: 'none' } : {}}
-        aria-hidden="true"
-      >
+    {
+      animation === 'bounce' && (
         <div
           class={cn(
-            'absolute top-0 left-1/2 w-2 h-2 rounded-full bg-current -translate-x-1/2',
+            'w-full h-full rounded-full bg-current flex items-center justify-center',
+            !disableAnimation && 'animate-bounce',
             color || colors.spinner
           )}
-        />
-      </div>
-    )}
+          style={disableAnimation ? { animation: 'none' } : {}}
+          aria-hidden="true"
+        >
+          <div class="w-1/2 h-1/2 rounded-full bg-current opacity-80" />
+        </div>
+      )
+    }
+
+    {
+      animation === 'orbit' && (
+        <div
+          class={cn(
+            'relative w-full h-full',
+            !disableAnimation && 'animate-spin',
+            !disableAnimation && speedClasses[speed]
+          )}
+          style={disableAnimation ? { animation: 'none' } : {}}
+          aria-hidden="true"
+        >
+          <div
+            class={cn(
+              'absolute top-0 left-1/2 w-2 h-2 rounded-full bg-current -translate-x-1/2',
+              color || colors.spinner
+            )}
+          />
+        </div>
+      )
+    }
 
     <!-- Progress percentage overlay -->
-    {isProgress && showProgress && (
-      <div class="absolute inset-2 flex items-center justify-center">
-        <span class={cn(
-          'font-bold leading-none',
-          colors.text,
-          size === 'xs' && 'text-[6px]',
-          size === 'sm' && 'text-[8px]',
-          size === 'md' && 'text-[10px]',
-          size === 'lg' && 'text-xs',
-          size === 'xl' && 'text-sm'
-        )}>
-          {Math.round(progress)}%
-        </span>
-      </div>
-    )}
+    {
+      isProgress && showProgress && (
+        <div class="absolute inset-2 flex items-center justify-center">
+          <span
+            class={cn(
+              'font-bold leading-none',
+              colors.text,
+              size === 'xs' && 'text-[6px]',
+              size === 'sm' && 'text-[8px]',
+              size === 'md' && 'text-[10px]',
+              size === 'lg' && 'text-xs',
+              size === 'xl' && 'text-sm'
+            )}
+          >
+            {Math.round(progress)}%
+          </span>
+        </div>
+      )
+    }
   </div>
 
   <!-- Text label -->
-  {showLabel && (
-    <span class={cn(
-      'font-medium',
-      textSizeClasses[size],
-      colors.text
-    )}>
-      {label}
-      {isProgress && showProgress && ` (${Math.round(progress)}%)`}
-    </span>
-  )}
+  {
+    showLabel && (
+      <span class={cn('font-medium', textSizeClasses[size], colors.text)}>
+        {label}
+        {isProgress && showProgress && ` (${Math.round(progress)}%)`}
+      </span>
+    )
+  }
 
   <!-- Screen reader only label -->
   <span class="sr-only">
@@ -437,43 +477,47 @@ const strokeDashoffset = isProgress ? circumference - (progress / 100) * circumf
 <style>
   /* Custom animations for better visual effects */
   @keyframes dots-bounce {
-    0%, 80%, 100% { 
+    0%,
+    80%,
+    100% {
       transform: scale(0.8);
       opacity: 0.5;
     }
-    40% { 
+    40% {
       transform: scale(1.2);
       opacity: 1;
     }
   }
 
   @keyframes bars-wave {
-    0%, 40%, 100% { 
+    0%,
+    40%,
+    100% {
       transform: scaleY(0.4);
       opacity: 0.7;
     }
-    20% { 
+    20% {
       transform: scaleY(1);
       opacity: 1;
     }
   }
 
   /* Apply custom animations */
-  [data-animation="dots"] .animate-pulse {
+  [data-animation='dots'] .animate-pulse {
     animation: dots-bounce 1.4s ease-in-out infinite;
   }
 
-  [data-animation="bars"] .animate-pulse {
+  [data-animation='bars'] .animate-pulse {
     animation: bars-wave 1.2s ease-in-out infinite;
   }
 
   /* High contrast mode support */
   @media (prefers-contrast: high) {
-    [role="status"] svg {
+    [role='status'] svg {
       filter: contrast(2);
     }
-    
-    [role="status"] div {
+
+    [role='status'] div {
       border: 2px solid currentColor;
     }
   }
@@ -486,7 +530,7 @@ const strokeDashoffset = isProgress ? circumference - (progress / 100) * circumf
     [data-animation] .animate-pulse {
       animation: none !important;
     }
-    
+
     /* Static loading indicator for reduced motion */
     .animate-spin {
       opacity: 0.8;
@@ -494,8 +538,8 @@ const strokeDashoffset = isProgress ? circumference - (progress / 100) * circumf
   }
 
   /* Ensure proper color inheritance */
-  [role="status"] svg path,
-  [role="status"] svg circle {
+  [role='status'] svg path,
+  [role='status'] svg circle {
     color: inherit;
   }
 </style>

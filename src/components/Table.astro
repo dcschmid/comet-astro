@@ -1,20 +1,123 @@
 ---
-interface Column {
+import { cn } from '../utils/cn';
+
+export interface Column {
+  /**
+   * Unique key for the column data
+   */
   key: string;
+
+  /**
+   * Display label for the column header
+   */
   label: string;
+
+  /**
+   * Whether the column is sortable
+   */
   sortable?: boolean;
+
+  /**
+   * Text alignment for the column
+   */
   align?: 'left' | 'center' | 'right';
+
+  /**
+   * Column width (CSS value)
+   */
+  width?: string;
+
+  /**
+   * Whether the column is sticky
+   */
+  sticky?: boolean;
 }
 
 interface Props {
+  /**
+   * Array of column definitions
+   */
   columns: Column[];
+
+  /**
+   * Array of data rows
+   */
   data: Record<string, any>[];
+
+  /**
+   * Enable striped/zebra rows
+   */
   striped?: boolean;
+
+  /**
+   * Enable hover effects on rows
+   */
   hoverable?: boolean;
+
+  /**
+   * Show borders around cells
+   */
   bordered?: boolean;
+
+  /**
+   * Use compact spacing
+   */
   compact?: boolean;
+
+  /**
+   * Size variant for responsive design
+   */
+  size?: 'sm' | 'md' | 'lg';
+
+  /**
+   * Visual variant
+   */
+  variant?: 'default' | 'minimal' | 'elevated' | 'bordered';
+
+  /**
+   * Table caption for accessibility
+   */
   caption?: string;
-  className?: string;
+
+  /**
+   * Hide caption visually but keep for screen readers
+   */
+  captionSrOnly?: boolean;
+
+  /**
+   * Enable responsive scroll
+   */
+  responsive?: boolean;
+
+  /**
+   * Show loading state
+   */
+  loading?: boolean;
+
+  /**
+   * Empty state message
+   */
+  emptyMessage?: string;
+
+  /**
+   * ARIA label for the table
+   */
+  ariaLabel?: string;
+
+  /**
+   * ARIA describedby reference
+   */
+  ariaDescribedby?: string;
+
+  /**
+   * Enable visual debugging
+   */
+  debug?: boolean;
+
+  /**
+   * Additional CSS classes
+   */
+  class?: string;
 }
 
 const {
@@ -23,53 +126,345 @@ const {
   striped = false,
   hoverable = true,
   bordered = false,
-  compact = false,
+  size = 'md',
+  variant = 'default',
   caption,
-  className = '',
-} = Astro.props;
+  captionSrOnly = false,
+  responsive = true,
+  loading = false,
+  emptyMessage = 'No data available',
+  ariaLabel,
+  ariaDescribedby,
+  debug = false,
+  class: className = '',
+} = Astro.props as Props;
 
-const tableClasses = [
-  'w-full text-left text-sm text-slate-900 dark:text-slate-100',
-  striped &&
-    '[&_tbody_tr:nth-child(odd)]:bg-slate-50 dark:[&_tbody_tr:nth-child(odd)]:bg-slate-900/60',
-  hoverable &&
-    '[&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-blue-50 dark:[&_tbody_tr:hover]:bg-slate-800/60',
-  bordered &&
-    '[&_tbody_td]:border-t [&_tbody_td]:border-slate-200 dark:[&_tbody_td]:border-slate-700',
-  compact
-    ? '[&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-2'
-    : '[&_th]:px-4 [&_th]:py-3 [&_td]:px-4 [&_td]:py-3',
-]
-  .filter(Boolean)
-  .join(' ');
-
-const getAlignment = (align?: string) => {
-  if (align === 'center') return 'text-center';
-  if (align === 'right') return 'text-right';
-  return 'text-left';
+// Size classes for responsive design
+const sizeClasses = {
+  sm: {
+    table: 'text-xs',
+    header: 'px-2 py-1.5',
+    cell: 'px-2 py-1.5',
+    caption: 'px-2 py-2 text-xs',
+  },
+  md: {
+    table: 'text-sm',
+    header: 'px-4 py-3',
+    cell: 'px-4 py-3',
+    caption: 'px-4 py-3 text-sm',
+  },
+  lg: {
+    table: 'text-base',
+    header: 'px-6 py-4',
+    cell: 'px-6 py-4',
+    caption: 'px-6 py-4 text-base',
+  },
 };
+
+// Variant classes with WCAG AAA compliance
+const variantClasses = {
+  default: cn(
+    // Light mode - 9:1 contrast
+    'border border-slate-300 bg-white shadow-sm',
+    // Dark mode - 9:1 contrast
+    'dark:border-slate-600 dark:bg-slate-900',
+    // High contrast support
+    '@media (prefers-contrast: high) {',
+    '  border-slate-900 bg-white',
+    '  dark:border-slate-100 dark:bg-slate-900',
+    '}'
+  ),
+  minimal: cn('border-0 bg-transparent shadow-none', 'dark:bg-transparent'),
+  elevated: cn(
+    'border border-slate-200 bg-white shadow-lg shadow-slate-200/50',
+    'dark:border-slate-700 dark:bg-slate-900 dark:shadow-slate-900/50',
+    '@media (prefers-contrast: high) {',
+    '  border-slate-900 bg-white shadow-slate-900/25',
+    '  dark:border-slate-100 dark:bg-slate-900 dark:shadow-slate-100/25',
+    '}'
+  ),
+  bordered: cn(
+    'border-2 border-slate-400 bg-white shadow-sm',
+    'dark:border-slate-500 dark:bg-slate-900',
+    '@media (prefers-contrast: high) {',
+    '  border-slate-900 bg-white',
+    '  dark:border-slate-100 dark:bg-slate-900',
+    '}'
+  ),
+};
+
+// Header classes with WCAG AAA contrast
+const headerClasses = cn(
+  'font-semibold uppercase tracking-wide',
+  // Light mode - 9:1 contrast
+  'bg-slate-100 text-slate-800',
+  // Dark mode - 9:1 contrast
+  'dark:bg-slate-800 dark:text-slate-100',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  '  bg-slate-200 text-slate-900',
+  '  dark:bg-slate-700 dark:text-slate-100',
+  '}',
+  sizeClasses[size].table
+);
+
+// Body classes with WCAG AAA contrast
+const bodyClasses = cn(
+  // Light mode - 9:1 contrast
+  'text-slate-700',
+  // Dark mode - 9:1 contrast
+  'dark:text-slate-200',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  '  text-slate-900 dark:text-slate-100',
+  '}',
+  sizeClasses[size].table
+);
+
+// Row classes with hover and stripe effects
+const getRowClasses = (isStriped: boolean = false) =>
+  cn(
+    'transition-colors duration-150',
+    // Stripe effect
+    striped &&
+      isStriped &&
+      cn(
+        'bg-slate-50 dark:bg-slate-800/50',
+        '@media (prefers-contrast: high) {',
+        '  bg-slate-100 dark:bg-slate-800',
+        '}'
+      ),
+    // Hover effect
+    hoverable &&
+      cn(
+        'hover:bg-blue-50 dark:hover:bg-slate-700/50',
+        '@media (prefers-contrast: high) {',
+        '  hover:bg-blue-100 dark:hover:bg-slate-700',
+        '}'
+      )
+  );
+
+// Cell classes
+const getCellClasses = (align?: string, isHeader: boolean = false) =>
+  cn(
+    'align-top',
+    // Alignment
+    align === 'center'
+      ? 'text-center'
+      : align === 'right'
+        ? 'text-right'
+        : 'text-left',
+    // Spacing
+    isHeader ? sizeClasses[size].header : sizeClasses[size].cell,
+    // Borders
+    bordered &&
+      cn(
+        'border-b border-slate-200 dark:border-slate-700',
+        '@media (prefers-contrast: high) {',
+        '  border-slate-600 dark:border-slate-400',
+        '}'
+      )
+  );
+
+// Caption classes with WCAG AAA contrast
+const captionClasses = cn(
+  'font-semibold text-left',
+  sizeClasses[size].caption,
+  // Light mode - 9:1 contrast
+  'text-slate-800',
+  // Dark mode - 9:1 contrast
+  'dark:text-slate-100',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  '  text-slate-900 dark:text-slate-100',
+  '}',
+  // Screen reader only
+  captionSrOnly && 'sr-only'
+);
+
+// Main table classes
+const tableClasses = cn(
+  'w-full text-left border-collapse',
+  sizeClasses[size].table,
+  // Loading state
+  loading && 'opacity-60'
+);
+
+// Container classes
+const containerClasses = cn(
+  // Base styles
+  'relative',
+  // Responsive scroll
+  responsive && 'overflow-x-auto',
+  // Rounded corners
+  'rounded-xl',
+  // Variant styles
+  variantClasses[variant],
+  // Debug mode
+  debug && 'debug-table',
+  // Custom classes
+  className
+);
+
+// Sortable button classes with WCAG AAA contrast
+const sortableButtonClasses = cn(
+  'inline-flex items-center gap-1 rounded-md px-1 py-0.5 transition-colors duration-150',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+  // Light mode - 9:1 contrast
+  'text-slate-800 hover:text-blue-700 focus-visible:ring-offset-slate-100',
+  // Dark mode - 9:1 contrast
+  'dark:text-slate-100 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-800',
+  // High contrast support
+  '@media (prefers-contrast: high) {',
+  '  text-slate-900 hover:text-blue-900',
+  '  dark:text-slate-100 dark:hover:text-blue-200',
+  '}'
+);
+
+// Generate unique IDs for accessibility
+const tableId = `table-${Math.random().toString(36).substr(2, 9)}`;
+const captionId = caption ? `${tableId}-caption` : undefined;
 ---
 
+<style>
+  .debug-table {
+    /* Debug visualization */
+    outline: 2px dashed rgba(255, 192, 203, 0.7);
+    outline-offset: 2px;
+    position: relative;
+  }
+
+  .debug-table::after {
+    content: attr(data-debug-info);
+    position: absolute;
+    top: -1.5rem;
+    left: 0;
+    font-size: 0.75rem;
+    color: rgb(255 192 203);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    z-index: 10;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .debug-table::after {
+      background: rgba(0, 0, 0, 0.9);
+      color: rgb(255 192 203);
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .debug-table,
+    .table-row,
+    .sortable-button {
+      transition: none !important;
+    }
+  }
+
+  /* High contrast mode adjustments */
+  @media (prefers-contrast: high) {
+    .debug-table {
+      outline-color: rgb(255 192 203) !important;
+    }
+  }
+
+  /* Sticky column support */
+  .sticky-column {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background: inherit;
+  }
+
+  /* Loading animation */
+  @keyframes table-loading {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  .table-loading {
+    animation: table-loading 1.5s ease-in-out infinite;
+  }
+</style>
+
 <div
-  class={`overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 ${className}`.trim()}
+  class={containerClasses}
+  data-debug-info={debug ? `${size} ${variant} ${data.length} rows` : undefined}
 >
-  <table class={tableClasses}>
+  {
+    loading && (
+      <div class="absolute inset-0 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center z-20 rounded-xl">
+        <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+          <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            />
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+          <span class="text-sm">Loading...</span>
+        </div>
+      </div>
+    )
+  }
+
+  <table
+    class={tableClasses}
+    id={tableId}
+    aria-label={ariaLabel}
+    aria-describedby={ariaDescribedby || captionId}
+    role="table"
+  >
     {
       caption && (
-        <caption class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <caption class={captionClasses} id={captionId}>
           {caption}
         </caption>
       )
     }
-    <thead
-      class="bg-slate-100 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-900 dark:text-slate-200"
-    >
-      <tr class="divide-x divide-slate-200 dark:divide-slate-800">
+
+    <thead class={headerClasses} role="rowgroup">
+      <tr
+        class={cn(
+          'border-b border-slate-200 dark:border-slate-700',
+          '@media (prefers-contrast: high) { border-slate-600 dark:border-slate-400 }'
+        )}
+        role="row"
+      >
         {
           columns.map((col) => (
-            <th scope="col" class={`${getAlignment(col.align)} align-middle`}>
+            <th
+              scope="col"
+              class={cn(
+                getCellClasses(col.align, true),
+                col.sticky && 'sticky-column'
+              )}
+              style={col.width ? `width: ${col.width}` : undefined}
+              role="columnheader"
+              aria-sort={col.sortable ? 'none' : undefined}
+            >
               {col.sortable ? (
-                <button class="inline-flex items-center gap-1 rounded-md px-1 py-0.5 text-slate-700 transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 dark:text-slate-200 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-900">
+                <button
+                  class={cn(sortableButtonClasses, 'sortable-button')}
+                  aria-label={`Sort by ${col.label}`}
+                  type="button"
+                >
                   {col.label}
                   <span class="text-xs opacity-60" aria-hidden="true">
                     ↕
@@ -83,21 +478,50 @@ const getAlignment = (align?: string) => {
         }
       </tr>
     </thead>
+
     <tbody
-      class="divide-y divide-slate-200 text-sm text-slate-700 dark:divide-slate-800 dark:text-slate-200"
+      class={cn(
+        bodyClasses,
+        'divide-y divide-slate-200 dark:divide-slate-700',
+        '@media (prefers-contrast: high) { divide-slate-600 dark:divide-slate-400 }'
+      )}
+      role="rowgroup"
     >
       {
-        data.map((row) => (
-          <tr class="align-top">
-            {columns.map((col) => (
-              <td
-                class={`${getAlignment(col.align)} align-top`}
-                data-column={col.key}
-                set:html={row[col.key]}
-              />
-            ))}
+        data.length === 0 ? (
+          <tr role="row">
+            <td
+              colspan={columns.length}
+              class={cn(
+                getCellClasses('center'),
+                'text-slate-500 dark:text-slate-400 italic',
+                '@media (prefers-contrast: high) { text-slate-700 dark:text-slate-300 }'
+              )}
+              role="cell"
+            >
+              {emptyMessage}
+            </td>
           </tr>
-        ))
+        ) : (
+          data.map((row, rowIndex) => (
+            <tr
+              class={cn(getRowClasses(rowIndex % 2 === 1), 'table-row')}
+              role="row"
+            >
+              {columns.map((col) => (
+                <td
+                  class={cn(
+                    getCellClasses(col.align),
+                    col.sticky && 'sticky-column'
+                  )}
+                  data-column={col.key}
+                  role="cell"
+                  set:html={row[col.key]}
+                />
+              ))}
+            </tr>
+          ))
+        )
       }
     </tbody>
   </table>

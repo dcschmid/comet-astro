@@ -23,22 +23,22 @@ interface Props {
   // Content
   trigger: string;
   columns: Column[];
-  
+
   // Variants
   variant?: 'default' | 'compact' | 'detailed' | 'minimal';
   size?: 'sm' | 'md' | 'lg';
-  
+
   // Layout
   maxColumns?: number;
   width?: 'auto' | 'full' | 'screen';
-  
+
   // States
   disabled?: boolean;
-  
+
   // Accessibility
   ariaLabel?: string;
   ariaDescribedBy?: string;
-  
+
   // Classes
   class?: string;
   className?: string;
@@ -55,7 +55,7 @@ const {
   ariaLabel,
   ariaDescribedBy,
   class: className,
-  className: legacyClassName
+  className: legacyClassName,
 } = Astro.props;
 
 // Generate unique IDs for accessibility
@@ -67,7 +67,7 @@ const variantClasses = {
   default: 'border border-gray-300 dark:border-gray-600 shadow-sm',
   compact: 'border border-gray-200 dark:border-gray-700 shadow-sm',
   detailed: 'border-2 border-gray-300 dark:border-gray-600 shadow-lg',
-  minimal: 'border-0 shadow-none'
+  minimal: 'border-0 shadow-none',
 };
 
 // Size styles - Fixed column widths to prevent overlap
@@ -79,7 +79,7 @@ const sizeClasses = {
     title: 'text-xs font-medium',
     item: 'p-3 text-sm',
     description: 'text-xs',
-    columnWidth: 'w-[240px]'
+    columnWidth: 'w-[240px]',
   },
   md: {
     trigger: 'px-4 py-2 text-sm',
@@ -88,7 +88,7 @@ const sizeClasses = {
     title: 'text-sm font-semibold',
     item: 'p-4 text-sm',
     description: 'text-xs',
-    columnWidth: 'w-[280px]'
+    columnWidth: 'w-[280px]',
   },
   lg: {
     trigger: 'px-6 py-3 text-base',
@@ -97,8 +97,8 @@ const sizeClasses = {
     title: 'text-base font-semibold',
     item: 'p-5 text-base',
     description: 'text-sm',
-    columnWidth: 'w-[320px]'
-  }
+    columnWidth: 'w-[320px]',
+  },
 };
 
 const currentSize = sizeClasses[size];
@@ -107,7 +107,7 @@ const currentSize = sizeClasses[size];
 const widthClasses = {
   auto: 'min-w-fit max-w-7xl',
   full: 'w-full min-w-fit max-w-7xl',
-  screen: 'w-screen max-w-screen-2xl'
+  screen: 'w-screen max-w-screen-2xl',
 };
 
 // Grid columns based on actual columns and maxColumns - Fixed width distribution
@@ -116,7 +116,7 @@ const gridClasses = {
   1: 'grid-cols-1 min-w-[320px]',
   2: 'grid-cols-2 min-w-[640px]',
   3: 'grid-cols-3 min-w-[960px]',
-  4: 'grid-cols-4 min-w-[1280px]'
+  4: 'grid-cols-4 min-w-[1280px]',
 };
 
 // Base trigger classes with WCAG AAA contrast
@@ -131,7 +131,9 @@ const triggerClasses = `
   dark:focus:ring-offset-gray-900
   transition-all duration-200 ease-in-out
   ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
-`.trim().replace(/\s+/g, ' ');
+`
+  .trim()
+  .replace(/\s+/g, ' ');
 
 // Panel classes with WCAG AAA contrast
 const panelClasses = `
@@ -142,7 +144,9 @@ const panelClasses = `
   ${variant === 'detailed' ? 'shadow-2xl' : variant !== 'minimal' ? 'shadow-lg' : 'shadow-md'}
   ${variant !== 'minimal' ? 'ring-1 ring-black/5 dark:ring-white/10' : ''}
   opacity-0 invisible pointer-events-none transition-all duration-200 ease-out
-`.trim().replace(/\s+/g, ' ');
+`
+  .trim()
+  .replace(/\s+/g, ' ');
 
 const finalClassName = className || legacyClassName || '';
 ---
@@ -164,7 +168,10 @@ const finalClassName = className || legacyClassName || '';
     disabled={disabled}
   >
     {trigger}
-    <span class={`${currentSize.icon} transition-transform duration-200`} aria-hidden="true">▼</span>
+    <span
+      class={`${currentSize.icon} transition-transform duration-200`}
+      aria-hidden="true">▼</span
+    >
   </button>
 
   <div
@@ -179,12 +186,16 @@ const finalClassName = className || legacyClassName || '';
     <div
       class={`grid ${gridClasses[actualColumns] || 'grid-cols-1'} ${currentSize.panel} w-full`}
     >
-      {columns.map((column, columnIndex) => (
-        <div key={columnIndex} class={`${currentSize.columnWidth} overflow-hidden`}>
-          {column.href ? (
-            <a
-              href={column.href}
-              class={`
+      {
+        columns.map((column, columnIndex) => (
+          <div
+            key={columnIndex}
+            class={`${currentSize.columnWidth} overflow-hidden`}
+          >
+            {column.href ? (
+              <a
+                href={column.href}
+                class={`
                 block mb-4 ${currentSize.title} uppercase tracking-wide
                 text-gray-700 dark:text-gray-300
                 hover:text-blue-700 dark:hover:text-blue-300
@@ -192,31 +203,42 @@ const finalClassName = className || legacyClassName || '';
                 dark:focus:ring-offset-gray-900
                 transition-colors duration-200
                 truncate
-              `.trim().replace(/\s+/g, ' ')}
-              title={column.title}
-            >
-              {column.title}
-            </a>
-          ) : (
-            <h3 class={`mb-4 ${currentSize.title} uppercase tracking-wide text-gray-700 dark:text-gray-300 truncate`} title={column.title}>
-              {column.title}
-            </h3>
-          )}
-          
-          {column.description && (
-            <p class={`mb-4 ${currentSize.description} text-gray-600 dark:text-gray-400 break-words`}>
-              {column.description}
-            </p>
-          )}
-          
-          <ul class="space-y-2" role="none">
-            {column.items.map((item, itemIndex) => (
-              <li key={itemIndex} role="none">
-                <a
-                  href={item.href}
-                  target={item.target || '_self'}
-                  rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
-                  class={`
+              `
+                  .trim()
+                  .replace(/\s+/g, ' ')}
+                title={column.title}
+              >
+                {column.title}
+              </a>
+            ) : (
+              <h3
+                class={`mb-4 ${currentSize.title} uppercase tracking-wide text-gray-700 dark:text-gray-300 truncate`}
+                title={column.title}
+              >
+                {column.title}
+              </h3>
+            )}
+
+            {column.description && (
+              <p
+                class={`mb-4 ${currentSize.description} text-gray-600 dark:text-gray-400 break-words`}
+              >
+                {column.description}
+              </p>
+            )}
+
+            <ul class="space-y-2" role="none">
+              {column.items.map((item, itemIndex) => (
+                <li key={itemIndex} role="none">
+                  <a
+                    href={item.href}
+                    target={item.target || '_self'}
+                    rel={
+                      item.target === '_blank'
+                        ? 'noopener noreferrer'
+                        : undefined
+                    }
+                    class={`
                     group flex items-start gap-3 rounded-lg border border-transparent w-full
                     ${currentSize.item}
                     text-gray-900 dark:text-gray-50
@@ -225,45 +247,55 @@ const finalClassName = className || legacyClassName || '';
                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                     dark:focus:ring-offset-gray-900
                     transition-all duration-200
-                  `.trim().replace(/\s+/g, ' ')}
-                  role="menuitem"
-                  tabindex="-1"
-                  title={`${item.label}${item.description ? ': ' + item.description : ''}`}
-                >
-                  {item.icon && (
-                    <span
-                      class={`shrink-0 ${currentSize.icon} text-blue-700 dark:text-blue-300`}
-                      aria-hidden="true"
-                    >
-                      {item.icon}
-                    </span>
-                  )}
-                  <div class="flex-1 min-w-0 overflow-hidden">
-                    <div class={`font-medium text-gray-900 dark:text-gray-50 group-hover:text-blue-800 dark:group-hover:text-blue-200 break-words`}>
-                      <span class="break-words">{item.label}</span>
-                      {item.badge && (
-                        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 shrink-0">
-                          {item.badge}
-                        </span>
+                  `
+                      .trim()
+                      .replace(/\s+/g, ' ')}
+                    role="menuitem"
+                    tabindex="-1"
+                    title={`${item.label}${item.description ? ': ' + item.description : ''}`}
+                  >
+                    {item.icon && (
+                      <span
+                        class={`shrink-0 ${currentSize.icon} text-blue-700 dark:text-blue-300`}
+                        aria-hidden="true"
+                      >
+                        {item.icon}
+                      </span>
+                    )}
+                    <div class="flex-1 min-w-0 overflow-hidden">
+                      <div
+                        class={`font-medium text-gray-900 dark:text-gray-50 group-hover:text-blue-800 dark:group-hover:text-blue-200 break-words`}
+                      >
+                        <span class="break-words">{item.label}</span>
+                        {item.badge && (
+                          <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 shrink-0">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                      {item.description && (
+                        <p
+                          class={`mt-1 ${currentSize.description} text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 break-words`}
+                        >
+                          {item.description}
+                        </p>
                       )}
                     </div>
-                    {item.description && (
-                      <p class={`mt-1 ${currentSize.description} text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 break-words`}>
-                        {item.description}
-                      </p>
+                    {item.target === '_blank' && (
+                      <span
+                        class={`shrink-0 ${currentSize.icon} text-gray-400`}
+                        aria-hidden="true"
+                      >
+                        ↗
+                      </span>
                     )}
-                  </div>
-                  {item.target === '_blank' && (
-                    <span class={`shrink-0 ${currentSize.icon} text-gray-400`} aria-hidden="true">
-                      ↗
-                    </span>
-                  )}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
     </div>
   </div>
 </div>

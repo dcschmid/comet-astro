@@ -1,21 +1,506 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import SpotifyEmbed from '../../components/SpotifyEmbed.astro';
+
+const usageSnippet = `---
+import { SpotifyEmbed } from 'comet-astro';
+---
+
+<!-- Track Embed -->
+<SpotifyEmbed 
+  uri="spotify:track:11dFghVXANMlKmJXsNCbNl"
+  type="track"
+  variant="default"
+  title="Custom track title for accessibility"
+/>
+
+<!-- Album Embed -->
+<SpotifyEmbed 
+  uri="spotify:album:1ATL5GLyefJaxhQzSPVrLX"
+  type="album"
+  variant="card"
+/>`;
 ---
 
 <DocsLayout
   title="SpotifyEmbed"
-  description="Responsive Spotify iframe for tracks, albums, playlists, and podcasts."
+  description="WCAG AAA compliant Spotify content embed with loading states, error handling, and accessibility features."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <p class="text-gray-400 text-sm">
-      Pass the Spotify URI and declare the <code>type</code> to render the correct
-      embed layout.
+    <p class="text-base text-slate-100">
+      SpotifyEmbed provides accessible integration with Spotify content
+      including tracks, albums, playlists, artists, and podcasts. It includes
+      loading states, error handling, and proper ARIA labeling for screen
+      readers.
     </p>
-    <div class="grid gap-4 md:grid-cols-2">
-      <SpotifyEmbed uri="spotify:track:11dFghVXANMlKmJXsNCbNl" type="track" />
-      <SpotifyEmbed uri="spotify:album:1ATL5GLyefJaxhQzSPVrLX" type="album" />
+    <p class="text-base text-slate-200">
+      The component automatically extracts content type and ID from Spotify
+      URIs, provides keyboard navigation support, and ensures WCAG AAA
+      compliance with proper contrast ratios and focus indicators.
+    </p>
+    <p class="text-base text-slate-200">
+      Built on top of <strong>EmbedBase</strong>, this component provides
+      consistent loading states, error handling, and visual variants while
+      maintaining Spotify-specific optimizations and features.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          uri
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Required Spotify URI in format <code>spotify:type:id</code>. Example: <code
+            >spotify:track:11dFghVXANMlKmJXsNCbNl</code
+          >
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          type?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Content type. Choose <code>"track"</code>, <code>"album"</code>, <code
+            >"playlist"</code
+          >,
+          <code>"artist"</code>, <code>"show"</code>, or <code>"episode"</code>.
+          Auto-detected from URI.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          height?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom height override in pixels. Uses content-appropriate defaults if
+          not specified.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          compact?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Use compact display mode for tracks. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style variant. Choose <code>"default"</code>, <code
+            >"minimal"</code
+          >, or <code>"card"</code>. Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showLoading?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show loading spinner while content loads. Defaults to <code>true</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom accessible title for screen readers. Auto-generated if not
+          provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          allowFullscreen?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Allow fullscreen mode. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          loading?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Iframe loading strategy. Choose <code>"lazy"</code> or <code
+            >"eager"</code
+          >. Defaults to <code>"lazy"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and provide a Spotify URI. The component
+      automatically detects the content type and applies appropriate sizing and
+      accessibility features. URIs can be copied from the Spotify app's share
+      menu.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Content Types</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <!-- Track Examples -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Tracks</h3>
+        <div class="space-y-4">
+          <!-- Normal Track -->
+          <div class="space-y-2">
+            <h4 class="text-sm font-medium text-slate-200">Normal View</h4>
+            <SpotifyEmbed
+              uri="spotify:track:11dFghVXANMlKmJXsNCbNl"
+              type="track"
+              title="Normal track player"
+            />
+          </div>
+
+          <!-- Compact Track -->
+          <div class="space-y-2">
+            <h4 class="text-sm font-medium text-slate-200">Compact View</h4>
+            <SpotifyEmbed
+              uri="spotify:track:11dFghVXANMlKmJXsNCbNl"
+              type="track"
+              compact={true}
+              title="Compact track player"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Album Example -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Album</h3>
+        <div class="space-y-2">
+          <h4 class="text-sm font-medium text-slate-200">Full Album View</h4>
+          <SpotifyEmbed
+            uri="spotify:album:1ATL5GLyefJaxhQzSPVrLX"
+            type="album"
+            title="Album player with track list"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Visual Variants</h2>
+    <div class="grid gap-6 lg:grid-cols-3">
+      <!-- Default Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Default</h3>
+        <SpotifyEmbed
+          uri="spotify:track:11dFghVXANMlKmJXsNCbNl"
+          type="track"
+          variant="default"
+          compact={true}
+        />
+      </div>
+
+      <!-- Minimal Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Minimal</h3>
+        <SpotifyEmbed
+          uri="spotify:track:11dFghVXANMlKmJXsNCbNl"
+          type="track"
+          variant="minimal"
+          compact={true}
+        />
+      </div>
+
+      <!-- Card Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Card</h3>
+        <SpotifyEmbed
+          uri="spotify:track:11dFghVXANMlKmJXsNCbNl"
+          type="track"
+          variant="card"
+          compact={true}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Playlists & Shows</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <!-- Playlist Example -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Playlist</h3>
+        <div class="space-y-2">
+          <h4 class="text-sm font-medium text-slate-200">Curated Playlist</h4>
+          <SpotifyEmbed
+            uri="spotify:playlist:37i9dQZF1DXcBWIGoYBM5M"
+            type="playlist"
+            title="Today's Top Hits playlist"
+          />
+        </div>
+      </div>
+
+      <!-- Show Example -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-slate-100">Podcast Show</h3>
+        <div class="space-y-2">
+          <h4 class="text-sm font-medium text-slate-200">Podcast Series</h4>
+          <SpotifyEmbed
+            uri="spotify:show:4rOoJ6Egrf8K2IrywzwOMk"
+            type="show"
+            title="Podcast show player"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Music Blog -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Music Blog</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-6">
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100 mb-2">
+              Featured Track
+            </h4>
+            <p class="text-slate-300 text-sm mb-4">
+              Check out this amazing new release that's been trending this week.
+            </p>
+            <SpotifyEmbed
+              uri="spotify:track:11dFghVXANMlKmJXsNCbNl"
+              type="track"
+              variant="card"
+              title="Featured track of the week"
+            />
+          </div>
+
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100 mb-2">
+              Recommended Album
+            </h4>
+            <p class="text-slate-300 text-sm mb-4">
+              A complete listening experience worth exploring from start to
+              finish.
+            </p>
+            <SpotifyEmbed
+              uri="spotify:album:1ATL5GLyefJaxhQzSPVrLX"
+              type="album"
+              variant="default"
+              title="Recommended album of the month"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Podcast Integration -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Podcast Integration</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100 mb-2">
+              Latest Episode
+            </h4>
+            <p class="text-slate-300 text-sm mb-4">
+              Listen to our most recent episode featuring expert insights.
+            </p>
+            <SpotifyEmbed
+              uri="spotify:episode:512ojhOuo1ktJprKbVcKyQ"
+              type="episode"
+              variant="card"
+              title="Latest podcast episode"
+            />
+          </div>
+
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100 mb-2">
+              Subscribe to Our Show
+            </h4>
+            <p class="text-slate-300 text-sm mb-4">
+              Follow our podcast for weekly updates and expert discussions.
+            </p>
+            <SpotifyEmbed
+              uri="spotify:show:4rOoJ6Egrf8K2IrywzwOMk"
+              type="show"
+              variant="minimal"
+              title="Subscribe to our podcast show"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Artist Showcase -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Artist Showcase</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <div>
+            <h4 class="text-lg font-semibold text-slate-100 mb-2">
+              Featured Artist
+            </h4>
+            <p class="text-slate-300 text-sm mb-4">
+              Discover this artist's most popular tracks and latest releases.
+            </p>
+            <SpotifyEmbed
+              uri="spotify:artist:1vCWHaC5f2uS3yhpwWbIA6"
+              type="artist"
+              variant="card"
+              title="Featured artist profile"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">EmbedBase Architecture</h2>
+    <p class="text-base text-slate-200">
+      This component is built on top of EmbedBase, providing:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Consistent Loading States:</strong> Unified loading spinner and error
+        handling across all embed components
+      </li>
+      <li>
+        <strong>Visual Variants:</strong> Multiple styling options (default, minimal,
+        card) for different use cases
+      </li>
+      <li>
+        <strong>Accessibility:</strong> WCAG AAA compliance with 9:1 contrast ratios
+        and proper ARIA attributes
+      </li>
+      <li>
+        <strong>Performance:</strong> Lazy loading and optimized iframe attributes
+      </li>
+      <li>
+        <strong>Responsive Design:</strong> Flexible sizing and container handling
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      SpotifyEmbed meets WCAG AAA standards with proper focus indicators,
+      keyboard navigation support, and comprehensive screen reader labeling. All
+      embed variants maintain sufficient contrast ratios in both light and dark
+      themes.
+    </p>
+    <p class="text-base text-slate-200">
+      The component provides contextual descriptions for different content
+      types, loading states with accessible announcements, and error handling
+      with user-friendly messages. Keyboard users can navigate to the embedded
+      player and use standard media controls.
+    </p>
+    <p class="text-base text-slate-200">
+      High contrast mode is automatically supported with enhanced borders and
+      focus indicators. Reduced motion preferences disable loading animations
+      while maintaining all functionality and accessibility features.
+    </p>
+
+    <div
+      class="mt-6 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+    >
+      <h3 class="text-sm font-semibold text-slate-200 mb-3">
+        URI Format Examples
+      </h3>
+      <div class="grid gap-3 sm:grid-cols-1">
+        <div class="space-y-1">
+          <div class="text-xs font-medium text-slate-300">Track:</div>
+          <code class="text-xs text-green-400 bg-slate-800 px-2 py-1 rounded"
+            >spotify:track:11dFghVXANMlKmJXsNCbNl</code
+          >
+        </div>
+        <div class="space-y-1">
+          <div class="text-xs font-medium text-slate-300">Album:</div>
+          <code class="text-xs text-blue-400 bg-slate-800 px-2 py-1 rounded"
+            >spotify:album:1ATL5GLyefJaxhQzSPVrLX</code
+          >
+        </div>
+        <div class="space-y-1">
+          <div class="text-xs font-medium text-slate-300">Playlist:</div>
+          <code class="text-xs text-purple-400 bg-slate-800 px-2 py-1 rounded"
+            >spotify:playlist:37i9dQZF1DXcBWIGoYBM5M</code
+          >
+        </div>
+        <div class="space-y-1">
+          <div class="text-xs font-medium text-slate-300">Show:</div>
+          <code class="text-xs text-amber-400 bg-slate-800 px-2 py-1 rounded"
+            >spotify:show:4rOoJ6Egrf8K2IrywzwOMk</code
+          >
+        </div>
+      </div>
     </div>
   </section>
 </DocsLayout>

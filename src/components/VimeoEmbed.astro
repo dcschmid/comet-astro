@@ -1,46 +1,110 @@
 ---
+import EmbedBase from './EmbedBase.astro';
+
+/**
+ * VimeoEmbed - WCAG AAA compliant Vimeo video embed
+ * Provides accessible Vimeo integration with proper loading states and error handling
+ */
 interface Props {
+  /** Vimeo video ID */
   videoId: string;
+  /** Accessible title for screen readers */
   title?: string;
-  aspectRatio?: '16/9' | '4/3' | '1/1';
+  /** Visual theme variant */
+  variant?: 'default' | 'minimal' | 'card' | 'featured' | 'inline';
+  /** Enable autoplay */
   autoplay?: boolean;
+  /** Loop video playback */
   loop?: boolean;
+  /** Start video muted */
   muted?: boolean;
-  className?: string;
+  /** Player color theme (hex color) */
+  color?: string;
+  /** Show portrait */
+  portrait?: boolean;
+  /** Show byline */
+  byline?: boolean;
+  /** Do Not Track mode */
+  dnt?: boolean;
+  /** Video quality preference */
+  quality?: 'auto' | '240p' | '360p' | '540p' | '720p' | '1080p';
+  /** Show loading state */
+  showLoading?: boolean;
+  /** Aspect ratio - Vimeo typically uses 16:9 */
+  aspectRatio?: '16:9' | '4:3' | '1:1' | '21:9' | '9:16' | 'auto';
+  /** CSS class for styling */
+  class?: string;
+  /** ARIA label for accessibility */
+  ariaLabel?: string;
+  /** Additional iframe attributes */
+  [key: string]: any;
 }
 
 const {
   videoId,
   title = 'Vimeo video player',
-  aspectRatio = '16/9',
+  variant = 'default',
   autoplay = false,
   loop = false,
   muted = false,
-  className = '',
+  color = '00adef',
+  portrait = false,
+  byline = false,
+  dnt = true,
+  quality = 'auto',
+  showLoading = true,
+  aspectRatio = '16:9',
+  class: className = '',
+  ariaLabel,
+  ...props
 } = Astro.props;
 
-const ratioClasses = {
-  '16/9': 'aspect-video',
-  '4/3': 'aspect-[4/3]',
-  '1/1': 'aspect-square',
+// Validate videoId
+if (!videoId || typeof videoId !== 'string') {
+  throw new Error('VimeoEmbed: videoId is required and must be a string');
+}
+
+// Build Vimeo embed URL
+const buildVimeoEmbedUrl = (): string => {
+  const url = new URL(
+    `https://player.vimeo.com/video/${encodeURIComponent(videoId)}`
+  );
+
+  // Playback parameters
+  if (autoplay) url.searchParams.set('autoplay', '1');
+  if (loop) url.searchParams.set('loop', '1');
+  if (muted) url.searchParams.set('muted', '1');
+
+  // Appearance parameters
+  if (color) url.searchParams.set('color', color.replace('#', ''));
+  url.searchParams.set('portrait', portrait ? '1' : '0');
+  url.searchParams.set('byline', byline ? '1' : '0');
+  url.searchParams.set('title', '0'); // Hide title for cleaner look
+
+  // Privacy and performance
+  if (dnt) url.searchParams.set('dnt', '1');
+  if (quality !== 'auto') url.searchParams.set('quality', quality);
+
+  return url.toString();
 };
 
-const params = new URLSearchParams({
-  ...(autoplay && { autoplay: '1' }),
-  ...(loop && { loop: '1' }),
-  ...(muted && { muted: '1' }),
-});
+const embedUrl = buildVimeoEmbedUrl();
 
-const src = `https://player.vimeo.com/video/${videoId}?${params.toString()}`;
+// Generate appropriate title and ARIA label
+const finalTitle = title || `Vimeo video ${videoId}`;
+const finalAriaLabel =
+  ariaLabel || `Vimeo video player${title ? `: ${title}` : ''}`;
 ---
 
-<div
-  class={`relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 ${ratioClasses[aspectRatio]} ${className}`.trim()}
->
-  <iframe
-    src={src}
-    title={title}
-    allow="autoplay; fullscreen; picture-in-picture"
-    allowfullscreen
-    class="absolute inset-0 h-full w-full border-0"></iframe>
-</div>
+<EmbedBase
+  src={embedUrl}
+  title={finalTitle}
+  aspectRatio={aspectRatio}
+  variant={variant}
+  showLoading={showLoading}
+  class={className}
+  ariaLabel={finalAriaLabel}
+  allowFullscreen={true}
+  allow="autoplay; fullscreen; picture-in-picture"
+  {...props}
+/>

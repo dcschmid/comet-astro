@@ -35,14 +35,16 @@ const confirmDialogId = 'confirm-dialog';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      Dialog provides a robust modal interface built on the native HTML dialog element. 
-      The component maintains WCAG AAA contrast ratios across all interactive states and 
-      includes comprehensive focus management for keyboard navigation accessibility.
+      Dialog provides a robust modal interface built on the native HTML dialog
+      element. The component maintains WCAG AAA contrast ratios across all
+      interactive states and includes comprehensive focus management for
+      keyboard navigation accessibility.
     </p>
     <p class="text-base text-slate-200">
-      Focus trapping, backdrop interaction, and ESC key handling work automatically. 
-      The dialog returns focus to the triggering element when closed, ensuring a seamless 
-      user experience across keyboard and mouse interactions.
+      Focus trapping, backdrop interaction, and ESC key handling work
+      automatically. The dialog returns focus to the triggering element when
+      closed, ensuring a seamless user experience across keyboard and mouse
+      interactions.
     </p>
   </section>
 
@@ -58,7 +60,8 @@ const confirmDialogId = 'confirm-dialog';
           id
         </dt>
         <dd class="text-sm text-slate-200">
-          Required unique identifier for the dialog element. Used for triggering with <code>data-dialog-trigger</code>.
+          Required unique identifier for the dialog element. Used for triggering
+          with <code>data-dialog-trigger</code>.
         </dd>
       </div>
       <div
@@ -70,7 +73,8 @@ const confirmDialogId = 'confirm-dialog';
           title?
         </dt>
         <dd class="text-sm text-slate-200">
-          Optional header title for the dialog. Creates accessible heading with proper ARIA labeling.
+          Optional header title for the dialog. Creates accessible heading with
+          proper ARIA labeling.
         </dd>
       </div>
       <div
@@ -82,7 +86,11 @@ const confirmDialogId = 'confirm-dialog';
           size?
         </dt>
         <dd class="text-sm text-slate-200">
-          Dialog width preset: <code>"sm"</code>, <code>"md"</code>, <code>"lg"</code>, <code>"xl"</code>, or <code>"full"</code>. Defaults to <code>"md"</code>.
+          Dialog width preset: <code>"sm"</code>, <code>"md"</code>, <code
+            >"lg"</code
+          >, <code>"xl"</code>, or <code>"full"</code>. Defaults to <code
+            >"md"</code
+          >.
         </dd>
       </div>
       <div
@@ -94,7 +102,9 @@ const confirmDialogId = 'confirm-dialog';
           dismissible?
         </dt>
         <dd class="text-sm text-slate-200">
-          Shows close button and enables backdrop/ESC dismissal. Defaults to <code>true</code>.
+          Shows close button and enables backdrop/ESC dismissal. Defaults to <code
+            >true</code
+          >.
         </dd>
       </div>
       <div
@@ -106,7 +116,8 @@ const confirmDialogId = 'confirm-dialog';
           className?
         </dt>
         <dd class="text-sm text-slate-200">
-          Additional CSS classes to apply to the dialog element for custom styling.
+          Additional CSS classes to apply to the dialog element for custom
+          styling.
         </dd>
       </div>
     </dl>
@@ -115,9 +126,9 @@ const confirmDialogId = 'confirm-dialog';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Create a trigger element with <code>data-dialog-trigger</code> pointing to the dialog ID. 
-      The dialog handles opening, focus management, and closing automatically. Customize actions 
-      using the "actions" slot for complex interactions.
+      Create a trigger element with <code>data-dialog-trigger</code> pointing to
+      the dialog ID. The dialog handles opening, focus management, and closing automatically.
+      Customize actions using the "actions" slot for complex interactions.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -139,7 +150,11 @@ const confirmDialogId = 'confirm-dialog';
         Open Basic Dialog
       </button>
       <DialogComponent id={dialogId} title="Basic Dialog Example">
-        <p>This is a basic dialog with default styling and behavior. It demonstrates the standard layout with header, content area, and footer actions.</p>
+        <p>
+          This is a basic dialog with default styling and behavior. It
+          demonstrates the standard layout with header, content area, and footer
+          actions.
+        </p>
       </DialogComponent>
     </div>
   </section>
@@ -172,25 +187,40 @@ const confirmDialogId = 'confirm-dialog';
         Extra Large
       </button>
     </div>
-    
+
     <DialogComponent id="small-dialog" title="Small Dialog" size="sm">
-      <p>This is a small dialog perfect for simple confirmations or brief messages.</p>
+      <p>
+        This is a small dialog perfect for simple confirmations or brief
+        messages.
+      </p>
     </DialogComponent>
-    
+
     <DialogComponent id="large-dialog" title="Large Dialog" size="lg">
-      <p>Large dialogs provide more space for forms, detailed content, or complex interactions. They maintain responsive behavior across different screen sizes.</p>
+      <p>
+        Large dialogs provide more space for forms, detailed content, or complex
+        interactions. They maintain responsive behavior across different screen
+        sizes.
+      </p>
     </DialogComponent>
-    
+
     <DialogComponent id="xl-dialog" title="Extra Large Dialog" size="xl">
-      <p>Extra large dialogs offer maximum content area while preserving mobile responsiveness. Use these for data tables, multi-step forms, or rich media content.</p>
-      <p class="mt-4">The dialog automatically handles focus trapping and returns focus to the trigger element when closed.</p>
+      <p>
+        Extra large dialogs offer maximum content area while preserving mobile
+        responsiveness. Use these for data tables, multi-step forms, or rich
+        media content.
+      </p>
+      <p class="mt-4">
+        The dialog automatically handles focus trapping and returns focus to the
+        trigger element when closed.
+      </p>
     </DialogComponent>
   </section>
 
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Custom Actions</h2>
     <p class="text-base text-slate-200">
-      Override the default close button with custom action buttons using the "actions" slot.
+      Override the default close button with custom action buttons using the
+      "actions" slot.
     </p>
     <div class="space-y-4">
       <button
@@ -201,7 +231,10 @@ const confirmDialogId = 'confirm-dialog';
         Delete Item
       </button>
       <DialogComponent id={confirmDialogId} title="Confirm Deletion">
-        <p>This action cannot be undone. Are you sure you want to delete this item permanently?</p>
+        <p>
+          This action cannot be undone. Are you sure you want to delete this
+          item permanently?
+        </p>
         <Fragment slot="actions">
           <button
             data-dialog-close
@@ -225,19 +258,24 @@ const confirmDialogId = 'confirm-dialog';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      Contrast ratios exceed WCAG AAA requirements (7:1+) across all dialog elements including 
-      headers, content areas, and action buttons in both light and dark themes. Focus indicators 
-      use 2px visible rings with proper offset values for clear keyboard navigation.
+      Contrast ratios exceed WCAG AAA requirements (7:1+) across all dialog
+      elements including headers, content areas, and action buttons in both
+      light and dark themes. Focus indicators use 2px visible rings with proper
+      offset values for clear keyboard navigation.
     </p>
     <p class="text-base text-slate-200">
-      Focus management includes automatic trapping within the dialog, restoration to the triggering 
-      element on close, and initial focus placement on the first interactive element. ESC key 
-      handling and backdrop clicks provide intuitive dismissal patterns.
+      Focus management includes automatic trapping within the dialog,
+      restoration to the triggering element on close, and initial focus
+      placement on the first interactive element. ESC key handling and backdrop
+      clicks provide intuitive dismissal patterns.
     </p>
     <p class="text-base text-slate-200">
-      The dialog uses semantic HTML with proper ARIA attributes including <code>aria-modal</code>, 
-      <code>aria-labelledby</code>, and role assignments. Screen readers receive appropriate 
-      announcements for dialog state changes and action confirmations.
+      The dialog uses semantic HTML with proper ARIA attributes including <code
+        >aria-modal</code
+      >,
+      <code>aria-labelledby</code>, and role assignments. Screen readers receive
+      appropriate announcements for dialog state changes and action
+      confirmations.
     </p>
   </section>
 </DocsLayout>

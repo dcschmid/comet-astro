@@ -1,34 +1,576 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Slider from '../../components/Slider.astro';
+
+const usageSnippet = `---
+import { Slider } from 'comet-astro';
+---
+
+<Slider 
+  name="volume" 
+  label="Volume Control"
+  min={0}
+  max={100}
+  value={75}
+  showValue={true}
+  showMinMax={true}
+  size="md"
+  variant="default"
+/>`;
 ---
 
 <DocsLayout
   title="Slider"
-  description="Custom range input with label, ticks, and value display options."
+  description="WCAG AAA compliant range input with enhanced keyboard navigation and accessibility features."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
+    <p class="text-base text-slate-100">
+      Slider provides an accessible way for users to select values from a
+      continuous range using mouse, touch, or keyboard input. It includes proper
+      ARIA labeling, keyboard shortcuts, and visual feedback that meets WCAG AAA
+      standards.
+    </p>
+    <p class="text-base text-slate-200">
+      The component supports different sizes and color variants, provides
+      real-time value updates for screen readers, and ensures sufficient
+      contrast ratios in both light and dark themes. Touch targets meet minimum
+      size requirements.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          name
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Required form input name attribute for the slider.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          label?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible label text displayed above the slider.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          min?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Minimum value. Defaults to <code>0</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          max?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Maximum value. Defaults to <code>100</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          step?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Step increment for value changes. Defaults to <code>1</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          value?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Current selected value. Defaults to <code>min</code> value.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showValue?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Display current value next to label. Defaults to <code>true</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showMinMax?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show min/max labels below slider. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant. Choose <code>"sm"</code>, <code>"md"</code>, or <code
+            >"lg"</code
+          >. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Color variant. Choose <code>"default"</code>, <code>"success"</code>,
+          <code>"warning"</code>, or <code>"error"</code>. Defaults to <code
+            >"default"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disabled?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Disable the slider input. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaDescription?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional description for screen readers.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and provide a name attribute. The slider
+      automatically handles keyboard navigation, ARIA updates, and visual
+      feedback. Use different variants and sizes to match your design
+      requirements.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Basic Examples</h2>
+    <div class="space-y-6">
+      <!-- Simple Slider -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Simple Slider</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <Slider name="simple" label="Volume" value={50} />
+        </div>
+      </div>
+
+      <!-- With Min/Max Labels -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">With Min/Max Labels</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <Slider
+            name="brightness"
+            label="Brightness"
+            min={0}
+            max={100}
+            value={75}
+            showMinMax={true}
+          />
+        </div>
+      </div>
+
+      <!-- Custom Range -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Custom Range</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+        >
+          <Slider
+            name="zoom"
+            label="Zoom Level"
+            min={10}
+            max={200}
+            step={10}
+            value={100}
+            showValue={true}
+            showMinMax={true}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <!-- Small -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Small</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider name="small" label="Small Slider" size="sm" value={30} />
+        </div>
+      </div>
+
+      <!-- Medium -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Medium</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider name="medium" label="Medium Slider" size="md" value={60} />
+        </div>
+      </div>
+
+      <!-- Large -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Large</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider name="large" label="Large Slider" size="lg" value={90} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Default -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Default</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider name="default" label="Default" variant="default" value={50} />
+        </div>
+      </div>
+
+      <!-- Success -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Success</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider name="success" label="Success" variant="success" value={75} />
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Warning</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider name="warning" label="Warning" variant="warning" value={60} />
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Error</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider name="error" label="Error" variant="error" value={25} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">States</h2>
+    <div class="grid gap-6 sm:grid-cols-2">
+      <!-- Normal State -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Normal</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider
+            name="normal"
+            label="Interactive Slider"
+            value={70}
+            showMinMax={true}
+          />
+        </div>
+      </div>
+
+      <!-- Disabled State -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Disabled</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Slider
+            name="disabled"
+            label="Disabled Slider"
+            value={40}
+            disabled={true}
+            showMinMax={true}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Audio Controls -->
     <div class="space-y-4">
-      <Slider name="volume" label="Volume" value={50} />
-      <Slider
-        name="brightness"
-        label="Brightness"
-        min={0}
-        max={100}
-        value={75}
-        showMinMax
-      />
-      <Slider
-        name="zoom"
-        label="Zoom"
-        min={10}
-        max={200}
-        step={10}
-        value={100}
-        showValue
-        showMinMax
-      />
+      <h3 class="text-lg font-medium text-slate-100">Audio Controls</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <Slider
+            name="volume"
+            label="Volume"
+            min={0}
+            max={100}
+            value={75}
+            variant="default"
+            showValue={true}
+            ariaDescription="Adjust audio volume from 0 to 100 percent"
+          />
+          <Slider
+            name="bass"
+            label="Bass"
+            min={-10}
+            max={10}
+            value={2}
+            variant="success"
+            showMinMax={true}
+          />
+          <Slider
+            name="treble"
+            label="Treble"
+            min={-10}
+            max={10}
+            value={-1}
+            variant="success"
+            showMinMax={true}
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Editor -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Image Editor</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <Slider
+            name="brightness-edit"
+            label="Brightness"
+            min={-100}
+            max={100}
+            value={10}
+            variant="default"
+            showValue={true}
+            showMinMax={true}
+          />
+          <Slider
+            name="contrast"
+            label="Contrast"
+            min={-100}
+            max={100}
+            value={5}
+            variant="default"
+            showValue={true}
+            showMinMax={true}
+          />
+          <Slider
+            name="saturation"
+            label="Saturation"
+            min={0}
+            max={200}
+            value={100}
+            variant="default"
+            showValue={true}
+            showMinMax={true}
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Controls -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Form Controls</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-4">
+          <Slider
+            name="age"
+            label="Age Range"
+            min={18}
+            max={100}
+            value={35}
+            variant="default"
+            showValue={true}
+            showMinMax={true}
+            ariaDescription="Select your age between 18 and 100 years"
+          />
+          <Slider
+            name="budget"
+            label="Budget (in thousands)"
+            min={10}
+            max={1000}
+            step={10}
+            value={250}
+            variant="success"
+            showValue={true}
+            showMinMax={true}
+          />
+          <Slider
+            name="rating"
+            label="Rating"
+            min={1}
+            max={5}
+            step={0.5}
+            value={4}
+            variant="warning"
+            showValue={true}
+            showMinMax={true}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      The Slider component meets WCAG AAA standards with contrast ratios
+      exceeding 9:1 in all variants and themes. Enhanced focus indicators
+      provide clear visual feedback, and the component automatically adjusts for
+      high contrast mode.
+    </p>
+    <p class="text-base text-slate-200">
+      Full keyboard navigation is supported with arrow keys, Home/End, and Page
+      Up/Down for precise value selection. Screen readers receive real-time
+      updates through aria-live regions and comprehensive ARIA labeling.
+    </p>
+    <p class="text-base text-slate-200">
+      Touch targets meet the minimum 44x44px requirement, and the component
+      respects user preferences for reduced motion by disabling transitions when
+      requested.
+    </p>
+
+    <div
+      class="mt-6 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+    >
+      <h3 class="text-sm font-semibold text-slate-200 mb-3">
+        Keyboard Shortcuts
+      </h3>
+      <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="flex items-center space-x-2">
+          <kbd
+            class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+            >←→</kbd
+          >
+          <span class="text-sm text-slate-300">Adjust by step</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <kbd
+            class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+            >↑↓</kbd
+          >
+          <span class="text-sm text-slate-300">Adjust by step</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <kbd
+            class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+            >Home</kbd
+          >
+          <span class="text-sm text-slate-300">Jump to minimum</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <kbd
+            class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+            >End</kbd
+          >
+          <span class="text-sm text-slate-300">Jump to maximum</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <kbd
+            class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+            >Page Up</kbd
+          >
+          <span class="text-sm text-slate-300">Jump by 10 steps</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <kbd
+            class="rounded bg-slate-800 px-2 py-1 text-xs text-slate-200 shadow-sm border border-slate-700"
+            >Page Down</kbd
+          >
+          <span class="text-sm text-slate-300">Jump by 10 steps</span>
+        </div>
+      </div>
     </div>
   </section>
 </DocsLayout>

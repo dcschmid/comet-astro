@@ -16,45 +16,179 @@ const usageSnippet = `---\nimport { CodeBlock } from 'comet-astro';\n\n---\n\n<C
   description="Accessible, high-contrast code block with optional title bar, line numbers, line highlighting, wrapping and copy support."
 >
   <section class="space-y-4">
-    <p class="text-base text-slate-100">Displays preformatted code with an optional title or filename bar, copy-to-clipboard button, and highlighted lines. Background and text colors maintain WCAG AAA contrast in light and dark themes.</p>
-    <p class="text-base text-slate-200">Use line highlighting sparingly to direct attention. Provide a filename when referencing real project files; otherwise use a descriptive title.</p>
+    <p class="text-base text-slate-100">
+      Displays preformatted code with an optional title or filename bar,
+      copy-to-clipboard button, and highlighted lines. Background and text
+      colors maintain WCAG AAA contrast in light and dark themes.
+    </p>
+    <p class="text-base text-slate-200">
+      Use line highlighting sparingly to direct attention. Provide a filename
+      when referencing real project files; otherwise use a descriptive title.
+    </p>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">code</dt><dd class="text-sm text-slate-200">Raw code string to render inside the block.</dd></div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">language?</dt><dd class="text-sm text-slate-200">Language identifier used for syntax highlighting classes.</dd></div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">title?</dt><dd class="text-sm text-slate-200">Title bar label. Ignored if <code>filename</code> is provided.</dd></div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">filename?</dt><dd class="text-sm text-slate-200">File name to display; overrides <code>title</code>.</dd></div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">showLineNumbers?</dt><dd class="text-sm text-slate-200">Adds a gutter with line numbers for reference.</dd></div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">highlightLines?</dt><dd class="text-sm text-slate-200">Array of 1-based line numbers to emphasize.</dd></div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">wrap?</dt><dd class="text-sm text-slate-200">Soft wrap long lines instead of horizontal scrolling.</dd></div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">copyable?</dt><dd class="text-sm text-slate-200">Show copy button (defaults to <code>true</code>).</dd></div>
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"><dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">className?</dt><dd class="text-sm text-slate-200">Append extra classes (padding, margin). Avoid overriding color & focus utilities.</dd></div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          code
+        </dt><dd class="text-sm text-slate-200">
+          Raw code string to render inside the block.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          language?
+        </dt><dd class="text-sm text-slate-200">
+          Language identifier used for syntax highlighting classes.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          title?
+        </dt><dd class="text-sm text-slate-200">
+          Title bar label. Ignored if <code>filename</code> is provided.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          filename?
+        </dt><dd class="text-sm text-slate-200">
+          File name to display; overrides <code>title</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showLineNumbers?
+        </dt><dd class="text-sm text-slate-200">
+          Adds a gutter with line numbers for reference.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          highlightLines?
+        </dt><dd class="text-sm text-slate-200">
+          Array of 1-based line numbers to emphasize.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          wrap?
+        </dt><dd class="text-sm text-slate-200">
+          Soft wrap long lines instead of horizontal scrolling.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          copyable?
+        </dt><dd class="text-sm text-slate-200">
+          Show copy button (defaults to <code>true</code>).
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt><dd class="text-sm text-slate-200">
+          Append extra classes (padding, margin). Avoid overriding color & focus
+          utilities.
+        </dd>
+      </div>
     </dl>
   </section>
 
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">Typical usage with filename, line highlight and copy button.</p>
-    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+    <p class="text-base text-slate-200">
+      Typical usage with filename, line highlight and copy button.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
   </section>
 
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
     <div class="space-y-6">
-      <CodeBlockComp code={exampleCode} language="javascript" filename="example.js" />
-      <CodeBlockComp code={exampleCode} language="javascript" showLineNumbers highlightLines={[2]} />
-      <CodeBlockComp code={exampleCode} language="javascript" wrap title="Wrapped" />
-      <CodeBlockComp code={exampleCode} language="javascript" copyable={false} title="No copy button" />
+      <CodeBlockComp
+        code={exampleCode}
+        language="javascript"
+        filename="example.js"
+      />
+      <CodeBlockComp
+        code={exampleCode}
+        language="javascript"
+        showLineNumbers
+        highlightLines={[2]}
+      />
+      <CodeBlockComp
+        code={exampleCode}
+        language="javascript"
+        wrap
+        title="Wrapped"
+      />
+      <CodeBlockComp
+        code={exampleCode}
+        language="javascript"
+        copyable={false}
+        title="No copy button"
+      />
     </div>
   </section>
 
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
-    <p class="text-base text-slate-200">Copy feedback is announced via a visually hidden live region. Button label remains concise (“Copy”). Highlighted lines add a subtle background + ring for color and structural cues; ensure you also reference them in nearby text if critical.</p>
-    <p class="text-base text-slate-200">AAA contrast: Light theme uses <code>bg-slate-50</code>/<code>text-slate-800</code>; dark theme uses <code>bg-slate-950</code>/<code>text-slate-100</code>. Highlight overlay keeps sufficient contrast for underlying code while staying distinguishable.</p>
-    <p class="text-base text-slate-200">Prefer short snippets (&lt;120 lines) in docs; link to full source for larger examples to maintain scannability and performance.</p>
+    <p class="text-base text-slate-200">
+      Copy feedback is announced via a visually hidden live region. Button label
+      remains concise (“Copy”). Highlighted lines add a subtle background + ring
+      for color and structural cues; ensure you also reference them in nearby
+      text if critical.
+    </p>
+    <p class="text-base text-slate-200">
+      AAA contrast: Light theme uses <code>bg-slate-50</code>/<code
+        >text-slate-800</code
+      >; dark theme uses <code>bg-slate-950</code>/<code>text-slate-100</code>.
+      Highlight overlay keeps sufficient contrast for underlying code while
+      staying distinguishable.
+    </p>
+    <p class="text-base text-slate-200">
+      Prefer short snippets (&lt;120 lines) in docs; link to full source for
+      larger examples to maintain scannability and performance.
+    </p>
   </section>
 </DocsLayout>

@@ -75,7 +75,8 @@ const inputId = `${id}-input`;
 const helpId = helpText ? `${id}-help` : undefined;
 const errorId = error ? `${id}-error` : undefined;
 const suggestionsId = enableSuggestions ? `${id}-suggestions` : undefined;
-const finalAriaDescribedBy = [ariaDescribedBy, helpId, errorId].filter(Boolean).join(' ') || undefined;
+const finalAriaDescribedBy =
+  [ariaDescribedBy, helpId, errorId].filter(Boolean).join(' ') || undefined;
 
 // Size configurations
 const sizeClasses = {
@@ -105,7 +106,8 @@ const sizeClasses = {
 // Variant styles with WCAG AAA compliance
 const variantClasses = {
   default: {
-    container: 'bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm',
+    container:
+      'bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm',
     input: cn(
       'bg-transparent text-gray-900 dark:text-gray-100',
       'placeholder:text-gray-500 dark:placeholder:text-gray-400',
@@ -118,11 +120,15 @@ const variantClasses = {
       'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
     ),
     icon: 'text-gray-500 dark:text-gray-400',
-    focus: 'focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
-    error: error && 'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400',
+    focus:
+      'focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
+    error:
+      error &&
+      'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400',
   },
   minimal: {
-    container: 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg',
+    container:
+      'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg',
     input: cn(
       'bg-transparent text-gray-900 dark:text-gray-100',
       'placeholder:text-gray-500 dark:placeholder:text-gray-400',
@@ -135,11 +141,15 @@ const variantClasses = {
       'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400'
     ),
     icon: 'text-gray-500 dark:text-gray-400',
-    focus: 'focus-within:border-gray-400 dark:focus-within:border-gray-500 focus-within:ring-2 focus-within:ring-gray-400 dark:focus-within:ring-gray-500',
-    error: error && 'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400',
+    focus:
+      'focus-within:border-gray-400 dark:focus-within:border-gray-500 focus-within:ring-2 focus-within:ring-gray-400 dark:focus-within:ring-gray-500',
+    error:
+      error &&
+      'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400',
   },
   outlined: {
-    container: 'bg-transparent border-2 border-gray-300 dark:border-gray-600 rounded-lg',
+    container:
+      'bg-transparent border-2 border-gray-300 dark:border-gray-600 rounded-lg',
     input: cn(
       'bg-transparent text-gray-900 dark:text-gray-100',
       'placeholder:text-gray-500 dark:placeholder:text-gray-400',
@@ -152,8 +162,11 @@ const variantClasses = {
       'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
     ),
     icon: 'text-gray-600 dark:text-gray-300',
-    focus: 'focus-within:border-blue-600 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-600 dark:focus-within:ring-blue-400',
-    error: error && 'border-red-600 dark:border-red-400 focus-within:border-red-600 dark:focus-within:border-red-400 focus-within:ring-red-600 dark:focus-within:ring-red-400',
+    focus:
+      'focus-within:border-blue-600 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-600 dark:focus-within:ring-blue-400',
+    error:
+      error &&
+      'border-red-600 dark:border-red-400 focus-within:border-red-600 dark:focus-within:border-red-400 focus-within:ring-red-600 dark:focus-within:ring-red-400',
   },
   filled: {
     container: 'bg-gray-100 dark:bg-gray-800 border-0 rounded-lg shadow-inner',
@@ -168,8 +181,11 @@ const variantClasses = {
       'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
     ),
     icon: 'text-gray-600 dark:text-gray-300',
-    focus: 'focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
-    error: error && 'bg-red-50 dark:bg-red-900/20 focus-within:ring-red-500 dark:focus-within:ring-red-400',
+    focus:
+      'focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
+    error:
+      error &&
+      'bg-red-50 dark:bg-red-900/20 focus-within:ring-red-500 dark:focus-within:ring-red-400',
   },
 };
 
@@ -208,7 +224,8 @@ const labelClasses = cn(
   'block font-medium text-gray-900 dark:text-gray-100 mb-2',
   sizeClasses[size].label,
   disabled && 'opacity-50',
-  required && 'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
+  required &&
+    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
 );
 
 const helpClasses = cn(
@@ -219,35 +236,38 @@ const helpClasses = cn(
 ---
 
 <div class="space-y-2">
-  {label && (
-    <label class={labelClasses} for={inputId}>
-      {label}
-    </label>
-  )}
-  
-  <form
-    role="search"
-    method={method}
-    action={action}
-    class="relative"
-  >
+  {
+    label && (
+      <label class={labelClasses} for={inputId}>
+        {label}
+      </label>
+    )
+  }
+
+  <form role="search" method={method} action={action} class="relative">
     <div class={containerClasses} data-search-container>
-      {showIcon && (
-        <div class={iconClasses}>
-          <svg 
-            class={sizeClasses[size].icon}
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            stroke-width="1.8"
-          >
-            <circle cx="11" cy="11" r="8" stroke-width="1.8"/>
-            <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-      )}
-      
+      {
+        showIcon && (
+          <div class={iconClasses}>
+            <svg
+              class={sizeClasses[size].icon}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              stroke-width="1.8"
+            >
+              <circle cx="11" cy="11" r="8" stroke-width="1.8" />
+              <path
+                d="M21 21l-4.35-4.35"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+        )
+      }
+
       <input
         id={inputId}
         type="search"
@@ -269,60 +289,74 @@ const helpClasses = cn(
         data-search-input
         data-testid="search-input"
       />
-      
-      {showButton && (
-        <button
-          type="submit"
-          class={buttonClasses}
-          disabled={disabled}
-          aria-label={submitLabel}
-          data-testid="search-button"
-        >
-          <span class="sr-only sm:not-sr-only">{submitLabel}</span>
-          <svg 
-            class={cn('sm:hidden', sizeClasses[size].icon)}
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            stroke-width="1.8"
+
+      {
+        showButton && (
+          <button
+            type="submit"
+            class={buttonClasses}
+            disabled={disabled}
+            aria-label={submitLabel}
+            data-testid="search-button"
           >
-            <circle cx="11" cy="11" r="8" stroke-width="1.8"/>
-            <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-      )}
+            <span class="sr-only sm:not-sr-only">{submitLabel}</span>
+            <svg
+              class={cn('sm:hidden', sizeClasses[size].icon)}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              stroke-width="1.8"
+            >
+              <circle cx="11" cy="11" r="8" stroke-width="1.8" />
+              <path
+                d="M21 21l-4.35-4.35"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        )
+      }
     </div>
-    
-    {enableSuggestions && (
-      <div
-        id={suggestionsId}
-        class={cn(
-          'absolute top-full left-0 right-0 z-50 mt-1',
-          'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700',
-          'rounded-lg shadow-lg max-h-60 overflow-y-auto',
-          'hidden'
-        )}
-        role="listbox"
-        aria-label="Search suggestions"
-        data-search-suggestions
-      >
-        <!-- Suggestions will be populated by JavaScript -->
-      </div>
-    )}
+
+    {
+      enableSuggestions && (
+        <div
+          id={suggestionsId}
+          class={cn(
+            'absolute top-full left-0 right-0 z-50 mt-1',
+            'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700',
+            'rounded-lg shadow-lg max-h-60 overflow-y-auto',
+            'hidden'
+          )}
+          role="listbox"
+          aria-label="Search suggestions"
+          data-search-suggestions
+        >
+          {/* Suggestions will be populated by JavaScript */}
+        </div>
+      )
+    }
   </form>
-  
+
   <div class="space-y-1">
-    {helpText && (
-      <p id={helpId} class={helpClasses}>
-        {helpText}
-      </p>
-    )}
-    {error && (
-      <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
-        {typeof error === 'string' ? error : 'Please check your search query.'}
-      </p>
-    )}
+    {
+      helpText && (
+        <p id={helpId} class={helpClasses}>
+          {helpText}
+        </p>
+      )
+    }
+    {
+      error && (
+        <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
+          {typeof error === 'string'
+            ? error
+            : 'Please check your search query.'}
+        </p>
+      )
+    }
   </div>
 </div>
 
@@ -330,30 +364,30 @@ const helpClasses = cn(
   [data-search-container]:focus-within {
     outline: none;
   }
-  
+
   [data-search-suggestions] {
     scrollbar-width: thin;
     scrollbar-color: rgb(156 163 175) transparent;
   }
-  
+
   [data-search-suggestions]::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   [data-search-suggestions]::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   [data-search-suggestions]::-webkit-scrollbar-thumb {
     background: rgb(156 163 175);
     border-radius: 4px;
   }
-  
+
   @media (prefers-color-scheme: dark) {
     [data-search-suggestions] {
       scrollbar-color: rgb(75 85 99) transparent;
     }
-    
+
     [data-search-suggestions]::-webkit-scrollbar-thumb {
       background: rgb(75 85 99);
     }
@@ -362,72 +396,78 @@ const helpClasses = cn(
 
 <script is:inline>
   (function setupSearchBar() {
-    const searchContainers = document.querySelectorAll('[data-search-container]');
-    
-    searchContainers.forEach(container => {
+    const searchContainers = document.querySelectorAll(
+      '[data-search-container]'
+    );
+
+    searchContainers.forEach((container) => {
       const input = container.querySelector('[data-search-input]');
-      const suggestionsContainer = container.parentElement?.querySelector('[data-search-suggestions]');
-      
+      const suggestionsContainer = container.parentElement?.querySelector(
+        '[data-search-suggestions]'
+      );
+
       if (!(input instanceof HTMLInputElement)) return;
-      
+
       // Handle search suggestions if enabled
       if (suggestionsContainer) {
         let suggestionTimeout;
-        
+
         const showSuggestions = () => {
           suggestionsContainer.classList.remove('hidden');
           input.setAttribute('aria-expanded', 'true');
         };
-        
+
         const hideSuggestions = () => {
           suggestionsContainer.classList.add('hidden');
           input.setAttribute('aria-expanded', 'false');
         };
-        
+
         const createSuggestionItem = (text, isHighlighted = false) => {
           const item = document.createElement('div');
           item.className = [
             'px-4 py-2 cursor-pointer text-sm',
             'hover:bg-blue-100 dark:hover:bg-blue-500/20',
             'text-gray-900 dark:text-gray-100',
-            isHighlighted && 'bg-blue-100 dark:bg-blue-500/20'
-          ].filter(Boolean).join(' ');
+            isHighlighted && 'bg-blue-100 dark:bg-blue-500/20',
+          ]
+            .filter(Boolean)
+            .join(' ');
           item.textContent = text;
           item.setAttribute('role', 'option');
           item.setAttribute('aria-selected', isHighlighted ? 'true' : 'false');
           return item;
         };
-        
+
         // Mock suggestions for demo (in real implementation, fetch from API)
         const getSuggestions = (query) => {
           if (!query.trim()) return [];
-          
+
           const mockSuggestions = [
             'Search results',
             'Search tips',
             'Search documentation',
             'Search examples',
-            'Search help'
+            'Search help',
           ];
-          
+
           return mockSuggestions
-            .filter(item => item.toLowerCase().includes(query.toLowerCase()))
+            .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
             .slice(0, 5);
         };
-        
+
         input.addEventListener('input', (event) => {
           clearTimeout(suggestionTimeout);
           const query = event.target.value;
-          
+
           if (query.length < 2) {
             hideSuggestions();
             return;
           }
-          
+
           suggestionTimeout = setTimeout(() => {
             const suggestions = getSuggestions(query);
             suggestionsContainer.innerHTML = '';
-            
+
             if (suggestions.length > 0) {
               suggestions.forEach((suggestion, index) => {
                 const item = createSuggestionItem(suggestion, index === 0);
@@ -444,31 +484,51 @@ const helpClasses = cn(
             }
           }, 300);
         });
-        
+
         // Keyboard navigation for suggestions
         input.addEventListener('keydown', (event) => {
           if (!suggestionsContainer.classList.contains('hidden')) {
-            const items = Array.from(suggestionsContainer.querySelectorAll('[role="option"]'));
-            const currentIndex = items.findIndex(item => item.getAttribute('aria-selected') === 'true');
-            
+            const items = Array.from(
+              suggestionsContainer.querySelectorAll('[role="option"]')
+            );
+            const currentIndex = items.findIndex(
+              (item) => item.getAttribute('aria-selected') === 'true'
+            );
+
             if (event.key === 'ArrowDown') {
               event.preventDefault();
-              const nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+              const nextIndex =
+                currentIndex < items.length - 1 ? currentIndex + 1 : 0;
               items.forEach((item, index) => {
-                item.setAttribute('aria-selected', index === nextIndex ? 'true' : 'false');
+                item.setAttribute(
+                  'aria-selected',
+                  index === nextIndex ? 'true' : 'false'
+                );
                 item.classList.toggle('bg-blue-100', index === nextIndex);
-                item.classList.toggle('dark:bg-blue-500/20', index === nextIndex);
+                item.classList.toggle(
+                  'dark:bg-blue-500/20',
+                  index === nextIndex
+                );
               });
             } else if (event.key === 'ArrowUp') {
               event.preventDefault();
-              const prevIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+              const prevIndex =
+                currentIndex > 0 ? currentIndex - 1 : items.length - 1;
               items.forEach((item, index) => {
-                item.setAttribute('aria-selected', index === prevIndex ? 'true' : 'false');
+                item.setAttribute(
+                  'aria-selected',
+                  index === prevIndex ? 'true' : 'false'
+                );
                 item.classList.toggle('bg-blue-100', index === prevIndex);
-                item.classList.toggle('dark:bg-blue-500/20', index === prevIndex);
+                item.classList.toggle(
+                  'dark:bg-blue-500/20',
+                  index === prevIndex
+                );
               });
             } else if (event.key === 'Enter') {
-              const selectedItem = items.find(item => item.getAttribute('aria-selected') === 'true');
+              const selectedItem = items.find(
+                (item) => item.getAttribute('aria-selected') === 'true'
+              );
               if (selectedItem) {
                 event.preventDefault();
                 input.value = selectedItem.textContent || '';
@@ -480,10 +540,13 @@ const helpClasses = cn(
             }
           }
         });
-        
+
         // Hide suggestions when clicking outside
         document.addEventListener('click', (event) => {
-          if (!container.contains(event.target) && !suggestionsContainer.contains(event.target)) {
+          if (
+            !container.contains(event.target) &&
+            !suggestionsContainer.contains(event.target)
+          ) {
             hideSuggestions();
           }
         });

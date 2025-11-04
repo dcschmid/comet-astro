@@ -72,20 +72,29 @@ import { KBD } from 'comet-astro';
   <!-- Overview -->
   <section class="space-y-4">
     <p class="text-lg text-slate-200">
-      A sophisticated keyboard shortcut component that displays key combinations 
-      with platform-specific styling, optimal accessibility, and responsive design.
+      A sophisticated keyboard shortcut component that displays key combinations
+      with platform-specific styling, optimal accessibility, and responsive
+      design.
     </p>
     <div class="flex flex-wrap gap-2">
-      <span class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20"
+      >
         WCAG AAA
       </span>
-      <span class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20"
+      >
         Platform Aware
       </span>
-      <span class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20"
+      >
         Responsive
       </span>
-      <span class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20"
+      >
         Accessible
       </span>
     </div>
@@ -97,23 +106,49 @@ import { KBD } from 'comet-astro';
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Common Shortcuts</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3">
-          <p class="text-slate-200">Save your work: <KBDComponent keys={['Ctrl', 'S']} /></p>
-          <p class="text-slate-200">Copy selection: <KBDComponent keys={['Ctrl', 'C']} /></p>
-          <p class="text-slate-200">Paste content: <KBDComponent keys={['Ctrl', 'V']} /></p>
-          <p class="text-slate-200">Undo action: <KBDComponent keys={['Ctrl', 'Z']} /></p>
-          <p class="text-slate-200">Find in page: <KBDComponent keys={['Ctrl', 'F']} /></p>
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3"
+        >
+          <p class="text-slate-200">
+            Save your work: <KBDComponent keys={['Ctrl', 'S']} />
+          </p>
+          <p class="text-slate-200">
+            Copy selection: <KBDComponent keys={['Ctrl', 'C']} />
+          </p>
+          <p class="text-slate-200">
+            Paste content: <KBDComponent keys={['Ctrl', 'V']} />
+          </p>
+          <p class="text-slate-200">
+            Undo action: <KBDComponent keys={['Ctrl', 'Z']} />
+          </p>
+          <p class="text-slate-200">
+            Find in page: <KBDComponent keys={['Ctrl', 'F']} />
+          </p>
         </div>
       </div>
-      
+
       <div class="space-y-4">
-        <h3 class="text-base font-medium text-slate-200">Advanced Combinations</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3">
-          <p class="text-slate-200">Command palette: <KBDComponent keys={['Ctrl', 'Shift', 'P']} /></p>
-          <p class="text-slate-200">Developer tools: <KBDComponent keys={['F12']} /></p>
-          <p class="text-slate-200">Quick search: <KBDComponent keys={['Ctrl', 'K']} /></p>
-          <p class="text-slate-200">Switch tabs: <KBDComponent keys={['Ctrl', 'Tab']} /></p>
-          <p class="text-slate-200">Close tab: <KBDComponent keys={['Ctrl', 'W']} /></p>
+        <h3 class="text-base font-medium text-slate-200">
+          Advanced Combinations
+        </h3>
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3"
+        >
+          <p class="text-slate-200">
+            Command palette: <KBDComponent keys={['Ctrl', 'Shift', 'P']} />
+          </p>
+          <p class="text-slate-200">
+            Developer tools: <KBDComponent keys={['F12']} />
+          </p>
+          <p class="text-slate-200">
+            Quick search: <KBDComponent keys={['Ctrl', 'K']} />
+          </p>
+          <p class="text-slate-200">
+            Switch tabs: <KBDComponent keys={['Ctrl', 'Tab']} />
+          </p>
+          <p class="text-slate-200">
+            Close tab: <KBDComponent keys={['Ctrl', 'W']} />
+          </p>
         </div>
       </div>
     </div>
@@ -122,7 +157,9 @@ import { KBD } from 'comet-astro';
   <!-- Size Variants -->
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
-    <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+    <div
+      class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+    >
       <div class="flex items-center gap-4">
         <span class="text-slate-200 w-16">Extra Small:</span>
         <KBDComponent size="xs" keys={['Ctrl', 'S']} />
@@ -157,28 +194,36 @@ import { KBD } from 'comet-astro';
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <div class="space-y-3">
         <h3 class="text-sm font-medium text-slate-300">Default</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 text-center">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 text-center"
+        >
           <KBDComponent variant="default" keys={['Ctrl', 'S']} />
         </div>
         <p class="text-xs text-slate-400">3D keyboard effect with shadow</p>
       </div>
       <div class="space-y-3">
         <h3 class="text-sm font-medium text-slate-300">Outlined</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 text-center">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 text-center"
+        >
           <KBDComponent variant="outlined" keys={['Ctrl', 'S']} />
         </div>
         <p class="text-xs text-slate-400">Clean outline style</p>
       </div>
       <div class="space-y-3">
         <h3 class="text-sm font-medium text-slate-300">Minimal</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 text-center">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 text-center"
+        >
           <KBDComponent variant="minimal" keys={['Ctrl', 'S']} />
         </div>
         <p class="text-xs text-slate-400">Subtle background only</p>
       </div>
       <div class="space-y-3">
         <h3 class="text-sm font-medium text-slate-300">Filled</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 text-center">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 text-center"
+        >
           <KBDComponent variant="filled" keys={['Ctrl', 'S']} />
         </div>
         <p class="text-xs text-slate-400">Solid background with shadow</p>
@@ -192,7 +237,9 @@ import { KBD } from 'comet-astro';
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Visual Separators</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-4"
+        >
           <div class="flex items-center gap-3">
             <span class="text-slate-300 w-12">Plus:</span>
             <KBDComponent keys={['Ctrl', 'Shift', 'P']} separator="plus" />
@@ -211,14 +258,24 @@ import { KBD } from 'comet-astro';
           </div>
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Usage Context</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3 text-sm">
-          <p class="text-slate-200"><strong>Plus (+):</strong> Simultaneous key press</p>
-          <p class="text-slate-200"><strong>Then (→):</strong> Sequential key press</p>
-          <p class="text-slate-200"><strong>Or (/):</strong> Alternative options</p>
-          <p class="text-slate-200"><strong>Space ( ):</strong> Clean minimal look</p>
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3 text-sm"
+        >
+          <p class="text-slate-200">
+            <strong>Plus (+):</strong> Simultaneous key press
+          </p>
+          <p class="text-slate-200">
+            <strong>Then (→):</strong> Sequential key press
+          </p>
+          <p class="text-slate-200">
+            <strong>Or (/):</strong> Alternative options
+          </p>
+          <p class="text-slate-200">
+            <strong>Space ( ):</strong> Clean minimal look
+          </p>
         </div>
       </div>
     </div>
@@ -230,7 +287,9 @@ import { KBD } from 'comet-astro';
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">macOS</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3"
+        >
           <div class="flex items-center gap-3">
             <span class="text-slate-300 w-16">Command:</span>
             <KBDComponent platform="mac" keys={['Cmd', 'S']} />
@@ -245,10 +304,12 @@ import { KBD } from 'comet-astro';
           </div>
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Windows</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3"
+        >
           <div class="flex items-center gap-3">
             <span class="text-slate-300 w-16">Windows:</span>
             <KBDComponent platform="windows" keys={['Win', 'R']} />
@@ -263,10 +324,12 @@ import { KBD } from 'comet-astro';
           </div>
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Linux</h3>
-        <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3">
+        <div
+          class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 space-y-3"
+        >
           <div class="flex items-center gap-3">
             <span class="text-slate-300 w-16">Super:</span>
             <KBDComponent platform="linux" keys={['Super', 'L']} />
@@ -288,33 +351,45 @@ import { KBD } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Basic Props
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>keys?</code>, <code>size?</code>, <code>variant?</code>, 
+          <code>keys?</code>, <code>size?</code>, <code>variant?</code>,
           <code>className?</code> - Core styling and content options.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Visual Options
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>separator?</code>, <code>platform?</code> - 
-          Customize separators and platform-specific key display.
+          <code>separator?</code>, <code>platform?</code> - Customize separators
+          and platform-specific key display.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Accessibility
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>ariaLabel?</code>, <code>description?</code> - 
-          Enhanced accessibility with custom labels and descriptions for screen readers.
+          <code>ariaLabel?</code>, <code>description?</code> - Enhanced accessibility
+          with custom labels and descriptions for screen readers.
         </dd>
       </div>
     </dl>
@@ -324,28 +399,31 @@ import { KBD } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      The KBD component automatically detects platform-specific keys and applies 
-      appropriate styling. Use it to display keyboard shortcuts clearly in documentation 
-      and user interfaces.
+      The KBD component automatically detects platform-specific keys and applies
+      appropriate styling. Use it to display keyboard shortcuts clearly in
+      documentation and user interfaces.
     </p>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Basic Usage</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{basicUsage}</code>
       </pre>
     </div>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Advanced Features</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{advancedUsage}</code>
       </pre>
     </div>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Documentation Example</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{documentationUsage}</code>
       </pre>
     </div>
@@ -358,27 +436,46 @@ import { KBD } from 'comet-astro';
       <ul class="space-y-3 text-sm text-slate-200">
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+ contrast ratios in both light and dark modes</span>
+          <span
+            ><strong>WCAG AAA Compliance:</strong> All color combinations meet 7:1+
+            contrast ratios in both light and dark modes</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Screen Reader Support:</strong> Semantic <code>&lt;kbd&gt;</code> elements with descriptive aria-labels</span>
+          <span
+            ><strong>Screen Reader Support:</strong> Semantic <code
+              >&lt;kbd&gt;</code
+            > elements with descriptive aria-labels</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Platform Awareness:</strong> Automatic key mapping for macOS, Windows, and Linux conventions</span>
+          <span
+            ><strong>Platform Awareness:</strong> Automatic key mapping for macOS,
+            Windows, and Linux conventions</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>High Contrast Mode:</strong> Enhanced borders and font weights for high contrast displays</span>
+          <span
+            ><strong>High Contrast Mode:</strong> Enhanced borders and font weights
+            for high contrast displays</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Reduced Motion:</strong> Respects user preferences for reduced motion and animations</span>
+          <span
+            ><strong>Reduced Motion:</strong> Respects user preferences for reduced
+            motion and animations</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Responsive Design:</strong> Consistent appearance across all device sizes and orientations</span>
+          <span
+            ><strong>Responsive Design:</strong> Consistent appearance across all
+            device sizes and orientations</span
+          >
         </li>
       </ul>
     </div>

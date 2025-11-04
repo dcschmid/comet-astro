@@ -1,40 +1,630 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Tooltip from '../../components/Tooltip.astro';
-import ButtonLink from '../../components/ButtonLink.astro';
+import Button from '../../components/Button.astro';
+
+const usageSnippet = `---
+import { Tooltip } from 'comet-astro';
+---
+
+<div class="flex gap-4">
+  <Tooltip content="This is a helpful tooltip" position="top">
+    <Button variant="primary">Hover me</Button>
+  </Tooltip>
+  
+  <Tooltip content="Click to see more details" trigger="click" variant="info">
+    <Button variant="secondary">Click me</Button>
+  </Tooltip>
+  
+  <Tooltip content="Focus for accessibility" trigger="focus" size="lg">
+    <Button variant="ghost">Focus me</Button>
+  </Tooltip>
+</div>`;
 ---
 
 <DocsLayout
   title="Tooltip"
-  description="Accessible hover/focus tooltip with directional positioning."
+  description="Accessible tooltip component with AAA contrast, multiple variants, and comprehensive trigger options."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Examples</h2>
-    <div class="flex gap-4">
-      <Tooltip content="Top tooltip" position="top">
-        <ButtonLink
-          href="#"
-          label="Hover me (top)"
-          variant="secondary"
-          size="sm"
-        />
-      </Tooltip>
-      <Tooltip content="Right tooltip" position="right">
-        <ButtonLink
-          href="#"
-          label="Hover me (right)"
-          variant="secondary"
-          size="sm"
-        />
-      </Tooltip>
-      <Tooltip content="Bottom tooltip" position="bottom">
-        <ButtonLink
-          href="#"
-          label="Hover me (bottom)"
-          variant="secondary"
-          size="sm"
-        />
-      </Tooltip>
+    <p class="text-base text-slate-100">
+      Tooltips provide contextual information or help text that appears when
+      users interact with an element. Our Tooltip component follows WCAG AAA
+      guidelines with proper contrast ratios, multiple trigger modes, and
+      comprehensive keyboard support.
+    </p>
+    <p class="text-base text-slate-200">
+      Each variant includes semantic color coding, flexible positioning options,
+      and responsive behavior that adapts to different screen sizes and
+      interaction methods.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          content
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Required. The text content to display in the tooltip. Use plain text
+          for better accessibility.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style for the tooltip. Choose <code>"default"</code>, <code
+            >"dark"</code
+          >, <code>"light"</code>, <code>"info"</code>, <code>"success"</code>, <code
+            >"warning"</code
+          >, or <code>"error"</code>. Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size of the tooltip. Choose <code>"sm"</code>, <code>"md"</code>, or <code
+            >"lg"</code
+          >. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          position?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Position relative to the target element. Choose <code>"top"</code>, <code
+            >"bottom"</code
+          >, <code>"left"</code>, <code>"right"</code>, <code>"top-start"</code
+          >, <code>"top-end"</code>, <code>"bottom-start"</code>, or <code
+            >"bottom-end"</code
+          >. Defaults to <code>"top"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          trigger?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          How the tooltip is triggered. Choose <code>"hover"</code>, <code
+            >"focus"</code
+          >, <code>"click"</code>, or <code>"manual"</code>. Defaults to <code
+            >"hover"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          delay?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show delay in milliseconds. Defaults to <code>0</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          hideDelay?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Hide delay in milliseconds. Defaults to <code>0</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disabled?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to disable the tooltip. When disabled, no tooltip will be
+          shown. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          allowHTML?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to allow HTML content in the tooltip. Use cautiously for
+          security. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          maxWidth?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Maximum width of the tooltip. Choose <code>"xs"</code>, <code
+            >"sm"</code
+          >, <code>"md"</code>, <code>"lg"</code>, or <code>"xl"</code>.
+          Defaults to <code>"xs"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the tooltip container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <div class="rounded-lg bg-slate-900/60 p-4">
+      <pre class="text-sm text-slate-200"><code>{usageSnippet}</code></pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Variants</h3>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Default</h4>
+          <Tooltip content="Default tooltip style" trigger="hover">
+            <Button variant="secondary" size="sm">Hover me</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Dark</h4>
+          <Tooltip content="Dark tooltip style" variant="dark" trigger="hover">
+            <Button variant="secondary" size="sm">Hover me</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Light</h4>
+          <Tooltip
+            content="Light tooltip style"
+            variant="light"
+            trigger="hover"
+          >
+            <Button variant="secondary" size="sm">Hover me</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Info</h4>
+          <Tooltip content="Information tooltip" variant="info" trigger="hover">
+            <Button variant="secondary" size="sm">Hover me</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Success</h4>
+          <Tooltip content="Success tooltip" variant="success" trigger="hover">
+            <Button variant="secondary" size="sm">Hover me</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Warning</h4>
+          <Tooltip content="Warning tooltip" variant="warning" trigger="hover">
+            <Button variant="secondary" size="sm">Hover me</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Error</h4>
+          <Tooltip content="Error tooltip" variant="error" trigger="hover">
+            <Button variant="secondary" size="sm">Hover me</Button>
+          </Tooltip>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Sizes</h3>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Small</h4>
+          <Tooltip content="Small tooltip" size="sm" trigger="hover">
+            <Button variant="primary" size="sm">Small tooltip</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Medium</h4>
+          <Tooltip
+            content="Medium tooltip with more content"
+            size="md"
+            trigger="hover"
+          >
+            <Button variant="primary" size="md">Medium tooltip</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Large</h4>
+          <Tooltip
+            content="Large tooltip with even more detailed content"
+            size="lg"
+            trigger="hover"
+          >
+            <Button variant="primary" size="lg">Large tooltip</Button>
+          </Tooltip>
+        </div>
+      </div>
+    </div>
+
+    <!-- Positions -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Positions</h3>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Top</h4>
+          <Tooltip content="Tooltip on top" position="top" trigger="hover">
+            <Button variant="ghost" size="sm">Top</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Bottom</h4>
+          <Tooltip
+            content="Tooltip on bottom"
+            position="bottom"
+            trigger="hover"
+          >
+            <Button variant="ghost" size="sm">Bottom</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Left</h4>
+          <Tooltip content="Tooltip on left" position="left" trigger="hover">
+            <Button variant="ghost" size="sm">Left</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Right</h4>
+          <Tooltip content="Tooltip on right" position="right" trigger="hover">
+            <Button variant="ghost" size="sm">Right</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Top Start</h4>
+          <Tooltip
+            content="Tooltip aligned to start"
+            position="top-start"
+            trigger="hover"
+          >
+            <Button variant="ghost" size="sm">Top Start</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Top End</h4>
+          <Tooltip
+            content="Tooltip aligned to end"
+            position="top-end"
+            trigger="hover"
+          >
+            <Button variant="ghost" size="sm">Top End</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Bottom Start</h4>
+          <Tooltip
+            content="Tooltip aligned to start"
+            position="bottom-start"
+            trigger="hover"
+          >
+            <Button variant="ghost" size="sm">Bottom Start</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Bottom End</h4>
+          <Tooltip
+            content="Tooltip aligned to end"
+            position="bottom-end"
+            trigger="hover"
+          >
+            <Button variant="ghost" size="sm">Bottom End</Button>
+          </Tooltip>
+        </div>
+      </div>
+    </div>
+
+    <!-- Triggers -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Trigger Modes</h3>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Hover</h4>
+          <Tooltip content="Appears on hover" trigger="hover">
+            <Button variant="secondary">Hover trigger</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Focus</h4>
+          <Tooltip content="Appears on focus" trigger="focus">
+            <Button variant="secondary">Focus trigger</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Click</h4>
+          <Tooltip content="Appears on click" trigger="click">
+            <Button variant="secondary">Click trigger</Button>
+          </Tooltip>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Features -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Advanced Features</h3>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">With Delay</h4>
+          <Tooltip
+            content="Appears after 500ms delay"
+            delay={500}
+            trigger="hover"
+          >
+            <Button variant="primary">Delayed tooltip</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Large Max Width</h4>
+          <Tooltip
+            content="This is a much longer tooltip text that demonstrates the larger maximum width setting for tooltips that need more space"
+            maxWidth="lg"
+            trigger="hover"
+          >
+            <Button variant="primary">Wide tooltip</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">HTML Content</h4>
+          <Tooltip
+            content="<strong>Bold text</strong> and <em>italic text</em>"
+            allowHTML
+            trigger="hover"
+          >
+            <Button variant="primary">HTML tooltip</Button>
+          </Tooltip>
+        </div>
+        <div
+          class="flex flex-col items-center gap-3 p-4 border border-slate-700/50 rounded-lg bg-slate-900/20"
+        >
+          <h4 class="text-sm font-medium text-slate-300">Disabled</h4>
+          <Tooltip content="This won't show" disabled trigger="hover">
+            <Button variant="primary">Disabled tooltip</Button>
+          </Tooltip>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="space-y-4 text-sm text-slate-200">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Screen Reader Support</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• Uses <code>role="tooltip"</code> for proper identification</li>
+          <li>
+            • Connected to trigger element via <code>aria-describedby</code>
+          </li>
+          <li>• Announces content changes to screen readers</li>
+          <li>• Proper <code>aria-hidden</code> state management</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Keyboard Navigation</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>
+            • <kbd class="px-1 py-0.5 bg-slate-700 rounded text-xs">Tab</kbd> - Navigate
+            to trigger element
+          </li>
+          <li>
+            • <kbd class="px-1 py-0.5 bg-slate-700 rounded text-xs">Escape</kbd>
+            - Hide visible tooltip
+          </li>
+          <li>
+            • <kbd class="px-1 py-0.5 bg-slate-700 rounded text-xs"
+              >Enter/Space</kbd
+            > - Activate click trigger
+          </li>
+          <li>• Focus trigger shows tooltip automatically</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Visual Accessibility</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• WCAG AAA contrast ratios (9:1) in all variants and themes</li>
+          <li>• High contrast mode support with enhanced borders</li>
+          <li>• Forced colors mode compatibility</li>
+          <li>• Responsive text wrapping on smaller screens</li>
+          <li>• Reduced motion support disables animations</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Interaction Controls</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• Multiple trigger modes for different use cases</li>
+          <li>• Configurable delays for better user control</li>
+          <li>• Click outside to dismiss for click triggers</li>
+          <li>• Collision detection prevents tooltips from going off-screen</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+    <div class="space-y-4">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Help Text</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;Tooltip content="Enter your full name as it appears on official documents"&gt;
+  &lt;Input placeholder="Full name" /&gt;
+&lt;/Tooltip&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Status Information</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;Tooltip content="Last updated 2 minutes ago" variant="info" trigger="hover"&gt;
+  &lt;StatusBadge status="online" /&gt;
+&lt;/Tooltip&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Action Description</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;Tooltip content="Delete this item permanently" variant="error" trigger="focus"&gt;
+  &lt;Button variant="danger" size="sm"&gt;
+    &lt;TrashIcon /&gt;
+  &lt;/Button&gt;
+&lt;/Tooltip&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Progressive Disclosure</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;Tooltip content="Click to see detailed configuration options" trigger="click" maxWidth="md"&gt;
+  &lt;Button variant="ghost"&gt;Advanced Settings&lt;/Button&gt;
+&lt;/Tooltip&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Best Practices</h2>
+    <div class="space-y-3 text-sm text-slate-200">
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Use clear, concise tooltip text that adds value</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Choose appropriate trigger modes based on user context</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Use semantic variants to match the message intent</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Position tooltips to avoid covering important content</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Test with keyboard navigation and screen readers</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span>Don't use HTML content unless absolutely necessary</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span>Avoid tooltips for critical information users must see</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span>Don't make tooltips too long - keep them scannable</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span>Avoid using click triggers for simple help text</span>
+      </div>
     </div>
   </section>
 </DocsLayout>

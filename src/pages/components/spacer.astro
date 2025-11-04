@@ -1,20 +1,516 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Spacer from '../../components/Spacer.astro';
+
+const usageSnippet = `---
+import { Spacer } from 'comet-astro';
+---
+
+<div>
+  <h1>Section Title</h1>
+  <Spacer size="lg" />
+  <p>Content with proper spacing</p>
+  <Spacer size="xl" axis="vertical" />
+  <div>Another section</div>
+</div>`;
 ---
 
 <DocsLayout
   title="Spacer"
-  description="Insert responsive spacing between elements without extra wrappers."
+  description="WCAG AAA compliant spacing component with responsive sizing and semantic accessibility features."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <div class="bg-gray-900 p-4 rounded-lg">
-      <div class="bg-purple-500/20 p-4 rounded">Content Above</div>
-      <Spacer size="lg" />
-      <div class="bg-purple-500/20 p-4 rounded">Content Below (lg spacer)</div>
-      <Spacer size="xl" />
-      <div class="bg-purple-500/20 p-4 rounded">Content Below (xl spacer)</div>
+    <p class="text-base text-slate-100">
+      Spacer provides semantic spacing between elements without requiring
+      additional wrapper divs or margin utilities. It supports responsive
+      sizing, debug mode for development, and proper accessibility attributes.
+    </p>
+    <p class="text-base text-slate-200">
+      The component automatically handles different spacing directions and
+      includes ARIA attributes for screen readers. Debug mode helps visualize
+      spacing during development with high-contrast indicators.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size of the spacer. Choose <code>"xs"</code>, <code>"sm"</code>, <code
+            >"md"</code
+          >,
+          <code>"lg"</code>, <code>"xl"</code>, <code>"2xl"</code>, <code
+            >"3xl"</code
+          >,
+          <code>"4xl"</code>, <code>"5xl"</code>, or <code>"auto"</code>.
+          Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          axis?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Direction of spacing. Choose <code>"horizontal"</code>, <code
+            >"vertical"</code
+          >, or <code>"both"</code>. Defaults to <code>"vertical"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          responsive?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Responsive size variations. Object with <code>sm</code>, <code
+            >md</code
+          >,
+          <code>lg</code>, <code>xl</code> breakpoint keys and size values.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          debug?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Show visual debug indicator with size info. Defaults to <code
+            >false</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          role?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Semantic ARIA role. Choose <code>"separator"</code>, <code
+            >"presentation"</code
+          >, or <code>"none"</code>. Defaults to <code>"presentation"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component and place it between elements that need spacing. The
+      spacer automatically adjusts based on the axis prop and provides semantic
+      spacing without affecting layout flow.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Size Examples</h2>
+    <div
+      class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+    >
+      <div class="space-y-1">
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Block
+        </div>
+        <div class="text-xs text-slate-400 text-center">xs spacer (4px)</div>
+        <Spacer size="xs" />
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Block
+        </div>
+        <div class="text-xs text-slate-400 text-center">sm spacer (8px)</div>
+        <Spacer size="sm" />
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Block
+        </div>
+        <div class="text-xs text-slate-400 text-center">md spacer (16px)</div>
+        <Spacer size="md" />
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Block
+        </div>
+        <div class="text-xs text-slate-400 text-center">lg spacer (24px)</div>
+        <Spacer size="lg" />
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Block
+        </div>
+        <div class="text-xs text-slate-400 text-center">xl spacer (32px)</div>
+        <Spacer size="xl" />
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Block
+        </div>
+        <div class="text-xs text-slate-400 text-center">2xl spacer (48px)</div>
+        <Spacer size="2xl" />
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Block
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Axis Examples</h2>
+    <div class="grid gap-6 lg:grid-cols-3">
+      <!-- Vertical Spacing -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Vertical</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div
+            class="bg-green-500/20 p-3 rounded text-center text-sm text-slate-200"
+          >
+            Top
+          </div>
+          <Spacer size="lg" axis="vertical" />
+          <div
+            class="bg-green-500/20 p-3 rounded text-center text-sm text-slate-200"
+          >
+            Bottom
+          </div>
+        </div>
+      </div>
+
+      <!-- Horizontal Spacing -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Horizontal</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="flex items-center">
+            <div
+              class="bg-yellow-500/20 p-3 rounded text-center text-sm text-slate-200"
+            >
+              Left
+            </div>
+            <Spacer size="lg" axis="horizontal" />
+            <div
+              class="bg-yellow-500/20 p-3 rounded text-center text-sm text-slate-200"
+            >
+              Right
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Both Axes -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Both</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="flex flex-col items-center">
+            <div
+              class="bg-purple-500/20 p-3 rounded text-center text-sm text-slate-200"
+            >
+              Center
+            </div>
+            <Spacer size="lg" axis="both" />
+            <div
+              class="bg-purple-500/20 p-3 rounded text-center text-sm text-slate-200"
+            >
+              Spaced
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Debug Mode</h2>
+    <div class="space-y-4">
+      <p class="text-base text-slate-200">
+        Enable debug mode to visualize spacers during development. The debug
+        indicator shows size and axis information with high-contrast patterns.
+      </p>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Above
+        </div>
+        <Spacer size="xl" debug={true} />
+        <div
+          class="bg-blue-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Content Below
+        </div>
+        <div class="text-xs text-slate-400 mt-2">
+          Debug mode shows spacing visualization
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Responsive Spacing</h2>
+    <div class="space-y-4">
+      <p class="text-base text-slate-200">
+        Use responsive prop to adjust spacing at different screen sizes. Resize
+        your browser to see the spacing change.
+      </p>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div
+          class="bg-green-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Responsive Content Above
+        </div>
+        <Spacer
+          size="sm"
+          responsive={{ sm: 'md', md: 'lg', lg: 'xl', xl: '2xl' }}
+          debug={true}
+        />
+        <div
+          class="bg-green-500/20 p-3 rounded text-center text-sm text-slate-200"
+        >
+          Responsive Content Below
+        </div>
+        <div class="text-xs text-slate-400 mt-2">
+          sm: 8px → md: 16px → lg: 24px → xl: 32px → 2xl: 48px
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Section Spacing -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Section Spacing</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <section>
+          <h2 class="text-lg font-semibold text-slate-100 mb-2">
+            First Section
+          </h2>
+          <p class="text-slate-300 text-sm">
+            Content for the first section with proper spacing.
+          </p>
+        </section>
+        <Spacer size="2xl" role="separator" />
+        <section>
+          <h2 class="text-lg font-semibold text-slate-100 mb-2">
+            Second Section
+          </h2>
+          <p class="text-slate-300 text-sm">
+            Content for the second section, clearly separated.
+          </p>
+        </section>
+        <Spacer size="2xl" role="separator" />
+        <section>
+          <h2 class="text-lg font-semibold text-slate-100 mb-2">
+            Third Section
+          </h2>
+          <p class="text-slate-300 text-sm">
+            Final section with consistent spacing pattern.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <!-- Card Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Card Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="bg-slate-800/60 p-4 rounded-lg">
+          <h3 class="font-semibold text-slate-100">Card Title</h3>
+          <Spacer size="sm" />
+          <p class="text-slate-300 text-sm">Card description text.</p>
+          <Spacer size="md" />
+          <div class="flex space-x-2">
+            <button class="px-3 py-1 bg-blue-600 text-white text-xs rounded"
+              >Action</button
+            >
+            <button class="px-3 py-1 bg-slate-600 text-white text-xs rounded"
+              >Cancel</button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Navigation Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <nav class="flex items-center">
+          <div class="font-semibold text-slate-100">Logo</div>
+          <Spacer size="lg" axis="horizontal" />
+          <div class="flex space-x-4">
+            <a href="#" class="text-slate-300 hover:text-slate-100 text-sm"
+              >Home</a
+            >
+            <a href="#" class="text-slate-300 hover:text-slate-100 text-sm"
+              >About</a
+            >
+            <a href="#" class="text-slate-300 hover:text-slate-100 text-sm"
+              >Contact</a
+            >
+          </div>
+          <Spacer size="auto" axis="horizontal" />
+          <button class="px-3 py-1 bg-blue-600 text-white text-xs rounded"
+            >Login</button
+          >
+        </nav>
+      </div>
+    </div>
+
+    <!-- Form Layout -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Form Layout</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <form class="max-w-md">
+          <div>
+            <label class="block text-sm font-medium text-slate-200 mb-1"
+              >Email</label
+            >
+            <input
+              type="email"
+              class="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded text-slate-100 text-sm"
+            />
+          </div>
+          <Spacer size="md" />
+          <div>
+            <label class="block text-sm font-medium text-slate-200 mb-1"
+              >Password</label
+            >
+            <input
+              type="password"
+              class="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded text-slate-100 text-sm"
+            />
+          </div>
+          <Spacer size="lg" />
+          <button
+            type="submit"
+            class="w-full px-4 py-2 bg-blue-600 text-white rounded text-sm"
+            >Submit</button
+          >
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Spacer components use proper ARIA attributes with role="presentation" by
+      default to indicate they are decorative spacing elements. When used as
+      section separators, set role="separator" for semantic meaning.
+    </p>
+    <p class="text-base text-slate-200">
+      Debug mode includes screen reader announcements for development purposes,
+      and the component automatically handles aria-hidden attributes to prevent
+      unnecessary announcements in production.
+    </p>
+    <p class="text-base text-slate-200">
+      Responsive spacing ensures content remains properly spaced across all
+      device sizes, maintaining readability and visual hierarchy that meets WCAG
+      AAA guidelines for content organization.
+    </p>
+
+    <div
+      class="mt-6 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+    >
+      <h3 class="text-sm font-semibold text-slate-200 mb-3">Size Reference</h3>
+      <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">xs</span>
+          <span class="text-slate-400">4px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">sm</span>
+          <span class="text-slate-400">8px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">md</span>
+          <span class="text-slate-400">16px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">lg</span>
+          <span class="text-slate-400">24px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">xl</span>
+          <span class="text-slate-400">32px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">2xl</span>
+          <span class="text-slate-400">48px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">3xl</span>
+          <span class="text-slate-400">64px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">4xl</span>
+          <span class="text-slate-400">80px</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-300">5xl</span>
+          <span class="text-slate-400">96px</span>
+        </div>
+      </div>
     </div>
   </section>
 </DocsLayout>

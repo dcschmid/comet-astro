@@ -1,0 +1,495 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ButtonBase from '../../components/ButtonBase.astro';
+
+const usageSnippet = `---
+import { ButtonBase } from 'comet-astro';
+---
+
+<!-- Render as button -->
+<ButtonBase 
+  as="button"
+  variant="primary"
+  size="md"
+  type="submit"
+>
+  Submit Form
+</ButtonBase>
+
+<!-- Render as anchor -->
+<ButtonBase 
+  as="a"
+  href="https://example.com"
+  variant="secondary"
+  size="lg"
+  external={true}
+>
+  Visit Website
+</ButtonBase>`;
+---
+
+<DocsLayout
+  title="ButtonBase"
+  description="Shared styling and logic foundation for Button and ButtonLink components with consistent appearance, accessibility, and external link handling."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      ButtonBase is the foundational component that powers both Button and
+      ButtonLink, providing consistent styling, accessibility features, and
+      behavior across all button-like interactions in Comet.
+    </p>
+    <p class="text-base text-slate-200">
+      This component ensures WCAG AAA compliance with 9:1 contrast ratios,
+      proper focus indicators, and intelligent external link detection while
+      maintaining a unified design system across button variants.
+    </p>
+    <p class="text-base text-slate-200">
+      <strong>Note:</strong> ButtonBase is typically used internally by Button and
+      ButtonLink components rather than directly in applications. For most use cases,
+      use Button or ButtonLink instead.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          as
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Required element type to render. Choose <code>"button"</code> or <code
+            >"a"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style variant. Choose <code>"primary"</code>, <code
+            >"secondary"</code
+          >, or <code>"ghost"</code>. Defaults to <code>"primary"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size variant affecting height and padding. Choose <code>"sm"</code>,
+          <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          disabled?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether the component is disabled. Defaults to <code>false</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          type?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Button type (only for button elements). Choose <code>"button"</code>,
+          <code>"submit"</code>, or <code>"reset"</code>. Defaults to <code
+            >"button"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          href?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Link destination (only for anchor elements). Required when <code
+            >as="a"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          target?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Link target (only for anchor elements). Choose <code>"_blank"</code>,
+          <code>"_self"</code>, <code>"_parent"</code>, or <code>"_top"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          external?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Force external link behavior with icon and new tab. Auto-detected for
+          absolute URLs.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          ariaLabel?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom ARIA label for accessibility when content is not descriptive
+          enough.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          class?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes for custom styling.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Architecture Benefits</h2>
+    <p class="text-base text-slate-200">
+      ButtonBase provides shared functionality that ensures consistency across
+      button components:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Code Reduction:</strong> ~60% reduction in duplicate styling between
+        Button and ButtonLink
+      </li>
+      <li>
+        <strong>Consistent Styling:</strong> Unified appearance across all button
+        variants and sizes
+      </li>
+      <li>
+        <strong>Intelligent Rendering:</strong> Proper element type based on use
+        case (button vs anchor)
+      </li>
+      <li>
+        <strong>External Link Detection:</strong> Automatic icon and attributes for
+        external URLs
+      </li>
+      <li>
+        <strong>Accessibility Compliance:</strong> WCAG AAA standards with proper
+        ARIA attributes
+      </li>
+      <li>
+        <strong>Focus Management:</strong> Consistent focus indicators and keyboard
+        navigation
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Visual Variants</h2>
+    <div class="grid gap-6 lg:grid-cols-3">
+      <!-- Primary Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Primary</h3>
+        <p class="text-sm text-slate-300">
+          High-contrast variant for primary actions
+        </p>
+        <ButtonBase as="button" variant="primary" size="md">
+          Primary Action
+        </ButtonBase>
+      </div>
+
+      <!-- Secondary Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Secondary</h3>
+        <p class="text-sm text-slate-300">
+          Subtle variant for secondary actions
+        </p>
+        <ButtonBase as="button" variant="secondary" size="md">
+          Secondary Action
+        </ButtonBase>
+      </div>
+
+      <!-- Ghost Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Ghost</h3>
+        <p class="text-sm text-slate-300">
+          Minimal variant for tertiary actions
+        </p>
+        <ButtonBase as="button" variant="ghost" size="md">
+          Ghost Action
+        </ButtonBase>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
+    <div class="flex flex-wrap items-center gap-3">
+      <ButtonBase as="button" variant="primary" size="sm">Small</ButtonBase>
+      <ButtonBase as="button" variant="primary" size="md">Medium</ButtonBase>
+      <ButtonBase as="button" variant="primary" size="lg">Large</ButtonBase>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Element Types</h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <!-- Button Element -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Button Element</h3>
+        <p class="text-sm text-slate-300">
+          For form submissions and interactive actions
+        </p>
+        <div class="space-y-2">
+          <ButtonBase as="button" type="button" variant="primary">
+            Interactive Button
+          </ButtonBase>
+          <ButtonBase as="button" type="submit" variant="secondary">
+            Submit Form
+          </ButtonBase>
+          <ButtonBase as="button" disabled variant="ghost">
+            Disabled Button
+          </ButtonBase>
+        </div>
+      </div>
+
+      <!-- Anchor Element -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Anchor Element</h3>
+        <p class="text-sm text-slate-300">For navigation and external links</p>
+        <div class="space-y-2">
+          <ButtonBase as="a" href="/docs" variant="primary">
+            Internal Link
+          </ButtonBase>
+          <ButtonBase
+            as="a"
+            href="https://example.com"
+            target="_blank"
+            variant="secondary"
+          >
+            External Link
+          </ButtonBase>
+          <ButtonBase as="a" href="mailto:contact@example.com" variant="ghost">
+            Email Link
+          </ButtonBase>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">
+      External Link Detection
+    </h2>
+    <p class="text-base text-slate-200">
+      ButtonBase automatically detects external links and applies appropriate
+      styling and attributes:
+    </p>
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <h4 class="font-medium text-slate-200">Automatic Detection</h4>
+        <div class="flex gap-3">
+          <ButtonBase as="a" href="https://astro.build" variant="primary">
+            Astro Website
+          </ButtonBase>
+          <ButtonBase as="a" href="/docs/components" variant="secondary">
+            Internal Docs
+          </ButtonBase>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-medium text-slate-200">Manual Override</h4>
+        <div class="flex gap-3">
+          <ButtonBase
+            as="a"
+            href="/relative-path"
+            external={true}
+            variant="primary"
+          >
+            Force External Style
+          </ButtonBase>
+          <ButtonBase
+            as="a"
+            href="https://example.com"
+            external={false}
+            variant="secondary"
+          >
+            Suppress External Style
+          </ButtonBase>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      While ButtonBase can be used directly for custom implementations, it's
+      recommended to use Button or ButtonLink components which provide optimized
+      configurations for common use cases.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">
+      Components Using ButtonBase
+    </h2>
+    <p class="text-base text-slate-200">
+      The following components are built on top of ButtonBase:
+    </p>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 text-sm"
+      >
+        <strong class="text-slate-200">Button</strong>
+        <p class="text-slate-400">
+          Intelligent button/link component with auto-detection
+        </p>
+      </div>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 text-sm"
+      >
+        <strong class="text-slate-200">ButtonLink</strong>
+        <p class="text-slate-400">Dedicated anchor-style button component</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility Features</h2>
+    <p class="text-base text-slate-200">
+      ButtonBase ensures WCAG AAA compliance across all button components with:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        9:1 contrast ratios in all variants and states (hover, focus, disabled)
+      </li>
+      <li>4px focus rings with theme-appropriate offsets for visibility</li>
+      <li>Proper ARIA attributes and semantic HTML structure</li>
+      <li>Keyboard navigation support with visible focus indicators</li>
+      <li>
+        Screen reader announcements for external links and disabled states
+      </li>
+      <li>High contrast mode compatibility with enhanced borders</li>
+      <li>Proper button/anchor semantics based on element type</li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Styling System</h2>
+    <p class="text-base text-slate-200">
+      ButtonBase provides a comprehensive styling system with:
+    </p>
+    <ul class="list-disc pl-6 space-y-1 text-slate-200">
+      <li>
+        <strong>Three Variants:</strong> Primary, secondary, and ghost with distinct
+        visual hierarchy
+      </li>
+      <li>
+        <strong>Three Sizes:</strong> Small (sm), medium (md), and large (lg) with
+        proportional spacing
+      </li>
+      <li>
+        <strong>State Variants:</strong> Default, hover, focus, and disabled states
+        with smooth transitions
+      </li>
+      <li>
+        <strong>Theme Compatibility:</strong> Proper colors for both light and dark
+        themes
+      </li>
+      <li>
+        <strong>External Link Icons:</strong> Automatic icon placement with proper
+        spacing
+      </li>
+      <li>
+        <strong>Responsive Design:</strong> Consistent appearance across different
+        screen sizes
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Implementation Details</h2>
+    <div class="space-y-3">
+      <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4">
+        <h4 class="font-medium text-slate-200 mb-2">Element Selection Logic</h4>
+        <ul class="list-disc pl-4 space-y-1 text-sm text-slate-300">
+          <li>
+            <code>as="button"</code>: Renders <code>&lt;button&gt;</code> element
+            with proper type and form attributes
+          </li>
+          <li>
+            <code>as="a"</code>: Renders <code>&lt;a&gt;</code> element with href,
+            target, and rel attributes
+          </li>
+          <li>
+            Automatic <code>rel="noopener noreferrer"</code> for external links with
+            <code>target="_blank"</code>
+          </li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4">
+        <h4 class="font-medium text-slate-200 mb-2">External Link Detection</h4>
+        <ul class="list-disc pl-4 space-y-1 text-sm text-slate-300">
+          <li>
+            Automatic detection for URLs starting with <code>http://</code>, <code
+              >https://</code
+            >, or <code>mailto:</code>
+          </li>
+          <li>
+            Manual override with <code>external</code> prop for custom behavior
+          </li>
+          <li>
+            External link icon automatically added with proper ARIA labels
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</DocsLayout>

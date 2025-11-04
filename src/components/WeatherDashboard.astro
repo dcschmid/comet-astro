@@ -1,0 +1,903 @@
+---
+/**
+ * WeatherDashboard - Comprehensive environmental monitoring dashboard
+ *
+ * Example showcasing all weather-related components:
+ * - Location search and selection
+ * - Current weather conditions
+ * - Air quality monitoring
+ * - Marine weather conditions
+ * - Multi-location support
+ */
+
+interface Props {
+  /**
+   * Default location to display
+   */
+  defaultLocation?: {
+    name: string;
+    latitude: number;
+    longitude: number;
+  };
+
+  /**
+   * Dashboard layout
+   */
+  layout?: 'grid' | 'stacked' | 'tabbed';
+
+  /**
+   * Components to include
+   */
+  components?: {
+    weather?: boolean;
+    airQuality?: boolean;
+    marine?: boolean;
+  };
+
+  /**
+   * Custom CSS classes
+   */
+  class?: string;
+}
+
+const {
+  defaultLocation,
+  layout = 'grid',
+  components = {
+    weather: true,
+    airQuality: true,
+    marine: true,
+  },
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const classes = ['weather-dashboard', `weather-dashboard--${layout}`, className]
+  .filter(Boolean)
+  .join(' ');
+
+// Import required components
+import WeatherLocationSearch from './WeatherLocationSearch.astro';
+import WeatherBase from './WeatherBase.astro';
+import AirQuality from './AirQuality.astro';
+import MarineWeather from './MarineWeather.astro';
+---
+
+<div class={classes} data-weather-dashboard {...rest}>
+  <header class="dashboard-header">
+    <div class="dashboard-title">
+      <h1>Environmental Dashboard</h1>
+      <p class="dashboard-subtitle">
+        Comprehensive weather, air quality, and marine conditions
+      </p>
+    </div>
+
+    <div class="location-search-container">
+      <WeatherLocationSearch
+        size="default"
+        placeholder="Search location..."
+        showRecent={true}
+        onLocationSelect="handleLocationChange"
+        class="dashboard-search"
+      />
+    </div>
+  </header>
+
+  <div class="dashboard-content">
+    <div class="location-info" id="current-location">
+      <div class="location-display">
+        <span class="location-icon" aria-hidden="true">📍</span>
+        <div class="location-details">
+          <div class="location-name">
+            {defaultLocation?.name || 'Select a location'}
+          </div>
+          <div class="location-coords">
+            {
+              defaultLocation
+                ? `${defaultLocation.latitude.toFixed(4)}, ${defaultLocation.longitude.toFixed(4)}`
+                : 'No location selected'
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {
+      layout === 'tabbed' ? (
+        <div class="dashboard-tabs" role="tablist">
+          {components.weather && (
+            <button
+              class="tab-button active"
+              role="tab"
+              aria-selected="true"
+              aria-controls="weather-panel"
+              data-tab="weather"
+            >
+              <span class="tab-icon" aria-hidden="true">
+                🌤️
+              </span>
+              Weather
+            </button>
+          )}
+
+          {components.airQuality && (
+            <button
+              class="tab-button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="air-quality-panel"
+              data-tab="air-quality"
+            >
+              <span class="tab-icon" aria-hidden="true">
+                🌫️
+              </span>
+              Air Quality
+            </button>
+          )}
+
+          {components.marine && (
+            <button
+              class="tab-button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="marine-panel"
+              data-tab="marine"
+            >
+              <span class="tab-icon" aria-hidden="true">
+                🌊
+              </span>
+              Marine
+            </button>
+          )}
+        </div>
+      ) : null
+    }
+
+    <div class="dashboard-panels">
+      {
+        components.weather && (
+          <div
+            class={`dashboard-panel ${layout === 'tabbed' ? 'tab-panel active' : ''}`}
+            id="weather-panel"
+            role={layout === 'tabbed' ? 'tabpanel' : undefined}
+          >
+            <WeatherBase
+              latitude={defaultLocation?.latitude}
+              longitude={defaultLocation?.longitude}
+              location={defaultLocation?.name}
+              size="detailed"
+              showForecast={true}
+              showHourly={true}
+              showDetails={true}
+              refreshInterval={15}
+              class="dashboard-weather"
+            />
+          </div>
+        )
+      }
+
+      {
+        components.airQuality && (
+          <div
+            class={`dashboard-panel ${layout === 'tabbed' ? 'tab-panel' : ''}`}
+            id="air-quality-panel"
+            role={layout === 'tabbed' ? 'tabpanel' : undefined}
+            style={layout === 'tabbed' ? 'display: none;' : ''}
+          >
+            <AirQuality
+              latitude={defaultLocation?.latitude}
+              longitude={defaultLocation?.longitude}
+              location={defaultLocation?.name}
+              size="detailed"
+              showPollen={true}
+              showHealthAdvice={true}
+              refreshInterval={30}
+              class="dashboard-air-quality"
+            />
+          </div>
+        )
+      }
+
+      {
+        components.marine && (
+          <div
+            class={`dashboard-panel ${layout === 'tabbed' ? 'tab-panel' : ''}`}
+            id="marine-panel"
+            role={layout === 'tabbed' ? 'tabpanel' : undefined}
+            style={layout === 'tabbed' ? 'display: none;' : ''}
+          >
+            <MarineWeather
+              latitude={defaultLocation?.latitude}
+              longitude={defaultLocation?.longitude}
+              location={defaultLocation?.name}
+              size="detailed"
+              showWaveDetails={true}
+              showCurrents={true}
+              showTides={true}
+              showSafetyAdvice={true}
+              refreshInterval={30}
+              class="dashboard-marine"
+            />
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  <footer class="dashboard-footer">
+    <div class="data-sources">
+      <span class="sources-label">Data sources:</span>
+      <a
+        href="https://open-meteo.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Open-Meteo API
+      </a>
+    </div>
+
+    <div class="last-refresh" aria-live="polite">
+      <span class="refresh-label">Last updated:</span>
+      <span class="refresh-time">--</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+  class WeatherDashboard {
+    constructor(element) {
+      this.element = element;
+      this.currentLocation = null;
+      this.activeTab = 'weather';
+
+      this.init();
+    }
+
+    init() {
+      this.setupLocationHandler();
+      this.setupTabs();
+      this.updateRefreshTime();
+
+      // Set up periodic refresh time update
+      setInterval(() => this.updateRefreshTime(), 60000);
+    }
+
+    setupLocationHandler() {
+      // Listen for location selection events
+      this.element.addEventListener('locationSelect', (e) => {
+        this.handleLocationChange(e.detail);
+      });
+    }
+
+    setupTabs() {
+      const tabButtons = this.element.querySelectorAll('.tab-button');
+
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const tabId = button.dataset.tab;
+          this.switchTab(tabId);
+        });
+
+        button.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const tabId = button.dataset.tab;
+            this.switchTab(tabId);
+          }
+        });
+      });
+    }
+
+    switchTab(tabId) {
+      const tabButtons = this.element.querySelectorAll('.tab-button');
+      const tabPanels = this.element.querySelectorAll('.tab-panel');
+
+      // Update buttons
+      tabButtons.forEach((button) => {
+        const isActive = button.dataset.tab === tabId;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-selected', isActive.toString());
+      });
+
+      // Update panels
+      tabPanels.forEach((panel) => {
+        const panelId = panel.id.replace('-panel', '');
+        const isActive = panelId === tabId;
+        panel.style.display = isActive ? 'block' : 'none';
+        panel.classList.toggle('active', isActive);
+      });
+
+      this.activeTab = tabId;
+    }
+
+    handleLocationChange(location) {
+      this.currentLocation = location;
+      this.updateLocationDisplay(location);
+      this.updateAllComponents(location);
+    }
+
+    updateLocationDisplay(location) {
+      const locationDisplay = this.element.querySelector('#current-location');
+      const nameEl = locationDisplay.querySelector('.location-name');
+      const coordsEl = locationDisplay.querySelector('.location-coords');
+
+      if (nameEl && coordsEl) {
+        nameEl.textContent = this.formatLocationName(location);
+        coordsEl.textContent = `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`;
+      }
+    }
+
+    updateAllComponents(location) {
+      // Update weather component
+      const weatherComponent = this.element.querySelector(
+        '[data-weather-component]'
+      );
+      if (weatherComponent && weatherComponent._weatherInstance) {
+        weatherComponent._weatherInstance.updateLocation(location);
+      }
+
+      // Update air quality component
+      const airQualityComponent = this.element.querySelector(
+        '[data-air-quality-component]'
+      );
+      if (airQualityComponent && airQualityComponent._airQualityInstance) {
+        airQualityComponent._airQualityInstance.updateLocation(location);
+      }
+
+      // Update marine component
+      const marineComponent = this.element.querySelector(
+        '[data-marine-weather-component]'
+      );
+      if (marineComponent && marineComponent._marineWeatherInstance) {
+        marineComponent._marineWeatherInstance.updateLocation(location);
+      }
+    }
+
+    formatLocationName(location) {
+      const parts = [];
+      if (location.name) parts.push(location.name);
+      if (location.admin1 && location.admin1 !== location.name)
+        parts.push(location.admin1);
+      if (location.country && location.country !== location.admin1)
+        parts.push(location.country);
+
+      return parts.join(', ') || 'Unknown Location';
+    }
+
+    updateRefreshTime() {
+      const refreshTime = this.element.querySelector('.refresh-time');
+      if (refreshTime) {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString(undefined, {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        refreshTime.textContent = timeString;
+      }
+    }
+  }
+
+  // Global function for location selection callback
+  window.handleLocationChange = function (location) {
+    const dashboard = document.querySelector('[data-weather-dashboard]');
+    if (dashboard && dashboard._dashboardInstance) {
+      dashboard._dashboardInstance.handleLocationChange(location);
+    }
+  };
+
+  // Initialize dashboard
+  document.addEventListener('DOMContentLoaded', () => {
+    // Force dark mode detection and application for dashboard
+    function applyDashboardDarkModeStyles() {
+      const isDark =
+        document.documentElement.classList.contains('dark') ||
+        document.documentElement.dataset.theme === 'dark' ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      document.querySelectorAll('.weather-dashboard').forEach((element) => {
+        if (isDark) {
+          element.style.setProperty('--dashboard-bg', '#1f2937', 'important');
+          element.style.setProperty('--dashboard-text', '#f9fafb', 'important');
+          element.style.setProperty(
+            '--dashboard-text-muted',
+            '#e5e7eb',
+            'important'
+          );
+          element.style.setProperty(
+            '--dashboard-border',
+            '#6b7280',
+            'important'
+          );
+          element.style.setProperty(
+            '--dashboard-accent',
+            '#60a5fa',
+            'important'
+          );
+          element.style.setProperty(
+            '--dashboard-hover-bg',
+            '#374151',
+            'important'
+          );
+          element.style.setProperty(
+            '--dashboard-active-bg',
+            '#4b5563',
+            'important'
+          );
+          element.style.backgroundColor = '#1f2937';
+          element.style.color = '#f9fafb';
+          element.style.borderColor = '#6b7280';
+        } else {
+          element.style.setProperty('--dashboard-bg', '#ffffff', 'important');
+          element.style.setProperty('--dashboard-text', '#000000', 'important');
+          element.style.setProperty(
+            '--dashboard-text-muted',
+            '#1f2937',
+            'important'
+          );
+          element.style.setProperty(
+            '--dashboard-border',
+            '#374151',
+            'important'
+          );
+          element.style.setProperty(
+            '--dashboard-accent',
+            '#1e40af',
+            'important'
+          );
+          element.style.setProperty(
+            '--dashboard-hover-bg',
+            '#f3f4f6',
+            'important'
+          );
+          element.style.setProperty(
+            '--dashboard-active-bg',
+            '#e5e7eb',
+            'important'
+          );
+          element.style.backgroundColor = '#ffffff';
+          element.style.color = '#000000';
+          element.style.borderColor = '#374151';
+        }
+      });
+    }
+
+    // Apply styles immediately
+    applyDashboardDarkModeStyles();
+
+    // Listen for dark mode changes
+    const darkModeMediaQuery = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    );
+    darkModeMediaQuery.addEventListener('change', applyDashboardDarkModeStyles);
+
+    // Also listen for class changes on documentElement
+    const observer = new MutationObserver(applyDashboardDarkModeStyles);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme'],
+    });
+
+    const dashboard = document.querySelector('[data-weather-dashboard]');
+    if (dashboard) {
+      dashboard._dashboardInstance = new WeatherDashboard(dashboard);
+    }
+  });
+</script>
+
+<style>
+  /* Tailwind 4 CSS Custom Properties for Weather Dashboard - WCAG AAA Enhanced */
+  @layer components {
+    .weather-dashboard {
+      /* Light Mode - WCAG AAA Compliant Colors */
+      --dashboard-bg: #ffffff;
+      --dashboard-text: #000000;
+      --dashboard-text-muted: #1f2937;
+      --dashboard-border: #374151;
+      --dashboard-accent: #1e40af;
+      --dashboard-hover-bg: #f3f4f6;
+      --dashboard-active-bg: #e5e7eb;
+      --dashboard-radius: 0.75rem;
+
+      /* Ensure proper styling */
+      background-color: var(--dashboard-bg);
+      color: var(--dashboard-text);
+      font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+      border-radius: var(--dashboard-radius);
+      overflow: hidden;
+      min-height: 100vh;
+      border: 1px solid var(--dashboard-border);
+    }
+
+    /* Dark Mode - WCAG AAA Compliant */
+    .dark .weather-dashboard,
+    [data-theme='dark'] .weather-dashboard,
+    html.dark .weather-dashboard {
+      --dashboard-bg: #1f2937 !important;
+      --dashboard-text: #f9fafb !important;
+      --dashboard-text-muted: #e5e7eb !important;
+      --dashboard-border: #6b7280 !important;
+      --dashboard-accent: #60a5fa !important;
+      --dashboard-hover-bg: #374151 !important;
+      --dashboard-active-bg: #4b5563 !important;
+
+      background-color: var(--dashboard-bg) !important;
+      color: var(--dashboard-text) !important;
+      border-color: var(--dashboard-border) !important;
+    }
+
+    /* Media Query Fallback for Dark Mode */
+    @media (prefers-color-scheme: dark) {
+      .weather-dashboard {
+        --dashboard-bg: #1f2937 !important;
+        --dashboard-text: #f9fafb !important;
+        --dashboard-text-muted: #e5e7eb !important;
+        --dashboard-border: #6b7280 !important;
+        --dashboard-accent: #60a5fa !important;
+        --dashboard-hover-bg: #374151 !important;
+        --dashboard-active-bg: #4b5563 !important;
+
+        background-color: var(--dashboard-bg) !important;
+        color: var(--dashboard-text) !important;
+        border-color: var(--dashboard-border) !important;
+      }
+    }
+
+    /* Header Section */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 2rem;
+      background: var(--dashboard-accent);
+      color: #ffffff;
+      gap: 2rem;
+    }
+
+    .dark .dashboard-header,
+    [data-theme='dark'] .dashboard-header {
+      background: var(--dashboard-accent) !important;
+    }
+
+    .dashboard-title h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .dashboard-subtitle {
+      margin: 0;
+      font-size: 1.125rem;
+      color: #f3f4f6;
+      font-weight: 500;
+    }
+
+    .location-search-container {
+      min-width: 18.75rem;
+      max-width: 25rem;
+      flex-shrink: 0;
+    }
+
+    /* Content Section */
+    .dashboard-content {
+      padding: 2rem;
+    }
+
+    .location-info {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background-color: var(--dashboard-hover-bg);
+      border: 2px solid var(--dashboard-border);
+      border-radius: var(--dashboard-radius);
+    }
+
+    .location-display {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .location-icon {
+      font-size: 2rem;
+      color: var(--dashboard-text-muted);
+    }
+
+    .location-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--dashboard-text);
+      margin-bottom: 0.25rem;
+    }
+
+    .location-coords {
+      font-size: 0.875rem;
+      color: var(--dashboard-text-muted);
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-weight: 600;
+    }
+
+    /* Tabs Section */
+    .dashboard-tabs {
+      display: flex;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--dashboard-border);
+      gap: 0;
+    }
+
+    .tab-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: var(--dashboard-text-muted);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .tab-button:hover {
+      color: var(--dashboard-text);
+      background-color: var(--dashboard-hover-bg);
+    }
+
+    .tab-button:focus {
+      outline: 3px solid var(--dashboard-accent);
+      outline-offset: 2px;
+    }
+
+    .tab-button.active {
+      color: var(--dashboard-accent);
+      border-bottom-color: var(--dashboard-accent);
+      background-color: var(--dashboard-active-bg);
+      font-weight: 700;
+    }
+
+    .tab-icon {
+      font-size: 1.125rem;
+    }
+
+    /* Panel Section */
+    .dashboard-panels {
+      position: relative;
+    }
+
+    .dashboard-panel {
+      margin-bottom: 2rem;
+    }
+
+    .tab-panel {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(1rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Footer Section */
+    .dashboard-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      background-color: var(--dashboard-hover-bg);
+      border-top: 2px solid var(--dashboard-border);
+      font-size: 0.875rem;
+      color: var(--dashboard-text-muted);
+      font-weight: 600;
+    }
+
+    .data-sources a {
+      color: var(--dashboard-accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .data-sources a:hover {
+      text-decoration: underline;
+    }
+
+    .data-sources a:focus {
+      outline: 2px solid var(--dashboard-accent);
+      outline-offset: 2px;
+    }
+
+    .refresh-label {
+      margin-right: 0.5rem;
+      color: var(--dashboard-text-muted);
+    }
+
+    .refresh-time {
+      font-weight: 700;
+      color: var(--dashboard-text);
+    }
+
+    /* Layout Variants */
+    .weather-dashboard--grid .dashboard-panels {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(31.25rem, 1fr));
+      gap: 2rem;
+    }
+
+    .weather-dashboard--stacked .dashboard-panels {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .weather-dashboard--tabbed .dashboard-panels {
+      position: relative;
+      min-height: 25rem;
+    }
+
+    /* Component Spacing */
+    .dashboard-weather,
+    .dashboard-air-quality,
+    .dashboard-marine {
+      margin: 0;
+      height: fit-content;
+    }
+
+    /* Responsive Design - Tablet */
+    @media (max-width: 64rem) {
+      .weather-dashboard--grid .dashboard-panels {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Responsive Design - Mobile */
+    @media (max-width: 48rem) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+        padding: 1.5rem;
+      }
+
+      .location-search-container {
+        min-width: auto;
+        max-width: none;
+      }
+
+      .dashboard-content {
+        padding: 1rem;
+      }
+
+      .dashboard-tabs {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .dashboard-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-button {
+        white-space: nowrap;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      .dashboard-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+      }
+    }
+
+    /* Small Mobile */
+    @media (max-width: 40rem) {
+      .dashboard-header {
+        padding: 1rem;
+      }
+
+      .dashboard-title h1 {
+        font-size: 1.5rem;
+      }
+
+      .dashboard-subtitle {
+        font-size: 1rem;
+      }
+
+      .location-display {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .location-icon {
+        font-size: 1.5rem;
+      }
+
+      .location-info {
+        padding: 1rem;
+      }
+    }
+
+    /* High Contrast Mode Support */
+    @media (prefers-contrast: high) {
+      .weather-dashboard {
+        --dashboard-border: currentColor;
+        border-width: 2px;
+      }
+
+      .location-info,
+      .dashboard-footer,
+      .dashboard-tabs {
+        border-width: 2px;
+      }
+
+      .tab-button {
+        border: 1px solid var(--dashboard-border);
+      }
+
+      .tab-button.active {
+        background-color: var(--dashboard-text);
+        color: var(--dashboard-bg);
+      }
+    }
+
+    /* Reduced Motion Support */
+    @media (prefers-reduced-motion: reduce) {
+      .tab-button,
+      .tab-panel {
+        transition: none;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    }
+
+    /* Print Styles */
+    @media print {
+      .dashboard-header {
+        background: none !important;
+        color: var(--dashboard-text) !important;
+        border-bottom: 2px solid currentColor;
+      }
+
+      .location-search-container,
+      .dashboard-tabs,
+      .dashboard-footer {
+        display: none !important;
+      }
+
+      .dashboard-panels {
+        display: block !important;
+      }
+
+      .dashboard-panel {
+        break-inside: avoid;
+        margin-bottom: 2rem;
+      }
+
+      .weather-dashboard {
+        border: 1px solid currentColor;
+        min-height: auto;
+      }
+    }
+  }
+</style>

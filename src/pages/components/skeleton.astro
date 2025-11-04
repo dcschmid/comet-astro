@@ -1,19 +1,412 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Skeleton from '../../components/Skeleton.astro';
+
+const usageSnippet = `---
+import { Skeleton } from 'comet-astro';
+---
+
+<div class="space-y-4">
+  <Skeleton variant="text" lines={3} />
+  <Skeleton variant="circle" size="lg" />
+  <Skeleton variant="card" size="md" />
+</div>`;
 ---
 
 <DocsLayout
   title="Skeleton"
-  description="Placeholder shimmer blocks while content loads."
+  description="Accessible loading placeholders with AAA contrast, multiple variants, and responsive sizing."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <div class="space-y-3 rounded-xl border border-gray-800 bg-gray-900 p-6">
-      <Skeleton width="60%" height="20px" />
-      <Skeleton width="90%" height="16px" />
-      <Skeleton width="72%" height="16px" />
-      <Skeleton width="85%" height="16px" />
+    <p class="text-base text-slate-100">
+      Skeleton components provide visual feedback during content loading with
+      proper accessibility features and WCAG AAA compliant contrast ratios. They
+      help users understand that content is being loaded without causing
+      confusion.
+    </p>
+    <p class="text-base text-slate-200">
+      Each variant respects user preferences for reduced motion and provides
+      screen reader announcements for loading states. Animations are optimized
+      for performance and accessibility across all devices.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style for the skeleton. Choose <code>"default"</code>, <code
+            >"circle"</code
+          >,
+          <code>"rectangle"</code>, <code>"text"</code>, or <code>"card"</code>.
+          Defaults to <code>"default"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Adjusts dimensions for common use cases. Options are <code>"sm"</code
+          >, <code>"md"</code>,
+          <code>"lg"</code>, or <code>"xl"</code>. Defaults to <code>"md"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          animation?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Animation type for the loading effect. Choose <code>"pulse"</code>, <code
+            >"wave"</code
+          >, or <code>"none"</code>. Defaults to <code>"pulse"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          lines?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Number of lines for text variant. Only applies when <code
+            >variant="text"</code
+          >. Defaults to <code>3</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          width?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom width override. Accepts any valid CSS width value.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          height?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom height override. Accepts any valid CSS height value.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          loadingText?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Accessible text for screen readers. Defaults to <code
+            >"Loading content"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          rounded?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Border radius for the skeleton. Choose <code>"none"</code>, <code
+            >"sm"</code
+          >,
+          <code>"md"</code>, <code>"lg"</code>, or <code>"full"</code>. Defaults
+          to <code>"md"</code>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, choose a variant that matches your content
+      structure, and customize the size and animation. The skeleton
+      automatically provides proper loading announcements and respects
+      accessibility preferences.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Default Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Default</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Skeleton variant="default" size="md" />
+        </div>
+      </div>
+
+      <!-- Circle Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Circle</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Skeleton variant="circle" size="lg" />
+        </div>
+      </div>
+
+      <!-- Rectangle Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Rectangle</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Skeleton variant="rectangle" width="100%" height="80px" />
+        </div>
+      </div>
+
+      <!-- Text Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Text</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Skeleton variant="text" lines={3} />
+        </div>
+      </div>
+
+      <!-- Card Variant -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Card</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <Skeleton variant="card" size="md" />
+        </div>
+      </div>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Sizes</h2>
+    <div class="grid gap-6 sm:grid-cols-4">
+      <!-- Small -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Small</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="space-y-2">
+            <Skeleton variant="default" size="sm" />
+            <Skeleton variant="circle" size="sm" />
+            <Skeleton variant="text" size="sm" lines={2} />
+          </div>
+        </div>
+      </div>
+
+      <!-- Medium -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Medium</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="space-y-2">
+            <Skeleton variant="default" size="md" />
+            <Skeleton variant="circle" size="md" />
+            <Skeleton variant="text" size="md" lines={2} />
+          </div>
+        </div>
+      </div>
+
+      <!-- Large -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Large</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="space-y-2">
+            <Skeleton variant="default" size="lg" />
+            <Skeleton variant="circle" size="lg" />
+            <Skeleton variant="text" size="lg" lines={2} />
+          </div>
+        </div>
+      </div>
+
+      <!-- Extra Large -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Extra Large</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="space-y-2">
+            <Skeleton variant="default" size="xl" />
+            <Skeleton variant="circle" size="xl" />
+            <Skeleton variant="text" size="xl" lines={2} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Animations</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <!-- Pulse Animation -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Pulse</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="space-y-2">
+            <Skeleton animation="pulse" variant="text" lines={3} />
+          </div>
+        </div>
+      </div>
+
+      <!-- Wave Animation -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Wave</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="space-y-2">
+            <Skeleton animation="wave" variant="text" lines={3} />
+          </div>
+        </div>
+      </div>
+
+      <!-- No Animation -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium text-slate-100">Static</h3>
+        <div
+          class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        >
+          <div class="space-y-2">
+            <Skeleton animation="none" variant="text" lines={3} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+
+    <!-- Profile Card -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Profile Card</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="flex items-start space-x-4">
+          <Skeleton variant="circle" size="lg" />
+          <div class="flex-1 space-y-2">
+            <Skeleton width="60%" height="20px" />
+            <Skeleton width="40%" height="16px" />
+            <Skeleton variant="text" lines={2} size="sm" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article List -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Article List</h3>
+      <div
+        class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-6 shadow-sm"
+      >
+        <div class="space-y-6">
+          {
+            Array.from({ length: 3 }, (_, index) => (
+              <div key={index} class="flex space-x-4">
+                <Skeleton variant="rectangle" width="120px" height="80px" />
+                <div class="flex-1 space-y-2">
+                  <Skeleton width="90%" height="20px" />
+                  <Skeleton variant="text" lines={2} size="sm" />
+                  <Skeleton width="30%" height="14px" />
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-100">Dashboard Cards</h3>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          Array.from({ length: 3 }, (_, index) => (
+            <div
+              key={index}
+              class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+            >
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <Skeleton width="40%" height="16px" />
+                  <Skeleton variant="circle" size="sm" />
+                </div>
+                <Skeleton width="60%" height="32px" />
+                <Skeleton variant="text" lines={1} size="sm" />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <p class="text-base text-slate-200">
+      Contrast ratios stay above 9:1 in both light and dark themes for maximum
+      visibility. Animations respect user preferences for reduced motion and are
+      disabled automatically when the user has set this preference in their
+      system settings.
+    </p>
+    <p class="text-base text-slate-200">
+      Screen reader users receive loading announcements through aria-live
+      regions, and each skeleton includes descriptive text that can be
+      customized with the
+      <code>loadingText</code> prop for context-specific content.
+    </p>
+    <p class="text-base text-slate-200">
+      High contrast mode is automatically supported with enhanced border
+      visibility and adjusted color combinations that maintain accessibility
+      standards across all user environments.
+    </p>
   </section>
 </DocsLayout>

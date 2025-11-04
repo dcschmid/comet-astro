@@ -1,45 +1,191 @@
 ---
+import EmbedBase from './EmbedBase.astro';
+
+/**
+ * SpotifyEmbed - WCAG AAA compliant Spotify content embed
+ * Provides accessible Spotify media integration with proper loading states and error handling
+ */
 interface Props {
-  uri: string; // spotify:track:xxx or spotify:album:xxx or spotify:playlist:xxx
-  type?: 'track' | 'album' | 'playlist' | 'show' | 'episode';
-  height?: number;
+  /** Spotify URI (spotify:track:xxx, spotify:album:xxx, etc.) */
+  uri: string;
+  /** Type of Spotify content */
+  type?: 'track' | 'album' | 'playlist' | 'show' | 'episode' | 'artist';
+  /** Compact display mode */
   compact?: boolean;
-  className?: string;
+  /** Visual theme variant */
+  variant?: 'default' | 'minimal' | 'card';
+  /** Show loading state */
+  showLoading?: boolean;
+  /** Accessible title for screen readers */
+  title?: string;
+  /** Additional CSS classes */
+  class?: string;
+  /** Allow fullscreen */
+  allowFullscreen?: boolean;
+  /** Lazy loading */
+  loading?: 'lazy' | 'eager';
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Aspect ratio override */
+  aspectRatio?: '16:9' | '4:3' | '1:1' | '21:9' | '9:16' | 'auto' | 'none';
+  /** Error message */
+  error?: string;
+  /** Description for accessibility */
+  description?: string;
+  /** ARIA label */
+  ariaLabel?: string;
 }
 
 const {
   uri,
   type = 'track',
-  height,
   compact = false,
-  className = '',
-} = Astro.props;
+  variant = 'default',
+  showLoading = true,
+  title,
+  class: className = '',
+  allowFullscreen = true,
+  loading = 'lazy',
+  size = 'md',
+  aspectRatio = 'auto',
+  error,
+  description,
+  ariaLabel,
+} = Astro.props as Props;
 
-// Extract ID from Spotify URI
-const id = uri.split(':').pop();
+// Validate and extract ID from Spotify URI
+if (!uri || !uri.includes('spotify:')) {
+  throw new Error(
+    `Invalid Spotify URI: ${uri}. Expected format: spotify:type:id`
+  );
+}
 
-const defaultHeights: Record<string, number> = {
-  track: compact ? 80 : 152,
-  album: 352,
-  playlist: 352,
-  show: 232,
-  episode: 232,
+const uriParts = uri.split(':');
+const extractedType = uriParts[1] as typeof type;
+const id = uriParts[2];
+
+if (!id) {
+  throw new Error(`Could not extract ID from Spotify URI: ${uri}`);
+}
+
+// Use type from URI if not explicitly provided
+const contentType = type || extractedType;
+
+// Build Spotify embed URL
+const buildSpotifyUrl = () => {
+  const baseUrl = 'https://open.spotify.com/embed';
+  const url = new URL(`${baseUrl}/${contentType}/${id}`);
+
+  // Add display parameters
+  url.searchParams.set('utm_source', 'generator');
+  if (compact) {
+    url.searchParams.set('theme', '0');
+  }
+
+  return url.toString();
 };
 
-const embedHeight = height || defaultHeights[type] || 352;
-const src = `https://open.spotify.com/embed/${type}/${id}`;
+const embedUrl = buildSpotifyUrl();
+
+// Determine appropriate aspect ratio for Spotify content
+const getSpotifyAspectRatio = () => {
+  if (aspectRatio !== 'auto') return aspectRatio;
+
+  // Spotify-specific aspect ratios
+  switch (contentType) {
+    case 'track':
+    case 'episode':
+      return compact ? '16:9' : '4:3';
+    case 'album':
+    case 'playlist':
+    case 'show':
+      return '1:1';
+    case 'artist':
+      return '16:9';
+    default:
+      return '16:9';
+  }
+};
+
+const finalAspectRatio = getSpotifyAspectRatio();
+
+// Generate appropriate title
+const generateTitle = () => {
+  if (title) return title;
+
+  const typeNames = {
+    track: 'Spotify Track',
+    album: 'Spotify Album',
+    playlist: 'Spotify Playlist',
+    show: 'Spotify Podcast',
+    episode: 'Spotify Episode',
+    artist: 'Spotify Artist',
+  };
+
+  return typeNames[contentType] || 'Spotify Content';
+};
+
+const finalTitle = generateTitle();
+
+// Build allow attribute for Spotify
+const allowFeatures = [
+  'accelerometer',
+  'autoplay',
+  'clipboard-write',
+  'encrypted-media',
+  'gyroscope',
+  'picture-in-picture',
+  'web-share',
+].join('; ');
 ---
 
-<div
-  class={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 ${className}`.trim()}
-  style={`height: ${embedHeight}px`}
->
-  <iframe
-    src={src}
-    width="100%"
-    height={embedHeight}
-    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-    loading="lazy"
-    class="h-full w-full border-0"
-    title={`Spotify ${type} player`}></iframe>
-</div>
+<EmbedBase
+  src={embedUrl}
+  title={finalTitle}
+  variant={variant}
+  size={size}
+  aspectRatio={finalAspectRatio}
+  rounded={true}
+  lazy={loading === 'lazy'}
+  description={description || `Spotify ${contentType} player`}
+  ariaLabel={ariaLabel || `${finalTitle} - Spotify player`}
+  loading={showLoading}
+  error={error}
+  responsive={true}
+  allowFullscreen={allowFullscreen}
+  allow={allowFeatures}
+  className={className}
+/>
+
+<style>
+  /* Spotify specific optimizations */
+  :global([data-embed-type='spotify'] iframe) {
+    /* Ensure proper Spotify iframe behavior */
+    border: 0;
+    border-radius: 12px;
+  }
+
+  /* High contrast mode support for Spotify */
+  @media (prefers-contrast: high) {
+    :global([data-embed-type='spotify']) {
+      border-width: 3px;
+    }
+  }
+
+  /* Print styles for Spotify embeds */
+  @media print {
+    :global([data-embed-type='spotify'] iframe) {
+      display: none;
+    }
+    :global([data-embed-type='spotify'])::after {
+      content: 'Spotify ' attr(data-content-type) ': ' attr(data-content-id);
+      display: block;
+      padding: 1rem;
+      background: #1db954;
+      color: white;
+      border: 1px solid #1db954;
+      text-align: center;
+      font-family: monospace;
+    }
+  }
+</style>

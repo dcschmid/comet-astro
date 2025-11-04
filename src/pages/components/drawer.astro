@@ -38,14 +38,16 @@ const customId = 'demo-drawer-custom';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      Drawer provides slide-in panel interfaces that anchor to viewport edges with comprehensive 
-      accessibility features. The component maintains WCAG AAA contrast ratios across all interactive 
-      elements and includes focus trapping, keyboard navigation, and proper ARIA announcements.
+      Drawer provides slide-in panel interfaces that anchor to viewport edges
+      with comprehensive accessibility features. The component maintains WCAG
+      AAA contrast ratios across all interactive elements and includes focus
+      trapping, keyboard navigation, and proper ARIA announcements.
     </p>
     <p class="text-base text-slate-200">
-      Focus management includes automatic trapping within the drawer, backdrop dismissal, and 
-      restoration to the triggering element when closed. ESC key handling and smooth animations 
-      provide intuitive interaction patterns for both mouse and keyboard users.
+      Focus management includes automatic trapping within the drawer, backdrop
+      dismissal, and restoration to the triggering element when closed. ESC key
+      handling and smooth animations provide intuitive interaction patterns for
+      both mouse and keyboard users.
     </p>
   </section>
 
@@ -61,7 +63,8 @@ const customId = 'demo-drawer-custom';
           id
         </dt>
         <dd class="text-sm text-slate-200">
-          Required unique identifier for the drawer element. Used for triggering with <code>data-drawer-trigger</code>.
+          Required unique identifier for the drawer element. Used for triggering
+          with <code>data-drawer-trigger</code>.
         </dd>
       </div>
       <div
@@ -73,7 +76,8 @@ const customId = 'demo-drawer-custom';
           title?
         </dt>
         <dd class="text-sm text-slate-200">
-          Optional header title for the drawer. Creates accessible heading with proper ARIA labeling.
+          Optional header title for the drawer. Creates accessible heading with
+          proper ARIA labeling.
         </dd>
       </div>
       <div
@@ -85,7 +89,8 @@ const customId = 'demo-drawer-custom';
           position?
         </dt>
         <dd class="text-sm text-slate-200">
-          Drawer anchor position: <code>"left"</code> or <code>"right"</code>. Defaults to <code>"right"</code>.
+          Drawer anchor position: <code>"left"</code> or <code>"right"</code>.
+          Defaults to <code>"right"</code>.
         </dd>
       </div>
       <div
@@ -97,7 +102,9 @@ const customId = 'demo-drawer-custom';
           size?
         </dt>
         <dd class="text-sm text-slate-200">
-          Drawer width preset: <code>"sm"</code>, <code>"md"</code>, <code>"lg"</code>, or <code>"full"</code>. Defaults to <code>"md"</code>.
+          Drawer width preset: <code>"sm"</code>, <code>"md"</code>, <code
+            >"lg"</code
+          >, or <code>"full"</code>. Defaults to <code>"md"</code>.
         </dd>
       </div>
       <div
@@ -109,7 +116,9 @@ const customId = 'demo-drawer-custom';
           dismissible?
         </dt>
         <dd class="text-sm text-slate-200">
-          Shows close button and enables backdrop/ESC dismissal. Defaults to <code>true</code>.
+          Shows close button and enables backdrop/ESC dismissal. Defaults to <code
+            >true</code
+          >.
         </dd>
       </div>
       <div
@@ -121,7 +130,8 @@ const customId = 'demo-drawer-custom';
           className?
         </dt>
         <dd class="text-sm text-slate-200">
-          Additional CSS classes to apply to the drawer panel for custom styling.
+          Additional CSS classes to apply to the drawer panel for custom
+          styling.
         </dd>
       </div>
     </dl>
@@ -130,9 +140,9 @@ const customId = 'demo-drawer-custom';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Create a trigger element with <code>data-drawer-trigger</code> pointing to the drawer ID. 
-      The drawer handles opening, focus management, and closing automatically. Customize actions 
-      using the "actions" slot for complex interactions.
+      Create a trigger element with <code>data-drawer-trigger</code> pointing to
+      the drawer ID. The drawer handles opening, focus management, and closing automatically.
+      Customize actions using the "actions" slot for complex interactions.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -161,28 +171,40 @@ const customId = 'demo-drawer-custom';
         Open Right Drawer
       </button>
     </div>
-    
+
     <DrawerComponent id={leftId} title="Left Navigation" position="left">
       <div class="space-y-4">
         <p>This drawer slides in from the left side of the screen.</p>
         <nav class="space-y-2">
-          <a href="#" class="block rounded px-3 py-2 text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700">Home</a>
-          <a href="#" class="block rounded px-3 py-2 text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700">About</a>
-          <a href="#" class="block rounded px-3 py-2 text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700">Contact</a>
+          <a
+            href="#"
+            class="block rounded px-3 py-2 text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700"
+            >Home</a
+          >
+          <a
+            href="#"
+            class="block rounded px-3 py-2 text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700"
+            >About</a
+          >
+          <a
+            href="#"
+            class="block rounded px-3 py-2 text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700"
+            >Contact</a
+          >
         </nav>
       </div>
     </DrawerComponent>
-    
+
     <DrawerComponent id={rightId} title="Settings Panel" position="right">
       <div class="space-y-4">
         <p>This drawer slides in from the right side of the screen.</p>
         <div class="space-y-3">
           <label class="flex items-center gap-2">
-            <input type="checkbox" class="rounded border-slate-300">
+            <input type="checkbox" class="rounded border-slate-300" />
             <span>Enable notifications</span>
           </label>
           <label class="flex items-center gap-2">
-            <input type="checkbox" class="rounded border-slate-300">
+            <input type="checkbox" class="rounded border-slate-300" />
             <span>Dark mode</span>
           </label>
         </div>
@@ -211,26 +233,50 @@ const customId = 'demo-drawer-custom';
         Large Drawer
       </button>
     </div>
-    
+
     <DrawerComponent id={smallId} title="Small Drawer" size="sm">
-      <p>This is a small drawer perfect for quick actions or navigation menus with minimal content.</p>
+      <p>
+        This is a small drawer perfect for quick actions or navigation menus
+        with minimal content.
+      </p>
     </DrawerComponent>
-    
+
     <DrawerComponent id={largeId} title="Large Content Drawer" size="lg">
       <div class="space-y-4">
-        <p>Large drawers provide more space for forms, detailed content, or complex interactions.</p>
+        <p>
+          Large drawers provide more space for forms, detailed content, or
+          complex interactions.
+        </p>
         <div class="space-y-3">
           <div>
-            <label class="block text-sm font-medium text-slate-800 dark:text-slate-200">Name</label>
-            <input type="text" class="mt-1 block w-full rounded border-slate-300 px-3 py-2">
+            <label
+              class="block text-sm font-medium text-slate-800 dark:text-slate-200"
+              >Name</label
+            >
+            <input
+              type="text"
+              class="mt-1 block w-full rounded border-slate-300 px-3 py-2"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-slate-800 dark:text-slate-200">Email</label>
-            <input type="email" class="mt-1 block w-full rounded border-slate-300 px-3 py-2">
+            <label
+              class="block text-sm font-medium text-slate-800 dark:text-slate-200"
+              >Email</label
+            >
+            <input
+              type="email"
+              class="mt-1 block w-full rounded border-slate-300 px-3 py-2"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-slate-800 dark:text-slate-200">Message</label>
-            <textarea rows="4" class="mt-1 block w-full rounded border-slate-300 px-3 py-2"></textarea>
+            <label
+              class="block text-sm font-medium text-slate-800 dark:text-slate-200"
+              >Message</label
+            >
+            <textarea
+              rows="4"
+              class="mt-1 block w-full rounded border-slate-300 px-3 py-2"
+            ></textarea>
           </div>
         </div>
       </div>
@@ -240,7 +286,8 @@ const customId = 'demo-drawer-custom';
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Custom Actions</h2>
     <p class="text-base text-slate-200">
-      Override the default close button with custom action buttons using the "actions" slot.
+      Override the default close button with custom action buttons using the
+      "actions" slot.
     </p>
     <div class="space-y-4">
       <button
@@ -255,12 +302,27 @@ const customId = 'demo-drawer-custom';
           <p>Make changes to your profile information below.</p>
           <div class="space-y-3">
             <div>
-              <label class="block text-sm font-medium text-slate-800 dark:text-slate-200">Display Name</label>
-              <input type="text" value="John Doe" class="mt-1 block w-full rounded border-slate-300 px-3 py-2">
+              <label
+                class="block text-sm font-medium text-slate-800 dark:text-slate-200"
+                >Display Name</label
+              >
+              <input
+                type="text"
+                value="John Doe"
+                class="mt-1 block w-full rounded border-slate-300 px-3 py-2"
+              />
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-800 dark:text-slate-200">Bio</label>
-              <textarea rows="3" class="mt-1 block w-full rounded border-slate-300 px-3 py-2">Software developer passionate about accessibility and user experience.</textarea>
+              <label
+                class="block text-sm font-medium text-slate-800 dark:text-slate-200"
+                >Bio</label
+              >
+              <textarea
+                rows="3"
+                class="mt-1 block w-full rounded border-slate-300 px-3 py-2"
+                >Software developer passionate about accessibility and user
+                experience.</textarea
+              >
             </div>
           </div>
         </div>
@@ -289,19 +351,24 @@ const customId = 'demo-drawer-custom';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      Contrast ratios exceed WCAG AAA requirements (7:1+) across all drawer elements including 
-      headers, content areas, and action buttons in both light and dark themes. Focus indicators 
-      use 2px visible rings with proper offset values for clear keyboard navigation.
+      Contrast ratios exceed WCAG AAA requirements (7:1+) across all drawer
+      elements including headers, content areas, and action buttons in both
+      light and dark themes. Focus indicators use 2px visible rings with proper
+      offset values for clear keyboard navigation.
     </p>
     <p class="text-base text-slate-200">
-      Focus management includes automatic trapping within the drawer, restoration to the triggering 
-      element on close, and initial focus placement on the first interactive element. ESC key 
-      handling and backdrop clicks provide intuitive dismissal patterns with smooth animations.
+      Focus management includes automatic trapping within the drawer,
+      restoration to the triggering element on close, and initial focus
+      placement on the first interactive element. ESC key handling and backdrop
+      clicks provide intuitive dismissal patterns with smooth animations.
     </p>
     <p class="text-base text-slate-200">
-      The drawer uses semantic HTML with proper ARIA attributes including <code>aria-modal</code>, 
-      <code>aria-labelledby</code>, and role assignments. Body scroll is locked when open to prevent 
-      background interaction, and screen readers receive appropriate announcements for state changes.
+      The drawer uses semantic HTML with proper ARIA attributes including <code
+        >aria-modal</code
+      >,
+      <code>aria-labelledby</code>, and role assignments. Body scroll is locked
+      when open to prevent background interaction, and screen readers receive
+      appropriate announcements for state changes.
     </p>
   </section>
 </DocsLayout>

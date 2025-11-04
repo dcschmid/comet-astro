@@ -1,18 +1,588 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import TwitterEmbed from '../../components/TwitterEmbed.astro';
+
+const usageSnippet = `---
+import { TwitterEmbed } from 'comet-astro';
+---
+
+<div class="space-y-6">
+  <TwitterEmbed 
+    tweetId="1354143047324299264" 
+    variant="default"
+    theme="auto"
+  />
+  
+  <TwitterEmbed 
+    tweetId="1354143047324299264" 
+    variant="elevated"
+    size="lg"
+    privacyMode
+  />
+  
+  <TwitterEmbed 
+    tweetId="1354143047324299264" 
+    variant="minimal"
+    showConversation={false}
+  />
+</div>`;
 ---
 
 <DocsLayout
   title="TwitterEmbed"
-  description="Embed a tweet with theme-aware styling and optional conversation controls."
+  description="Accessible Twitter embed component with AAA contrast, privacy controls, and comprehensive loading states."
 >
   <section class="space-y-4">
-    <h2 class="text-xl font-bold">Example</h2>
-    <p class="text-gray-400 text-sm">
-      Supply a public tweet ID. The embed automatically adapts to the current
-      theme.
+    <p class="text-base text-slate-100">
+      TwitterEmbed allows you to embed tweets in your application with full
+      accessibility support, privacy controls, and responsive design. The
+      component follows WCAG AAA guidelines with proper contrast ratios and
+      comprehensive error handling.
     </p>
-    <TwitterEmbed tweetId="1354143047324299264" className="mt-3" />
+    <p class="text-base text-slate-200">
+      Each variant includes semantic styling, configurable privacy modes, and
+      enhanced loading states that provide clear feedback to all users.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          tweetId
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Required. The Twitter status ID of the tweet to embed. Found in the
+          tweet URL.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          variant?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Visual style for the embed container. Choose <code>"default"</code>, <code
+            >"minimal"</code
+          >, <code>"bordered"</code>, or <code>"elevated"</code>. Defaults to <code
+            >"default"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          theme?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Twitter widget theme. Choose <code>"light"</code>, <code>"dark"</code
+          >, or <code>"auto"</code>. Auto adapts to system theme. Defaults to <code
+            >"auto"</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          size?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Size of the embed container. Choose <code>"sm"</code>, <code
+            >"md"</code
+          >, or <code>"lg"</code>. Defaults to <code>"md"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          width?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Maximum width constraint. Choose <code>"compact"</code>, <code
+            >"normal"</code
+          >, or <code>"wide"</code>. Defaults to <code>"normal"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showConversation?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to show the conversation thread. Defaults to <code>true</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          showCards?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Whether to show Twitter cards (images, videos). Defaults to <code
+            >true</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          privacyMode?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Enable Do Not Track mode for enhanced privacy. Defaults to <code
+            >false</code
+          >.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          loadingText?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom loading message. Defaults to <code>"Loading tweet..."</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          errorText?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Custom error message. Defaults to <code>"Failed to load tweet"</code>.
+        </dd>
+      </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          className?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Additional CSS classes to apply to the embed container.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <div class="rounded-lg bg-slate-900/60 p-4">
+      <pre class="text-sm text-slate-200"><code>{usageSnippet}</code></pre>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+
+    <!-- Variants -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Variants</h3>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Default</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              variant="default"
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Minimal</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              variant="minimal"
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Bordered</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              variant="bordered"
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Elevated</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              variant="elevated"
+              theme="auto"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Sizes</h3>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Small</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              size="sm"
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Medium</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              size="md"
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Large</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              size="lg"
+              theme="auto"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Width Options -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Width Options</h3>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Compact</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              width="compact"
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Normal</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              width="normal"
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Wide</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              width="wide"
+              theme="auto"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Features</h3>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Privacy Mode</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              privacyMode
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">No Conversation</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              showConversation={false}
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">No Cards</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              showCards={false}
+              theme="auto"
+            />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Custom Messages</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed
+              tweetId="1354143047324299264"
+              loadingText="Fetching tweet..."
+              errorText="Tweet unavailable"
+              theme="auto"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme Options -->
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-slate-200">Theme Options</h3>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Light Theme</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed tweetId="1354143047324299264" theme="light" />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Dark Theme</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed tweetId="1354143047324299264" theme="dark" />
+          </div>
+        </div>
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-slate-300">Auto Theme</h4>
+          <div
+            class="border border-slate-700/50 rounded-lg p-4 bg-slate-900/20"
+          >
+            <TwitterEmbed tweetId="1354143047324299264" theme="auto" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
+    <div class="space-y-4 text-sm text-slate-200">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Screen Reader Support</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• Uses <code>role="region"</code> with descriptive labels</li>
+          <li>• Live regions announce loading and error states</li>
+          <li>• Proper semantic markup for embedded content</li>
+          <li>• Alternative text and fallback links for failed embeds</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Keyboard Navigation</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>
+            • <kbd class="px-1 py-0.5 bg-slate-700 rounded text-xs">Tab</kbd> - Navigate
+            to embed container
+          </li>
+          <li>
+            • <kbd class="px-1 py-0.5 bg-slate-700 rounded text-xs"
+              >Enter/Space</kbd
+            > - Open tweet on Twitter
+          </li>
+          <li>• Focus indicators on container and interactive elements</li>
+          <li>• Keyboard access to all embed controls and links</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Visual Accessibility</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• WCAG AAA contrast ratios (9:1) for all text and controls</li>
+          <li>• High contrast mode support with enhanced borders</li>
+          <li>• Forced colors mode compatibility</li>
+          <li>• Responsive design adapts to different screen sizes</li>
+          <li>• Reduced motion support disables animations</li>
+        </ul>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Privacy & Security</h3>
+        <ul class="space-y-1 text-slate-300">
+          <li>• Optional Do Not Track mode prevents tracking</li>
+          <li>• Privacy notice when DNT is enabled</li>
+          <li>• Secure iframe loading with proper attributes</li>
+          <li>• Graceful degradation when scripts fail to load</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Common Patterns</h2>
+    <div class="space-y-4">
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Blog Post Tweet</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;TwitterEmbed 
+  tweetId="1354143047324299264" 
+  variant="elevated"
+  size="lg"
+  showConversation={false}
+/&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Sidebar Tweet</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;TwitterEmbed 
+  tweetId="1354143047324299264" 
+  variant="bordered"
+  size="sm"
+  width="compact"
+/&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Privacy-Conscious Embed</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;TwitterEmbed 
+  tweetId="1354143047324299264" 
+  variant="default"
+  privacyMode
+  showCards={false}
+/&gt;</code></pre>
+      </div>
+
+      <div class="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+        <h3 class="font-medium text-slate-100 mb-2">Hero Tweet</h3>
+        <pre
+          class="text-sm text-slate-300 overflow-x-auto"><code>&lt;TwitterEmbed 
+  tweetId="1354143047324299264" 
+  variant="elevated"
+  size="lg"
+  width="wide"
+  theme="auto"
+/&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Best Practices</h2>
+    <div class="space-y-3 text-sm text-slate-200">
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Use specific tweet IDs from public, accessible tweets</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Enable privacy mode for user-conscious applications</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Choose appropriate variants based on page layout</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Provide meaningful loading and error messages</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-emerald-400 font-bold">✓</span>
+        <span>Test with slow network connections</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span>Don't embed deleted or private tweets</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span>Avoid too many embeds on a single page</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span>Don't use embeds as primary content source</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-red-400 font-bold">✗</span>
+        <span
+          >Avoid embedding sensitive or controversial content without context</span
+        >
+      </div>
+    </div>
   </section>
 </DocsLayout>

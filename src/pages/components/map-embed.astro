@@ -31,14 +31,16 @@ import { MapEmbed } from 'comet-astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      MapEmbed provides a fully accessible way to embed OpenStreetMap in your application.
-      It uses Leaflet for interactive maps and OpenStreetMap data, offering a privacy-friendly,
-      open source alternative to proprietary mapping services with WCAG AAA compliant styling.
+      MapEmbed provides a fully accessible way to embed OpenStreetMap in your
+      application. It uses Leaflet for interactive maps and OpenStreetMap data,
+      offering a privacy-friendly, open source alternative to proprietary
+      mapping services with WCAG AAA compliant styling.
     </p>
     <p class="text-base text-slate-200">
-      The component includes loading states, error fallbacks, and proper ARIA labels
-      to ensure screen readers can effectively announce map content. All visual states
-      maintain high contrast ratios for maximum accessibility, and no API keys are required.
+      The component includes loading states, error fallbacks, and proper ARIA
+      labels to ensure screen readers can effectively announce map content. All
+      visual states maintain high contrast ratios for maximum accessibility, and
+      no API keys are required.
     </p>
   </section>
 
@@ -54,8 +56,8 @@ import { MapEmbed } from 'comet-astro';
           address?
         </dt>
         <dd class="text-sm text-slate-200">
-          Street address to display on the map. The component will geocode
-          the address to find the location.
+          Street address to display on the map. The component will geocode the
+          address to find the location.
         </dd>
       </div>
       <div
@@ -67,8 +69,9 @@ import { MapEmbed } from 'comet-astro';
           coordinates?
         </dt>
         <dd class="text-sm text-slate-200">
-          Exact latitude and longitude as <code>&lbrace;&lbrace; lat: number, lng: number &rbrace;&rbrace;</code>.
-          Provides the most precise location display.
+          Exact latitude and longitude as <code
+            >&lbrace;&lbrace; lat: number, lng: number &rbrace;&rbrace;</code
+          >. Provides the most precise location display.
         </dd>
       </div>
       <div
@@ -80,8 +83,12 @@ import { MapEmbed } from 'comet-astro';
           tileStyle?
         </dt>
         <dd class="text-sm text-slate-200">
-          Map tile style. Choose <code>"standard"</code>, <code>"satellite"</code>,
-          <code>"terrain"</code>, or <code>"dark"</code>. Defaults to <code>"standard"</code>.
+          Map tile style. Choose <code>"standard"</code>, <code
+            >"satellite"</code
+          >,
+          <code>"terrain"</code>, or <code>"dark"</code>. Defaults to <code
+            >"standard"</code
+          >.
         </dd>
       </div>
       <div
@@ -94,7 +101,9 @@ import { MapEmbed } from 'comet-astro';
         </dt>
         <dd class="text-sm text-slate-200">
           Visual style. Choose <code>"default"</code>, <code>"bordered"</code>,
-          <code>"elevated"</code>, or <code>"minimal"</code>. Defaults to <code>"default"</code>.
+          <code>"elevated"</code>, or <code>"minimal"</code>. Defaults to <code
+            >"default"</code
+          >.
         </dd>
       </div>
       <div
@@ -106,8 +115,11 @@ import { MapEmbed } from 'comet-astro';
           size?
         </dt>
         <dd class="text-sm text-slate-200">
-          Maximum width constraint. Options are <code>"sm"</code>, <code>"md"</code>,
-          <code>"lg"</code>, or <code>"xl"</code>. Defaults to <code>"md"</code>.
+          Maximum width constraint. Options are <code>"sm"</code>, <code
+            >"md"</code
+          >,
+          <code>"lg"</code>, or <code>"xl"</code>. Defaults to <code>"md"</code
+          >.
         </dd>
       </div>
       <div
@@ -120,7 +132,8 @@ import { MapEmbed } from 'comet-astro';
         </dt>
         <dd class="text-sm text-slate-200">
           Map container ratio. Choose <code>"16/9"</code>, <code>"4/3"</code>,
-          <code>"1/1"</code>, <code>"21/9"</code>, or <code>"3/2"</code>. Defaults to <code>"16/9"</code>.
+          <code>"1/1"</code>, <code>"21/9"</code>, or <code>"3/2"</code>.
+          Defaults to <code>"16/9"</code>.
         </dd>
       </div>
       <div
@@ -132,7 +145,9 @@ import { MapEmbed } from 'comet-astro';
           zoom?
         </dt>
         <dd class="text-sm text-slate-200">
-          Map zoom level from 1 (world) to 20 (building). Defaults to <code>15</code>
+          Map zoom level from 1 (world) to 20 (building). Defaults to <code
+            >15</code
+          >
           which shows neighborhood detail.
         </dd>
       </div>
@@ -145,8 +160,9 @@ import { MapEmbed } from 'comet-astro';
           title?
         </dt>
         <dd class="text-sm text-slate-200">
-          Accessible title for screen readers. Defaults to <code>"Map location"</code>.
-          Should describe what the map shows.
+          Accessible title for screen readers. Defaults to <code
+            >"Map location"</code
+          >. Should describe what the map shows.
         </dd>
       </div>
       <div
@@ -158,8 +174,9 @@ import { MapEmbed } from 'comet-astro';
           showMarker?
         </dt>
         <dd class="text-sm text-slate-200">
-          Display a marker at the specified location. Defaults to <code>true</code>.
-          Can include custom popup text via <code>markerText</code>.
+          Display a marker at the specified location. Defaults to <code
+            >true</code
+          >. Can include custom popup text via <code>markerText</code>.
         </dd>
       </div>
       <div
@@ -171,8 +188,8 @@ import { MapEmbed } from 'comet-astro';
           staticMap?
         </dt>
         <dd class="text-sm text-slate-200">
-          Disable map interaction (zoom, pan, etc.). Useful for display-only maps.
-          Defaults to <code>false</code> (interactive).
+          Disable map interaction (zoom, pan, etc.). Useful for display-only
+          maps. Defaults to <code>false</code> (interactive).
         </dd>
       </div>
       <div
@@ -184,8 +201,9 @@ import { MapEmbed } from 'comet-astro';
           showControls?
         </dt>
         <dd class="text-sm text-slate-200">
-          Show Leaflet map controls (zoom, fullscreen, etc.). 
-          Defaults to <code>true</code>. Set to <code>false</code> for minimal embeds.
+          Show Leaflet map controls (zoom, fullscreen, etc.). Defaults to <code
+            >true</code
+          >. Set to <code>false</code> for minimal embeds.
         </dd>
       </div>
     </dl>
@@ -195,8 +213,8 @@ import { MapEmbed } from 'comet-astro';
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
       Import the component and provide a location via address or coordinates.
-      The component handles loading states, errors, and accessibility automatically.
-      No API keys required - uses open source OpenStreetMap data.
+      The component handles loading states, errors, and accessibility
+      automatically. No API keys required - uses open source OpenStreetMap data.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
@@ -205,14 +223,16 @@ import { MapEmbed } from 'comet-astro';
   </section>
 
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">No Configuration Required</h2>
+    <h2 class="text-xl font-semibold text-slate-100">
+      No Configuration Required
+    </h2>
     <p class="text-base text-slate-200">
-      This example shows a working map without any API keys. OpenStreetMap provides
-      free, open source mapping data that works out of the box.
+      This example shows a working map without any API keys. OpenStreetMap
+      provides free, open source mapping data that works out of the box.
     </p>
     <div class="space-y-4">
-      <MapEmbed 
-        address="Eiffel Tower, Paris" 
+      <MapEmbed
+        address="Eiffel Tower, Paris"
         title="Eiffel Tower location"
         zoom={14}
         variant="default"
@@ -225,9 +245,11 @@ import { MapEmbed } from 'comet-astro';
     <div class="space-y-6">
       <div class="space-y-2">
         <h3 class="text-lg font-medium text-slate-200">Default</h3>
-        <p class="text-sm text-slate-300">Standard border and background styling</p>
+        <p class="text-sm text-slate-300">
+          Standard border and background styling
+        </p>
         <div class="max-w-md">
-          <MapEmbed 
+          <MapEmbed
             address="Times Square, New York"
             title="Times Square location"
             variant="default"
@@ -240,7 +262,7 @@ import { MapEmbed } from 'comet-astro';
         <h3 class="text-lg font-medium text-slate-200">Bordered</h3>
         <p class="text-sm text-slate-300">Thicker border for emphasis</p>
         <div class="max-w-md">
-          <MapEmbed 
+          <MapEmbed
             address="Big Ben, London"
             title="Big Ben location"
             variant="bordered"
@@ -253,7 +275,7 @@ import { MapEmbed } from 'comet-astro';
         <h3 class="text-lg font-medium text-slate-200">Elevated</h3>
         <p class="text-sm text-slate-300">Card-like appearance with shadow</p>
         <div class="max-w-md">
-          <MapEmbed 
+          <MapEmbed
             address="Tokyo Tower, Japan"
             title="Tokyo Tower location"
             variant="elevated"
@@ -264,9 +286,11 @@ import { MapEmbed } from 'comet-astro';
 
       <div class="space-y-2">
         <h3 class="text-lg font-medium text-slate-200">Minimal</h3>
-        <p class="text-sm text-slate-300">Clean styling with subtle background</p>
+        <p class="text-sm text-slate-300">
+          Clean styling with subtle background
+        </p>
         <div class="max-w-md">
-          <MapEmbed 
+          <MapEmbed
             address="Sydney Opera House, Australia"
             title="Sydney Opera House location"
             variant="minimal"
@@ -285,7 +309,7 @@ import { MapEmbed } from 'comet-astro';
     <div class="space-y-4">
       <div class="space-y-2">
         <h3 class="text-base font-medium text-slate-300">Small (max-w-sm)</h3>
-        <MapEmbed 
+        <MapEmbed
           address="Statue of Liberty, New York"
           title="Statue of Liberty"
           size="sm"
@@ -294,7 +318,7 @@ import { MapEmbed } from 'comet-astro';
       </div>
       <div class="space-y-2">
         <h3 class="text-base font-medium text-slate-300">Medium (max-w-2xl)</h3>
-        <MapEmbed 
+        <MapEmbed
           address="Golden Gate Bridge, San Francisco"
           title="Golden Gate Bridge"
           size="md"
@@ -312,7 +336,7 @@ import { MapEmbed } from 'comet-astro';
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-2">
         <h3 class="text-sm font-medium text-slate-300">16:9 (Video)</h3>
-        <MapEmbed 
+        <MapEmbed
           address="Colosseum, Rome"
           title="Colosseum"
           aspectRatio="16/9"
@@ -321,7 +345,7 @@ import { MapEmbed } from 'comet-astro';
       </div>
       <div class="space-y-2">
         <h3 class="text-sm font-medium text-slate-300">4:3 (Traditional)</h3>
-        <MapEmbed 
+        <MapEmbed
           address="Machu Picchu, Peru"
           title="Machu Picchu"
           aspectRatio="4/3"
@@ -330,7 +354,7 @@ import { MapEmbed } from 'comet-astro';
       </div>
       <div class="space-y-2">
         <h3 class="text-sm font-medium text-slate-300">1:1 (Square)</h3>
-        <MapEmbed 
+        <MapEmbed
           address="Christ the Redeemer, Brazil"
           title="Christ the Redeemer"
           aspectRatio="1/1"
@@ -339,7 +363,7 @@ import { MapEmbed } from 'comet-astro';
       </div>
       <div class="space-y-2">
         <h3 class="text-sm font-medium text-slate-300">21:9 (Ultra-wide)</h3>
-        <MapEmbed 
+        <MapEmbed
           address="Great Wall of China"
           title="Great Wall of China"
           aspectRatio="21/9"
@@ -352,18 +376,20 @@ import { MapEmbed } from 'comet-astro';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Accessibility</h2>
     <p class="text-base text-slate-200">
-      MapEmbed follows WCAG AAA guidelines with contrast ratios exceeding 7:1 in all states.
-      The component uses semantic HTML with proper ARIA labels and provides comprehensive
-      screen reader support for map content using open source OpenStreetMap data.
+      MapEmbed follows WCAG AAA guidelines with contrast ratios exceeding 7:1 in
+      all states. The component uses semantic HTML with proper ARIA labels and
+      provides comprehensive screen reader support for map content using open
+      source OpenStreetMap data.
     </p>
     <p class="text-base text-slate-200">
-      Loading states are announced to assistive technology, and error states provide
-      clear feedback when maps cannot be loaded. The map container includes proper ARIA
-      attributes and focus management for keyboard navigation.
+      Loading states are announced to assistive technology, and error states
+      provide clear feedback when maps cannot be loaded. The map container
+      includes proper ARIA attributes and focus management for keyboard
+      navigation.
     </p>
     <p class="text-base text-slate-200">
-      For optimal accessibility, always provide a descriptive <code>title</code> prop
-      that clearly explains what location the map displays. The component automatically
+      For optimal accessibility, always provide a descriptive <code>title</code>
+      prop that clearly explains what location the map displays. The component automatically
       provides coordinates to screen readers and respects reduced motion preferences.
     </p>
   </section>
@@ -371,18 +397,20 @@ import { MapEmbed } from 'comet-astro';
   <section class="mt-10 space-y-4">
     <h2 class="text-xl font-semibold text-slate-100">Privacy & Open Source</h2>
     <p class="text-base text-slate-200">
-      MapEmbed uses OpenStreetMap data and the Leaflet library, both open source projects
-      that respect user privacy. No tracking, no API keys required, and no vendor lock-in.
+      MapEmbed uses OpenStreetMap data and the Leaflet library, both open source
+      projects that respect user privacy. No tracking, no API keys required, and
+      no vendor lock-in.
     </p>
     <p class="text-base text-slate-200">
-      The component loads Leaflet from the official CDN only when needed, with integrity
-      checks for security. Address geocoding uses the Nominatim service, which is also
-      open source and privacy-friendly.
+      The component loads Leaflet from the official CDN only when needed, with
+      integrity checks for security. Address geocoding uses the Nominatim
+      service, which is also open source and privacy-friendly.
     </p>
     <div class="rounded-lg border border-green-600/20 bg-green-950/20 p-4">
       <p class="text-sm text-green-200">
-        <strong>Privacy First:</strong> No user tracking, no API quotas, no vendor dependencies.
-        MapEmbed provides professional mapping without compromising user privacy.
+        <strong>Privacy First:</strong> No user tracking, no API quotas, no vendor
+        dependencies. MapEmbed provides professional mapping without compromising
+        user privacy.
       </p>
     </div>
   </section>
@@ -390,13 +418,15 @@ import { MapEmbed } from 'comet-astro';
   <section class="mt-10 space-y-8">
     <h2 class="text-xl font-semibold text-slate-100">Tile Styles</h2>
     <p class="text-base text-slate-200">
-      Choose from different map tile styles to match your design needs.
-      All styles use open source data and services.
+      Choose from different map tile styles to match your design needs. All
+      styles use open source data and services.
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-2">
-        <h3 class="text-sm font-medium text-slate-300">Standard (OpenStreetMap)</h3>
-        <MapEmbed 
+        <h3 class="text-sm font-medium text-slate-300">
+          Standard (OpenStreetMap)
+        </h3>
+        <MapEmbed
           coordinates={{ lat: 48.8584, lng: 2.2945 }}
           title="Standard map style"
           tileStyle="standard"
@@ -405,8 +435,10 @@ import { MapEmbed } from 'comet-astro';
         />
       </div>
       <div class="space-y-2">
-        <h3 class="text-sm font-medium text-slate-300">Terrain (OpenTopoMap)</h3>
-        <MapEmbed 
+        <h3 class="text-sm font-medium text-slate-300">
+          Terrain (OpenTopoMap)
+        </h3>
+        <MapEmbed
           coordinates={{ lat: 48.8584, lng: 2.2945 }}
           title="Terrain map style"
           tileStyle="terrain"
@@ -416,7 +448,7 @@ import { MapEmbed } from 'comet-astro';
       </div>
       <div class="space-y-2">
         <h3 class="text-sm font-medium text-slate-300">Satellite (ArcGIS)</h3>
-        <MapEmbed 
+        <MapEmbed
           coordinates={{ lat: 48.8584, lng: 2.2945 }}
           title="Satellite map style"
           tileStyle="satellite"
@@ -426,7 +458,7 @@ import { MapEmbed } from 'comet-astro';
       </div>
       <div class="space-y-2">
         <h3 class="text-sm font-medium text-slate-300">Dark (CartoDB)</h3>
-        <MapEmbed 
+        <MapEmbed
           coordinates={{ lat: 48.8584, lng: 2.2945 }}
           title="Dark map style"
           tileStyle="dark"

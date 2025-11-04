@@ -92,9 +92,11 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
     aria-live="polite"
     data-autocomplete-status
   >
-    {options.length
-      ? `${options.length} options available.`
-      : 'No options available.'}
+    {
+      options.length
+        ? `${options.length} options available.`
+        : 'No options available.'
+    }
   </div>
   <div
     class="absolute left-0 top-full z-40 mt-2 w-full translate-y-2 overflow-hidden rounded-xl border border-slate-200/75 bg-white/95 text-slate-900 shadow-xl backdrop-blur supports-backdrop-filter:bg-white/80 dark:border-slate-700/70 dark:bg-slate-950/95 dark:text-slate-100"
@@ -187,8 +189,7 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
         }
       });
 
-    const escapeRegex = (value) =>
-      value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     const highlight = (text) => {
       if (!currentQuery) return escapeHTML(text);

@@ -4,7 +4,7 @@ import { cn } from '../utils/cn';
 /**
  * RichTextEditor - Accessible WYSIWYG editor built on contenteditable with WCAG AAA compliance
  */
-export interface Props {
+interface Props {
   /** Initial HTML content value */
   value?: string;
   /** Placeholder text for empty editor */
@@ -96,7 +96,9 @@ const id = propId || `rich-text-${Math.random().toString(36).slice(2, 10)}`;
 const helpId = helpText ? `${id}-help` : undefined;
 const errorId = error ? `${id}-error` : undefined;
 const charCountId = showCharCount ? `${id}-char-count` : undefined;
-const finalAriaDescribedBy = [ariaDescribedBy, helpId, errorId, charCountId].filter(Boolean).join(' ') || undefined;
+const finalAriaDescribedBy =
+  [ariaDescribedBy, helpId, errorId, charCountId].filter(Boolean).join(' ') ||
+  undefined;
 
 // Size configurations
 const sizeClasses = {
@@ -132,9 +134,11 @@ const variantClasses = {
       'bg-white dark:bg-gray-950',
       'focus-within:border-blue-500 dark:focus-within:border-blue-400',
       'focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
-      error && 'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
+      error &&
+        'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
     ),
-    button: 'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+    button:
+      'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
   },
   minimal: {
     toolbar: 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800',
@@ -143,32 +147,40 @@ const variantClasses = {
       'bg-gray-50 dark:bg-gray-800',
       'focus-within:border-gray-400 dark:focus-within:border-gray-500',
       'focus-within:ring-gray-400 dark:focus-within:ring-gray-500',
-      error && 'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
+      error &&
+        'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
     ),
-    button: 'text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus-visible:ring-gray-500 dark:focus-visible:ring-gray-400',
+    button:
+      'text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus-visible:ring-gray-500 dark:focus-visible:ring-gray-400',
   },
   bordered: {
-    toolbar: 'border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900',
+    toolbar:
+      'border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900',
     editor: cn(
       'border-2 border-gray-300 dark:border-gray-600',
       'bg-white dark:bg-gray-950',
       'focus-within:border-blue-600 dark:focus-within:border-blue-400',
       'focus-within:ring-blue-600 dark:focus-within:ring-blue-400',
-      error && 'border-red-600 dark:border-red-400 focus-within:border-red-600 dark:focus-within:border-red-400 focus-within:ring-red-600 dark:focus-within:ring-red-400'
+      error &&
+        'border-red-600 dark:border-red-400 focus-within:border-red-600 dark:focus-within:border-red-400 focus-within:ring-red-600 dark:focus-within:ring-red-400'
     ),
-    button: 'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+    button:
+      'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
   },
   elevated: {
-    toolbar: 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-md',
+    toolbar:
+      'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-md',
     editor: cn(
       'border border-gray-300 dark:border-gray-700',
       'bg-white dark:bg-gray-950 shadow-sm',
       'focus-within:border-blue-500 dark:focus-within:border-blue-400',
       'focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
       'focus-within:shadow-md',
-      error && 'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
+      error &&
+        'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
     ),
-    button: 'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+    button:
+      'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
   },
 };
 
@@ -200,7 +212,8 @@ const labelClasses = cn(
   'block font-medium text-gray-900 dark:text-gray-100',
   sizeClasses[size].label,
   disabled && 'opacity-50',
-  required && 'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
+  required &&
+    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
 );
 
 const helpClasses = cn(
@@ -223,185 +236,189 @@ const charCountClasses = cn(
   data-max-length={maxLength}
   data-show-char-count={showCharCount}
 >
-  {label && (
-    <label
-      class={labelClasses}
-      for={`${id}-content`}
-    >
-      {label}
-    </label>
-  )}
-  
-  {!readOnly && !disabled && (
-    <div
-      class={toolbarClasses}
-      data-rich-text-toolbar
-      role="toolbar"
-      aria-label="Text formatting options"
-    >
-      {toolbar.includes('bold') && (
-        <button
-          type="button"
-          class={cn(toolbarButtonClasses, 'font-bold')}
-          data-rich-text-action="bold"
-          aria-label="Bold"
-          title="Bold (Ctrl+B)"
-          disabled={disabled}
-        >
-          B
-        </button>
-      )}
-      {toolbar.includes('italic') && (
-        <button
-          type="button"
-          class={cn(toolbarButtonClasses, 'italic')}
-          data-rich-text-action="italic"
-          aria-label="Italic"
-          title="Italic (Ctrl+I)"
-          disabled={disabled}
-        >
-          I
-        </button>
-      )}
-      {toolbar.includes('underline') && (
-        <button
-          type="button"
-          class={cn(toolbarButtonClasses, 'underline')}
-          data-rich-text-action="underline"
-          aria-label="Underline"
-          title="Underline (Ctrl+U)"
-          disabled={disabled}
-        >
-          U
-        </button>
-      )}
-      {toolbar.includes('strike') && (
-        <button
-          type="button"
-          class={cn(toolbarButtonClasses, 'line-through')}
-          data-rich-text-action="strikeThrough"
-          aria-label="Strikethrough"
-          title="Strikethrough"
-          disabled={disabled}
-        >
-          S
-        </button>
-      )}
-      {toolbar.includes('heading') && (
-        <button
-          type="button"
-          class={cn(toolbarButtonClasses, 'font-bold')}
-          data-rich-text-action="formatBlock"
-          data-arg="h3"
-          aria-label="Heading"
-          title="Heading"
-          disabled={disabled}
-        >
-          H
-        </button>
-      )}
-      {toolbar.includes('quote') && (
-        <button
-          type="button"
-          class={toolbarButtonClasses}
-          data-rich-text-action="formatBlock"
-          data-arg="blockquote"
-          aria-label="Quote"
-          title="Quote"
-          disabled={disabled}
-        >
-          ❝
-        </button>
-      )}
-      {toolbar.includes('code') && (
-        <button
-          type="button"
-          class={cn(toolbarButtonClasses, 'font-mono')}
-          data-rich-text-action="formatBlock"
-          data-arg="pre"
-          aria-label="Code"
-          title="Code block"
-          disabled={disabled}
-        >
-          {'</>'}
-        </button>
-      )}
-      {toolbar.includes('link') && (
-        <button
-          type="button"
-          class={toolbarButtonClasses}
-          data-rich-text-action="link"
-          aria-label="Insert link"
-          title="Insert link"
-          disabled={disabled}
-        >
-          🔗
-        </button>
-      )}
-      {toolbar.includes('ordered-list') && (
-        <button
-          type="button"
-          class={toolbarButtonClasses}
-          data-rich-text-action="insertOrderedList"
-          aria-label="Numbered list"
-          title="Numbered list"
-          disabled={disabled}
-        >
-          1.
-        </button>
-      )}
-      {toolbar.includes('unordered-list') && (
-        <button
-          type="button"
-          class={toolbarButtonClasses}
-          data-rich-text-action="insertUnorderedList"
-          aria-label="Bullet list"
-          title="Bullet list"
-          disabled={disabled}
-        >
-          •
-        </button>
-      )}
-      <div class="h-5 w-px bg-gray-300 dark:bg-gray-600 mx-1" aria-hidden="true"></div>
-      {toolbar.includes('undo') && (
-        <button
-          type="button"
-          class={toolbarButtonClasses}
-          data-rich-text-action="undo"
-          aria-label="Undo"
-          title="Undo (Ctrl+Z)"
-          disabled={disabled}
-        >
-          ↺
-        </button>
-      )}
-      {toolbar.includes('redo') && (
-        <button
-          type="button"
-          class={toolbarButtonClasses}
-          data-rich-text-action="redo"
-          aria-label="Redo"
-          title="Redo (Ctrl+Y)"
-          disabled={disabled}
-        >
-          ↻
-        </button>
-      )}
-      {toolbar.includes('clear') && (
-        <button
-          type="button"
-          class={toolbarButtonClasses}
-          data-rich-text-action="clear"
-          aria-label="Clear formatting"
-          title="Clear formatting"
-          disabled={disabled}
-        >
-          Clear
-        </button>
-      )}
-    </div>
-  )}
-  
+  {
+    label && (
+      <label class={labelClasses} for={`${id}-content`}>
+        {label}
+      </label>
+    )
+  }
+
+  {
+    !readOnly && !disabled && (
+      <div
+        class={toolbarClasses}
+        data-rich-text-toolbar
+        role="toolbar"
+        aria-label="Text formatting options"
+      >
+        {toolbar.includes('bold') && (
+          <button
+            type="button"
+            class={cn(toolbarButtonClasses, 'font-bold')}
+            data-rich-text-action="bold"
+            aria-label="Bold"
+            title="Bold (Ctrl+B)"
+            disabled={disabled}
+          >
+            B
+          </button>
+        )}
+        {toolbar.includes('italic') && (
+          <button
+            type="button"
+            class={cn(toolbarButtonClasses, 'italic')}
+            data-rich-text-action="italic"
+            aria-label="Italic"
+            title="Italic (Ctrl+I)"
+            disabled={disabled}
+          >
+            I
+          </button>
+        )}
+        {toolbar.includes('underline') && (
+          <button
+            type="button"
+            class={cn(toolbarButtonClasses, 'underline')}
+            data-rich-text-action="underline"
+            aria-label="Underline"
+            title="Underline (Ctrl+U)"
+            disabled={disabled}
+          >
+            U
+          </button>
+        )}
+        {toolbar.includes('strike') && (
+          <button
+            type="button"
+            class={cn(toolbarButtonClasses, 'line-through')}
+            data-rich-text-action="strikeThrough"
+            aria-label="Strikethrough"
+            title="Strikethrough"
+            disabled={disabled}
+          >
+            S
+          </button>
+        )}
+        {toolbar.includes('heading') && (
+          <button
+            type="button"
+            class={cn(toolbarButtonClasses, 'font-bold')}
+            data-rich-text-action="formatBlock"
+            data-arg="h3"
+            aria-label="Heading"
+            title="Heading"
+            disabled={disabled}
+          >
+            H
+          </button>
+        )}
+        {toolbar.includes('quote') && (
+          <button
+            type="button"
+            class={toolbarButtonClasses}
+            data-rich-text-action="formatBlock"
+            data-arg="blockquote"
+            aria-label="Quote"
+            title="Quote"
+            disabled={disabled}
+          >
+            ❝
+          </button>
+        )}
+        {toolbar.includes('code') && (
+          <button
+            type="button"
+            class={cn(toolbarButtonClasses, 'font-mono')}
+            data-rich-text-action="formatBlock"
+            data-arg="pre"
+            aria-label="Code"
+            title="Code block"
+            disabled={disabled}
+          >
+            {'</>'}
+          </button>
+        )}
+        {toolbar.includes('link') && (
+          <button
+            type="button"
+            class={toolbarButtonClasses}
+            data-rich-text-action="link"
+            aria-label="Insert link"
+            title="Insert link"
+            disabled={disabled}
+          >
+            🔗
+          </button>
+        )}
+        {toolbar.includes('ordered-list') && (
+          <button
+            type="button"
+            class={toolbarButtonClasses}
+            data-rich-text-action="insertOrderedList"
+            aria-label="Numbered list"
+            title="Numbered list"
+            disabled={disabled}
+          >
+            1.
+          </button>
+        )}
+        {toolbar.includes('unordered-list') && (
+          <button
+            type="button"
+            class={toolbarButtonClasses}
+            data-rich-text-action="insertUnorderedList"
+            aria-label="Bullet list"
+            title="Bullet list"
+            disabled={disabled}
+          >
+            •
+          </button>
+        )}
+        <div
+          class="h-5 w-px bg-gray-300 dark:bg-gray-600 mx-1"
+          aria-hidden="true"
+        />
+        {toolbar.includes('undo') && (
+          <button
+            type="button"
+            class={toolbarButtonClasses}
+            data-rich-text-action="undo"
+            aria-label="Undo"
+            title="Undo (Ctrl+Z)"
+            disabled={disabled}
+          >
+            ↺
+          </button>
+        )}
+        {toolbar.includes('redo') && (
+          <button
+            type="button"
+            class={toolbarButtonClasses}
+            data-rich-text-action="redo"
+            aria-label="Redo"
+            title="Redo (Ctrl+Y)"
+            disabled={disabled}
+          >
+            ↻
+          </button>
+        )}
+        {toolbar.includes('clear') && (
+          <button
+            type="button"
+            class={toolbarButtonClasses}
+            data-rich-text-action="clear"
+            aria-label="Clear formatting"
+            title="Clear formatting"
+            disabled={disabled}
+          >
+            Clear
+          </button>
+        )}
+      </div>
+    )
+  }
+
   <div
     id={`${id}-content`}
     class={editorClasses}
@@ -421,35 +438,44 @@ const charCountClasses = cn(
   >
     {value ? <Fragment set:html={value} /> : ''}
   </div>
-  
-  <textarea 
-    name={name ?? undefined} 
-    hidden 
+
+  <textarea
+    name={name ?? undefined}
+    hidden
     data-rich-text-input
     required={required}
     disabled={disabled}
-    aria-hidden="true"
-  >{value}</textarea>
-  
+    aria-hidden="true">{value}</textarea
+  >
+
   <div class="flex justify-between items-start gap-4">
     <div class="flex-1">
-      {helpText && (
-        <p id={helpId} class={helpClasses}>
-          {helpText}
-        </p>
-      )}
-      {error && (
-        <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
-          {typeof error === 'string' ? error : 'Please correct the errors above.'}
-        </p>
-      )}
+      {
+        helpText && (
+          <p id={helpId} class={helpClasses}>
+            {helpText}
+          </p>
+        )
+      }
+      {
+        error && (
+          <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
+            {typeof error === 'string'
+              ? error
+              : 'Please correct the errors above.'}
+          </p>
+        )
+      }
     </div>
-    
-    {showCharCount && (
-      <div id={charCountId} class={charCountClasses} aria-live="polite">
-        <span data-char-count>0</span>{maxLength && <span>/{maxLength}</span>}
-      </div>
-    )}
+
+    {
+      showCharCount && (
+        <div id={charCountId} class={charCountClasses} aria-live="polite">
+          <span data-char-count>0</span>
+          {maxLength && <span>/{maxLength}</span>}
+        </div>
+      )
+    }
   </div>
 </div>
 
@@ -504,7 +530,9 @@ const charCountClasses = cn(
     border-radius: 0.375rem;
     padding: 0.75rem;
     margin: 1rem 0;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family:
+      ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas,
+      'Liberation Mono', 'Courier New', monospace;
     font-size: 0.875em;
     overflow-x: auto;
   }
@@ -579,7 +607,7 @@ const charCountClasses = cn(
       const text = editor.innerText.trim();
       const count = text.length;
       charCountElement.textContent = count.toString();
-      
+
       if (maxLength && count > maxLength) {
         charCountElement.style.color = 'rgb(239 68 68)'; // red-500
         editor.setAttribute('aria-invalid', 'true');
@@ -657,11 +685,21 @@ const charCountClasses = cn(
             break;
         }
       }
-      
+
       // Character limit enforcement
       if (maxLength && !event.ctrlKey && !event.metaKey) {
         const text = editor.innerText;
-        if (text.length >= maxLength && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+        if (
+          text.length >= maxLength &&
+          ![
+            'Backspace',
+            'Delete',
+            'ArrowLeft',
+            'ArrowRight',
+            'ArrowUp',
+            'ArrowDown',
+          ].includes(event.key)
+        ) {
           event.preventDefault();
         }
       }

@@ -1,0 +1,334 @@
+---
+/**
+ * WeatherForecast – Minimal daily forecast snapshot (WCAG AAA)
+ * Astro-only, Tailwind-only, no overengineering.
+ * Metrics (per day): Day label (Today/Tomorrow/Weekday), icon, condition text, high/low temp, precip %.
+ * Optional live fetch via Open‑Meteo daily forecast.
+ */
+interface Props {
+  latitude?: number;
+  longitude?: number;
+  location?: string;
+  days?: number; // number of days to show (1-7)
+  disableFetch?: boolean;
+  refreshInterval?: number; // minutes; 0 = no auto refresh
+  ariaLabel?: string;
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const {
+  latitude,
+  longitude,
+  location = 'Demo Location',
+  days = 5,
+  disableFetch = false,
+  refreshInterval = 0,
+  ariaLabel,
+  class: className = '',
+} = props;
+
+const label = ariaLabel || `Daily forecast for ${location}`;
+const baseCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-7 flex flex-col gap-6 ${className}`;
+const gridCls =
+  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-5';
+const cardCls =
+  'flex flex-col gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[120px]';
+const dayLabelCls =
+  'text-[11px] font-bold text-slate-900 dark:text-slate-50 flex items-center gap-1';
+const condCls =
+  'text-[11px] font-medium text-slate-600 dark:text-slate-300 truncate';
+const tempCls = 'text-[11px] font-semibold text-slate-700 dark:text-slate-200';
+const precipCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+
+// Fallback demo data (simple predictable sequence)
+const fallback = Array.from({ length: days }, (_, i) => ({
+  code: [0, 1, 2, 61, 3, 95, 71][i % 7],
+  tmax: 18 + i,
+  tmin: 9 + i,
+  precip: [10, 20, 40, 70, 15, 5, 30][i % 7],
+}));
+
+function mapWeather(code: number) {
+  if ([0].includes(code))
+    return ['Clear', '☀️', 'bg-amber-600 dark:bg-amber-400'];
+  if ([1, 2, 3].includes(code))
+    return ['Partly Cloudy', '⛅', 'bg-slate-500 dark:bg-slate-400'];
+  if ([45, 48].includes(code))
+    return ['Fog', '🌫️', 'bg-slate-600 dark:bg-slate-500'];
+  if ([51, 53, 55].includes(code))
+    return ['Drizzle', '🌦️', 'bg-cyan-600 dark:bg-cyan-400'];
+  if ([61, 63, 65, 80, 81, 82].includes(code))
+    return ['Rain', '🌧️', 'bg-blue-700 dark:bg-blue-400'];
+  if ([66, 67].includes(code))
+    return ['Freezing Rain', '🧊', 'bg-indigo-700 dark:bg-indigo-400'];
+  if ([71, 73, 75, 77, 85, 86].includes(code))
+    return ['Snow', '❄️', 'bg-sky-700 dark:bg-sky-400'];
+  if ([95, 96, 99].includes(code))
+    return ['Storm', '⛈️', 'bg-rose-700 dark:bg-rose-400'];
+  return ['Unknown', '❓', 'bg-slate-500 dark:bg-slate-400'];
+}
+
+const initialMapped = fallback.map((d) => mapWeather(d.code));
+---
+
+<div
+  class={baseCls}
+  role="region"
+  aria-label={label}
+  aria-busy={!disableFetch && latitude != null && longitude != null
+    ? 'true'
+    : 'false'}
+  data-forecast
+  data-lat={latitude}
+  data-lon={longitude}
+  data-disable-fetch={disableFetch}
+  data-refresh={refreshInterval}
+  data-days={days}
+  data-state={!disableFetch && latitude != null && longitude != null
+    ? 'loading'
+    : 'static'}
+>
+  <header
+    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
+  >
+    <h2
+      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
+    >
+      <span aria-hidden="true">📅</span>
+      <span class="truncate" data-location>{location}</span>
+    </h2>
+    <p
+      class="text-xs font-medium text-slate-600 dark:text-slate-300"
+      aria-live="polite"
+      data-status
+    >
+      {
+        !disableFetch && latitude != null && longitude != null
+          ? 'Lade Vorhersage …'
+          : 'Statische Demodaten'
+      }
+    </p>
+  </header>
+  <div class={gridCls} data-days-wrapper>
+    {
+      fallback.map((d, i) => (
+        <div
+          class={cardCls}
+          data-day-card
+          data-idx={i}
+          aria-label={`Forecast day ${i + 1}`}
+        >
+          <div class="flex items-start justify-between">
+            <div class={dayLabelCls} data-day-label>
+              <span
+                class={`inline-block w-2 h-2 rounded-full ${initialMapped[i][2]}`}
+                aria-hidden="true"
+                data-day-dot
+              />
+              <span data-day-name>
+                {i === 0
+                  ? 'Today'
+                  : i === 1
+                    ? 'Tomorrow'
+                    : new Date(
+                        Date.now() + i * 24 * 3600 * 1000
+                      ).toLocaleDateString([], { weekday: 'short' })}
+              </span>
+            </div>
+            <span class="text-lg" data-day-icon>
+              {initialMapped[i][1]}
+            </span>
+          </div>
+          <div class={condCls} data-day-cond>
+            {initialMapped[i][0]}
+          </div>
+          <div class="flex flex-wrap gap-2 items-center">
+            <span class={tempCls} data-day-temp-high>
+              H: {Math.round(d.tmax)}°C
+            </span>
+            <span class={tempCls} data-day-temp-low>
+              L: {Math.round(d.tmin)}°C
+            </span>
+            <span class={precipCls} data-day-precip>
+              {Math.round(d.precip)}%
+            </span>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+  <p
+    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
+    data-disclaimer
+  >
+    {
+      !disableFetch && latitude != null && longitude != null
+        ? `Live Daten (Open‑Meteo Daily). ${refreshInterval > 0 ? `Auto Refresh alle ${refreshInterval}m.` : ''} Fallback bei Fehler.`
+        : 'Demodaten. latitude+longitude setzen für Live-Aktualisierung.'
+    } AAA Kontrast eingehalten.
+  </p>
+  <footer
+    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
+  >
+    <span
+      >Quelle: <span class="underline text-slate-800 dark:text-slate-200"
+        >Open‑Meteo</span
+      ></span
+    >
+    <span class="ml-auto" data-refresh-indicator
+      >{
+        refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'Kein Auto-Refresh'
+      }</span
+    >
+  </footer>
+</div>
+
+<script>
+  function mapWeather(code) {
+    if ([0].includes(code))
+      return ['Clear', '☀️', 'bg-amber-600 dark:bg-amber-400'];
+    if ([1, 2, 3].includes(code))
+      return ['Partly Cloudy', '⛅', 'bg-slate-500 dark:bg-slate-400'];
+    if ([45, 48].includes(code))
+      return ['Fog', '🌫️', 'bg-slate-600 dark:bg-slate-500'];
+    if ([51, 53, 55].includes(code))
+      return ['Drizzle', '🌦️', 'bg-cyan-600 dark:bg-cyan-400'];
+    if ([61, 63, 65, 80, 81, 82].includes(code))
+      return ['Rain', '🌧️', 'bg-blue-700 dark:bg-blue-400'];
+    if ([66, 67].includes(code))
+      return ['Freezing Rain', '🧊', 'bg-indigo-700 dark:bg-indigo-400'];
+    if ([71, 73, 75, 77, 85, 86].includes(code))
+      return ['Snow', '❄️', 'bg-sky-700 dark:bg-sky-400'];
+    if ([95, 96, 99].includes(code))
+      return ['Storm', '⛈️', 'bg-rose-700 dark:bg-rose-400'];
+    return ['Unknown', '❓', 'bg-slate-500 dark:bg-slate-400'];
+  }
+  function initForecast(el) {
+    const disableFetch = el.dataset.disableFetch === 'true';
+    const lat = el.dataset.lat ? parseFloat(el.dataset.lat) : undefined;
+    const lon = el.dataset.lon ? parseFloat(el.dataset.lon) : undefined;
+    const refresh = parseInt(el.dataset.refresh || '0');
+    const days = Math.min(parseInt(el.dataset.days || '5'), 7);
+    const statusEl = el.querySelector('[data-status]');
+    const cards = Array.from(el.querySelectorAll('[data-day-card]'));
+    const setState = (s) => {
+      el.dataset.state = s;
+      el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
+    };
+    async function fetchData() {
+      if (disableFetch || lat == null || lon == null) {
+        if (statusEl) statusEl.textContent = 'Fallback Werte aktiv';
+        return;
+      }
+      setState('loading');
+      if (statusEl) statusEl.textContent = 'Lade Vorhersage …';
+      try {
+        const params = new URLSearchParams({
+          latitude: String(lat),
+          longitude: String(lon),
+          daily:
+            'temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code',
+          timezone: 'auto',
+        });
+        const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+        const res = await fetch(url);
+        if (!res.ok) throw 0;
+        const data = await res.json();
+        const d = data.daily || {};
+        for (let i = 0; i < days; i++) {
+          const card = cards[i];
+          if (!card) continue;
+          const code = d.weather_code?.[i];
+          const tmax = d.temperature_2m_max?.[i];
+          const tmin = d.temperature_2m_min?.[i];
+          const precip = d.precipitation_probability_max?.[i];
+          if (code != null) {
+            const [cond, icon, cls] = mapWeather(code);
+            const dot = card.querySelector('[data-day-dot]');
+            if (dot) dot.className = `inline-block w-2 h-2 rounded-full ${cls}`;
+            const iconEl = card.querySelector('[data-day-icon]');
+            if (iconEl) iconEl.textContent = icon;
+            const condEl = card.querySelector('[data-day-cond]');
+            if (condEl) condEl.textContent = cond;
+          }
+          if (tmax != null) {
+            const elT = card.querySelector('[data-day-temp-high]');
+            if (elT) elT.textContent = `H: ${Math.round(tmax)}°C`;
+          }
+          if (tmin != null) {
+            const elT = card.querySelector('[data-day-temp-low]');
+            if (elT) elT.textContent = `L: ${Math.round(tmin)}°C`;
+          }
+          if (precip != null) {
+            const pEl = card.querySelector('[data-day-precip]');
+            if (pEl) pEl.textContent = `${Math.round(precip)}%`;
+          }
+          const nameEl = card.querySelector('[data-day-name]');
+          if (nameEl) {
+            if (i === 0) nameEl.textContent = 'Today';
+            else if (i === 1) nameEl.textContent = 'Tomorrow';
+            else
+              nameEl.textContent = new Date(
+                d.time?.[i] || Date.now() + i * 86400000
+              ).toLocaleDateString([], { weekday: 'short' });
+          }
+        }
+        if (statusEl) statusEl.textContent = 'Live Daten geladen';
+        setState('ready');
+      } catch {
+        if (statusEl) statusEl.textContent = 'Live Fehler (Fallback gezeigt)';
+        setState('error');
+      }
+    }
+    fetchData();
+    if (refresh > 0 && !disableFetch && lat != null && lon != null) {
+      setInterval(fetchData, refresh * 60 * 1000);
+      const ind = el.querySelector('[data-refresh-indicator]');
+      if (ind) ind.textContent = `Auto ${refresh}m`;
+    }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-forecast]').forEach(initForecast);
+  });
+</script>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-forecast] * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    [data-forecast] {
+      outline: 2px solid currentColor;
+    }
+  }
+  [data-forecast][data-state='loading'] [data-day-card] {
+    position: relative;
+  }
+  [data-forecast][data-state='loading'] [data-day-card]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.15),
+      rgba(148, 163, 184, 0.35),
+      rgba(148, 163, 184, 0.15)
+    );
+    animation: forecast-pulse 1.4s ease-in-out infinite;
+    opacity: 0.35;
+  }
+  @keyframes forecast-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.65;
+    }
+  }
+</style>

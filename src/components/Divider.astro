@@ -40,20 +40,26 @@ const borderClass = ['dashed', 'dotted'].includes(variant)
   : '';
 ---
 
-{label && orientation === 'horizontal' ? (
-  <div class={`relative ${spacingClasses[spacing]}`} role="separator" aria-label={label}>
-    <div class="absolute inset-0 flex items-center" aria-hidden="true">
-      <div class={`w-full h-px ${variantClasses[variant]} ${borderClass}`}></div>
+{
+  label && orientation === 'horizontal' ? (
+    <div
+      class={`relative ${spacingClasses[spacing]}`}
+      role="separator"
+      aria-label={label}
+    >
+      <div class="absolute inset-0 flex items-center" aria-hidden="true">
+        <div class={`w-full h-px ${variantClasses[variant]} ${borderClass}`} />
+      </div>
+      <div class="relative flex justify-center">
+        <span class="bg-white px-3 text-sm font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+          {label}
+        </span>
+      </div>
     </div>
-    <div class="relative flex justify-center">
-      <span class="bg-white px-3 text-sm font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">
-        {label}
-      </span>
-    </div>
-  </div>
-) : (
-  <hr
-    class={`${orientationClasses} ${variantClasses[variant]} ${spacingClasses[spacing]} ${borderClass} ${className}`}
-    aria-hidden="true"
-  />
-)}
+  ) : (
+    <hr
+      class={`${orientationClasses} ${variantClasses[variant]} ${spacingClasses[spacing]} ${borderClass} ${className}`}
+      aria-hidden="true"
+    />
+  )
+}

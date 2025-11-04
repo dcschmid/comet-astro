@@ -59,7 +59,7 @@ const positionClasses = {
         (title || dismissible) && (
           <header class="flex items-center justify-between border-b-2 border-slate-300/80 bg-slate-50/50 px-6 py-4 dark:border-slate-600/80 dark:bg-slate-700/30">
             {title && (
-              <h2 
+              <h2
                 id={`${id}-title`}
                 class="text-lg font-semibold text-slate-900 dark:text-slate-100"
               >
@@ -73,8 +73,16 @@ const positionClasses = {
                 data-drawer-close
                 aria-label="Close drawer"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M18 6L6 18M6 6l12 12"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
             )}
@@ -88,7 +96,9 @@ const positionClasses = {
         <slot />
       </div>
 
-      <footer class="border-t-2 border-slate-300/80 bg-slate-50/30 px-6 py-4 dark:border-slate-600/80 dark:bg-slate-700/20">
+      <footer
+        class="border-t-2 border-slate-300/80 bg-slate-50/30 px-6 py-4 dark:border-slate-600/80 dark:bg-slate-700/20"
+      >
         <slot name="actions">
           {
             dismissible && (

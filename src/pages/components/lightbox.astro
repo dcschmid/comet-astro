@@ -6,52 +6,63 @@ import LightboxComponent from '../../components/Lightbox.astro';
 const basicImages = [
   {
     src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
-    thumbnail: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=80',
+    thumbnail:
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=80',
     caption: 'Urban Dawn',
     alt: 'City skyline at dawn with golden light',
-    description: 'A breathtaking view of the city as the sun rises, casting a golden glow over the urban landscape.'
+    description:
+      'A breathtaking view of the city as the sun rises, casting a golden glow over the urban landscape.',
   },
   {
     src: 'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=1200&q=80',
-    thumbnail: 'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=400&q=80',
+    thumbnail:
+      'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=400&q=80',
     caption: 'Alpine Serenity',
     alt: 'Calm lake surrounded by mountains',
-    description: 'Crystal clear mountain lake reflecting the peaks above, surrounded by pristine alpine wilderness.'
+    description:
+      'Crystal clear mountain lake reflecting the peaks above, surrounded by pristine alpine wilderness.',
   },
   {
     src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80',
-    thumbnail: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=400&q=80',
+    thumbnail:
+      'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=400&q=80',
     caption: 'Creative Collaboration',
     alt: 'People collaborating around table',
-    description: 'A dynamic team brainstorming session with creative minds working together to solve complex challenges.'
+    description:
+      'A dynamic team brainstorming session with creative minds working together to solve complex challenges.',
   },
   {
     src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80',
-    thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=400&q=80',
+    thumbnail:
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=400&q=80',
     caption: 'Mountain Peak',
     alt: 'Snow-covered mountain peak against blue sky',
-    description: 'Majestic snow-capped mountain peak rising into a clear blue sky, representing strength and endurance.'
+    description:
+      'Majestic snow-capped mountain peak rising into a clear blue sky, representing strength and endurance.',
   },
 ];
 
 const portfolioImages = [
   {
     src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-    thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80',
+    thumbnail:
+      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80',
     caption: 'Abstract Art',
-    alt: 'Colorful abstract digital artwork'
+    alt: 'Colorful abstract digital artwork',
   },
   {
     src: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=1200&q=80',
-    thumbnail: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=300&q=80',
+    thumbnail:
+      'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=300&q=80',
     caption: 'Modern Architecture',
-    alt: 'Contemporary building with geometric design'
+    alt: 'Contemporary building with geometric design',
   },
   {
     src: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1200&q=80',
-    thumbnail: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=300&q=80',
+    thumbnail:
+      'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=300&q=80',
     caption: 'Flower Macro',
-    alt: 'Close-up of vibrant flower petals'
+    alt: 'Close-up of vibrant flower petals',
   },
 ];
 
@@ -126,21 +137,30 @@ import { Lightbox } from 'comet-astro';
   <!-- Overview -->
   <section class="space-y-4">
     <p class="text-lg text-slate-200">
-      A sophisticated image gallery component with full-screen overlay viewing, 
-      multiple layout variants, keyboard navigation, and comprehensive accessibility 
-      features including screen reader support and high contrast mode compatibility.
+      A sophisticated image gallery component with full-screen overlay viewing,
+      multiple layout variants, keyboard navigation, and comprehensive
+      accessibility features including screen reader support and high contrast
+      mode compatibility.
     </p>
     <div class="flex flex-wrap gap-2">
-      <span class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300 ring-1 ring-inset ring-green-500/20"
+      >
         WCAG AAA
       </span>
-      <span class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-inset ring-blue-500/20"
+      >
         Touch Enabled
       </span>
-      <span class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 ring-1 ring-inset ring-purple-500/20"
+      >
         Keyboard Nav
       </span>
-      <span class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20">
+      <span
+        class="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20"
+      >
         Zoom & Pan
       </span>
     </div>
@@ -155,20 +175,24 @@ import { Lightbox } from 'comet-astro';
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
           <LightboxComponent images={basicImages.slice(0, 3)} />
         </div>
-        <p class="text-xs text-slate-400">Click any image to open the lightbox viewer</p>
+        <p class="text-xs text-slate-400">
+          Click any image to open the lightbox viewer
+        </p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Compact Grid</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LightboxComponent 
-            images={portfolioImages} 
+          <LightboxComponent
+            images={portfolioImages}
             thumbnailSize="sm"
             columns={3}
             gap="sm"
           />
         </div>
-        <p class="text-xs text-slate-400">Smaller thumbnails in compact layout</p>
+        <p class="text-xs text-slate-400">
+          Smaller thumbnails in compact layout
+        </p>
       </div>
     </div>
   </section>
@@ -180,21 +204,23 @@ import { Lightbox } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Grid Layout</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LightboxComponent 
-            images={basicImages.slice(0, 4)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 4)}
             variant="grid"
             columns={2}
             thumbnailSize="sm"
           />
         </div>
-        <p class="text-xs text-slate-400">Responsive grid layout with equal spacing</p>
+        <p class="text-xs text-slate-400">
+          Responsive grid layout with equal spacing
+        </p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Masonry Layout</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LightboxComponent 
-            images={portfolioImages} 
+          <LightboxComponent
+            images={portfolioImages}
             variant="masonry"
             columns={2}
             thumbnailSize="md"
@@ -202,12 +228,12 @@ import { Lightbox } from 'comet-astro';
         </div>
         <p class="text-xs text-slate-400">Pinterest-style masonry layout</p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Carousel Layout</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LightboxComponent 
-            images={basicImages} 
+          <LightboxComponent
+            images={basicImages}
             variant="carousel"
             thumbnailSize="md"
             gap="md"
@@ -215,12 +241,12 @@ import { Lightbox } from 'comet-astro';
         </div>
         <p class="text-xs text-slate-400">Horizontal scrolling carousel</p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">List Layout</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LightboxComponent 
-            images={basicImages.slice(0, 3)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 3)}
             variant="list"
             showCaptions
           />
@@ -237,41 +263,41 @@ import { Lightbox } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Small</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LightboxComponent 
-            images={basicImages.slice(0, 2)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 2)}
             thumbnailSize="sm"
             columns={2}
           />
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Medium</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LightboxComponent 
-            images={basicImages.slice(0, 2)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 2)}
             thumbnailSize="md"
             columns={2}
           />
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Large</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LightboxComponent 
-            images={basicImages.slice(0, 1)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 1)}
             thumbnailSize="lg"
             columns={1}
           />
         </div>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Extra Large</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LightboxComponent 
-            images={basicImages.slice(0, 1)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 1)}
             thumbnailSize="xl"
             columns={1}
           />
@@ -287,8 +313,8 @@ import { Lightbox } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">With Autoplay</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LightboxComponent 
-            images={basicImages.slice(0, 3)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 3)}
             autoplay
             autoplayInterval={4000}
             showCounter
@@ -296,14 +322,16 @@ import { Lightbox } from 'comet-astro';
             columns={3}
           />
         </div>
-        <p class="text-xs text-slate-400">Automatic slideshow with play/pause controls</p>
+        <p class="text-xs text-slate-400">
+          Automatic slideshow with play/pause controls
+        </p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Custom Styling</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-          <LightboxComponent 
-            images={portfolioImages} 
+          <LightboxComponent
+            images={portfolioImages}
             rounded="xl"
             gap="lg"
             columns={3}
@@ -311,7 +339,9 @@ import { Lightbox } from 'comet-astro';
             enableZoom
           />
         </div>
-        <p class="text-xs text-slate-400">Rounded corners, zoom enabled, large gaps</p>
+        <p class="text-xs text-slate-400">
+          Rounded corners, zoom enabled, large gaps
+        </p>
       </div>
     </div>
   </section>
@@ -323,21 +353,23 @@ import { Lightbox } from 'comet-astro';
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Fade Transition</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LightboxComponent 
-            images={basicImages.slice(0, 2)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 2)}
             animation="fade"
             thumbnailSize="sm"
             columns={2}
           />
         </div>
-        <p class="text-xs text-slate-400">Smooth fade transition between images</p>
+        <p class="text-xs text-slate-400">
+          Smooth fade transition between images
+        </p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Slide Transition</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LightboxComponent 
-            images={basicImages.slice(0, 2)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 2)}
             animation="slide"
             thumbnailSize="sm"
             columns={2}
@@ -345,12 +377,12 @@ import { Lightbox } from 'comet-astro';
         </div>
         <p class="text-xs text-slate-400">Sliding animation between images</p>
       </div>
-      
+
       <div class="space-y-4">
         <h3 class="text-base font-medium text-slate-200">Zoom Transition</h3>
         <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-4">
-          <LightboxComponent 
-            images={basicImages.slice(0, 2)} 
+          <LightboxComponent
+            images={basicImages.slice(0, 2)}
             animation="zoom"
             thumbnailSize="sm"
             columns={2}
@@ -365,43 +397,62 @@ import { Lightbox } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Props</h2>
     <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Content
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>images?</code>, <code>showCaptions?</code>, <code>showCounter?</code> - 
-          Control displayed content and metadata.
+          <code>images?</code>, <code>showCaptions?</code>, <code
+            >showCounter?</code
+          > - Control displayed content and metadata.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Layout
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>variant?</code>, <code>columns?</code>, <code>gap?</code>, <code>thumbnailSize?</code> - 
-          Control gallery layout and spacing.
+          <code>variant?</code>, <code>columns?</code>, <code>gap?</code>, <code
+            >thumbnailSize?</code
+          > - Control gallery layout and spacing.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Appearance
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>rounded?</code>, <code>animation?</code>, <code>className?</code> - 
-          Control visual styling and effects.
+          <code>rounded?</code>, <code>animation?</code>, <code>className?</code
+          > - Control visual styling and effects.
         </dd>
       </div>
-      
-      <div class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm">
-        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-200">
+
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
           Behavior
         </dt>
         <dd class="text-sm text-slate-200">
-          <code>enableZoom?</code>, <code>autoplay?</code>, <code>touchNavigation?</code> - 
-          Control interactive features.
+          <code>enableZoom?</code>, <code>autoplay?</code>, <code
+            >touchNavigation?</code
+          > - Control interactive features.
         </dd>
       </div>
     </dl>
@@ -411,7 +462,8 @@ import { Lightbox } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Image Object Structure</h2>
     <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
-      <pre class="text-sm text-slate-200 overflow-x-auto">
+      <pre
+        class="text-sm text-slate-200 overflow-x-auto">
         <code>{`interface LightboxImage {
   src: string;              // Full-size image URL (required)
   alt?: string;             // Alt text for accessibility
@@ -427,28 +479,31 @@ import { Lightbox } from 'comet-astro';
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      The Lightbox component provides a complete gallery solution with full 
-      accessibility support, touch gestures, keyboard navigation, and multiple 
+      The Lightbox component provides a complete gallery solution with full
+      accessibility support, touch gestures, keyboard navigation, and multiple
       layout options for any type of image collection.
     </p>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Basic Gallery</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{basicUsage}</code>
       </pre>
     </div>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Advanced Features</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{advancedUsage}</code>
       </pre>
     </div>
-    
+
     <div class="space-y-4">
       <h3 class="text-lg font-medium text-slate-100">Custom Content</h3>
-      <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <pre
+        class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
         <code class="language-astro">{customUsage}</code>
       </pre>
     </div>
@@ -459,29 +514,65 @@ import { Lightbox } from 'comet-astro';
     <h2 class="text-xl font-semibold text-slate-100">Keyboard Shortcuts</h2>
     <div class="rounded-lg border border-slate-700/50 bg-slate-800/30 p-6">
       <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="flex justify-between items-center py-2 border-b border-slate-700/30">
+        <div
+          class="flex justify-between items-center py-2 border-b border-slate-700/30"
+        >
           <dt class="font-medium text-slate-200">Open Lightbox</dt>
-          <dd class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200">Enter / Space</dd>
+          <dd
+            class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200"
+          >
+            Enter / Space
+          </dd>
         </div>
-        <div class="flex justify-between items-center py-2 border-b border-slate-700/30">
+        <div
+          class="flex justify-between items-center py-2 border-b border-slate-700/30"
+        >
           <dt class="font-medium text-slate-200">Close Lightbox</dt>
-          <dd class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200">Escape</dd>
+          <dd
+            class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200"
+          >
+            Escape
+          </dd>
         </div>
-        <div class="flex justify-between items-center py-2 border-b border-slate-700/30">
+        <div
+          class="flex justify-between items-center py-2 border-b border-slate-700/30"
+        >
           <dt class="font-medium text-slate-200">Next Image</dt>
-          <dd class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200">→ / Space</dd>
+          <dd
+            class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200"
+          >
+            → / Space
+          </dd>
         </div>
-        <div class="flex justify-between items-center py-2 border-b border-slate-700/30">
+        <div
+          class="flex justify-between items-center py-2 border-b border-slate-700/30"
+        >
           <dt class="font-medium text-slate-200">Previous Image</dt>
-          <dd class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200">← </dd>
+          <dd
+            class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200"
+          >
+            ←
+          </dd>
         </div>
-        <div class="flex justify-between items-center py-2 border-b border-slate-700/30">
+        <div
+          class="flex justify-between items-center py-2 border-b border-slate-700/30"
+        >
           <dt class="font-medium text-slate-200">First Image</dt>
-          <dd class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200">Home</dd>
+          <dd
+            class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200"
+          >
+            Home
+          </dd>
         </div>
-        <div class="flex justify-between items-center py-2 border-b border-slate-700/30">
+        <div
+          class="flex justify-between items-center py-2 border-b border-slate-700/30"
+        >
           <dt class="font-medium text-slate-200">Last Image</dt>
-          <dd class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200">End</dd>
+          <dd
+            class="font-mono text-sm bg-slate-700 px-2 py-1 rounded text-slate-200"
+          >
+            End
+          </dd>
         </div>
       </dl>
     </div>
@@ -494,31 +585,52 @@ import { Lightbox } from 'comet-astro';
       <ul class="space-y-3 text-sm text-slate-200">
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>WCAG AAA Compliance:</strong> All interactive elements meet 7:1+ contrast ratios with proper focus indicators</span>
+          <span
+            ><strong>WCAG AAA Compliance:</strong> All interactive elements meet
+            7:1+ contrast ratios with proper focus indicators</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Keyboard Navigation:</strong> Complete keyboard control with intuitive shortcuts and proper focus management</span>
+          <span
+            ><strong>Keyboard Navigation:</strong> Complete keyboard control with
+            intuitive shortcuts and proper focus management</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Screen Reader Support:</strong> Live announcements, proper ARIA attributes, and descriptive labels</span>
+          <span
+            ><strong>Screen Reader Support:</strong> Live announcements, proper ARIA
+            attributes, and descriptive labels</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Touch Accessibility:</strong> Swipe gestures and touch-friendly controls with proper target sizes</span>
+          <span
+            ><strong>Touch Accessibility:</strong> Swipe gestures and touch-friendly
+            controls with proper target sizes</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>High Contrast Mode:</strong> Enhanced visibility in high contrast accessibility displays</span>
+          <span
+            ><strong>High Contrast Mode:</strong> Enhanced visibility in high contrast
+            accessibility displays</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Reduced Motion:</strong> Respects user's motion preferences for smoother experience</span>
+          <span
+            ><strong>Reduced Motion:</strong> Respects user's motion preferences
+            for smoother experience</span
+          >
         </li>
         <li class="flex items-start gap-3">
           <span class="text-green-400">✓</span>
-          <span><strong>Focus Management:</strong> Proper focus trapping in modal and restoration when closed</span>
+          <span
+            ><strong>Focus Management:</strong> Proper focus trapping in modal and
+            restoration when closed</span
+          >
         </li>
       </ul>
     </div>

@@ -46,25 +46,26 @@ const {
 // Gap size mappings
 const gapSizes = {
   xs: '0.5rem',
-  sm: '0.75rem', 
+  sm: '0.75rem',
   md: '1rem',
   lg: '1.5rem',
-  xl: '2rem'
+  xl: '2rem',
 };
 
 // Size variants for consistent spacing
 const sizeVariants = {
   sm: { gap: gapSizes.sm, minHeight: '200px' },
   md: { gap: gapSizes.md, minHeight: '300px' },
-  lg: { gap: gapSizes.lg, minHeight: '400px' }
+  lg: { gap: gapSizes.lg, minHeight: '400px' },
 };
 
 // Resolve gap value
-const gapValue = typeof gap === 'string' && gap in gapSizes 
-  ? gapSizes[gap as keyof typeof gapSizes]
-  : typeof gap === 'string' 
-    ? gap 
-    : sizeVariants[size].gap;
+const gapValue =
+  typeof gap === 'string' && gap in gapSizes
+    ? gapSizes[gap as keyof typeof gapSizes]
+    : typeof gap === 'string'
+      ? gap
+      : sizeVariants[size].gap;
 
 // Column configuration with proper fallbacks
 const columnConfig: Required<Breakpoints> = {
@@ -100,8 +101,9 @@ const columnConfig: Required<Breakpoints> = {
 const variantClasses = {
   default: '',
   card: 'p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900',
-  gallery: 'rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800',
-  minimal: 'space-y-2'
+  gallery:
+    'rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800',
+  minimal: 'space-y-2',
 };
 
 // Generate unique ID for this masonry instance
@@ -127,7 +129,9 @@ const styleContent = `
   }
 
   /* Focus management for keyboard navigation */
-  ${focusManagement ? `
+  ${
+    focusManagement
+      ? `
   #${id}:focus-within {
     outline: 2px solid rgb(59 130 246);
     outline-offset: 2px;
@@ -141,7 +145,9 @@ const styleContent = `
     position: relative;
     z-index: 10;
   }
-  ` : ''}
+  `
+      : ''
+  }
 
   /* High contrast mode support */
   @media (prefers-contrast: high) {
@@ -201,27 +207,30 @@ const styleContent = `
 `;
 
 // Container classes
-const containerClasses = `masonry-columns ${variantClasses[variant]} ${className}`.trim();
+const containerClasses =
+  `masonry-columns ${variantClasses[variant]} ${className}`.trim();
 
 // ARIA attributes
 const ariaAttributes = {
   role,
   ...(title && { 'aria-label': title }),
   ...(role === 'grid' && { 'aria-readonly': 'true' }),
-  ...(focusManagement && { tabindex: '0' })
+  ...(focusManagement && { tabindex: '0' }),
 };
 ---
 
 <style is:inline set:html={styleContent}></style>
 
-{title && (
-  <div class="sr-only" id={`${id}-title`}>
-    {title}
-  </div>
-)}
+{
+  title && (
+    <div class="sr-only" id={`${id}-title`}>
+      {title}
+    </div>
+  )
+}
 
-<div 
-  id={id} 
+<div
+  id={id}
   class={containerClasses}
   {...ariaAttributes}
   aria-describedby={title ? `${id}-title` : undefined}
@@ -230,9 +239,13 @@ const ariaAttributes = {
 </div>
 
 <!-- Screen reader instructions for complex layouts -->
-{role === 'grid' && (
-  <div class="sr-only">
-    Navigate this grid using arrow keys. Items are arranged in {columnConfig.base} column{columnConfig.base > 1 ? 's' : ''} on mobile, 
-    increasing to {columnConfig.xl} column{columnConfig.xl > 1 ? 's' : ''} on larger screens.
-  </div>
-)}
+{
+  role === 'grid' && (
+    <div class="sr-only">
+      Navigate this grid using arrow keys. Items are arranged in{' '}
+      {columnConfig.base} column{columnConfig.base > 1 ? 's' : ''} on mobile,
+      increasing to {columnConfig.xl} column{columnConfig.xl > 1 ? 's' : ''} on
+      larger screens.
+    </div>
+  )
+}

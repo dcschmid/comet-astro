@@ -1,55 +1,302 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import UniversalCard from '../../components/UniversalCard.astro';
-const uMeta = ['5 min read'];
-const uActions = [{ href: '#', label: 'Read' }];
+
+const uMeta = ['5 min read', 'Published Nov 3, 2024'];
+const uActions = [
+  { href: '#', label: 'Read More', variant: 'primary' },
+  { href: '#', label: 'Share', variant: 'secondary' },
+];
+const uBadges = [
+  { label: 'New', variant: 'success' },
+  { label: 'Featured', variant: 'warning' },
+];
+const uTags = ['JavaScript', 'TypeScript', 'Web Development'];
 ---
 
 <DocsLayout
   title="UniversalCard"
-  description="Flexible card for knowledge, playlists, sections, etc. Supports vertical, horizontal and compact layouts."
+  description="A flexible card component for displaying various types of content with WCAG AAA accessibility compliance, multiple layouts, interactive states, and comprehensive customization options."
 >
   <section>
-    <h2 class="text-xl font-bold">Props</h2>
-    <ul class="list-disc pl-6 text-gray-300">
-      <li><code>variant?: 'vertical'|'horizontal'|'compact'</code></li>
+    <h2 class="text-xl font-bold mb-4">Props</h2>
+    <div class="space-y-3 text-sm">
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Layout & Style</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code
+              >variant?: 'vertical' | 'horizontal' | 'compact' | 'featured'</code
+            > - Layout variant (default: 'vertical')
+          </li>
+          <li>
+            <code>size?: 'sm' | 'md' | 'lg'</code> - Size affecting spacing and typography
+            (default: 'md')
+          </li>
+          <li>
+            <code>elevation?: 'none' | 'sm' | 'md' | 'lg'</code> - Shadow depth (default:
+            'sm')
+          </li>
+          <li><code>className?: string</code> - Additional CSS classes</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Content</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>title?: string</code> - Main heading text</li>
+          <li><code>subtitle?: string</code> - Optional secondary heading</li>
+          <li><code>description?: string</code> - Main content description</li>
+          <li><code>eyebrow?: string</code> - Small text above title</li>
+          <li>
+            <code>longDescription?: boolean</code> - Allow text wrapping (default:
+            false)
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Media</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>imageSrc?: string</code> - Image source URL</li>
+          <li>
+            <code>imageAlt?: string</code> - Image alt text (required if imageSrc
+            provided)
+          </li>
+          <li>
+            <code>imageAspect?: 'square' | 'video' | 'photo' | 'wide'</code> - Aspect
+            ratio (default: 'video')
+          </li>
+          <li>
+            <code>imageRounded?: boolean</code> - Rounded image corners (default:
+            true)
+          </li>
+          <li>
+            <code>imagePlaceholder?: boolean</code> - Show placeholder (default:
+            false)
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Navigation</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li><code>href?: string</code> - URL for card link</li>
+          <li>
+            <code>target?: '_self' | '_blank' | '_parent' | '_top'</code> - Link
+            target (default: '_self')
+          </li>
+          <li><code>rel?: string</code> - Link rel attribute</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Metadata & Actions</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>badges?: &#123;label: string, variant?: string&#125;[]</code> -
+            Badge objects
+          </li>
+          <li><code>tags?: string[]</code> - Tag strings</li>
+          <li>
+            <code>meta?: string[]</code> - Metadata (dates, authors, etc.)
+          </li>
+          <li>
+            <code
+              >actions?: &#123;href: string, label: string, variant?: string,
+              target?: string, rel?: string, disabled?: boolean&#125;[]</code
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">States & Behavior</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>status?: 'draft' | 'published' | 'archived' | 'featured'</code
+            > - Content status indicator
+          </li>
+          <li>
+            <code>interactive?: boolean</code> - Enable hover/focus effects (default:
+            false)
+          </li>
+          <li>
+            <code>loading?: boolean</code> - Show loading state (default: false)
+          </li>
+          <li>
+            <code>disabled?: boolean</code> - Disable interactions (default: false)
+          </li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <h3 class="font-semibold text-lg">Accessibility</h3>
+        <ul class="list-disc pl-6 space-y-1 text-slate-300">
+          <li>
+            <code>headingLevel?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'</code> -
+            Semantic heading level (default: 'h3')
+          </li>
+          <li><code>role?: string</code> - ARIA role (default: 'article')</li>
+          <li>
+            <code>ariaLabel?: string</code> - ARIA label for screen readers
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Accessibility Features</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>WCAG AAA compliant with 9:1 contrast ratios in all color schemes</li>
+      <li>Full keyboard navigation support with visible focus indicators</li>
       <li>
-        <code>href?: string</code>, <code>target?: ...</code>, <code
-          >rel?: string</code
-        >
+        Screen reader compatible with proper ARIA labels and semantic HTML
       </li>
-      <li>
-        <code>imageSrc?: string</code>, <code>imageAlt?: string</code>, <code
-          >imageRounded?: boolean</code
-        >, <code>imageAspect?: '16:9'|'4:3'|'1:1'|'3:2'</code>
-      </li>
-      <li>
-        <code>eyebrow?: string</code>, <code>title?: string</code>, <code
-          >subtitle?: string</code
-        >, <code>description?: string</code>
-      </li>
-      <li>
-        <code>badges?: &#123;label,variant&#125;[]</code>, <code
-          >tags?: string[]</code
-        >, <code>meta?: string[]</code>
-      </li>
-      <li>
-        <code>actions?: &#123;href,label,variant?,target?,rel?&#125;[]</code>
-      </li>
+      <li>Supports semantic heading levels for proper document structure</li>
+      <li>Loading states announced to assistive technologies</li>
+      <li>Reduced motion support for users with vestibular disorders</li>
+      <li>High contrast mode compatibility</li>
+      <li>Interactive elements have appropriate hover and focus states</li>
+      <li>Status indicators include both visual and text cues</li>
+      <li>Images include proper alt text and loading attributes</li>
     </ul>
   </section>
 
   <section>
-    <h2 class="text-xl font-bold">Examples</h2>
-    <UniversalCard
-      variant="vertical"
-      href="#"
-      imageSrc="https://picsum.photos/seed/u1/800/450"
-      eyebrow="Knowledge"
-      title="The Evolution of Rock"
-      description="A short intro to key eras and sounds."
-      meta={uMeta}
-      actions={uActions}
-    />
+    <h2 class="text-xl font-bold mb-4">Examples</h2>
+
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Basic Vertical Card</h3>
+        <UniversalCard
+          variant="vertical"
+          title="The Evolution of Rock Music"
+          description="A comprehensive guide exploring the history and development of rock music from its roots to modern day."
+          imageSrc="https://picsum.photos/seed/rock/800/450"
+          imageAlt="Rock music evolution"
+          eyebrow="Music Guide"
+          meta={uMeta}
+          actions={uActions}
+          href="#"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Horizontal Layout</h3>
+        <UniversalCard
+          variant="horizontal"
+          title="Advanced Web Development"
+          description="Master modern web development techniques with TypeScript, React, and cutting-edge tools."
+          imageSrc="https://picsum.photos/seed/web/800/450"
+          imageAlt="Web development"
+          eyebrow="Course"
+          badges={uBadges}
+          tags={uTags}
+          meta={['8 hours', 'Intermediate']}
+          actions={[{ href: '#', label: 'Start Course', variant: 'primary' }]}
+          href="#"
+          size="lg"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Compact Layout</h3>
+        <UniversalCard
+          variant="compact"
+          title="Quick Tips for Better Code"
+          description="Essential programming tips for writing cleaner, more maintainable code."
+          eyebrow="Tips"
+          tags={['Programming', 'Best Practices']}
+          meta={['2 min read']}
+          size="sm"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Featured Card</h3>
+        <UniversalCard
+          variant="featured"
+          title="Major Product Announcement"
+          description="Exciting news about our latest product release with revolutionary features that will transform your workflow."
+          imageSrc="https://picsum.photos/seed/announcement/800/450"
+          imageAlt="Product announcement"
+          status="featured"
+          elevation="lg"
+          interactive={true}
+          badges={[{ label: 'Announcement', variant: 'primary' }]}
+          meta={['Just released', 'Product Team']}
+          actions={[
+            { href: '#', label: 'Learn More', variant: 'primary' },
+            { href: '#', label: 'Watch Demo', variant: 'secondary' },
+          ]}
+          href="#"
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Status Indicators</h3>
+        <div class="grid gap-4 md:grid-cols-2">
+          <UniversalCard
+            title="Draft Article"
+            description="Work in progress article awaiting review and publication."
+            status="draft"
+            meta={['Last edited yesterday']}
+            size="sm"
+          />
+          <UniversalCard
+            title="Published Article"
+            description="Live article available to all readers and indexed by search engines."
+            status="published"
+            meta={['Published 2 days ago']}
+            href="#"
+            size="sm"
+          />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Loading State</h3>
+        <UniversalCard
+          title="Loading Content"
+          description="Please wait while we fetch the latest information from our servers."
+          loading={true}
+          imagePlaceholder={true}
+        />
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Interactive Card</h3>
+        <UniversalCard
+          title="Hover for Effects"
+          description="This card demonstrates interactive hover and focus effects with smooth transitions."
+          interactive={true}
+          elevation="md"
+          imageSrc="https://picsum.photos/seed/interactive/800/450"
+          imageAlt="Interactive demo"
+          href="#"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Slots</h2>
+    <ul class="list-disc pl-6 space-y-1 text-slate-300">
+      <li>
+        <code>default</code> - Main content area, typically for description text
+      </li>
+      <li>
+        <code>title</code> - Custom title content replacing the title prop
+      </li>
+      <li><code>media</code> - Custom media content (images, videos, etc.)</li>
+      <li>
+        <code>actions</code> - Custom action buttons replacing the actions prop
+      </li>
+      <li>
+        <code>footer</code> - Additional footer content below main content
+      </li>
+    </ul>
   </section>
 </DocsLayout>

@@ -1,355 +1,113 @@
 ---
+import EmbedBase from './EmbedBase.astro';
+
 /**
- * MapEmbed - Accessible OpenStreetMap embed with WCAG AAA compliance
- * Uses OpenStreetMap and Leaflet for privacy-friendly, open source mapping
+ * MapEmbed - WCAG AAA compliant map embed
+ * Provides accessible map integration with proper loading states and error handling
  */
 interface Props {
   /** Street address to display */
   address?: string;
   /** Exact coordinates */
   coordinates?: { lat: number; lng: number };
-  /** Map zoom level (1-20) */
-  zoom?: number;
-  /** Aspect ratio of the map container */
-  aspectRatio?: '16/9' | '4/3' | '1/1' | '21/9' | '3/2';
-  /** Size variant for responsive design */
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** Visual style variant */
-  variant?: 'default' | 'bordered' | 'elevated' | 'minimal';
-  /** Accessible title for the map */
+  /** Map provider */
+  provider?: 'openstreetmap' | 'google' | 'mapbox';
+  /** Visual theme variant */
+  variant?: 'default' | 'minimal' | 'card';
+  /** Show loading state */
+  showLoading?: boolean;
+  /** Accessible title for screen readers */
   title?: string;
-  /** Map tile style */
-  tileStyle?: 'standard' | 'satellite' | 'terrain' | 'dark';
-  /** Show map controls */
-  showControls?: boolean;
-  /** Show marker on the location */
-  showMarker?: boolean;
-  /** Custom marker text */
-  markerText?: string;
-  /** Custom CSS classes */
-  className?: string;
-  /** Loading state text */
-  loadingText?: string;
-  /** Error fallback text */
-  errorText?: string;
-  /** Disable map interaction */
-  staticMap?: boolean;
+  /** CSS class for styling */
+  class?: string;
+  /** ARIA label for accessibility */
+  ariaLabel?: string;
+  /** Additional iframe attributes */
+  [key: string]: any;
 }
 
 const {
   address,
   coordinates,
-  zoom = 15,
-  aspectRatio = '16/9',
-  size = 'md',
+  provider = 'openstreetmap',
   variant = 'default',
-  title = 'Map location',
-  tileStyle = 'standard',
-  showControls = true,
-  showMarker = true,
-  markerText,
-  className = '',
-  loadingText = 'Loading map...',
-  errorText = 'Map unavailable',
-  staticMap = false,
-} = Astro.props as Props;
+  showLoading = true,
+  title,
+  class: className = '',
+  ariaLabel,
+  ...props
+} = Astro.props;
 
-// Aspect ratio classes
-const ratioClasses = {
-  '16/9': 'aspect-video',
-  '4/3': 'aspect-[4/3]',
-  '1/1': 'aspect-square',
-  '21/9': 'aspect-[21/9]',
-  '3/2': 'aspect-[3/2]',
-};
-
-// Size classes for responsive design
-const sizeClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-2xl',
-  lg: 'max-w-4xl',
-  xl: 'max-w-6xl'
-};
-
-// Variant styles with WCAG AAA compliant colors
-const variantClasses = {
-  default: 'rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800',
-  bordered: 'rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900',
-  elevated: 'rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg dark:shadow-slate-900/50',
-  minimal: 'rounded-lg bg-slate-100 dark:bg-slate-800'
-};
-
-// Tile server URLs (all open source)
-const tileServers = {
-  standard: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  terrain: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-};
-
-// Generate unique ID for this map instance
-const mapId = `map-${Math.random().toString(36).substr(2, 9)}`;
-
-// Determine coordinates
-let mapLat = 51.505; // Default to London
-let mapLng = -0.09;
-let hasValidLocation = false;
-
-if (coordinates) {
-  mapLat = coordinates.lat;
-  mapLng = coordinates.lng;
-  hasValidLocation = true;
-} else if (address) {
-  // For address, we'll use Nominatim API to geocode
-  hasValidLocation = true;
+// Validate that either address or coordinates are provided
+if (!address && !coordinates) {
+  throw new Error('MapEmbed: Either address or coordinates must be provided');
 }
 
-// Generate location text for accessibility
-const locationText = coordinates ? `${coordinates.lat}, ${coordinates.lng}` :
-                     address ? address : 'Map location';
+// Build map embed URL based on provider
+const buildMapEmbedUrl = (): string => {
+  let lat: number;
+  let lng: number;
+  
+  if (coordinates) {
+    lat = coordinates.lat;
+    lng = coordinates.lng;
+  } else if (address) {
+    // For simplicity, we'll use OpenStreetMap's approach which handles address encoding
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(address)}&layer=mapnik`;
+  } else {
+    throw new Error('Invalid map configuration');
+  }
+  
+  switch (provider) {
+    case 'openstreetmap': {
+      // Calculate bbox for OpenStreetMap embed
+      const offset = 0.01; // Adjust based on zoom level
+      const bbox = `${lng - offset},${lat - offset},${lng + offset},${lat + offset}`;
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
+    }
+      
+    case 'google':
+      return `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1000!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v1`;
+      
+    case 'mapbox':
+      // Mapbox embed would require API key, so we'll fallback to OpenStreetMap
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01},${lat - 0.01},${lng + 0.01},${lat + 0.01}&layer=mapnik&marker=${lat},${lng}`;
+      
+    default:
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01},${lat - 0.01},${lng + 0.01},${lat + 0.01}&layer=mapnik&marker=${lat},${lng}`;
+  }
+};
 
-const containerClasses = `relative overflow-hidden ${variantClasses[variant]} ${ratioClasses[aspectRatio]} ${sizeClasses[size]} ${className}`.trim();
+const embedUrl = buildMapEmbedUrl();
+
+// Generate location description for accessibility
+const getLocationDescription = (): string => {
+  if (coordinates) {
+    return `${coordinates.lat}, ${coordinates.lng}`;
+  }
+  if (address) {
+    return address;
+  }
+  return 'Map location';
+};
+
+const locationDescription = getLocationDescription();
+
+// Generate appropriate title and ARIA label
+const finalTitle = title || `Map showing ${locationDescription}`;
+const finalAriaLabel = ariaLabel || `Interactive map displaying ${locationDescription}`;
 ---
 
-<div class={containerClasses}>
-  {hasValidLocation ? (
-    <>
-      <!-- Loading state -->
-      <div 
-        class="absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
-        id={`map-loading-${mapId}`}
-      >
-        <div class="flex items-center gap-3">
-          <div class="w-5 h-5 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin" 
-               aria-hidden="true"></div>
-          <span class="text-sm font-medium">{loadingText}</span>
-        </div>
-      </div>
-
-      <!-- Map container -->
-      <div
-        id={mapId}
-        class="absolute inset-0 w-full h-full z-10"
-        role="application"
-        aria-label={title || `Interactive map showing ${locationText}`}
-        tabindex="0"
-      ></div>
-
-      <!-- Error fallback (initially hidden) -->
-      <div 
-        class="absolute inset-0 items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-6 z-20"
-        id={`map-error-${mapId}`}
-        style="display: none;"
-      >
-        <div class="text-center space-y-3">
-          <div class="w-12 h-12 mx-auto rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center" aria-hidden="true">
-            <svg class="w-6 h-6 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </div>
-          <div>
-            <p class="font-medium text-sm">{errorText}</p>
-            <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">{locationText}</p>
-          </div>
-        </div>
-      </div>
-    </>
-  ) : (
-    // No location provided state
-    <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-6">
-      <div class="text-center space-y-3 max-w-sm">
-        <div class="w-12 h-12 mx-auto rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center" aria-hidden="true">
-          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-        </div>
-        <div>
-          <p class="font-medium text-sm">Location Required</p>
-          <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
-            Please provide an address or coordinates to display the map
-          </p>
-        </div>
-      </div>
-    </div>
-  )}
-
-  <!-- Screen reader only content -->
-  <div class="sr-only">
-    Map showing {locationText}. 
-    {hasValidLocation ? 'Interactive OpenStreetMap content available.' : 'Location information required to display map.'}
-  </div>
-</div>
-
-{hasValidLocation && (
-  <script define:vars={{ mapId, mapLat, mapLng, zoom, address, showControls, staticMap, showMarker, markerText, tileStyle: tileServers[tileStyle] }}>
-    // Leaflet map initialization
-    document.addEventListener('DOMContentLoaded', function() {
-      const mapContainer = document.getElementById(mapId);
-      const loadingElement = document.getElementById(`map-loading-${mapId}`);
-      const errorElement = document.getElementById(`map-error-${mapId}`);
-      
-      if (!mapContainer) return;
-
-      // Load Leaflet CSS and JS
-      const loadLeaflet = () => {
-        return new Promise((resolve, reject) => {
-          // Load CSS
-          if (!document.querySelector('link[href*="leaflet"]')) {
-            const css = document.createElement('link');
-            css.rel = 'stylesheet';
-            css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-            css.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-            css.crossOrigin = '';
-            document.head.appendChild(css);
-          }
-
-          // Load JS
-          if (!window.L) {
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-            script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-            script.crossOrigin = '';
-            script.onload = resolve;
-            script.onerror = reject;
-            document.head.appendChild(script);
-          } else {
-            resolve();
-          }
-        });
-      };
-
-      // Initialize map
-      const initMap = async () => {
-        try {
-          await loadLeaflet();
-          
-          let lat = mapLat;
-          let lng = mapLng;
-          
-          // Geocode address if provided
-          if (address) {
-            try {
-              const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`);
-              const data = await response.json();
-              if (data && data.length > 0) {
-                lat = parseFloat(data[0].lat);
-                lng = parseFloat(data[0].lon);
-              }
-            } catch {
-              console.warn('Geocoding failed, using default coordinates');
-            }
-          }
-
-          // Create map (L is loaded by Leaflet)
-          const map = window.L.map(mapContainer, {
-            zoomControl: showControls,
-            attributionControl: true,
-            scrollWheelZoom: !staticMap,
-            dragging: !staticMap,
-            touchZoom: !staticMap,
-            doubleClickZoom: !staticMap,
-            boxZoom: !staticMap,
-            keyboard: !staticMap
-          }).setView([lat, lng], zoom);
-
-          // Add tile layer
-          window.L.tileLayer(tileStyle, {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 19
-          }).addTo(map);
-
-          // Add marker if requested
-          if (showMarker) {
-            const marker = window.L.marker([lat, lng]).addTo(map);
-            if (markerText) {
-              marker.bindPopup(markerText).openPopup();
-            }
-          }
-
-          // Hide loading state
-          if (loadingElement) {
-            loadingElement.style.display = 'none';
-          }
-
-          // Set ARIA labels for accessibility
-          mapContainer.setAttribute('aria-label', `Interactive map showing ${lat}, ${lng}`);
-          
-        } catch (error) {
-          console.error('Map initialization failed:', error);
-          
-          // Hide loading, show error
-          if (loadingElement) loadingElement.style.display = 'none';
-          if (errorElement) errorElement.style.display = 'flex';
-        }
-      };
-
-      initMap();
-    });
-  </script>
-)}
-
-<style>
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    .leaflet-container {
-      filter: contrast(1.2);
-    }
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    .animate-spin {
-      animation: none;
-    }
-    
-    .leaflet-container {
-      transition: none !important;
-    }
-  }
-
-  /* Focus management for map container */
-  [role="application"]:focus {
-    outline: 3px solid rgb(59 130 246);
-    outline-offset: 2px;
-  }
-
-  /* Dark mode adjustments */
-  @media (prefers-color-scheme: dark) {
-    .leaflet-container {
-      filter: brightness(0.9) contrast(1.1);
-    }
-  }
-
-  /* Ensure map fills container */
-  .leaflet-container {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* Custom marker styling for better accessibility */
-  .leaflet-marker-icon {
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-  }
-
-  /* Popup styling */
-  .leaflet-popup-content-wrapper {
-    border-radius: 8px;
-    border: 1px solid rgb(203 213 225);
-  }
-
-  /* Attribution styling */
-  .leaflet-control-attribution {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    color: rgb(51 65 85) !important;
-    font-size: 11px !important;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .leaflet-control-attribution {
-      background-color: rgba(30, 41, 59, 0.9) !important;
-      color: rgb(148 163 184) !important;
-    }
-  }
-</style>
+<EmbedBase
+  src={embedUrl}
+  title={finalTitle}
+  aspectRatio="16/9"
+  variant={variant}
+  showLoading={showLoading}
+  class={className}
+  ariaLabel={finalAriaLabel}
+  allowFullscreen={false}
+  loading="lazy"
+  referrerPolicy="no-referrer-when-downgrade"
+  {...props}
+/>
