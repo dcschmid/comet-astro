@@ -30,13 +30,13 @@ const totalComponents = componentCatalog.length;
   hideHeader={true}
 >
   <div class="space-y-12">
-    <!-- Custom Hero replacing default header for full control -->
+    <!-- Centered Hero -->
     <section
-      class="text-center space-y-7 min-h-[60vh] flex flex-col justify-center"
+      class="flex min-h-[70vh] flex-col items-center justify-center text-center gap-7"
     >
       <Headline
         level="h1"
-        textSize="4xl"
+        textSize="2xl"
         weight="extrabold"
         textAlign="center"
         className="tracking-tight"
@@ -47,29 +47,13 @@ const totalComponents = componentCatalog.length;
         Production‑ready, WCAG AAA Astro components—semantic, high‑contrast,
         minimal JavaScript, and easy to customize.
       </Paragraph>
-      <Badge
-        label="Component Library"
-        variant="primary"
-        className="text-sm mx-auto"
-      />
-      <Headline
-        level="h2"
-        textSize="lg"
-        weight="semibold"
-        textAlign="center"
-        color="muted"
-        maxWidth="prose"
-      >
-        A curated set of accessible, performance‑focused Astro UI primitives
-        built for real products.
-      </Headline>
       <Paragraph size="md" variant="muted" align="center" maxWidth="prose">
-        Every component ships with semantic HTML, keyboard interaction patterns,
-        high contrast (WCAG AAA) defaults, Tailwind utility styling, and minimal
-        client JavaScript. Drop them into dashboards, content sites, or
-        data‑rich weather experiences without refactoring.
+        A curated set of accessible, performance‑focused Astro UI primitives
+        built for real products. Every component ships with semantic HTML,
+        keyboard interaction patterns, high contrast (WCAG AAA) defaults,
+        Tailwind utility styling, and minimal client JavaScript.
       </Paragraph>
-      <div class="mx-auto max-w-5xl grid gap-6 md:grid-cols-3 mt-4">
+      <div class="mx-auto max-w-5xl grid gap-6 md:grid-cols-3">
         <Card elevation={2} class="p-5 flex flex-col gap-2">
           <Headline level="h3" textSize="sm" weight="bold" color="default"
             >Accessibility</Headline
