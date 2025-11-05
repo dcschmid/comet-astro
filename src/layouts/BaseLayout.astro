@@ -10,8 +10,10 @@ import SkipLink from '../components/SkipLink.astro';
 import Container from '../components/Container.astro';
 
 interface Props {
-  title?: string;
-  description?: string;
+  seoTitle?: string;
+  /** Site-wide short title (shown in header) */
+  sitetitle?: string;
+  seoDescription?: string;
   lang?: string;
   /** Fixed font for the page (overrides user preference) */
   fontMode?:
@@ -45,8 +47,9 @@ interface Props {
 }
 
 const {
-  title = 'Comet Astro Page',
-  description,
+  seoTitle = 'Comet Astro Page',
+  sitetitle = 'Comet Astro',
+  seoDescription,
   lang = 'en',
   fontMode = 'atkinson',
   highLegibility = false,
@@ -55,6 +58,14 @@ const {
   announceRegion = true,
   preloadFont = true,
 } = Astro.props as Props;
+
+// Compose a useful page title: "Page Title — Site Title" when both present.
+// Compose a useful page title for SEO: "SEO Title — Site Title" when both present.
+const pageTitle = sitetitle
+  ? seoTitle
+    ? `${seoTitle} — ${sitetitle}`
+    : sitetitle
+  : seoTitle;
 
 const liveId = `a11y-live-${Math.random().toString(36).slice(2, 8)}`;
 const mainId = `main-${Math.random().toString(36).slice(2, 8)}`;
@@ -84,8 +95,8 @@ const resolvedFontClass = fontClassMap[fontMode] || fontClassMap.default;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {title && <title>{title}</title>}
-    {description && <meta name="description" content={description} />}
+    {pageTitle && <title>{pageTitle}</title>}
+    {seoDescription && <meta name="description" content={seoDescription} />}
     <meta name="color-scheme" content="dark light" />
     <script is:inline>
       (function () {
@@ -213,7 +224,7 @@ const resolvedFontClass = fontClassMap[fontMode] || fontClassMap.default;
             href="/"
             class="text-base font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 dark:focus-visible:ring-blue-300"
           >
-            {title}
+            {sitetitle}
           </a>
         </div>
         <div class="flex items-center gap-4">

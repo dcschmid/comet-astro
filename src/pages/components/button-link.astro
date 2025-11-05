@@ -1,6 +1,7 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import ButtonLink from '../../components/ButtonLink.astro';
+// ComponentDocsSections intentionally not used here to keep props markup explicit
 
 const usageSnippet = `---
 import { ButtonLink } from 'comet-astro';
@@ -18,8 +19,8 @@ import { ButtonLink } from 'comet-astro';
 ---
 
 <DocsLayout
-  title="ButtonLink"
-  description="High-contrast anchor-style buttons with external link detection and keyboard-friendly focus rings."
+  seoTitle="ButtonLink"
+  seoDescription="High-contrast anchor-style buttons with external link detection and keyboard-friendly focus rings."
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
@@ -42,100 +43,80 @@ import { ButtonLink } from 'comet-astro';
     </p>
   </section>
 
-  <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
-    <dl class="grid gap-6 sm:grid-cols-2">
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+  <section id="props" class="space-y-4">
+    <div class="flex items-center justify-between gap-4">
+      <h2
+        class="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50"
       >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          href
-        </dt>
-        <dd class="text-sm text-slate-200">Destination URL. Required.</dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        Props
+      </h2>
+      <a
+        href="#props"
+        class="ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-transparent text-slate-600 hover:bg-slate-100 hover:text-sky-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-sky-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+        aria-label="Permalink Props"
       >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          label?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Visible text when you don’t provide slot content. Ideal for quick
-          buttons without custom markup.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        <span aria-hidden class="text-xs font-semibold">#</span>
+      </a>
+    </div>
+
+    <div
+      class="prose max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-3"
+    >
+      <table
+        class="w-full text-sm border border-neutral-200 dark:border-neutral-800 rounded-md overflow-hidden"
       >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          size?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Adjusts height and padding. Options are <code>"sm"</code>, <code
-            >"md"</code
-          >, or <code>"lg"</code>. Defaults to <code>"md"</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          variant?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Visual treatment. Choose <code>"primary"</code>, <code
-            >"secondary"</code
-          >, or <code>"ghost"</code>. Defaults to <code>"primary"</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          target?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Standard anchor target. When set to <code>"_blank"</code>, the
-          component adds <code>rel="noopener noreferrer"</code> automatically.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          externalLabel?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Screen-reader text appended to external links. Defaults to “opens in
-          new window”.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          iconLeft / iconRight
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Named slots for icons before or after the label. Icons inherit the
-          button’s color automatically.
-        </dd>
-      </div>
-    </dl>
+        <thead class="bg-neutral-50 dark:bg-neutral-800">
+          <tr>
+            <th class="p-2 text-left">Prop</th>
+            <th class="p-2 text-left">Type</th>
+            <th class="p-2 text-left">Default</th>
+            <th class="p-2 text-left">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">href</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2">Destination URL for the link (required).</td>
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">label</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2">Visible text when no slot content is provided.</td>
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">size</td>
+            <td class="p-2 font-mono">'sm' | 'md' | 'lg'</td>
+            <td class="p-2 font-mono">'md'</td>
+            <td class="p-2">Adjusts height and padding.</td>
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">variant</td>
+            <td class="p-2 font-mono">'primary' | 'secondary' | 'ghost'</td>
+            <td class="p-2 font-mono">'primary'</td>
+            <td class="p-2">Visual treatment for the link.</td>
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">loading</td>
+            <td class="p-2 font-mono">boolean</td>
+            <td class="p-2 font-mono">false</td>
+            <td class="p-2">Shows spinner and sets <code>aria-busy</code>.</td>
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">icon</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2"
+              >Optional icon name to render before the label using the <code
+                >Icon</code
+              > component.</td
+            >
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <section class="mt-10 space-y-6">
@@ -148,6 +129,64 @@ import { ButtonLink } from 'comet-astro';
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{usageSnippet}</code>
+    </pre>
+    <h3 class="text-base font-semibold text-slate-100">Icon example</h3>
+    <p class="text-sm text-slate-200">
+      Quick usage with the built-in <code>Icon</code> set:
+    </p>
+    <div class="flex gap-3">
+      <ButtonLink href="#" icon="plus">Add</ButtonLink>
+      <ButtonLink href="#" variant="secondary" icon="external">Open</ButtonLink>
+      <ButtonLink href="#" variant="ghost" icon="x">Close</ButtonLink>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Loading state</h2>
+    <p class="text-base text-slate-200">
+      `ButtonLink` supports the same <code>loading</code> prop as <code
+        >Button</code
+      >. This renders a spinner and sets <code>aria-busy</code> for assistive technologies.
+      Use <code>loadingLabel</code> to provide custom screen reader text while the
+      link is busy.
+    </p>
+    <div class="flex gap-3">
+      <ButtonLink href="#" loading label="Processing" />
+      <ButtonLink href="#" variant="destructive" loading label="Deleting" />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Overriding styles</h2>
+    <p class="text-base text-slate-200">
+      The same two approaches apply to <code>ButtonLink</code>: pass a
+      <code>class</code> to add or override Tailwind utilities, or compute classes
+      with the <code>buttonVariants</code> helper for programmatic composition. Remember
+      to include <code>dark:...</code> utilities for color overrides when your site
+      uses a dark theme.
+    </p>
+    <div class="flex gap-3">
+      <ButtonLink
+        href="#"
+        class="bg-emerald-600 border-emerald-600 text-white dark:bg-emerald-700 dark:border-emerald-700"
+        >Green link</ButtonLink
+      >
+      <ButtonLink
+        href="#"
+        variant="ghost"
+        class="text-violet-400 dark:text-violet-300">Violet ghost</ButtonLink
+      >
+    </div>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-ts">{`// Local helper example - create this in your app
+import { tv } from 'tailwind-variants';
+
+const myButton = tv({ base: 'inline-flex items-center', variants: { variant: { secondary: 'bg-slate-800 text-white' } } });
+
+const custom = myButton({ variant: 'secondary', class: 'rounded-full px-5' });
+
+<ButtonLink href="/" class={custom}>Rounded Link</ButtonLink>`}</code>
     </pre>
   </section>
 

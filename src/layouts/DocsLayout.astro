@@ -9,6 +9,9 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 interface Props {
   title: string;
   description?: string;
+  /** Optional SEO overrides forwarded to BaseLayout */
+  seoTitle?: string;
+  seoDescription?: string;
   /** Wrap content slot in <Prose> component for consistent typography */
   prose?: boolean;
   /** Size scale forwarded to Headline component */
@@ -24,6 +27,8 @@ interface Props {
 const {
   title,
   description,
+  seoTitle,
+  seoDescription,
   prose = true,
   headlineSize = 'lg',
   descriptionSize = 'md',
@@ -46,11 +51,18 @@ const breadcrumbItems = [
   ...(pathParts[0] === 'components' ? [{ href: '', label: 'Components' }] : []),
   ...(pathParts[pathParts.length - 1] ? [{ label: title, current: true }] : []),
 ];
+// Prefer explicit seoTitle/seoDescription when provided; otherwise derive from title/description.
+const resolvedSeoTitle = seoTitle ? seoTitle : `${title} – Comet Astro`;
+const resolvedSeoDescription = seoDescription ? seoDescription : description;
 ---
 
+// Prefer explicit seoTitle/seoDescription when provided; otherwise derive from
+title/description. const resolvedSeoTitle = seoTitle ? seoTitle : `${title} – Comet
+Astro`; const resolvedSeoDescription = seoDescription ? seoDescription : description;
+
 <BaseLayout
-  title={`${title} – Comet Astro`}
-  description={description}
+  seoTitle={resolvedSeoTitle}
+  seoDescription={resolvedSeoDescription}
   containerSize="lg"
 >
   <div slot="theme"><ThemeToggle /></div>

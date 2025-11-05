@@ -79,6 +79,52 @@ import Button from 'comet-astro/src/components/Button.astro';
 
 Class passthrough works via the `class` prop on all components.
 
+## Variants (tailwind-variants)
+
+Interactive Komponenten wie `Button` nutzen jetzt [`tailwind-variants`](https://www.tailwind-variants.org/) für deklarative Varianten.
+
+Einfach über Props steuern:
+
+```astro
+<Button variant="secondary" size="lg">Download</Button>
+<Button variant="ghost" size="sm" class="mt-4">Mehr</Button>
+```
+
+Erweiterte Komposition ist möglich, aber die interne Varianten-Factory
+wird in `ButtonBase` verwaltet und nicht als Teil der öffentlichen API
+exportiert. Für prosjekt-spezifische Presets empfehlen wir entweder
+ein Inline-Override via die `class`-Prop oder, wenn du programmatisch
+zusammensetzen möchtest, eine kleine lokale Helferfunktion in deinem
+Projekt, z.B. mit `tailwind-variants`:
+
+```ts
+// in deinem Projekt (not in comet-astro)
+import { tv } from 'tailwind-variants';
+
+const myButton = tv({
+  base: 'rounded px-4',
+  variants: {
+    /* ... */
+  },
+});
+
+// oder: nutze inline class overrides
+// <Button class="bg-purple-700 text-white dark:bg-purple-800">Custom</Button>
+```
+
+Verfügbare `variant` Werte: `primary`, `secondary`, `ghost`, `success`, `destructive`.
+
+Loading-State nutzen (zeigt Spinner, setzt `aria-busy`, ist automatisch disabled):
+
+```astro
+<Button loading>Speichern</Button>
+<Button variant="destructive" loading loadingLabel="Wird gelöscht"
+  >Löschen</Button
+>
+```
+
+Das Utility merged eigene Klassen mit den Varianten sicher (Konflikte werden von Tailwind geklärt). Fallbacks: `variant="primary"`, `size="md"`.
+
 ## License
 
 MIT

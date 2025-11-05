@@ -121,3 +121,5 @@ export { default as WeatherDashboard } from './src/components/WeatherDashboard.a
 export { default as WeatherForecast } from './src/components/WeatherForecast.astro';
 export { default as WeatherLocationSearch } from './src/components/WeatherLocationSearch.astro';
 export { default as YouTubeEmbed } from './src/components/YouTubeEmbed.astro';
+// Variant utilities
+// buttonVariants intentionally internal to ButtonBase now; public export removed

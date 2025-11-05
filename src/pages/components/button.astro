@@ -7,16 +7,24 @@ import { Button } from 'comet-astro';
 
 ---
 
-<div class="flex gap-3">
+<div class="flex gap-3 flex-wrap">
   <Button variant="primary">Publish</Button>
   <Button variant="secondary">Preview</Button>
   <Button variant="ghost">Cancel</Button>
+  <Button variant="success">Saved</Button>
+  <Button variant="destructive">Delete</Button>
+</div>
+
+<!-- Loading examples -->
+<div class="mt-4 flex gap-3">
+  <Button loading>Saving...</Button>
+  <Button variant="destructive" loading>Deleting...</Button>
 </div>`;
 ---
 
 <DocsLayout
-  title="Button"
-  description="Accessible buttons with AAA contrast, three variants, and responsive sizing."
+  seoTitle="Button"
+  seoDescription="Accessible buttons with AAA contrast, three variants, and responsive sizing."
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
@@ -36,78 +44,161 @@ import { Button } from 'comet-astro';
     </p>
   </section>
 
-  <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
-    <dl class="grid gap-6 sm:grid-cols-2">
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+  <section id="props" class="space-y-4">
+    <div class="flex items-center justify-between gap-4">
+      <h2
+        class="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50"
       >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          variant?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Visual style for the control. Choose <code>"primary"</code>, <code
-            >"secondary"</code
-          >, or <code>"ghost"</code>. Defaults to <code>"primary"</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        Props
+      </h2>
+      <a
+        href="#props"
+        class="ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-transparent text-slate-600 hover:bg-slate-100 hover:text-sky-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-sky-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+        aria-label="Permalink Props"
       >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          size?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Adjusts height and padding. Options are <code>"sm"</code>, <code
-            >"md"</code
-          >, or <code>"lg"</code>. Defaults to <code>"md"</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+        <span aria-hidden class="text-xs font-semibold">#</span>
+      </a>
+    </div>
+
+    <div
+      class="prose max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-3"
+    >
+      <table
+        class="w-full text-sm border border-neutral-200 dark:border-neutral-800 rounded-md overflow-hidden"
       >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          href?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          When supplied, the component renders as an anchor element with the
-          same styling, enabling button-like links.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          external?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Forces the external-link treatment (icon, new tab, <code>rel</code>).
-          Defaults to automatic detection for absolute URLs.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          disabled?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Applies a disabled state and removes pointer events. The control
-          remains tabbable when rendered as a native <code>button</code>,
-          following platform conventions.
-        </dd>
-      </div>
-    </dl>
+        <thead class="bg-neutral-50 dark:bg-neutral-800">
+          <tr>
+            <th class="p-2 text-left">Prop</th>
+            <th class="p-2 text-left">Type</th>
+            <th class="p-2 text-left">Default</th>
+            <th class="p-2 text-left">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">variant</td>
+            <td class="p-2 font-mono"
+              >'primary' | 'secondary' | 'ghost' | 'success' | 'destructive' |
+              'warning' | 'cyan' | 'teal' | 'purple' | 'indigo' | 'info'</td
+            >
+            <td class="p-2 font-mono">'primary'</td>
+            <td class="p-2"
+              >Visual style for the control (includes Light & Dark variants).</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">size</td>
+            <td class="p-2 font-mono">'sm' | 'md' | 'lg'</td>
+            <td class="p-2 font-mono">'md'</td>
+            <td class="p-2">Adjusts height, padding and typography scale.</td>
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">id</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2"
+              >Optional DOM id attribute for JS hooks or targeting in tests.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">href</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2"
+              >When present, renders an anchor element with button styling.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">external</td>
+            <td class="p-2 font-mono">boolean</td>
+            <td class="p-2 font-mono">auto</td>
+            <td class="p-2"
+              >Force external link behaviour (adds icon, target and rel
+              attributes).</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">disabled</td>
+            <td class="p-2 font-mono">boolean</td>
+            <td class="p-2 font-mono">false</td>
+            <td class="p-2"
+              >Applies a disabled visual state and removes pointer events.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">loading</td>
+            <td class="p-2 font-mono">boolean</td>
+            <td class="p-2 font-mono">false</td>
+            <td class="p-2"
+              >Shows a spinner, sets <code>aria-busy</code>, and applies busy
+              styles.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">loadingLabel</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">'Loading'</td>
+            <td class="p-2"
+              >Accessible label read by screen readers while loading.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">class</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2"
+              >Additional Tailwind utility classes merged with computed classes
+              (useful for one-off overrides).</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">ariaLabel</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2"
+              >Accessible name for the button/link; when present, icons are
+              treated as decorative.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">icon</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2"
+              >Name of an icon from the <code>Icon</code> component to render before
+              the label.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">target</td>
+            <td class="p-2 font-mono"
+              >'_blank' | '_self' | '_parent' | '_top'</td
+            >
+            <td class="p-2 font-mono">'_self'</td>
+            <td class="p-2"
+              >Specifies where to open the linked document when using <code
+                >href</code
+              >.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">rel</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">—</td>
+            <td class="p-2"
+              >Rel attribute for anchors; <code>noopener noreferrer</code> is added
+              automatically for external links.</td
+            >
+          </tr>
+          <tr class="border-t border-neutral-200 dark:border-neutral-800">
+            <td class="p-2 font-mono">externalLabel</td>
+            <td class="p-2 font-mono">string</td>
+            <td class="p-2 font-mono">'opens in new window'</td>
+            <td class="p-2">Screen reader text appended for external links.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <section class="mt-10 space-y-6">
@@ -121,6 +212,15 @@ import { Button } from 'comet-astro';
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{usageSnippet}</code>
     </pre>
+    <h3 class="text-base font-semibold text-slate-100">Icon example</h3>
+    <p class="text-sm text-slate-200">
+      Quick usage with the built-in <code>Icon</code> set:
+    </p>
+    <div class="flex gap-3">
+      <Button icon="plus">Add</Button>
+      <Button variant="secondary" icon="check">Saved</Button>
+      <Button variant="ghost" icon="x">Cancel</Button>
+    </div>
   </section>
 
   <section class="mt-10 space-y-8">
@@ -129,6 +229,8 @@ import { Button } from 'comet-astro';
       <Button variant="primary">Primary action</Button>
       <Button variant="secondary">Secondary</Button>
       <Button variant="ghost">Ghost</Button>
+      <Button variant="success">Success</Button>
+      <Button variant="destructive">Destructive</Button>
     </div>
   </section>
 
@@ -139,6 +241,74 @@ import { Button } from 'comet-astro';
       <Button size="md" variant="primary">Medium</Button>
       <Button size="lg" variant="primary">Large</Button>
     </div>
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <h2 class="text-xl font-semibold text-slate-100">Loading state</h2>
+    <p class="text-base text-slate-200">
+      Buttons support a <code>loading</code> boolean prop which displays a small
+      spinner to the left of the label, sets <code>aria-busy="true"</code>, and
+      visually indicates the busy state (reduced opacity / cursor-wait). Use
+      <code>loadingLabel</code> to provide an accessible label announced to screen
+      readers while the control is busy.
+    </p>
+    <div class="flex gap-3">
+      <Button loading>Saving</Button>
+      <Button variant="destructive" loading loadingLabel="Deleting item"
+        >Delete</Button
+      >
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Overriding styles</h2>
+    <p class="text-base text-slate-200">
+      You can override the generated styles either by passing a <code
+        >class</code
+      >
+      prop (merged with variant classes) or programmatically using the
+      <code>buttonVariants</code> utility exported by the library. When overriding
+      colors, also include related utilities such as <code>text-...</code>
+      and the <code>dark:...</code> variants if your site supports dark mode, so
+      you don't leave a conflicting color utility that preserves the old appearance.
+    </p>
+
+    <h3 class="text-lg font-medium text-slate-100">1) Inline class override</h3>
+    <p class="text-sm text-slate-200">
+      Use the <code>class</code> prop to add or override utilities. The library uses
+      merging strategies so utility classes you pass will apply on top of the defaults.
+    </p>
+    <div class="flex gap-3">
+      <Button
+        class="bg-purple-700 border-purple-700 text-white hover:bg-purple-600 dark:bg-purple-800 dark:border-purple-800"
+        >Purple</Button
+      >
+      <Button
+        variant="ghost"
+        class="text-rose-500 hover:bg-rose-50 dark:text-rose-400"
+        >Rose Ghost</Button
+      >
+    </div>
+
+    <h3 class="text-lg font-medium text-slate-100">2) Programmatic override</h3>
+    <p class="text-sm text-slate-200">
+      Import <code>buttonVariants</code> and compute classes in JS/TS to create new
+      presets or compose with runtime values.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-ts">{`// In your own project, create a small helper with tailwind-variants
+import { tv } from 'tailwind-variants';
+
+const myButton = tv({
+  base: 'inline-flex items-center justify-center rounded-lg',
+  variants: { variant: { primary: 'bg-blue-900 text-white' }, size: { lg: 'px-6' } },
+});
+
+const fancy = myButton({ variant: 'primary', size: 'lg', class: 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white dark:from-purple-700 dark:to-indigo-700' });
+
+<Button class={fancy}>Fancy</Button>`}</code>
+    </pre>
   </section>
 
   <section class="mt-10 space-y-8">

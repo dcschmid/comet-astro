@@ -7,8 +7,8 @@ import Badge from '../components/Badge.astro';
 ---
 
 <DocsLayout
-  title="BaseLayout & Barrierefreie Schriften"
-  description="Grundgerüst für WCAG-konforme Seiten + Prop-basierte Auswahl barrierefreier Schriftarten."
+  seoTitle="BaseLayout & Barrierefreie Schriften"
+  seoDescription="Grundgerüst für WCAG-konforme Seiten + Prop-basierte Auswahl barrierefreier Schriftarten."
   headlineSize="xl"
   descriptionSize="md"
 >
@@ -24,18 +24,22 @@ import Badge from '../components/Badge.astro';
     <Headline level="h2" textSize="lg" weight="bold">Props</Headline>
     <div class="space-y-4 text-sm">
       <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="title" variant="neutral" />
+        <Badge label="seoTitle" variant="neutral" />
         <span class="text-slate-600 dark:text-slate-400"
-          >Seitentitel (string)</span>
+          >SEO-Seitentitel (string; wird für &lt;title&gt; verwendet)</span
+        >
       </div>
       <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="description" variant="neutral" />
-        <span class="text-slate-600 dark:text-slate-400">Meta Description</span>
+        <Badge label="seoDescription" variant="neutral" />
+        <span class="text-slate-600 dark:text-slate-400"
+          >Meta Description (für SEO)</span
+        >
       </div>
       <div class="flex flex-wrap gap-2 items-center">
         <Badge label="lang" variant="neutral" />
         <span class="text-slate-600 dark:text-slate-400"
-          >Sprach-Code (default en)</span>
+          >Sprach-Code (default en)</span
+        >
       </div>
       <div class="flex flex-wrap gap-2 items-center">
         <Badge label="fontMode" variant="accent" />
@@ -45,27 +49,32 @@ import Badge from '../components/Badge.astro';
             nunito | lato | ubuntu | sourcesans | sourcecode | firacode |
             ibmplexsans | ibmplexmono | spacegrotesk | sylexiad | tiresias |
             braille</code
-          ></span>
+          ></span
+        >
       </div>
       <div class="flex flex-wrap gap-2 items-center">
         <Badge label="highLegibility" variant="success" />
         <span class="text-slate-600 dark:text-slate-400"
-          >Erhöhte Lesbarkeit (größere Line-Height, word-spacing)</span>
+          >Erhöhte Lesbarkeit (größere Line-Height, word-spacing)</span
+        >
       </div>
       <div class="flex flex-wrap gap-2 items-center">
         <Badge label="heading" variant="neutral" />
         <span class="text-slate-600 dark:text-slate-400"
-          >Optionales H1 direkt im Layout</span>
+          >Optionales H1 direkt im Layout</span
+        >
       </div>
       <div class="flex flex-wrap gap-2 items-center">
         <Badge label="containerSize" variant="neutral" />
         <span class="text-slate-600 dark:text-slate-400"
-          >Breite: sm | md | lg | xl | 2xl | full</span>
+          >Breite: sm | md | lg | xl | 2xl | full</span
+        >
       </div>
       <div class="flex flex-wrap gap-2 items-center">
         <Badge label="announceRegion" variant="neutral" />
         <span class="text-slate-600 dark:text-slate-400"
-          >Screenreader Live-Region einschalten</span>
+          >Screenreader Live-Region einschalten</span
+        >
       </div>
     </div>
 
@@ -76,8 +85,8 @@ import Badge from '../components/Badge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout
-  title="Startseite"
-  description="Demo mit Atkinson Hyperlegible"
+  seoTitle="Startseite"
+  seoDescription="Demo mit Atkinson Hyperlegible"
   fontMode="atkinson"
   highLegibility={true}
   heading="Willkommen"

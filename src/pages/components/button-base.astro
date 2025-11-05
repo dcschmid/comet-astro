@@ -1,6 +1,10 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import ButtonBase from '../../components/ButtonBase.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import Headline from '../../components/Headline.astro';
+import Table from '../../components/Table.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 const usageSnippet = `---
 import { ButtonBase } from 'comet-astro';
@@ -26,176 +30,189 @@ import { ButtonBase } from 'comet-astro';
 >
   Visit Website
 </ButtonBase>`;
+
+const propsColumns = [
+  { key: 'prop', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    prop: 'as',
+    type: "'button' | 'a'",
+    default: "'button'",
+    description:
+      'Element type to render; affects available props like href and type.',
+  },
+  {
+    prop: 'variant',
+    type: "'primary' | 'secondary' | 'ghost' | 'success' | 'destructive' | 'warning' | 'cyan' | 'teal' | 'purple' | 'indigo' | 'info'",
+    default: "'primary'",
+    description:
+      'Visual style variant used for colors and focus rings. Provides Light and Dark mode variants.',
+  },
+  {
+    prop: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Control sizing and padding.',
+  },
+  {
+    prop: 'loading',
+    type: 'boolean',
+    default: 'false',
+    description:
+      'Displays spinner, sets <code>aria-busy</code>, and applies loading styles.',
+  },
+  {
+    prop: 'loadingLabel',
+    type: 'string',
+    default: "'Loading'",
+    description: 'Accessible label read by screen readers while loading.',
+  },
+  {
+    prop: 'class',
+    type: 'string',
+    default: '—',
+    description:
+      'Additional Tailwind utility classes merged with computed classes (useful for one-off overrides).',
+  },
+  {
+    prop: 'ariaLabel',
+    type: 'string',
+    default: '—',
+    description:
+      'Accessible name for the button/link; when present, icons are treated as decorative.',
+  },
+  {
+    prop: 'disabled',
+    type: 'boolean',
+    default: 'false',
+    description: 'Disables interaction and applies disabled styles.',
+  },
+  {
+    prop: 'icon',
+    type: 'string',
+    default: '—',
+    description:
+      'Optional icon name for the <code>Icon</code> component. Renders before the content.',
+  },
+  {
+    prop: 'href',
+    type: 'string',
+    default: '—',
+    description:
+      "Destination for anchor rendering (only when <code>as='a'</code>).",
+  },
+  {
+    prop: 'target',
+    type: "'_blank' | '_self' | '_parent' | '_top'",
+    default: "'_self'",
+    description:
+      "Specifies where to open the linked document when using <code>as='a'</code>.",
+  },
+  {
+    prop: 'rel',
+    type: 'string',
+    default: '—',
+    description:
+      'Rel attribute for anchors; <code>noopener noreferrer</code> is added automatically for external links.',
+  },
+  {
+    prop: 'external',
+    type: 'boolean',
+    default: 'auto',
+    description:
+      'Force or suppress external link behavior. If omitted, external links are detected automatically.',
+  },
+  {
+    prop: 'externalLabel',
+    type: 'string',
+    default: "'opens in new window'",
+    description: 'Screen reader text appended for external links.',
+  },
+  {
+    prop: 'id',
+    type: 'string',
+    default: '—',
+    description:
+      'Optional DOM id attribute for JS hooks or targeting in tests.',
+  },
+];
+
+const tvSnippet = `// In your app: create a small helper using tailwind-variants
+import { tv } from 'tailwind-variants';
+
+// Define the tokens you need for your project (copy/adapt from ButtonBase as desired)
+export const myButton = tv({
+  base: 'inline-flex items-center justify-center rounded-lg font-semibold no-underline transition-colors duration-150',
+  variants: {
+    variant: {
+      primary: 'border border-blue-900 bg-blue-950 text-blue-50',
+      success: 'border border-green-900 bg-green-950 text-green-50',
+    },
+    size: {
+      sm: 'h-9 px-3 text-sm',
+      md: 'h-10 px-4 text-sm',
+      lg: 'h-12 px-6 text-base',
+    },
+  },
+  defaultVariants: { variant: 'primary', size: 'md' },
+});
+
+// Compose a preset and merge additional utilities via the \`class\` option
+const fancy = myButton({
+  variant: 'primary',
+  size: 'lg',
+  class: 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white dark:from-purple-700 dark:to-indigo-700',
+});
+
+// Pass the computed classes to the component's \`class\` prop
+<ButtonBase as="button" class={fancy}>Fancy</ButtonBase>`;
 ---
 
 <DocsLayout
-  title="ButtonBase"
-  description="Shared styling and logic foundation for Button and ButtonLink components with consistent appearance, accessibility, and external link handling."
+  seoTitle="ButtonBase"
+  seoDescription="Shared styling and logic foundation for Button and ButtonLink components with consistent appearance, accessibility, and external link handling."
 >
   <section class="space-y-4">
-    <p class="text-base text-slate-100">
+    <Paragraph class="text-base text-slate-100">
       ButtonBase is the foundational component that powers both Button and
       ButtonLink, providing consistent styling, accessibility features, and
       behavior across all button-like interactions in Comet.
-    </p>
-    <p class="text-base text-slate-200">
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
       This component ensures WCAG AAA compliance with 9:1 contrast ratios,
       proper focus indicators, and intelligent external link detection while
       maintaining a unified design system across button variants.
-    </p>
-    <p class="text-base text-slate-200">
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
       <strong>Note:</strong> ButtonBase is typically used internally by Button and
       ButtonLink components rather than directly in applications. For most use cases,
       use Button or ButtonLink instead.
-    </p>
+    </Paragraph>
+  </section>
+
+  <section id="props" class="space-y-4">
+    <Headline level="h2">Props</Headline>
+
+    <div
+      class="prose max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-3"
+    >
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
-    <dl class="grid gap-6 sm:grid-cols-2">
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          as
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Required element type to render. Choose <code>"button"</code> or <code
-            >"a"</code
-          >.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          variant?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Visual style variant. Choose <code>"primary"</code>, <code
-            >"secondary"</code
-          >, or <code>"ghost"</code>. Defaults to <code>"primary"</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          size?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Size variant affecting height and padding. Choose <code>"sm"</code>,
-          <code>"md"</code>, or <code>"lg"</code>. Defaults to <code>"md"</code
-          >.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          disabled?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Whether the component is disabled. Defaults to <code>false</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          type?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Button type (only for button elements). Choose <code>"button"</code>,
-          <code>"submit"</code>, or <code>"reset"</code>. Defaults to <code
-            >"button"</code
-          >.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          href?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Link destination (only for anchor elements). Required when <code
-            >as="a"</code
-          >.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          target?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Link target (only for anchor elements). Choose <code>"_blank"</code>,
-          <code>"_self"</code>, <code>"_parent"</code>, or <code>"_top"</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          external?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Force external link behavior with icon and new tab. Auto-detected for
-          absolute URLs.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          ariaLabel?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Custom ARIA label for accessibility when content is not descriptive
-          enough.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          class?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Additional CSS classes for custom styling.
-        </dd>
-      </div>
-    </dl>
-  </section>
-
-  <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Architecture Benefits</h2>
-    <p class="text-base text-slate-200">
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Architecture Benefits</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
       ButtonBase provides shared functionality that ensures consistency across
       button components:
-    </p>
+    </Paragraph>
     <ul class="list-disc pl-6 space-y-1 text-slate-200">
       <li>
         <strong>Code Reduction:</strong> ~60% reduction in duplicate styling between
@@ -224,15 +241,64 @@ import { ButtonBase } from 'comet-astro';
     </ul>
   </section>
 
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Overriding styles</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Because ButtonBase is powered by <code>tailwind-variants</code>, you can
+      override styles in two ways: a) via the <code>class</code> prop which will
+      be merged with the computed classes, or b) by importing
+      <code>buttonVariants</code> to compute custom presets. If your project supports
+      dark mode, include <code>dark:...</code> utilities when overriding colors to
+      ensure the override appears correctly in both themes.
+    </Paragraph>
+
+    <Headline level="h3" class="text-lg font-medium text-slate-100"
+      >Inline class prop</Headline
+    >
+    <Paragraph class="text-sm text-slate-200"
+      >Add utilities for one-off overrides.</Paragraph
+    >
+    <div class="flex gap-3">
+      <ButtonBase
+        as="button"
+        class="bg-amber-600 border-amber-600 text-white dark:bg-amber-700 dark:border-amber-700"
+        >Amber</ButtonBase
+      >
+      <ButtonBase
+        as="button"
+        variant="ghost"
+        class="text-emerald-400 dark:text-emerald-300">Emerald Ghost</ButtonBase
+      >
+    </div>
+
+    <Headline level="h3" class="text-lg font-medium text-slate-100"
+      >Programmatic composition</Headline
+    >
+    <Paragraph class="text-sm text-slate-200"
+      >Create new presets in code by composing a local <code>tv</code> helper — the
+      library keeps its internal <code>buttonVariants</code> inside <code
+        >ButtonBase</code
+      >, so you should define a small helper in your app to compute classes for
+      custom presets.</Paragraph
+    >
+    <CodeBlock language="ts" code={tvSnippet} />
+  </section>
+
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">Visual Variants</h2>
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Visual Variants</Headline
+    >
     <div class="grid gap-6 lg:grid-cols-3">
       <!-- Primary Variant -->
       <div class="space-y-3">
-        <h3 class="text-lg font-medium text-slate-100">Primary</h3>
-        <p class="text-sm text-slate-300">
+        <Headline level="h3" class="text-lg font-medium text-slate-100"
+          >Primary</Headline
+        >
+        <Paragraph class="text-sm text-slate-300">
           High-contrast variant for primary actions
-        </p>
+        </Paragraph>
         <ButtonBase as="button" variant="primary" size="md">
           Primary Action
         </ButtonBase>
@@ -240,10 +306,12 @@ import { ButtonBase } from 'comet-astro';
 
       <!-- Secondary Variant -->
       <div class="space-y-3">
-        <h3 class="text-lg font-medium text-slate-100">Secondary</h3>
-        <p class="text-sm text-slate-300">
+        <Headline level="h3" class="text-lg font-medium text-slate-100"
+          >Secondary</Headline
+        >
+        <Paragraph class="text-sm text-slate-300">
           Subtle variant for secondary actions
-        </p>
+        </Paragraph>
         <ButtonBase as="button" variant="secondary" size="md">
           Secondary Action
         </ButtonBase>
@@ -251,10 +319,12 @@ import { ButtonBase } from 'comet-astro';
 
       <!-- Ghost Variant -->
       <div class="space-y-3">
-        <h3 class="text-lg font-medium text-slate-100">Ghost</h3>
-        <p class="text-sm text-slate-300">
+        <Headline level="h3" class="text-lg font-medium text-slate-100"
+          >Ghost</Headline
+        >
+        <Paragraph class="text-sm text-slate-300">
           Minimal variant for tertiary actions
-        </p>
+        </Paragraph>
         <ButtonBase as="button" variant="ghost" size="md">
           Ghost Action
         </ButtonBase>
@@ -262,8 +332,100 @@ import { ButtonBase } from 'comet-astro';
     </div>
   </section>
 
+  <section class="mt-12 space-y-6">
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Variant Gallery (Light / Dark)</Headline
+    >
+    <Paragraph class="text-sm text-slate-300"
+      >Preview each variant in both light and dark contexts. Use the copy button
+      to grab the variant class snippet.</Paragraph
+    >
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <!-- Light Preview -->
+      <div
+        class="rounded-lg border border-slate-700/60 bg-white p-6 text-slate-900"
+      >
+        <Headline level="h3" class="text-lg font-medium mb-3 text-slate-900"
+          >Light Mode</Headline
+        >
+        <div class="flex flex-wrap gap-3">
+          <ButtonBase as="button" variant="primary">Primary</ButtonBase>
+          <ButtonBase as="button" variant="success">Success</ButtonBase>
+          <ButtonBase as="button" variant="destructive">Delete</ButtonBase>
+          <ButtonBase as="button" variant="warning">Warning</ButtonBase>
+          <ButtonBase as="button" variant="info">Info</ButtonBase>
+          <ButtonBase as="button" variant="secondary">Secondary</ButtonBase>
+          <ButtonBase as="button" variant="ghost">Ghost</ButtonBase>
+          <ButtonBase as="button" variant="cyan">Cyan</ButtonBase>
+          <ButtonBase as="button" variant="teal">Teal</ButtonBase>
+          <ButtonBase as="button" variant="purple">Purple</ButtonBase>
+          <ButtonBase as="button" variant="indigo">Indigo</ButtonBase>
+        </div>
+      </div>
+
+      <!-- Dark Preview -->
+      <div
+        class="rounded-lg border border-slate-700/60 bg-slate-900 p-6 text-slate-50"
+      >
+        <Headline level="h3" class="text-lg font-medium mb-3"
+          >Dark Mode</Headline
+        >
+        <div class="flex flex-wrap gap-3">
+          <div class="dark">
+            <ButtonBase as="button" variant="primary">Primary</ButtonBase>
+            <ButtonBase as="button" variant="success">Success</ButtonBase>
+            <ButtonBase as="button" variant="destructive">Delete</ButtonBase>
+            <ButtonBase as="button" variant="warning">Warning</ButtonBase>
+            <ButtonBase as="button" variant="info">Info</ButtonBase>
+            <ButtonBase as="button" variant="secondary">Secondary</ButtonBase>
+            <ButtonBase as="button" variant="ghost">Ghost</ButtonBase>
+            <ButtonBase as="button" variant="cyan">Cyan</ButtonBase>
+            <ButtonBase as="button" variant="teal">Teal</ButtonBase>
+            <ButtonBase as="button" variant="purple">Purple</ButtonBase>
+            <ButtonBase as="button" variant="indigo">Indigo</ButtonBase>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose max-w-none">
+      <Headline level="h4">Copyable snippets</Headline>
+      <CodeBlock
+        language="html"
+        code={`<ButtonBase as="button" variant="primary">Primary</ButtonBase>`}
+        className="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50"
+      />
+      <CodeBlock
+        language="html"
+        code={`<ButtonBase as="button" variant="warning">Warning</ButtonBase>`}
+        className="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50"
+      />
+    </div>
+  </section>
+
+  <section class="mt-8 space-y-3">
+    <Headline level="h3" class="text-base font-semibold text-slate-100"
+      >Icon example</Headline
+    >
+    <Paragraph class="text-sm text-slate-200"
+      >Use the simple <code>icon</code> prop for common cases. The icon will be announced
+      when no <code>ariaLabel</code> is provided; when you pass an <code
+        >ariaLabel</code
+      >, the icon is treated as decorative.</Paragraph
+    >
+    <div class="flex gap-3">
+      <ButtonBase as="button" icon="plus">Add</ButtonBase>
+      <ButtonBase as="button" variant="secondary" icon="check">Saved</ButtonBase
+      >
+      <ButtonBase as="button" variant="ghost" icon="x">Cancel</ButtonBase>
+    </div>
+  </section>
+
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">Size Variants</h2>
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Size Variants</Headline
+    >
     <div class="flex flex-wrap items-center gap-3">
       <ButtonBase as="button" variant="primary" size="sm">Small</ButtonBase>
       <ButtonBase as="button" variant="primary" size="md">Medium</ButtonBase>
@@ -272,14 +434,18 @@ import { ButtonBase } from 'comet-astro';
   </section>
 
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">Element Types</h2>
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Element Types</Headline
+    >
     <div class="grid gap-6 lg:grid-cols-2">
       <!-- Button Element -->
       <div class="space-y-3">
-        <h3 class="text-lg font-medium text-slate-100">Button Element</h3>
-        <p class="text-sm text-slate-300">
+        <Headline level="h3" class="text-lg font-medium text-slate-100"
+          >Button Element</Headline
+        >
+        <Paragraph class="text-sm text-slate-300">
           For form submissions and interactive actions
-        </p>
+        </Paragraph>
         <div class="space-y-2">
           <ButtonBase as="button" type="button" variant="primary">
             Interactive Button
@@ -295,8 +461,12 @@ import { ButtonBase } from 'comet-astro';
 
       <!-- Anchor Element -->
       <div class="space-y-3">
-        <h3 class="text-lg font-medium text-slate-100">Anchor Element</h3>
-        <p class="text-sm text-slate-300">For navigation and external links</p>
+        <Headline level="h3" class="text-lg font-medium text-slate-100"
+          >Anchor Element</Headline
+        >
+        <Paragraph class="text-sm text-slate-300"
+          >For navigation and external links</Paragraph
+        >
         <div class="space-y-2">
           <ButtonBase as="a" href="/docs" variant="primary">
             Internal Link
@@ -318,16 +488,18 @@ import { ButtonBase } from 'comet-astro';
   </section>
 
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">
+    <Headline level="h2" class="text-xl font-semibold text-slate-100">
       External Link Detection
-    </h2>
-    <p class="text-base text-slate-200">
+    </Headline>
+    <Paragraph class="text-base text-slate-200">
       ButtonBase automatically detects external links and applies appropriate
       styling and attributes:
-    </p>
+    </Paragraph>
     <div class="space-y-4">
       <div class="space-y-2">
-        <h4 class="font-medium text-slate-200">Automatic Detection</h4>
+        <Headline level="h4" class="font-medium text-slate-200"
+          >Automatic Detection</Headline
+        >
         <div class="flex gap-3">
           <ButtonBase as="a" href="https://astro.build" variant="primary">
             Astro Website
@@ -339,7 +511,9 @@ import { ButtonBase } from 'comet-astro';
       </div>
 
       <div class="space-y-2">
-        <h4 class="font-medium text-slate-200">Manual Override</h4>
+        <Headline level="h4" class="font-medium text-slate-200"
+          >Manual Override</Headline
+        >
         <div class="flex gap-3">
           <ButtonBase
             as="a"
@@ -363,48 +537,55 @@ import { ButtonBase } from 'comet-astro';
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
       While ButtonBase can be used directly for custom implementations, it's
       recommended to use Button or ButtonLink components which provide optimized
       configurations for common use cases.
-    </p>
-    <pre
-      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-      <code class="language-astro">{usageSnippet}</code>
-    </pre>
+    </Paragraph>
+    <CodeBlock
+      language="astro"
+      code={usageSnippet}
+      className="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"
+    />
   </section>
 
   <section class="mt-10 space-y-4">
-    <h2 class="text-xl font-semibold text-slate-100">
+    <Headline level="h2" class="text-xl font-semibold text-slate-100">
       Components Using ButtonBase
-    </h2>
-    <p class="text-base text-slate-200">
+    </Headline>
+    <Paragraph class="text-base text-slate-200">
       The following components are built on top of ButtonBase:
-    </p>
+    </Paragraph>
     <div class="grid gap-3 sm:grid-cols-2">
       <div
         class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 text-sm"
       >
         <strong class="text-slate-200">Button</strong>
-        <p class="text-slate-400">
+        <Paragraph class="text-slate-400">
           Intelligent button/link component with auto-detection
-        </p>
+        </Paragraph>
       </div>
       <div
         class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-3 text-sm"
       >
         <strong class="text-slate-200">ButtonLink</strong>
-        <p class="text-slate-400">Dedicated anchor-style button component</p>
+        <Paragraph class="text-slate-400"
+          >Dedicated anchor-style button component</Paragraph
+        >
       </div>
     </div>
   </section>
 
   <section class="mt-10 space-y-4">
-    <h2 class="text-xl font-semibold text-slate-100">Accessibility Features</h2>
-    <p class="text-base text-slate-200">
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Accessibility Features</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
       ButtonBase ensures WCAG AAA compliance across all button components with:
-    </p>
+    </Paragraph>
     <ul class="list-disc pl-6 space-y-1 text-slate-200">
       <li>
         9:1 contrast ratios in all variants and states (hover, focus, disabled)
@@ -421,10 +602,12 @@ import { ButtonBase } from 'comet-astro';
   </section>
 
   <section class="mt-10 space-y-4">
-    <h2 class="text-xl font-semibold text-slate-100">Styling System</h2>
-    <p class="text-base text-slate-200">
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Styling System</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
       ButtonBase provides a comprehensive styling system with:
-    </p>
+    </Paragraph>
     <ul class="list-disc pl-6 space-y-1 text-slate-200">
       <li>
         <strong>Three Variants:</strong> Primary, secondary, and ghost with distinct
@@ -454,10 +637,14 @@ import { ButtonBase } from 'comet-astro';
   </section>
 
   <section class="mt-10 space-y-4">
-    <h2 class="text-xl font-semibold text-slate-100">Implementation Details</h2>
+    <Headline level="h2" class="text-xl font-semibold text-slate-100"
+      >Implementation Details</Headline
+    >
     <div class="space-y-3">
       <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4">
-        <h4 class="font-medium text-slate-200 mb-2">Element Selection Logic</h4>
+        <Headline level="h4" class="font-medium text-slate-200 mb-2"
+          >Element Selection Logic</Headline
+        >
         <ul class="list-disc pl-4 space-y-1 text-sm text-slate-300">
           <li>
             <code>as="button"</code>: Renders <code>&lt;button&gt;</code> element
@@ -475,7 +662,9 @@ import { ButtonBase } from 'comet-astro';
       </div>
 
       <div class="rounded-lg border border-slate-700/75 bg-slate-900/60 p-4">
-        <h4 class="font-medium text-slate-200 mb-2">External Link Detection</h4>
+        <Headline level="h4" class="font-medium text-slate-200 mb-2"
+          >External Link Detection</Headline
+        >
         <ul class="list-disc pl-4 space-y-1 text-sm text-slate-300">
           <li>
             Automatic detection for URLs starting with <code>http://</code>, <code
