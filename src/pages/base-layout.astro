@@ -1,149 +1,143 @@
 ---
-import DocsLayout from '../layouts/DocsLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Headline from '../components/Headline.astro';
 import Paragraph from '../components/Paragraph.astro';
 import CodeBlock from '../components/CodeBlock.astro';
 import Badge from '../components/Badge.astro';
 ---
 
-<DocsLayout
-  seoTitle="BaseLayout & Barrierefreie Schriften"
-  seoDescription="Grundgerüst für WCAG-konforme Seiten + Prop-basierte Auswahl barrierefreier Schriftarten."
-  headlineSize="xl"
-  descriptionSize="md"
+<BaseLayout
+  seoTitle="BaseLayout & Accessible Fonts"
+  seoDescription="A minimal scaffold for WCAG-compliant pages and prop-based selection of accessible fonts."
+  containerSize="lg"
 >
-  <section class="space-y-8">
-    <Headline level="h2" textSize="lg" weight="bold">Motivation</Headline>
-    <Paragraph size="md" variant="muted" maxWidth="prose">
-      Das <code>BaseLayout</code> bietet ein minimales, semantisches Grundgerüst
-      mit <strong>Landmarks</strong>, Skip-Link, Header, optionaler Sidebar und
-      Footer. Es stellt sicher, dass grundlegende WCAG-Praktiken (Struktur,
-      Fokus, Kontrast) von Anfang an vorhanden sind.
-    </Paragraph>
+  <div slot="header">
+    <header class="mb-6">
+      <Headline level="h1" textSize="2xl" weight="extrabold"
+        >BaseLayout & Accessible Fonts</Headline
+      >
+    </header>
+  </div>
 
-    <Headline level="h2" textSize="lg" weight="bold">Props</Headline>
-    <div class="space-y-4 text-sm">
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="seoTitle" variant="neutral" />
-        <span class="text-slate-600 dark:text-slate-400"
-          >SEO-Seitentitel (string; wird für &lt;title&gt; verwendet)</span
-        >
-      </div>
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="seoDescription" variant="neutral" />
-        <span class="text-slate-600 dark:text-slate-400"
-          >Meta Description (für SEO)</span
-        >
-      </div>
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="lang" variant="neutral" />
-        <span class="text-slate-600 dark:text-slate-400"
-          >Sprach-Code (default en)</span
-        >
-      </div>
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="fontMode" variant="accent" />
-        <span class="text-slate-600 dark:text-slate-400"
-          >Barrierefreie Schrift: <code
-            >default | atkinson | opendyslexic | lexie (self-host) | opensans |
-            nunito | lato | ubuntu | sourcesans | sourcecode | firacode |
-            ibmplexsans | ibmplexmono | spacegrotesk | sylexiad | tiresias |
-            braille</code
-          ></span
-        >
-      </div>
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="highLegibility" variant="success" />
-        <span class="text-slate-600 dark:text-slate-400"
-          >Erhöhte Lesbarkeit (größere Line-Height, word-spacing)</span
-        >
-      </div>
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="heading" variant="neutral" />
-        <span class="text-slate-600 dark:text-slate-400"
-          >Optionales H1 direkt im Layout</span
-        >
-      </div>
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="containerSize" variant="neutral" />
-        <span class="text-slate-600 dark:text-slate-400"
-          >Breite: sm | md | lg | xl | 2xl | full</span
-        >
-      </div>
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge label="announceRegion" variant="neutral" />
-        <span class="text-slate-600 dark:text-slate-400"
-          >Screenreader Live-Region einschalten</span
-        >
-      </div>
-    </div>
+  <div slot="main">
+    <section class="space-y-8">
+      <Paragraph size="md" variant="muted" maxWidth="prose">
+        The <code>BaseLayout</code> provides a minimal, semantic scaffold including
+        landmarks, a skip link, a header, optional sidebar and footer. It ensures
+        basic WCAG practices (structure, focus, contrast) are present by default.
+      </Paragraph>
 
-    <Headline level="h2" textSize="lg" weight="bold">Beispiel</Headline>
-    <CodeBlock lang="astro">
-      {
-        `---
+      <Headline level="h2" textSize="lg" weight="bold">Props</Headline>
+      <div class="space-y-4 text-sm">
+        <div class="flex flex-wrap gap-2 items-center">
+          <Badge label="seoTitle" variant="neutral" />
+          <span class="text-slate-600 dark:text-slate-400"
+            >SEO page title (string; used for the &lt;title&gt; tag)</span
+          >
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <Badge label="seoDescription" variant="neutral" />
+          <span class="text-slate-600 dark:text-slate-400"
+            >Meta description (for SEO)</span
+          >
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <Badge label="lang" variant="neutral" />
+          <span class="text-slate-600 dark:text-slate-400"
+            >Language code (default: en)</span
+          >
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <Badge label="fontMode" variant="accent" />
+          <span class="text-slate-600 dark:text-slate-400"
+            >Accessible font choices: <code
+              >default | atkinson | opendyslexic</code
+            ></span
+          >
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <Badge label="highLegibility" variant="success" />
+          <span class="text-slate-600 dark:text-slate-400"
+            >Enable high legibility (larger line-height and word-spacing)</span
+          >
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <Badge label="heading" variant="neutral" />
+          <span class="text-slate-600 dark:text-slate-400"
+            >Optional H1 provided directly by the layout</span
+          >
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <Badge label="containerSize" variant="neutral" />
+          <span class="text-slate-600 dark:text-slate-400"
+            >Container width: sm | md | lg | xl | 2xl | full</span
+          >
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <Badge label="announceRegion" variant="neutral" />
+          <span class="text-slate-600 dark:text-slate-400"
+            >Enable screen reader live region</span
+          >
+        </div>
+      </div>
+
+      <Headline level="h2" textSize="lg" weight="bold">Example</Headline>
+      <CodeBlock lang="astro">
+        {
+          `---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout
-  seoTitle="Startseite"
-  seoDescription="Demo mit Atkinson Hyperlegible"
+  seoTitle="Home"
+  seoDescription="Demo using Atkinson Hyperlegible"
   fontMode="atkinson"
   highLegibility={true}
-  heading="Willkommen"
+  heading="Welcome"
   containerSize="lg"
 >
-  <p>Diese Seite nutzt die Schriftart Atkinson Hyperlegible für bessere Lesbarkeit.</p>
+  <p>This page uses Atkinson Hyperlegible for improved readability.</p>
 </BaseLayout>`
-      }
-    </CodeBlock>
+        }
+      </CodeBlock>
 
-    <Headline level="h2" textSize="lg" weight="bold"
-      >Schriften & Hinweise</Headline
-    >
-    <ul
-      class="list-disc pl-6 space-y-2 text-sm text-slate-700 dark:text-slate-300"
-    >
-      <li>
-        <strong>Atkinson Hyperlegible:</strong> Für Sehbehinderungen optimiert (Formdifferenzierung).
-      </li>
-      <li>
-        <strong>OpenDyslexic:</strong> Open-Source, Gewicht unten stabilisiert Buchstaben.
-      </li>
-      <li>
-        <strong>Lexie Readable / Sylexiad / Tiresias:</strong> Erfordern teils eigene
-        Lizenz & Hosting (Platzhalter-Fonts).
-      </li>
-      <li>
-        <strong>Braille:</strong> Nur für visuelle Darstellung – Screenreader benötigen
-        keine Braille-Schrift.
-      </li>
-      <li>
-        <strong
-          >Open Sans / Lato / Nunito / Ubuntu / Space Grotesk / Source Sans Pro
-          / IBM Plex Sans:</strong
-        > Hohe Lesbarkeit, ausgewogene Formen, geeignet für Fließtext.
-      </li>
-      <li>
-        <strong>Source Code Pro / Fira Code / IBM Plex Mono:</strong> Monospace nur
-        für Codebereiche; nicht als Grundschrift für lange Fließtexte nutzen.
-      </li>
-      <li>
-        <strong>Performance:</strong> Für Produktion lokale <code
-          >@font-face</code
-        >-Dateien hosten und Preload nutzen.
-      </li>
-      <li>
-        <strong>Farb- & Kontrasttests:</strong> Schriftwechsel kann minimale Pixel-Verschiebungen
-        erzeugen → visuelle Regression prüfen.
-      </li>
-    </ul>
+      <Headline level="h2" textSize="lg" weight="bold">Fonts & Notes</Headline>
+      <ul
+        class="list-disc pl-6 space-y-2 text-sm text-slate-700 dark:text-slate-300"
+      >
+        <li>
+          <strong>Atkinson Hyperlegible:</strong> Optimized for visual impairments
+          (distinct letterforms).
+        </li>
+        <li>
+          <strong>OpenDyslexic:</strong> Open-source font with heavier bottoms to
+          anchor letter shapes.
+        </li>
+        <li>
+          <strong>Other specialty fonts:</strong> A number of licensed or specialty
+          fonts exist, but they are not included in the default set and may require
+          separate licensing and hosting.
+        </li>
+        <li>
+          <strong>Monospace fonts:</strong> Use monospaced fonts for code blocks
+          only (avoid using them as the primary body font).
+        </li>
+        <li>
+          <strong>Performance:</strong> In production host local <code
+            >@font-face</code
+          > files and use preload.
+        </li>
+        <li>
+          <strong>Color & contrast testing:</strong> Changing fonts can cause minor
+          pixel shifts — run visual regression tests.
+        </li>
+      </ul>
 
-    <Headline level="h2" textSize="lg" weight="bold">Best Practices</Headline>
-    <Paragraph size="sm" variant="muted" maxWidth="prose">
-      Nutze <code>fontMode</code> sparsam pro Seite. Ein globaler User-Schrift-Umschalter
-      kann separat implementiert werden, um persönliche Präferenzen zu respektieren.
-      Für Dyslexie-optimierte Varianten zusätzlich moderate Zeilenlänge (≈72ch) und
-      ausreichendes Zeilenintervall prüfen.
-    </Paragraph>
-  </section>
-</DocsLayout>
+      <Headline level="h2" textSize="lg" weight="bold">Best Practices</Headline>
+      <Paragraph size="sm" variant="muted" maxWidth="prose">
+        Use <code>fontMode</code> sparingly per page. Consider a global user font
+        preference toggle to respect user choices. For dyslexia-optimized fonts,
+        also prefer moderate line lengths (~72ch) and sufficient line spacing.
+      </Paragraph>
+    </section>
+  </div>
+</BaseLayout>

@@ -15,43 +15,23 @@ interface Props {
 
 const {
   value = 'default',
-  label = 'Schriftart wählen',
+  label = 'Select font',
   storageKey = 'comet-font',
   options = [
     {
       id: 'default',
-      label: 'Standard',
-      description: 'System / Inter fallback',
+      label: 'Default',
+      description: 'System fallback',
     },
     {
       id: 'atkinson',
       label: 'Atkinson Hyperlegible',
-      description: 'Für Sehbehinderungen optimiert',
+      description: 'Optimized for readability',
     },
     {
       id: 'opendyslexic',
       label: 'OpenDyslexic',
-      description: 'Kostenloser Dyslexie-Font',
-    },
-    {
-      id: 'lexie',
-      label: 'Lexie Readable',
-      description: 'Lesefreundlich, alternative Formen',
-    },
-    {
-      id: 'sylexiad',
-      label: 'Sylexiad',
-      description: 'Entwickelt für ältere / Sehprobleme',
-    },
-    {
-      id: 'tiresias',
-      label: 'Tiresias PC',
-      description: 'RNIB, Bildschirmoptimiert',
-    },
-    {
-      id: 'braille',
-      label: 'Unified Braille (visuell)',
-      description: 'Nur für spezielle Visualisierung',
+      description: 'Dyslexia-friendly open font',
     },
   ],
 } = Astro.props as Props;
@@ -112,10 +92,6 @@ const liveId = `${id}-live`;
         default: 'font-default',
         atkinson: 'font-atkinson',
         opendyslexic: 'font-opendyslexic',
-        lexie: 'font-lexie',
-        sylexiad: 'font-sylexiad',
-        tiresias: 'font-tiresias',
-        braille: 'font-braille',
       };
       // remove old classes
       Object.values(classMap).forEach((c) => document.body.classList.remove(c));

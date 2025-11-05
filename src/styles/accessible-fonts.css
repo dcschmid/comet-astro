@@ -1,52 +1,17 @@
 /* Accessible font families (initial minimal setup). In production prefer self-hosting with proper caching.
    Each font stack ends with system fallbacks to ensure legibility & performance.
-   NOTE: Some specialty fonts (Unified Braille, Lexie Readable, Tiresias, Sylexiad) may require manual licensing review.
-   This file intentionally keeps remote @import minimal; refine later with local @font-face.
+  NOTE: Only Atkinson Hyperlegible and OpenDyslexic are included by default.
+  This file intentionally keeps remote @import minimal; refine later with local @font-face.
 */
 
 /* Atkinson Hyperlegible: now loaded via fontsource (see fontsource.css) */
 
 /* OpenDyslexic: now loaded via fontsource (see fontsource.css) */
 
-/* Placeholder @font-face blocks for fonts needing manual integration.
-   Replace src URLs after acquiring files/licenses. */
-/* Proprietary / license-check fonts (uncomment when files added) */
-/*
-@font-face {
-  font-family: 'LexieReadable';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/LexieReadable-Regular.woff2') format('woff2');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Sylexiad';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/Sylexiad-Regular.woff2') format('woff2');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TiresiasPCFont';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/TiresiasPCFont-Regular.woff2') format('woff2');
-  font-display: swap;
-}
-*/
+/* Placeholder @font-face blocks for licensed fonts can be added here if needed.
+   Keep this file minimal to avoid accidental inclusion of large or licensed assets. */
 
-/* Unified Braille: Typically not needed for screen reader users; screen readers interpret semantic text.
-   If visual braille rendering is desired, integrate a braille font carefully and limit usage to a toggle region. */
-/* Optional visual Braille font (add file before enabling) */
-/*
-@font-face {
-  font-family: 'UnifiedBraille';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/UnifiedBraille-Regular.woff2') format('woff2');
-  font-display: swap;
-}
-*/
+/* Optional visual specialty faces can be added here if explicitly required. */
 
 /* Utility classes applied dynamically by BaseLayout / FontSwitcher */
 .font-default {
@@ -54,7 +19,6 @@
     --font-default,
     system-ui,
     ui-sans-serif,
-    'Inter',
     'Atkinson Hyperlegible',
     sans-serif
   );
@@ -62,52 +26,8 @@
 .font-atkinson {
   font-family: 'Atkinson Hyperlegible', system-ui, ui-sans-serif, sans-serif;
 }
-.font-lexie {
-  font-family: 'Lexie Readable', 'Atkinson Hyperlegible', system-ui, sans-serif;
-}
-.font-opensans {
-  font-family: 'Open Sans', system-ui, ui-sans-serif, sans-serif;
-}
-.font-nunito {
-  font-family: 'Nunito', system-ui, ui-sans-serif, sans-serif;
-}
-.font-lato {
-  font-family: 'Lato', system-ui, ui-sans-serif, sans-serif;
-}
-.font-ubuntu {
-  font-family: 'Ubuntu', system-ui, ui-sans-serif, sans-serif;
-}
-.font-sourcesans {
-  font-family: 'Source Sans Pro', system-ui, ui-sans-serif, sans-serif;
-}
-.font-sourcecode {
-  font-family:
-    'Source Code Pro', ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-.font-firacode {
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-.font-ibmplexsans {
-  font-family: 'IBM Plex Sans', system-ui, ui-sans-serif, sans-serif;
-}
-.font-ibmplexmono {
-  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-.font-spacegrotesk {
-  font-family: 'Space Grotesk', system-ui, ui-sans-serif, sans-serif;
-}
 .font-opendyslexic {
   font-family: 'OpenDyslexic', 'Atkinson Hyperlegible', system-ui, sans-serif;
-}
-.font-sylexiad {
-  font-family: 'Sylexiad', 'Atkinson Hyperlegible', system-ui, sans-serif;
-}
-.font-tiresias {
-  font-family: 'TiresiasPCFont', 'Atkinson Hyperlegible', system-ui, sans-serif;
-}
-.font-braille {
-  font-family: 'UnifiedBraille', 'Atkinson Hyperlegible', system-ui, sans-serif;
-  letter-spacing: 0.15em;
 }
 
 /* High legibility enhancements (optional when a11y mode active) */
