@@ -5,7 +5,16 @@
 interface Props {
   title?: string;
   message?: string;
-  variant?: 'info' | 'success' | 'warning' | 'error';
+  variant?:
+    | 'info'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'classic'
+    | 'nature'
+    | 'warm'
+    | 'sky'
+    | 'orange';
   dismissible?: boolean;
   dismissLabel?: string;
   className?: string;
@@ -20,54 +29,84 @@ const {
   className = '',
 } = Astro.props as Props;
 
-const baseWrap =
-  'relative flex items-start gap-4 rounded-xl border px-4 py-4 text-base leading-relaxed shadow-sm transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-white focus-within:ring-current dark:focus-within:ring-offset-slate-950 motion-reduce:transition-none sm:px-5 sm:py-5';
+import { tv } from 'tailwind-variants';
+import Icon from './Icon.astro';
 
-const styles: Record<
-  NonNullable<Props['variant']>,
-  {
-    wrap: string;
-    icon: string;
-    role: 'status' | 'alert';
-    ariaLive: 'polite' | 'assertive';
-    label: string;
-  }
-> = {
-  info: {
-    wrap: 'border-blue-500/70 bg-slate-50 text-slate-900 dark:border-blue-400/70 dark:bg-slate-900 dark:text-slate-100',
-    icon: 'text-blue-700 dark:text-blue-300',
-    role: 'status',
-    ariaLive: 'polite',
-    label: 'Information',
+export const baseWrap =
+  'relative flex items-start gap-4 rounded-xl border px-4 py-4 text-base leading-relaxed shadow-sm transition-colors duration-150 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-white focus-within:ring-current dark:focus-within:ring-offset-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 motion-reduce:transition-none sm:px-5 sm:py-5';
+
+export const alertVariants = tv({
+  base: baseWrap,
+  variants: {
+    variant: {
+      // Palettes (new) — include border + hover states for light & dark
+      classic:
+        'bg-white text-gray-900 accent-blue-600 border-gray-200 hover:border-blue-400 hover:bg-blue-50 dark:bg-gray-900 dark:text-white dark:accent-blue-400 dark:border-gray-700 dark:hover:border-blue-500 dark:hover:bg-gray-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-200',
+      nature:
+        'bg-stone-50 text-stone-900 accent-emerald-600 border-stone-200 hover:border-emerald-400 hover:bg-stone-100 dark:bg-stone-950 dark:text-stone-100 dark:accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 focus-visible:ring-emerald-300 dark:focus-visible:ring-emerald-200',
+      warm: 'bg-gray-50 text-gray-900 accent-violet-600 border-gray-300 hover:border-violet-400 hover:bg-violet-50 dark:bg-gray-950 dark:text-gray-50 dark:accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 focus-visible:ring-violet-300 dark:focus-visible:ring-violet-200',
+      sky: 'bg-slate-50 text-slate-900 accent-cyan-600 border-slate-200 hover:border-cyan-400 hover:bg-cyan-50 dark:bg-slate-900 dark:text-slate-50 dark:accent-cyan-300 dark:border-slate-700 dark:hover:border-cyan-500 dark:hover:bg-slate-800 focus-visible:ring-cyan-300 dark:focus-visible:ring-cyan-200',
+      orange:
+        'bg-zinc-50 text-zinc-900 accent-orange-500 border-zinc-200 hover:border-orange-400 hover:bg-orange-50 dark:bg-zinc-950 dark:text-zinc-100 dark:accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 focus-visible:ring-orange-300 dark:focus-visible:ring-orange-200',
+      // Semantic aliases mapped to palettes for backward compatibility
+      info: 'bg-white text-gray-900 accent-blue-600 border-gray-200 hover:border-blue-400 hover:bg-blue-50 dark:bg-gray-900 dark:text-white dark:accent-blue-400 dark:border-gray-700 dark:hover:border-blue-500 dark:hover:bg-gray-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-200',
+      success:
+        'bg-stone-50 text-stone-900 accent-emerald-600 border-stone-200 hover:border-emerald-400 hover:bg-stone-100 dark:bg-stone-950 dark:text-stone-100 dark:accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 focus-visible:ring-emerald-300 dark:focus-visible:ring-emerald-200',
+      warning:
+        'bg-gray-50 text-gray-900 accent-violet-600 border-gray-300 hover:border-violet-400 hover:bg-violet-50 dark:bg-gray-950 dark:text-gray-50 dark:accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 focus-visible:ring-violet-300 dark:focus-visible:ring-violet-200',
+      error:
+        'bg-zinc-50 text-zinc-900 accent-orange-500 border-zinc-200 hover:border-orange-400 hover:bg-orange-50 dark:bg-zinc-950 dark:text-zinc-100 dark:accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 focus-visible:ring-orange-300 dark:focus-visible:ring-orange-200',
+    },
   },
-  success: {
-    wrap: 'border-emerald-500/70 bg-emerald-50 text-slate-900 dark:border-emerald-400/70 dark:bg-slate-900 dark:text-slate-100',
-    icon: 'text-emerald-700 dark:text-emerald-300',
-    role: 'status',
-    ariaLive: 'polite',
-    label: 'Success',
+  defaultVariants: {
+    variant: 'classic',
   },
-  warning: {
-    wrap: 'border-amber-500/80 bg-amber-50 text-slate-900 dark:border-amber-400/70 dark:bg-slate-900 dark:text-slate-100',
-    icon: 'text-amber-700 dark:text-amber-300',
-    role: 'alert',
-    ariaLive: 'assertive',
-    label: 'Warning',
-  },
-  error: {
-    wrap: 'border-rose-500/80 bg-rose-50 text-slate-900 dark:border-rose-500/80 dark:bg-slate-900 dark:text-slate-100',
-    icon: 'text-rose-700 dark:text-rose-300',
-    role: 'alert',
-    ariaLive: 'assertive',
-    label: 'Error',
-  },
-};
+});
+
+const iconColor = {
+  classic: 'text-blue-600 dark:text-blue-400',
+  nature: 'text-emerald-600 dark:text-emerald-400',
+  warm: 'text-violet-600 dark:text-violet-400',
+  sky: 'text-cyan-600 dark:text-cyan-300',
+  orange: 'text-orange-500 dark:text-orange-300',
+  // aliases
+  info: 'text-blue-600 dark:text-blue-400',
+  success: 'text-emerald-600 dark:text-emerald-400',
+  warning: 'text-violet-600 dark:text-violet-400',
+  error: 'text-orange-500 dark:text-orange-300',
+} as const;
+
+const roleMap = {
+  classic: { role: 'status', ariaLive: 'polite', label: 'Information' },
+  nature: { role: 'status', ariaLive: 'polite', label: 'Success' },
+  warm: { role: 'alert', ariaLive: 'assertive', label: 'Warning' },
+  sky: { role: 'status', ariaLive: 'polite', label: 'Information' },
+  orange: { role: 'alert', ariaLive: 'assertive', label: 'Error' },
+  // aliases
+  info: { role: 'status', ariaLive: 'polite', label: 'Information' },
+  success: { role: 'status', ariaLive: 'polite', label: 'Success' },
+  warning: { role: 'alert', ariaLive: 'assertive', label: 'Warning' },
+  error: { role: 'alert', ariaLive: 'assertive', label: 'Error' },
+} as const;
+
+const iconName = {
+  classic: 'info',
+  nature: 'check-circle',
+  warm: 'exclamation',
+  sky: 'info',
+  orange: 'x-circle',
+  // aliases
+  info: 'info',
+  success: 'check-circle',
+  warning: 'exclamation',
+  error: 'x-circle',
+} as const;
 ---
 
 <div
-  class={`${baseWrap} ${styles[variant].wrap} ${className}`.trim()}
-  role={styles[variant].role}
-  aria-live={styles[variant].ariaLive}
+  class={`${alertVariants({ variant })} ${className}`.trim()}
+  role={roleMap[variant].role}
+  aria-live={roleMap[variant].ariaLive}
   aria-atomic="true"
   data-variant={variant}
   data-state="open"
@@ -75,20 +114,19 @@ const styles: Record<
 >
   <div class="flex w-full items-start gap-4 sm:gap-5">
     <div
-      class={`mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-lg font-semibold shadow-inner ${styles[variant].icon} dark:bg-white/10`}
+      class={`mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-lg font-semibold shadow-inner ${iconColor[variant]} dark:bg-white/10`}
       aria-hidden="true"
     >
-      {
-        {
-          info: 'ℹ︎',
-          success: '✓',
-          warning: '!',
-          error: '×',
-        }[variant]
-      }
+      <Icon
+        name={iconName[variant]}
+        size="md"
+        decorative={false}
+        ariaLabel={roleMap[variant].label}
+        className="h-5 w-5"
+      />
     </div>
     <div class="min-w-0 space-y-2 text-slate-800 dark:text-slate-200">
-      <span class="sr-only">{styles[variant].label}</span>
+      <span class="sr-only">{roleMap[variant].label}</span>
       {title && <div class="text-base font-semibold text-current">{title}</div>}
       {
         message && (

@@ -1,8 +1,13 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Alert from '../../components/Alert.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import InlineCode from '../../components/InlineCode.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
 
 const variantExamples = [
+  // semantic examples (aliases kept for compatibility)
   {
     variant: 'info',
     title: 'Heads up',
@@ -24,6 +29,28 @@ const variantExamples = [
     title: 'Sync failed',
     message: 'We could not reach the API. Try again in a few minutes.',
   },
+  // new palette examples
+  {
+    variant: 'classic',
+    title: 'Classic',
+    message: 'Classic Blue surface and accent.',
+  },
+  {
+    variant: 'nature',
+    title: 'Nature',
+    message: 'Nature Green surface and accent.',
+  },
+  {
+    variant: 'warm',
+    title: 'Warm',
+    message: 'Warm Purple surface and accent.',
+  },
+  { variant: 'sky', title: 'Sky', message: 'Sky Cyan surface and accent.' },
+  {
+    variant: 'orange',
+    title: 'Orange',
+    message: 'Orange Accent surface and accent.',
+  },
 ];
 
 const usageSnippet = `---
@@ -32,159 +59,147 @@ import { Alert } from 'comet-astro';
 ---
 
 <Alert
-  variant="success"
+  variant="classic"
   title="Profile updated"
   message="Changes are live for everyone on your team."
   dismissible
   dismissLabel="Hide success message"
 />`;
 
-const tintedClassName = [
-  'border-slate-700',
-  'bg-slate-950/80',
-  'text-slate-100',
-  '[&_[data-close]]:text-slate-200',
-  '[&_[data-close]]:hover:bg-slate-700/40',
-  '[&_[data-close]]:focus-visible:ring-slate-200',
-].join(' ');
+// tint example removed to show palette variants consistently
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'title',
+    type: 'string',
+    default: "''",
+    description:
+      'Optional heading rendered above the message copy. Keep it short so screen readers announce the important words first.',
+  },
+  {
+    name: 'message',
+    type: 'string',
+    default: "''",
+    description:
+      'Primary text content. Supports plain strings; use the default slot for additional rich content such as links.',
+  },
+  {
+    name: 'variant',
+    type: '"info" | "success" | "warning" | "error" | string',
+    default: 'info',
+    description:
+      'One of the semantic variants or a theme palette. Controls icon, accent color and announced urgency.',
+  },
+  {
+    name: 'dismissible',
+    type: 'boolean',
+    default: 'false',
+    description:
+      'Adds a close button that hides the alert client-side. Useful for persistent notifications or inline reminders.',
+  },
+  {
+    name: 'dismissLabel',
+    type: 'string',
+    default: '"Dismiss alert"',
+    description:
+      'Accessible label for the dismiss button. Customize to localise the action or describe the message context.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description:
+      'Extra classes merged onto the wrapper. Use arbitrary selectors to retheme the close button or tweak spacing.',
+  },
+];
 ---
 
 <DocsLayout
   seoTitle="Alert"
   seoDescription="Accessible status messaging with semantic variants, optional dismissal, and brandable styling hooks."
 >
+  <Headline level="h1" textSize="2xl">Alert</Headline>
   <section class="space-y-4">
-    <p class="text-base text-slate-100">
+    <Paragraph class="text-base text-slate-100">
       Alerts sit inline with the surrounding layout to acknowledge actions,
       surface warnings, or call out critical failures. Each variant ships with
       AAA-friendly contrast in light and dark themes, announces itself with the
       correct live region, and respects reduced-motion preferences.
-    </p>
-    <p class="text-base text-slate-200">
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
       Reach for alerts when in-context feedback keeps people moving. For broader
       announcements that appear across many screens, pair alerts with a banner
       or toast pattern instead.
-    </p>
+    </Paragraph>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
-    <dl class="grid gap-6 sm:grid-cols-2">
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          title?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Optional heading rendered above the message copy. Keep it short so
-          screen readers announce the important words first.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          message?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Primary text content. Supports plain strings; use the default slot for
-          additional rich content such as links.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          variant?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          One of <code>info</code>, <code>success</code>, <code>warning</code>,
-          or <code>error</code>. Variants control the icon, accent color, and
-          announced urgency.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          dismissible?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Adds a close button that hides the alert client-side. Useful for
-          persistent notifications or inline reminders that users can opt out
-          of.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          dismissLabel?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Accessible label for the dismiss button. Defaults to <code
-            >"Dismiss alert"</code
-          >; customise it to localise the action or describe the message
-          context.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          className?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Extra classes merged onto the wrapper. Use arbitrary selectors to
-          retheme the close button or tweak spacing without reimplementing the
-          alert logic.
-        </dd>
-      </div>
-    </dl>
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">
-      Import the component from the package entry-point, pass the variant that
-      matches the tone of the message, and set <code>dismissible</code> when the
-      alert is optional. Provide a custom
-      <code>dismissLabel</code> when you need to localise the control.
-    </p>
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the <InlineCode>Alert</InlineCode> component from the package entry
+      point and choose a <InlineCode>variant</InlineCode> that matches the message's
+      tone (for example, <InlineCode>info</InlineCode>,
+      <InlineCode>success</InlineCode>, <InlineCode>warning</InlineCode>, or
+      <InlineCode>error</InlineCode>). Set <InlineCode>dismissible</InlineCode> when
+      users should be able to close the alert. If you enable
+      <InlineCode>dismissible</InlineCode>, provide a descriptive
+      <InlineCode>dismissLabel</InlineCode> to localize the control and improve accessibility
+      for screen reader users.
+    </Paragraph>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{usageSnippet}</code>
     </pre>
+    <Paragraph class="text-sm text-slate-300">
+      The package also exports a helper named <InlineCode
+        >alertVariants</InlineCode
+      >
+      which returns the underlying Tailwind class strings for each palette. This
+      helper is useful when you need to apply the same palette programmatically across
+      multiple components or when composing custom UI fragments. Example (local import):
+      <InlineCode
+        >import &#123; alertVariants &#125; from '../../components/Alert.astro'</InlineCode
+      >.
+    </Paragraph>
   </section>
 
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Examples</Headline
+    >
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Contextual messaging
-        </h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100"
+          >Contextual messaging</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Pick the variant that matches the message urgency. Warnings and errors
           announce using an assertive live region so assistive tech can
           interrupt other output.
-        </p>
+        </Paragraph>
       </div>
-      <div class="grid gap-4 md:grid-cols-2">
+      <div class="grid gap-4 sm:grid-cols-2">
         {
           variantExamples.map((props) => (
             <Alert {...props} key={props.variant} />
@@ -195,15 +210,19 @@ const tintedClassName = [
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Dismissible reminder
-        </h3>
-        <p class="text-base text-slate-200">
-          Toggle <code>dismissible</code> for alerts that can safely disappear without
-          a page reload. The component toggles <code>hidden</code> and <code
-            >aria-hidden</code
-          > so repeat announcements stop once dismissed.
-        </p>
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100"
+          >Dismissible reminder</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          Toggle <InlineCode>dismissible</InlineCode> for alerts that can safely
+          disappear without a page reload. The component toggles <InlineCode
+            >hidden</InlineCode
+          > and <InlineCode>aria-hidden</InlineCode> so repeat announcements stop
+          once dismissed.
+        </Paragraph>
       </div>
       <Alert
         variant="warning"
@@ -216,20 +235,105 @@ const tintedClassName = [
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Custom surface styling
-        </h3>
-        <p class="text-base text-slate-200">
-          Use <code>className</code> with arbitrary variants to match your brand
-          palette or a darker surface while keeping the accessibility wiring intact.
-        </p>
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100"
+          >Custom surface styling</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          Use <InlineCode>className</InlineCode> with arbitrary variants to match
+          your brand palette or a darker surface while keeping the accessibility
+          wiring intact.
+        </Paragraph>
       </div>
       <Alert
-        variant="info"
+        variant="classic"
         title="Maintenance window"
         message="Dashboards will be read-only on Saturday 22:00–23:00 CET."
-        className={tintedClassName}
       />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100"
+          >Overriding styles (tailwind-variants)</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          If you need to tweak the default classes, you can either use the
+          <InlineCode>alertVariants</InlineCode> helper or directly override the
+          underlying Tailwind class strings. This library uses
+          <InlineCode>tailwind-variants</InlineCode>, so the same overriding
+          techniques described in the official documentation apply.
+        </Paragraph>
+        <Paragraph class="text-base text-slate-200">
+          See the <a
+            class="underline text-sky-400"
+            href="https://www.tailwind-variants.org/docs/overriding-styles"
+            target="_blank"
+            rel="noopener noreferrer"
+            >"Overriding styles" guide on tailwind-variants</a
+          > for details.
+        </Paragraph>
+        <Paragraph class="text-sm text-slate-300">
+          Short example: import <InlineCode>alertVariants</InlineCode>, get the
+          classes for a variant and append or replace utility classes as needed.
+        </Paragraph>
+        <Paragraph class="text-sm text-slate-300">
+          The following two examples show (1) a minimal <InlineCode
+            >tailwind-variants</InlineCode
+          > config file you can add to your app and (2) an <InlineCode
+            >.astro</InlineCode
+          > example that imports the helper, patches the returned slot classes, and
+          passes them to the <InlineCode>Alert</InlineCode> component.
+        </Paragraph>
+
+        <Paragraph class="text-sm text-slate-300"
+          >Self-contained Astro example (shows the tailwind-variants overriding
+          pattern inline).</Paragraph
+        >
+        <pre
+          class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+          <code class="language-astro">{`---
+import Alert from '../../components/Alert.astro';
+import { tv } from 'tailwind-variants';
+
+// define a minimal tv config inline (you can move this to a shared file)
+const alertVariants = tv({
+  base: 'rounded-md p-4 flex gap-3 items-start',
+  slots: {
+    wrapper: 'rounded-md p-4 flex gap-3 items-start',
+    icon: 'flex-shrink-0',
+    title: 'font-semibold',
+    message: 'text-sm'
+  },
+  variants: {
+    variant: {
+      info: {
+        wrapper: 'bg-sky-50 text-sky-900',
+        icon: 'text-sky-600'
+      },
+      classic: {
+        wrapper: 'bg-classic-50 text-classic-900',
+        icon: 'text-classic-600'
+      }
+    }
+  },
+  defaultVariants: { variant: 'info' }
+});
+
+// get the slot classes for the 'classic' variant
+const slots = alertVariants({ variant: 'classic' });
+// patch the wrapper at runtime (replace background and add padding)
+const patched = slots.wrapper.replace('bg-classic-50', 'bg-brand-600').concat(' px-6');
+---
+
+<Alert variant="classic" className={patched} title="TV Override" message="Example showing overriding styles inline in Astro." />`}</code>
+        </pre>
+      </div>
     </article>
   </section>
 </DocsLayout>

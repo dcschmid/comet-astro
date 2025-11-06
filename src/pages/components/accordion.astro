@@ -273,6 +273,61 @@ const safe = sanitize(userProvidedHtml);
     />
   </section>
 
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Overriding styles (tailwind-variants)</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      You can fine-tune internal styles by using <InlineCode
+        >classOverrides</InlineCode
+      > for per-slot tweaks or <InlineCode>className</InlineCode> for larger brand-level
+      surfaces. This example shows a self-contained <InlineCode
+        >tailwind-variants</InlineCode
+      > (tv) pattern inline in an Astro page — no external helper file required.
+      For more options and advanced overrides see
+      <a
+        class="underline text-sky-400"
+        href="https://www.tailwind-variants.org/docs/overriding-styles"
+        target="_blank"
+        rel="noopener noreferrer">the tailwind-variants guide</a
+      >.
+    </Paragraph>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{`---
+import Accordion from '../../components/Accordion.astro';
+import { tv } from 'tailwind-variants';
+
+// minimal tv config defined inline
+const accordionTv = tv({
+  base: 'space-y-2',
+  slots: {
+    wrapper: 'space-y-2',
+    section: 'border rounded',
+    trigger: 'flex items-center justify-between px-4 py-3',
+    icon: 'ml-2',
+    panelContent: 'px-4 py-2'
+  },
+  variants: {
+    color: {
+      classicBlue: { section: 'bg-white text-gray-900' },
+      natureGreen: { section: 'bg-stone-50 text-stone-900' }
+    }
+  },
+  defaultVariants: { color: 'classicBlue' }
+});
+
+// get slot classes and patch the panel content at runtime
+const slots = accordionTv({ color: 'classicBlue' });
+const patchedPanel = slots.panelContent.replace('px-4', 'px-8');
+const classOverrides = { panelContent: patchedPanel, trigger: 'hover:bg-rose-50 dark:hover:bg-rose-900' };
+const brandClassName = '[&_section]:bg-slate-950 [&_[data-acc-trigger]]:text-amber-100';
+---
+
+<Accordion items={overviewItems} classOverrides={classOverrides} className={brandClassName} />`}</code>
+    </pre>
+  </section>
+
   <section class="mt-10 space-y-8">
     <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
       >Examples</Headline
@@ -408,6 +463,62 @@ const safe = sanitize(userProvidedHtml);
       </div>
 
       <div class="space-y-4">
+        <Headline
+          level="h4"
+          textSize="sm"
+          weight="semibold"
+          className="text-slate-100"
+          >Overriding styles (tailwind-variants)</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          You can use <InlineCode>tailwind-variants</InlineCode> to produce the internal
+          slot class strings and either supply per-slot overrides via
+          <InlineCode>classOverrides</InlineCode> or apply a brand surface with
+          <InlineCode>className</InlineCode>. The example below is
+          self-contained and shows how to define a minimal TV config inline and
+          then patch the returned slot classes at runtime — no external helper
+          file required. See <a
+            class="underline text-sky-400"
+            href="https://www.tailwind-variants.org/docs/overriding-styles"
+            target="_blank"
+            rel="noopener noreferrer"
+            >the tailwind-variants overriding-styles guide</a
+          > for more details.
+        </Paragraph>
+        <pre
+          class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+          <code class="language-astro">{`---
+import Accordion from '../../components/Accordion.astro';
+import { tv } from 'tailwind-variants';
+
+// minimal tv config defined inline
+const accordionTv = tv({
+  base: 'space-y-2',
+  slots: {
+    wrapper: 'space-y-2',
+    section: 'border rounded',
+    trigger: 'flex items-center justify-between px-4 py-3',
+    icon: 'ml-2',
+    panelContent: 'px-4 py-2'
+  },
+  variants: {
+    color: {
+      classicBlue: { section: 'bg-white text-gray-900' },
+      natureGreen: { section: 'bg-stone-50 text-stone-900' }
+    }
+  },
+  defaultVariants: { color: 'classicBlue' }
+});
+
+// get slot classes and patch the panel content at runtime
+const slots = accordionTv({ color: 'classicBlue' });
+const patchedPanel = slots.panelContent.replace('px-4', 'px-8');
+const classOverrides = { panelContent: patchedPanel, trigger: 'hover:bg-rose-50 dark:hover:bg-rose-900' };
+const brandClassName = '[&_section]:bg-slate-950 [&_[data-acc-trigger]]:text-amber-100';
+---
+
+<Accordion items={overviewItems} classOverrides={classOverrides} className={brandClassName} />`}</code>
+        </pre>
         <Headline
           level="h4"
           textSize="sm"
