@@ -1,6 +1,11 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Accordion from '../../components/Accordion.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
 
 const overviewItems = [
   {
@@ -53,6 +58,35 @@ const brandItems = [
   },
 ];
 
+const htmlItems = [
+  {
+    id: 'html-1',
+    title: 'Rich content: lists, links and markup',
+    content: `
+      <p>Accordions accept <strong>HTML strings</strong> for rich content. Use this when content
+      comes from a trusted CMS or when you want to render formatted text:</p>
+      <ul>
+        <li><strong>Step 1:</strong> Prepare the content as HTML.</li>
+        <li><strong>Step 2:</strong> Pass it in the <code>content</code> key and the component will render it.</li>
+        <li><strong>Step 3:</strong> Ensure the source is sanitized server-side if it's user-provided.</li>
+      </ul>
+      <p>Example link: <a href="https://example.com" target="_blank" rel="noopener">External resource</a></p>
+    `,
+  },
+  {
+    id: 'html-2',
+    title: 'Media and small blocks',
+    content: `
+      <p>Small rich blocks work well inside panels:</p>
+      <figure class="my-2">
+        <img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=400&q=60" alt="Example" class="rounded" />
+        <figcaption class="text-xs text-slate-400 mt-1">Example image</figcaption>
+      </figure>
+      <p>Use lists and markup for structured content.</p>
+    `,
+  },
+];
+
 const brandClassName = [
   'space-y-4',
   '[&_section]:border-amber-500',
@@ -76,123 +110,251 @@ const items = [
 ---
 
 <Accordion items={items} multiple />`;
+const colorVariants = [
+  'classicBlue',
+  'natureGreen',
+  'warmPurple',
+  'skyCyan',
+  'orangeAccent',
+];
+
+const paletteMeta = {
+  classicBlue: {
+    label: 'Classic Blue',
+    light: 'bg-white text-gray-900 accent-blue-600',
+    dark: 'dark:bg-gray-900 dark:text-white accent-blue-400',
+  },
+  natureGreen: {
+    label: 'Nature Green',
+    light: 'bg-stone-50 text-stone-900 accent-emerald-600',
+    dark: 'dark:bg-stone-950 dark:text-stone-100 accent-emerald-400',
+  },
+  warmPurple: {
+    label: 'Warm Purple',
+    light: 'bg-gray-50 text-gray-900 accent-violet-600',
+    dark: 'dark:bg-gray-950 dark:text-gray-50 accent-violet-400',
+  },
+  skyCyan: {
+    label: 'Sky Cyan',
+    light: 'bg-slate-50 text-slate-900 accent-cyan-600',
+    dark: 'dark:bg-slate-900 dark:text-slate-50 accent-cyan-300',
+  },
+  orangeAccent: {
+    label: 'Orange Accent',
+    light: 'bg-zinc-50 text-zinc-900 accent-orange-500',
+    dark: 'dark:bg-zinc-950 dark:text-zinc-100 accent-orange-300',
+  },
+};
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'items',
+    type: 'Item[]',
+    default: '[]',
+    description:
+      'Array of sections to render. Each item needs an id, title and optional HTML content.',
+  },
+  {
+    name: 'multiple',
+    type: 'boolean',
+    default: 'false',
+    description: 'Allow more than one panel to be open simultaneously.',
+  },
+  {
+    name: 'openIds',
+    type: 'string[]',
+    default: '[]',
+    description:
+      'IDs of items that should be open on first render (useful for SSR).',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description:
+      'Additional Tailwind utility classes to merge onto the wrapper.',
+  },
+  {
+    name: 'color',
+    type: '"classicBlue" | "natureGreen" | "warmPurple" | "skyCyan" | "orangeAccent"',
+    default: 'classicBlue',
+    description:
+      'Choose a built-in accessible palette for light and dark mode.',
+  },
+  {
+    name: 'classOverrides',
+    type: '{ wrapper?: string; section?: string; trigger?: string; icon?: string; panelContent?: string }',
+    default: '{}',
+    description:
+      'Optional per-slot Tailwind utility overrides merged with the component variants. Use to tweak internal spacing, backgrounds or text styles without copying the component.',
+  },
+];
 ---
 
 <DocsLayout
   seoTitle="Accordion"
   seoDescription="Disclosure/accordion with single or multiple open sections."
 >
+  <Headline level="h1" textSize="2xl">Accordion</Headline>
   <section class="space-y-4">
-    <p class="text-base text-slate-100">
-      The accordion lets people expand inline sections without losing their
-      place on the page. Each trigger meets the WCAG target size guidelines,
-      announces its expanded state, and keeps reduced-motion preferences in
-      mind.
-    </p>
-    <p class="text-base text-slate-200">
-      Use it for FAQs, onboarding checklists, or any grouped content where only
-      a few answers need to be visible at once.
-    </p>
+    <Paragraph class="text-base text-slate-100">
+      The Accordion component provides an accessible, keyboard-friendly
+      disclosure pattern for grouping related content. Triggers announce their
+      state with
+      <InlineCode>aria-expanded</InlineCode>, panels are hidden with
+      <InlineCode>aria-hidden</InlineCode>, and reduced-motion preferences are
+      respected. The component offers single- and multi-open modes, color
+      palettes tuned for high contrast, and a small API for styling overrides.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Typical use cases include FAQs, progressive disclosure in forms, compact
+      help centers, or any scenario where users need to reveal and hide sections
+      without losing context on the page.
+    </Paragraph>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
-    <dl class="grid gap-6 sm:grid-cols-2">
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          items
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Array of sections to render. Each item needs a stable <code>id</code>,
-          a short
-          <code>title</code>, and optional HTML string in <code>content</code>.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          multiple?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Allow more than one panel to stay open. Default is <code>false</code> (only
-          one at a time).
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          openIds?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Array of item IDs that should be open on first render. Helpful when
-          restoring scroll position or server-rendering expanded content.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          className?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Merge additional Tailwind utilities onto the wrapper. Use this to
-          adjust spacing or theme nested elements with arbitrary selector
-          variants.
-        </dd>
-      </div>
-    </dl>
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">
-      Import the component from the package entry-point and supply an array of
-      items. Content accepts HTML strings, so you can pass rich text generated
-      from a CMS.
-    </p>
-    <pre
-      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-      <code class="language-astro">{usageSnippet}</code>
-    </pre>
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and provide an array of items. Each item should
+      contain an <InlineCode>id</InlineCode>, a <InlineCode>title</InlineCode>
+      and optional <InlineCode>content</InlineCode>. The component is SSR-
+      friendly so you can render initial open states with <InlineCode
+        >openIds</InlineCode
+      >. Content may be passed as HTML strings (rendered with <InlineCode
+        >set:html</InlineCode
+      >) — if that HTML originates from external sources, sanitize it
+      server-side (example below).
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+
+    <Headline
+      level="h3"
+      textSize="sm"
+      weight="semibold"
+      className="text-slate-100">Sanitizing HTML content</Headline
+    >
+    <Paragraph class="text-sm text-slate-400">
+      If you render user-provided HTML inside panels, sanitize it on the server
+      to avoid XSS. A lightweight example using <InlineCode
+        >isomorphic-dompurify</InlineCode
+      >:
+    </Paragraph>
+    <CodeBlock
+      code={`import DOMPurify from 'isomorphic-dompurify';
+
+export function sanitize(html) {
+  return DOMPurify.sanitize(html);
+}
+
+// server-side
+const safe = sanitize(userProvidedHtml);
+// pass safe into Accordion items -> content
+`}
+      language="typescript"
+    />
   </section>
 
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Single-open accordion (default)
-        </h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100">Single-open accordion (default)</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Only one panel stays open at a time. Great for compact FAQ lists where
-          people expect one answer per click.
-        </p>
+          people expect one answer per click. This mode helps reduce vertical
+          scroll and keeps the interface concise.
+        </Paragraph>
       </div>
       <Accordion items={overviewItems} openIds={['accessibility']} />
     </article>
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Allow multiple panels
-        </h3>
-        <p class="text-base text-slate-200">
-          Set <code>multiple</code> when readers may want to compare answers or keep
-          a checklist of steps open simultaneously.
-        </p>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100">Color variants</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          The component ships with five accessible color palettes that work in
+          both light and dark themes. Use the <InlineCode>color</InlineCode> prop
+          to switch the palette applied to each section. The palettes are tuned for
+          WCAG AAA contrast across surface, text and accent colors.
+        </Paragraph>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2">
+        {
+          colorVariants.map((c) => (
+            <div class="space-y-3">
+              <Headline
+                level="h4"
+                textSize="sm"
+                weight="semibold"
+                className="text-slate-100"
+              >
+                {paletteMeta[c].label}{' '}
+                <span class="text-xs text-slate-400">({c})</span>
+              </Headline>
+              <Accordion items={brandItems} color={c} />
+              <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-2 text-xs text-slate-50">
+                <>
+                  <InlineCode className="leading-tight">
+                    {paletteMeta[c].light}
+                  </InlineCode>
+                  <br />
+                </>
+                <InlineCode className="leading-tight">
+                  {paletteMeta[c].dark}
+                </InlineCode>
+              </pre>
+            </div>
+          ))
+        }
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100">Allow multiple panels</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          Set <InlineCode>multiple</InlineCode> when readers may want to compare
+          answers or keep a checklist of steps open simultaneously. This is useful
+          for longer forms, multi-step instructions, or side-by-side comparisons.
+        </Paragraph>
       </div>
       <Accordion
         items={multiItems}
@@ -203,16 +365,155 @@ const items = [
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Custom brand styling
-        </h3>
-        <p class="text-base text-slate-200">
-          Use <code>className</code> together with Tailwind&apos;s arbitrary selector
-          syntax to restyle internal sections while keeping the accessibility and
-          focus management behavior.
-        </p>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100">HTML content examples</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          Panels support rich HTML content. Pass a trusted HTML string to the
+          <InlineCode>content</InlineCode> key; the component will render it with
+          <InlineCode>set:html</InlineCode>. Sanitize user-provided HTML
+          server-side.
+        </Paragraph>
       </div>
-      <Accordion items={brandItems} className={brandClassName} />
+      <Accordion items={htmlItems} />
+    </article>
+
+    <article class="space-y-6">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100">Styling &amp; overrides</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          If you need fine-grained control over internal slot styles (for
+          example to tweak padding or the open-state background), pass a <InlineCode
+            >classOverrides</InlineCode
+          >
+          object to the component. Each key merges with the internal styles produced
+          by the component's variants.
+        </Paragraph>
+        <Paragraph class="text-sm text-slate-400">
+          Note: <InlineCode>classOverrides</InlineCode> values are merged into the
+          final class string produced by the component (they are appended to the
+          variant output), so they can be used to tweak or override particular utility
+          classes. They do not change the component's internal variant logic (for
+          example open-state behaviour or the defined color variants) — use them
+          for styling adjustments only.
+        </Paragraph>
+      </div>
+
+      <div class="space-y-4">
+        <Headline
+          level="h4"
+          textSize="sm"
+          weight="semibold"
+          className="text-slate-100"
+          >Example: change trigger background &amp; panel padding</Headline
+        >
+        <Accordion
+          items={overviewItems}
+          classOverrides={{
+            trigger: 'hover:bg-rose-50 dark:hover:bg-rose-900',
+            panelContent: 'px-8',
+          }}
+        />
+
+        <CodeBlock
+          code={`<Accordion
+  items={items}
+  classOverrides={{
+    trigger: 'hover:bg-rose-50 dark:hover:bg-rose-900',
+    panelContent: 'px-8'
+  }}
+/>`}
+          language="astro"
+        />
+
+        <Paragraph class="text-base text-slate-200">
+          The example above shows a simple override. The component appends the
+          provided <InlineCode>classOverrides</InlineCode> values to the classes
+          generated by the internal variants. In most cases this is sufficient to
+          tweak spacing, colors or hover states. If you need to override a utility
+          that the component already sets (for example the same
+          <InlineCode>padding</InlineCode> utility), prefer the Tailwind important
+          modifier (prefix with <InlineCode>!</InlineCode>) so the final rule
+          wins.
+        </Paragraph>
+
+        <Headline
+          level="h4"
+          textSize="sm"
+          weight="semibold"
+          className="text-slate-100"
+          >Detailed: forcing precedence with classOverrides</Headline
+        >
+        <Paragraph class="text-sm text-slate-400">
+          Because classes are appended, the last occurrence usually wins. To be
+          explicit, use the <InlineCode>!</InlineCode> prefix to make a utility important
+          (Tailwind uses this to emit <code>!important</code>). Example:
+        </Paragraph>
+        <CodeBlock
+          code={`<Accordion
+  items={items}
+  classOverrides={{
+    panelContent: '!px-8', // will render as !padding and win over earlier px- classes
+    trigger: 'bg-rose-50 dark:bg-rose-900 !text-white'
+  }}
+/>`}
+          language="astro"
+        />
+
+        <Paragraph class="text-sm text-slate-400">
+          Note: use <InlineCode>!</InlineCode> sparingly — it increases CSS specificity
+          and can make future overrides harder.
+        </Paragraph>
+
+        <Headline
+          level="h4"
+          textSize="sm"
+          weight="semibold"
+          className="text-slate-100">When to use className</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
+          For larger brand-level changes (many internal tweaks or multiple slot
+          changes at once), use the <InlineCode>className</InlineCode> prop together
+          with Tailwind's arbitrary selector syntax. This is useful when you want
+          to apply a consistent brand surface across many sections.
+        </Paragraph>
+        <Accordion items={brandItems} className={brandClassName} />
+
+        <Headline
+          level="h4"
+          textSize="sm"
+          weight="semibold"
+          className="text-slate-100"
+          >Detailed: brand-level styling with className</Headline
+        >
+        <Paragraph class="text-sm text-slate-400">
+          Use <InlineCode>className</InlineCode> when you want to scope a group of
+          utility changes as a single theme or brand surface. Combine it with Tailwind's
+          arbitrary selector shortcuts to target internal elements without touching
+          component internals.
+        </Paragraph>
+        <CodeBlock
+          code={`const brandClassName = [
+  '[&_section]:border-amber-500',
+  '[&_section]:bg-slate-950',
+  '[&_[data-acc-trigger]]:bg-transparent',
+  '[&_[data-acc-trigger]]:text-amber-100',
+  '[&_[data-acc-trigger]]:hover:bg-slate-900',
+].join(' ');
+
+<Accordion items={items} className={brandClassName} />
+`}
+          language="astro"
+        />
+      </div>
     </article>
   </section>
 </DocsLayout>

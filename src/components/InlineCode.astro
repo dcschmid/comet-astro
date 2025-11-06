@@ -1,0 +1,14 @@
+---
+/**
+ * Simple inline code component used across docs for consistent styling.
+ * Props:
+ * - className?: string - additional utility classes
+ */
+const { className = '' } = Astro.props;
+---
+
+<code
+  class={`rounded font-mono text-[13px] px-1 py-0.5 bg-slate-800/60 text-slate-100 ${className}`}
+>
+  <slot />
+</code>
