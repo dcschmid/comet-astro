@@ -89,6 +89,11 @@ const TRANSLATIONS = {
       'Everyone should avoid outdoor activities; follow local health guidance.',
     elevated_note: 'Elevated pollutant levels detected:',
     measured_others_not: '(others not available)',
+    pollutant_moderate_caution:
+      'Some pollutant concentrations are moderately elevated.',
+    no_location_provided:
+      'No location provided. Please enable location access or provide coordinates.',
+    your_location: 'your location',
   },
   de: {
     aria_for: 'Luftqualitätsinformationen für',
@@ -148,6 +153,11 @@ const TRANSLATIONS = {
       'Alle sollten Aktivitäten im Freien vermeiden; befolgen Sie lokale Gesundheitsanweisungen.',
     elevated_note: 'Erhöhte Schadstoffwerte festgestellt:',
     measured_others_not: '(andere nicht verfügbar)',
+    pollutant_moderate_caution:
+      'Einige Schadstoffkonzentrationen sind mäßig erhöht.',
+    no_location_provided:
+      'Kein Standort angegeben. Bitte Standortzugriff erlauben oder Koordinaten angeben.',
+    your_location: 'Ihr Standort',
   },
   es: {
     aria_for: 'Información de la calidad del aire para',
@@ -182,6 +192,11 @@ const TRANSLATIONS = {
     fetch_failed: 'Error al obtener datos de calidad del aire.',
     measured_label: 'Medido:',
     measured_others_not: '(otros no disponibles)',
+    pollutant_moderate_caution:
+      'Algunas concentraciones de contaminantes están moderadamente elevadas.',
+    no_location_provided:
+      'No se proporcionó ubicación. Habilite el acceso a la ubicación o proporcione coordenadas.',
+    your_location: 'su ubicación',
   },
   fr: {
     aria_for: 'Informations sur la qualité de l’air pour',
@@ -217,6 +232,11 @@ const TRANSLATIONS = {
     fetch_failed: 'Échec de la récupération des données de qualité de l’air.',
     measured_label: 'Mesuré:',
     measured_others_not: '(autres non disponibles)',
+    pollutant_moderate_caution:
+      'Certaines concentrations de polluants sont modérément élevées.',
+    no_location_provided:
+      'Aucune localisation fournie. Veuillez activer l’accès à la localisation ou fournir des coordonnées.',
+    your_location: 'votre emplacement',
   },
   it: {
     aria_for: 'Informazioni sulla qualità dell’aria per',
@@ -251,6 +271,11 @@ const TRANSLATIONS = {
     fetch_failed: 'Recupero dati qualità dell’aria non riuscito.',
     measured_label: 'Misurato:',
     measured_others_not: '(altri non disponibili)',
+    pollutant_moderate_caution:
+      'Alcune concentrazioni di inquinanti sono moderatamente elevate.',
+    no_location_provided:
+      "Nessuna posizione fornita. Abilita l'accesso alla posizione o fornisci le coordinate.",
+    your_location: 'la tua posizione',
   },
   pt: {
     aria_for: 'Informações da qualidade do ar para',
@@ -285,6 +310,11 @@ const TRANSLATIONS = {
     fetch_failed: 'Falha ao obter dados de qualidade do ar.',
     measured_label: 'Medido:',
     measured_others_not: '(outros não disponíveis)',
+    pollutant_moderate_caution:
+      'Algumas concentrações de poluentes estão moderadamente elevadas.',
+    no_location_provided:
+      'Nenhuma localização fornecida. Ative o acesso à localização ou forneça coordenadas.',
+    your_location: 'sua localização',
   },
 };
 
@@ -330,26 +360,34 @@ const root = tv({
   {...rest}
 >
   <div class="space-y-6">
-    <!-- Header -->
-    <header class="flex items-center justify-between">
-      <h2
-        class="flex items-center gap-3 text-xl font-bold text-gray-900 dark:text-gray-100"
-      >
-        <span class="text-2xl" aria-hidden="true">🫁</span>
-        <span>{t('air_quality')}</span>
-        {
-          location && (
-            <span class="text-lg font-medium text-gray-600 dark:text-gray-400">
-              • {location}
-            </span>
-          )
-        }
-      </h2>
+    <!-- Header: title on first line; location + update on second line -->
+    <header class="space-y-2">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl leading-none align-middle" aria-hidden="true"
+          >🫁</span
+        >
+        <h2
+          class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 leading-none"
+        >
+          {t('air_quality')}
+        </h2>
+      </div>
+
       <div
-        class="text-sm text-gray-500 dark:text-gray-400 update-time"
-        aria-live="polite"
+        class="flex items-center justify-between text-gray-600 dark:text-gray-400"
       >
-        {t('updating')}
+        <div class="flex-1 text-left text-lg font-medium">
+          {
+            location ? (
+              <span class="inline-flex items-center">
+                <span>{location}</span>
+              </span>
+            ) : null
+          }
+        </div>
+        <div class="text-sm ml-4 update-time" aria-live="polite">
+          {t('updating')}
+        </div>
       </div>
     </header>
 
@@ -462,7 +500,7 @@ const root = tv({
         showHealthAdvice && (
           <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-4">
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">
-              Health Recommendations
+              {t('health_recommendations')}
             </h3>
             <div class="space-y-3">
               <div class="flex gap-3">
@@ -471,10 +509,10 @@ const root = tv({
                 </div>
                 <div>
                   <div class="font-medium text-gray-900 dark:text-gray-100">
-                    General Population
+                    {t('general_population')}
                   </div>
                   <div class="text-sm text-gray-700 dark:text-gray-300 general-text">
-                    Air quality is being assessed...
+                    {t('assessing')}
                   </div>
                 </div>
               </div>
@@ -484,10 +522,10 @@ const root = tv({
                 </div>
                 <div>
                   <div class="font-medium text-gray-900 dark:text-gray-100">
-                    Sensitive Individuals
+                    {t('sensitive_individuals')}
                   </div>
                   <div class="text-sm text-gray-700 dark:text-gray-300 sensitive-text">
-                    Air quality is being assessed...
+                    {t('assessing')}
                   </div>
                   {/* Pollutant badges will be rendered here */}
                   <div
@@ -638,6 +676,8 @@ const root = tv({
           advice_hazardous_sensitive:
             'Everyone should avoid outdoor activities; follow local health guidance.',
           elevated_note: 'Elevated pollutant levels detected:',
+          pollutant_moderate_caution:
+            'Some pollutant concentrations are moderately elevated.',
           explainer_summary: 'What do these abbreviations mean?',
           explainer_pm2_5:
             'PM2.5: Particulate Matter ≤2.5 µm (fine particles) — penetrates deep into lungs.',
@@ -651,6 +691,10 @@ const root = tv({
             'SO2: Sulfur Dioxide — from burning sulfur-containing fuels; respiratory effects.',
           explainer_co:
             'CO: Carbon Monoxide — reduces oxygen delivery in the body at high levels.',
+          legend_text:
+            'Values are latest hourly concentrations. Badges are colored by indicative severity vs. typical thresholds (e.g. PM2.5 35 µg/m³).',
+          no_pollutant_data:
+            'No pollutant concentration data available for this location.',
         },
         de: {
           updated: 'Aktualisiert:',
@@ -683,6 +727,8 @@ const root = tv({
           advice_hazardous_sensitive:
             'Alle sollten Aktivitäten im Freien vermeiden; befolgen Sie lokale Gesundheitsanweisungen.',
           elevated_note: 'Erhöhte Schadstoffwerte festgestellt:',
+          pollutant_moderate_caution:
+            'Einige Schadstoffkonzentrationen sind mäßig erhöht.',
           explainer_summary: 'Was bedeuten die Abkürzungen?',
           explainer_pm2_5:
             'PM2.5: Partikel ≤2.5 µm (fein) — dringen tief in die Lunge ein.',
@@ -696,6 +742,10 @@ const root = tv({
             'SO2: Schwefeldioxid — aus schwefelhaltigen Brennstoffen; Atemwege betroffen.',
           explainer_co:
             'CO: Kohlenmonoxid — verringert Sauerstofftransport im Körper.',
+          legend_text:
+            'Werte sind aktuelle Stundenmittel. Badges zeigen die indizielle Schwere im Vergleich zu typischen Schwellen (z. B. PM2.5 35 µg/m³).',
+          no_pollutant_data:
+            'Für diesen Ort liegen keine Schadstoffkonzentrationen vor.',
         },
         es: {
           updated: 'Actualizado:',
@@ -729,6 +779,8 @@ const root = tv({
           advice_hazardous_sensitive:
             'Todos deben evitar actividades al aire libre; siga las recomendaciones locales de salud.',
           elevated_note: 'Niveles elevados de contaminantes detectados:',
+          pollutant_moderate_caution:
+            'Algunas concentraciones de contaminantes están moderadamente elevadas.',
           explainer_summary: '¿Qué significan estas abreviaturas?',
           explainer_pm2_5:
             'PM2.5: Partículas ≤2.5 µm (finas) — penetran profundamente en los pulmones.',
@@ -740,6 +792,10 @@ const root = tv({
           explainer_so2: 'SO2: Dióxido de azufre — efectos respiratorios.',
           explainer_co:
             'CO: Monóxido de carbono — reduce la entrega de oxígeno en el cuerpo.',
+          legend_text:
+            'Los valores son concentraciones horarias más recientes. Los badges se colorean según la gravedad indicativa frente a umbrales típicos (ej. PM2.5 35 µg/m³).',
+          no_pollutant_data:
+            'No hay datos de concentraciones de contaminantes para esta ubicación.',
         },
         fr: {
           updated: 'Mis à jour:',
@@ -774,6 +830,8 @@ const root = tv({
           advice_hazardous_sensitive:
             'Tout le monde doit éviter les activités en plein air ; suivez les recommandations sanitaires locales.',
           elevated_note: 'Niveaux élevés de polluants détectés :',
+          pollutant_moderate_caution:
+            'Certaines concentrations de polluants sont modérément élevées.',
           explainer_summary: 'Que signifient ces abréviations?',
           explainer_pm2_5:
             'PM2.5: Particules ≤2.5 µm (fines) — pénètrent profondément dans les poumons.',
@@ -785,6 +843,10 @@ const root = tv({
           explainer_so2: 'SO2: Dioxyde de soufre — effets respiratoires.',
           explainer_co:
             'CO: Monoxyde de carbone — réduit l’apport en oxygène dans le corps.',
+          legend_text:
+            'Les valeurs sont les concentrations horaires les plus récentes. Les badges sont colorés selon la gravité indicative par rapport aux seuils typiques (ex. PM2.5 35 µg/m³).',
+          no_pollutant_data:
+            'Aucune donnée de concentration des polluants pour cet emplacement.',
         },
         it: {
           updated: 'Aggiornato:',
@@ -818,6 +880,8 @@ const root = tv({
           advice_hazardous_sensitive:
             'Tutti dovrebbero evitare attività all’aperto; seguire le indicazioni sanitarie locali.',
           elevated_note: 'Livelli elevati di inquinanti rilevati:',
+          pollutant_moderate_caution:
+            'Alcune concentrazioni di inquinanti sono moderatamente elevate.',
           explainer_summary: 'Cosa significano queste abbreviazioni?',
           explainer_pm2_5:
             'PM2.5: Particelle ≤2.5 µm (fini) — penetrano in profondità nei polmoni.',
@@ -830,6 +894,10 @@ const root = tv({
           explainer_so2: 'SO2: Diossido di zolfo — effetti respiratori.',
           explainer_co:
             'CO: Monossido di carbonio — riduce il trasporto di ossigeno nel corpo.',
+          legend_text:
+            'I valori sono le concentrazioni orarie più recenti. I badge sono colorati in base alla gravità indicativa rispetto alle soglie tipiche (es. PM2.5 35 µg/m³).',
+          no_pollutant_data:
+            'Nessun dato di concentrazione degli inquinanti per questa posizione.',
         },
         pt: {
           updated: 'Atualizado:',
@@ -861,17 +929,23 @@ const root = tv({
           advice_hazardous_sensitive:
             'Todos devem evitar atividades ao ar livre; siga as orientações de saúde locais.',
           elevated_note: 'Níveis elevados de poluentes detectados:',
+          pollutant_moderate_caution:
+            'Algumas concentrações de poluentes estão moderadamente elevadas.',
           explainer_summary: 'O que significam estas abreviaturas?',
           explainer_pm2_5:
             'PM2.5: Partículas ≤2.5 µm (finas) — penetram profundamente nos pulmões.',
           explainer_pm10:
-            'PM10: Partículas ≤10 µm (grossas) — risco de irritação respiratória.',
+            'PM10: Partículas ≤10 µm (grossas) — risco de irritação respiratoria.',
           explainer_no2:
             'NO2: Dióxido de azoto — do tráfego/combustão; pode irritar as vias respiratórias.',
           explainer_o3: 'O3: Ozono (a nível do solo) — afeta a respiração.',
           explainer_so2: 'SO2: Dióxido de enxofre — efeitos respiratórios.',
           explainer_co:
             'CO: Monóxido de carbono — reduz o fornecimento de oxigénio no corpo.',
+          legend_text:
+            'Os valores são as concentrações horárias mais recentes. Os badges são coloridos por gravidade indicativa vs. limites típicos (ex. PM2.5 35 µg/m³).',
+          no_pollutant_data:
+            'Sem dados de concentração de poluentes para esta localização.',
         },
       };
       return (
@@ -901,7 +975,7 @@ const root = tv({
 
     async fetchData() {
       if (!this.latitude || !this.longitude) {
-        this.showError('No location provided.');
+        this.showError(this.tLang('no_location_provided'));
         return;
       }
 
@@ -1201,6 +1275,37 @@ const root = tv({
         sensitive += note;
       }
 
+      // Consider overall pollutant-derived severity and adjust advice if needed
+      const severityOrder = { low: 0, moderate: 1, high: 2, 'very-high': 3 };
+      const severityFor = (k, v) => {
+        const thr = pollutantThresholds[k];
+        if (thr == null) return 'low';
+        if (v < thr * 0.5) return 'low';
+        if (v < thr) return 'moderate';
+        if (v < thr * 1.5) return 'high';
+        return 'very-high';
+      };
+
+      let maxSeverity = 'low';
+      Object.keys(components).forEach((k) => {
+        const val = Number(components[k]);
+        if (!Number.isFinite(val)) return;
+        const sev = severityFor(k, val);
+        if (severityOrder[sev] > severityOrder[maxSeverity]) maxSeverity = sev;
+      });
+
+      // If pollutant severity is high or very-high, escalate textual advice
+      if (severityOrder[maxSeverity] >= severityOrder['high']) {
+        // escalate to 'poor' band advice as a conservative fallback
+        general = this.tLang('advice_poor_general');
+        sensitive = this.tLang('advice_poor_sensitive');
+      } else if (maxSeverity === 'moderate') {
+        // if AQI says excellent but some pollutants are moderate, append a caution
+        const caution = ` ${this.tLang('pollutant_moderate_caution')}`;
+        if (!general.includes(caution)) general += caution;
+        if (!sensitive.includes(caution)) sensitive += caution;
+      }
+
       if (generalEl) generalEl.textContent = general;
       if (sensitiveEl) sensitiveEl.textContent = sensitive;
 
@@ -1281,11 +1386,9 @@ const root = tv({
 
       if (legend) {
         if (rendered === 0) {
-          legend.textContent =
-            'No pollutant concentration data available for this location.';
+          legend.textContent = this.tLang('no_pollutant_data');
         } else {
-          legend.innerHTML =
-            'Values are latest hourly concentrations. Badges are colored by indicative severity vs. typical thresholds (e.g. PM2.5 35 µg/m³).';
+          legend.innerHTML = this.tLang('legend_text');
         }
 
         // Add a short, collapsible explanation of pollutant abbreviations

@@ -4,18 +4,139 @@ import AirQuality from '../../components/AirQuality.astro';
 import Headline from '../../components/Headline.astro';
 import Paragraph from '../../components/Paragraph.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
+import Table from '../../components/Table.astro';
+import InlineCode from '../../components/InlineCode.astro';
 
-const usageSnippet = "import { AirQuality } from 'comet-astro';\\n\\n<AirQuality latitude={52.52} longitude={13.405} />";
+const usageSnippet = `---
+import { AirQuality } from 'comet-astro';
+
+---
+
+<AirQuality latitude={52.52} longitude={13.405} location="Berlin" />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'latitude',
+    type: 'number',
+    default: 'undefined',
+    description: 'Latitude coordinate for lookup (preferred).',
+  },
+  {
+    name: 'longitude',
+    type: 'number',
+    default: 'undefined',
+    description: 'Longitude coordinate for lookup (preferred).',
+  },
+  {
+    name: 'location',
+    type: 'string',
+    default: "''",
+    description:
+      'Optional human-readable location label shown next to the heading.',
+  },
+  {
+    name: 'aqiSystem',
+    type: `'european' | 'us' | 'both'`,
+    default: `'both'`,
+    description: 'Which AQI system(s) to show.',
+  },
+  {
+    name: 'size',
+    type: `'xs' | 'sm' | 'md' | 'lg' | 'xl'`,
+    default: `'md'`,
+    description:
+      'Compactness / padding and type size controlled by the variant.',
+  },
+  {
+    name: 'variant',
+    type: `'default' | 'minimal' | 'dashboard'`,
+    default: `'default'`,
+    description:
+      'Visual variant: minimal strips borders/background; dashboard adapts for tight layouts.',
+  },
+  {
+    name: 'showHealthAdvice',
+    type: 'boolean',
+    default: 'true',
+    description:
+      'Toggle the health advice panel (sensitive/general recommendations).',
+  },
+  {
+    name: 'class',
+    type: 'string',
+    default: "''",
+    description: 'Additional utility classes to apply to the root wrapper.',
+  },
+];
+
+const examplesSnippet = `---
+import { AirQuality } from 'comet-astro';
+
+---
+
+<!-- Berlin (Deutsch) -->
+<AirQuality latitude={52.52} longitude={13.405} location="Berlin" language="de" />
+
+<!-- New York (English) -->
+<AirQuality latitude={40.71} longitude={-74.01} location="New York" language="en" />
+
+<!-- Madrid (Español) -->
+<AirQuality latitude={40.4168} longitude={-3.7038} location="Madrid" language="es" />
+
+<!-- Paris (Français) -->
+<AirQuality latitude={48.8566} longitude={2.3522} location="Paris" language="fr" />
+
+<!-- Rome (Italiano) -->
+<AirQuality latitude={41.9028} longitude={12.4964} location="Rome" language="it" />
+
+<!-- Lisbon (Português) -->
+<AirQuality latitude={38.7223} longitude={-9.1393} location="Lisbon" language="pt" />
+
+<!-- Los Angeles (US AQI, small) -->
+<AirQuality latitude={34.05} longitude={-118.24} location="Los Angeles" aqiSystem="us" size="sm" />
+
+<!-- Compact minimal -->
+<AirQuality latitude={52.52} longitude={13.405} variant="minimal" size="sm" />`;
 ---
 
 <DocsLayout seoTitle="AirQuality">
   <Headline level="h1" textSize="2xl">AirQuality</Headline>
 
-  <section class="mt-6">
-    <Paragraph>The AirQuality component displays current air quality (EU/US AQI) and pollutant badges.</Paragraph>
-    <div class="mt-4">
-      <AirQuality latitude={52.52} longitude={13.405} location="Berlin" />
-    </div>
+  <section class="mt-6 space-y-4">
+    <Paragraph>
+      The <InlineCode>AirQuality</InlineCode> component fetches and displays up-to-date
+      air quality information for a given location. It presents system-level AQI
+      values (European and/or US scales), per-pollutant concentration badges (PM2.5,
+      PM10, NO2, O3, SO2, CO), and short health recommendations tuned to the reported
+      AQI band.
+    </Paragraph>
+
+    <Paragraph>
+      Data is retrieved from public air-quality endpoints (hourly or current
+      values are requested depending on availability). The component tries
+      hourly endpoints first for pollutant trends and falls back to single-
+      value current endpoints when hourly data is unavailable for a pollutant.
+      The component also caches a small support map in <InlineCode
+        >localStorage</InlineCode
+      >
+      to avoid repeated capability checks on subsequent renders.
+    </Paragraph>
+
+    <Paragraph>
+      Features include: selectable <InlineCode>aqiSystem</InlineCode> (EU, US or
+      both), responsive size variants, an optional lightweight "minimal" presentation
+      for compact layouts, accessible ARIA attributes for screen readers, and a health-advice
+      panel with recommendations for the general population and sensitive groups.
+      The component is SSR-friendly and can accept server-provided coordinates for
+      deterministic rendering.
+    </Paragraph>
   </section>
 
   <section class="mt-8">
@@ -23,4 +144,122 @@ const usageSnippet = "import { AirQuality } from 'comet-astro';\\n\\n<AirQuality
     <CodeBlock code={usageSnippet} language="astro" />
   </section>
 
+  <section class="mt-10 space-y-6">
+    <Headline level="h2">Props</Headline>
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2">Examples</Headline>
+    <Paragraph class="text-base text-slate-200"
+      >Basic examples showing common configurations and how to use the <InlineCode
+        >size</InlineCode
+      > and <InlineCode>variant</InlineCode> props.</Paragraph
+    >
+
+    <div class="grid gap-6 sm:grid-cols-2 mt-4">
+      <div class="space-y-3">
+        <Headline level="h4" textSize="sm" weight="semibold"
+          >Berlin (Deutsch)</Headline
+        >
+        <AirQuality
+          latitude={52.52}
+          longitude={13.405}
+          location="Berlin"
+          language="de"
+        />
+      </div>
+
+      <div class="space-y-3">
+        <Headline level="h4" textSize="sm" weight="semibold"
+          >New York (English)</Headline
+        >
+        <AirQuality
+          latitude={40.71}
+          longitude={-74.01}
+          location="New York"
+          language="en"
+        />
+      </div>
+
+      <div class="space-y-3">
+        <Headline level="h4" textSize="sm" weight="semibold"
+          >Madrid (Español)</Headline
+        >
+        <AirQuality
+          latitude={40.4168}
+          longitude={-3.7038}
+          location="Madrid"
+          language="es"
+        />
+      </div>
+
+      <div class="space-y-3">
+        <Headline level="h4" textSize="sm" weight="semibold"
+          >Paris (Français)</Headline
+        >
+        <AirQuality
+          latitude={48.8566}
+          longitude={2.3522}
+          location="Paris"
+          language="fr"
+        />
+      </div>
+
+      <div class="space-y-3">
+        <Headline level="h4" textSize="sm" weight="semibold"
+          >Rome (Italiano)</Headline
+        >
+        <AirQuality
+          latitude={41.9028}
+          longitude={12.4964}
+          location="Rome"
+          language="it"
+        />
+      </div>
+
+      <div class="space-y-3">
+        <Headline level="h4" textSize="sm" weight="semibold"
+          >Lisbon (Português)</Headline
+        >
+        <AirQuality
+          latitude={38.7223}
+          longitude={-9.1393}
+          location="Lisbon"
+          language="pt"
+        />
+      </div>
+
+      <div class="space-y-3">
+        <Headline level="h4" textSize="sm" weight="semibold"
+          >Los Angeles (US AQI, small)</Headline
+        >
+        <AirQuality
+          latitude={34.05}
+          longitude={-118.24}
+          location="Los Angeles"
+          aqiSystem="us"
+          size="sm"
+        />
+      </div>
+
+      <div class="space-y-3">
+        <Headline level="h4" textSize="sm" weight="semibold"
+          >Compact minimal</Headline
+        >
+        <AirQuality
+          latitude={52.52}
+          longitude={13.405}
+          variant="minimal"
+          size="sm"
+        />
+      </div>
+    </div>
+
+    <Headline level="h3" textSize="sm" weight="semibold">Code examples</Headline
+    >
+    <CodeBlock code={examplesSnippet} language="astro" />
+  </section>
 </DocsLayout>
