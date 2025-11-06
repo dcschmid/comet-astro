@@ -22,9 +22,213 @@ const {
   aqiSystem = 'both',
   size = 'md',
   showHealthAdvice = true,
+  language = 'en',
+  domain = 'both',
   class: className = '',
   ...rest
 } = Astro.props;
+
+// Server-side translations used for template rendering
+const TRANSLATIONS = {
+  en: {
+    aria_for: 'Air quality information for',
+    air_quality: 'Air Quality',
+    updating: 'Updating...',
+    loading_data: 'Loading air quality data...',
+    error_title: 'Air quality data unavailable',
+    try_again: 'Try again',
+    eu_aqi: 'European AQI',
+    us_aqi: 'US AQI',
+    health_recommendations: 'Health Recommendations',
+    general_population: 'General Population',
+    sensitive_individuals: 'Sensitive Individuals',
+    assessing: 'Air quality is being assessed...',
+    no_pollutant_data: 'No pollutant concentration data available for this location.',
+    legend_text: 'Values are latest hourly concentrations. Badges are colored by indicative severity vs. typical thresholds (e.g. PM2.5 35 µg/m³).',
+    explainer_summary: 'What do these abbreviations mean?',
+    explainer_pm2_5: 'PM2.5: Particulate Matter ≤2.5 µm (fine particles) — penetrates deep into lungs.',
+    explainer_pm10: 'PM10: Particulate Matter ≤10 µm (coarse particles) — respiratory irritation risk.',
+    explainer_no2: 'NO2: Nitrogen Dioxide — from traffic and combustion; can irritate airways.',
+    explainer_o3: 'O3: Ozone (ground-level) — formed by reactions in sunlight; affects breathing.',
+    explainer_so2: 'SO2: Sulfur Dioxide — from burning sulfur-containing fuels; respiratory effects.',
+    explainer_co: 'CO: Carbon Monoxide — reduces oxygen delivery in the body at high levels.',
+    updated: 'Updated:',
+  measured_label: 'Measured:',
+    location_denied: 'Location access denied. Please provide coordinates.',
+    fetch_failed: 'Failed to fetch air quality data.'
+    ,
+    advice_excellent_general: 'Air quality is excellent. Perfect for outdoor activities.',
+    advice_excellent_sensitive: 'Air quality is safe for everyone.',
+    advice_acceptable_general: 'Air quality is acceptable for most people.',
+    advice_acceptable_sensitive: 'Consider reducing prolonged outdoor exertion.',
+    advice_moderate_general: 'Air quality is moderate — some individuals may experience symptoms.',
+    advice_moderate_sensitive: 'People with respiratory conditions should reduce prolonged or heavy outdoor exertion.',
+    advice_poor_general: 'Air quality is poor. Reduce outdoor activities.',
+    advice_poor_sensitive: 'Sensitive groups: avoid prolonged outdoor exertion; consider staying indoors.',
+    advice_very_poor_general: 'Air quality is very poor. Avoid outdoor activities.',
+    advice_very_poor_sensitive: 'Sensitive groups: remain indoors and follow medical advice.',
+    advice_hazardous_general: 'Air quality is hazardous. Stay indoors and limit exposure.',
+    advice_hazardous_sensitive: 'Everyone should avoid outdoor activities; follow local health guidance.',
+    elevated_note: 'Elevated pollutant levels detected:'
+    , measured_others_not: '(others not available)'
+  },
+  de: {
+    aria_for: 'Luftqualitätsinformationen für',
+    air_quality: 'Luftqualität',
+    updating: 'Aktualisiere...',
+    loading_data: 'Lade Luftqualitätsdaten...',
+    error_title: 'Luftdaten nicht verfügbar',
+    try_again: 'Erneut versuchen',
+    eu_aqi: 'EU‑AQI',
+    us_aqi: 'US‑AQI',
+    health_recommendations: 'Gesundheitsempfehlungen',
+    general_population: 'Allgemeine Bevölkerung',
+    sensitive_individuals: 'Empfindliche Personen',
+    assessing: 'Die Luftqualität wird geprüft...',
+    no_pollutant_data: 'Für diesen Ort liegen keine Schadstoffkonzentrationen vor.',
+    legend_text: 'Werte sind aktuelle Stundenmittel. Badges zeigen die indizielle Schwere im Vergleich zu typischen Schwellen (z. B. PM2.5 35 µg/m³).',
+    explainer_summary: 'Was bedeuten die Abkürzungen?',
+    explainer_pm2_5: 'PM2.5: Partikel ≤2.5 µm (fein) — dringen tief in die Lunge ein.',
+    explainer_pm10: 'PM10: Partikel ≤10 µm (grob) — kann Atemwege reizen.',
+    explainer_no2: 'NO2: Stickstoffdioxid — aus Verkehr/Verbrennung; reizt die Atemwege.',
+    explainer_o3: 'O3: Bodennahes Ozon — entsteht in Sonnenlicht; belastet die Atmung.',
+    explainer_so2: 'SO2: Schwefeldioxid — aus schwefelhaltigen Brennstoffen; Atemwege betroffen.',
+    explainer_co: 'CO: Kohlenmonoxid — verringert Sauerstofftransport im Körper.',
+    updated: 'Aktualisiert:',
+  measured_label: 'Gemessen:',
+    location_denied: 'Standortzugriff verweigert. Bitte Koordinaten angeben.',
+    fetch_failed: 'Abruf der Luftdaten fehlgeschlagen.'
+    ,
+    advice_excellent_general: 'Die Luftqualität ist ausgezeichnet. Ideal für Aktivitäten im Freien.',
+    advice_excellent_sensitive: 'Die Luftqualität ist für alle sicher.',
+    advice_acceptable_general: 'Die Luftqualität ist für die meisten Menschen akzeptabel.',
+    advice_acceptable_sensitive: 'Reduzieren Sie längere körperliche Aktivitäten im Freien.',
+    advice_moderate_general: 'Die Luftqualität ist mäßig — einige Personen können Symptome haben.',
+    advice_moderate_sensitive: 'Personen mit Atemwegserkrankungen sollten längere oder anstrengende Aktivitäten im Freien reduzieren.',
+    advice_poor_general: 'Die Luftqualität ist schlecht. Reduzieren Sie Aktivitäten im Freien.',
+    advice_poor_sensitive: 'Empfindliche Gruppen: Vermeiden Sie längere Aktivitäten im Freien; bleiben Sie wenn möglich drinnen.',
+    advice_very_poor_general: 'Die Luftqualität ist sehr schlecht. Vermeiden Sie Aktivitäten im Freien.',
+    advice_very_poor_sensitive: 'Empfindliche Gruppen: Bleiben Sie drinnen und befolgen Sie medizinische Anweisungen.',
+    advice_hazardous_general: 'Die Luftqualität ist gefährlich. Bleiben Sie drinnen und begrenzen Sie die Exposition.',
+    advice_hazardous_sensitive: 'Alle sollten Aktivitäten im Freien vermeiden; befolgen Sie lokale Gesundheitsanweisungen.',
+    elevated_note: 'Erhöhte Schadstoffwerte festgestellt:'
+    , measured_others_not: '(andere nicht verfügbar)'
+  },
+  es: {
+    aria_for: 'Información de la calidad del aire para',
+    air_quality: 'Calidad del aire',
+    updating: 'Actualizando...',
+    loading_data: 'Cargando datos de calidad del aire...',
+    error_title: 'Datos de calidad del aire no disponibles',
+    try_again: 'Reintentar',
+    eu_aqi: 'AQI Europeo',
+    us_aqi: 'AQI EE. UU.',
+    health_recommendations: 'Recomendaciones de salud',
+    general_population: 'Población general',
+    sensitive_individuals: 'Personas sensibles',
+    assessing: 'Se está evaluando la calidad del aire...',
+    no_pollutant_data: 'No hay datos de concentraciones de contaminantes para esta ubicación.',
+    legend_text: 'Los valores son concentraciones horarias más recientes. Los badges se colorean según la gravedad indicativa frente a umbrales típicos (ej. PM2.5 35 µg/m³).',
+    explainer_summary: '¿Qué significan estas abreviaturas?',
+    explainer_pm2_5: 'PM2.5: Partículas ≤2.5 µm (finas) — penetran profundamente en los pulmones.',
+    explainer_pm10: 'PM10: Partículas ≤10 µm (gruesas) — riesgo de irritación respiratoria.',
+    explainer_no2: 'NO2: Dióxido de nitrógeno — de tráfico/combustión; irrita las vías respiratorias.',
+    explainer_o3: 'O3: Ozono troposférico — afecta la respiración.',
+    explainer_so2: 'SO2: Dióxido de azufre — efectos respiratorios.',
+    explainer_co: 'CO: Monóxido de carbono — reduce la entrega de oxígeno en el cuerpo.',
+    updated: 'Actualizado:',
+    location_denied: 'Acceso a la ubicación denegado. Proporcione coordenadas.',
+    fetch_failed: 'Error al obtener datos de calidad del aire.'
+  , measured_label: 'Medido:'
+  , measured_others_not: '(otros no disponibles)'
+  },
+  fr: {
+    aria_for: 'Informations sur la qualité de l’air pour',
+    air_quality: 'Qualité de l’air',
+    updating: 'Mise à jour...',
+    loading_data: 'Chargement des données de qualité de l’air...',
+    error_title: 'Données de qualité de l’air non disponibles',
+    try_again: 'Réessayer',
+    eu_aqi: 'AQI Europe',
+    us_aqi: 'AQI US',
+    health_recommendations: 'Recommandations de santé',
+    general_population: 'Population générale',
+    sensitive_individuals: 'Personnes sensibles',
+    assessing: 'La qualité de l’air est en cours d’évaluation...',
+    no_pollutant_data: 'Aucune donnée de concentration des polluants pour cet emplacement.',
+    legend_text: 'Les valeurs sont les concentrations horaires les plus récentes. Les badges sont colorés selon la gravité indicative par rapport aux seuils typiques (ex. PM2.5 35 µg/m³).',
+    explainer_summary: 'Que signifient ces abréviations?',
+    explainer_pm2_5: 'PM2.5: Particules ≤2.5 µm (fines) — pénètrent profondément dans les poumons.',
+    explainer_pm10: 'PM10: Particules ≤10 µm (grossières) — irritation respiratoire possible.',
+    explainer_no2: 'NO2: Dioxyde d’azote — du trafic/combustion; irrite les voies respiratoires.',
+    explainer_o3: 'O3: Ozone de surface — affecte la respiration.',
+    explainer_so2: 'SO2: Dioxyde de soufre — effets respiratoires.',
+    explainer_co: 'CO: Monoxyde de carbone — réduit l’apport en oxygène dans le corps.',
+    updated: 'Mis à jour:',
+    location_denied: 'Accès à la localisation refusé. Veuillez fournir des coordonnées.',
+    fetch_failed: 'Échec de la récupération des données de qualité de l’air.'
+  , measured_label: 'Mesuré:'
+  , measured_others_not: "(autres non disponibles)"
+  },
+  it: {
+    aria_for: 'Informazioni sulla qualità dell’aria per',
+    air_quality: 'Qualità dell’aria',
+    updating: 'Aggiornamento...',
+    loading_data: 'Caricamento dati qualità dell’aria...',
+    error_title: 'Dati qualità dell’aria non disponibili',
+    try_again: 'Riprova',
+    eu_aqi: 'AQI Europa',
+    us_aqi: 'AQI USA',
+    health_recommendations: 'Raccomandazioni per la salute',
+    general_population: 'Popolazione generale',
+    sensitive_individuals: 'Persone sensibili',
+    assessing: "La qualità dell'aria è in fase di valutazione...",
+    no_pollutant_data: 'Nessun dato di concentrazione degli inquinanti per questa posizione.',
+    legend_text: 'I valori sono le concentrazioni orarie più recenti. I badge sono colorati in base alla gravità indicativa rispetto alle soglie tipiche (es. PM2.5 35 µg/m³).',
+    explainer_summary: 'Cosa significano queste abbreviazioni?',
+    explainer_pm2_5: 'PM2.5: Particelle ≤2.5 µm (fini) — penetrano in profondità nei polmoni.',
+    explainer_pm10: 'PM10: Particelle ≤10 µm (grossolane) — rischio di irritazione respiratoria.',
+    explainer_no2: 'NO2: Diossido di azoto — da traffico/combustione; può irritare le vie respiratorie.',
+    explainer_o3: 'O3: Ozono troposferico — influisce sulla respirazione.',
+    explainer_so2: 'SO2: Diossido di zolfo — effetti respiratori.',
+    explainer_co: 'CO: Monossido di carbonio — riduce il trasporto di ossigeno nel corpo.',
+    updated: 'Aggiornato:',
+    location_denied: "Accesso alla posizione negato. Fornisci le coordinate.",
+    fetch_failed: 'Recupero dati qualità dell’aria non riuscito.'
+  , measured_label: 'Misurato:'
+  , measured_others_not: '(altri non disponibili)'
+  },
+  pt: {
+    aria_for: 'Informações da qualidade do ar para',
+    air_quality: 'Qualidade do ar',
+    updating: 'A atualizar...',
+    loading_data: 'A carregar dados da qualidade do ar...',
+    error_title: 'Dados de qualidade do ar não disponíveis',
+    try_again: 'Tentar novamente',
+    eu_aqi: 'AQI Europa',
+    us_aqi: 'AQI EUA',
+    health_recommendations: 'Recomendações de saúde',
+    general_population: 'População geral',
+    sensitive_individuals: 'Pessoas sensíveis',
+    assessing: 'A qualidade do ar está a ser avaliada...',
+    no_pollutant_data: 'Sem dados de concentração de poluentes para esta localização.',
+    legend_text: 'Os valores são as concentrações horárias mais recentes. Os badges são coloridos por gravidade indicativa vs. limites típicos (ex. PM2.5 35 µg/m³).',
+    explainer_summary: 'O que significam estas abreviaturas?',
+    explainer_pm2_5: 'PM2.5: Partículas ≤2.5 µm (finas) — penetram profundamente nos pulmões.',
+    explainer_pm10: 'PM10: Partículas ≤10 µm (grossas) — risco de irritação respiratória.',
+    explainer_no2: 'NO2: Dióxido de azoto — do tráfego/combustão; pode irritar as vias respiratórias.',
+    explainer_o3: 'O3: Ozono (a nível do solo) — afeta a respiração.',
+    explainer_so2: 'SO2: Dióxido de enxofre — efeitos respiratórios.',
+    explainer_co: 'CO: Monóxido de carbono — reduz o fornecimento de oxigénio no corpo.',
+    updated: 'Atualizado:',
+    location_denied: 'Acesso à localização negado. Forneça coordenadas.',
+    fetch_failed: 'Falha ao obter dados de qualidade do ar.'
+    , measured_label: 'Medido:'
+    , measured_others_not: '(outros não disponíveis)'
+  }
+};
+
+const t = (key) => (TRANSLATIONS[language] && TRANSLATIONS[language][key]) || TRANSLATIONS.en[key] || key;
 
 const sizeClasses = {
   xs: 'text-xs p-3',
@@ -38,10 +242,12 @@ const sizeClasses = {
 <div
   class={`air-quality-widget bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-lg ${sizeClasses[size]} ${className}`}
   role="region"
-  aria-label={`Air quality information for ${location || 'your location'}`}
+  aria-label={`${t('aria_for')} ${location || 'your location'}`}
   data-air-quality-widget
   data-latitude={latitude}
   data-longitude={longitude}
+  data-language={language}
+  data-domain={domain}
   data-location={location}
   data-aqi-system={aqiSystem}
   {...rest}
@@ -53,7 +259,7 @@ const sizeClasses = {
         class="flex items-center gap-3 text-xl font-bold text-gray-900 dark:text-gray-100"
       >
         <span class="text-2xl" aria-hidden="true">🫁</span>
-        <span>Air Quality</span>
+        <span>{t('air_quality')}</span>
         {
           location && (
             <span class="text-lg font-medium text-gray-600 dark:text-gray-400">
@@ -66,7 +272,7 @@ const sizeClasses = {
         class="text-sm text-gray-500 dark:text-gray-400 update-time"
         aria-live="polite"
       >
-        Updating...
+        {t('updating')}
       </div>
     </header>
 
@@ -75,13 +281,13 @@ const sizeClasses = {
       class="flex items-center justify-center gap-4 py-12 air-quality__loading"
       aria-live="polite"
     >
-      <div
-        class="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin dark:border-gray-600 dark:border-t-blue-400"
-        aria-hidden="true"
-      >
-      </div>
-      <span class="text-lg font-semibold text-gray-700 dark:text-gray-300"
-        >Loading air quality data...</span
+              <div
+                class="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin dark:border-gray-600 dark:border-t-blue-400"
+                aria-hidden="true"
+              >
+              </div>
+              <span class="text-lg font-semibold text-gray-700 dark:text-gray-300"
+        >{t('loading_data')}</span
       >
     </div>
 
@@ -92,14 +298,14 @@ const sizeClasses = {
     >
       <div class="text-4xl" aria-hidden="true">⚠️</div>
       <h3 class="text-lg font-bold text-red-800 dark:text-red-300">
-        Air quality data unavailable
+        {t('error_title')}
       </h3>
       <p class="text-red-700 dark:text-red-400 error-message"></p>
-      <button
+        <button
         class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors retry-button"
         type="button"
       >
-        Try again
+        {t('try_again')}
       </button>
     </div>
 
@@ -120,7 +326,7 @@ const sizeClasses = {
                 id="eu-aqi-label"
                 class="text-lg font-bold text-gray-900 dark:text-gray-100"
               >
-                European AQI
+                {t('eu_aqi')}
               </h3>
               <div
                 class="text-4xl font-black text-center eu-aqi-value"
@@ -152,7 +358,7 @@ const sizeClasses = {
                 id="us-aqi-label"
                 class="text-lg font-bold text-gray-900 dark:text-gray-100"
               >
-                US AQI
+                {t('us_aqi')}
               </h3>
               <div
                 class="text-4xl font-black text-center us-aqi-value"
@@ -203,9 +409,15 @@ const sizeClasses = {
                   <div class="font-medium text-gray-900 dark:text-gray-100">
                     Sensitive Individuals
                   </div>
-                  <div class="text-sm text-gray-700 dark:text-gray-300 sensitive-text">
-                    Air quality is being assessed...
-                  </div>
+                      <div class="text-sm text-gray-700 dark:text-gray-300 sensitive-text">
+                        Air quality is being assessed...
+                      </div>
+                      <!-- Pollutant badges will be rendered here -->
+                      <div class="mt-2 pollutant-badges flex flex-wrap gap-2" aria-hidden="false"></div>
+                      <!-- Short legend describing pollutant values -->
+                      <div class="mt-2 pollutant-legend text-xs text-gray-600 dark:text-gray-400"></div>
+                      <!-- Coverage label -->
+                      <div class="mt-1 pollutant-coverage text-xs text-gray-600 dark:text-gray-400"></div>
                 </div>
               </div>
             </div>
@@ -220,6 +432,8 @@ const sizeClasses = {
   class AirQuality {
     constructor(element) {
       this.element = element;
+      this.lang = element.dataset.language || 'en';
+      this.domain = element.dataset.domain || 'auto';
       this.latitude = parseFloat(element.dataset.latitude) || null;
       this.longitude = parseFloat(element.dataset.longitude) || null;
       this.location = element.dataset.location || null;
@@ -233,10 +447,233 @@ const sizeClasses = {
       this.init();
     }
 
+    // Detect which pollutant hourly endpoints are supported for this location
+    async detectSupportedPollutants() {
+      const pollutants = ['pm2_5', 'pm10', 'no2', 'o3', 'so2', 'co'];
+      const cacheKey = `aq_supported_${this.latitude}_${this.longitude}_${this.domain || 'auto'}`;
+      try {
+        const raw = localStorage.getItem(cacheKey);
+        if (raw) {
+          const obj = JSON.parse(raw);
+          // TTL 1 hour
+          if (Date.now() - obj.t < 1000 * 60 * 60) return obj.payload;
+        }
+      } catch {
+        // ignore cache parsing errors
+      }
+
+      // For each pollutant try hourly first; if hourly fails try current as fallback.
+      const checks = await Promise.all(
+        pollutants.map(async (p) => {
+          // build base url with domain if provided
+          const domainParam = this.domain && this.domain !== 'auto' ? `&domain=${this.domain}` : '';
+          try {
+            const hourlyUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&hourly=${p}${domainParam}&timezone=auto`;
+            const res = await fetch(hourlyUrl);
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.hourly && Array.isArray(json.hourly[p])) return { p, method: 'hourly' };
+            }
+          } catch { /* ignore hourly attempt */ }
+
+          // hourly failed — try current as fallback
+          try {
+            const domainParam2 = this.domain && this.domain !== 'auto' ? `&domain=${this.domain}` : '';
+            const currentUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&current=${p}${domainParam2}&timezone=auto`;
+            const cres = await fetch(currentUrl);
+            if (cres.ok) {
+              const cjson = await cres.json();
+              if (cjson && cjson.current && cjson.current[p] != null) return { p, method: 'current' };
+            }
+          } catch { /* ignore current attempt */ }
+
+          return { p, method: null };
+        })
+      );
+
+      const supportedMap = {};
+      checks.forEach((c) => {
+        if (c.method) supportedMap[c.p] = c.method;
+      });
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), payload: supportedMap }));
+  } catch { /* ignore localStorage set errors */ }
+      return supportedMap;
+    }
+
     async init() {
       this.retryButton?.addEventListener('click', () => this.fetchData());
       await this.getCoordinates();
       await this.fetchData();
+    }
+
+    // simple runtime translation helper for client-side strings
+    tLang(key) {
+      const TRANSLATIONS = {
+        en: {
+          updated: 'Updated:',
+          location_denied: 'Location access denied. Please provide coordinates.',
+          fetch_failed: 'Failed to fetch air quality data.',
+          measured_label: 'Measured:',
+          measured_others_not: '(others not available)',
+          advice_excellent_general: 'Air quality is excellent. Perfect for outdoor activities.',
+          advice_excellent_sensitive: 'Air quality is safe for everyone.',
+          advice_acceptable_general: 'Air quality is acceptable for most people.',
+          advice_acceptable_sensitive: 'Consider reducing prolonged outdoor exertion.',
+          advice_moderate_general: 'Air quality is moderate — some individuals may experience symptoms.',
+          advice_moderate_sensitive: 'People with respiratory conditions should reduce prolonged or heavy outdoor exertion.',
+          advice_poor_general: 'Air quality is poor. Reduce outdoor activities.',
+          advice_poor_sensitive: 'Sensitive groups: avoid prolonged outdoor exertion; consider staying indoors.',
+          advice_very_poor_general: 'Air quality is very poor. Avoid outdoor activities.',
+          advice_very_poor_sensitive: 'Sensitive groups: remain indoors and follow medical advice.',
+          advice_hazardous_general: 'Air quality is hazardous. Stay indoors and limit exposure.',
+          advice_hazardous_sensitive: 'Everyone should avoid outdoor activities; follow local health guidance.',
+          elevated_note: 'Elevated pollutant levels detected:',
+          explainer_summary: 'What do these abbreviations mean?',
+          explainer_pm2_5: 'PM2.5: Particulate Matter ≤2.5 µm (fine particles) — penetrates deep into lungs.',
+          explainer_pm10: 'PM10: Particulate Matter ≤10 µm (coarse particles) — respiratory irritation risk.',
+          explainer_no2: 'NO2: Nitrogen Dioxide — from traffic and combustion; can irritate airways.',
+          explainer_o3: 'O3: Ozone (ground-level) — formed by reactions in sunlight; affects breathing.',
+          explainer_so2: 'SO2: Sulfur Dioxide — from burning sulfur-containing fuels; respiratory effects.',
+          explainer_co: 'CO: Carbon Monoxide — reduces oxygen delivery in the body at high levels.'
+        },
+        de: {
+          updated: 'Aktualisiert:',
+          location_denied: 'Standortzugriff verweigert. Bitte Koordinaten angeben.',
+          fetch_failed: 'Abruf der Luftdaten fehlgeschlagen.',
+          measured_label: 'Gemessen:',
+          measured_others_not: '(andere nicht verfügbar)',
+          advice_excellent_general: 'Die Luftqualität ist ausgezeichnet. Ideal für Aktivitäten im Freien.',
+          advice_excellent_sensitive: 'Die Luftqualität ist für alle sicher.',
+          advice_acceptable_general: 'Die Luftqualität ist für die meisten Menschen akzeptabel.',
+          advice_acceptable_sensitive: 'Reduzieren Sie längere körperliche Aktivitäten im Freien.',
+          advice_moderate_general: 'Die Luftqualität ist mäßig — einige Personen können Symptome haben.',
+          advice_moderate_sensitive: 'Personen mit Atemwegserkrankungen sollten längere oder anstrengende Aktivitäten im Freien reduzieren.',
+          advice_poor_general: 'Die Luftqualität ist schlecht. Reduzieren Sie Aktivitäten im Freien.',
+          advice_poor_sensitive: 'Empfindliche Gruppen: Vermeiden Sie längere Aktivitäten im Freien; bleiben Sie wenn möglich drinnen.',
+          advice_very_poor_general: 'Die Luftqualität ist sehr schlecht. Vermeiden Sie Aktivitäten im Freien.',
+          advice_very_poor_sensitive: 'Empfindliche Gruppen: Bleiben Sie drinnen und befolgen Sie medizinische Anweisungen.',
+          advice_hazardous_general: 'Die Luftqualität ist gefährlich. Bleiben Sie drinnen und begrenzen Sie die Exposition.',
+          advice_hazardous_sensitive: 'Alle sollten Aktivitäten im Freien vermeiden; befolgen Sie lokale Gesundheitsanweisungen.',
+          elevated_note: 'Erhöhte Schadstoffwerte festgestellt:',
+          explainer_summary: 'Was bedeuten die Abkürzungen?',
+          explainer_pm2_5: 'PM2.5: Partikel ≤2.5 µm (fein) — dringen tief in die Lunge ein.',
+          explainer_pm10: 'PM10: Partikel ≤10 µm (grob) — kann Atemwege reizen.',
+          explainer_no2: 'NO2: Stickstoffdioxid — aus Verkehr/Verbrennung; reizt die Atemwege.',
+          explainer_o3: 'O3: Bodennahes Ozon — entsteht in Sonnenlicht; belastet die Atmung.',
+          explainer_so2: 'SO2: Schwefeldioxid — aus schwefelhaltigen Brennstoffen; Atemwege betroffen.',
+          explainer_co: 'CO: Kohlenmonoxid — verringert Sauerstofftransport im Körper.'
+        },
+        es: {
+          updated: 'Actualizado:',
+          location_denied: 'Acceso a la ubicación denegado. Proporcione coordenadas.',
+          fetch_failed: 'Error al obtener datos de calidad del aire.',
+          measured_label: 'Medido:',
+          measured_others_not: '(otros no disponibles)',
+          advice_excellent_general: 'La calidad del aire es excelente. Perfecta para actividades al aire libre.',
+          advice_excellent_sensitive: 'La calidad del aire es segura para todos.',
+          advice_acceptable_general: 'La calidad del aire es aceptable para la mayoría de las personas.',
+          advice_acceptable_sensitive: 'Considere reducir el esfuerzo prolongado al aire libre.',
+          advice_moderate_general: 'La calidad del aire es moderada — algunas personas pueden experimentar síntomas.',
+          advice_moderate_sensitive: 'Personas con condiciones respiratorias deben reducir el esfuerzo prolongado o intenso al aire libre.',
+          advice_poor_general: 'La calidad del aire es mala. Reduzca las actividades al aire libre.',
+          advice_poor_sensitive: 'Grupos sensibles: evite el esfuerzo prolongado al aire libre; considere permanecer en interiores.',
+          advice_very_poor_general: 'La calidad del aire es muy mala. Evite actividades al aire libre.',
+          advice_very_poor_sensitive: 'Grupos sensibles: permanezca en interiores y siga el consejo médico.',
+          advice_hazardous_general: 'La calidad del aire es peligrosa. Permanezca en interiores y limite la exposición.',
+          advice_hazardous_sensitive: 'Todos deben evitar actividades al aire libre; siga las recomendaciones locales de salud.',
+          elevated_note: 'Niveles elevados de contaminantes detectados:',
+          explainer_summary: '¿Qué significan estas abreviaturas?',
+          explainer_pm2_5: 'PM2.5: Partículas ≤2.5 µm (finas) — penetran profundamente en los pulmones.',
+          explainer_pm10: 'PM10: Partículas ≤10 µm (gruesas) — riesgo de irritación respiratoria.',
+          explainer_no2: 'NO2: Dióxido de nitrógeno — de tráfico/combustión; irrita las vías respiratorias.',
+          explainer_o3: 'O3: Ozono troposférico — afecta la respiración.',
+          explainer_so2: 'SO2: Dióxido de azufre — efectos respiratorios.',
+          explainer_co: 'CO: Monóxido de carbono — reduce la entrega de oxígeno en el cuerpo.'
+        },
+        fr: {
+          updated: 'Mis à jour:',
+          location_denied: 'Accès à la localisation refusé. Veuillez fournir des coordonnées.',
+          fetch_failed: 'Échec de la récupération des données de qualité de l’air.',
+          measured_label: 'Mesuré:',
+          measured_others_not: "(autres non disponibles)",
+          advice_excellent_general: 'La qualité de l’air est excellente. Parfait pour les activités en plein air.',
+          advice_excellent_sensitive: 'La qualité de l’air est sans danger pour tout le monde.',
+          advice_acceptable_general: 'La qualité de l’air est acceptable pour la plupart des personnes.',
+          advice_acceptable_sensitive: 'Envisagez de réduire les efforts prolongés à l’extérieur.',
+          advice_moderate_general: 'La qualité de l’air est modérée — certaines personnes peuvent ressentir des symptômes.',
+          advice_moderate_sensitive: 'Les personnes atteintes de maladies respiratoires doivent réduire les efforts prolongés ou intenses à l’extérieur.',
+          advice_poor_general: 'La qualité de l’air est mauvaise. Réduisez les activités en plein air.',
+          advice_poor_sensitive: 'Groupes sensibles : évitez l’effort prolongé en extérieur ; envisagez de rester à l’intérieur.',
+          advice_very_poor_general: 'La qualité de l’air est très mauvaise. Évitez les activités en plein air.',
+          advice_very_poor_sensitive: 'Groupes sensibles : restez à l’intérieur et suivez les conseils médicaux.',
+          advice_hazardous_general: 'La qualité de l’air est dangereuse. Restez à l’intérieur et limitez l’exposition.',
+          advice_hazardous_sensitive: 'Tout le monde doit éviter les activités en plein air ; suivez les recommandations sanitaires locales.',
+          elevated_note: 'Niveaux élevés de polluants détectés :',
+          explainer_summary: 'Que signifient ces abréviations?',
+          explainer_pm2_5: 'PM2.5: Particules ≤2.5 µm (fines) — pénètrent profondément dans les poumons.',
+          explainer_pm10: 'PM10: Particules ≤10 µm (grossières) — irritation respiratoire possible.',
+          explainer_no2: 'NO2: Dioxyde d’azote — du trafic/combustion; irrite les voies respiratoires.',
+          explainer_o3: 'O3: Ozone de surface — affecte la respiration.',
+          explainer_so2: 'SO2: Dioxyde de soufre — effets respiratoires.',
+          explainer_co: 'CO: Monoxyde de carbone — réduit l’apport en oxygène dans le corps.'
+        },
+        it: {
+          updated: 'Aggiornato:',
+          location_denied: 'Accesso alla posizione negato. Fornisci le coordinate.',
+          fetch_failed: 'Recupero dati qualità dell’aria non riuscito.',
+          measured_label: 'Misurato:',
+          measured_others_not: '(altri non disponibili)',
+          advice_excellent_general: 'La qualità dell’aria è eccellente. Perfetta per attività all’aperto.',
+          advice_excellent_sensitive: 'La qualità dell’aria è sicura per tutti.',
+          advice_acceptable_general: 'La qualità dell’aria è accettabile per la maggior parte delle persone.',
+          advice_acceptable_sensitive: 'Considerare di ridurre l’attività fisica prolungata all’aperto.',
+          advice_moderate_general: 'La qualità dell’aria è moderata — alcune persone potrebbero avvertire sintomi.',
+          advice_moderate_sensitive: 'Le persone con patologie respiratorie dovrebbero ridurre l’attività fisica prolungata o intensa all’aperto.',
+          advice_poor_general: 'La qualità dell’aria è scadente. Ridurre le attività all’aperto.',
+          advice_poor_sensitive: 'Gruppi sensibili: evitare attività prolungate all’aperto; prendere in considerazione di restare al chiuso.',
+          advice_very_poor_general: 'La qualità dell’aria è molto scadente. Evitare attività all’aperto.',
+          advice_very_poor_sensitive: 'Gruppi sensibili: rimanere al chiuso e seguire i consigli medici.',
+          advice_hazardous_general: 'La qualità dell’aria è pericolosa. Rimanere al chiuso e limitare l’esposizione.',
+          advice_hazardous_sensitive: 'Tutti dovrebbero evitare attività all’aperto; seguire le indicazioni sanitarie locali.',
+          elevated_note: 'Livelli elevati di inquinanti rilevati:',
+          explainer_summary: 'Cosa significano queste abbreviazioni?',
+          explainer_pm2_5: 'PM2.5: Particelle ≤2.5 µm (fini) — penetrano in profondità nei polmoni.',
+          explainer_pm10: 'PM10: Particelle ≤10 µm (grossolane) — rischio di irritazione respiratoria.',
+          explainer_no2: 'NO2: Diossido di azoto — da traffico/combustione; può irritare le vie respiratorie.',
+          explainer_o3: 'O3: Ozono troposferico — influisce sulla respirazione.',
+          explainer_so2: 'SO2: Diossido di zolfo — effetti respiratori.',
+          explainer_co: 'CO: Monossido di carbonio — riduce il trasporto di ossigeno nel corpo.'
+        },
+        pt: {
+          updated: 'Atualizado:',
+          location_denied: 'Acesso à localização negado. Forneça coordenadas.',
+          fetch_failed: 'Falha ao obter dados de qualidade do ar.',
+          measured_label: 'Medido:',
+          measured_others_not: '(outros não disponíveis)',
+          advice_excellent_general: 'A qualidade do ar é excelente. Perfeita para atividades ao ar livre.',
+          advice_excellent_sensitive: 'A qualidade do ar é segura para todos.',
+          advice_acceptable_general: 'A qualidade do ar é aceitável para a maioria das pessoas.',
+          advice_acceptable_sensitive: 'Considere reduzir o esforço prolongado ao ar livre.',
+          advice_moderate_general: 'A qualidade do ar é moderada — algumas pessoas podem apresentar sintomas.',
+          advice_moderate_sensitive: 'Pessoas com condições respiratórias devem reduzir o esforço prolongado ou intenso ao ar livre.',
+          advice_poor_general: 'A qualidade do ar é má. Reduza as atividades ao ar livre.',
+          advice_poor_sensitive: 'Grupos sensíveis: evite esforço prolongado ao ar livre; considere permanecer em ambientes fechados.',
+          advice_very_poor_general: 'A qualidade do ar é muito má. Evite atividades ao ar livre.',
+          advice_very_poor_sensitive: 'Grupos sensíveis: permaneça em ambientes fechados e siga as orientações médicas.',
+          advice_hazardous_general: 'A qualidade do ar é perigosa. Permaneça em ambientes fechados e limite a exposição.',
+          advice_hazardous_sensitive: 'Todos devem evitar atividades ao ar livre; siga as orientações de saúde locais.',
+          elevated_note: 'Níveis elevados de poluentes detectados:',
+          explainer_summary: 'O que significam estas abreviaturas?',
+          explainer_pm2_5: 'PM2.5: Partículas ≤2.5 µm (finas) — penetram profundamente nos pulmões.',
+          explainer_pm10: 'PM10: Partículas ≤10 µm (grossas) — risco de irritação respiratória.',
+          explainer_no2: 'NO2: Dióxido de azoto — do tráfego/combustão; pode irritar as vias respiratórias.',
+          explainer_o3: 'O3: Ozono (a nível do solo) — afeta a respiração.',
+          explainer_so2: 'SO2: Dióxido de enxofre — efeitos respiratórios.',
+          explainer_co: 'CO: Monóxido de carbono — reduz o fornecimento de oxigénio no corpo.'
+        }
+      };
+      return (TRANSLATIONS[this.lang] && TRANSLATIONS[this.lang][key]) || TRANSLATIONS.en[key] || key;
     }
 
     async getCoordinates() {
@@ -252,7 +689,7 @@ const sizeClasses = {
           this.latitude = position.coords.latitude;
           this.longitude = position.coords.longitude;
         } catch {
-          this.showError('Location access denied. Please provide coordinates.');
+          this.showError(this.tLang('location_denied'));
         }
       }
     }
@@ -266,16 +703,84 @@ const sizeClasses = {
       this.showLoading();
 
       try {
-        const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&current=european_aqi,us_aqi&timezone=auto`;
-        const response = await fetch(url);
+  // Request current AQI values separately (only AQI here — per-pollutant current values are fetched individually below)
+  const currentUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&current=european_aqi,us_aqi&timezone=auto`;
+        const currentRes = await fetch(currentUrl);
+        if (!currentRes.ok) throw new Error(`API error: ${currentRes.status}`);
+        const currentData = await currentRes.json();
+        if (currentData.error) throw new Error(currentData.reason || 'AirQuality current API error');
 
-        if (!response.ok) throw new Error(`API error: ${response.status}`);
+        // Detect supported pollutants with method map (hourly | current)
+        let supportMap = {};
+        try {
+          supportMap = await this.detectSupportedPollutants();
+        } catch {
+          supportMap = {}; // fallback empty
+        }
+        // persist for handleData fallback logic
+        this.supportMap = supportMap;
 
-        const data = await response.json();
-        this.handleData(data);
+        const allPollutants = ['pm2_5', 'pm10', 'no2', 'o3', 'so2', 'co'];
+        const hourlyList = [];
+        // pollutants marked 'current' will be read from currentData later
+        allPollutants.forEach((p) => {
+          if (supportMap && supportMap[p] === 'hourly') hourlyList.push(p);
+        });
+
+        // Fetch hourly data only for hourlyList (single variable requests per pollutant)
+        const hourlyPromises = hourlyList.map(async (p) => {
+          const domainParam = this.domain && this.domain !== 'auto' ? `&domain=${this.domain}` : '';
+          const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&hourly=${p}${domainParam}&timezone=auto`;
+          try {
+            const res = await fetch(url);
+            if (!res.ok) return { pollutant: p, data: null };
+            const json = await res.json();
+            return { pollutant: p, data: json };
+          } catch {
+            return { pollutant: p, data: null };
+          }
+        });
+
+        const hourlyResults = await Promise.all(hourlyPromises);
+        const mergedHourly = {};
+        hourlyResults.forEach((r) => {
+          if (r && r.data && r.data.hourly && r.data.hourly[r.pollutant]) {
+            mergedHourly[r.pollutant] = r.data.hourly[r.pollutant];
+          }
+        });
+
+        // For pollutants detected as 'current', fetch single-variable current endpoints (avoid multi-variable current requests)
+        const currentPollutants = {};
+        const currentList = allPollutants.filter((p) => supportMap && supportMap[p] === 'current');
+        const currentPromises = currentList.map(async (p) => {
+          const domainParam = this.domain && this.domain !== 'auto' ? `&domain=${this.domain}` : '';
+          const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&current=${p}${domainParam}&timezone=auto`;
+          try {
+            const res = await fetch(url);
+            if (!res.ok) return;
+            const json = await res.json();
+            if (json && json.current && json.current[p] != null) currentPollutants[p] = json.current[p];
+          } catch {
+            // ignore per-pollutant current fetch errors
+          }
+        });
+        await Promise.all(currentPromises);
+
+        // Merge into a single shape expected by handleData (currentData remains primary source for 'current' methods)
+        const merged = {
+          ...currentData,
+          current: {
+            ...(currentData.current || {}),
+            ...currentPollutants,
+          },
+          hourly: mergedHourly,
+        };
+
+        this.handleData(merged);
         this.showContent();
-      } catch {
-        this.showError('Failed to fetch air quality data.');
+      } catch (err) {
+        console.error('AirQuality fetch error', err);
+        this.showError(this.tLang('fetch_failed'));
       }
     }
 
@@ -332,8 +837,69 @@ const sizeClasses = {
       }
 
       // Update health advice
-      this.updateHealthAdvice(current.european_aqi || current.us_aqi || 0);
+      // Provide both AQI and pollutant components to the advice generator
+      const aqiValue =
+        current.european_aqi != null
+          ? Math.round(current.european_aqi)
+          : current.us_aqi != null
+          ? Math.round(current.us_aqi)
+          : 0;
+
+      // Extract pollutant values. Prefer current if available or supported as 'current', otherwise latest from hourly arrays.
+      const components = {};
+      const hourly = data.hourly || {};
+
+      const getLatest = (arr) => {
+        if (!Array.isArray(arr)) return undefined;
+        for (let i = arr.length - 1; i >= 0; i--) {
+          const v = arr[i];
+          if (v !== null && v !== undefined) return v;
+        }
+        return undefined;
+      };
+
+      const pick = (key) => {
+        // If current has a value, prefer it
+        if (current && current[key] != null) return current[key];
+        // If supportMap says current, prefer current (even if null), else try hourly latest
+        if (this.supportMap && this.supportMap[key] === 'current' && current && current[key] != null) return current[key];
+        return getLatest(hourly[key]);
+      };
+
+      components.pm2_5 = pick('pm2_5');
+      components.pm10 = pick('pm10');
+      components.no2 = pick('no2');
+      components.o3 = pick('o3');
+      components.so2 = pick('so2');
+      components.co = pick('co');
+
+      this.updateHealthAdvice({ aqi: aqiValue, components });
       this.updateLastUpdated();
+      this.updateCoverage();
+    }
+
+    updateCoverage() {
+      const el = this.element.querySelector('.pollutant-coverage');
+      if (!el) return;
+      const map = this.supportMap || {};
+      const keys = Object.keys(map).filter((k) => map[k]);
+      if (keys.length === 0) {
+        el.textContent = '';
+        return;
+      }
+      const label = this.tLang('measured_label') || 'Measured:';
+      const othersNot = this.tLang('measured_others_not') || '(others not available)';
+      // build tooltip text: "Measured: PM2_5, PM10 (others not available)"
+      const measuredText = `${label} ${keys.map((k) => k.toUpperCase()).join(', ')} ${othersNot}`;
+
+      // Render a simple inline info with visually-hidden tooltip text for accessibility
+      el.innerHTML = `
+        <span class="inline-flex items-center gap-2">
+          <svg aria-hidden="true" class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"></path></svg>
+          <span class="sr-only">${measuredText}</span>
+          <span class="text-xs text-gray-600 dark:text-gray-400">${label} ${keys.map((k) => k.toUpperCase()).join(', ')}<span class="text-gray-400"> ${othersNot}</span></span>
+        </span>
+      `;
     }
 
     getEuropeanAQILevel(aqi) {
@@ -358,37 +924,174 @@ const sizeClasses = {
       return { class: 'hazardous', description: 'Hazardous' };
     }
 
-    updateHealthAdvice(aqi) {
+    updateHealthAdvice({ aqi = 0, components = {} } = {}) {
       const generalEl = this.element.querySelector('.general-text');
       const sensitiveEl = this.element.querySelector('.sensitive-text');
 
-      let advice;
+      // Base advice from AQI bands (simple, readable guidance)
+      let general = 'Air quality is being assessed...';
+      let sensitive = 'Air quality is being assessed...';
+
       if (aqi <= 50) {
-        advice = {
-          general: 'Air quality is excellent. Perfect for outdoor activities.',
-          sensitive: 'Air quality is safe for everyone.',
-        };
+        general = this.tLang('advice_excellent_general');
+        sensitive = this.tLang('advice_excellent_sensitive');
       } else if (aqi <= 100) {
-        advice = {
-          general: 'Air quality is acceptable for most people.',
-          sensitive: 'Consider reducing prolonged outdoor exertion.',
-        };
+        general = this.tLang('advice_acceptable_general');
+        sensitive = this.tLang('advice_acceptable_sensitive');
+      } else if (aqi <= 150) {
+        general = this.tLang('advice_moderate_general');
+        sensitive = this.tLang('advice_moderate_sensitive');
+      } else if (aqi <= 200) {
+        general = this.tLang('advice_poor_general');
+        sensitive = this.tLang('advice_poor_sensitive');
+      } else if (aqi <= 300) {
+        general = this.tLang('advice_very_poor_general');
+        sensitive = this.tLang('advice_very_poor_sensitive');
       } else {
-        advice = {
-          general: 'Consider reducing outdoor activities.',
-          sensitive: 'Avoid outdoor activities. Stay indoors.',
-        };
+        general = this.tLang('advice_hazardous_general');
+        sensitive = this.tLang('advice_hazardous_sensitive');
       }
 
-      if (generalEl) generalEl.textContent = advice.general;
-      if (sensitiveEl) sensitiveEl.textContent = advice.sensitive;
+      // Inspect pollutant components for specific elevated warnings
+      const pollutantThresholds = {
+        pm2_5: 35, // µg/m3 - indicative threshold
+        pm10: 50,
+        no2: 200,
+        o3: 120,
+        so2: 125,
+        co: 10000, // µg/m3 - very high threshold as placeholder
+      };
+
+      const elevated = [];
+      Object.keys(components).forEach((key) => {
+        const val = Number(components[key]);
+        if (!Number.isFinite(val)) return;
+        const thr = pollutantThresholds[key];
+        if (thr != null && val >= thr) {
+          // Format value with reasonable precision
+          elevated.push(`${key.toUpperCase()}: ${val}`);
+        }
+      });
+
+      if (elevated.length > 0) {
+        const note = ` ${this.tLang('elevated_note')} ${elevated.join(', ')}.`;
+        general += note;
+        sensitive += note;
+      }
+
+      if (generalEl) generalEl.textContent = general;
+      if (sensitiveEl) sensitiveEl.textContent = sensitive;
+
+      // Update pollutant badges/list
+      this.updatePollutantList(components);
+    }
+
+    updatePollutantList(components = {}) {
+      const container = this.element.querySelector('.pollutant-badges');
+      const legend = this.element.querySelector('.pollutant-legend');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const units = {
+        pm2_5: 'µg/m³',
+        pm10: 'µg/m³',
+        no2: 'µg/m³',
+        o3: 'µg/m³',
+        so2: 'µg/m³',
+        co: 'µg/m³',
+      };
+
+      // Indicative thresholds used to derive badge color (same as advice thresholds)
+      const thresholds = {
+        pm2_5: 35,
+        pm10: 50,
+        no2: 200,
+        o3: 120,
+        so2: 125,
+        co: 10000,
+      };
+
+      const severityFor = (k, v) => {
+        const thr = thresholds[k];
+        if (thr == null) return 'unknown';
+        if (v < thr * 0.5) return 'low';
+        if (v < thr) return 'moderate';
+        if (v < thr * 1.5) return 'high';
+        return 'very-high';
+      };
+
+      const colorFor = (sev) => {
+        // Tailwind-like utility strings; these classes exist in the project
+        switch (sev) {
+          case 'low':
+            return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200';
+          case 'moderate':
+            return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-200';
+          case 'high':
+            return 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900 dark:text-orange-200';
+          case 'very-high':
+            return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-200';
+          default:
+            return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-100';
+        }
+      };
+
+      let rendered = 0;
+      Object.keys(components).forEach((k) => {
+        const raw = components[k];
+        const val = Number(raw);
+        if (!Number.isFinite(val)) return;
+
+        const sev = severityFor(k, val);
+        const color = colorFor(sev);
+
+        const badge = document.createElement('div');
+        badge.className = `px-2 py-1 rounded-md text-sm font-medium border ${color}`;
+        badge.setAttribute('role', 'status');
+        const titleText = `${k.toUpperCase()}: ${val}${units[k] ? ' ' + units[k] : ''}`;
+        badge.setAttribute('aria-label', titleText);
+        // tooltip on hover for quick info
+        badge.setAttribute('title', titleText);
+        badge.textContent = titleText;
+        container.appendChild(badge);
+        rendered++;
+      });
+
+      if (legend) {
+        if (rendered === 0) {
+          legend.textContent = 'No pollutant concentration data available for this location.';
+        } else {
+          legend.innerHTML = 'Values are latest hourly concentrations. Badges are colored by indicative severity vs. typical thresholds (e.g. PM2.5 35 µg/m³).';
+        }
+
+        // Add a short, collapsible explanation of pollutant abbreviations
+        const detailsId = 'pollutant-explainer';
+        let details = this.element.querySelector(`#${detailsId}`);
+          if (!details) {
+          details = document.createElement('details');
+          details.id = detailsId;
+          details.className = 'mt-2 text-xs text-gray-700 dark:text-gray-300';
+          details.innerHTML = `
+            <summary class="font-medium">${this.tLang('explainer_summary')}</summary>
+            <ul class="mt-2 list-disc ml-5 space-y-1">
+              <li><strong>PM2.5</strong>: ${this.tLang('explainer_pm2_5')}</li>
+              <li><strong>PM10</strong>: ${this.tLang('explainer_pm10')}</li>
+              <li><strong>NO2</strong>: ${this.tLang('explainer_no2')}</li>
+              <li><strong>O3</strong>: ${this.tLang('explainer_o3')}</li>
+              <li><strong>SO2</strong>: ${this.tLang('explainer_so2')}</li>
+              <li><strong>CO</strong>: ${this.tLang('explainer_co')}</li>
+            </ul>
+          `;
+          legend.appendChild(details);
+        }
+      }
     }
 
     updateLastUpdated() {
       const updateEl = this.element.querySelector('.update-time');
       if (updateEl) {
         const now = new Date();
-        updateEl.textContent = `Updated: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        updateEl.textContent = `${this.tLang('updated')} ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
       }
     }
 
