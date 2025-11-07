@@ -1,6 +1,10 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import AspectRatio from '../../components/AspectRatio.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import InlineCode from '../../components/InlineCode.astro';
 
 const ratioSamples = [
   {
@@ -65,6 +69,29 @@ const posterUrl = '/images/poster.jpg';
 
 const frameClass =
   'flex h-full w-full items-center justify-center rounded-xl border border-slate-500/25 bg-slate-500/10 text-sm font-semibold text-slate-600 dark:text-slate-200';
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'ratio',
+    type: 'string | number',
+    default: '"16/9"',
+    description:
+      'Preset string ("16/9", "4/3", etc.) or numeric value representing width ÷ height. Defaults to "16/9".',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description:
+      'Extra Tailwind classes merged onto the outer wrapper. Useful for rounded corners, borders, or overflow control (for example, overflow-hidden).',
+  },
+];
 ---
 
 <DocsLayout
@@ -72,82 +99,61 @@ const frameClass =
   seoDescription="Lock in a predictable aspect ratio for images, media, or placeholders without fragile padding hacks."
 >
   <section class="space-y-4">
-    <p class="text-base text-slate-100">
-      Wrap any content in <code>&lt;AspectRatio&gt;</code> to preserve a fixed shape
-      as the layout resizes. The component relies on Tailwind&apos;s native <code
-        >aspect-*</code
-      > utilities, so the slot scales fluidly while keeping its width-to-height ratio
-      intact.
-    </p>
-    <p class="text-base text-slate-200">
+    <Paragraph class="text-base text-slate-100">
+      Wrap any content in <InlineCode>&lt;AspectRatio&gt;</InlineCode> to preserve
+      a fixed shape as the layout resizes. The component relies on Tailwind&apos;s
+      native <code>aspect-*</code> utilities, so the slot scales fluidly while keeping
+      its width-to-height ratio intact.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
       Use it for responsive video embeds, marketing cards, or preview
       skeletons—anywhere you want the layout to stay steady while content loads
       in.
-    </p>
+    </Paragraph>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
-    <dl class="grid gap-6 sm:grid-cols-2">
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          ratio?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Preset string (<code>"16/9"</code>, <code>"4/3"</code>, etc.) or
-          numeric value representing width ÷ height. Defaults to <code
-            >"16/9"</code
-          >.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          className?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Extra Tailwind classes merged onto the outer wrapper. Handy for
-          rounded corners, borders, or overflow control (for example, <code
-            >overflow-hidden</code
-          > with media).
-        </dd>
-      </div>
-    </dl>
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
       Pick the ratio that matches your media, then slot in any element—images,
       videos, maps, or even custom skeletons. When working with numeric ratios,
       pass the width divided by height (for example,
-      <code>ratio=&#123;2.39&#125;</code> for anamorphic video).
-    </p>
+      <InlineCode>ratio=&#123;2.39&#125;</InlineCode> for anamorphic video).
+    </Paragraph>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-      <code class="language-astro">{usageSnippet}</code>
+  <code class="language-astro">{usageSnippet}</code>
     </pre>
   </section>
 
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Examples</Headline
+    >
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Standard media ratios
-        </h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100"
+          >Standard media ratios</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Popular video and thumbnail shapes rendered with soft placeholders.
           Swap in live embeds or images to match your production assets.
-        </p>
+        </Paragraph>
       </div>
       <div class="grid gap-6 sm:grid-cols-3">
         {
@@ -158,15 +164,15 @@ const frameClass =
                 className="overflow-hidden rounded-xl border border-slate-700/40 bg-slate-800/30"
               >
                 <div
-                  class={`h-full w-full bg-gradient-to-br ${item.gradient} ${frameClass}`}
+                  class={`h-full w-full bg-linear-to-br ${item.gradient} ${frameClass}`}
                   aria-hidden="true"
                 >
                   {item.label}
                 </div>
               </AspectRatio>
-              <p class="text-sm text-slate-400 dark:text-slate-300">
+              <Paragraph class="text-sm text-slate-400 dark:text-slate-300">
                 {item.description}
-              </p>
+              </Paragraph>
             </div>
           ))
         }
@@ -175,14 +181,17 @@ const frameClass =
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Portrait and specialty content
-        </h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100"
+          >Portrait and specialty content</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Showcase tall imagery, print previews, or cinematic crops without
           manually calculating padding. The slot always stretches to fill the
           available height.
-        </p>
+        </Paragraph>
       </div>
       <div class="grid gap-6 sm:grid-cols-3">
         {
@@ -193,15 +202,15 @@ const frameClass =
                 className="overflow-hidden rounded-xl border border-slate-700/40 bg-slate-800/30"
               >
                 <div
-                  class={`${frameClass} bg-gradient-to-br from-slate-500/10 to-slate-300/10`}
+                  class={`${frameClass} bg-linear-to-br from-slate-500/10 to-slate-300/10`}
                   aria-hidden="true"
                 >
                   {item.label}
                 </div>
               </AspectRatio>
-              <p class="text-sm text-slate-400 dark:text-slate-300">
+              <Paragraph class="text-sm text-slate-400 dark:text-slate-300">
                 {item.description}
-              </p>
+              </Paragraph>
             </div>
           ))
         }
@@ -210,30 +219,35 @@ const frameClass =
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Custom numeric ratio
-        </h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100"
+          >Custom numeric ratio</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Supply a decimal or fractional string for uncommon dimensions. This
-          example uses <code>ratio="239/100"</code> to mimic widescreen cinema artwork
-          while rounding the outer frame and clipping overflow.
-        </p>
+          example uses <InlineCode>ratio="239/100"</InlineCode> to mimic widescreen
+          cinema artwork while rounding the outer frame and clipping overflow.
+        </Paragraph>
       </div>
       <AspectRatio
         ratio={cinemaRatio}
         className="overflow-hidden rounded-2xl border border-purple-500/40 bg-purple-500/10 shadow-lg"
       >
         <div
-          class="flex h-full w-full flex-col justify-end bg-gradient-to-br from-purple-600/60 via-indigo-600/40 to-slate-900/80 p-6 text-white"
+          class="flex h-full w-full flex-col justify-end bg-linear-to-br from-purple-600/60 via-indigo-600/40 to-slate-900/80 p-6 text-white"
         >
           <span class="text-xs uppercase tracking-wide text-purple-100/80"
             >Case study</span
           >
-          <h4 class="mt-2 text-lg font-semibold">Design system launch</h4>
-          <p class="mt-2 text-sm text-purple-100/90">
+          <Headline level="h4" textSize="lg" className="mt-2 font-semibold"
+            >Design system launch</Headline
+          >
+          <Paragraph class="mt-2 text-sm text-purple-100/90">
             Keep your hero artwork sharp on any screen by locking the canvas to
             the final aspect ratio.
-          </p>
+          </Paragraph>
         </div>
       </AspectRatio>
     </article>
