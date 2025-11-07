@@ -1,5 +1,6 @@
 ---
-import EmbedBase from './EmbedBase.astro';
+import { cn } from '../utils/cn';
+import LoadingSpinner from './LoadingSpinner.astro';
 
 /**
  * AppleMusicEmbed - WCAG AAA compliant Apple Music and Podcasts embed
@@ -29,8 +30,8 @@ interface Props {
 const {
   url,
   type = 'auto',
-  variant = 'default',
   showLoading = true,
+  autoHeight = true,
   title,
   class: className = '',
   allowFullscreen = true,
@@ -135,19 +136,202 @@ const finalTitle =
 const finalAriaLabel =
   ariaLabel ||
   `Apple ${contentType === 'episode' ? 'podcast' : 'music'} player${title ? `: ${title}` : ''}`;
+
+// Host detection for debugging / conditional logic
+let embedHost = '';
+try {
+  embedHost = new URL(embedUrl).hostname;
+} catch {
+  embedHost = '';
+}
+
+// Compute padding-top for aspect ratio containers (height/width * 100%)
+let paddingTop = '56.25%';
+try {
+  const parts = finalAspectRatio.split('/');
+  if (parts.length === 2) {
+    const w = parseFloat(parts[0]) || 16;
+    const h = parseFloat(parts[1]) || 9;
+    paddingTop = `${(h / w) * 100}%`;
+  }
+} catch {
+  paddingTop = '56.25%';
+}
+
+const containerClass = cn('w-full', className);
+const uid = `apple-embed-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-<EmbedBase
-  src={embedUrl}
-  title={finalTitle}
-  aspectRatio={finalAspectRatio}
-  variant={variant}
-  showLoading={showLoading}
-  class={className}
-  ariaLabel={finalAriaLabel}
-  allowFullscreen={allowFullscreen}
-  allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
-  sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
-  referrerPolicy="strict-origin-when-cross-origin"
-  {...props}
-/>
+<div
+  id={uid}
+  class={containerClass}
+  role="region"
+  aria-label={finalAriaLabel}
+  data-apple-embed-id={uid}
+  data-apple-embed-loading={showLoading ? 'true' : 'false'}
+>
+  {
+    autoHeight ? (
+      <div
+        class="relative"
+        data-apple-height-wrapper
+        style={`height: ${contentType === 'song' || contentType === 'episode' ? 175 : 450}px;`}
+      >
+        {showLoading && (
+          <div
+            data-apple-embed-overlay
+            class="absolute inset-0 z-10 flex items-center justify-center bg-slate-100/80 dark:bg-slate-900/80"
+          >
+            <LoadingSpinner
+              size="lg"
+              variant="primary"
+              label="Loading content"
+              showLabel={true}
+            />
+          </div>
+        )}
+
+        <iframe
+          id={`${uid}-frame`}
+          src={embedUrl}
+          title={finalTitle}
+          class="absolute inset-0 w-full h-full border-0"
+          loading={showLoading ? 'lazy' : 'eager'}
+          allow={
+            props.allow ??
+            'autoplay; encrypted-media; fullscreen; clipboard-write'
+          }
+          referrerpolicy={
+            props.referrerPolicy ?? 'strict-origin-when-cross-origin'
+          }
+          aria-label={finalAriaLabel}
+          aria-describedby={props.description ? `apple-embed-desc` : undefined}
+          data-embed-host={embedHost}
+          allowfullscreen={allowFullscreen}
+          {...props}
+        />
+
+        {props.description && (
+          <div id="apple-embed-desc" class="sr-only">
+            {props.description}
+          </div>
+        )}
+      </div>
+    ) : (
+      <div class="relative" style={`padding-top: ${paddingTop};`}>
+        {showLoading && (
+          <div class="absolute inset-0 z-10 flex items-center justify-center bg-slate-100/80 dark:bg-slate-900/80">
+            <LoadingSpinner
+              size="lg"
+              variant="primary"
+              label="Loading content"
+              showLabel={true}
+            />
+          </div>
+        )}
+
+        <iframe
+          id={`${uid}-frame`}
+          src={embedUrl}
+          title={finalTitle}
+          class="absolute inset-0 w-full h-full border-0"
+          loading={showLoading ? 'lazy' : 'eager'}
+          allow={
+            props.allow ??
+            'autoplay; encrypted-media; fullscreen; clipboard-write'
+          }
+          referrerpolicy={
+            props.referrerPolicy ?? 'strict-origin-when-cross-origin'
+          }
+          aria-label={finalAriaLabel}
+          aria-describedby={props.description ? `apple-embed-desc` : undefined}
+          data-embed-host={embedHost}
+          allowfullscreen={allowFullscreen}
+          {...props}
+        />
+
+        {props.description && (
+          <div id="apple-embed-desc" class="sr-only">
+            {props.description}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  <script>
+    (function () {
+      if (typeof window === 'undefined' || typeof document === 'undefined')
+        return;
+
+      function initContainer(container) {
+        try {
+          const iframe = container.querySelector('iframe');
+          const overlay = container.querySelector('[data-apple-embed-overlay]');
+          const wrapper = container.querySelector(
+            '[data-apple-height-wrapper]'
+          );
+          if (!iframe) return;
+
+          function hideOverlay() {
+            if (overlay) overlay.style.display = 'none';
+            container.dataset.appleEmbedLoading = 'false';
+          }
+
+          // On iframe load: try same-origin sizing then hide overlay
+          iframe.addEventListener('load', function () {
+            try {
+              // Same-origin sizing (may throw if cross-origin)
+              const doc =
+                iframe.contentDocument || iframe.contentWindow.document;
+              const h =
+                doc.documentElement.scrollHeight || doc.body.scrollHeight;
+              if (h && wrapper) {
+                wrapper.style.height = h + 'px';
+              }
+            } catch {
+              // cross-origin — ignore
+            }
+            hideOverlay();
+          });
+
+          // Listen for postMessage from iframe (embed can send {type:'embed-size', height: N})
+          function onMessage(ev) {
+            if (!iframe || !iframe.contentWindow) return;
+            if (ev.source !== iframe.contentWindow) return;
+            const data = ev.data || {};
+            if (
+              data &&
+              data.type === 'embed-size' &&
+              typeof data.height === 'number'
+            ) {
+              if (wrapper) wrapper.style.height = data.height + 'px';
+            }
+            if (data && data.type === 'embed-ready') {
+              hideOverlay();
+            }
+          }
+          window.addEventListener('message', onMessage);
+
+          // Fallback: hide overlay after 12s to avoid perpetual spinner
+          const t = setTimeout(hideOverlay, 12000);
+
+          // Cleanup when node is removed from DOM
+          const mo = new MutationObserver(() => {
+            if (!document.body.contains(container)) {
+              window.removeEventListener('message', onMessage);
+              clearTimeout(t);
+              mo.disconnect();
+            }
+          });
+          mo.observe(document.body, { childList: true, subtree: true });
+        } catch {
+          // don't let script errors bubble up
+        }
+      }
+
+      // Initialize all existing embed containers
+      document.querySelectorAll('[data-apple-embed-id]').forEach(initContainer);
+    })();
+  </script>
+</div>

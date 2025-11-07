@@ -1,6 +1,9 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import AppleMusicEmbed from '../../components/AppleMusicEmbed.astro';
+import Table from '../../components/Table.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import Headline from '../../components/Headline.astro';
 
 const defaultAlbum = 'https://music.apple.com/de/album/comalies-xx/1631418082';
 
@@ -26,125 +29,152 @@ const albumUrl = 'https://music.apple.com/de/album/enjoy-the-silence/1045281848?
   url={albumUrl}
   title="Apple Music embed for Mac Miller's Swimming"
 />`;
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'url',
+    type: 'string',
+    default: "''",
+    description:
+      'Full Apple Music or Apple Podcasts share link (album, playlist, artist, radio show, or episode). Rewritten to the embed domain automatically.',
+  },
+  {
+    name: 'title',
+    type: 'string',
+    default: '"Apple media player"',
+    description:
+      'Accessible title applied to the iframe. Describe the artist, playlist, or episode for assistive technologies.',
+  },
+  {
+    name: 'allowFullscreen',
+    type: 'boolean',
+    default: 'true',
+    description:
+      'Toggles the allowfullscreen attribute. Enabled by default to allow expansion when supported.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description:
+      'Extra classes merged onto a wrapping div for spacing or layout tweaks. Avoid overriding Apple-provided styling.',
+  },
+  {
+    name: 'showLoading',
+    type: 'boolean',
+    default: 'true',
+    description:
+      'Controls whether a loading spinner is shown while the iframe loads. The spinner will be hidden when the iframe fires load or after a short timeout.',
+  },
+  {
+    name: 'autoHeight',
+    type: 'boolean',
+    default: 'true',
+    description:
+      'When true the component will attempt to size the embed to the provider-reported height. This uses same-origin DOM reads (when permitted) or listens for postMessage updates from the iframe. If neither is available a sensible fallback height is used.',
+  },
+];
 ---
 
 <DocsLayout
   seoTitle="AppleMusicEmbed"
   seoDescription="Lightweight wrapper for Apple Music and Apple Podcasts share links that preserves the native player styling while adding accessible controls."
 >
+  <Headline level="h1" textSize="2xl">Apple Music Embed</Headline>
+
   <section class="space-y-4">
-    <p class="text-base text-slate-100">
+    <Paragraph class="text-base text-slate-100">
       Pass any Apple Music or Apple Podcasts share URL and the component
       rewrites it to the embed host without adding extra chrome, backgrounds, or
       borders. What you see is Apple's player exactly as it ships, dropped
       straight into your layout.
-    </p>
-    <p class="text-base text-slate-200">
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
       Supply a meaningful <code>title</code> so assistive technologies announce the
       album, artist, or episode when the iframe gains focus. Beyond that, you can
       use <code>className</code> purely for external spacing or layout tweaks around
       the native embed.
-    </p>
-    <p class="text-base text-slate-200">
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
       Built on top of <strong>EmbedBase</strong>, this component provides
       consistent loading states, error handling, and accessibility features
       while preserving Apple's native player styling.
-    </p>
+    </Paragraph>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
-    <dl class="grid gap-6 sm:grid-cols-2">
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          url
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Full Apple Music or Apple Podcasts share link (album, playlist,
-          artist, radio show, or episode). The component rewrites it to the
-          embed domain automatically.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          title?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Accessible title applied to the <code>iframe</code>. Describe the
-          artist, playlist, radio show, or podcast so assistive technologies
-          announce meaningful context. Defaults to "Apple media player".
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          allowFullscreen?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Toggles the <code>allowfullscreen</code> attribute. Enabled by default
-          to let listeners expand the embed when Apple supports it.
-        </dd>
-      </div>
-      <div
-        class="space-y-1 rounded-lg border border-slate-700/80 bg-slate-900/60 p-4 shadow-sm"
-      >
-        <dt
-          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-        >
-          className?
-        </dt>
-        <dd class="text-sm text-slate-200">
-          Extra classes merged onto a wrapping <code>div</code>. Helpful for
-          margins, grids, or responsive sizing around the default player. Avoid
-          overriding the internal Apple-provided styling.
-        </dd>
-      </div>
-    </dl>
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
   </section>
 
   <section class="mt-10 space-y-6">
-    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
-    <p class="text-base text-slate-200">
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
       Share URLs come directly from the Apple Music or Apple Podcasts "Copy
       Link" actions. Provide a descriptive <code>title</code> for accessibility and
       let the component use Apple's intrinsic player sizing automatically.
-    </p>
-    <p class="text-base text-slate-300">
+    </Paragraph>
+    <Paragraph class="text-base text-slate-300">
       For Apple Music radio shows (the live and on-demand programs in the Listen
       Now → Radio tab), open the show detail page, choose <em>Share</em>, and
       copy the link. Those URLs start with
       <code>https://music.apple.com/.../station/</code> and work with this embed
       just like albums or playlists.
-    </p>
+    </Paragraph>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{usageSnippet}</code>
     </pre>
+    <Paragraph class="text-base text-slate-200">
+      New: the component supports <code>autoHeight</code> (default <code
+        >true</code
+      >) and an internal loading overlay. When <code>autoHeight</code> is enabled
+      the component will:
+    </Paragraph>
+    <ul class="list-disc pl-6 text-slate-200">
+      <li>
+        Try a same-origin DOM read of the iframe document height (only possible
+        when the embed allows it).
+      </li>
+      <li>
+        Listen for <code>postMessage</code> messages from the iframe with a payload
+        like <code>{`{ type: 'embed-size', height: 600 }`}</code>.
+      </li>
+      <li>
+        Fall back to a sensible default height (compact for tracks, larger for
+        albums/podcasts) and hide the overlay after a timeout.
+      </li>
+    </ul>
   </section>
 
   <section class="mt-10 space-y-8">
-    <h2 class="text-xl font-semibold text-slate-100">Examples</h2>
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Examples</Headline
+    >
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Default album embed
-        </h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100">Default album embed</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           The default height exposes artwork, track listing, and Apple's CTA.
           Perfect for feature stories or release spotlights.
-        </p>
+        </Paragraph>
       </div>
       <AppleMusicEmbed
         url={defaultAlbum}
@@ -154,14 +184,16 @@ const albumUrl = 'https://music.apple.com/de/album/enjoy-the-silence/1045281848?
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Compact track embed
-        </h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100">Compact track embed</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Track links automatically switch to Apple's compact player height so
           playlists or articles stay tight on mobile while maintaining focus
           outlines.
-        </p>
+        </Paragraph>
       </div>
       <AppleMusicEmbed
         url={trackUrl}
@@ -171,14 +203,17 @@ const albumUrl = 'https://music.apple.com/de/album/enjoy-the-silence/1045281848?
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">
-          Podcast episode embed
-        </h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100"
+          >Podcast episode embed</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Paste an Apple Podcasts link to surface narrated content alongside
           editorial copy. Use a descriptive title so listeners know which
           episode will start playing.
-        </p>
+        </Paragraph>
       </div>
       <AppleMusicEmbed
         url={podcastUrl}
@@ -188,12 +223,16 @@ const albumUrl = 'https://music.apple.com/de/album/enjoy-the-silence/1045281848?
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">Artist spotlight</h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100">Artist spotlight</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Embed an artist profile to highlight catalog releases without
           overwhelming shorter layouts. Disable fullscreen when the embedded
           surface already sits within a constrained card.
-        </p>
+        </Paragraph>
       </div>
       <AppleMusicEmbed
         url={artistUrl}
@@ -204,12 +243,16 @@ const albumUrl = 'https://music.apple.com/de/album/enjoy-the-silence/1045281848?
 
     <article class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold text-slate-100">Playlist embed</h3>
-        <p class="text-base text-slate-200">
+        <Headline
+          level="h3"
+          textSize="lg"
+          className="font-semibold text-slate-100">Playlist embed</Headline
+        >
+        <Paragraph class="text-base text-slate-200">
           Showcase a curated playlist directly from Apple Music. Copy the share
           link, drop it into the component, and the full artwork, description,
           and track preview queue render exactly as Apple designed them.
-        </p>
+        </Paragraph>
       </div>
       <AppleMusicEmbed
         url={playlistUrl}
