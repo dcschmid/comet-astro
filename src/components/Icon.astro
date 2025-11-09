@@ -119,6 +119,10 @@ const icons: Record<string, string> = {
   music:
     'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3',
 
+  // Volume / Mute (added)
+  volume: 'M11 5L6 9H2v6h4l5 4V5z',
+  mute: 'M18.364 5.636L5.636 18.364M9.5 9.5v5a1 1 0 001 1h.5l3 3V6l-3 3H10.5a1 1 0 00-1 1z',
+
   // Communication
   mail: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
   phone:
@@ -143,28 +147,47 @@ const icons: Record<string, string> = {
 };
 
 const path = icons[name] || icons['info'];
+
+// Per-icon visual transforms to correct optical centering (x, y)
+const transformMap: Record<string, string | undefined> = {
+  // bumped offsets after visual testing
+  volume: 'translate(0.9 0.45)',
+  mute: 'translate(0.9 0.45)',
+};
+const pathTransform = transformMap[name];
 ---
 
 {
   decorative ? (
     <svg
-      class={`inline-block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
+      class={`block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
       aria-hidden="true"
     >
       {title && <title>{title}</title>}
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d={path}
-      />
+      {pathTransform ? (
+        <g transform={pathTransform}>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d={path}
+          />
+        </g>
+      ) : (
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d={path}
+        />
+      )}
     </svg>
   ) : ariaLabel ? (
     <svg
-      class={`inline-block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
+      class={`block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -172,28 +195,50 @@ const path = icons[name] || icons['info'];
       role="img"
     >
       {title && <title>{title}</title>}
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d={path}
-      />
+      {pathTransform ? (
+        <g transform={pathTransform}>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d={path}
+          />
+        </g>
+      ) : (
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d={path}
+        />
+      )}
     </svg>
   ) : title ? (
     <svg
-      class={`inline-block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
+      class={`block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
       role="img"
     >
       <title>{title}</title>
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d={path}
-      />
+      {pathTransform ? (
+        <g transform={pathTransform}>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d={path}
+          />
+        </g>
+      ) : (
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d={path}
+        />
+      )}
     </svg>
   ) : (
     <svg

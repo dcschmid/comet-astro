@@ -105,6 +105,69 @@ Indigo:
 
 ---
 
+### Classic Blue (WCAG AAA)
+
+Light:
+`bg-white text-gray-900 accent-blue-600 border-gray-200 hover:border-blue-400 hover:bg-blue-50 focus-visible:ring-blue-300`
+
+Dark:
+`dark:bg-gray-900 dark:text-white accent-blue-400 border-gray-700 hover:dark:border-blue-500 hover:dark:bg-gray-800 dark:focus-visible:ring-blue-200`
+
+Combined:
+`bg-white text-gray-900 accent-blue-600 border border-gray-200 hover:border-blue-400 hover:bg-blue-50 focus-visible:ring-blue-300 dark:bg-gray-900 dark:text-white accent-blue-400 dark:border-gray-700 dark:hover:border-blue-500 dark:hover:bg-gray-800 dark:focus-visible:ring-blue-200`
+
+---
+
+### Nature Green (WCAG AAA)
+
+Light:
+`bg-stone-50 text-stone-900 accent-emerald-600 border-stone-200 hover:border-emerald-400 hover:bg-stone-100 focus-visible:ring-emerald-300`
+
+Dark:
+`dark:bg-stone-950 dark:text-stone-100 accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 dark:focus-visible:ring-emerald-200`
+
+Combined:
+`bg-stone-50 text-stone-900 accent-emerald-600 border border-stone-200 hover:border-emerald-400 hover:bg-stone-100 focus-visible:ring-emerald-300 dark:bg-stone-950 dark:text-stone-100 accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 dark:focus-visible:ring-emerald-200`
+
+---
+
+### Warm Purple (WCAG AAA)
+
+Light:
+`bg-gray-50 text-gray-900 accent-violet-600 border-gray-300 hover:border-violet-400 hover:bg-violet-50 focus-visible:ring-violet-300`
+
+Dark:
+`dark:bg-gray-950 dark:text-gray-50 accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 dark:focus-visible:ring-violet-200`
+
+Combined:
+`bg-gray-50 text-gray-900 accent-violet-600 border border-gray-300 hover:border-violet-400 hover:bg-violet-50 focus-visible:ring-violet-300 dark:bg-gray-950 dark:text-gray-50 accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 dark:focus-visible:ring-violet-200`
+
+---
+
+### Sky Cyan (WCAG AAA)
+
+Light:
+`bg-slate-50 text-slate-900 accent-cyan-600 border-slate-200 hover:border-cyan-400 hover:bg-cyan-50 focus-visible:ring-cyan-300`
+
+Dark:
+`dark:bg-slate-900 dark:text-slate-50 accent-cyan-300 dark:border-slate-700 dark:hover:border-cyan-500 dark:hover:bg-slate-800 dark:focus-visible:ring-cyan-200`
+
+Combined:
+`bg-slate-50 text-slate-900 accent-cyan-600 border border-slate-200 hover:border-cyan-400 hover:bg-cyan-50 focus-visible:ring-cyan-300 dark:bg-slate-900 dark:text-slate-50 accent-cyan-300 dark:border-slate-700 dark:hover:border-cyan-500 dark:hover:bg-slate-800 dark:focus-visible:ring-cyan-200`
+
+---
+
+### Orange Accent (WCAG AAA)
+
+Light:
+`bg-zinc-50 text-zinc-900 accent-orange-500 border-zinc-200 hover:border-orange-400 hover:bg-orange-50 focus-visible:ring-orange-300`
+
+Dark:
+`dark:bg-zinc-950 dark:text-zinc-100 accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 dark:focus-visible:ring-orange-200`
+
+Combined:
+`bg-zinc-50 text-zinc-900 accent-orange-500 border border-zinc-200 hover:border-orange-400 hover:bg-orange-50 focus-visible:ring-orange-300 dark:bg-zinc-950 dark:text-zinc-100 accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 dark:focus-visible:ring-orange-200`
+
 ## Accessibility / Testing notes
 
 - Contrast: these combinations were chosen to aim for WCAG AAA (7:1) for normal text on the button surface. For critical flows, verify specific color tokens with a contrast checker (WebAIM / axe).

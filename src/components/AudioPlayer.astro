@@ -1,4 +1,6 @@
 ---
+import { tv } from 'tailwind-variants';
+
 interface Props {
   src: string;
   title?: string;
@@ -27,38 +29,79 @@ const {
   className = '',
 } = Astro.props as Props;
 
-const baseClasses =
-  'relative overflow-hidden rounded-2xl border border-slate-300 bg-slate-50 text-slate-900 shadow-sm transition-colors motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100';
-const padding = variant === 'compact' ? 'p-4 sm:p-5' : 'p-6 sm:p-7';
-const layoutGap = variant === 'compact' ? 'gap-5 sm:gap-6' : 'gap-6 sm:gap-7';
-const shouldShowMetadata = variant === 'full' && (cover || title || artist);
+// Responsive spacing: xs-sm-md-lg-xl-2xl
+const layoutGap =
+  variant === 'compact'
+    ? 'gap-2 xs:gap-3 sm:gap-4 md:gap-5'
+    : 'gap-2 xs:gap-3 sm:gap-4 md:gap-5 lg:gap-6 2xl:gap-7';
+const shouldShowMetadata = variant === 'full' && (title || artist);
+const containerLayout =
+  variant === 'full'
+    ? shouldShowMetadata
+      ? `flex flex-col ${layoutGap}` // Flex column when showing metadata to ensure proper stacking
+      : `grid grid-cols-1 ${layoutGap} xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 md:items-center md:gap-6 lg:gap-7` // Two column when no metadata
+    : `flex flex-col ${layoutGap}`;
 const hasWideCover = variant === 'full' && cover && coverAspect === 'wide';
+// Controls: single row on mobile, optimized spacing across breakpoints
 const controlsLayout =
   variant === 'compact'
-    ? 'flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:gap-5'
-    : 'flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5';
-const controlsOffset = hasWideCover || shouldShowMetadata ? 'mt-4 sm:mt-5' : '';
+    ? 'flex flex-row items-center gap-1 xs:gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6 2xl:gap-7 md:items-center md:justify-between'
+    : 'flex flex-row items-center gap-1 xs:gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6 2xl:gap-8 md:items-center md:justify-between';
+// Top offset for controls
 const hasTranscript = Boolean(captionsSrc);
 const transcriptSrcAttr = hasTranscript
   ? encodeURIComponent(captionsSrc!)
   : undefined;
 const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
+import Icon from './Icon.astro';
+
+const playerTv = tv({
+  base: 'relative overflow-hidden rounded-2xl border border-slate-300 bg-slate-50 text-slate-900 shadow-sm transition-colors motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 flex flex-col',
+  variants: {
+    variant: {
+      compact: 'p-3 sm:p-4 md:p-5 gap-4 sm:gap-5',
+      full: 'p-5 sm:p-6 md:p-7 gap-5 sm:gap-6',
+    },
+    layoutRow: {
+      true: 'md:flex-row md:items-start md:gap-4 lg:gap-6',
+      false: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'full',
+    layoutRow: false,
+  },
+});
+
+const playBtnTv = tv({
+  base: 'inline-flex items-center justify-center rounded-full text-lg font-semibold shadow-sm transition motion-reduce:transition-none',
+  variants: {
+    variant: {
+      compact:
+        'h-9 w-9 min-h-9 min-w-9 bg-blue-600 text-white dark:bg-blue-500 dark:text-slate-950 md:h-10 md:w-10 lg:h-12 lg:w-12',
+      full: 'h-10 w-10 min-h-10 min-w-10 bg-blue-600 text-lg text-white dark:bg-blue-500 dark:text-slate-950 md:h-12 md:w-12 lg:h-14 lg:w-14',
+    },
+  },
+  defaultVariants: {
+    variant: 'full',
+  },
+});
 ---
 
 <div
   id={playerId}
-  class={`${baseClasses} ${padding} ${className}`.trim()}
+  class={`${playerTv({ variant, layoutRow: variant === 'full' && !shouldShowMetadata })} ${className}`.trim()}
   data-audio-player
   data-variant={variant}
   data-transcript-src={transcriptSrcAttr}
   data-transcript-label={captionsLabel}
   aria-live="polite"
 >
-  <div class={`flex flex-col ${layoutGap}`}>
+  <div class={containerLayout}>
     {
       hasWideCover && (
-        <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-200/40 dark:border-slate-700/60 dark:bg-slate-800/40">
-          <div class="aspect-[16/9] w-full">
+        <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-200/40 dark:border-slate-700/60 dark:bg-slate-800/40 md:col-span-1 md:max-w-[560px]">
+          <div class="aspect-video w-full">
             <img
               src={cover}
               alt={title ? `${title} cover art` : 'Album cover'}
@@ -74,26 +117,26 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
         <div
           class={
             hasWideCover
-              ? 'space-y-1 text-left'
-              : 'flex items-center gap-5 sm:gap-6'
+              ? 'space-y-1 text-left md:col-span-1 md:px-3'
+              : 'flex items-center gap-2 sm:gap-3 md:gap-4' // Changed this for image and text in one line
           }
         >
           {cover && !hasWideCover && (
             <img
               src={cover}
               alt={title ? `${title} cover art` : 'Album cover'}
-              class="h-24 w-24 flex-shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-28 sm:w-28"
+              class="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60"
             />
           )}
 
-          <div class="min-w-0 flex-1 space-y-1">
+          <div class="min-w-0 flex-1 space-y-0.5">
             {title && (
-              <p class="truncate text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+              <p class="truncate text-base font-semibold tracking-tight text-slate-900 dark:text-slate-100">
                 {title}
               </p>
             )}
             {artist && (
-              <p class="truncate text-sm font-medium text-slate-600 dark:text-slate-300">
+              <p class="truncate text-xs font-medium text-slate-600 dark:text-slate-300">
                 {artist}
               </p>
             )}
@@ -110,103 +153,136 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
       data-audio
       aria-label={title ? `Audio player for ${title}` : 'Audio player'}></audio>
 
-    <div class={`${controlsLayout} ${controlsOffset}`.trim()}>
+    <div class={`${controlsLayout}`.trim()}>
       {
         variant === 'compact' && cover && (
           <img
             src={cover}
             alt={title ? `${title} cover art` : 'Album cover'}
-            class="h-14 w-14 flex-shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-16 sm:w-16"
+            class="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24"
           />
         )
       }
-      <button
-        type="button"
-        class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:bg-blue-500 dark:text-slate-950 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-slate-950"
-        data-play-pause
-        aria-label="Play/Pause"
-      >
-        <span data-play-icon>▶</span>
-        <span data-pause-icon class="hidden">⏸</span>
-      </button>
-
-      <div
-        class="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
-      >
-        <span
-          class="text-xs font-semibold uppercase tracking-wide text-slate-600 tabular-nums dark:text-slate-300"
-          data-current-time>0:00</span
-        >
-        <input
-          type="range"
-          min="0"
-          value="0"
-          step="0.1"
-          aria-label="Seek position"
-          class="h-3 flex-1 appearance-none rounded-full bg-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:focus-visible:ring-offset-slate-950"
-          data-seek
-        />
-        <span
-          class="text-xs font-semibold uppercase tracking-wide text-slate-600 tabular-nums dark:text-slate-300"
-          data-duration>0:00</span
-        >
-      </div>
-
-      <button
-        type="button"
-        class="inline-flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-slate-300 text-base font-semibold text-slate-600 transition hover:border-blue-500 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:border-slate-600 dark:text-slate-300 dark:hover:border-blue-400 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-950"
-        data-mute
-        aria-label="Mute audio"
-        aria-pressed="false"
-      >
-        <span data-volume-icon>🔊</span>
-        <span data-mute-icon class="hidden">🔇</span>
-      </button>
-    </div>
-    {
-      hasTranscript && (
+      <div class="relative flex-1 w-full">
+        <!-- Button group: Play & Mute -->
         <div
-          class="mt-6 overflow-hidden rounded-xl border border-slate-300/75 bg-slate-100/70 shadow-inner transition-colors motion-reduce:transition-none dark:border-slate-700/70 dark:bg-slate-900/60"
-          data-transcript-container
+          class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 -translate-y-1/2 gap-5 md:static md:translate-x-0 md:translate-y-0 md:flex-row md:items-center md:mr-8 lg:mr-10"
         >
           <button
             type="button"
-            class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 motion-reduce:transition-none dark:text-slate-100 dark:hover:bg-slate-800/60 dark:focus-visible:ring-offset-slate-900"
-            data-transcript-toggle
-            aria-expanded="false"
-            aria-controls={`${playerId}-transcript`}
+            class={`${playBtnTv({ variant })}`}
+            data-play-pause
+            aria-label="Play or pause audio"
+            aria-pressed="false"
           >
-            <span data-transcript-toggle-label>{captionsLabel}</span>
-            <span
-              aria-hidden="true"
-              class="text-lg transition-transform"
-              data-transcript-toggle-icon
-            >
-              ▾
+            <span data-play-icon>
+              <Icon name="play" size="xl" decorative />
+            </span>
+            <span data-pause-icon class="hidden">
+              <Icon name="pause" size="xl" decorative />
             </span>
           </button>
-          <div
-            id={`${playerId}-transcript`}
-            class="hidden border-t border-slate-300/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-950/60"
-            data-transcript-panel
-            role="group"
+
+          <button
+            type="button"
+            class={`inline-flex items-center justify-center rounded-full text-lg font-semibold shadow-sm transition motion-reduce:transition-none border border-slate-300 text-slate-600 bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:border-slate-600 dark:text-slate-300 dark:focus-visible:ring-offset-slate-950 ${variant === 'compact' ? 'h-9 w-9 md:h-10 lg:h-12 lg:w-12' : 'h-10 w-10 md:h-12 lg:h-12 lg:w-12'}`}
+            data-mute
+            aria-label="Mute or unmute audio"
+            aria-pressed="false"
           >
-            <div
-              class="px-4 py-3 text-sm text-slate-500 dark:text-slate-300"
-              data-transcript-loading
+            <span
+              data-volume-icon
+              class="flex align-center items-center justify-center translate-x-px translate-y-px"
             >
-              Loading transcript…
-            </div>
-            <div
-              class="hidden px-4 py-3 text-sm text-rose-600 dark:text-rose-300"
-              data-transcript-error
+              <Icon name="volume" size="xl" decorative />
+            </span>
+            <span data-mute-icon class="hidden translate-x-px translate-y-px">
+              <Icon name="mute" size="xl" decorative />
+            </span>
+          </button>
+        </div>
+        <div class="flex flex-1 items-center gap-2 mt-14 md:mt-0">
+          <div class="flex items-center gap-2 flex-1 min-w-0">
+            <span
+              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-10 sm:w-12 text-center shrink-0"
+              data-current-time>0:00</span
             >
-              Unable to load transcript.
+            <div class="flex-1 min-w-0">
+              <input
+                type="range"
+                min="0"
+                value="0"
+                step="0.1"
+                id="seek-label"
+                class="h-3 md:h-3.5 lg:h-4 w-full appearance-none rounded-full bg-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:focus-visible:ring-offset-slate-950"
+                data-seek
+                role="slider"
+                aria-label="Seek position"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+              />
             </div>
-            <ol
-              class="hidden max-h-60 space-y-2 overflow-y-auto px-4 py-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
-              data-transcript-list
-            />
+            <span
+              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-10 sm:w-12 text-center shrink-0"
+              data-duration>0:00</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    {
+      hasTranscript && (
+        <div class="w-full mt-4 md:mt-6 md:col-span-2">
+          <div
+            class="mx-0 overflow-hidden rounded-lg border border-slate-300/75 bg-slate-100/70 shadow-inner transition-colors motion-reduce:transition-none dark:border-slate-700/70 dark:bg-slate-900/60"
+            data-transcript-container
+          >
+            <button
+              type="button"
+              class="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 motion-reduce:transition-none dark:text-slate-100 dark:hover:bg-slate-800/60 dark:focus-visible:ring-offset-slate-950 min-h-10"
+              data-transcript-toggle
+              aria-expanded="true"
+              aria-controls={`${playerId}-transcript`}
+              aria-label={`${captionsLabel} (click to show or hide)`}
+            >
+              <span data-transcript-toggle-label>{captionsLabel}</span>
+              <span
+                aria-hidden="true"
+                class="text-lg transition-transform"
+                data-transcript-toggle-icon
+              >
+                <Icon
+                  name="chevron-down"
+                  size="lg"
+                  decorative
+                  aria-hidden="true"
+                />
+              </span>
+            </button>
+            <div
+              id={`${playerId}-transcript`}
+              class="border-t border-slate-300/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-950/60"
+              data-transcript-panel
+              role="group"
+            >
+              <div
+                class="px-3 py-2 text-sm text-slate-500 dark:text-slate-300"
+                data-transcript-loading
+              >
+                Loading transcript…
+              </div>
+              <div
+                class="hidden px-3 py-2 text-sm text-rose-600 dark:text-rose-300"
+                data-transcript-error
+              >
+                Unable to load transcript.
+              </div>
+              <ol
+                class="hidden max-h-60 space-y-1 overflow-y-auto px-3 py-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+                data-transcript-list
+              />
+            </div>
           </div>
         </div>
       )
@@ -339,6 +415,8 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
 
       if (seekInput instanceof HTMLInputElement) {
         seekInput.setAttribute('aria-valuemin', '0');
+        seekInput.setAttribute('role', 'slider');
+        seekInput.setAttribute('aria-label', 'Seek position');
         updateSeekVisual(seekInput, audio);
       }
 
@@ -356,7 +434,8 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
         playIcon?.classList.add('hidden');
         pauseIcon?.classList.remove('hidden');
         if (playPauseBtn instanceof HTMLElement) {
-          playPauseBtn.setAttribute('aria-label', 'Pause');
+          playPauseBtn.setAttribute('aria-label', 'Pause audio');
+          playPauseBtn.setAttribute('aria-pressed', 'true');
         }
       });
 
@@ -364,7 +443,8 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
         playIcon?.classList.remove('hidden');
         pauseIcon?.classList.add('hidden');
         if (playPauseBtn instanceof HTMLElement) {
-          playPauseBtn.setAttribute('aria-label', 'Play');
+          playPauseBtn.setAttribute('aria-label', 'Play audio');
+          playPauseBtn.setAttribute('aria-pressed', 'false');
         }
       });
 
@@ -495,10 +575,11 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
                 <li>
                   <button
                     type="button"
-                    class="w-full rounded-lg bg-slate-100/60 px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-blue-100/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900/40 dark:text-slate-200 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-950"
+                    class="w-full rounded-lg bg-slate-100/60 px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-blue-100/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900/40 dark:text-slate-200 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-950 min-h-11"
                     data-transcript-entry="${index}"
-                    data-cue-start="${cue.start}"
-                    data-active="false"
+        data-cue-start="${cue.start}"
+        data-active="false"
+        aria-label="Jump to transcript at ${formatTime(cue.start)}"
                   >
                     ${escapeHtml(cue.text)}
                   </button>
@@ -574,7 +655,10 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
           updateActiveCue(audio.currentTime);
         }
 
-        setTranscriptExpanded(false);
+        // Open transcript panel by default when a transcript source exists
+        setTranscriptExpanded(true);
+        // Load transcript immediately so it's available under the player
+        loadTranscript();
       }
     });
   });
@@ -585,14 +669,17 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
 
 <style is:inline>
   [data-audio-player] {
-    --seek-fill: rgb(37 99 235);
+    --seek-fill: rgb(29 78 216); /* Darker blue for better contrast */
     --seek-bg: rgb(203 213 225);
     --seek-percent: 0%;
+    --focus-ring-color: rgb(30 64 175); /* WCAG AAA compliant focus */
+    --focus-ring-width: 3px;
   }
 
   :where(.dark) [data-audio-player] {
-    --seek-fill: rgb(96 165 250);
+    --seek-fill: rgb(59 130 246); /* Lighter blue for dark mode */
     --seek-bg: rgb(30 41 59);
+    --focus-ring-color: rgb(96 165 250); /* WCAG AAA compliant focus */
   }
 
   [data-audio-player] [data-seek] {
@@ -608,22 +695,32 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
     border: 1px solid color-mix(in srgb, var(--seek-bg) 80%, transparent);
   }
 
+  [data-audio-player] [data-seek]:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
   [data-audio-player] [data-seek]::-webkit-slider-thumb,
   [data-audio-player] [data-seek]::-moz-range-thumb {
     -webkit-appearance: none;
     appearance: none;
-    height: 18px;
-    width: 18px;
+    height: 20px; /* Increased size for better touch targets */
+    width: 20px; /* Increased size for better touch targets */
     border-radius: 999px;
     background: var(--seek-fill);
-    border: 2px solid rgb(248 250 252);
-    box-shadow: 0 1px 2px rgb(15 23 42 / 0.25);
+    border: 2px solid color-mix(in srgb, white 80%, transparent);
+    cursor: pointer;
+  }
+
+  [data-audio-player] [data-seek]::-webkit-slider-thumb:focus,
+  [data-audio-player] [data-seek]::-moz-range-thumb:focus {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
   }
 
   :where(.dark) [data-audio-player] [data-seek]::-webkit-slider-thumb,
   :where(.dark) [data-audio-player] [data-seek]::-moz-range-thumb {
-    border-color: rgb(15 23 42);
-    box-shadow: 0 1px 4px rgb(15 23 42 / 0.45);
+    border-color: color-mix(in srgb, black 30%, transparent);
   }
 
   [data-audio-player] [data-seek]::-webkit-slider-runnable-track,
@@ -633,29 +730,68 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
     background: transparent;
   }
 
-  [data-audio-player] [data-transcript-entry] {
-    transition:
-      background-color 0.2s ease,
-      color 0.2s ease;
-  }
-
   [data-audio-player] [data-transcript-entry][data-active='true'] {
-    background: linear-gradient(
-      90deg,
-      rgba(37, 99, 235, 0.15) 0%,
-      rgba(37, 99, 235, 0.05) 100%
-    );
-    color: rgb(30 64 175);
+    background-color: color-mix(in srgb, var(--seek-fill) 10%, transparent);
+    color: var(--seek-fill);
+    border-left: 3px solid var(--seek-fill);
   }
 
   :where(.dark)
     [data-audio-player]
     [data-transcript-entry][data-active='true'] {
-    background: linear-gradient(
-      90deg,
-      rgba(96, 165, 250, 0.18) 0%,
-      rgba(96, 165, 250, 0.08) 100%
-    );
-    color: rgb(191 219 254);
+    background-color: color-mix(in srgb, var(--seek-fill) 15%, transparent);
+    color: color-mix(in srgb, var(--seek-fill) 80%, white);
+  }
+
+  /* Better focus indicators for all interactive elements */
+  [data-audio-player] button:focus-visible,
+  [data-audio-player] [data-transcript-entry]:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  /* Ensure proper contrast for text elements */
+  [data-audio-player] .text-slate-700 {
+    color: #334155; /* WCAG AAA compliant color */
+  }
+
+  [data-audio-player] .text-slate-600 {
+    color: #475569; /* WCAG AAA compliant color */
+  }
+
+  :where(.dark) [data-audio-player] .dark\:text-slate-200 {
+    color: #e2e8f0; /* WCAG AAA compliant color */
+  }
+
+  :where(.dark) [data-audio-player] .dark\:text-slate-300 {
+    color: #cbd5e1; /* WCAG AAA compliant color */
+  }
+
+  /* Responsive tweaks */
+  [data-audio-player] img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  [data-audio-player] [data-transcript-list] {
+    max-height: 14rem; /* ~224px on small screens */
+  }
+
+  @media (min-width: 768px) {
+    [data-audio-player] [data-seek]::-webkit-slider-thumb,
+    [data-audio-player] [data-seek]::-moz-range-thumb {
+      height: 22px;
+      width: 22px;
+    }
+
+    [data-audio-player] [data-transcript-list] {
+      max-height: 16rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    [data-audio-player] [data-transcript-list] {
+      max-height: 18rem;
+    }
   }
 </style>

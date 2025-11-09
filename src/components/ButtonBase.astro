@@ -18,6 +18,27 @@ const buttonVariants = tv(
     ].join(' '),
     variants: {
       variant: {
+        // Custom WCAG AAA palettes (5) - light + dark flavors with borders and hover states
+        classic: [
+          'bg-white text-gray-900 accent-blue-600 border border-gray-200 hover:border-blue-400 hover:bg-blue-50 focus-visible:ring-blue-300',
+          'dark:bg-gray-900 dark:text-white accent-blue-400 dark:border-gray-700 dark:hover:border-blue-500 dark:hover:bg-gray-800 dark:focus-visible:ring-blue-200',
+        ].join(' '),
+        nature: [
+          'bg-stone-50 text-stone-900 accent-emerald-600 border border-stone-200 hover:border-emerald-400 hover:bg-stone-100 focus-visible:ring-emerald-300',
+          'dark:bg-stone-950 dark:text-stone-100 accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 dark:focus-visible:ring-emerald-200',
+        ].join(' '),
+        warm: [
+          'bg-gray-50 text-gray-900 accent-violet-600 border border-gray-300 hover:border-violet-400 hover:bg-violet-50 focus-visible:ring-violet-300',
+          'dark:bg-gray-950 dark:text-gray-50 accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 dark:focus-visible:ring-violet-200',
+        ].join(' '),
+        sky: [
+          'bg-slate-50 text-slate-900 accent-cyan-600 border border-slate-200 hover:border-cyan-400 hover:bg-cyan-50 focus-visible:ring-cyan-300',
+          'dark:bg-slate-900 dark:text-slate-50 accent-cyan-300 dark:border-slate-700 dark:hover:border-cyan-500 dark:hover:bg-slate-800 dark:focus-visible:ring-cyan-200',
+        ].join(' '),
+        orange: [
+          'bg-zinc-50 text-zinc-900 accent-orange-500 border border-zinc-200 hover:border-orange-400 hover:bg-orange-50 focus-visible:ring-orange-300',
+          'dark:bg-zinc-950 dark:text-zinc-100 accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 dark:focus-visible:ring-orange-200',
+        ].join(' '),
         primary: [
           'bg-blue-600 text-white hover:bg-blue-700 active:translate-y-px focus-visible:ring-blue-300',
           'dark:bg-blue-400 dark:text-black dark:hover:bg-blue-500 dark:focus-visible:ring-blue-200',
@@ -108,7 +129,12 @@ export interface ButtonBaseProps {
     | 'teal'
     | 'purple'
     | 'indigo'
-    | 'info';
+    | 'info'
+    | 'classic'
+    | 'nature'
+    | 'warm'
+    | 'sky'
+    | 'orange';
   /** Size variant */
   size?: 'sm' | 'md' | 'lg';
   /** Loading state (shows spinner, disables content) */
