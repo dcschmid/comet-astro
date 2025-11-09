@@ -29,24 +29,22 @@ const {
   className = '',
 } = Astro.props as Props;
 
-// Responsive spacing: xs-sm-md-lg-xl-2xl
-const layoutGap =
-  variant === 'compact'
-    ? 'gap-2 xs:gap-3 sm:gap-4 md:gap-5'
-    : 'gap-2 xs:gap-3 sm:gap-4 md:gap-5 lg:gap-6 2xl:gap-7';
+const stackGap = 'gap-4 sm:gap-5 md:gap-6';
 const shouldShowMetadata = variant === 'full' && (title || artist);
-const containerLayout =
-  variant === 'full'
-    ? shouldShowMetadata
-      ? `flex flex-col ${layoutGap}` // Flex column when showing metadata to ensure proper stacking
-      : `grid grid-cols-1 ${layoutGap} xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 md:items-center md:gap-6 lg:gap-7` // Two column when no metadata
-    : `flex flex-col ${layoutGap}`;
 const hasWideCover = variant === 'full' && cover && coverAspect === 'wide';
-// Controls: single row on mobile, optimized spacing across breakpoints
+const showMediaSection = variant === 'full' && (cover || shouldShowMetadata);
+const containerLayout = `flex flex-col ${stackGap}`;
+const mediaSectionClasses = [
+  'flex flex-col gap-3 sm:gap-4 rounded-2xl border border-slate-200/70 bg-white/40 p-4 shadow-sm dark:border-slate-800/70 dark:bg-slate-900/40',
+  hasWideCover ? 'sm:flex-col' : 'sm:flex-row sm:items-center',
+].join(' ');
+const mediaContentClasses = hasWideCover
+  ? 'flex flex-col gap-3'
+  : 'min-w-0 flex-1 space-y-1';
 const controlsLayout =
   variant === 'compact'
-    ? 'flex flex-row items-center gap-1 xs:gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6 2xl:gap-7 md:items-center md:justify-between'
-    : 'flex flex-row items-center gap-1 xs:gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6 2xl:gap-8 md:items-center md:justify-between';
+    ? 'flex flex-wrap items-center gap-4 sm:gap-5'
+    : 'flex flex-col gap-4 sm:gap-5';
 // Top offset for controls
 const hasTranscript = Boolean(captionsSrc);
 const transcriptSrcAttr = hasTranscript
@@ -99,48 +97,43 @@ const playBtnTv = tv({
 >
   <div class={containerLayout}>
     {
-      hasWideCover && (
-        <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-200/40 dark:border-slate-700/60 dark:bg-slate-800/40 md:col-span-1 md:max-w-[560px]">
-          <div class="aspect-video w-full">
-            <img
-              src={cover}
-              alt={title ? `${title} cover art` : 'Album cover'}
-              class="h-full w-full object-cover"
-            />
-          </div>
-        </div>
-      )
-    }
-
-    {
-      shouldShowMetadata && (
-        <div
-          class={
-            hasWideCover
-              ? 'space-y-1 text-left md:col-span-1 md:px-3'
-              : 'flex items-center gap-2 sm:gap-3 md:gap-4' // Changed this for image and text in one line
-          }
-        >
-          {cover && !hasWideCover && (
-            <img
-              src={cover}
-              alt={title ? `${title} cover art` : 'Album cover'}
-              class="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60"
-            />
+      showMediaSection && (
+        <div class={mediaSectionClasses}>
+          {cover && (
+            <div
+              class={
+                hasWideCover
+                  ? 'overflow-hidden rounded-xl ring-1 ring-slate-200/70 dark:ring-slate-800/70'
+                  : 'shrink-0 overflow-hidden rounded-2xl ring-1 ring-slate-200/60 dark:ring-slate-700/60'
+              }
+            >
+              <div class={hasWideCover ? 'aspect-video w-full' : ''}>
+                <img
+                  src={cover}
+                  alt={title ? `${title} cover art` : 'Album cover'}
+                  class={
+                    hasWideCover
+                      ? 'h-full w-full object-cover'
+                      : 'h-20 w-28 sm:h-24 sm:w-32 md:h-28 md:w-36 object-cover'
+                  }
+                />
+              </div>
+            </div>
           )}
-
-          <div class="min-w-0 flex-1 space-y-0.5">
-            {title && (
-              <p class="truncate text-base font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                {title}
-              </p>
-            )}
-            {artist && (
-              <p class="truncate text-xs font-medium text-slate-600 dark:text-slate-300">
-                {artist}
-              </p>
-            )}
-          </div>
+          {shouldShowMetadata && (
+            <div class={mediaContentClasses}>
+              {title && (
+                <p class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                  {title}
+                </p>
+              )}
+              {artist && (
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                  {artist}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       )
     }
@@ -153,21 +146,22 @@ const playBtnTv = tv({
       data-audio
       aria-label={title ? `Audio player for ${title}` : 'Audio player'}></audio>
 
-    <div class={`${controlsLayout}`.trim()}>
+    <div class={controlsLayout}>
       {
         variant === 'compact' && cover && (
           <img
             src={cover}
             alt={title ? `${title} cover art` : 'Album cover'}
-            class="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24"
+            class="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 self-center"
           />
         )
       }
-      <div class="relative flex-1 w-full">
-        <!-- Button group: Play & Mute -->
-        <div
-          class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 -translate-y-1/2 gap-5 md:static md:translate-x-0 md:translate-y-0 md:flex-row md:items-center md:mr-8 lg:mr-10"
-        >
+      <div
+        class={`${
+          variant === 'compact' ? 'flex-1 min-w-0' : 'w-full'
+        } space-y-4`.trim()}
+      >
+        <div class="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
           <button
             type="button"
             class={`${playBtnTv({ variant })}`}
@@ -201,10 +195,13 @@ const playBtnTv = tv({
             </span>
           </button>
         </div>
-        <div class="flex flex-1 items-center gap-2 mt-14 md:mt-0">
-          <div class="flex items-center gap-2 flex-1 min-w-0">
+
+        <div class="space-y-2 sm:space-y-3">
+          <div
+            class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3"
+          >
             <span
-              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-10 sm:w-12 text-center shrink-0"
+              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-12 sm:w-14 text-left sm:text-center shrink-0"
               data-current-time>0:00</span
             >
             <div class="flex-1 min-w-0">
@@ -214,7 +211,7 @@ const playBtnTv = tv({
                 value="0"
                 step="0.1"
                 id="seek-label"
-                class="h-3 md:h-3.5 lg:h-4 w-full appearance-none rounded-full bg-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:focus-visible:ring-offset-slate-950"
+                class="h-3.5 sm:h-4 w-full appearance-none rounded-full bg-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:focus-visible:ring-offset-slate-950"
                 data-seek
                 role="slider"
                 aria-label="Seek position"
@@ -224,7 +221,7 @@ const playBtnTv = tv({
               />
             </div>
             <span
-              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-10 sm:w-12 text-center shrink-0"
+              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-12 sm:w-14 text-right sm:text-center shrink-0"
               data-duration>0:00</span
             >
           </div>
@@ -233,7 +230,7 @@ const playBtnTv = tv({
     </div>
     {
       hasTranscript && (
-        <div class="w-full mt-4 md:mt-6 md:col-span-2">
+        <div class="w-full mt-4 md:mt-6">
           <div
             class="mx-0 overflow-hidden rounded-lg border border-slate-300/75 bg-slate-100/70 shadow-inner transition-colors motion-reduce:transition-none dark:border-slate-700/70 dark:bg-slate-900/60"
             data-transcript-container
