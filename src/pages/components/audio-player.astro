@@ -36,6 +36,54 @@ const wideTrack = {
     'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200&q=80',
 };
 
+const paletteShowcase = [
+  {
+    id: 'classic-blue',
+    palette: 'classicBlue',
+    label: 'Classic Blue',
+    description: 'Default editorial contrast with cool blue accents.',
+    track: fullTrack,
+    coverAspect: 'square',
+  },
+  {
+    id: 'nature-green',
+    palette: 'natureGreen',
+    label: 'Nature Green',
+    description:
+      'Earthy stone neutrals with emerald controls for wellness or outdoors.',
+    track: compactTrack,
+    variant: 'compact',
+    coverAspect: 'square',
+  },
+  {
+    id: 'warm-purple',
+    palette: 'warmPurple',
+    label: 'Warm Purple',
+    description:
+      'Vibrant violet highlights suited for playlists or creative brands.',
+    track: wideTrack,
+    coverAspect: 'wide',
+  },
+  {
+    id: 'sky-cyan',
+    palette: 'skyCyan',
+    label: 'Sky Cyan',
+    description: 'Crisp cyan accents designed for dashboards or SaaS products.',
+    track: fullTrack,
+    coverAspect: 'square',
+  },
+  {
+    id: 'orange-accent',
+    palette: 'orangeAccent',
+    label: 'Orange Accent',
+    description:
+      'Friendly orange palette that pairs well with news or education.',
+    track: compactTrack,
+    variant: 'compact',
+    coverAspect: 'square',
+  },
+];
+
 const transcriptVtt = `WEBVTT\n\n00:00.000 --> 00:07.000\nWelcome to tonight's session.\n\n00:07.000 --> 00:14.000\nWe are exploring the new audio player transcript feature.\n\n00:14.000 --> 00:22.000\nUse the highlights to jump to any moment in the recording.\n`;
 
 const transcriptDataUrl = `data:text/vtt;charset=utf-8,${encodeURIComponent(transcriptVtt)}`;
@@ -49,6 +97,7 @@ const track = {
   artist: 'Accessible Design',
   cover: '/covers/podcast.jpg',
   captions: '/audio/interview.vtt',
+  palette: 'skyCyan',
 };
 
 ---
@@ -61,6 +110,7 @@ const track = {
   coverAspect="wide"
   captionsSrc={track.captions}
   captionsLabel="Interview transcript"
+  palette={track.palette}
   className="max-w-md"
 />`;
 
@@ -121,6 +171,13 @@ const propsData = [
       'Choose "full" (default) for artwork and metadata or "compact" for a streamlined bar layout.',
   },
   {
+    name: 'palette',
+    type: '"classicBlue" | "natureGreen" | "warmPurple" | "skyCyan" | "orangeAccent"',
+    default: '"classicBlue"',
+    description:
+      'Switch between pre-built WCAG AAA color palettes. Each palette updates borders, backgrounds, focus rings, and button accents to match your brand.',
+  },
+  {
     name: 'coverAspect',
     type: '"square" | "wide"',
     default: 'square',
@@ -161,8 +218,9 @@ const propsData = [
     <Paragraph className="text-base text-slate-100">
       The audio player wraps the native <InlineCode>&lt;audio&gt;</InlineCode> element
       with stylised controls that respect reduced-motion preferences, expose clear
-      focus states, and meet WCAG AAA contrast targets in both themes. It is fully
-      keyboard accessible and announces playback state changes to assistive tech.
+      focus states, and meet WCAG AAA contrast targets in both themes. Switch palettes
+      via the <InlineCode>palette</InlineCode> prop to remap borders, buttons, and
+      seek accents without overriding any CSS.
     </Paragraph>
     <Paragraph className="text-base text-slate-200">
       Supply metadata to create a full album-style layout or flip to the compact
@@ -197,6 +255,143 @@ const propsData = [
       copyable={true}
       className="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"
     />
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Styling & Theming</Headline
+    >
+    <Paragraph className="text-base text-slate-200">
+      AudioPlayer is styled with plain BEM class names plus a rich set of CSS
+      custom properties. You can override either approach:
+    </Paragraph>
+    <ul class="list-disc pl-5 space-y-2 text-base text-slate-200">
+      <li>
+        Target the structural hooks such as <InlineCode
+          >.audio-player</InlineCode
+        >,
+        <InlineCode>.audio-player__media</InlineCode>,
+        <InlineCode>.audio-player__controls</InlineCode>, and palette modifiers
+        like
+        <InlineCode>.audio-player--palette-warmPurple</InlineCode>.
+      </li>
+      <li>
+        Override the exposed variables for colours, focus rings, or the seek
+        bar. The most commonly tweaked tokens include <InlineCode
+          >--ap-bg</InlineCode
+        >,
+        <InlineCode>--ap-border</InlineCode>, <InlineCode
+          >--ap-primary-bg</InlineCode
+        >,
+        <InlineCode>--ap-primary-hover-bg</InlineCode>,
+        <InlineCode>--ap-ghost-border</InlineCode>,
+        <InlineCode>--ap-transcript-entry-bg</InlineCode>,
+        <InlineCode>--ap-transcript-entry-hover</InlineCode>,
+        <InlineCode>--ap-thumbnail-ring</InlineCode>,
+        <InlineCode>--seek-fill</InlineCode>, and <InlineCode
+          >--seek-bg</InlineCode
+        >.
+      </li>
+    </ul>
+    <Paragraph className="text-base text-slate-200">
+      Attach a custom class via <InlineCode>className</InlineCode> and provide an
+      override block in any global stylesheet. Everything declared later in the cascade
+      wins over the built-in palette.
+    </Paragraph>
+    <CodeBlock
+      code={`<style lang="scss">
+.player-sunset {
+  --ap-bg: #12060d;
+  --ap-border: #3c1021;
+  --ap-primary-bg: #f97316;
+  --ap-primary-hover-bg: #ea580c;
+  --ap-ghost-border: rgba(255, 255, 255, 0.25);
+  --ap-ghost-text: #ffe4c4;
+  --ap-transcript-entry-bg: rgba(255, 255, 255, 0.06);
+  --ap-transcript-entry-hover: rgba(255, 255, 255, 0.12);
+  --seek-fill: #f97316;
+  --seek-bg: rgba(255, 255, 255, 0.15);
+
+  .audio-player__metadata {
+    text-align: center;
+  }
+
+  .audio-player__controls {
+    align-items: center;
+  }
+}
+</style>
+
+<AudioPlayer
+  className="player-sunset"
+  palette="classicBlue"
+  title="Late Night Drive"
+  artist="SoundHelix"
+  src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+/>`}
+      language="html"
+      copyable={true}
+      className="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"
+    />
+    <Paragraph className="text-base text-slate-200">
+      In this example we keep the <InlineCode>palette</InlineCode> prop for sensible
+      defaults, but the custom class overrides key tokens to produce a sunset-inspired
+      scheme and even tweaks the metadata alignment via the BEM hook.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Color palettes</Headline
+    >
+    <Paragraph className="text-base text-slate-200">
+      Use the <InlineCode>palette</InlineCode> prop to pick from five WCAG AAA color
+      combinations. Each palette updates the container, controls, focus rings, and
+      transcript interactions in both light and dark themes—no custom CSS required.
+    </Paragraph>
+    <div class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
+      {
+        paletteShowcase.map(
+          ({
+            id,
+            palette,
+            label,
+            description,
+            track,
+            variant,
+            coverAspect,
+          }) => (
+            <article
+              key={id}
+              class="flex min-w-0 flex-col gap-4 rounded-2xl border border-slate-800/40 bg-slate-900/30 p-4 shadow-inner shadow-black/30"
+            >
+              <div class="space-y-1">
+                <Headline
+                  level="h3"
+                  textSize="md"
+                  className="font-semibold text-slate-100"
+                >
+                  {label}
+                </Headline>
+                <Paragraph className="text-sm text-slate-300">
+                  {description}
+                </Paragraph>
+              </div>
+              <AudioPlayer
+                src={track.src}
+                title={track.title}
+                artist={track.artist}
+                cover={track.cover}
+                coverAspect={coverAspect}
+                variant={variant ?? 'full'}
+                palette={palette}
+                className="w-full min-w-0 max-w-none"
+              />
+            </article>
+          )
+        )
+      }
+    </div>
   </section>
 
   <section class="mt-10 space-y-8">

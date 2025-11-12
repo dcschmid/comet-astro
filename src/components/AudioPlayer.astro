@@ -1,6 +1,4 @@
 ---
-import { tv } from 'tailwind-variants';
-
 interface Props {
   src: string;
   title?: string;
@@ -10,6 +8,12 @@ interface Props {
   loop?: boolean;
   variant?: 'compact' | 'full';
   coverAspect?: 'square' | 'wide';
+  palette?:
+    | 'classicBlue'
+    | 'natureGreen'
+    | 'warmPurple'
+    | 'skyCyan'
+    | 'orangeAccent';
   captionsSrc?: string;
   captionsLabel?: string;
   className?: string;
@@ -24,114 +28,111 @@ const {
   loop = false,
   variant = 'full',
   coverAspect = 'square',
+  palette = 'classicBlue',
   captionsSrc,
   captionsLabel = 'Transcript',
   className = '',
 } = Astro.props as Props;
 
-const stackGap = 'gap-4 sm:gap-5 md:gap-6';
+const paletteNames = [
+  'classicBlue',
+  'natureGreen',
+  'warmPurple',
+  'skyCyan',
+  'orangeAccent',
+] as const;
+type PaletteName = (typeof paletteNames)[number];
+const paletteSet = new Set<PaletteName>(paletteNames);
+const paletteKey = (
+  paletteSet.has(palette as PaletteName) ? palette : 'classicBlue'
+) as PaletteName;
 const shouldShowMetadata = variant === 'full' && (title || artist);
 const hasWideCover = variant === 'full' && cover && coverAspect === 'wide';
 const showMediaSection = variant === 'full' && (cover || shouldShowMetadata);
-const containerLayout = `flex flex-col ${stackGap}`;
-const mediaSectionClasses = [
-  'flex flex-col gap-3 sm:gap-4 rounded-2xl border border-slate-200/70 bg-white/40 p-4 shadow-sm dark:border-slate-800/70 dark:bg-slate-900/40',
-  hasWideCover ? 'sm:flex-col' : 'sm:flex-row sm:items-center',
-].join(' ');
-const mediaContentClasses = hasWideCover
-  ? 'flex flex-col gap-3'
-  : 'min-w-0 flex-1 space-y-1';
-const controlsLayout =
-  variant === 'compact'
-    ? 'flex flex-wrap items-center gap-4 sm:gap-5'
-    : 'flex flex-col gap-4 sm:gap-5';
-// Top offset for controls
 const hasTranscript = Boolean(captionsSrc);
-const transcriptSrcAttr = hasTranscript
-  ? encodeURIComponent(captionsSrc!)
-  : undefined;
+const transcriptSrcAttr = hasTranscript ? captionsSrc : undefined;
 const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
 import Icon from './Icon.astro';
 
-const playerTv = tv({
-  base: 'relative overflow-hidden rounded-2xl border border-slate-300 bg-slate-50 text-slate-900 shadow-sm transition-colors motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 flex flex-col',
-  variants: {
-    variant: {
-      compact: 'p-3 sm:p-4 md:p-5 gap-4 sm:gap-5',
-      full: 'p-5 sm:p-6 md:p-7 gap-5 sm:gap-6',
-    },
-    layoutRow: {
-      true: 'md:flex-row md:items-start md:gap-4 lg:gap-6',
-      false: '',
-    },
-  },
-  defaultVariants: {
-    variant: 'full',
-    layoutRow: false,
-  },
-});
+const audioMimeType = (() => {
+  if (!src) return undefined;
+  const lower = src.split('?')[0].toLowerCase();
+  if (lower.endsWith('.mp3')) return 'audio/mpeg';
+  if (lower.endsWith('.ogg') || lower.endsWith('.oga')) return 'audio/ogg';
+  if (lower.endsWith('.wav')) return 'audio/wav';
+  if (lower.endsWith('.m4a') || lower.endsWith('.aac')) return 'audio/mp4';
+  return undefined;
+})();
 
-const playBtnTv = tv({
-  base: 'inline-flex items-center justify-center rounded-full text-lg font-semibold shadow-sm transition motion-reduce:transition-none',
-  variants: {
-    variant: {
-      compact:
-        'h-9 w-9 min-h-9 min-w-9 bg-blue-600 text-white dark:bg-blue-500 dark:text-slate-950 md:h-10 md:w-10 lg:h-12 lg:w-12',
-      full: 'h-10 w-10 min-h-10 min-w-10 bg-blue-600 text-lg text-white dark:bg-blue-500 dark:text-slate-950 md:h-12 md:w-12 lg:h-14 lg:w-14',
-    },
-  },
-  defaultVariants: {
-    variant: 'full',
-  },
-});
+const baseClassNames = [
+  'audio-player',
+  `audio-player--${variant}`,
+  showMediaSection ? 'audio-player--has-media' : 'audio-player--no-media',
+  hasWideCover ? 'audio-player--wide-cover' : '',
+  variant === 'compact' && cover ? 'audio-player--has-thumbnail' : '',
+  `audio-player--palette-${paletteKey}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const innerClasses = ['audio-player__inner'];
+if (variant === 'full' && showMediaSection) {
+  innerClasses.push('audio-player__inner--full');
+}
+
+const mediaClasses = ['audio-player__media'];
+if (hasWideCover) {
+  mediaClasses.push('audio-player__media--wide');
+}
+
+const coverClasses = ['audio-player__cover'];
+if (hasWideCover) {
+  coverClasses.push('audio-player__cover--wide');
+}
+
+const coverInnerClasses = ['audio-player__cover-inner'];
+if (hasWideCover) {
+  coverInnerClasses.push('audio-player__cover-inner--wide');
+}
+
+const controlsClasses = [
+  'audio-player__controls',
+  `audio-player__controls--${variant}`,
+];
+const controlsBodyClasses = ['audio-player__controls-body'];
+const transcriptEntryClasses = 'audio-player__transcript-entry';
 ---
 
 <div
   id={playerId}
-  class={`${playerTv({ variant, layoutRow: variant === 'full' && !shouldShowMetadata })} ${className}`.trim()}
+  class={baseClassNames.trim()}
   data-audio-player
   data-variant={variant}
+  data-palette={paletteKey}
   data-transcript-src={transcriptSrcAttr}
   data-transcript-label={captionsLabel}
   aria-live="polite"
 >
-  <div class={containerLayout}>
+  <div class={innerClasses.join(' ')}>
     {
       showMediaSection && (
-        <div class={mediaSectionClasses}>
+        <div class={mediaClasses.join(' ')}>
           {cover && (
-            <div
-              class={
-                hasWideCover
-                  ? 'overflow-hidden rounded-xl ring-1 ring-slate-200/70 dark:ring-slate-800/70'
-                  : 'shrink-0 overflow-hidden rounded-2xl ring-1 ring-slate-200/60 dark:ring-slate-700/60'
-              }
-            >
-              <div class={hasWideCover ? 'aspect-video w-full' : ''}>
+            <div class={coverClasses.join(' ')}>
+              <div class={coverInnerClasses.join(' ')}>
                 <img
                   src={cover}
                   alt={title ? `${title} cover art` : 'Album cover'}
-                  class={
-                    hasWideCover
-                      ? 'h-full w-full object-cover'
-                      : 'h-20 w-28 sm:h-24 sm:w-32 md:h-28 md:w-36 object-cover'
-                  }
+                  class="audio-player__cover-image"
                 />
               </div>
             </div>
           )}
           {shouldShowMetadata && (
-            <div class={mediaContentClasses}>
-              {title && (
-                <p class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                  {title}
-                </p>
-              )}
-              {artist && (
-                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
-                  {artist}
-                </p>
-              )}
+            <div class="audio-player__metadata">
+              {title && <p class="audio-player__title">{title}</p>}
+              {artist && <p class="audio-player__artist">{artist}</p>}
             </div>
           )}
         </div>
@@ -143,28 +144,29 @@ const playBtnTv = tv({
       preload="metadata"
       loop={loop}
       autoplay={autoplay}
+      class="audio-player__element sr-only"
       data-audio
-      aria-label={title ? `Audio player for ${title}` : 'Audio player'}></audio>
+      aria-label={title ? `Audio player for ${title}` : 'Audio player'}
+    >
+      <source src={src} type={audioMimeType || undefined} />
+      Your browser does not support the audio element.
+    </audio>
 
-    <div class={controlsLayout}>
+    <div class={controlsClasses.join(' ')}>
       {
         variant === 'compact' && cover && (
           <img
             src={cover}
             alt={title ? `${title} cover art` : 'Album cover'}
-            class="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 self-center"
+            class="audio-player__thumbnail"
           />
         )
       }
-      <div
-        class={`${
-          variant === 'compact' ? 'flex-1 min-w-0' : 'w-full'
-        } space-y-4`.trim()}
-      >
-        <div class="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+      <div class={controlsBodyClasses.join(' ')}>
+        <div class="audio-player__buttons">
           <button
             type="button"
-            class={`${playBtnTv({ variant })}`}
+            class="audio-player__button audio-player__button--primary"
             data-play-pause
             aria-label="Play or pause audio"
             aria-pressed="false"
@@ -179,39 +181,34 @@ const playBtnTv = tv({
 
           <button
             type="button"
-            class={`inline-flex items-center justify-center rounded-full text-lg font-semibold shadow-sm transition motion-reduce:transition-none border border-slate-300 text-slate-600 bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:border-slate-600 dark:text-slate-300 dark:focus-visible:ring-offset-slate-950 ${variant === 'compact' ? 'h-9 w-9 md:h-10 lg:h-12 lg:w-12' : 'h-10 w-10 md:h-12 lg:h-12 lg:w-12'}`}
+            class="audio-player__button audio-player__button--ghost"
             data-mute
             aria-label="Mute or unmute audio"
             aria-pressed="false"
           >
-            <span
-              data-volume-icon
-              class="flex align-center items-center justify-center translate-x-px translate-y-px"
-            >
+            <span data-volume-icon class="audio-player__button-icon">
               <Icon name="volume" size="xl" decorative />
             </span>
-            <span data-mute-icon class="hidden translate-x-px translate-y-px">
+            <span data-mute-icon class="audio-player__button-icon hidden">
               <Icon name="mute" size="xl" decorative />
             </span>
           </button>
         </div>
 
-        <div class="space-y-2 sm:space-y-3">
-          <div
-            class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3"
-          >
+        <div class="audio-player__seek">
+          <div class="audio-player__seek-row">
             <span
-              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-12 sm:w-14 text-left sm:text-center shrink-0"
+              class="audio-player__time audio-player__time--current"
               data-current-time>0:00</span
             >
-            <div class="flex-1 min-w-0">
+            <div class="audio-player__range-track">
               <input
                 type="range"
                 min="0"
                 value="0"
                 step="0.1"
                 id="seek-label"
-                class="h-3.5 sm:h-4 w-full appearance-none rounded-full bg-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:focus-visible:ring-offset-slate-950"
+                class="audio-player__range"
                 data-seek
                 role="slider"
                 aria-label="Seek position"
@@ -221,23 +218,21 @@ const playBtnTv = tv({
               />
             </div>
             <span
-              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-12 sm:w-14 text-right sm:text-center shrink-0"
+              class="audio-player__time audio-player__time--duration"
               data-duration>0:00</span
             >
           </div>
         </div>
       </div>
     </div>
+
     {
       hasTranscript && (
-        <div class="w-full mt-4 md:mt-6">
-          <div
-            class="mx-0 overflow-hidden rounded-lg border border-slate-300/75 bg-slate-100/70 shadow-inner transition-colors motion-reduce:transition-none dark:border-slate-700/70 dark:bg-slate-900/60"
-            data-transcript-container
-          >
+        <div class="audio-player__transcript">
+          <div class="audio-player__transcript-shell" data-transcript-container>
             <button
               type="button"
-              class="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 motion-reduce:transition-none dark:text-slate-100 dark:hover:bg-slate-800/60 dark:focus-visible:ring-offset-slate-950 min-h-10"
+              class="audio-player__transcript-toggle"
               data-transcript-toggle
               aria-expanded="true"
               aria-controls={`${playerId}-transcript`}
@@ -245,8 +240,7 @@ const playBtnTv = tv({
             >
               <span data-transcript-toggle-label>{captionsLabel}</span>
               <span
-                aria-hidden="true"
-                class="text-lg transition-transform"
+                class="audio-player__transcript-toggle-icon"
                 data-transcript-toggle-icon
               >
                 <Icon
@@ -259,24 +253,24 @@ const playBtnTv = tv({
             </button>
             <div
               id={`${playerId}-transcript`}
-              class="border-t border-slate-300/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-950/60"
+              class="audio-player__transcript-panel"
               data-transcript-panel
               role="group"
             >
               <div
-                class="px-3 py-2 text-sm text-slate-500 dark:text-slate-300"
+                class="audio-player__transcript-status"
                 data-transcript-loading
               >
                 Loading transcript…
               </div>
               <div
-                class="hidden px-3 py-2 text-sm text-rose-600 dark:text-rose-300"
+                class="audio-player__transcript-status audio-player__transcript-status--error hidden"
                 data-transcript-error
               >
                 Unable to load transcript.
               </div>
               <ol
-                class="hidden max-h-60 space-y-1 overflow-y-auto px-3 py-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+                class="audio-player__transcript-list hidden"
                 data-transcript-list
               />
             </div>
@@ -287,8 +281,9 @@ const playBtnTv = tv({
   </div>
 </div>
 
-<script is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
+<script is:inline define:vars={{ transcriptEntryClass: transcriptEntryClasses }}
+>
+  const initAudioPlayers = () => {
     const players = document.querySelectorAll('[data-audio-player]');
 
     const formatTime = (seconds) => {
@@ -376,8 +371,10 @@ const playBtnTv = tv({
 
     players.forEach((player) => {
       if (!(player instanceof HTMLElement)) return;
+      if (player.dataset.audioHydrated === 'true') return;
       const audio = player.querySelector('[data-audio]');
       if (!(audio instanceof HTMLAudioElement)) return;
+      player.dataset.audioHydrated = 'true';
 
       const playPauseBtn = player.querySelector('[data-play-pause]');
       const playIcon = player.querySelector('[data-play-icon]');
@@ -388,9 +385,7 @@ const playBtnTv = tv({
       const currentTimeEl = player.querySelector('[data-current-time]');
       const durationEl = player.querySelector('[data-duration]');
       const seekInput = player.querySelector('[data-seek]');
-      const transcriptSrc = player.dataset.transcriptSrc
-        ? decodeURIComponent(player.dataset.transcriptSrc)
-        : null;
+      const transcriptSrc = player.dataset.transcriptSrc || null;
       const transcriptLabel = player.dataset.transcriptLabel || 'Transcript';
       const transcriptToggle = player.querySelector('[data-transcript-toggle]');
       const transcriptPanel = player.querySelector('[data-transcript-panel]');
@@ -572,7 +567,7 @@ const playBtnTv = tv({
                 <li>
                   <button
                     type="button"
-                    class="w-full rounded-lg bg-slate-100/60 px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-blue-100/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900/40 dark:text-slate-200 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-950 min-h-11"
+                    class="${transcriptEntryClass}"
                     data-transcript-entry="${index}"
         data-cue-start="${cue.start}"
         data-active="false"
@@ -594,9 +589,22 @@ const playBtnTv = tv({
             if (transcriptLoading instanceof HTMLElement) {
               transcriptLoading.classList.remove('hidden');
             }
-            const response = await fetch(transcriptSrc);
-            if (!response.ok) throw new Error('Request failed');
-            const text = await response.text();
+            let text = '';
+            if (transcriptSrc.startsWith('data:')) {
+              const commaIndex = transcriptSrc.indexOf(',');
+              if (commaIndex === -1) throw new Error('Invalid data URI');
+              const dataPortion = transcriptSrc.slice(commaIndex + 1);
+              const isBase64 = transcriptSrc
+                .slice(5, commaIndex)
+                .includes(';base64');
+              text = isBase64
+                ? atob(dataPortion.trim())
+                : decodeURIComponent(dataPortion);
+            } else {
+              const response = await fetch(transcriptSrc);
+              if (!response.ok) throw new Error('Request failed');
+              text = await response.text();
+            }
             cues = parseVtt(text);
             transcriptLoaded = true;
             renderTranscript();
@@ -652,34 +660,263 @@ const playBtnTv = tv({
           updateActiveCue(audio.currentTime);
         }
 
-        // Open transcript panel by default when a transcript source exists
         setTranscriptExpanded(true);
-        // Load transcript immediately so it's available under the player
         loadTranscript();
       }
     });
-  });
+  };
 
-  // parseTime and parseVtt are defined above inside the inline script where they're used.
-  // No duplicated definitions required here.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAudioPlayers, {
+      once: true,
+    });
+  } else {
+    initAudioPlayers();
+  }
 </script>
 
 <style is:inline>
-  [data-audio-player] {
-    --seek-fill: rgb(29 78 216); /* Darker blue for better contrast */
-    --seek-bg: rgb(203 213 225);
+  .audio-player {
+    --ap-bg: var(--ap-bg-light, #ffffff);
+    --ap-border: var(--ap-border-light, #e5e7eb);
+    --ap-bg-hover: var(--ap-hover-bg-light, var(--ap-bg-light));
+    --ap-border-hover: var(--ap-hover-border-light, var(--ap-border-light));
+    --ap-text: var(--ap-text-light, #111827);
+    --ap-subtext: var(--ap-subtext-light, #4b5563);
+    --ap-card-bg: var(--ap-card-bg-light, rgba(15, 23, 42, 0.03));
+    --ap-card-border: var(--ap-card-border-light, rgba(15, 23, 42, 0.08));
+    --ap-frame: var(--ap-frame-light, rgba(15, 23, 42, 0.15));
+    --ap-primary-bg: var(--ap-primary-bg-light, #2563eb);
+    --ap-primary-hover-bg: var(--ap-primary-hover-bg-light, #1d4ed8);
+    --ap-primary-text: var(--ap-primary-text-light, #ffffff);
+    --ap-ghost-border: var(--ap-ghost-border-light, #d1d5db);
+    --ap-ghost-text: var(--ap-ghost-text-light, #374151);
+    --ap-ghost-hover-border: var(--ap-ghost-hover-border-light, #2563eb);
+    --ap-ghost-hover-text: var(--ap-ghost-hover-text-light, #2563eb);
+    --ap-transcript-shell-bg: var(
+      --ap-transcript-shell-bg-light,
+      rgba(248, 250, 252, 0.9)
+    );
+    --ap-transcript-shell-border: var(
+      --ap-transcript-shell-border-light,
+      rgba(203, 213, 225, 0.75)
+    );
+    --ap-transcript-panel-bg: var(
+      --ap-transcript-panel-bg-light,
+      rgba(255, 255, 255, 0.95)
+    );
+    --ap-transcript-panel-border: var(
+      --ap-transcript-panel-border-light,
+      rgba(203, 213, 225, 0.7)
+    );
+    --ap-transcript-entry-bg: var(
+      --ap-transcript-entry-bg-light,
+      rgba(248, 250, 252, 0.7)
+    );
+    --ap-transcript-entry-hover: var(
+      --ap-transcript-entry-hover-light,
+      rgba(15, 23, 42, 0.05)
+    );
+    --ap-transcript-entry-text: var(--ap-transcript-entry-text-light, #1f2937);
+    --ap-thumbnail-ring: var(--ap-thumbnail-ring-light, rgba(15, 23, 42, 0.1));
+    --focus-ring-color: var(--focus-ring-color-light, #2563eb);
+    --focus-ring-offset: var(
+      --focus-ring-offset-color-light,
+      rgba(255, 255, 255, 0.9)
+    );
+    --seek-fill: var(--seek-fill-light, #2563eb);
+    --seek-bg: var(--seek-bg-light, #e2e8f0);
     --seek-percent: 0%;
-    --focus-ring-color: rgb(30 64 175); /* WCAG AAA compliant focus */
-    --focus-ring-width: 3px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    gap: clamp(1rem, 4vw, 1.5rem);
+    padding: clamp(1rem, 3vw, 1.5rem) clamp(0.75rem, 3vw, 1.5rem);
+    border-radius: 1.5rem;
+    border: 1px solid var(--ap-border);
+    background-color: var(--ap-bg);
+    color: var(--ap-text);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
-
-  :where(.dark) [data-audio-player] {
-    --seek-fill: rgb(59 130 246); /* Lighter blue for dark mode */
-    --seek-bg: rgb(30 41 59);
-    --focus-ring-color: rgb(96 165 250); /* WCAG AAA compliant focus */
+  .audio-player:hover {
+    border-color: var(--ap-border-hover);
+    background-color: var(--ap-bg-hover);
   }
-
-  [data-audio-player] [data-seek] {
+  .audio-player--compact {
+    padding: 0.75rem 1rem;
+    gap: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .audio-player--full {
+      padding: 1.5rem 1.75rem;
+    }
+  }
+  .audio-player__inner {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 4vw, 1.5rem);
+  }
+  .audio-player__media {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+  .audio-player__media--wide {
+    gap: clamp(1rem, 4vw, 1.35rem);
+  }
+  .audio-player__cover {
+    width: 100%;
+    border-radius: 1.25rem;
+    border: 1px solid transparent;
+    box-shadow: 0 15px 30px rgba(15, 23, 42, 0.08);
+  }
+  .audio-player__cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .audio-player__metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .audio-player__title {
+    font-size: clamp(1rem, 4vw, 1.15rem);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ap-text);
+    margin: 0;
+  }
+  .audio-player__artist {
+    font-size: clamp(0.9rem, 3.2vw, 0.95rem);
+    font-weight: 500;
+    color: var(--ap-subtext);
+    margin: 0;
+  }
+  .audio-player__controls {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.9rem, 4vw, 1.25rem);
+  }
+  @media (min-width: 40rem) {
+    .audio-player__controls--compact {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem 1.25rem;
+    }
+  }
+  .audio-player__controls-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.8rem, 3vw, 1rem);
+    width: 100%;
+  }
+  .audio-player__buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  @media (max-width: 26rem) {
+    .audio-player__buttons {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+  }
+  .audio-player__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 600;
+    min-width: clamp(2.75rem, 12vw, 3.25rem);
+    min-height: clamp(2.75rem, 12vw, 3.25rem);
+    border: 2px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+  .audio-player__button:focus-visible {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px var(--focus-ring-offset);
+  }
+  .audio-player__button--primary {
+    background-color: var(--ap-primary-bg);
+    color: var(--ap-primary-text);
+    min-width: clamp(3rem, 12vw, 3.5rem);
+    min-height: clamp(3rem, 12vw, 3.5rem);
+  }
+  .audio-player__button--primary:hover {
+    background-color: var(--ap-primary-hover-bg);
+  }
+  .audio-player__button--ghost {
+    border-color: var(--ap-ghost-border);
+    color: var(--ap-ghost-text);
+    min-width: clamp(3rem, 12vw, 3.25rem);
+    min-height: clamp(3rem, 12vw, 3.25rem);
+  }
+  .audio-player__button--ghost:hover {
+    border-color: var(--ap-ghost-hover-border);
+    color: var(--ap-ghost-hover-text);
+  }
+  @media (max-width: 26rem) {
+    .audio-player__button {
+      width: 100%;
+    }
+  }
+  .audio-player__button-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .audio-player__seek {
+    width: 100%;
+  }
+  .audio-player__seek-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  @media (max-width: 26rem) {
+    .audio-player__seek-row {
+      gap: 0.5rem;
+    }
+  }
+  @media (min-width: 40rem) {
+    .audio-player__seek-row {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.85rem;
+    }
+  }
+  .audio-player__range-track {
+    flex: 1;
+    min-width: 0;
+  }
+  .audio-player__range {
+    width: 100%;
+    appearance: none;
+    height: 0.85rem;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
     background: linear-gradient(
       90deg,
       var(--seek-fill) 0%,
@@ -687,108 +924,561 @@ const playBtnTv = tv({
       var(--seek-bg) var(--seek-percent),
       var(--seek-bg) 100%
     );
-    height: 0.75rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--seek-bg) 80%, transparent);
+    transition: background 0.15s ease;
   }
-
-  [data-audio-player] [data-seek]:focus-visible {
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  .audio-player__range:focus-visible {
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
+    box-shadow: 0 0 0 3px var(--focus-ring-offset);
   }
-
-  [data-audio-player] [data-seek]::-webkit-slider-thumb,
-  [data-audio-player] [data-seek]::-moz-range-thumb {
-    -webkit-appearance: none;
+  .audio-player__range::-webkit-slider-thumb,
+  .audio-player__range::-moz-range-thumb {
     appearance: none;
-    height: 20px; /* Increased size for better touch targets */
-    width: 20px; /* Increased size for better touch targets */
-    border-radius: 999px;
-    background: var(--seek-fill);
-    border: 2px solid color-mix(in srgb, white 80%, transparent);
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background-color: var(--ap-primary-bg);
+    box-shadow: 0 5px 25px rgba(15, 23, 42, 0.25);
     cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease;
   }
-
-  [data-audio-player] [data-seek]::-webkit-slider-thumb:focus,
-  [data-audio-player] [data-seek]::-moz-range-thumb:focus {
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  .audio-player__range:active::-webkit-slider-thumb,
+  .audio-player__range:active::-moz-range-thumb {
+    transform: scale(1.05);
+    background-color: var(--ap-primary-hover-bg);
+  }
+  .audio-player__time {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ap-subtext);
+    min-width: 2.75rem;
+    text-align: center;
+  }
+  @media (max-width: 26rem) {
+    .audio-player__time {
+      text-align: left;
+      min-width: auto;
+    }
+  }
+  .audio-player__thumbnail {
+    width: clamp(2.75rem, 14vw, 3.5rem);
+    height: clamp(2.75rem, 14vw, 3.5rem);
+    border-radius: 1rem;
+    object-fit: cover;
+    border: 2px solid var(--ap-thumbnail-ring);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+  }
+  .audio-player__transcript {
+    width: 100%;
+    margin-top: clamp(0.5rem, 3vw, 1rem);
+  }
+  .audio-player__transcript-shell {
+    border: 1px solid var(--ap-transcript-shell-border);
+    border-radius: 1rem;
+    background-color: var(--ap-transcript-shell-bg);
+    overflow: hidden;
+    box-shadow: inset 0 0 12px rgba(15, 23, 42, 0.08);
+  }
+  .audio-player__transcript-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: transparent;
+    border: none;
+    color: var(--ap-text);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .audio-player__transcript-toggle:hover {
+    background-color: rgba(15, 23, 42, 0.05);
+  }
+  .audio-player__transcript-toggle:focus-visible {
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
+    box-shadow: 0 0 0 3px var(--focus-ring-offset);
   }
-
-  :where(.dark) [data-audio-player] [data-seek]::-webkit-slider-thumb,
-  :where(.dark) [data-audio-player] [data-seek]::-moz-range-thumb {
-    border-color: color-mix(in srgb, black 30%, transparent);
+  @media (max-width: 26rem) {
+    .audio-player__transcript-toggle {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
-
-  [data-audio-player] [data-seek]::-webkit-slider-runnable-track,
-  [data-audio-player] [data-seek]::-moz-range-track {
-    height: 0.75rem;
+  .audio-player__transcript-toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+  @media (max-width: 26rem) {
+    .audio-player__transcript-toggle-icon {
+      align-self: flex-end;
+    }
+  }
+  .audio-player__transcript-panel {
+    border-top: 1px solid var(--ap-transcript-panel-border);
+    background-color: var(--ap-transcript-panel-bg);
+  }
+  .audio-player__transcript-status {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    color: var(--ap-subtext);
+  }
+  .audio-player__transcript-status--error {
+    color: #e11d48;
+  }
+  .audio-player__transcript-list {
+    max-height: 15rem;
+    overflow-y: auto;
+    padding: 0.75rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ap-primary-bg) transparent;
+  }
+  .audio-player__transcript-list::-webkit-scrollbar {
+    width: 0.4rem;
+  }
+  .audio-player__transcript-list::-webkit-scrollbar-thumb {
+    background-color: rgba(15, 23, 42, 0.35);
     border-radius: 999px;
+  }
+  .audio-player__transcript-list::-webkit-scrollbar-track {
     background: transparent;
   }
-
-  [data-audio-player] [data-transcript-entry][data-active='true'] {
-    background-color: color-mix(in srgb, var(--seek-fill) 10%, transparent);
-    color: var(--seek-fill);
-    border-left: 3px solid var(--seek-fill);
+  .audio-player__transcript-entry {
+    width: 100%;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background-color: var(--ap-transcript-entry-bg);
+    color: var(--ap-transcript-entry-text);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease;
   }
-
-  :where(.dark)
-    [data-audio-player]
-    [data-transcript-entry][data-active='true'] {
-    background-color: color-mix(in srgb, var(--seek-fill) 15%, transparent);
-    color: color-mix(in srgb, var(--seek-fill) 80%, white);
+  .audio-player__transcript-entry:hover {
+    background-color: var(--ap-transcript-entry-hover);
   }
-
-  /* Better focus indicators for all interactive elements */
-  [data-audio-player] button:focus-visible,
-  [data-audio-player] [data-transcript-entry]:focus-visible {
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  .audio-player__transcript-entry:focus-visible {
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
+    box-shadow: 0 0 0 3px var(--focus-ring-offset);
+  }
+  .audio-player__transcript-entry[data-active='true'] {
+    border-color: var(--ap-primary-bg);
+    background-color: var(--ap-transcript-entry-hover);
   }
 
-  /* Ensure proper contrast for text elements */
-  [data-audio-player] .text-slate-700 {
-    color: #334155; /* WCAG AAA compliant color */
+  :where(.dark) .audio-player {
+    --ap-bg: var(--ap-bg-dark, var(--ap-bg-light));
+    --ap-border: var(--ap-border-dark, var(--ap-border-light));
+    --ap-bg-hover: var(--ap-hover-bg-dark, var(--ap-hover-bg-light));
+    --ap-border-hover: var(
+      --ap-hover-border-dark,
+      var(--ap-hover-border-light)
+    );
+    --ap-text: var(--ap-text-dark, var(--ap-text-light));
+    --ap-subtext: var(--ap-subtext-dark, var(--ap-subtext-light));
+    --ap-card-bg: var(--ap-card-bg-dark, var(--ap-card-bg-light));
+    --ap-card-border: var(--ap-card-border-dark, var(--ap-card-border-light));
+    --ap-frame: var(--ap-frame-dark, var(--ap-frame-light));
+    --ap-primary-bg: var(--ap-primary-bg-dark, var(--ap-primary-bg-light));
+    --ap-primary-hover-bg: var(
+      --ap-primary-hover-bg-dark,
+      var(--ap-primary-hover-bg-light)
+    );
+    --ap-primary-text: var(
+      --ap-primary-text-dark,
+      var(--ap-primary-text-light)
+    );
+    --ap-ghost-border: var(
+      --ap-ghost-border-dark,
+      var(--ap-ghost-border-light)
+    );
+    --ap-ghost-text: var(--ap-ghost-text-dark, var(--ap-ghost-text-light));
+    --ap-ghost-hover-border: var(
+      --ap-ghost-hover-border-dark,
+      var(--ap-ghost-hover-border-light)
+    );
+    --ap-ghost-hover-text: var(
+      --ap-ghost-hover-text-dark,
+      var(--ap-ghost-hover-text-light)
+    );
+    --ap-transcript-shell-bg: var(
+      --ap-transcript-shell-bg-dark,
+      var(--ap-transcript-shell-bg-light)
+    );
+    --ap-transcript-shell-border: var(
+      --ap-transcript-shell-border-dark,
+      var(--ap-transcript-shell-border-light)
+    );
+    --ap-transcript-panel-bg: var(
+      --ap-transcript-panel-bg-dark,
+      var(--ap-transcript-panel-bg-light)
+    );
+    --ap-transcript-panel-border: var(
+      --ap-transcript-panel-border-dark,
+      var(--ap-transcript-panel-border-light)
+    );
+    --ap-transcript-entry-bg: var(
+      --ap-transcript-entry-bg-dark,
+      var(--ap-transcript-entry-bg-light)
+    );
+    --ap-transcript-entry-hover: var(
+      --ap-transcript-entry-hover-dark,
+      var(--ap-transcript-entry-hover-light)
+    );
+    --ap-transcript-entry-text: var(
+      --ap-transcript-entry-text-dark,
+      var(--ap-transcript-entry-text-light)
+    );
+    --ap-thumbnail-ring: var(
+      --ap-thumbnail-ring-dark,
+      var(--ap-thumbnail-ring-light)
+    );
+    --focus-ring-color: var(
+      --focus-ring-color-dark,
+      var(--focus-ring-color-light)
+    );
+    --focus-ring-offset: var(
+      --focus-ring-offset-color-dark,
+      var(--focus-ring-offset-color-light)
+    );
+    --seek-fill: var(--seek-fill-dark, var(--seek-fill-light));
+    --seek-bg: var(--seek-bg-dark, var(--seek-bg-light));
   }
 
-  [data-audio-player] .text-slate-600 {
-    color: #475569; /* WCAG AAA compliant color */
+  .rotate-180 {
+    transform: rotate(180deg);
   }
 
-  :where(.dark) [data-audio-player] .dark\:text-slate-200 {
-    color: #e2e8f0; /* WCAG AAA compliant color */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  :where(.dark) [data-audio-player] .dark\:text-slate-300 {
-    color: #cbd5e1; /* WCAG AAA compliant color */
+  .hidden {
+    display: none !important;
   }
 
-  /* Responsive tweaks */
-  [data-audio-player] img {
-    max-width: 100%;
-    height: auto;
+  .audio-player--palette-classicBlue {
+    --ap-bg-light: #ffffff;
+    --ap-bg-dark: #0f172a;
+    --ap-border-light: #e5e7eb;
+    --ap-border-dark: #374151;
+    --ap-hover-bg-light: #f1f5ff;
+    --ap-hover-bg-dark: #1f2937;
+    --ap-hover-border-light: #60a5fa;
+    --ap-hover-border-dark: #3b82f6;
+    --ap-text-light: #111827;
+    --ap-text-dark: #f8fafc;
+    --ap-subtext-light: #4b5563;
+    --ap-subtext-dark: #d1d5db;
+    --ap-card-bg-light: rgba(239, 246, 255, 0.8);
+    --ap-card-bg-dark: rgba(17, 24, 39, 0.45);
+    --ap-card-border-light: rgba(229, 231, 235, 0.8);
+    --ap-card-border-dark: rgba(55, 65, 81, 0.65);
+    --ap-frame-light: rgba(229, 231, 235, 0.7);
+    --ap-frame-dark: rgba(55, 65, 81, 0.7);
+    --ap-primary-bg-light: #2563eb;
+    --ap-primary-bg-dark: #60a5fa;
+    --ap-primary-hover-bg-light: #1d4ed8;
+    --ap-primary-hover-bg-dark: #93c5fd;
+    --ap-primary-text-light: #ffffff;
+    --ap-primary-text-dark: #0f172a;
+    --ap-ghost-border-light: #d1d5db;
+    --ap-ghost-border-dark: #4b5563;
+    --ap-ghost-text-light: #374151;
+    --ap-ghost-text-dark: #e5e7eb;
+    --ap-ghost-hover-border-light: #60a5fa;
+    --ap-ghost-hover-border-dark: #93c5fd;
+    --ap-ghost-hover-text-light: #2563eb;
+    --ap-ghost-hover-text-dark: #bfdbfe;
+    --ap-transcript-shell-bg-light: rgba(248, 250, 252, 0.9);
+    --ap-transcript-shell-bg-dark: rgba(15, 23, 42, 0.65);
+    --ap-transcript-shell-border-light: rgba(203, 213, 225, 0.75);
+    --ap-transcript-shell-border-dark: rgba(71, 85, 105, 0.7);
+    --ap-transcript-panel-bg-light: rgba(255, 255, 255, 0.95);
+    --ap-transcript-panel-bg-dark: rgba(2, 6, 23, 0.85);
+    --ap-transcript-panel-border-light: rgba(203, 213, 225, 0.7);
+    --ap-transcript-panel-border-dark: rgba(71, 85, 105, 0.6);
+    --ap-transcript-entry-bg-light: rgba(248, 250, 252, 0.7);
+    --ap-transcript-entry-bg-dark: rgba(15, 23, 42, 0.4);
+    --ap-transcript-entry-hover-light: rgba(15, 23, 42, 0.05);
+    --ap-transcript-entry-hover-dark: rgba(255, 255, 255, 0.08);
+    --ap-transcript-entry-text-light: #1f2937;
+    --ap-transcript-entry-text-dark: #e2e8f0;
+    --ap-thumbnail-ring-light: rgba(229, 231, 235, 0.75);
+    --ap-thumbnail-ring-dark: rgba(55, 65, 81, 0.75);
+    --seek-fill-light: rgb(37 99 235);
+    --seek-fill-dark: rgb(59 130 246);
+    --seek-bg-light: rgb(203 213 225);
+    --seek-bg-dark: rgb(30 41 59);
+    --focus-ring-color-light: rgb(59 130 246);
+    --focus-ring-color-dark: rgb(147 197 253);
+    --focus-ring-offset-color-light: rgb(248 250 252);
+    --focus-ring-offset-color-dark: rgb(15 23 42);
   }
 
-  [data-audio-player] [data-transcript-list] {
-    max-height: 14rem; /* ~224px on small screens */
+  .audio-player--palette-natureGreen {
+    --ap-bg-light: #fafaf9;
+    --ap-bg-dark: #0c0a09;
+    --ap-border-light: #e7e5e4;
+    --ap-border-dark: #292524;
+    --ap-hover-bg-light: #f5f5f4;
+    --ap-hover-bg-dark: #1c1917;
+    --ap-hover-border-light: #34d399;
+    --ap-hover-border-dark: #10b981;
+    --ap-text-light: #1c1917;
+    --ap-text-dark: #fafaf9;
+    --ap-subtext-light: #57534e;
+    --ap-subtext-dark: #e7e5e4;
+    --ap-card-bg-light: rgba(245, 245, 244, 0.85);
+    --ap-card-bg-dark: rgba(28, 25, 23, 0.45);
+    --ap-card-border-light: rgba(231, 229, 228, 0.8);
+    --ap-card-border-dark: rgba(68, 64, 60, 0.7);
+    --ap-frame-light: rgba(231, 229, 228, 0.7);
+    --ap-frame-dark: rgba(68, 64, 60, 0.7);
+    --ap-primary-bg-light: #059669;
+    --ap-primary-bg-dark: #34d399;
+    --ap-primary-hover-bg-light: #047857;
+    --ap-primary-hover-bg-dark: #6ee7b7;
+    --ap-primary-text-light: #ffffff;
+    --ap-primary-text-dark: #0c0a09;
+    --ap-ghost-border-light: #d6d3d1;
+    --ap-ghost-border-dark: #57534e;
+    --ap-ghost-text-light: #57534e;
+    --ap-ghost-text-dark: #e7e5e4;
+    --ap-ghost-hover-border-light: #34d399;
+    --ap-ghost-hover-border-dark: #6ee7b7;
+    --ap-ghost-hover-text-light: #047857;
+    --ap-ghost-hover-text-dark: #a7f3d0;
+    --ap-transcript-shell-bg-light: rgba(250, 250, 249, 0.92);
+    --ap-transcript-shell-bg-dark: rgba(12, 10, 9, 0.72);
+    --ap-transcript-shell-border-light: rgba(214, 211, 209, 0.75);
+    --ap-transcript-shell-border-dark: rgba(68, 64, 60, 0.7);
+    --ap-transcript-panel-bg-light: rgba(255, 255, 255, 0.95);
+    --ap-transcript-panel-bg-dark: rgba(8, 7, 6, 0.85);
+    --ap-transcript-panel-border-light: rgba(214, 211, 209, 0.7);
+    --ap-transcript-panel-border-dark: rgba(68, 64, 60, 0.6);
+    --ap-transcript-entry-bg-light: rgba(245, 245, 244, 0.75);
+    --ap-transcript-entry-bg-dark: rgba(28, 25, 23, 0.45);
+    --ap-transcript-entry-hover-light: rgba(4, 120, 87, 0.08);
+    --ap-transcript-entry-hover-dark: rgba(255, 255, 255, 0.08);
+    --ap-transcript-entry-text-light: #44403c;
+    --ap-transcript-entry-text-dark: #f5f5f4;
+    --ap-thumbnail-ring-light: rgba(214, 211, 209, 0.8);
+    --ap-thumbnail-ring-dark: rgba(68, 64, 60, 0.7);
+    --seek-fill-light: rgb(5 150 105);
+    --seek-fill-dark: rgb(52 211 153);
+    --seek-bg-light: rgb(231 229 228);
+    --seek-bg-dark: rgb(28 25 23);
+    --focus-ring-color-light: rgb(16 185 129);
+    --focus-ring-color-dark: rgb(52 211 153);
+    --focus-ring-offset-color-light: rgb(245 245 244);
+    --focus-ring-offset-color-dark: rgb(28 25 23);
   }
 
-  @media (min-width: 768px) {
-    [data-audio-player] [data-seek]::-webkit-slider-thumb,
-    [data-audio-player] [data-seek]::-moz-range-thumb {
-      height: 22px;
-      width: 22px;
-    }
-
-    [data-audio-player] [data-transcript-list] {
-      max-height: 16rem;
-    }
+  .audio-player--palette-warmPurple {
+    --ap-bg-light: #f9fafb;
+    --ap-bg-dark: #030712;
+    --ap-border-light: #d1d5db;
+    --ap-border-dark: #374151;
+    --ap-hover-bg-light: #f5f3ff;
+    --ap-hover-bg-dark: #111827;
+    --ap-hover-border-light: #a78bfa;
+    --ap-hover-border-dark: #8b5cf6;
+    --ap-text-light: #111827;
+    --ap-text-dark: #f4f4ff;
+    --ap-subtext-light: #4b5563;
+    --ap-subtext-dark: #d1d5db;
+    --ap-card-bg-light: rgba(245, 243, 255, 0.7);
+    --ap-card-bg-dark: rgba(17, 24, 39, 0.45);
+    --ap-card-border-light: rgba(209, 213, 219, 0.75);
+    --ap-card-border-dark: rgba(55, 65, 81, 0.65);
+    --ap-frame-light: rgba(209, 213, 219, 0.7);
+    --ap-frame-dark: rgba(55, 65, 81, 0.6);
+    --ap-primary-bg-light: #7c3aed;
+    --ap-primary-bg-dark: #c4b5fd;
+    --ap-primary-hover-bg-light: #6d28d9;
+    --ap-primary-hover-bg-dark: #ddd6fe;
+    --ap-primary-text-light: #ffffff;
+    --ap-primary-text-dark: #111827;
+    --ap-ghost-border-light: #d1d5db;
+    --ap-ghost-border-dark: #4b5563;
+    --ap-ghost-text-light: #4b5563;
+    --ap-ghost-text-dark: #e5e7eb;
+    --ap-ghost-hover-border-light: #a78bfa;
+    --ap-ghost-hover-border-dark: #c4b5fd;
+    --ap-ghost-hover-text-light: #6d28d9;
+    --ap-ghost-hover-text-dark: #ddd6fe;
+    --ap-transcript-shell-bg-light: rgba(249, 250, 251, 0.9);
+    --ap-transcript-shell-bg-dark: rgba(3, 7, 18, 0.7);
+    --ap-transcript-shell-border-light: rgba(209, 213, 219, 0.75);
+    --ap-transcript-shell-border-dark: rgba(75, 85, 99, 0.65);
+    --ap-transcript-panel-bg-light: rgba(255, 255, 255, 0.96);
+    --ap-transcript-panel-bg-dark: rgba(3, 7, 18, 0.85);
+    --ap-transcript-panel-border-light: rgba(209, 213, 219, 0.7);
+    --ap-transcript-panel-border-dark: rgba(75, 85, 99, 0.6);
+    --ap-transcript-entry-bg-light: rgba(245, 243, 255, 0.75);
+    --ap-transcript-entry-bg-dark: rgba(17, 24, 39, 0.45);
+    --ap-transcript-entry-hover-light: rgba(124, 58, 237, 0.08);
+    --ap-transcript-entry-hover-dark: rgba(255, 255, 255, 0.08);
+    --ap-transcript-entry-text-light: #4b5563;
+    --ap-transcript-entry-text-dark: #f4f4ff;
+    --ap-thumbnail-ring-light: rgba(209, 213, 219, 0.75);
+    --ap-thumbnail-ring-dark: rgba(75, 85, 99, 0.7);
+    --seek-fill-light: rgb(124 58 237);
+    --seek-fill-dark: rgb(167 139 250);
+    --seek-bg-light: rgb(226 232 240);
+    --seek-bg-dark: rgb(30 27 75);
+    --focus-ring-color-light: rgb(129 140 248);
+    --focus-ring-color-dark: rgb(167 139 250);
+    --focus-ring-offset-color-light: rgb(249 250 251);
+    --focus-ring-offset-color-dark: rgb(17 24 39);
   }
 
-  @media (min-width: 1024px) {
-    [data-audio-player] [data-transcript-list] {
-      max-height: 18rem;
-    }
+  .audio-player--palette-skyCyan {
+    --ap-bg-light: #f8fafc;
+    --ap-bg-dark: #0f172a;
+    --ap-border-light: #e2e8f0;
+    --ap-border-dark: #334155;
+    --ap-hover-bg-light: #ecfeff;
+    --ap-hover-bg-dark: #1e293b;
+    --ap-hover-border-light: #22d3ee;
+    --ap-hover-border-dark: #0ea5e9;
+    --ap-text-light: #0f172a;
+    --ap-text-dark: #f8fafc;
+    --ap-subtext-light: #475569;
+    --ap-subtext-dark: #cbd5f5;
+    --ap-card-bg-light: rgba(236, 254, 255, 0.7);
+    --ap-card-bg-dark: rgba(15, 23, 42, 0.4);
+    --ap-card-border-light: rgba(226, 232, 240, 0.8);
+    --ap-card-border-dark: rgba(51, 65, 85, 0.7);
+    --ap-frame-light: rgba(226, 232, 240, 0.7);
+    --ap-frame-dark: rgba(51, 65, 85, 0.7);
+    --ap-primary-bg-light: #0891b2;
+    --ap-primary-bg-dark: #67e8f9;
+    --ap-primary-hover-bg-light: #0e7490;
+    --ap-primary-hover-bg-dark: #a5f3fc;
+    --ap-primary-text-light: #ffffff;
+    --ap-primary-text-dark: #0f172a;
+    --ap-ghost-border-light: #cbd5f5;
+    --ap-ghost-border-dark: #475569;
+    --ap-ghost-text-light: #475569;
+    --ap-ghost-text-dark: #e2e8f0;
+    --ap-ghost-hover-border-light: #22d3ee;
+    --ap-ghost-hover-border-dark: #67e8f9;
+    --ap-ghost-hover-text-light: #0e7490;
+    --ap-ghost-hover-text-dark: #a5f3fc;
+    --ap-transcript-shell-bg-light: rgba(248, 250, 252, 0.92);
+    --ap-transcript-shell-bg-dark: rgba(15, 23, 42, 0.7);
+    --ap-transcript-shell-border-light: rgba(203, 213, 225, 0.75);
+    --ap-transcript-shell-border-dark: rgba(71, 85, 105, 0.7);
+    --ap-transcript-panel-bg-light: rgba(255, 255, 255, 0.96);
+    --ap-transcript-panel-bg-dark: rgba(2, 6, 23, 0.85);
+    --ap-transcript-panel-border-light: rgba(203, 213, 225, 0.7);
+    --ap-transcript-panel-border-dark: rgba(71, 85, 105, 0.6);
+    --ap-transcript-entry-bg-light: rgba(236, 254, 255, 0.7);
+    --ap-transcript-entry-bg-dark: rgba(15, 23, 42, 0.4);
+    --ap-transcript-entry-hover-light: rgba(8, 145, 178, 0.1);
+    --ap-transcript-entry-hover-dark: rgba(255, 255, 255, 0.08);
+    --ap-transcript-entry-text-light: #0f172a;
+    --ap-transcript-entry-text-dark: #e2e8f0;
+    --ap-thumbnail-ring-light: rgba(203, 213, 225, 0.75);
+    --ap-thumbnail-ring-dark: rgba(51, 65, 85, 0.7);
+    --seek-fill-light: rgb(8 145 178);
+    --seek-fill-dark: rgb(103 232 249);
+    --seek-bg-light: rgb(226 232 240);
+    --seek-bg-dark: rgb(15 23 42);
+    --focus-ring-color-light: rgb(6 182 212);
+    --focus-ring-color-dark: rgb(103 232 249);
+    --focus-ring-offset-color-light: rgb(248 250 252);
+    --focus-ring-offset-color-dark: rgb(15 23 42);
   }
+
+  .audio-player--palette-orangeAccent {
+    --ap-bg-light: #fafafa;
+    --ap-bg-dark: #09090b;
+    --ap-border-light: #e4e4e7;
+    --ap-border-dark: #27272a;
+    --ap-hover-bg-light: #fff7ed;
+    --ap-hover-bg-dark: #18181b;
+    --ap-hover-border-light: #fb923c;
+    --ap-hover-border-dark: #f97316;
+    --ap-text-light: #18181b;
+    --ap-text-dark: #f4f4f5;
+    --ap-subtext-light: #3f3f46;
+    --ap-subtext-dark: #d4d4d8;
+    --ap-card-bg-light: rgba(255, 247, 237, 0.7);
+    --ap-card-bg-dark: rgba(24, 24, 27, 0.4);
+    --ap-card-border-light: rgba(228, 228, 231, 0.8);
+    --ap-card-border-dark: rgba(39, 39, 42, 0.65);
+    --ap-frame-light: rgba(228, 228, 231, 0.7);
+    --ap-frame-dark: rgba(39, 39, 42, 0.65);
+    --ap-primary-bg-light: #f97316;
+    --ap-primary-bg-dark: #fdba74;
+    --ap-primary-hover-bg-light: #ea580c;
+    --ap-primary-hover-bg-dark: #fed7aa;
+    --ap-primary-text-light: #ffffff;
+    --ap-primary-text-dark: #18181b;
+    --ap-ghost-border-light: #d4d4d8;
+    --ap-ghost-border-dark: #52525b;
+    --ap-ghost-text-light: #3f3f46;
+    --ap-ghost-text-dark: #e4e4e7;
+    --ap-ghost-hover-border-light: #fb923c;
+    --ap-ghost-hover-border-dark: #fdba74;
+    --ap-ghost-hover-text-light: #ea580c;
+    --ap-ghost-hover-text-dark: #fed7aa;
+    --ap-transcript-shell-bg-light: rgba(250, 250, 249, 0.92);
+    --ap-transcript-shell-bg-dark: rgba(9, 9, 11, 0.72);
+    --ap-transcript-shell-border-light: rgba(228, 228, 231, 0.75);
+    --ap-transcript-shell-border-dark: rgba(39, 39, 42, 0.7);
+    --ap-transcript-panel-bg-light: rgba(255, 255, 255, 0.95);
+    --ap-transcript-panel-bg-dark: rgba(12, 12, 14, 0.85);
+    --ap-transcript-panel-border-light: rgba(228, 228, 231, 0.7);
+    --ap-transcript-panel-border-dark: rgba(39, 39, 42, 0.6);
+    --ap-transcript-entry-bg-light: rgba(255, 247, 237, 0.75);
+    --ap-transcript-entry-bg-dark: rgba(24, 24, 27, 0.45);
+    --ap-transcript-entry-hover-light: rgba(249, 115, 22, 0.1);
+    --ap-transcript-entry-hover-dark: rgba(255, 255, 255, 0.08);
+    --ap-transcript-entry-text-light: #3f3f46;
+    --ap-transcript-entry-text-dark: #f4f4f5;
+    --ap-thumbnail-ring-light: rgba(228, 228, 231, 0.75);
+    --ap-thumbnail-ring-dark: rgba(39, 39, 42, 0.7);
+    --seek-fill-light: rgb(249 115 22);
+    --seek-fill-dark: rgb(253 186 116);
+    --seek-bg-light: rgb(228 228 231);
+    --seek-bg-dark: rgb(24 24 27);
+    --focus-ring-color-light: rgb(249 115 22);
+    --focus-ring-color-dark: rgb(253 186 116);
+    --focus-ring-offset-color-light: rgb(250 250 249);
+    --focus-ring-offset-color-dark: rgb(24 24 27);
+  }
+
+  /*# sourceMappingURL=player.css.map */
 </style>
