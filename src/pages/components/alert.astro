@@ -53,6 +53,41 @@ const variantExamples = [
   },
 ];
 
+const themingSnippet = `---
+import { Alert } from 'comet-astro';
+
+const className = 'brand-alert';
+---
+
+<Alert
+  className={className}
+  variant="classic"
+  title="Heads up"
+  message="We tweaked the palette and spacing using the new BEM hooks."
+/>
+
+<style is:inline>
+  :global(.brand-alert) {
+    --alert-bg: #030712;
+    --alert-border: #1e1b4b;
+    --alert-text: #f8fafc;
+    --alert-muted: rgba(226, 232, 240, 0.86);
+    --alert-icon: #fbbf24;
+    --alert-hover-bg: #111827;
+    --alert-hover-border: #fcd34d;
+    --alert-focus: #fbbf24;
+  }
+
+  :global(.brand-alert .alert__title) {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  :global(.brand-alert .alert__dismiss) {
+    border-radius: 999px;
+  }
+</style>`;
+
 const usageSnippet = `---
 import { Alert } from 'comet-astro';
 
@@ -150,6 +185,64 @@ const propsData = [
 
   <section class="mt-10 space-y-6">
     <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+      >Styling &amp; Theming</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Alert now exposes the same BEM/CSS-variable surface we documented for the
+      Accordion. The wrapper always renders as <InlineCode>.alert</InlineCode>
+      plus modifiers such as <InlineCode>.alert--palette-classic</InlineCode> and
+      <InlineCode>.alert--dismissible</InlineCode>. Internal slots have stable
+      selectors (<InlineCode>.alert__icon</InlineCode>,
+      <InlineCode>.alert__body</InlineCode>, <InlineCode
+        >.alert__title</InlineCode
+      >,
+      <InlineCode>.alert__message</InlineCode>, <InlineCode
+        >.alert__dismiss</InlineCode
+      >) so you can scope overrides without touching the component internals.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Palette styling is driven by CSS variables such as
+      <InlineCode>--alert-bg</InlineCode>, <InlineCode
+        >--alert-border</InlineCode
+      >,
+      <InlineCode>--alert-text</InlineCode>, <InlineCode
+        >--alert-muted</InlineCode
+      >,
+      <InlineCode>--alert-icon</InlineCode>, and <InlineCode
+        >--alert-hover-border</InlineCode
+      >. Override these tokens on your wrapper class, or mix in additional
+      utilities using the BEM selectors above. Common hooks you can rely on:
+    </Paragraph>
+    <ul class="list-disc space-y-2 pl-6 text-sm text-slate-300">
+      <li>
+        <InlineCode>.alert</InlineCode> – root wrapper; palette modifiers are appended
+        as <InlineCode>.alert--palette-*</InlineCode>.
+      </li>
+      <li>
+        <InlineCode>.alert__icon</InlineCode> – circular icon container.
+      </li>
+      <li>
+        <InlineCode>.alert__title</InlineCode> /
+        <InlineCode>.alert__message</InlineCode> – text elements for typography tweaks.
+      </li>
+      <li>
+        <InlineCode>.alert__dismiss</InlineCode> – close button (focus ring and hover
+        token aware).
+      </li>
+    </ul>
+    <Paragraph class="text-base text-slate-200">
+      The snippet below mirrors the Accordion docs: add a scoped class via
+      <InlineCode>className</InlineCode>, override the exported
+      tokens/selectors, and keep the accessibility wiring intact.
+    </Paragraph>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{themingSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
       >Usage</Headline
     >
     <Paragraph class="text-base text-slate-200">
@@ -168,15 +261,12 @@ const propsData = [
       <code class="language-astro">{usageSnippet}</code>
     </pre>
     <Paragraph class="text-sm text-slate-300">
-      The package also exports a helper named <InlineCode
-        >alertVariants</InlineCode
+      Need to restyle alerts globally? Use the BEM selectors and CSS variables
+      shown in the Styling &amp; Theming section: add a wrapper class via
+      <InlineCode>className</InlineCode> and override <InlineCode
+        >--alert-*</InlineCode
       >
-      which returns the underlying Tailwind class strings for each palette. This
-      helper is useful when you need to apply the same palette programmatically across
-      multiple components or when composing custom UI fragments. Example (local import):
-      <InlineCode
-        >import &#123; alertVariants &#125; from '../../components/Alert.astro'</InlineCode
-      >.
+      tokens or slot selectors like <InlineCode>.alert__dismiss</InlineCode>.
     </Paragraph>
   </section>
 
@@ -231,109 +321,6 @@ const propsData = [
         dismissible
         dismissLabel="Hide trial reminder"
       />
-    </article>
-
-    <article class="space-y-4">
-      <div>
-        <Headline
-          level="h3"
-          textSize="lg"
-          className="font-semibold text-slate-100"
-          >Custom surface styling</Headline
-        >
-        <Paragraph class="text-base text-slate-200">
-          Use <InlineCode>className</InlineCode> with arbitrary variants to match
-          your brand palette or a darker surface while keeping the accessibility
-          wiring intact.
-        </Paragraph>
-      </div>
-      <Alert
-        variant="classic"
-        title="Maintenance window"
-        message="Dashboards will be read-only on Saturday 22:00–23:00 CET."
-      />
-    </article>
-
-    <article class="space-y-4">
-      <div>
-        <Headline
-          level="h3"
-          textSize="lg"
-          className="font-semibold text-slate-100"
-          >Overriding styles (tailwind-variants)</Headline
-        >
-        <Paragraph class="text-base text-slate-200">
-          If you need to tweak the default classes, you can either use the
-          <InlineCode>alertVariants</InlineCode> helper or directly override the
-          underlying Tailwind class strings. This library uses
-          <InlineCode>tailwind-variants</InlineCode>, so the same overriding
-          techniques described in the official documentation apply.
-        </Paragraph>
-        <Paragraph class="text-base text-slate-200">
-          See the <a
-            class="underline text-sky-400"
-            href="https://www.tailwind-variants.org/docs/overriding-styles"
-            target="_blank"
-            rel="noopener noreferrer"
-            >"Overriding styles" guide on tailwind-variants</a
-          > for details.
-        </Paragraph>
-        <Paragraph class="text-sm text-slate-300">
-          Short example: import <InlineCode>alertVariants</InlineCode>, get the
-          classes for a variant and append or replace utility classes as needed.
-        </Paragraph>
-        <Paragraph class="text-sm text-slate-300">
-          The following two examples show (1) a minimal <InlineCode
-            >tailwind-variants</InlineCode
-          > config file you can add to your app and (2) an <InlineCode
-            >.astro</InlineCode
-          > example that imports the helper, patches the returned slot classes, and
-          passes them to the <InlineCode>Alert</InlineCode> component.
-        </Paragraph>
-
-        <Paragraph class="text-sm text-slate-300"
-          >Self-contained Astro example (shows the tailwind-variants overriding
-          pattern inline).</Paragraph
-        >
-        <pre
-          class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-          <code class="language-astro">{`---
-import Alert from '../../components/Alert.astro';
-import { tv } from 'tailwind-variants';
-
-// define a minimal tv config inline (you can move this to a shared file)
-const alertVariants = tv({
-  base: 'rounded-md p-4 flex gap-3 items-start',
-  slots: {
-    wrapper: 'rounded-md p-4 flex gap-3 items-start',
-    icon: 'flex-shrink-0',
-    title: 'font-semibold',
-    message: 'text-sm'
-  },
-  variants: {
-    variant: {
-      info: {
-        wrapper: 'bg-sky-50 text-sky-900',
-        icon: 'text-sky-600'
-      },
-      classic: {
-        wrapper: 'bg-classic-50 text-classic-900',
-        icon: 'text-classic-600'
-      }
-    }
-  },
-  defaultVariants: { variant: 'info' }
-});
-
-// get the slot classes for the 'classic' variant
-const slots = alertVariants({ variant: 'classic' });
-// patch the wrapper at runtime (replace background and add padding)
-const patched = slots.wrapper.replace('bg-classic-50', 'bg-brand-600').concat(' px-6');
----
-
-<Alert variant="classic" className={patched} title="TV Override" message="Example showing overriding styles inline in Astro." />`}</code>
-        </pre>
-      </div>
     </article>
   </section>
 </DocsLayout>

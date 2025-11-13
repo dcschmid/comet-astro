@@ -62,6 +62,13 @@ const propsData = [
       'Visual variant: minimal strips borders/background; dashboard adapts for tight layouts.',
   },
   {
+    name: 'color',
+    type: `'classicBlue' | 'natureGreen' | 'warmPurple' | 'skyCyan' | 'orangeAccent'`,
+    default: `'classicBlue'`,
+    description:
+      'Switches the built-in palette. Each option updates the component CSS tokens (bg, border, hover, accent) similar to the Accordion color variants.',
+  },
+  {
     name: 'showHealthAdvice',
     type: 'boolean',
     default: 'true',
@@ -103,7 +110,75 @@ import { AirQuality } from 'comet-astro';
 <AirQuality latitude={34.05} longitude={-118.24} location="Los Angeles" aqiSystem="us" size="sm" />
 
 <!-- Compact minimal -->
-<AirQuality latitude={52.52} longitude={13.405} variant="minimal" size="sm" />`;
+<AirQuality latitude={52.52} longitude={13.405} variant="minimal" size="sm" />
+
+<!-- Classic vs Warm palette -->
+<AirQuality latitude={47.3769} longitude={8.5417} location="Zurich" color="classicBlue" />
+<AirQuality latitude={47.3769} longitude={8.5417} location="Zurich" color="warmPurple" />`;
+
+const colorVariants = [
+  {
+    key: 'classicBlue',
+    label: 'Classic Blue',
+    description: 'Default neutral card with crisp blues and slate neutrals.',
+  },
+  {
+    key: 'natureGreen',
+    label: 'Nature Green',
+    description: 'Earthy neutrals with emerald highlights for eco dashboards.',
+  },
+  {
+    key: 'warmPurple',
+    label: 'Warm Purple',
+    description: 'Pastel lavender base with vibrant violet accents.',
+  },
+  {
+    key: 'skyCyan',
+    label: 'Sky Cyan',
+    description: 'Cool slate + cyan palette inspired by clean-air monitors.',
+  },
+  {
+    key: 'orangeAccent',
+    label: 'Orange Accent',
+    description: 'Warm neutrals with citrus accents for alert states.',
+  },
+] as const;
+
+const themingSnippet = `---
+import { AirQuality } from 'comet-astro';
+
+const brandClass = 'brand-air-quality';
+---
+
+<AirQuality
+  class={brandClass}
+  latitude={37.7749}
+  longitude={-122.4194}
+  location="San Francisco"
+  showHealthAdvice={false}
+/>
+
+<style is:inline>
+  :global(.brand-air-quality) {
+    --aq-bg: #030712;
+    --aq-border: rgba(148, 163, 184, 0.25);
+    --aq-text: #f8fafc;
+    --aq-muted: #cbd5f5;
+    --aq-card-bg: rgba(15, 23, 42, 0.65);
+    --aq-accent: #38bdf8;
+    --aq-shadow: 0 30px 60px rgba(2, 6, 23, 0.8);
+  }
+
+  :global(.brand-air-quality .air-quality__title) {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  :global(.brand-air-quality .air-quality__aqi-card) {
+    border-color: rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.85);
+  }
+</style>`;
 ---
 
 <DocsLayout seoTitle="AirQuality">
@@ -148,6 +223,106 @@ import { AirQuality } from 'comet-astro';
     <Headline level="h2">Props</Headline>
     <div>
       <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2">Styling &amp; Theming</Headline>
+    <Paragraph>
+      The AirQuality component ships with a predictable BEM and CSS-variable
+      surface, mirroring the approach used in the Accordion docs. Attach a
+      custom class through the <InlineCode>class</InlineCode> prop and override the
+      exported selectors/variables without touching the component internals. Common
+      selectors include:
+    </Paragraph>
+    <ul class="list-disc pl-6 space-y-2 text-sm text-slate-300">
+      <li>
+        <InlineCode>.air-quality</InlineCode> – root wrapper and palette tokens,
+        plus modifiers like
+        <InlineCode>.air-quality--size-md</InlineCode>/<InlineCode
+          >--variant-minimal</InlineCode
+        >.
+      </li>
+      <li>
+        <InlineCode>.air-quality__aqi-card</InlineCode>,
+        <InlineCode>.air-quality__aqi-value</InlineCode>,
+        <InlineCode>.air-quality__aqi-desc</InlineCode> – the AQI cards for EU/US
+        systems.
+      </li>
+      <li>
+        <InlineCode>.air-quality__advice-text</InlineCode> – recommendation text
+        for general/sensitive audiences.
+      </li>
+      <li>
+        <InlineCode>.air-quality__pollutant-badge</InlineCode> (with severity modifiers
+        like <InlineCode>--moderate</InlineCode>) for the per-pollutant chips.
+      </li>
+    </ul>
+    <Paragraph>
+      Palette customization happens through CSS variables such as
+      <InlineCode>--aq-bg</InlineCode>, <InlineCode>--aq-border</InlineCode>,
+      <InlineCode>--aq-accent</InlineCode>, <InlineCode
+        >--badge-low-bg</InlineCode
+      >, etc. Override these tokens inside your scoped class, or sprinkle
+      additional utilities against the selectors above. The snippet below
+      mirrors how we themed the Accordion docs, showing how to apply a brand
+      class via
+      <InlineCode>class</InlineCode> and adjust the component using BEM selectors.
+    </Paragraph>
+    <CodeBlock code={themingSnippet} language="astro" />
+  </section>
+
+  <section class="mt-8 space-y-4">
+    <Headline level="h3" textSize="sm" weight="semibold"
+      >Color palettes</Headline
+    >
+    <Paragraph>
+      Pass the <InlineCode>color</InlineCode> prop to switch between the five built-in
+      palette presets. Each option mirrors the Accordion palettes and updates hover
+      states, borders, and accent colors via BEM modifiers (e.g.
+      <InlineCode>.air-quality--palette-warmPurple</InlineCode>).
+    </Paragraph>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        colorVariants.map((variant) => (
+          <div class="space-y-3" key={variant.key}>
+            <Headline level="h4" textSize="sm" weight="semibold">
+              {variant.label}{' '}
+              <span class="text-xs text-slate-400">({variant.key})</span>
+            </Headline>
+            <AirQuality
+              latitude={37.7749}
+              longitude={-122.4194}
+              location={variant.label}
+              color={variant.key as any}
+              size="sm"
+              showHealthAdvice={false}
+            />
+            <Paragraph class="text-xs text-slate-400">
+              {variant.description}
+            </Paragraph>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2">Full-width demo</Headline>
+    <Paragraph>
+      Need a data hero that spans edge-to-edge? Wrap the component in a
+      full-bleed container (using negative margins/extra padding) and apply your
+      brand class. The example below stretches to the documentation gutters and
+      uses a bespoke palette to illustrate the approach described above.
+    </Paragraph>
+    <div class="air-quality-doc-bleed">
+      <AirQuality
+        class="brand-air-quality-demo"
+        latitude={37.7749}
+        longitude={-122.4194}
+        location="San Francisco"
+        size="lg"
+      />
     </div>
   </section>
 
@@ -263,3 +438,34 @@ import { AirQuality } from 'comet-astro';
     <CodeBlock code={examplesSnippet} language="astro" />
   </section>
 </DocsLayout>
+
+<style is:inline>
+  .air-quality-doc-bleed {
+    margin-left: max(-2rem, -6vw);
+    margin-right: max(-2rem, -6vw);
+  }
+
+  .air-quality-doc-bleed > * {
+    width: 100%;
+  }
+
+  :global(.brand-air-quality-demo) {
+    --aq-bg: #030712;
+    --aq-border: rgba(148, 163, 184, 0.35);
+    --aq-text: #f8fafc;
+    --aq-muted: #cbd5f5;
+    --aq-card-bg: rgba(2, 6, 23, 0.85);
+    --aq-accent: #22d3ee;
+    --aq-shadow: 0 40px 80px rgba(2, 6, 23, 0.6);
+  }
+
+  :global(.brand-air-quality-demo .air-quality__title) {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  :global(.brand-air-quality-demo .air-quality__aqi-card) {
+    border-color: rgba(148, 163, 184, 0.4);
+    background: rgba(15, 23, 42, 0.9);
+  }
+</style>

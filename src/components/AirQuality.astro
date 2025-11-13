@@ -1,5 +1,4 @@
 ---
-import { tv } from 'tailwind-variants';
 /**
  * AirQuality - Accessible air quality monitoring component
  * WCAG AAA compliant air quality display with real-time data
@@ -13,6 +12,12 @@ interface Props {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'default' | 'minimal' | 'dashboard';
   showHealthAdvice?: boolean;
+  color?:
+    | 'classicBlue'
+    | 'natureGreen'
+    | 'warmPurple'
+    | 'skyCyan'
+    | 'orangeAccent';
   class?: string;
 }
 
@@ -24,11 +29,42 @@ const {
   size = 'md',
   variant = 'default',
   showHealthAdvice = true,
+  color = 'classicBlue',
   language = 'en',
   domain = 'both',
   class: className = '',
   ...rest
 } = Astro.props;
+
+const sizeOptions = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
+const variantOptions = ['default', 'minimal', 'dashboard'] as const;
+const colorOptions = [
+  'classicBlue',
+  'natureGreen',
+  'warmPurple',
+  'skyCyan',
+  'orangeAccent',
+] as const;
+type SizeOption = (typeof sizeOptions)[number];
+type VariantOption = (typeof variantOptions)[number];
+type ColorOption = (typeof colorOptions)[number];
+const sizeKey = sizeOptions.includes(size as SizeOption) ? size : 'md';
+const variantKey = variantOptions.includes(variant as VariantOption)
+  ? variant
+  : 'default';
+const colorKey = colorOptions.includes(color as ColorOption)
+  ? color
+  : 'classicBlue';
+
+const rootClasses = [
+  'air-quality',
+  `air-quality--size-${sizeKey}`,
+  `air-quality--variant-${variantKey}`,
+  `air-quality--palette-${colorKey}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Server-side translations used for template rendering
 const TRANSLATIONS = {
@@ -318,38 +354,18 @@ const TRANSLATIONS = {
   },
 };
 
+const translationsJSON = JSON.stringify(TRANSLATIONS).replace(/</g, '\\u003c');
+const translationsScript = `window.__AIR_QUALITY_TRANSLATIONS = window.__AIR_QUALITY_TRANSLATIONS || ${translationsJSON};`;
 const t = (key) =>
   (TRANSLATIONS[language] && TRANSLATIONS[language][key]) ||
   TRANSLATIONS.en[key] ||
   key;
-
-const root = tv({
-  base: 'air-quality-widget bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-lg',
-  variants: {
-    size: {
-      xs: 'text-xs p-3',
-      sm: 'text-sm p-4',
-      md: 'text-base p-6',
-      lg: 'text-lg p-8',
-      xl: 'text-xl p-10',
-    },
-    variant: {
-      default: '',
-      minimal: 'border-none bg-transparent shadow-none',
-      dashboard: 'rounded-none shadow-none',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-    variant: 'default',
-  },
-});
 ---
 
 <div
-  class={`${root({ size, variant })} ${className}`}
+  class={rootClasses}
   role="region"
-  aria-label={`${t('aria_for')} ${location || 'your location'}`}
+  aria-label={`${t('aria_for')} ${location || t('your_location')}`}
   data-air-quality-widget
   data-latitude={latitude}
   data-longitude={longitude}
@@ -359,102 +375,66 @@ const root = tv({
   data-aqi-system={aqiSystem}
   {...rest}
 >
-  <div class="space-y-6">
-    <!-- Header: title on first line; location + update on second line -->
-    <header class="space-y-2">
-      <div class="flex items-center gap-3">
-        <span class="text-3xl leading-none align-middle" aria-hidden="true"
-          >🫁</span
-        >
-        <h2
-          class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 leading-none"
-        >
-          {t('air_quality')}
-        </h2>
+  <div class="air-quality__body">
+    <header class="air-quality__header">
+      <div class="air-quality__title-row">
+        <span class="air-quality__title-icon" aria-hidden="true">🫁</span>
+        <h2 class="air-quality__title">{t('air_quality')}</h2>
       </div>
-
-      <div
-        class="flex items-center justify-between text-gray-600 dark:text-gray-400"
-      >
-        <div class="flex-1 text-left text-lg font-medium">
+      <div class="air-quality__meta-row">
+        <div class="air-quality__location">
           {
             location ? (
-              <span class="inline-flex items-center">
-                <span>{location}</span>
-              </span>
+              <span class="air-quality__location-value">{location}</span>
             ) : null
           }
         </div>
-        <div class="text-sm ml-4 update-time" aria-live="polite">
+        <div class="air-quality__update-time" aria-live="polite">
           {t('updating')}
         </div>
       </div>
     </header>
 
-    <!-- Loading State -->
-    <div
-      class="flex items-center justify-center gap-4 py-12 air-quality__loading"
-      aria-live="polite"
-    >
-      <div
-        class="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin dark:border-gray-600 dark:border-t-blue-400"
-        aria-hidden="true"
-      >
-      </div>
-      <span class="text-lg font-semibold text-gray-700 dark:text-gray-300"
-        >{t('loading_data')}</span
-      >
+    <div class="air-quality__loading" aria-live="polite">
+      <div class="air-quality__spinner" aria-hidden="true"></div>
+      <span class="air-quality__loading-text">{t('loading_data')}</span>
     </div>
 
-    <!-- Error State -->
-    <div
-      class="text-center space-y-4 py-12 air-quality__error hidden"
-      role="alert"
-    >
-      <div class="text-4xl" aria-hidden="true">⚠️</div>
-      <h3 class="text-lg font-bold text-red-800 dark:text-red-300">
-        {t('error_title')}
-      </h3>
-      <p class="text-red-700 dark:text-red-400 error-message"></p>
-      <button
-        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors retry-button"
-        type="button"
-      >
+    <div class="air-quality__error is-hidden" role="alert">
+      <div class="air-quality__error-icon" aria-hidden="true">⚠️</div>
+      <h3 class="air-quality__error-title">{t('error_title')}</h3>
+      <p class="air-quality__error-message"></p>
+      <button class="air-quality__retry-button" type="button">
         {t('try_again')}
       </button>
     </div>
 
-    <!-- Content -->
-    <div class="space-y-6 air-quality__content hidden">
-      <!-- AQI Display -->
+    <div class="air-quality__content is-hidden">
       <div
-        class={`grid gap-6 ${aqiSystem === 'both' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}
+        class={`air-quality__aqi-grid ${aqiSystem === 'both' ? 'air-quality__aqi-grid--dual' : ''}`}
       >
         {
           (aqiSystem === 'european' || aqiSystem === 'both') && (
             <div
-              class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4"
+              class="air-quality__aqi-card air-quality__aqi-card--eu"
               role="group"
               aria-labelledby="eu-aqi-label"
             >
-              <h3
-                id="eu-aqi-label"
-                class="text-lg font-bold text-gray-900 dark:text-gray-100"
-              >
+              <h3 id="eu-aqi-label" class="air-quality__aqi-heading">
                 {t('eu_aqi')}
               </h3>
               <div
-                class="text-4xl font-black text-center eu-aqi-value"
+                class="air-quality__aqi-value air-quality__aqi-value--eu"
                 aria-label="European Air Quality Index"
               >
                 --
               </div>
-              <div class="text-center text-gray-600 dark:text-gray-300 eu-aqi-desc">
+              <div class="air-quality__aqi-desc air-quality__aqi-desc--eu">
                 Loading...
               </div>
-              <div class="h-3 bg-linear-to-r from-green-500 to-red-500 rounded-full relative">
+              <div class="air-quality__aqi-bar">
                 <div
-                  class="absolute w-3 h-3 bg-white border-2 border-gray-800 rounded-full transform translate-y-0 eu-indicator"
+                  class="air-quality__aqi-indicator air-quality__aqi-indicator--eu"
                   style="left: 0%;"
                 />
               </div>
@@ -465,28 +445,25 @@ const root = tv({
         {
           (aqiSystem === 'us' || aqiSystem === 'both') && (
             <div
-              class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4"
+              class="air-quality__aqi-card air-quality__aqi-card--us"
               role="group"
               aria-labelledby="us-aqi-label"
             >
-              <h3
-                id="us-aqi-label"
-                class="text-lg font-bold text-gray-900 dark:text-gray-100"
-              >
+              <h3 id="us-aqi-label" class="air-quality__aqi-heading">
                 {t('us_aqi')}
               </h3>
               <div
-                class="text-4xl font-black text-center us-aqi-value"
+                class="air-quality__aqi-value air-quality__aqi-value--us"
                 aria-label="US Air Quality Index"
               >
                 --
               </div>
-              <div class="text-center text-gray-600 dark:text-gray-300 us-aqi-desc">
+              <div class="air-quality__aqi-desc air-quality__aqi-desc--us">
                 Loading...
               </div>
-              <div class="h-3 bg-linear-to-r from-green-500 to-red-900 rounded-full relative">
+              <div class="air-quality__aqi-bar">
                 <div
-                  class="absolute w-3 h-3 bg-white border-2 border-gray-800 rounded-full transform translate-y-0 us-indicator"
+                  class="air-quality__aqi-indicator air-quality__aqi-indicator--us"
                   style="left: 0%;"
                 />
               </div>
@@ -495,47 +472,43 @@ const root = tv({
         }
       </div>
 
-      <!-- Health Advice -->
       {
         showHealthAdvice && (
-          <div class="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-4">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">
+          <div class="air-quality__advice">
+            <h3 class="air-quality__advice-heading">
               {t('health_recommendations')}
             </h3>
-            <div class="space-y-3">
-              <div class="flex gap-3">
-                <div class="text-lg mt-0.5" aria-hidden="true">
+            <div class="air-quality__advice-list">
+              <div class="air-quality__advice-entry">
+                <div class="air-quality__advice-emoji" aria-hidden="true">
                   👥
                 </div>
                 <div>
-                  <div class="font-medium text-gray-900 dark:text-gray-100">
+                  <div class="air-quality__advice-label">
                     {t('general_population')}
                   </div>
-                  <div class="text-sm text-gray-700 dark:text-gray-300 general-text">
+                  <div class="air-quality__advice-text air-quality__advice-text--general">
                     {t('assessing')}
                   </div>
                 </div>
               </div>
-              <div class="flex gap-3">
-                <div class="text-lg mt-0.5" aria-hidden="true">
+              <div class="air-quality__advice-entry">
+                <div class="air-quality__advice-emoji" aria-hidden="true">
                   🤧
                 </div>
                 <div>
-                  <div class="font-medium text-gray-900 dark:text-gray-100">
+                  <div class="air-quality__advice-label">
                     {t('sensitive_individuals')}
                   </div>
-                  <div class="text-sm text-gray-700 dark:text-gray-300 sensitive-text">
+                  <div class="air-quality__advice-text air-quality__advice-text--sensitive">
                     {t('assessing')}
                   </div>
-                  {/* Pollutant badges will be rendered here */}
                   <div
-                    class="mt-2 pollutant-badges flex flex-wrap gap-2"
+                    class="air-quality__pollutant-badges"
                     aria-hidden="false"
                   />
-                  {/* Short legend describing pollutant values */}
-                  <div class="mt-2 pollutant-legend text-xs text-gray-600 dark:text-gray-400" />
-                  {/* Coverage label */}
-                  <div class="mt-1 pollutant-coverage text-xs text-gray-600 dark:text-gray-400" />
+                  <div class="air-quality__pollutant-legend" />
+                  <div class="air-quality__pollutant-coverage" />
                 </div>
               </div>
             </div>
@@ -546,7 +519,12 @@ const root = tv({
   </div>
 </div>
 
-<script>
+<script is:inline set:html={translationsScript} />
+<script type="module" is:inline>
+  const POLLUTANTS = ['pm2_5', 'pm10', 'no2', 'o3', 'so2', 'co'];
+  const SUPPORT_CACHE = new Map();
+  const CLIENT_TRANSLATIONS = window.__AIR_QUALITY_TRANSLATIONS || {};
+
   class AirQuality {
     constructor(element) {
       this.element = element;
@@ -557,420 +535,159 @@ const root = tv({
       this.location = element.dataset.location || null;
       this.aqiSystem = element.dataset.aqiSystem || 'both';
 
-      this.loadingEl = element.querySelector('.air-quality__loading');
-      this.errorEl = element.querySelector('.air-quality__error');
-      this.contentEl = element.querySelector('.air-quality__content');
-      this.retryButton = element.querySelector('.retry-button');
-
+      this.controller = null;
+      this.supportMap = {};
+      this.refs = this.collectRefs(element);
+      this.bindEvents();
       this.init();
     }
 
-    // Detect which pollutant hourly endpoints are supported for this location
-    async detectSupportedPollutants() {
-      const pollutants = ['pm2_5', 'pm10', 'no2', 'o3', 'so2', 'co'];
-      const cacheKey = `aq_supported_${this.latitude}_${this.longitude}_${this.domain || 'auto'}`;
-      try {
-        const raw = localStorage.getItem(cacheKey);
-        if (raw) {
-          const obj = JSON.parse(raw);
-          // TTL 1 hour
-          if (Date.now() - obj.t < 1000 * 60 * 60) return obj.payload;
-        }
-      } catch {
-        // ignore cache parsing errors
-      }
+    collectRefs(root) {
+      return {
+        loading: root.querySelector('.air-quality__loading'),
+        error: root.querySelector('.air-quality__error'),
+        content: root.querySelector('.air-quality__content'),
+        retry: root.querySelector('.air-quality__retry-button'),
+        errorMessage: root.querySelector('.air-quality__error-message'),
+        adviceGeneral: root.querySelector('.air-quality__advice-text--general'),
+        adviceSensitive: root.querySelector(
+          '.air-quality__advice-text--sensitive'
+        ),
+        pollutantBadges: root.querySelector('.air-quality__pollutant-badges'),
+        pollutantLegend: root.querySelector('.air-quality__pollutant-legend'),
+        pollutantCoverage: root.querySelector(
+          '.air-quality__pollutant-coverage'
+        ),
+        updateTime: root.querySelector('.air-quality__update-time'),
+        aqi: {
+          eu: {
+            value: root.querySelector('.air-quality__aqi-value--eu'),
+            desc: root.querySelector('.air-quality__aqi-desc--eu'),
+            indicator: root.querySelector('.air-quality__aqi-indicator--eu'),
+          },
+          us: {
+            value: root.querySelector('.air-quality__aqi-value--us'),
+            desc: root.querySelector('.air-quality__aqi-desc--us'),
+            indicator: root.querySelector('.air-quality__aqi-indicator--us'),
+          },
+        },
+      };
+    }
 
-      // For each pollutant try hourly first; if hourly fails try current as fallback.
-      const checks = await Promise.all(
-        pollutants.map(async (p) => {
-          // build base url with domain if provided
-          const domainParam =
-            this.domain && this.domain !== 'auto'
-              ? `&domain=${this.domain}`
-              : '';
-          try {
-            const hourlyUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&hourly=${p}${domainParam}&timezone=auto`;
-            const res = await fetch(hourlyUrl);
-            if (res.ok) {
-              const json = await res.json();
-              if (json && json.hourly && Array.isArray(json.hourly[p]))
-                return { p, method: 'hourly' };
-            }
-          } catch {
-            /* ignore hourly attempt */
-          }
+    bindEvents() {
+      this.refs.retry?.addEventListener('click', () => this.fetchData());
+    }
 
-          // hourly failed — try current as fallback
-          try {
-            const domainParam2 =
-              this.domain && this.domain !== 'auto'
-                ? `&domain=${this.domain}`
-                : '';
-            const currentUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&current=${p}${domainParam2}&timezone=auto`;
-            const cres = await fetch(currentUrl);
-            if (cres.ok) {
-              const cjson = await cres.json();
-              if (cjson && cjson.current && cjson.current[p] != null)
-                return { p, method: 'current' };
-            }
-          } catch {
-            /* ignore current attempt */
-          }
-
-          return { p, method: null };
-        })
-      );
-
-      const supportedMap = {};
-      checks.forEach((c) => {
-        if (c.method) supportedMap[c.p] = c.method;
-      });
-      try {
-        localStorage.setItem(
-          cacheKey,
-          JSON.stringify({ t: Date.now(), payload: supportedMap })
-        );
-      } catch {
-        /* ignore localStorage set errors */
-      }
-      return supportedMap;
+    tLang(key) {
+      const dictionary =
+        CLIENT_TRANSLATIONS[this.lang] || CLIENT_TRANSLATIONS.en;
+      return dictionary[key] || CLIENT_TRANSLATIONS.en[key] || key;
     }
 
     async init() {
-      this.retryButton?.addEventListener('click', () => this.fetchData());
       await this.getCoordinates();
       await this.fetchData();
     }
 
-    // simple runtime translation helper for client-side strings
-    tLang(key) {
-      const TRANSLATIONS = {
-        en: {
-          updated: 'Updated:',
-          location_denied:
-            'Location access denied. Please provide coordinates.',
-          fetch_failed: 'Failed to fetch air quality data.',
-          measured_label: 'Measured:',
-          measured_others_not: '(others not available)',
-          advice_excellent_general:
-            'Air quality is excellent. Perfect for outdoor activities.',
-          advice_excellent_sensitive: 'Air quality is safe for everyone.',
-          advice_acceptable_general:
-            'Air quality is acceptable for most people.',
-          advice_acceptable_sensitive:
-            'Consider reducing prolonged outdoor exertion.',
-          advice_moderate_general:
-            'Air quality is moderate — some individuals may experience symptoms.',
-          advice_moderate_sensitive:
-            'People with respiratory conditions should reduce prolonged or heavy outdoor exertion.',
-          advice_poor_general:
-            'Air quality is poor. Reduce outdoor activities.',
-          advice_poor_sensitive:
-            'Sensitive groups: avoid prolonged outdoor exertion; consider staying indoors.',
-          advice_very_poor_general:
-            'Air quality is very poor. Avoid outdoor activities.',
-          advice_very_poor_sensitive:
-            'Sensitive groups: remain indoors and follow medical advice.',
-          advice_hazardous_general:
-            'Air quality is hazardous. Stay indoors and limit exposure.',
-          advice_hazardous_sensitive:
-            'Everyone should avoid outdoor activities; follow local health guidance.',
-          elevated_note: 'Elevated pollutant levels detected:',
-          pollutant_moderate_caution:
-            'Some pollutant concentrations are moderately elevated.',
-          explainer_summary: 'What do these abbreviations mean?',
-          explainer_pm2_5:
-            'PM2.5: Particulate Matter ≤2.5 µm (fine particles) — penetrates deep into lungs.',
-          explainer_pm10:
-            'PM10: Particulate Matter ≤10 µm (coarse particles) — respiratory irritation risk.',
-          explainer_no2:
-            'NO2: Nitrogen Dioxide — from traffic and combustion; can irritate airways.',
-          explainer_o3:
-            'O3: Ozone (ground-level) — formed by reactions in sunlight; affects breathing.',
-          explainer_so2:
-            'SO2: Sulfur Dioxide — from burning sulfur-containing fuels; respiratory effects.',
-          explainer_co:
-            'CO: Carbon Monoxide — reduces oxygen delivery in the body at high levels.',
-          legend_text:
-            'Values are latest hourly concentrations. Badges are colored by indicative severity vs. typical thresholds (e.g. PM2.5 35 µg/m³).',
-          no_pollutant_data:
-            'No pollutant concentration data available for this location.',
-        },
-        de: {
-          updated: 'Aktualisiert:',
-          location_denied:
-            'Standortzugriff verweigert. Bitte Koordinaten angeben.',
-          fetch_failed: 'Abruf der Luftdaten fehlgeschlagen.',
-          measured_label: 'Gemessen:',
-          measured_others_not: '(andere nicht verfügbar)',
-          advice_excellent_general:
-            'Die Luftqualität ist ausgezeichnet. Ideal für Aktivitäten im Freien.',
-          advice_excellent_sensitive: 'Die Luftqualität ist für alle sicher.',
-          advice_acceptable_general:
-            'Die Luftqualität ist für die meisten Menschen akzeptabel.',
-          advice_acceptable_sensitive:
-            'Reduzieren Sie längere körperliche Aktivitäten im Freien.',
-          advice_moderate_general:
-            'Die Luftqualität ist mäßig — einige Personen können Symptome haben.',
-          advice_moderate_sensitive:
-            'Personen mit Atemwegserkrankungen sollten längere oder anstrengende Aktivitäten im Freien reduzieren.',
-          advice_poor_general:
-            'Die Luftqualität ist schlecht. Reduzieren Sie Aktivitäten im Freien.',
-          advice_poor_sensitive:
-            'Empfindliche Gruppen: Vermeiden Sie längere Aktivitäten im Freien; bleiben Sie wenn möglich drinnen.',
-          advice_very_poor_general:
-            'Die Luftqualität ist sehr schlecht. Vermeiden Sie Aktivitäten im Freien.',
-          advice_very_poor_sensitive:
-            'Empfindliche Gruppen: Bleiben Sie drinnen und befolgen Sie medizinische Anweisungen.',
-          advice_hazardous_general:
-            'Die Luftqualität ist gefährlich. Bleiben Sie drinnen und begrenzen Sie die Exposition.',
-          advice_hazardous_sensitive:
-            'Alle sollten Aktivitäten im Freien vermeiden; befolgen Sie lokale Gesundheitsanweisungen.',
-          elevated_note: 'Erhöhte Schadstoffwerte festgestellt:',
-          pollutant_moderate_caution:
-            'Einige Schadstoffkonzentrationen sind mäßig erhöht.',
-          explainer_summary: 'Was bedeuten die Abkürzungen?',
-          explainer_pm2_5:
-            'PM2.5: Partikel ≤2.5 µm (fein) — dringen tief in die Lunge ein.',
-          explainer_pm10:
-            'PM10: Partikel ≤10 µm (grob) — kann Atemwege reizen.',
-          explainer_no2:
-            'NO2: Stickstoffdioxid — aus Verkehr/Verbrennung; reizt die Atemwege.',
-          explainer_o3:
-            'O3: Bodennahes Ozon — entsteht in Sonnenlicht; belastet die Atmung.',
-          explainer_so2:
-            'SO2: Schwefeldioxid — aus schwefelhaltigen Brennstoffen; Atemwege betroffen.',
-          explainer_co:
-            'CO: Kohlenmonoxid — verringert Sauerstofftransport im Körper.',
-          legend_text:
-            'Werte sind aktuelle Stundenmittel. Badges zeigen die indizielle Schwere im Vergleich zu typischen Schwellen (z. B. PM2.5 35 µg/m³).',
-          no_pollutant_data:
-            'Für diesen Ort liegen keine Schadstoffkonzentrationen vor.',
-        },
-        es: {
-          updated: 'Actualizado:',
-          location_denied:
-            'Acceso a la ubicación denegado. Proporcione coordenadas.',
-          fetch_failed: 'Error al obtener datos de calidad del aire.',
-          measured_label: 'Medido:',
-          measured_others_not: '(otros no disponibles)',
-          advice_excellent_general:
-            'La calidad del aire es excelente. Perfecta para actividades al aire libre.',
-          advice_excellent_sensitive:
-            'La calidad del aire es segura para todos.',
-          advice_acceptable_general:
-            'La calidad del aire es aceptable para la mayoría de las personas.',
-          advice_acceptable_sensitive:
-            'Considere reducir el esfuerzo prolongado al aire libre.',
-          advice_moderate_general:
-            'La calidad del aire es moderada — algunas personas pueden experimentar síntomas.',
-          advice_moderate_sensitive:
-            'Personas con condiciones respiratorias deben reducir el esfuerzo prolongado o intenso al aire libre.',
-          advice_poor_general:
-            'La calidad del aire es mala. Reduzca las actividades al aire libre.',
-          advice_poor_sensitive:
-            'Grupos sensibles: evite el esfuerzo prolongado al aire libre; considere permanecer en interiores.',
-          advice_very_poor_general:
-            'La calidad del aire es muy mala. Evite actividades al aire libre.',
-          advice_very_poor_sensitive:
-            'Grupos sensibles: permanezca en interiores y siga el consejo médico.',
-          advice_hazardous_general:
-            'La calidad del aire es peligrosa. Permanezca en interiores y limite la exposición.',
-          advice_hazardous_sensitive:
-            'Todos deben evitar actividades al aire libre; siga las recomendaciones locales de salud.',
-          elevated_note: 'Niveles elevados de contaminantes detectados:',
-          pollutant_moderate_caution:
-            'Algunas concentraciones de contaminantes están moderadamente elevadas.',
-          explainer_summary: '¿Qué significan estas abreviaturas?',
-          explainer_pm2_5:
-            'PM2.5: Partículas ≤2.5 µm (finas) — penetran profundamente en los pulmones.',
-          explainer_pm10:
-            'PM10: Partículas ≤10 µm (gruesas) — riesgo de irritación respiratoria.',
-          explainer_no2:
-            'NO2: Dióxido de nitrógeno — de tráfico/combustión; irrita las vías respiratorias.',
-          explainer_o3: 'O3: Ozono troposférico — afecta la respiración.',
-          explainer_so2: 'SO2: Dióxido de azufre — efectos respiratorios.',
-          explainer_co:
-            'CO: Monóxido de carbono — reduce la entrega de oxígeno en el cuerpo.',
-          legend_text:
-            'Los valores son concentraciones horarias más recientes. Los badges se colorean según la gravedad indicativa frente a umbrales típicos (ej. PM2.5 35 µg/m³).',
-          no_pollutant_data:
-            'No hay datos de concentraciones de contaminantes para esta ubicación.',
-        },
-        fr: {
-          updated: 'Mis à jour:',
-          location_denied:
-            'Accès à la localisation refusé. Veuillez fournir des coordonnées.',
-          fetch_failed:
-            'Échec de la récupération des données de qualité de l’air.',
-          measured_label: 'Mesuré:',
-          measured_others_not: '(autres non disponibles)',
-          advice_excellent_general:
-            'La qualité de l’air est excellente. Parfait pour les activités en plein air.',
-          advice_excellent_sensitive:
-            'La qualité de l’air est sans danger pour tout le monde.',
-          advice_acceptable_general:
-            'La qualité de l’air est acceptable pour la plupart des personnes.',
-          advice_acceptable_sensitive:
-            'Envisagez de réduire les efforts prolongés à l’extérieur.',
-          advice_moderate_general:
-            'La qualité de l’air est modérée — certaines personnes peuvent ressentir des symptômes.',
-          advice_moderate_sensitive:
-            'Les personnes atteintes de maladies respiratoires doivent réduire les efforts prolongés ou intenses à l’extérieur.',
-          advice_poor_general:
-            'La qualité de l’air est mauvaise. Réduisez les activités en plein air.',
-          advice_poor_sensitive:
-            'Groupes sensibles : évitez l’effort prolongé en extérieur ; envisagez de rester à l’intérieur.',
-          advice_very_poor_general:
-            'La qualité de l’air est très mauvaise. Évitez les activités en plein air.',
-          advice_very_poor_sensitive:
-            'Groupes sensibles : restez à l’intérieur et suivez les conseils médicaux.',
-          advice_hazardous_general:
-            'La qualité de l’air est dangereuse. Restez à l’intérieur et limitez l’exposition.',
-          advice_hazardous_sensitive:
-            'Tout le monde doit éviter les activités en plein air ; suivez les recommandations sanitaires locales.',
-          elevated_note: 'Niveaux élevés de polluants détectés :',
-          pollutant_moderate_caution:
-            'Certaines concentrations de polluants sont modérément élevées.',
-          explainer_summary: 'Que signifient ces abréviations?',
-          explainer_pm2_5:
-            'PM2.5: Particules ≤2.5 µm (fines) — pénètrent profondément dans les poumons.',
-          explainer_pm10:
-            'PM10: Particules ≤10 µm (grossières) — irritation respiratoire possible.',
-          explainer_no2:
-            'NO2: Dioxyde d’azote — du trafic/combustion; irrite les voies respiratoires.',
-          explainer_o3: 'O3: Ozone de surface — affecte la respiration.',
-          explainer_so2: 'SO2: Dioxyde de soufre — effets respiratoires.',
-          explainer_co:
-            'CO: Monoxyde de carbone — réduit l’apport en oxygène dans le corps.',
-          legend_text:
-            'Les valeurs sont les concentrations horaires les plus récentes. Les badges sont colorés selon la gravité indicative par rapport aux seuils typiques (ex. PM2.5 35 µg/m³).',
-          no_pollutant_data:
-            'Aucune donnée de concentration des polluants pour cet emplacement.',
-        },
-        it: {
-          updated: 'Aggiornato:',
-          location_denied:
-            'Accesso alla posizione negato. Fornisci le coordinate.',
-          fetch_failed: 'Recupero dati qualità dell’aria non riuscito.',
-          measured_label: 'Misurato:',
-          measured_others_not: '(altri non disponibili)',
-          advice_excellent_general:
-            'La qualità dell’aria è eccellente. Perfetta per attività all’aperto.',
-          advice_excellent_sensitive:
-            'La qualità dell’aria è sicura per tutti.',
-          advice_acceptable_general:
-            'La qualità dell’aria è accettabile per la maggior parte delle persone.',
-          advice_acceptable_sensitive:
-            'Considerare di ridurre l’attività fisica prolungata all’aperto.',
-          advice_moderate_general:
-            'La qualità dell’aria è moderata — alcune persone potrebbero avvertire sintomi.',
-          advice_moderate_sensitive:
-            'Le persone con patologie respiratorie dovrebbero ridurre l’attività fisica prolungata o intensa all’aperto.',
-          advice_poor_general:
-            'La qualità dell’aria è scadente. Ridurre le attività all’aperto.',
-          advice_poor_sensitive:
-            'Gruppi sensibili: evitare attività prolungate all’aperto; prendere in considerazione di restare al chiuso.',
-          advice_very_poor_general:
-            'La qualità dell’aria è molto scadente. Evitare attività all’aperto.',
-          advice_very_poor_sensitive:
-            'Gruppi sensibili: rimanere al chiuso e seguire i consigli medici.',
-          advice_hazardous_general:
-            'La qualità dell’aria è pericolosa. Rimanere al chiuso e limitare l’esposizione.',
-          advice_hazardous_sensitive:
-            'Tutti dovrebbero evitare attività all’aperto; seguire le indicazioni sanitarie locali.',
-          elevated_note: 'Livelli elevati di inquinanti rilevati:',
-          pollutant_moderate_caution:
-            'Alcune concentrazioni di inquinanti sono moderatamente elevate.',
-          explainer_summary: 'Cosa significano queste abbreviazioni?',
-          explainer_pm2_5:
-            'PM2.5: Particelle ≤2.5 µm (fini) — penetrano in profondità nei polmoni.',
-          explainer_pm10:
-            'PM10: Particelle ≤10 µm (grossolane) — rischio di irritazione respiratoria.',
-          explainer_no2:
-            'NO2: Diossido di azoto — da traffico/combustione; può irritare le vie respiratorie.',
-          explainer_o3:
-            'O3: Ozono troposferico — influisce sulla respirazione.',
-          explainer_so2: 'SO2: Diossido di zolfo — effetti respiratori.',
-          explainer_co:
-            'CO: Monossido di carbonio — riduce il trasporto di ossigeno nel corpo.',
-          legend_text:
-            'I valori sono le concentrazioni orarie più recenti. I badge sono colorati in base alla gravità indicativa rispetto alle soglie tipiche (es. PM2.5 35 µg/m³).',
-          no_pollutant_data:
-            'Nessun dato di concentrazione degli inquinanti per questa posizione.',
-        },
-        pt: {
-          updated: 'Atualizado:',
-          location_denied: 'Acesso à localização negado. Forneça coordenadas.',
-          fetch_failed: 'Falha ao obter dados de qualidade do ar.',
-          measured_label: 'Medido:',
-          measured_others_not: '(outros não disponíveis)',
-          advice_excellent_general:
-            'A qualidade do ar é excelente. Perfeita para atividades ao ar livre.',
-          advice_excellent_sensitive: 'A qualidade do ar é segura para todos.',
-          advice_acceptable_general:
-            'A qualidade do ar é aceitável para a maioria das pessoas.',
-          advice_acceptable_sensitive:
-            'Considere reduzir o esforço prolongado ao ar livre.',
-          advice_moderate_general:
-            'A qualidade do ar é moderada — algumas pessoas podem apresentar sintomas.',
-          advice_moderate_sensitive:
-            'Pessoas com condições respiratórias devem reduzir o esforço prolongado ou intenso ao ar livre.',
-          advice_poor_general:
-            'A qualidade do ar é má. Reduza as atividades ao ar livre.',
-          advice_poor_sensitive:
-            'Grupos sensíveis: evite esforço prolongado ao ar livre; considere permanecer em ambientes fechados.',
-          advice_very_poor_general:
-            'A qualidade do ar é muito má. Evite atividades ao ar livre.',
-          advice_very_poor_sensitive:
-            'Grupos sensíveis: permaneça em ambientes fechados e siga as orientações médicas.',
-          advice_hazardous_general:
-            'A qualidade do ar é perigosa. Permaneça em ambientes fechados e limite a exposição.',
-          advice_hazardous_sensitive:
-            'Todos devem evitar atividades ao ar livre; siga as orientações de saúde locais.',
-          elevated_note: 'Níveis elevados de poluentes detectados:',
-          pollutant_moderate_caution:
-            'Algumas concentrações de poluentes estão moderadamente elevadas.',
-          explainer_summary: 'O que significam estas abreviaturas?',
-          explainer_pm2_5:
-            'PM2.5: Partículas ≤2.5 µm (finas) — penetram profundamente nos pulmões.',
-          explainer_pm10:
-            'PM10: Partículas ≤10 µm (grossas) — risco de irritação respiratoria.',
-          explainer_no2:
-            'NO2: Dióxido de azoto — do tráfego/combustão; pode irritar as vias respiratórias.',
-          explainer_o3: 'O3: Ozono (a nível do solo) — afeta a respiração.',
-          explainer_so2: 'SO2: Dióxido de enxofre — efeitos respiratórios.',
-          explainer_co:
-            'CO: Monóxido de carbono — reduz o fornecimento de oxigénio no corpo.',
-          legend_text:
-            'Os valores são as concentrações horárias mais recentes. Os badges são coloridos por gravidade indicativa vs. limites típicos (ex. PM2.5 35 µg/m³).',
-          no_pollutant_data:
-            'Sem dados de concentração de poluentes para esta localização.',
-        },
-      };
-      return (
-        (TRANSLATIONS[this.lang] && TRANSLATIONS[this.lang][key]) ||
-        TRANSLATIONS.en[key] ||
-        key
+    cacheKey() {
+      return `${this.latitude}_${this.longitude}_${this.domain || 'auto'}`;
+    }
+
+    async detectSupportedPollutants() {
+      const cacheKey = this.cacheKey();
+      if (SUPPORT_CACHE.has(cacheKey)) {
+        return SUPPORT_CACHE.get(cacheKey);
+      }
+
+      const localKey = `aq_supported_${cacheKey}`;
+      try {
+        const raw = localStorage.getItem(localKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Date.now() - parsed.t < 60 * 60 * 1000) {
+            SUPPORT_CACHE.set(cacheKey, parsed.payload);
+            return parsed.payload;
+          }
+        }
+      } catch {
+        // ignore
+      }
+
+      const checks = await Promise.all(
+        POLLUTANTS.map(async (pollutant) => {
+          const domainParam =
+            this.domain && this.domain !== 'auto'
+              ? `&domain=${this.domain}`
+              : '';
+          const base = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&timezone=auto${domainParam}`;
+          const tryFetch = async (type) => {
+            const url = `${base}&${type}=${pollutant}`;
+            const response = await fetch(url, {
+              signal: this.controller?.signal,
+            });
+            if (!response.ok) return null;
+            return response.json();
+          };
+
+          try {
+            const hourly = await tryFetch('hourly');
+            if (hourly?.hourly && Array.isArray(hourly.hourly[pollutant])) {
+              return { pollutant, method: 'hourly' };
+            }
+          } catch {
+            /* noop */
+          }
+
+          try {
+            const current = await tryFetch('current');
+            if (current?.current && current.current[pollutant] != null) {
+              return { pollutant, method: 'current' };
+            }
+          } catch {
+            /* noop */
+          }
+
+          return { pollutant, method: null };
+        })
       );
+
+      const map = {};
+      checks.forEach((item) => {
+        if (item.method) map[item.pollutant] = item.method;
+      });
+      SUPPORT_CACHE.set(cacheKey, map);
+      try {
+        localStorage.setItem(
+          localKey,
+          JSON.stringify({ t: Date.now(), payload: map })
+        );
+      } catch {
+        // ignore storage write errors
+      }
+      return map;
     }
 
     async getCoordinates() {
       if (this.latitude && this.longitude) return;
-
-      if ('geolocation' in navigator) {
-        try {
-          const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              timeout: 10000,
-            });
+      if (!('geolocation' in navigator)) return;
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            timeout: 10000,
           });
-          this.latitude = position.coords.latitude;
-          this.longitude = position.coords.longitude;
-        } catch {
-          this.showError(this.tLang('location_denied'));
-        }
+        });
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+      } catch {
+        this.showError(this.tLang('location_denied'));
       }
+    }
+
+    cancelPending() {
+      if (this.controller) {
+        this.controller.abort();
+      }
+      this.controller = new AbortController();
     }
 
     async fetchData() {
@@ -979,96 +696,104 @@ const root = tv({
         return;
       }
 
+      this.cancelPending();
       this.showLoading();
 
+      const baseParams = `latitude=${this.latitude}&longitude=${this.longitude}&timezone=auto`;
       try {
-        // Request current AQI values separately (only AQI here — per-pollutant current values are fetched individually below)
-        const currentUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&current=european_aqi,us_aqi&timezone=auto`;
-        const currentRes = await fetch(currentUrl);
-        if (!currentRes.ok) throw new Error(`API error: ${currentRes.status}`);
-        const currentData = await currentRes.json();
-        if (currentData.error)
-          throw new Error(currentData.reason || 'AirQuality current API error');
-
-        // Detect supported pollutants with method map (hourly | current)
-        let supportMap = {};
-        try {
-          supportMap = await this.detectSupportedPollutants();
-        } catch {
-          supportMap = {}; // fallback empty
+        const currentUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?${baseParams}&current=european_aqi,us_aqi`;
+        const currentRes = await fetch(currentUrl, {
+          signal: this.controller.signal,
+        });
+        if (!currentRes.ok) {
+          throw new Error(`API error: ${currentRes.status}`);
         }
-        // persist for handleData fallback logic
-        this.supportMap = supportMap;
+        const currentData = await currentRes.json();
+        if (currentData.error) {
+          throw new Error(currentData.reason || 'AirQuality current API error');
+        }
 
-        const allPollutants = ['pm2_5', 'pm10', 'no2', 'o3', 'so2', 'co'];
-        const hourlyList = [];
-        // pollutants marked 'current' will be read from currentData later
-        allPollutants.forEach((p) => {
-          if (supportMap && supportMap[p] === 'hourly') hourlyList.push(p);
-        });
+        try {
+          this.supportMap = await this.detectSupportedPollutants();
+        } catch {
+          this.supportMap = {};
+        }
 
-        // Fetch hourly data only for hourlyList (single variable requests per pollutant)
-        const hourlyPromises = hourlyList.map(async (p) => {
-          const domainParam =
-            this.domain && this.domain !== 'auto'
-              ? `&domain=${this.domain}`
-              : '';
-          const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&hourly=${p}${domainParam}&timezone=auto`;
-          try {
-            const res = await fetch(url);
-            if (!res.ok) return { pollutant: p, data: null };
-            const json = await res.json();
-            return { pollutant: p, data: json };
-          } catch {
-            return { pollutant: p, data: null };
-          }
-        });
-
-        const hourlyResults = await Promise.all(hourlyPromises);
-        const mergedHourly = {};
-        hourlyResults.forEach((r) => {
-          if (r && r.data && r.data.hourly && r.data.hourly[r.pollutant]) {
-            mergedHourly[r.pollutant] = r.data.hourly[r.pollutant];
-          }
-        });
-
-        // For pollutants detected as 'current', fetch single-variable current endpoints (avoid multi-variable current requests)
-        const currentPollutants = {};
-        const currentList = allPollutants.filter(
-          (p) => supportMap && supportMap[p] === 'current'
+        const hourlyPollutants = POLLUTANTS.filter(
+          (pollutant) => this.supportMap[pollutant] === 'hourly'
         );
-        const currentPromises = currentList.map(async (p) => {
-          const domainParam =
-            this.domain && this.domain !== 'auto'
-              ? `&domain=${this.domain}`
-              : '';
-          const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${this.latitude}&longitude=${this.longitude}&current=${p}${domainParam}&timezone=auto`;
+        const domainParam =
+          this.domain && this.domain !== 'auto' ? `&domain=${this.domain}` : '';
+
+        const hourlyPromises = hourlyPollutants.map(async (pollutant) => {
+          const url = `https://air-quality-api.open-meteo.com/v1/air-quality?${baseParams}${domainParam}&hourly=${pollutant}`;
           try {
-            const res = await fetch(url);
-            if (!res.ok) return;
-            const json = await res.json();
-            if (json && json.current && json.current[p] != null)
-              currentPollutants[p] = json.current[p];
+            const response = await fetch(url, {
+              signal: this.controller.signal,
+            });
+            if (!response.ok) return null;
+            const json = await response.json();
+            return json.hourly?.[pollutant]
+              ? { pollutant, data: json.hourly[pollutant] }
+              : null;
           } catch {
-            // ignore per-pollutant current fetch errors
+            return null;
           }
         });
-        await Promise.all(currentPromises);
 
-        // Merge into a single shape expected by handleData (currentData remains primary source for 'current' methods)
+        const currentPollutantList = POLLUTANTS.filter(
+          (pollutant) => this.supportMap[pollutant] === 'current'
+        );
+
+        const currentPollutantPromises = currentPollutantList.map(
+          async (pollutant) => {
+            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?${baseParams}${domainParam}&current=${pollutant}`;
+            try {
+              const response = await fetch(url, {
+                signal: this.controller.signal,
+              });
+              if (!response.ok) return null;
+              const json = await response.json();
+              return json.current?.[pollutant] != null
+                ? { pollutant, value: json.current[pollutant] }
+                : null;
+            } catch {
+              return null;
+            }
+          }
+        );
+
+        const [hourlyResults, currentResults] = await Promise.all([
+          Promise.all(hourlyPromises),
+          Promise.all(currentPollutantPromises),
+        ]);
+
+        const mergedHourly = {};
+        hourlyResults
+          .filter(Boolean)
+          .forEach(({ pollutant, data }) => (mergedHourly[pollutant] = data));
+
+        const mergedCurrent = {};
+        currentResults
+          .filter(Boolean)
+          .forEach(
+            ({ pollutant, value }) => (mergedCurrent[pollutant] = value)
+          );
+
         const merged = {
           ...currentData,
           current: {
             ...(currentData.current || {}),
-            ...currentPollutants,
+            ...mergedCurrent,
           },
           hourly: mergedHourly,
         };
 
         this.handleData(merged);
         this.showContent();
-      } catch (err) {
-        console.error('AirQuality fetch error', err);
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        console.error('AirQuality fetch error', error);
         this.showError(this.tLang('fetch_failed'));
       }
     }
@@ -1077,56 +802,20 @@ const root = tv({
       const current = data.current;
       if (!current) return;
 
-      // Update European AQI
-      if (current.european_aqi != null) {
-        const value = Math.round(current.european_aqi);
-        const level = this.getEuropeanAQILevel(value);
+      this.updateAQIBlock({
+        system: 'eu',
+        value: current.european_aqi,
+        levelGetter: this.getEuropeanAQILevel,
+        scale: 1,
+      });
 
-        const valueEl = this.element.querySelector('.eu-aqi-value');
-        const descEl = this.element.querySelector('.eu-aqi-desc');
-        const indicatorEl = this.element.querySelector('.eu-indicator');
+      this.updateAQIBlock({
+        system: 'us',
+        value: current.us_aqi,
+        levelGetter: this.getUSAQILevel,
+        scale: 1 / 5,
+      });
 
-        if (valueEl) {
-          valueEl.textContent = value.toString();
-          valueEl.className = `text-4xl font-black text-center eu-aqi-value aqi-${level.class}`;
-        }
-
-        if (descEl) {
-          descEl.textContent = level.description;
-          descEl.className = `text-center text-gray-600 dark:text-gray-300 eu-aqi-desc aqi-${level.class}`;
-        }
-
-        if (indicatorEl) {
-          indicatorEl.style.left = `${Math.min(value, 100)}%`;
-        }
-      }
-
-      // Update US AQI
-      if (current.us_aqi != null) {
-        const value = Math.round(current.us_aqi);
-        const level = this.getUSAQILevel(value);
-
-        const valueEl = this.element.querySelector('.us-aqi-value');
-        const descEl = this.element.querySelector('.us-aqi-desc');
-        const indicatorEl = this.element.querySelector('.us-indicator');
-
-        if (valueEl) {
-          valueEl.textContent = value.toString();
-          valueEl.className = `text-4xl font-black text-center us-aqi-value aqi-${level.class}`;
-        }
-
-        if (descEl) {
-          descEl.textContent = level.description;
-          descEl.className = `text-center text-gray-600 dark:text-gray-300 us-aqi-desc aqi-${level.class}`;
-        }
-
-        if (indicatorEl) {
-          indicatorEl.style.left = `${Math.min(value / 5, 100)}%`;
-        }
-      }
-
-      // Update health advice
-      // Provide both AQI and pollutant components to the advice generator
       const aqiValue =
         current.european_aqi != null
           ? Math.round(current.european_aqi)
@@ -1134,68 +823,58 @@ const root = tv({
             ? Math.round(current.us_aqi)
             : 0;
 
-      // Extract pollutant values. Prefer current if available or supported as 'current', otherwise latest from hourly arrays.
       const components = {};
       const hourly = data.hourly || {};
 
       const getLatest = (arr) => {
         if (!Array.isArray(arr)) return undefined;
-        for (let i = arr.length - 1; i >= 0; i--) {
-          const v = arr[i];
-          if (v !== null && v !== undefined) return v;
+        for (let i = arr.length - 1; i >= 0; i -= 1) {
+          const value = arr[i];
+          if (value != null) return value;
         }
         return undefined;
       };
 
-      const pick = (key) => {
-        // If current has a value, prefer it
+      const pickValue = (key) => {
         if (current && current[key] != null) return current[key];
-        // If supportMap says current, prefer current (even if null), else try hourly latest
         if (
           this.supportMap &&
           this.supportMap[key] === 'current' &&
           current &&
           current[key] != null
-        )
+        ) {
           return current[key];
+        }
         return getLatest(hourly[key]);
       };
 
-      components.pm2_5 = pick('pm2_5');
-      components.pm10 = pick('pm10');
-      components.no2 = pick('no2');
-      components.o3 = pick('o3');
-      components.so2 = pick('so2');
-      components.co = pick('co');
+      POLLUTANTS.forEach((pollutant) => {
+        components[pollutant] = pickValue(pollutant);
+      });
 
       this.updateHealthAdvice({ aqi: aqiValue, components });
       this.updateLastUpdated();
       this.updateCoverage();
     }
 
-    updateCoverage() {
-      const el = this.element.querySelector('.pollutant-coverage');
-      if (!el) return;
-      const map = this.supportMap || {};
-      const keys = Object.keys(map).filter((k) => map[k]);
-      if (keys.length === 0) {
-        el.textContent = '';
-        return;
-      }
-      const label = this.tLang('measured_label') || 'Measured:';
-      const othersNot =
-        this.tLang('measured_others_not') || '(others not available)';
-      // build tooltip text: "Measured: PM2_5, PM10 (others not available)"
-      const measuredText = `${label} ${keys.map((k) => k.toUpperCase()).join(', ')} ${othersNot}`;
-
-      // Render a simple inline info with visually-hidden tooltip text for accessibility
-      el.innerHTML = `
-        <span class="inline-flex items-center gap-2">
-          <svg aria-hidden="true" class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"></path></svg>
-          <span class="sr-only">${measuredText}</span>
-          <span class="text-xs text-gray-600 dark:text-gray-400">${label} ${keys.map((k) => k.toUpperCase()).join(', ')}<span class="text-gray-400"> ${othersNot}</span></span>
-        </span>
-      `;
+    updateAQIBlock({ system, value, levelGetter, scale }) {
+      if (value == null || !this.refs.aqi[system]) return;
+      const refs = this.refs.aqi[system];
+      const level = levelGetter(Math.round(value));
+      requestAnimationFrame(() => {
+        if (refs.value) {
+          refs.value.textContent = Math.round(value).toString();
+          refs.value.className = `air-quality__aqi-value air-quality__aqi-value--${system} aqi-${level.class}`;
+        }
+        if (refs.desc) {
+          refs.desc.textContent = level.description;
+          refs.desc.className = `air-quality__aqi-desc air-quality__aqi-desc--${system} aqi-${level.class}`;
+        }
+        if (refs.indicator) {
+          const position = Math.min(Math.max(value * scale, 0), 100);
+          refs.indicator.style.left = `${position}%`;
+        }
+      });
     }
 
     getEuropeanAQILevel(aqi) {
@@ -1221,10 +900,6 @@ const root = tv({
     }
 
     updateHealthAdvice({ aqi = 0, components = {} } = {}) {
-      const generalEl = this.element.querySelector('.general-text');
-      const sensitiveEl = this.element.querySelector('.sensitive-text');
-
-      // Base advice from AQI bands (simple, readable guidance)
       let general = 'Air quality is being assessed...';
       let sensitive = 'Air quality is being assessed...';
 
@@ -1248,24 +923,37 @@ const root = tv({
         sensitive = this.tLang('advice_hazardous_sensitive');
       }
 
-      // Inspect pollutant components for specific elevated warnings
-      const pollutantThresholds = {
-        pm2_5: 35, // µg/m3 - indicative threshold
+      const thresholds = {
+        pm2_5: 35,
         pm10: 50,
         no2: 200,
         o3: 120,
         so2: 125,
-        co: 10000, // µg/m3 - very high threshold as placeholder
+        co: 10000,
       };
 
       const elevated = [];
-      Object.keys(components).forEach((key) => {
-        const val = Number(components[key]);
-        if (!Number.isFinite(val)) return;
-        const thr = pollutantThresholds[key];
-        if (thr != null && val >= thr) {
-          // Format value with reasonable precision
-          elevated.push(`${key.toUpperCase()}: ${val}`);
+      let maxSeverity = 'low';
+      const severityOrder = { low: 0, moderate: 1, high: 2, 'very-high': 3 };
+
+      const getSeverity = (key, value) => {
+        const threshold = thresholds[key];
+        if (threshold == null) return 'unknown';
+        if (value < threshold * 0.5) return 'low';
+        if (value < threshold) return 'moderate';
+        if (value < threshold * 1.5) return 'high';
+        return 'very-high';
+      };
+
+      Object.entries(components).forEach(([key, raw]) => {
+        const value = Number(raw);
+        if (!Number.isFinite(value)) return;
+        const severity = getSeverity(key, value);
+        if (severityOrder[severity] > severityOrder[maxSeverity]) {
+          maxSeverity = severity;
+        }
+        if (thresholds[key] != null && value >= thresholds[key]) {
+          elevated.push(`${key.toUpperCase()}: ${value}`);
         }
       });
 
@@ -1273,50 +961,30 @@ const root = tv({
         const note = ` ${this.tLang('elevated_note')} ${elevated.join(', ')}.`;
         general += note;
         sensitive += note;
-      }
-
-      // Consider overall pollutant-derived severity and adjust advice if needed
-      const severityOrder = { low: 0, moderate: 1, high: 2, 'very-high': 3 };
-      const severityFor = (k, v) => {
-        const thr = pollutantThresholds[k];
-        if (thr == null) return 'low';
-        if (v < thr * 0.5) return 'low';
-        if (v < thr) return 'moderate';
-        if (v < thr * 1.5) return 'high';
-        return 'very-high';
-      };
-
-      let maxSeverity = 'low';
-      Object.keys(components).forEach((k) => {
-        const val = Number(components[k]);
-        if (!Number.isFinite(val)) return;
-        const sev = severityFor(k, val);
-        if (severityOrder[sev] > severityOrder[maxSeverity]) maxSeverity = sev;
-      });
-
-      // If pollutant severity is high or very-high, escalate textual advice
-      if (severityOrder[maxSeverity] >= severityOrder['high']) {
-        // escalate to 'poor' band advice as a conservative fallback
-        general = this.tLang('advice_poor_general');
-        sensitive = this.tLang('advice_poor_sensitive');
       } else if (maxSeverity === 'moderate') {
-        // if AQI says excellent but some pollutants are moderate, append a caution
         const caution = ` ${this.tLang('pollutant_moderate_caution')}`;
         if (!general.includes(caution)) general += caution;
         if (!sensitive.includes(caution)) sensitive += caution;
+      } else if (severityOrder[maxSeverity] >= severityOrder['high']) {
+        general = this.tLang('advice_poor_general');
+        sensitive = this.tLang('advice_poor_sensitive');
       }
 
-      if (generalEl) generalEl.textContent = general;
-      if (sensitiveEl) sensitiveEl.textContent = sensitive;
+      if (this.refs.adviceGeneral) {
+        this.refs.adviceGeneral.textContent = general;
+      }
+      if (this.refs.adviceSensitive) {
+        this.refs.adviceSensitive.textContent = sensitive;
+      }
 
-      // Update pollutant badges/list
       this.updatePollutantList(components);
     }
 
     updatePollutantList(components = {}) {
-      const container = this.element.querySelector('.pollutant-badges');
-      const legend = this.element.querySelector('.pollutant-legend');
+      const container = this.refs.pollutantBadges;
+      const legend = this.refs.pollutantLegend;
       if (!container) return;
+
       container.innerHTML = '';
 
       const units = {
@@ -1328,7 +996,6 @@ const root = tv({
         co: 'µg/m³',
       };
 
-      // Indicative thresholds used to derive badge color (same as advice thresholds)
       const thresholds = {
         pm2_5: 35,
         pm10: 50,
@@ -1338,69 +1005,53 @@ const root = tv({
         co: 10000,
       };
 
-      const severityFor = (k, v) => {
-        const thr = thresholds[k];
-        if (thr == null) return 'unknown';
-        if (v < thr * 0.5) return 'low';
-        if (v < thr) return 'moderate';
-        if (v < thr * 1.5) return 'high';
+      const severityFor = (key, value) => {
+        const threshold = thresholds[key];
+        if (threshold == null) return 'unknown';
+        if (value < threshold * 0.5) return 'low';
+        if (value < threshold) return 'moderate';
+        if (value < threshold * 1.5) return 'high';
         return 'very-high';
       };
 
-      const colorFor = (sev) => {
-        // Tailwind-like utility strings; these classes exist in the project
-        switch (sev) {
-          case 'low':
-            return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200';
-          case 'moderate':
-            return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-200';
-          case 'high':
-            return 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900 dark:text-orange-200';
-          case 'very-high':
-            return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-200';
-          default:
-            return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-100';
-        }
-      };
-
       let rendered = 0;
-      Object.keys(components).forEach((k) => {
-        const raw = components[k];
-        const val = Number(raw);
-        if (!Number.isFinite(val)) return;
+      const fragment = document.createDocumentFragment();
 
-        const sev = severityFor(k, val);
-        const color = colorFor(sev);
+      Object.entries(components).forEach(([key, raw]) => {
+        const value = Number(raw);
+        if (!Number.isFinite(value)) return;
+        const severity = severityFor(key, value);
 
         const badge = document.createElement('div');
-        badge.className = `px-2 py-1 rounded-md text-sm font-medium border ${color}`;
+        badge.className = `air-quality__pollutant-badge air-quality__pollutant-badge--${severity}`;
         badge.setAttribute('role', 'status');
-        const titleText = `${k.toUpperCase()}: ${val}${units[k] ? ' ' + units[k] : ''}`;
-        badge.setAttribute('aria-label', titleText);
-        // tooltip on hover for quick info
-        badge.setAttribute('title', titleText);
-        badge.textContent = titleText;
-        container.appendChild(badge);
-        rendered++;
+        const label = `${key.toUpperCase()}: ${value}${units[key] ? ` ${units[key]}` : ''}`;
+        badge.textContent = label;
+        badge.title = label;
+        badge.setAttribute('aria-label', label);
+        fragment.appendChild(badge);
+        rendered += 1;
       });
 
-      if (legend) {
-        if (rendered === 0) {
-          legend.textContent = this.tLang('no_pollutant_data');
-        } else {
-          legend.innerHTML = this.tLang('legend_text');
-        }
+      container.appendChild(fragment);
 
-        // Add a short, collapsible explanation of pollutant abbreviations
+      if (legend) {
+        legend.innerHTML =
+          rendered === 0
+            ? this.tLang('no_pollutant_data')
+            : this.tLang('legend_text');
+
         const detailsId = 'pollutant-explainer';
-        let details = this.element.querySelector(`#${detailsId}`);
+        let details = legend.querySelector(`#${detailsId}`);
         if (!details) {
           details = document.createElement('details');
           details.id = detailsId;
-          details.className = 'mt-2 text-xs text-gray-700 dark:text-gray-300';
+          details.className = 'air-quality__legend-details';
           details.innerHTML = `
-            <summary class="font-medium">${this.tLang('explainer_summary')}</summary>
-            <ul class="mt-2 list-disc ml-5 space-y-1">
+            <summary class="air-quality__legend-summary">${this.tLang(
+              'explainer_summary'
+            )}</summary>
+            <ul class="air-quality__legend-list">
               <li><strong>PM2.5</strong>: ${this.tLang('explainer_pm2_5')}</li>
               <li><strong>PM10</strong>: ${this.tLang('explainer_pm10')}</li>
               <li><strong>NO2</strong>: ${this.tLang('explainer_no2')}</li>
@@ -1414,121 +1065,750 @@ const root = tv({
       }
     }
 
-    updateLastUpdated() {
-      const updateEl = this.element.querySelector('.update-time');
-      if (updateEl) {
-        const now = new Date();
-        updateEl.textContent = `${this.tLang('updated')} ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    updateCoverage() {
+      const el = this.refs.pollutantCoverage;
+      if (!el) return;
+      const map = this.supportMap || {};
+      const supported = Object.keys(map).filter((key) => map[key]);
+      if (supported.length === 0) {
+        el.textContent = '';
+        return;
       }
+      const label = this.tLang('measured_label') || 'Measured:';
+      const others =
+        this.tLang('measured_others_not') || '(others not available)';
+      const text = `${label} ${supported
+        .map((key) => key.toUpperCase())
+        .join(', ')} ${others}`;
+
+      el.innerHTML = `
+        <span class="air-quality__coverage-info">
+          <svg aria-hidden="true" class="air-quality__coverage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+          </svg>
+          <span class="air-quality__sr-only">${text}</span>
+          <span class="air-quality__coverage-text">${label} ${supported
+            .map((key) => key.toUpperCase())
+            .join(
+              ', '
+            )}<span class="air-quality__coverage-muted"> ${others}</span></span>
+        </span>
+      `;
+    }
+
+    updateLastUpdated() {
+      if (!this.refs.updateTime) return;
+      const now = new Date();
+      this.refs.updateTime.textContent = `${this.tLang('updated')} ${now.toLocaleTimeString(
+        [],
+        {
+          hour: '2-digit',
+          minute: '2-digit',
+        }
+      )}`;
     }
 
     showLoading() {
-      this.loadingEl?.classList.remove('hidden');
-      this.errorEl?.classList.add('hidden');
-      this.contentEl?.classList.add('hidden');
+      this.refs.loading?.classList.remove('is-hidden');
+      this.refs.error?.classList.add('is-hidden');
+      this.refs.content?.classList.add('is-hidden');
     }
 
     showError(message) {
-      this.loadingEl?.classList.add('hidden');
-      this.errorEl?.classList.remove('hidden');
-      this.contentEl?.classList.add('hidden');
-
-      const messageEl = this.errorEl?.querySelector('.error-message');
-      if (messageEl) messageEl.textContent = message;
+      this.refs.loading?.classList.add('is-hidden');
+      this.refs.error?.classList.remove('is-hidden');
+      this.refs.content?.classList.add('is-hidden');
+      if (this.refs.errorMessage) {
+        this.refs.errorMessage.textContent = message;
+      }
     }
 
     showContent() {
-      this.loadingEl?.classList.add('hidden');
-      this.errorEl?.classList.add('hidden');
-      this.contentEl?.classList.remove('hidden');
+      this.refs.loading?.classList.add('is-hidden');
+      this.refs.error?.classList.add('is-hidden');
+      this.refs.content?.classList.remove('is-hidden');
     }
   }
 
-  // Initialize components
-  document.addEventListener('DOMContentLoaded', () => {
+  const hydrate = () => {
     document
       .querySelectorAll('[data-air-quality-widget]')
       .forEach((element) => {
-        new AirQuality(element);
+        if (!element.__airQualityInstance) {
+          element.__airQualityInstance = new AirQuality(element);
+        }
       });
-  });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hydrate, { once: true });
+  } else {
+    hydrate();
+  }
+
+  document.addEventListener('astro:page-load', hydrate);
 </script>
 
-<style>
-  @layer components {
-    .air-quality-widget {
-      /* Tailwind theme() requires quoted keys; provide fallbacks for robustness */
-      --aqi-good: theme('colors.green.700', #166534);
-      --aqi-fair: theme('colors.lime.600', #65a30d);
-      --aqi-moderate: theme('colors.yellow.600', #ca8a04);
-      --aqi-poor: theme('colors.orange.600', #ea580c);
-      --aqi-very-poor: theme('colors.red.700', #b91c1c);
-      --aqi-unhealthy-sensitive: theme('colors.orange.700', #c2410c);
-      --aqi-unhealthy: theme('colors.red.700', #b91c1c);
-      --aqi-very-unhealthy: theme('colors.purple.700', #6d28d9);
-      --aqi-hazardous: theme('colors.red.900', #7f1d1d);
-    }
+<style is:inline>
+  .air-quality {
+    --aq-bg: #ffffff;
+    --aq-border: #e2e8f0;
+    --aq-text: #0f172a;
+    --aq-muted: #4b5563;
+    --aq-card-bg: #f8fafc;
+    --aq-advice-bg: #eff6ff;
+    --aq-advice-border: #bfdbfe;
+    --aq-error-text: #b91c1c;
+    --aq-error-bg: #fee2e2;
+    --aq-spinner-track: #cbd5f5;
+    --aq-spinner-head: #2563eb;
+    --aq-accent: #2563eb;
+    --aq-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    --aq-hover-bg: #eff6ff;
+    --aq-hover-border: #c7d2fe;
+    --badge-low-bg: #dcfce7;
+    --badge-low-border: #bbf7d0;
+    --badge-low-text: #166534;
+    --badge-moderate-bg: #fef9c3;
+    --badge-moderate-border: #fde68a;
+    --badge-moderate-text: #92400e;
+    --badge-high-bg: #ffedd5;
+    --badge-high-border: #fdba74;
+    --badge-high-text: #9a3412;
+    --badge-very-high-bg: #fee2e2;
+    --badge-very-high-border: #fecaca;
+    --badge-very-high-text: #b91c1c;
+    --badge-unknown-bg: #e2e8f0;
+    --badge-unknown-border: #cbd5f5;
+    --badge-unknown-text: #475467;
+    --aqi-good: #166534;
+    --aqi-fair: #65a30d;
+    --aqi-moderate: #ca8a04;
+    --aqi-poor: #ea580c;
+    --aqi-very-poor: #b91c1c;
+    --aqi-unhealthy-sensitive: #c2410c;
+    --aqi-unhealthy: #b91c1c;
+    --aqi-very-unhealthy: #6d28d9;
+    --aqi-hazardous: #7f1d1d;
+    background-color: var(--aq-bg);
+    border: 2px solid var(--aq-border);
+    border-radius: 1.25rem;
+    color: var(--aq-text);
+    display: block;
+    padding: 1.5rem;
+    box-shadow: var(--aq-shadow);
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
 
-    .dark .air-quality-widget {
-      --aqi-good: theme('colors.green.400', #4ade80);
-      --aqi-fair: theme('colors.lime.400', #a3e635);
-      --aqi-moderate: theme('colors.yellow.400', #facc15);
-      --aqi-poor: theme('colors.orange.400', #fb923c);
-      --aqi-very-poor: theme('colors.red.400', #f87171);
-      --aqi-unhealthy-sensitive: theme('colors.orange.400', #fb923c);
-      --aqi-unhealthy: theme('colors.red.400', #f87171);
-      --aqi-very-unhealthy: theme('colors.purple.400', #c084fc);
-      --aqi-hazardous: theme('colors.red.300', #fca5a5);
-    }
+  .air-quality:hover {
+    border-color: var(--aq-hover-border, var(--aq-border));
+    background-color: var(--aq-hover-bg, var(--aq-bg));
+  }
 
-    .aqi-good {
-      color: var(--aqi-good) !important;
-    }
-    .aqi-fair {
-      color: var(--aqi-fair) !important;
-    }
-    .aqi-moderate {
-      color: var(--aqi-moderate) !important;
-    }
-    .aqi-poor {
-      color: var(--aqi-poor) !important;
-    }
-    .aqi-very-poor {
-      color: var(--aqi-very-poor) !important;
-    }
-    .aqi-unhealthy-sensitive {
-      color: var(--aqi-unhealthy-sensitive) !important;
-    }
-    .aqi-unhealthy {
-      color: var(--aqi-unhealthy) !important;
-    }
-    .aqi-very-unhealthy {
-      color: var(--aqi-very-unhealthy) !important;
-    }
-    .aqi-hazardous {
-      color: var(--aqi-hazardous) !important;
-    }
+  :where(.dark) .air-quality {
+    --aq-bg: #0f172a;
+    --aq-border: #1f2937;
+    --aq-text: #f8fafc;
+    --aq-muted: #cbd5f5;
+    --aq-card-bg: #111827;
+    --aq-advice-bg: rgba(30, 64, 175, 0.35);
+    --aq-advice-border: rgba(147, 197, 253, 0.35);
+    --aq-error-text: #fecaca;
+    --aq-error-bg: rgba(127, 29, 29, 0.35);
+    --aq-spinner-track: #334155;
+    --aq-spinner-head: #60a5fa;
+    --aq-accent: #60a5fa;
+    --aq-shadow: 0 18px 40px rgba(2, 6, 23, 0.6);
+    --aq-hover-bg: #1d2334;
+    --aq-hover-border: #475569;
+    --badge-low-bg: rgba(34, 197, 94, 0.15);
+    --badge-low-border: rgba(34, 197, 94, 0.5);
+    --badge-low-text: #4ade80;
+    --badge-moderate-bg: rgba(250, 204, 21, 0.1);
+    --badge-moderate-border: rgba(250, 204, 21, 0.4);
+    --badge-moderate-text: #facc15;
+    --badge-high-bg: rgba(251, 146, 60, 0.1);
+    --badge-high-border: rgba(251, 146, 60, 0.35);
+    --badge-high-text: #fdba74;
+    --badge-very-high-bg: rgba(248, 113, 113, 0.12);
+    --badge-very-high-border: rgba(248, 113, 113, 0.4);
+    --badge-very-high-text: #fecaca;
+    --badge-unknown-bg: rgba(148, 163, 184, 0.15);
+    --badge-unknown-border: rgba(148, 163, 184, 0.4);
+    --badge-unknown-text: #e2e8f0;
+    --aqi-good: #4ade80;
+    --aqi-fair: #a3e635;
+    --aqi-moderate: #facc15;
+    --aqi-poor: #fb923c;
+    --aqi-very-poor: #f87171;
+    --aqi-unhealthy-sensitive: #fb923c;
+    --aqi-unhealthy: #f87171;
+    --aqi-very-unhealthy: #c084fc;
+    --aqi-hazardous: #fca5a5;
+  }
 
-    .eu-indicator,
-    .us-indicator {
-      transition: left 0.5s ease-in-out;
-      top: 0;
-    }
+  .air-quality--variant-minimal {
+    border-color: transparent;
+    background-color: transparent;
+    box-shadow: none;
+  }
 
-    @media (prefers-contrast: high) {
-      .air-quality-widget {
-        border-width: 3px !important;
-      }
-    }
+  .air-quality--variant-dashboard {
+    border-radius: 0;
+    box-shadow: none;
+  }
 
-    @media (prefers-reduced-motion: reduce) {
-      .air-quality-widget .animate-spin {
-        animation: none;
-      }
-      .eu-indicator,
-      .us-indicator {
-        transition: none !important;
-      }
+  .air-quality--size-xs {
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .air-quality--size-sm {
+    font-size: 0.95rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .air-quality--size-lg {
+    font-size: 1.05rem;
+    padding: 1.75rem 2rem;
+  }
+
+  .air-quality--size-xl {
+    font-size: 1.15rem;
+    padding: 2.5rem;
+  }
+
+  .air-quality__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .air-quality--palette-classicBlue {
+    --aq-bg: #ffffff;
+    --aq-text: #111827;
+    --aq-muted: #4b5563;
+    --aq-border: #e5e7eb;
+    --aq-card-bg: #f8fafc;
+    --aq-advice-bg: #eff6ff;
+    --aq-advice-border: #bfdbfe;
+    --aq-accent: #2563eb;
+    --aq-spinner-track: #cbd5f5;
+    --aq-spinner-head: #2563eb;
+    --aq-hover-bg: #eff6ff;
+    --aq-hover-border: #60a5fa;
+  }
+
+  :where(.dark) .air-quality--palette-classicBlue {
+    --aq-bg: #111827;
+    --aq-text: #ffffff;
+    --aq-muted: #cbd5f5;
+    --aq-border: #374151;
+    --aq-card-bg: #1f2937;
+    --aq-advice-bg: rgba(59, 130, 246, 0.2);
+    --aq-advice-border: rgba(96, 165, 250, 0.35);
+    --aq-accent: #60a5fa;
+    --aq-spinner-track: #1f2937;
+    --aq-spinner-head: #60a5fa;
+    --aq-hover-bg: #1f2937;
+    --aq-hover-border: #3b82f6;
+  }
+
+  .air-quality--palette-natureGreen {
+    --aq-bg: #fafaf9;
+    --aq-text: #1c1917;
+    --aq-muted: #44403c;
+    --aq-border: #e7e5e4;
+    --aq-card-bg: #f1f0ed;
+    --aq-advice-bg: #ecfdf5;
+    --aq-advice-border: #bbf7d0;
+    --aq-accent: #059669;
+    --aq-spinner-track: #d6d3d1;
+    --aq-spinner-head: #059669;
+    --aq-hover-bg: #f7f3f9;
+    --aq-hover-border: #34d399;
+  }
+
+  :where(.dark) .air-quality--palette-natureGreen {
+    --aq-bg: #0c0a09;
+    --aq-text: #f5f5f4;
+    --aq-muted: #d6d3d1;
+    --aq-border: #292524;
+    --aq-card-bg: #1c1917;
+    --aq-advice-bg: rgba(16, 185, 129, 0.18);
+    --aq-advice-border: rgba(16, 185, 129, 0.35);
+    --aq-accent: #34d399;
+    --aq-spinner-track: #292524;
+    --aq-spinner-head: #34d399;
+    --aq-hover-bg: #181716;
+    --aq-hover-border: #10b981;
+  }
+
+  .air-quality--palette-warmPurple {
+    --aq-bg: #f9fafb;
+    --aq-text: #111827;
+    --aq-muted: #4c1d95;
+    --aq-border: #d1d5db;
+    --aq-card-bg: #f3e8ff;
+    --aq-advice-bg: #f5f3ff;
+    --aq-advice-border: #ddd6fe;
+    --aq-accent: #7c3aed;
+    --aq-spinner-track: #e0e7ff;
+    --aq-spinner-head: #7c3aed;
+    --aq-hover-bg: #faf5ff;
+    --aq-hover-border: #a78bfa;
+  }
+
+  :where(.dark) .air-quality--palette-warmPurple {
+    --aq-bg: #030712;
+    --aq-text: #f9fafb;
+    --aq-muted: #c7d2fe;
+    --aq-border: #312e81;
+    --aq-card-bg: #1e1b4b;
+    --aq-advice-bg: rgba(167, 139, 250, 0.18);
+    --aq-advice-border: rgba(167, 139, 250, 0.35);
+    --aq-accent: #a78bfa;
+    --aq-spinner-track: #312e81;
+    --aq-spinner-head: #a78bfa;
+    --aq-hover-bg: #111827;
+    --aq-hover-border: #8b5cf6;
+  }
+
+  .air-quality--palette-skyCyan {
+    --aq-bg: #f8fafc;
+    --aq-text: #0f172a;
+    --aq-muted: #036672;
+    --aq-border: #e2e8f0;
+    --aq-card-bg: #ecfeff;
+    --aq-advice-bg: #cffafe;
+    --aq-advice-border: #a5f3fc;
+    --aq-accent: #0891b2;
+    --aq-spinner-track: #bae6fd;
+    --aq-spinner-head: #0891b2;
+    --aq-hover-bg: #ecfeff;
+    --aq-hover-border: #22d3ee;
+  }
+
+  :where(.dark) .air-quality--palette-skyCyan {
+    --aq-bg: #0f172a;
+    --aq-text: #f8fafc;
+    --aq-muted: #bae6fd;
+    --aq-border: #1e293b;
+    --aq-card-bg: #112031;
+    --aq-advice-bg: rgba(34, 211, 238, 0.15);
+    --aq-advice-border: rgba(34, 211, 238, 0.35);
+    --aq-accent: #67e8f9;
+    --aq-spinner-track: #1e293b;
+    --aq-spinner-head: #22d3ee;
+    --aq-hover-bg: #020617;
+    --aq-hover-border: #06b6d4;
+  }
+
+  .air-quality--palette-orangeAccent {
+    --aq-bg: #fafafa;
+    --aq-text: #18181b;
+    --aq-muted: #78350f;
+    --aq-border: #e4e4e7;
+    --aq-card-bg: #fff7ed;
+    --aq-advice-bg: #fffbeb;
+    --aq-advice-border: #fed7aa;
+    --aq-accent: #f97316;
+    --aq-spinner-track: #fed7aa;
+    --aq-spinner-head: #f97316;
+    --aq-hover-bg: #fff7ed;
+    --aq-hover-border: #fb923c;
+  }
+
+  :where(.dark) .air-quality--palette-orangeAccent {
+    --aq-bg: #09090b;
+    --aq-text: #fafafa;
+    --aq-muted: #fed7aa;
+    --aq-border: #27272a;
+    --aq-card-bg: #1f1f24;
+    --aq-advice-bg: rgba(251, 146, 60, 0.18);
+    --aq-advice-border: rgba(251, 146, 60, 0.35);
+    --aq-accent: #fdba74;
+    --aq-spinner-track: #27272a;
+    --aq-spinner-head: #fdba74;
+    --aq-hover-bg: #18181b;
+    --aq-hover-border: #fb923c;
+  }
+
+  .air-quality__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .air-quality__title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .air-quality__title-icon {
+    font-size: 2.25rem;
+    line-height: 1;
+  }
+
+  .air-quality__title {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 700;
+    margin: 0;
+    color: var(--aq-text);
+  }
+
+  .air-quality__meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--aq-muted);
+    font-size: 0.95rem;
+  }
+
+  .air-quality__location {
+    font-weight: 600;
+  }
+
+  .air-quality__update-time {
+    font-size: 0.85rem;
+    text-align: right;
+  }
+
+  .air-quality__loading,
+  .air-quality__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 3rem 1rem;
+    text-align: center;
+  }
+
+  .air-quality__spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 4px solid var(--aq-spinner-track);
+    border-top-color: var(--aq-spinner-head);
+    animation: air-quality-spin 1s linear infinite;
+  }
+
+  .air-quality__loading-text {
+    font-weight: 600;
+    color: var(--aq-muted);
+  }
+
+  .air-quality__error-icon {
+    font-size: 2.5rem;
+  }
+
+  .air-quality__error-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--aq-error-text);
+  }
+
+  .air-quality__error-message {
+    color: var(--aq-error-text);
+  }
+
+  .air-quality__retry-button {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.65rem 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--aq-accent);
+    cursor: pointer;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .air-quality__retry-button:hover {
+    opacity: 0.9;
+  }
+
+  .air-quality__retry-button:focus-visible {
+    outline: 2px solid var(--aq-accent);
+    outline-offset: 3px;
+  }
+
+  .air-quality__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .air-quality__aqi-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 48rem) {
+    .air-quality__aqi-grid--dual {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .air-quality__aqi-card {
+    background: var(--aq-card-bg);
+    border: 1px solid var(--aq-border);
+    border-radius: 1.1rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 100%;
+  }
+
+  .air-quality__aqi-heading {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--aq-text);
+  }
+
+  .air-quality__aqi-value {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    text-align: center;
+    margin: 0;
+  }
+
+  .air-quality__aqi-desc {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--aq-muted);
+    min-height: 1.5em;
+  }
+
+  .air-quality__aqi-bar {
+    position: relative;
+    height: 0.65rem;
+    border-radius: 999px;
+    overflow: hidden;
+    background: linear-gradient(
+      90deg,
+      #22c55e,
+      #bef264,
+      #f97316,
+      #ef4444,
+      #7f1d1d
+    );
+  }
+
+  .air-quality__aqi-indicator {
+    position: absolute;
+    top: -0.25rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid var(--aq-border);
+    transform: translateX(-50%);
+    transition: left 0.45s ease;
+  }
+
+  :where(.dark) .air-quality__aqi-indicator {
+    background: var(--aq-bg);
+  }
+
+  .air-quality__advice {
+    background: var(--aq-advice-bg);
+    border: 1px solid var(--aq-advice-border);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .air-quality__advice-heading {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--aq-text);
+  }
+
+  .air-quality__advice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .air-quality__advice-entry {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .air-quality__advice-emoji {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .air-quality__advice-label {
+    font-weight: 600;
+    color: var(--aq-text);
+  }
+
+  .air-quality__advice-text {
+    font-size: 0.95rem;
+    color: var(--aq-muted);
+  }
+
+  .air-quality__pollutant-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .air-quality__pollutant-badge {
+    border-radius: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+  }
+
+  .air-quality__pollutant-badge--low {
+    background: var(--badge-low-bg);
+    border-color: var(--badge-low-border);
+    color: var(--badge-low-text);
+  }
+
+  .air-quality__pollutant-badge--moderate {
+    background: var(--badge-moderate-bg);
+    border-color: var(--badge-moderate-border);
+    color: var(--badge-moderate-text);
+  }
+
+  .air-quality__pollutant-badge--high {
+    background: var(--badge-high-bg);
+    border-color: var(--badge-high-border);
+    color: var(--badge-high-text);
+  }
+
+  .air-quality__pollutant-badge--very-high {
+    background: var(--badge-very-high-bg);
+    border-color: var(--badge-very-high-border);
+    color: var(--badge-very-high-text);
+  }
+
+  .air-quality__pollutant-badge--unknown {
+    background: var(--badge-unknown-bg);
+    border-color: var(--badge-unknown-border);
+    color: var(--badge-unknown-text);
+  }
+
+  .air-quality__pollutant-legend,
+  .air-quality__pollutant-coverage {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--aq-muted);
+  }
+
+  .air-quality__coverage-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .air-quality__coverage-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .air-quality__coverage-muted {
+    color: var(--aq-muted);
+    opacity: 0.75;
+  }
+
+  .air-quality__legend-details {
+    margin-top: 0.65rem;
+    font-size: 0.85rem;
+    color: var(--aq-muted);
+  }
+
+  .air-quality__legend-summary {
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .air-quality__legend-list {
+    margin: 0.5rem 0 0 1rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .aqi-good {
+    color: var(--aqi-good);
+  }
+  .aqi-fair {
+    color: var(--aqi-fair);
+  }
+  .aqi-moderate {
+    color: var(--aqi-moderate);
+  }
+  .aqi-poor {
+    color: var(--aqi-poor);
+  }
+  .aqi-very-poor {
+    color: var(--aqi-very-poor);
+  }
+  .aqi-unhealthy-sensitive {
+    color: var(--aqi-unhealthy-sensitive);
+  }
+  .aqi-unhealthy {
+    color: var(--aqi-unhealthy);
+  }
+  .aqi-very-unhealthy {
+    color: var(--aqi-very-unhealthy);
+  }
+  .aqi-hazardous {
+    color: var(--aqi-hazardous);
+  }
+
+  .is-hidden {
+    display: none !important;
+  }
+
+  .air-quality__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @keyframes air-quality-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .air-quality__spinner {
+      animation: none;
+    }
+    .air-quality__aqi-indicator {
+      transition: none;
     }
   }
 </style>

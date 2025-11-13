@@ -29,52 +29,30 @@ const {
   className = '',
 } = Astro.props as Props;
 
-import { tv } from 'tailwind-variants';
 import Icon from './Icon.astro';
 
-export const baseWrap =
-  'relative flex items-start gap-4 rounded-xl border px-4 py-4 text-base leading-relaxed shadow-sm transition-colors duration-150 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-white focus-within:ring-current dark:focus-within:ring-offset-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 motion-reduce:transition-none sm:px-5 sm:py-5';
-
-export const alertVariants = tv({
-  base: baseWrap,
-  variants: {
-    variant: {
-      // Palettes (new) — include border + hover states for light & dark
-      classic:
-        'bg-white text-gray-900 accent-blue-600 border-gray-200 hover:border-blue-400 hover:bg-blue-50 dark:bg-gray-900 dark:text-white dark:accent-blue-400 dark:border-gray-700 dark:hover:border-blue-500 dark:hover:bg-gray-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-200',
-      nature:
-        'bg-stone-50 text-stone-900 accent-emerald-600 border-stone-200 hover:border-emerald-400 hover:bg-stone-100 dark:bg-stone-950 dark:text-stone-100 dark:accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 focus-visible:ring-emerald-300 dark:focus-visible:ring-emerald-200',
-      warm: 'bg-gray-50 text-gray-900 accent-violet-600 border-gray-300 hover:border-violet-400 hover:bg-violet-50 dark:bg-gray-950 dark:text-gray-50 dark:accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 focus-visible:ring-violet-300 dark:focus-visible:ring-violet-200',
-      sky: 'bg-slate-50 text-slate-900 accent-cyan-600 border-slate-200 hover:border-cyan-400 hover:bg-cyan-50 dark:bg-slate-900 dark:text-slate-50 dark:accent-cyan-300 dark:border-slate-700 dark:hover:border-cyan-500 dark:hover:bg-slate-800 focus-visible:ring-cyan-300 dark:focus-visible:ring-cyan-200',
-      orange:
-        'bg-zinc-50 text-zinc-900 accent-orange-500 border-zinc-200 hover:border-orange-400 hover:bg-orange-50 dark:bg-zinc-950 dark:text-zinc-100 dark:accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 focus-visible:ring-orange-300 dark:focus-visible:ring-orange-200',
-      // Semantic aliases mapped to palettes for backward compatibility
-      info: 'bg-white text-gray-900 accent-blue-600 border-gray-200 hover:border-blue-400 hover:bg-blue-50 dark:bg-gray-900 dark:text-white dark:accent-blue-400 dark:border-gray-700 dark:hover:border-blue-500 dark:hover:bg-gray-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-200',
-      success:
-        'bg-stone-50 text-stone-900 accent-emerald-600 border-stone-200 hover:border-emerald-400 hover:bg-stone-100 dark:bg-stone-950 dark:text-stone-100 dark:accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 focus-visible:ring-emerald-300 dark:focus-visible:ring-emerald-200',
-      warning:
-        'bg-gray-50 text-gray-900 accent-violet-600 border-gray-300 hover:border-violet-400 hover:bg-violet-50 dark:bg-gray-950 dark:text-gray-50 dark:accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 focus-visible:ring-violet-300 dark:focus-visible:ring-violet-200',
-      error:
-        'bg-zinc-50 text-zinc-900 accent-orange-500 border-zinc-200 hover:border-orange-400 hover:bg-orange-50 dark:bg-zinc-950 dark:text-zinc-100 dark:accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 focus-visible:ring-orange-300 dark:focus-visible:ring-orange-200',
-    },
-  },
-  defaultVariants: {
-    variant: 'classic',
-  },
-});
-
-const iconColor = {
-  classic: 'text-blue-600 dark:text-blue-400',
-  nature: 'text-emerald-600 dark:text-emerald-400',
-  warm: 'text-violet-600 dark:text-violet-400',
-  sky: 'text-cyan-600 dark:text-cyan-300',
-  orange: 'text-orange-500 dark:text-orange-300',
-  // aliases
-  info: 'text-blue-600 dark:text-blue-400',
-  success: 'text-emerald-600 dark:text-emerald-400',
-  warning: 'text-violet-600 dark:text-violet-400',
-  error: 'text-orange-500 dark:text-orange-300',
+const paletteMap = {
+  classic: 'classic',
+  nature: 'nature',
+  warm: 'warm',
+  sky: 'sky',
+  orange: 'orange',
+  info: 'classic',
+  success: 'nature',
+  warning: 'warm',
+  error: 'orange',
 } as const;
+
+const paletteKey = paletteMap[variant] || 'classic';
+
+const rootClasses = [
+  'alert',
+  `alert--palette-${paletteKey}`,
+  dismissible ? 'alert--dismissible' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 const roleMap = {
   classic: { role: 'status', ariaLive: 'polite', label: 'Information' },
@@ -82,7 +60,6 @@ const roleMap = {
   warm: { role: 'alert', ariaLive: 'assertive', label: 'Warning' },
   sky: { role: 'status', ariaLive: 'polite', label: 'Information' },
   orange: { role: 'alert', ariaLive: 'assertive', label: 'Error' },
-  // aliases
   info: { role: 'status', ariaLive: 'polite', label: 'Information' },
   success: { role: 'status', ariaLive: 'polite', label: 'Success' },
   warning: { role: 'alert', ariaLive: 'assertive', label: 'Warning' },
@@ -95,7 +72,6 @@ const iconName = {
   warm: 'exclamation',
   sky: 'info',
   orange: 'x-circle',
-  // aliases
   info: 'info',
   success: 'check-circle',
   warning: 'exclamation',
@@ -104,7 +80,7 @@ const iconName = {
 ---
 
 <div
-  class={`${alertVariants({ variant })} ${className}`.trim()}
+  class={rootClasses}
   role={roleMap[variant].role}
   aria-live={roleMap[variant].ariaLive}
   aria-atomic="true"
@@ -112,63 +88,314 @@ const iconName = {
   data-state="open"
   aria-hidden="false"
 >
-  <div class="flex w-full items-start gap-4 sm:gap-5">
-    <div
-      class={`mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-lg font-semibold shadow-inner ${iconColor[variant]} dark:bg-white/10`}
-      aria-hidden="true"
-    >
+  <div class="alert__inner">
+    <div class="alert__icon" aria-hidden="true">
       <Icon
         name={iconName[variant]}
         size="md"
         decorative={false}
         ariaLabel={roleMap[variant].label}
-        className="h-5 w-5"
       />
     </div>
-    <div class="min-w-0 space-y-2 text-slate-800 dark:text-slate-200">
-      <span class="sr-only">{roleMap[variant].label}</span>
-      {title && <div class="text-base font-semibold text-current">{title}</div>}
-      {
-        message && (
-          <div class="text-sm leading-relaxed text-current">{message}</div>
-        )
-      }
+    <div class="alert__body">
+      <span class="alert__sr-only">{roleMap[variant].label}</span>
+      {title && <div class="alert__title">{title}</div>}
+      {message && <div class="alert__message">{message}</div>}
       <slot />
     </div>
     {
       dismissible && (
         <button
           type="button"
-          class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-sm font-semibold text-current transition-colors hover:border-current hover:bg-current/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 motion-reduce:transition-none"
-          data-close
+          class="alert__dismiss"
+          data-alert-dismiss
           aria-label={dismissLabel}
         >
           <span aria-hidden="true">×</span>
-          <span class="sr-only">{dismissLabel}</span>
+          <span class="alert__sr-only">{dismissLabel}</span>
         </button>
       )
     }
   </div>
 </div>
 
-<script is:inline>
-  (() => {
-    const script = document.currentScript;
-    if (!(script instanceof HTMLScriptElement)) return;
-    const root = script.previousElementSibling;
-    if (!(root instanceof HTMLElement)) return;
-    const btn = root.querySelector('[data-close]');
-    if (!(btn instanceof HTMLElement)) return;
-    root.dataset.state =
-      root.getAttribute('hidden') === 'true' ? 'closed' : 'open';
-    btn.addEventListener(
+<script type="module" is:inline>
+  const attachDismiss = (alert) => {
+    if (!(alert instanceof HTMLElement)) return;
+    if (alert.dataset.alertReady === 'true') return;
+    const dismissBtn = alert.querySelector('[data-alert-dismiss]');
+    if (!(dismissBtn instanceof HTMLElement)) return;
+    alert.dataset.state =
+      alert.getAttribute('hidden') === 'true' ? 'closed' : 'open';
+    dismissBtn.addEventListener(
       'click',
       () => {
-        root.setAttribute('hidden', 'true');
-        root.setAttribute('aria-hidden', 'true');
-        root.dataset.state = 'closed';
+        alert.setAttribute('hidden', 'true');
+        alert.setAttribute('aria-hidden', 'true');
+        alert.dataset.state = 'closed';
+        alert.classList.add('alert--closed');
       },
       { passive: true }
     );
-  })();
+    alert.dataset.alertReady = 'true';
+  };
+
+  const hydrateAlerts = () => {
+    document
+      .querySelectorAll('.alert')
+      .forEach((alert) => attachDismiss(alert));
+  };
+
+  const ready = () => hydrateAlerts();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ready, { once: true });
+  } else {
+    ready();
+  }
+
+  document.addEventListener('astro:page-load', hydrateAlerts);
 </script>
+
+<style is:inline>
+  .alert {
+    --alert-bg: #ffffff;
+    --alert-border: #e5e7eb;
+    --alert-text: #0f172a;
+    --alert-muted: #475467;
+    --alert-icon: #2563eb;
+    --alert-hover-bg: #eff6ff;
+    --alert-hover-border: #c7d2fe;
+    --alert-focus: #2563eb;
+    position: relative;
+    display: flex;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--alert-border);
+    border-radius: 1rem;
+    background-color: var(--alert-bg);
+    color: var(--alert-text);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .alert:hover {
+    border-color: var(--alert-hover-border);
+    background-color: var(--alert-hover-bg);
+  }
+
+  .alert__inner {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .alert__icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--alert-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.12);
+  }
+
+  :where(.dark) .alert__icon {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .alert__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .alert__title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--alert-text);
+  }
+
+  .alert__message {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--alert-muted);
+  }
+
+  .alert__dismiss {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--alert-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .alert__dismiss:hover {
+    border-color: var(--alert-hover-border);
+    background-color: var(--alert-hover-bg);
+  }
+
+  .alert__dismiss:focus-visible {
+    outline: 2px solid var(--alert-focus);
+    outline-offset: 2px;
+    border-color: var(--alert-focus);
+  }
+
+  .alert__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .alert--closed {
+    display: none;
+  }
+
+  :where(.dark) .alert {
+    --alert-bg: #0f172a;
+    --alert-border: #1f2937;
+    --alert-text: #f8fafc;
+    --alert-muted: #cbd5f5;
+    --alert-hover-bg: #1f2937;
+    --alert-hover-border: #334155;
+    --alert-focus: #60a5fa;
+    box-shadow: 0 16px 32px rgba(2, 6, 23, 0.65);
+  }
+
+  .alert--palette-classic {
+    --alert-bg: #ffffff;
+    --alert-border: #e5e7eb;
+    --alert-text: #111827;
+    --alert-muted: #4b5563;
+    --alert-icon: #2563eb;
+    --alert-hover-bg: #eff6ff;
+    --alert-hover-border: #60a5fa;
+    --alert-focus: #2563eb;
+  }
+
+  :where(.dark) .alert--palette-classic {
+    --alert-bg: #111827;
+    --alert-border: #374151;
+    --alert-text: #ffffff;
+    --alert-muted: #cbd5f5;
+    --alert-icon: #60a5fa;
+    --alert-hover-bg: #1f2937;
+    --alert-hover-border: #3b82f6;
+    --alert-focus: #60a5fa;
+  }
+
+  .alert--palette-nature {
+    --alert-bg: #fafaf9;
+    --alert-border: #e7e5e4;
+    --alert-text: #1c1917;
+    --alert-muted: #44403c;
+    --alert-icon: #059669;
+    --alert-hover-bg: #f7f3f9;
+    --alert-hover-border: #34d399;
+    --alert-focus: #059669;
+  }
+
+  :where(.dark) .alert--palette-nature {
+    --alert-bg: #0c0a09;
+    --alert-border: #292524;
+    --alert-text: #f5f5f4;
+    --alert-muted: #d6d3d1;
+    --alert-icon: #34d399;
+    --alert-hover-bg: #181716;
+    --alert-hover-border: #10b981;
+    --alert-focus: #34d399;
+  }
+
+  .alert--palette-warm {
+    --alert-bg: #f9fafb;
+    --alert-border: #d1d5db;
+    --alert-text: #111827;
+    --alert-muted: #4b5563;
+    --alert-icon: #7c3aed;
+    --alert-hover-bg: #faf5ff;
+    --alert-hover-border: #a78bfa;
+    --alert-focus: #7c3aed;
+  }
+
+  :where(.dark) .alert--palette-warm {
+    --alert-bg: #030712;
+    --alert-border: #374151;
+    --alert-text: #f9fafb;
+    --alert-muted: #cbd5f5;
+    --alert-icon: #a78bfa;
+    --alert-hover-bg: #111827;
+    --alert-hover-border: #8b5cf6;
+    --alert-focus: #a78bfa;
+  }
+
+  .alert--palette-sky {
+    --alert-bg: #f8fafc;
+    --alert-border: #e2e8f0;
+    --alert-text: #0f172a;
+    --alert-muted: #334155;
+    --alert-icon: #0891b2;
+    --alert-hover-bg: #ecfeff;
+    --alert-hover-border: #22d3ee;
+    --alert-focus: #0891b2;
+  }
+
+  :where(.dark) .alert--palette-sky {
+    --alert-bg: #0f172a;
+    --alert-border: #1e293b;
+    --alert-text: #f8fafc;
+    --alert-muted: #cbd5f5;
+    --alert-icon: #67e8f9;
+    --alert-hover-bg: #020617;
+    --alert-hover-border: #06b6d4;
+    --alert-focus: #22d3ee;
+  }
+
+  .alert--palette-orange {
+    --alert-bg: #fafafa;
+    --alert-border: #e4e4e7;
+    --alert-text: #18181b;
+    --alert-muted: #3f3f46;
+    --alert-icon: #f97316;
+    --alert-hover-bg: #fff7ed;
+    --alert-hover-border: #fb923c;
+    --alert-focus: #f97316;
+  }
+
+  :where(.dark) .alert--palette-orange {
+    --alert-bg: #09090b;
+    --alert-border: #27272a;
+    --alert-text: #fafafa;
+    --alert-muted: #d4d4d8;
+    --alert-icon: #fdba74;
+    --alert-hover-bg: #18181b;
+    --alert-hover-border: #fb923c;
+    --alert-focus: #fb923c;
+  }
+</style>
