@@ -223,12 +223,28 @@ const maxVisibleAttr = String(maxVisibleOptions);
 
     let filtered = optionsData.slice();
     let activeIndex = -1;
+    let optionNodes = [];
+    const filterCache = new Map();
+    const searchIndex = optionsData.map((option) => ({
+      option,
+      haystack: [
+        option.label,
+        option.value,
+        option.description ?? '',
+        ...(option.keywords ?? []),
+      ]
+        .join(' ')
+        .toLowerCase(),
+    }));
 
-    const focusOption = (index) => {
-      const items = Array.from(
+    const syncOptionNodes = () => {
+      optionNodes = Array.from(
         list.querySelectorAll('[data-autocomplete-option]')
       );
-      items.forEach((item, itemIndex) => {
+    };
+
+    const focusOption = (index) => {
+      optionNodes.forEach((item, itemIndex) => {
         const isActive = itemIndex === index;
         item.dataset.active = isActive ? 'true' : 'false';
         item.setAttribute('aria-selected', String(isActive));
@@ -278,6 +294,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
     const render = () => {
       if (filtered.length === 0) {
         list.innerHTML = '';
+        optionNodes = [];
         announce(emptyStateMessage);
         if (empty) {
           empty.hidden = false;
@@ -321,6 +338,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
           `
         )
         .join('');
+      syncOptionNodes();
       focusOption(-1);
     };
 
@@ -329,6 +347,7 @@ const maxVisibleAttr = String(maxVisibleOptions);
       currentQuery = query;
       if (!query) {
         filtered = optionsData.slice();
+        filterCache.clear();
         render();
         closePanel();
         hidden.value = '';
@@ -339,17 +358,15 @@ const maxVisibleAttr = String(maxVisibleOptions);
         return;
       }
 
-      filtered = optionsData.filter((option) => {
-        const haystack = [
-          option.label,
-          option.value,
-          option.description ?? '',
-          ...(option.keywords ?? []),
-        ]
-          .join(' ')
-          .toLowerCase();
-        return haystack.includes(query);
-      });
+      if (filterCache.has(query)) {
+        filtered = filterCache.get(query);
+      } else {
+        const result = searchIndex
+          .filter((entry) => entry.haystack.includes(query))
+          .map((entry) => entry.option);
+        filtered = result;
+        filterCache.set(query, result);
+      }
 
       render();
       openPanel();
@@ -364,11 +381,24 @@ const maxVisibleAttr = String(maxVisibleOptions);
       );
     };
 
+    const scheduleFilter = (() => {
+      let raf = 0;
+      let pendingValue = '';
+      return (value) => {
+        pendingValue = value;
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          filterOptions(pendingValue);
+          updateClearButton();
+        });
+      };
+    })();
+
     input.addEventListener('input', (event) => {
       const target =
         event.target instanceof HTMLInputElement ? event.target : input;
-      filterOptions(target.value);
-      updateClearButton();
+      scheduleFilter(target.value);
     });
 
     input.addEventListener('focus', () => {
@@ -403,30 +433,27 @@ const maxVisibleAttr = String(maxVisibleOptions);
       }
     });
 
-    list.addEventListener('mousemove', (event) => {
+    const optionIndexFromEvent = (event) => {
       const target =
         event.target instanceof HTMLElement
           ? event.target.closest('[data-autocomplete-option]')
           : null;
-      if (!(target instanceof HTMLElement)) return;
-      const items = Array.from(
-        list.querySelectorAll('[data-autocomplete-option]')
-      );
-      const index = items.indexOf(target);
-      focusOption(index);
+      if (!(target instanceof HTMLElement)) return -1;
+      return optionNodes.indexOf(target);
+    };
+
+    list.addEventListener('mousemove', (event) => {
+      const index = optionIndexFromEvent(event);
+      if (index >= 0) {
+        focusOption(index);
+      }
     });
 
     list.addEventListener('click', (event) => {
-      const target =
-        event.target instanceof HTMLElement
-          ? event.target.closest('[data-autocomplete-option]')
-          : null;
-      if (!(target instanceof HTMLElement)) return;
-      const items = Array.from(
-        list.querySelectorAll('[data-autocomplete-option]')
-      );
-      const index = items.indexOf(target);
-      selectOption(index);
+      const index = optionIndexFromEvent(event);
+      if (index >= 0) {
+        selectOption(index);
+      }
       input.focus();
     });
 

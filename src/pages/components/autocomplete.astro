@@ -123,22 +123,34 @@ const languages = [
   { value: 'rs', label: 'Rust', description: 'Memory-safe systems language.' },
   { value: 'py', label: 'Python', description: 'Batteries-included scripting language.' },
 ];
-
 ---
 
-<Autocomplete
-  options={languages}
-  label="Languages"
-  placeholder="Search languages…"
-  maxVisibleOptions={5}
-  inputName="language"
-  color="classicBlue"
-/>`;
+<div
+  on:autocomplete:select={(event) => {
+    const option = event.detail;
+    console.log('Selected language:', option.label);
+  }}
+  on:autocomplete:clear={() => {
+    console.log('Selection cleared');
+  }}
+>
+  <Autocomplete
+    options={languages}
+    label="Languages"
+    placeholder="Search languages…"
+    maxVisibleOptions={5}
+    inputName="language"
+    color="classicBlue"
+  />
+</div>`;
 
-const eventSnippet = `// Listen for selection events
+const eventSnippet = `// Or listen globally (multiple widgets can emit events)
 document.addEventListener('autocomplete:select', (event) => {
-  const option = event.detail;
-  console.log('Selected option', option);
+  console.log('Selected option', event.detail);
+});
+
+document.addEventListener('autocomplete:clear', () => {
+  console.log('Autocomplete cleared');
 });`;
 ---
 
@@ -330,10 +342,12 @@ document.addEventListener('autocomplete:select', (event) => {
   <section class="mt-10 space-y-6">
     <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Pass the option data, label, and placeholder text. The component emits <code
-        >autocomplete:select</code
-      >
-      and <code>autocomplete:clear</code> events so you can hook into user actions.
+      Pass the option data, label, and placeholder text. Bind to the root
+      element with <code>on:autocomplete:select</code> and <code
+        >on:autocomplete:clear</code
+      > to react to user actions (update state, fire analytics, trigger navigation,
+      etc.). The example below logs both events and still works inline without extra
+      JS files.
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
