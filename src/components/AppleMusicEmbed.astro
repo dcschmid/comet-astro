@@ -1,5 +1,4 @@
 ---
-import { cn } from '../utils/cn';
 import LoadingSpinner from './LoadingSpinner.astro';
 
 /**
@@ -38,6 +37,14 @@ const {
   ariaLabel,
   ...props
 } = Astro.props;
+
+const variantOptions = ['default', 'minimal', 'card'] as const;
+type Variant = (typeof variantOptions)[number];
+const variantKey = variantOptions.includes(
+  (props.variant as Variant) || 'default'
+)
+  ? (props.variant as Variant)
+  : 'default';
 
 // Build Apple Music/Podcasts embed URL
 const buildAppleEmbedUrl = (): string => {
@@ -114,10 +121,10 @@ const getAppleAspectRatio = (): string => {
   switch (contentType) {
     case 'song':
     case 'episode':
+    case 'podcast':
       return '16/7'; // Compact player ~175px height
     case 'album':
     case 'playlist':
-    case 'podcast':
       return '16/9'; // Standard player ~450px height
     default:
       return '16/9';
@@ -158,35 +165,48 @@ try {
   paddingTop = '56.25%';
 }
 
-const containerClass = cn('w-full', className);
 const uid = `apple-embed-${Math.random().toString(36).slice(2, 8)}`;
+const baseHeight =
+  contentType === 'song' ||
+  contentType === 'episode' ||
+  contentType === 'podcast'
+    ? 175
+    : 450;
+const rootClasses = [
+  'apple-embed',
+  `apple-embed--variant-${variantKey}`,
+  showLoading ? 'apple-embed--loading' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
   id={uid}
-  class={containerClass}
+  class={rootClasses}
   role="region"
   aria-label={finalAriaLabel}
   data-apple-embed-id={uid}
   data-apple-embed-loading={showLoading ? 'true' : 'false'}
+  data-auto-height={autoHeight ? 'true' : 'false'}
+  data-base-height={baseHeight}
 >
   {
     autoHeight ? (
       <div
-        class="relative"
+        class="apple-embed__viewport apple-embed__viewport--fixed"
         data-apple-height-wrapper
-        style={`height: ${contentType === 'song' || contentType === 'episode' ? 175 : 450}px;`}
+        style={`height: ${baseHeight}px;`}
       >
         {showLoading && (
-          <div
-            data-apple-embed-overlay
-            class="absolute inset-0 z-10 flex items-center justify-center bg-slate-100/80 dark:bg-slate-900/80"
-          >
+          <div data-apple-embed-overlay class="apple-embed__overlay">
             <LoadingSpinner
               size="lg"
               variant="primary"
               label="Loading content"
               showLabel={true}
+              className="apple-embed__spinner"
             />
           </div>
         )}
@@ -195,7 +215,7 @@ const uid = `apple-embed-${Math.random().toString(36).slice(2, 8)}`;
           id={`${uid}-frame`}
           src={embedUrl}
           title={finalTitle}
-          class="absolute inset-0 w-full h-full border-0"
+          class="apple-embed__iframe"
           loading={showLoading ? 'lazy' : 'eager'}
           allow={
             props.allow ??
@@ -212,20 +232,25 @@ const uid = `apple-embed-${Math.random().toString(36).slice(2, 8)}`;
         />
 
         {props.description && (
-          <div id="apple-embed-desc" class="sr-only">
+          <div id="apple-embed-desc" class="apple-embed__sr-only">
             {props.description}
           </div>
         )}
       </div>
     ) : (
-      <div class="relative" style={`padding-top: ${paddingTop};`}>
+      <div
+        class="apple-embed__viewport"
+        data-apple-height-wrapper
+        style={`padding-top: ${paddingTop};`}
+      >
         {showLoading && (
-          <div class="absolute inset-0 z-10 flex items-center justify-center bg-slate-100/80 dark:bg-slate-900/80">
+          <div class="apple-embed__overlay" data-apple-embed-overlay>
             <LoadingSpinner
               size="lg"
               variant="primary"
               label="Loading content"
               showLabel={true}
+              className="apple-embed__spinner"
             />
           </div>
         )}
@@ -234,7 +259,7 @@ const uid = `apple-embed-${Math.random().toString(36).slice(2, 8)}`;
           id={`${uid}-frame`}
           src={embedUrl}
           title={finalTitle}
-          class="absolute inset-0 w-full h-full border-0"
+          class="apple-embed__iframe"
           loading={showLoading ? 'lazy' : 'eager'}
           allow={
             props.allow ??
@@ -251,7 +276,7 @@ const uid = `apple-embed-${Math.random().toString(36).slice(2, 8)}`;
         />
 
         {props.description && (
-          <div id="apple-embed-desc" class="sr-only">
+          <div id="apple-embed-desc" class="apple-embed__sr-only">
             {props.description}
           </div>
         )}
@@ -259,79 +284,172 @@ const uid = `apple-embed-${Math.random().toString(36).slice(2, 8)}`;
     )
   }
 
-  <script>
-    (function () {
-      if (typeof window === 'undefined' || typeof document === 'undefined')
-        return;
+  <script type="module" is:inline>
+    const initAppleEmbed = (container) => {
+      if (!(container instanceof HTMLElement)) return;
+      if (container.dataset.embedReady === 'true') return;
+      const iframe = container.querySelector('.apple-embed__iframe');
+      if (!(iframe instanceof HTMLIFrameElement)) return;
+      const overlay = container.querySelector('[data-apple-embed-overlay]');
+      const viewport = container.querySelector('[data-apple-height-wrapper]');
+      const autoHeight = container.dataset.autoHeight === 'true';
 
-      function initContainer(container) {
-        try {
-          const iframe = container.querySelector('iframe');
-          const overlay = container.querySelector('[data-apple-embed-overlay]');
-          const wrapper = container.querySelector(
-            '[data-apple-height-wrapper]'
-          );
-          if (!iframe) return;
+      const hideOverlay = () => {
+        overlay?.classList.add('apple-embed__overlay--hidden');
+        container.classList.remove('apple-embed--loading');
+        container.dataset.appleEmbedLoading = 'false';
+      };
 
-          function hideOverlay() {
-            if (overlay) overlay.style.display = 'none';
-            container.dataset.appleEmbedLoading = 'false';
+      const setHeight = (value) => {
+        if (!autoHeight || !viewport || typeof value !== 'number') return;
+        viewport.style.height = `${value}px`;
+      };
+
+      const handleLoad = () => {
+        if (autoHeight) {
+          try {
+            const doc =
+              iframe.contentDocument || iframe.contentWindow?.document;
+            const h =
+              doc?.documentElement?.scrollHeight || doc?.body?.scrollHeight;
+            if (h) setHeight(h);
+          } catch {
+            /* cross-origin */
           }
-
-          // On iframe load: try same-origin sizing then hide overlay
-          iframe.addEventListener('load', function () {
-            try {
-              // Same-origin sizing (may throw if cross-origin)
-              const doc =
-                iframe.contentDocument || iframe.contentWindow.document;
-              const h =
-                doc.documentElement.scrollHeight || doc.body.scrollHeight;
-              if (h && wrapper) {
-                wrapper.style.height = h + 'px';
-              }
-            } catch {
-              // cross-origin — ignore
-            }
-            hideOverlay();
-          });
-
-          // Listen for postMessage from iframe (embed can send {type:'embed-size', height: N})
-          function onMessage(ev) {
-            if (!iframe || !iframe.contentWindow) return;
-            if (ev.source !== iframe.contentWindow) return;
-            const data = ev.data || {};
-            if (
-              data &&
-              data.type === 'embed-size' &&
-              typeof data.height === 'number'
-            ) {
-              if (wrapper) wrapper.style.height = data.height + 'px';
-            }
-            if (data && data.type === 'embed-ready') {
-              hideOverlay();
-            }
-          }
-          window.addEventListener('message', onMessage);
-
-          // Fallback: hide overlay after 12s to avoid perpetual spinner
-          const t = setTimeout(hideOverlay, 12000);
-
-          // Cleanup when node is removed from DOM
-          const mo = new MutationObserver(() => {
-            if (!document.body.contains(container)) {
-              window.removeEventListener('message', onMessage);
-              clearTimeout(t);
-              mo.disconnect();
-            }
-          });
-          mo.observe(document.body, { childList: true, subtree: true });
-        } catch {
-          // don't let script errors bubble up
         }
-      }
+        hideOverlay();
+      };
 
-      // Initialize all existing embed containers
-      document.querySelectorAll('[data-apple-embed-id]').forEach(initContainer);
-    })();
+      iframe.addEventListener('load', handleLoad);
+
+      const onMessage = (event) => {
+        if (event.source !== iframe.contentWindow) return;
+        const data = event.data || {};
+        if (typeof data.height === 'number') setHeight(data.height);
+        if (data.type === 'embed-ready') hideOverlay();
+      };
+
+      window.addEventListener('message', onMessage);
+      const fallback = window.setTimeout(hideOverlay, 12000);
+
+      const observer = new MutationObserver(() => {
+        if (!document.body.contains(container)) {
+          iframe.removeEventListener('load', handleLoad);
+          window.removeEventListener('message', onMessage);
+          window.clearTimeout(fallback);
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      container.dataset.embedReady = 'true';
+    };
+
+    const hydrateEmbeds = () => {
+      document
+        .querySelectorAll('.apple-embed')
+        .forEach((container) => initAppleEmbed(container));
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', hydrateEmbeds, {
+        once: true,
+      });
+    } else {
+      hydrateEmbeds();
+    }
+
+    document.addEventListener('astro:page-load', hydrateEmbeds);
   </script>
 </div>
+
+<style is:inline>
+  .apple-embed {
+    --apple-embed-bg: #0f172a;
+    --apple-embed-border: #1e293b;
+    --apple-embed-overlay: rgba(2, 6, 23, 0.7);
+    --apple-embed-spinner: #e5e7eb;
+    border-radius: 1.25rem;
+    background: var(--apple-embed-bg);
+    padding: clamp(0.5rem, 2vw, 1rem);
+    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.2);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .apple-embed--loading {
+    box-shadow: 0 12px 25px rgba(15, 23, 42, 0.25);
+  }
+
+  .apple-embed__viewport {
+    position: relative;
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--apple-embed-border);
+    background: #000;
+  }
+
+  .apple-embed__viewport--fixed {
+    height: 100%;
+  }
+
+  .apple-embed__iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+  }
+
+  .apple-embed__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--apple-embed-overlay);
+    transition: opacity 0.2s ease;
+  }
+
+  .apple-embed__overlay--hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .apple-embed__spinner {
+    color: var(--apple-embed-spinner);
+  }
+
+  .apple-embed__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .apple-embed--variant-minimal {
+    --apple-embed-bg: transparent;
+    --apple-embed-border: rgba(148, 163, 184, 0.3);
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .apple-embed--variant-card {
+    --apple-embed-bg: #ffffff;
+    --apple-embed-border: #e2e8f0;
+    --apple-embed-overlay: rgba(255, 255, 255, 0.8);
+    --apple-embed-spinner: #0f172a;
+  }
+
+  :where(.dark) .apple-embed--variant-card {
+    --apple-embed-bg: #111827;
+    --apple-embed-border: #1f2937;
+    --apple-embed-overlay: rgba(15, 23, 42, 0.75);
+    --apple-embed-spinner: #f8fafc;
+  }
+</style>
