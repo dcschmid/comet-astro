@@ -285,6 +285,31 @@ const rootClasses = [
   }
 
   <script type="module" is:inline>
+    const ENTRY_MAP = new WeakMap();
+    const WINDOW_MAP = new Map();
+
+    const hideOverlay = (entry) => {
+      entry.overlay?.classList.add('apple-embed__overlay--hidden');
+      entry.container.classList.remove('apple-embed--loading');
+      entry.container.dataset.appleEmbedLoading = 'false';
+    };
+
+    const setHeight = (entry, value) => {
+      if (!entry.autoHeight || !entry.viewport) return;
+      if (typeof value !== 'number') return;
+      entry.viewport.style.height = `${value}px`;
+    };
+
+    const handleMessage = (event) => {
+      const entry = WINDOW_MAP.get(event.source);
+      if (!entry) return;
+      const data = event.data || {};
+      if (typeof data.height === 'number') setHeight(entry, data.height);
+      if (data.type === 'embed-ready') hideOverlay(entry);
+    };
+
+    window.addEventListener('message', handleMessage);
+
     const initAppleEmbed = (container) => {
       if (!(container instanceof HTMLElement)) return;
       if (container.dataset.embedReady === 'true') return;
@@ -294,53 +319,45 @@ const rootClasses = [
       const viewport = container.querySelector('[data-apple-height-wrapper]');
       const autoHeight = container.dataset.autoHeight === 'true';
 
-      const hideOverlay = () => {
-        overlay?.classList.add('apple-embed__overlay--hidden');
-        container.classList.remove('apple-embed--loading');
-        container.dataset.appleEmbedLoading = 'false';
-      };
+      const entry = { container, iframe, overlay, viewport, autoHeight };
+      ENTRY_MAP.set(container, entry);
 
-      const setHeight = (value) => {
-        if (!autoHeight || !viewport || typeof value !== 'number') return;
-        viewport.style.height = `${value}px`;
-      };
-
-      const handleLoad = () => {
+      const onLoad = () => {
         if (autoHeight) {
           try {
             const doc =
               iframe.contentDocument || iframe.contentWindow?.document;
             const h =
               doc?.documentElement?.scrollHeight || doc?.body?.scrollHeight;
-            if (h) setHeight(h);
+            if (h) setHeight(entry, h);
           } catch {
-            /* cross-origin */
+            /* cross-origin, ignore */
           }
         }
-        hideOverlay();
+        if (iframe.contentWindow) {
+          WINDOW_MAP.set(iframe.contentWindow, entry);
+        }
+        hideOverlay(entry);
       };
 
-      iframe.addEventListener('load', handleLoad);
+      iframe.addEventListener('load', onLoad, { once: true });
+      const fallback = window.setTimeout(() => hideOverlay(entry), 12000);
 
-      const onMessage = (event) => {
-        if (event.source !== iframe.contentWindow) return;
-        const data = event.data || {};
-        if (typeof data.height === 'number') setHeight(data.height);
-        if (data.type === 'embed-ready') hideOverlay();
+      const cleanup = () => {
+        iframe.removeEventListener('load', onLoad);
+        if (iframe.contentWindow) WINDOW_MAP.delete(iframe.contentWindow);
+        window.clearTimeout(fallback);
+        ENTRY_MAP.delete(container);
       };
-
-      window.addEventListener('message', onMessage);
-      const fallback = window.setTimeout(hideOverlay, 12000);
 
       const observer = new MutationObserver(() => {
         if (!document.body.contains(container)) {
-          iframe.removeEventListener('load', handleLoad);
-          window.removeEventListener('message', onMessage);
-          window.clearTimeout(fallback);
+          cleanup();
           observer.disconnect();
         }
       });
       observer.observe(document.body, { childList: true, subtree: true });
+
       container.dataset.embedReady = 'true';
     };
 

@@ -6,62 +6,87 @@ interface Props {
 
 const { ratio = '16/9', className = '' } = Astro.props;
 
-const ratioClasses: Record<string, string> = {
-  '1/1': 'aspect-square',
-  '4/3': 'aspect-[4/3]',
-  '16/9': 'aspect-video',
-  '21/9': 'aspect-[21/9]',
-  '3/2': 'aspect-[3/2]',
-  '2/3': 'aspect-[2/3]',
+const ratioMap: Record<string, number> = {
+  '1/1': 1,
+  '4/3': 4 / 3,
+  '16/9': 16 / 9,
+  '21/9': 21 / 9,
+  '3/2': 3 / 2,
+  '2/3': 2 / 3,
 };
 
-const parseRatioValue = (value: Props['ratio']): number | null => {
-  if (typeof value === 'number') {
-    return Number.isFinite(value) && value > 0 ? value : null;
+const parseNumericRatio = (value: Props['ratio']): number => {
+  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+    return value;
   }
   if (typeof value === 'string') {
     const trimmed = value.trim();
-    if (!trimmed) return null;
-    if (ratioClasses[trimmed]) return null;
+    if (!trimmed) return ratioMap['16/9'];
+    if (ratioMap[trimmed]) return ratioMap[trimmed];
     if (trimmed.includes('/')) {
-      const [numerator, denominator] = trimmed.split('/').map(Number);
-      if (
-        Number.isFinite(numerator) &&
-        Number.isFinite(denominator) &&
-        denominator !== 0
-      ) {
-        return numerator / denominator;
+      const [n, d] = trimmed.split('/').map(Number);
+      if (Number.isFinite(n) && Number.isFinite(d) && d !== 0) {
+        return n / d;
       }
-      return null;
     }
     const numeric = Number(trimmed);
-    return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+    if (Number.isFinite(numeric) && numeric > 0) return numeric;
   }
-  return null;
+  return ratioMap['16/9'];
 };
 
-const trimmedRatio = typeof ratio === 'string' ? ratio.trim() : ratio;
-const tailwindClass =
-  typeof trimmedRatio === 'string' && ratioClasses[trimmedRatio]
-    ? ratioClasses[trimmedRatio]
-    : undefined;
-const numericRatio = tailwindClass ? null : parseRatioValue(trimmedRatio);
-const fallbackClass = ratioClasses['16/9'];
+const numericRatio = parseNumericRatio(ratio);
+const ratioKey =
+  typeof ratio === 'string' && ratioMap[ratio]
+    ? ratio.replace('/', '-')
+    : 'custom';
+
 const containerClass = [
-  'relative',
-  tailwindClass ?? (numericRatio ? '' : fallbackClass),
+  'aspect-frame',
+  `aspect-frame--ratio-${ratioKey}`,
   className,
 ]
   .filter(Boolean)
   .join(' ');
-const aspectStyle =
-  tailwindClass || numericRatio === null
-    ? undefined
-    : `aspect-ratio: ${numericRatio};`;
+
+const styleAttr = `--aspect-ratio: ${numericRatio};`;
 ---
 
-<div class={containerClass} style={aspectStyle}>
-  <div class="absolute inset-0">
+<div class={containerClass} style={styleAttr}>
+  <div class="aspect-frame__viewport">
     <slot />
   </div>
 </div>
+
+<style is:inline>
+  .aspect-frame {
+    position: relative;
+    width: 100%;
+    display: block;
+    aspect-ratio: var(--aspect-ratio, 16 / 9);
+  }
+
+  .aspect-frame__viewport {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  @supports not (aspect-ratio: 1 / 1) {
+    .aspect-frame {
+      aspect-ratio: auto;
+    }
+
+    .aspect-frame::before {
+      content: '';
+      display: block;
+      padding-bottom: calc(100% / var(--aspect-ratio, 16 / 9));
+    }
+
+    .aspect-frame__viewport {
+      position: absolute;
+      inset: 0;
+    }
+  }
+</style>
