@@ -1,6 +1,4 @@
 ---
-import { tv } from 'tailwind-variants';
-
 /**
  * Accordion - collapsible sections (Disclosure)
  */
@@ -21,7 +19,7 @@ interface Props {
     | 'warmPurple'
     | 'skyCyan'
     | 'orangeAccent';
-  /** Optional per-slot class overrides. Values will be merged with the tv output. */
+  /** Optional per-slot class overrides. Values are appended to the base BEM classes. */
   classOverrides?: {
     wrapper?: string;
     section?: string;
@@ -40,199 +38,179 @@ const {
   classOverrides = {},
 } = Astro.props as Props;
 
-const section = tv({
-  base: 'rounded-xl shadow-sm transition-colors motion-reduce:transition-none',
-  variants: {
-    color: {
-      // Palette 1: Classic Blue
-      classicBlue:
-        'border-gray-200 bg-white text-gray-900 focus-within:border-gray-300 dark:border-gray-800 dark:bg-gray-900 dark:text-white',
-      // Palette 2: Nature Green
-      natureGreen:
-        'border-stone-100 bg-stone-50 text-stone-900 focus-within:border-stone-200 dark:border-stone-900 dark:bg-stone-950 dark:text-stone-100',
-      // Palette 3: Warm Purple
-      warmPurple:
-        'border-gray-100 bg-gray-50 text-gray-900 focus-within:border-gray-200 dark:border-gray-900 dark:bg-gray-950 dark:text-gray-50',
-      // Palette 4: Sky Cyan
-      skyCyan:
-        'border-slate-100 bg-slate-50 text-slate-900 focus-within:border-slate-200 dark:border-slate-900 dark:bg-slate-900 dark:text-slate-50',
-      // Palette 5: Orange Accent
-      orangeAccent:
-        'border-zinc-100 bg-zinc-50 text-zinc-900 focus-within:border-zinc-200 dark:border-zinc-900 dark:bg-zinc-950 dark:text-zinc-100',
-    },
-  },
-  defaultVariants: { color: 'slate' },
-});
+const paletteNames = [
+  'classicBlue',
+  'natureGreen',
+  'warmPurple',
+  'skyCyan',
+  'orangeAccent',
+] as const;
 
-const trigger = tv({
-  base: 'flex w-full min-h-12 items-center justify-between gap-3 rounded-lg px-4 py-3 text-left text-base font-medium transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:px-6 sm:py-4 sm:text-lg',
-  variants: {
-    open: {
-      true: '',
-      false: '',
-    },
-    color: {
-      classicBlue: 'hover:bg-white dark:hover:bg-gray-900',
-      natureGreen: 'hover:bg-stone-50 dark:hover:bg-stone-950',
-      warmPurple: 'hover:bg-gray-50 dark:hover:bg-gray-950',
-      skyCyan: 'hover:bg-slate-50 dark:hover:bg-slate-900',
-      orangeAccent: 'hover:bg-zinc-50 dark:hover:bg-zinc-950',
-    },
-  },
-  defaultVariants: { color: 'slate' },
-});
+type PaletteName = (typeof paletteNames)[number];
+const paletteSet = new Set<PaletteName>(paletteNames);
+const paletteKey = (
+  paletteSet.has(color as PaletteName) ? color : 'classicBlue'
+) as PaletteName;
 
-const icon = tv({
-  base: 'text-xl transition-transform motion-reduce:rotate-0 motion-reduce:transition-none',
-  variants: {
-    open: { true: 'rotate-180', false: '' },
-    color: {
-      classicBlue: 'text-blue-600 dark:text-blue-400',
-      natureGreen: 'text-emerald-600 dark:text-emerald-400',
-      warmPurple: 'text-violet-600 dark:text-violet-400',
-      skyCyan: 'text-cyan-600 dark:text-cyan-300',
-      orangeAccent: 'text-orange-500 dark:text-orange-300',
-    },
-  },
-  defaultVariants: { color: 'slate' },
-});
-
-const panelContent = tv({
-  base: 'px-4 pt-4 pb-5 text-base sm:px-6 sm:pt-5 sm:pb-6',
-  variants: {
-    color: {
-      classicBlue: 'text-gray-900 dark:text-white',
-      natureGreen: 'text-stone-900 dark:text-stone-100',
-      warmPurple: 'text-gray-900 dark:text-gray-50',
-      skyCyan: 'text-slate-900 dark:text-slate-50',
-      orangeAccent: 'text-zinc-900 dark:text-zinc-100',
-    },
-  },
-  defaultVariants: { color: 'slate' },
-});
+const wrapperClasses = [
+  'accordion',
+  multiple ? 'accordion--multiple' : 'accordion--single',
+  `accordion--palette-${paletteKey}`,
+  className,
+  classOverrides.wrapper || '',
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
-  class={`space-y-4 sm:space-y-5 ${className} ${classOverrides.wrapper || ''}`}
+  class={wrapperClasses}
   data-multiple={multiple}
   data-open={openIds.join(',')}
-  data-color={color}
 >
   {
-    items.map((it) => (
-      <section
-        class={section({ color }, { class: classOverrides.section || '' })}
-      >
-        <h3>
-          <button
-            id={`acc-trigger-${it.id}`}
-            class={
-              trigger(
-                { color, open: String(openIds.includes(it.id)) },
-                { class: classOverrides.trigger || '' }
-              ) +
-              ' ' +
-              (openIds.includes(it.id) ? '' : '')
-            }
-            data-acc-trigger
-            data-id={it.id}
-            aria-expanded={openIds.includes(it.id)}
-            aria-controls={`acc-panel-${it.id}`}
-          >
-            <span>{it.title}</span>
-            <span
-              aria-hidden="true"
-              class={icon(
-                { color, open: String(openIds.includes(it.id)) },
-                { class: classOverrides.icon || '' }
-              )}
-              data-acc-icon
+    items.map((it) => {
+      const isOpen = openIds.includes(it.id);
+      const itemClasses = [
+        'accordion__item',
+        isOpen ? 'accordion__item--open' : '',
+        classOverrides.section || '',
+      ]
+        .filter(Boolean)
+        .join(' ');
+      const triggerClasses = [
+        'accordion__trigger',
+        isOpen ? 'accordion__trigger--open' : '',
+        classOverrides.trigger || '',
+      ]
+        .filter(Boolean)
+        .join(' ');
+      const iconClasses = [
+        'accordion__icon',
+        isOpen ? 'accordion__icon--open' : '',
+        classOverrides.icon || '',
+      ]
+        .filter(Boolean)
+        .join(' ');
+      const panelContentClasses = [
+        'accordion__panel-content',
+        classOverrides.panelContent || '',
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      return (
+        <section class={itemClasses} data-acc-item>
+          <h3 class="accordion__heading">
+            <button
+              type="button"
+              id={`acc-trigger-${it.id}`}
+              class={triggerClasses}
+              data-acc-trigger
+              data-id={it.id}
+              aria-expanded={isOpen ? 'true' : 'false'}
+              aria-controls={`acc-panel-${it.id}`}
             >
-              ▾
-            </span>
-          </button>
-        </h3>
-        <div
-          id={`acc-panel-${it.id}`}
-          data-acc-panel
-          data-id={it.id}
-          role="region"
-          aria-labelledby={`acc-trigger-${it.id}`}
-          aria-hidden={openIds.includes(it.id) ? 'false' : 'true'}
-          hidden={!openIds.includes(it.id)}
-          class={openIds.includes(it.id) ? '' : 'hidden'}
-        >
+              <span class="accordion__trigger-label">{it.title}</span>
+              <span aria-hidden="true" class={iconClasses} data-acc-icon>
+                ▾
+              </span>
+            </button>
+          </h3>
           <div
-            class={panelContent(
-              { color },
-              { class: classOverrides.panelContent || '' }
-            )}
+            id={`acc-panel-${it.id}`}
+            data-acc-panel
+            data-id={it.id}
+            role="region"
+            aria-labelledby={`acc-trigger-${it.id}`}
+            aria-hidden={isOpen ? 'false' : 'true'}
+            hidden={!isOpen}
+            class={`accordion__panel ${isOpen ? 'accordion__panel--open' : ''}`}
           >
-            {it.content ? <div set:html={it.content} /> : null}
+            <div class={panelContentClasses}>
+              {it.content ? <div set:html={it.content} /> : null}
+            </div>
           </div>
-        </div>
-      </section>
-    ))
+        </section>
+      );
+    })
   }
 </div>
 
 <script is:inline>
   (function () {
-    const root = document.currentScript?.previousElementSibling;
+    const script = document.currentScript;
+    const root = script?.previousElementSibling;
     if (!(root instanceof HTMLElement)) return;
     const multiple = root.getAttribute('data-multiple') === 'true';
 
-    const getOpen = () => {
-      const raw = root.getAttribute('data-open') || '';
-      return new Set(raw.split(',').filter(Boolean));
-    };
+    const entryNodes = Array.from(root.querySelectorAll('[data-acc-item]'));
+    const entries = [];
+    for (const section of entryNodes) {
+      if (!(section instanceof HTMLElement)) continue;
+      const trigger = section.querySelector('[data-acc-trigger]');
+      const panel = section.querySelector('[data-acc-panel]');
+      if (!(trigger instanceof HTMLElement) || !(panel instanceof HTMLElement))
+        continue;
+      const iconEl = section.querySelector('[data-acc-icon]');
+      const id = trigger.getAttribute('data-id');
+      if (!id) continue;
+      entries.push({
+        id,
+        section,
+        trigger,
+        panel,
+        icon: iconEl instanceof HTMLElement ? iconEl : null,
+      });
+    }
+    if (!entries.length) return;
 
-    const setOpen = (openSet) => {
+    const entryMap = new Map(entries.map((entry) => [entry.id, entry]));
+
+    const initialOpen = (root.getAttribute('data-open') || '')
+      .split(',')
+      .filter(Boolean);
+    const openSet = new Set(initialOpen);
+
+    const setRootState = () => {
       root.setAttribute('data-open', Array.from(openSet).join(','));
     };
 
-    const syncUI = (openSet) => {
-      const panels = root.querySelectorAll('[data-acc-panel]');
-      panels.forEach((panel) => {
-        if (!(panel instanceof HTMLElement)) return;
-        const id = panel.getAttribute('data-id');
-        const isOpen = id ? openSet.has(id) : false;
-        panel.classList.toggle('hidden', !isOpen);
-        panel.toggleAttribute('hidden', !isOpen);
-        panel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-      });
+    const syncEntry = (entry, isOpen) => {
+      entry.trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      entry.trigger.classList.toggle('accordion__trigger--open', isOpen);
 
-      const triggers = root.querySelectorAll('[data-acc-trigger]');
-      triggers.forEach((trigger) => {
-        if (!(trigger instanceof HTMLElement)) return;
-        const id = trigger.getAttribute('data-id');
-        const isOpen = id ? openSet.has(id) : false;
-        trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        const panelId = id ? `acc-panel-${id}` : '';
-        if (panelId) {
-          if (isOpen) {
-            trigger.setAttribute('aria-describedby', panelId);
-          } else {
-            trigger.removeAttribute('aria-describedby');
-          }
-        }
-        const icon = trigger.querySelector('[data-acc-icon]');
-        if (icon instanceof HTMLElement) {
-          icon.classList.toggle('rotate-180', isOpen);
-        }
-        // color-aware open state classes
-        const color = root.getAttribute('data-color') || 'slate';
-        const openBgMap = {
-          classicBlue: ['bg-white', 'dark:bg-gray-900'],
-          natureGreen: ['bg-stone-50', 'dark:bg-stone-950'],
-          warmPurple: ['bg-gray-50', 'dark:bg-gray-950'],
-          skyCyan: ['bg-slate-50', 'dark:bg-slate-900'],
-          orangeAccent: ['bg-zinc-50', 'dark:bg-zinc-950'],
-        };
-        const classes = openBgMap[color] || openBgMap.slate;
-        trigger.classList.toggle(classes[0], isOpen);
-        trigger.classList.toggle(classes[1], isOpen);
+      if (isOpen) {
+        entry.trigger.setAttribute('aria-describedby', `acc-panel-${entry.id}`);
+      } else {
+        entry.trigger.removeAttribute('aria-describedby');
+      }
+
+      entry.section.classList.toggle('accordion__item--open', isOpen);
+      entry.panel.toggleAttribute('hidden', !isOpen);
+      entry.panel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      entry.panel.classList.toggle('accordion__panel--open', isOpen);
+      if (entry.icon) {
+        entry.icon.classList.toggle('accordion__icon--open', isOpen);
+      }
+    };
+
+    const syncUI = () => {
+      entries.forEach((entry) => {
+        syncEntry(entry, openSet.has(entry.id));
       });
+    };
+
+    const toggleEntry = (id) => {
+      if (!entryMap.has(id)) return;
+      if (openSet.has(id)) {
+        openSet.delete(id);
+      } else {
+        if (!multiple) openSet.clear();
+        openSet.add(id);
+      }
+      setRootState();
+      syncUI();
     };
 
     root.addEventListener('click', (event) => {
@@ -243,18 +221,288 @@ const panelContent = tv({
       if (!(target instanceof HTMLElement)) return;
       const id = target.getAttribute('data-id');
       if (!id) return;
-      const openSet = getOpen();
-      if (openSet.has(id)) {
-        openSet.delete(id);
-      } else {
-        if (!multiple) openSet.clear();
-        openSet.add(id);
-      }
-      setOpen(openSet);
-      syncUI(openSet);
+      toggleEntry(id);
     });
 
     // initial sync to ensure classes reflect provided openIds
-    syncUI(getOpen());
+    syncUI();
   })();
 </script>
+
+<style is:inline>
+  .accordion {
+    --ac-section-bg: var(--ac-section-bg-light, #ffffff);
+    --ac-section-border: var(--ac-section-border-light, #e5e7eb);
+    --ac-section-border-active: var(--ac-section-border-active-light, #d1d5db);
+    --ac-text: var(--ac-text-light, #111827);
+    --ac-panel-text: var(--ac-panel-text-light, #111827);
+    --ac-panel-border: var(--ac-panel-border-light, rgba(15, 23, 42, 0.08));
+    --ac-trigger-hover: var(--ac-trigger-hover-light, #ffffff);
+    --ac-icon: var(--ac-icon-light, #2563eb);
+    --ac-focus-ring: var(--ac-focus-ring-light, #2563eb);
+    --ac-focus-ring-offset: var(
+      --ac-focus-ring-offset-light,
+      rgba(255, 255, 255, 0.95)
+    );
+    --ac-shadow: var(--ac-shadow-light, 0 10px 25px rgba(15, 23, 42, 0.08));
+    --ac-shadow-hover: var(
+      --ac-shadow-hover-light,
+      0 15px 30px rgba(15, 23, 42, 0.12)
+    );
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  :where(.dark) .accordion {
+    --ac-section-bg: var(--ac-section-bg-dark, #111827);
+    --ac-section-border: var(--ac-section-border-dark, #1f2937);
+    --ac-section-border-active: var(--ac-section-border-active-dark, #374151);
+    --ac-text: var(--ac-text-dark, #f9fafb);
+    --ac-panel-text: var(--ac-panel-text-dark, #f9fafb);
+    --ac-panel-border: var(--ac-panel-border-dark, rgba(255, 255, 255, 0.12));
+    --ac-trigger-hover: var(--ac-trigger-hover-dark, #111827);
+    --ac-icon: var(--ac-icon-dark, #60a5fa);
+    --ac-focus-ring: var(--ac-focus-ring-dark, #60a5fa);
+    --ac-focus-ring-offset: var(
+      --ac-focus-ring-offset-dark,
+      rgba(15, 23, 42, 0.8)
+    );
+    --ac-shadow: var(--ac-shadow-dark, 0 8px 24px rgba(2, 6, 23, 0.65));
+    --ac-shadow-hover: var(
+      --ac-shadow-hover-dark,
+      0 12px 30px rgba(2, 6, 23, 0.75)
+    );
+  }
+
+  @media (min-width: 40rem) {
+    .accordion {
+      gap: 1.25rem;
+    }
+  }
+
+  .accordion__item {
+    border-radius: 1rem;
+    border: 1px solid var(--ac-section-border);
+    background-color: var(--ac-section-bg);
+    color: var(--ac-text);
+    box-shadow: var(--ac-shadow);
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .accordion__item--open {
+    border-color: var(--ac-section-border-active);
+    box-shadow: var(--ac-shadow-hover);
+  }
+
+  .accordion__heading {
+    margin: 0;
+  }
+
+  .accordion__trigger {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.85rem;
+    min-height: 3rem;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .accordion__trigger:hover,
+  .accordion__trigger--open {
+    background-color: var(--ac-trigger-hover);
+  }
+
+  .accordion__trigger:focus-visible {
+    outline: 2px solid var(--ac-focus-ring);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--ac-focus-ring-offset);
+  }
+
+  @media (min-width: 40rem) {
+    .accordion__trigger {
+      padding: 1rem 1.5rem;
+      font-size: 1.125rem;
+    }
+  }
+
+  .accordion__trigger-label {
+    flex: 1;
+  }
+
+  .accordion__icon {
+    font-size: 1.25rem;
+    color: var(--ac-icon);
+    transition: transform 0.2s ease;
+  }
+
+  .accordion__icon--open {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .accordion__icon {
+      transition: none;
+    }
+
+    .accordion__trigger {
+      transition: none;
+    }
+  }
+
+  .accordion__panel {
+    border-top: 1px solid var(--ac-panel-border);
+  }
+
+  .accordion__panel--open {
+    display: block;
+  }
+
+  .accordion__panel[hidden] {
+    display: none;
+  }
+
+  .accordion__panel-content {
+    padding: 1rem 1rem 1.25rem;
+    color: var(--ac-panel-text);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  @media (min-width: 40rem) {
+    .accordion__panel-content {
+      padding: 1.25rem 1.5rem 1.5rem;
+      font-size: 1.0625rem;
+    }
+  }
+
+  .accordion--palette-classicBlue {
+    --ac-section-bg-light: #ffffff;
+    --ac-section-border-light: #e5e7eb;
+    --ac-section-border-active-light: #d1d5db;
+    --ac-text-light: #111827;
+    --ac-panel-text-light: #111827;
+    --ac-panel-border-light: rgba(15, 23, 42, 0.08);
+    --ac-trigger-hover-light: #ffffff;
+    --ac-icon-light: #2563eb;
+    --ac-focus-ring-light: #2563eb;
+    --ac-focus-ring-offset-light: rgba(255, 255, 255, 0.95);
+    --ac-section-bg-dark: #111827;
+    --ac-section-border-dark: #1f2937;
+    --ac-section-border-active-dark: #374151;
+    --ac-text-dark: #f9fafb;
+    --ac-panel-text-dark: #f9fafb;
+    --ac-panel-border-dark: rgba(255, 255, 255, 0.12);
+    --ac-trigger-hover-dark: #111827;
+    --ac-icon-dark: #60a5fa;
+    --ac-focus-ring-dark: #60a5fa;
+    --ac-focus-ring-offset-dark: rgba(15, 23, 42, 0.8);
+  }
+
+  .accordion--palette-natureGreen {
+    --ac-section-bg-light: #fafaf9;
+    --ac-section-border-light: #f5f5f4;
+    --ac-section-border-active-light: #e7e5e4;
+    --ac-text-light: #1c1917;
+    --ac-panel-text-light: #1c1917;
+    --ac-panel-border-light: rgba(28, 25, 23, 0.08);
+    --ac-trigger-hover-light: #fdfcfb;
+    --ac-icon-light: #059669;
+    --ac-focus-ring-light: #10b981;
+    --ac-focus-ring-offset-light: rgba(255, 255, 255, 0.92);
+    --ac-section-bg-dark: #0c0a09;
+    --ac-section-border-dark: #1c1917;
+    --ac-section-border-active-dark: #292524;
+    --ac-text-dark: #f5f5f4;
+    --ac-panel-text-dark: #f5f5f4;
+    --ac-panel-border-dark: rgba(245, 245, 244, 0.16);
+    --ac-trigger-hover-dark: #0c0a09;
+    --ac-icon-dark: #34d399;
+    --ac-focus-ring-dark: #34d399;
+    --ac-focus-ring-offset-dark: rgba(12, 10, 9, 0.85);
+  }
+
+  .accordion--palette-warmPurple {
+    --ac-section-bg-light: #f9fafb;
+    --ac-section-border-light: #f3f4f6;
+    --ac-section-border-active-light: #e5e7eb;
+    --ac-text-light: #111827;
+    --ac-panel-text-light: #111827;
+    --ac-panel-border-light: rgba(17, 24, 39, 0.08);
+    --ac-trigger-hover-light: #fdfdfd;
+    --ac-icon-light: #7c3aed;
+    --ac-focus-ring-light: #8b5cf6;
+    --ac-focus-ring-offset-light: rgba(255, 255, 255, 0.94);
+    --ac-section-bg-dark: #030712;
+    --ac-section-border-dark: #111827;
+    --ac-section-border-active-dark: #1f2937;
+    --ac-text-dark: #f9fafb;
+    --ac-panel-text-dark: #f9fafb;
+    --ac-panel-border-dark: rgba(249, 250, 251, 0.14);
+    --ac-trigger-hover-dark: #030712;
+    --ac-icon-dark: #a78bfa;
+    --ac-focus-ring-dark: #a78bfa;
+    --ac-focus-ring-offset-dark: rgba(3, 7, 18, 0.85);
+  }
+
+  .accordion--palette-skyCyan {
+    --ac-section-bg-light: #f8fafc;
+    --ac-section-border-light: #e2e8f0;
+    --ac-section-border-active-light: #cbd5f5;
+    --ac-text-light: #0f172a;
+    --ac-panel-text-light: #0f172a;
+    --ac-panel-border-light: rgba(2, 6, 23, 0.08);
+    --ac-trigger-hover-light: #fdfefe;
+    --ac-icon-light: #0891b2;
+    --ac-focus-ring-light: #0ea5e9;
+    --ac-focus-ring-offset-light: rgba(255, 255, 255, 0.94);
+    --ac-section-bg-dark: #0f172a;
+    --ac-section-border-dark: #1e293b;
+    --ac-section-border-active-dark: #334155;
+    --ac-text-dark: #f8fafc;
+    --ac-panel-text-dark: #f8fafc;
+    --ac-panel-border-dark: rgba(148, 163, 184, 0.2);
+    --ac-trigger-hover-dark: #0f172a;
+    --ac-icon-dark: #67e8f9;
+    --ac-focus-ring-dark: #22d3ee;
+    --ac-focus-ring-offset-dark: rgba(15, 23, 42, 0.85);
+  }
+
+  .accordion--palette-orangeAccent {
+    --ac-section-bg-light: #fafafa;
+    --ac-section-border-light: #f4f4f5;
+    --ac-section-border-active-light: #e4e4e7;
+    --ac-text-light: #18181b;
+    --ac-panel-text-light: #18181b;
+    --ac-panel-border-light: rgba(24, 24, 27, 0.08);
+    --ac-trigger-hover-light: #fefefe;
+    --ac-icon-light: #f97316;
+    --ac-focus-ring-light: #fb923c;
+    --ac-focus-ring-offset-light: rgba(255, 255, 255, 0.95);
+    --ac-section-bg-dark: #09090b;
+    --ac-section-border-dark: #18181b;
+    --ac-section-border-active-dark: #27272a;
+    --ac-text-dark: #f4f4f5;
+    --ac-panel-text-dark: #f4f4f5;
+    --ac-panel-border-dark: rgba(244, 244, 245, 0.18);
+    --ac-trigger-hover-dark: #09090b;
+    --ac-icon-dark: #fdba74;
+    --ac-focus-ring-dark: #fdba74;
+    --ac-focus-ring-offset-dark: rgba(9, 9, 11, 0.85);
+  }
+</style>
