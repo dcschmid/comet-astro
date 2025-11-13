@@ -283,36 +283,23 @@ const transcriptEntryClasses = 'audio-player__transcript-entry';
 
 <script is:inline define:vars={{ transcriptEntryClass: transcriptEntryClasses }}
 >
-  const initAudioPlayers = () => {
-    const players = document.querySelectorAll('[data-audio-player]');
+  (() => {
+    const HYDRATED_ATTR = 'data-audio-player-ready';
+    const hydratedPlayers = new WeakSet();
+    const transcriptCache = new Map();
+    const transcriptClassName = transcriptEntryClass;
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const formatTime = (seconds) => {
       if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
-      return `${String(mins)}:${String(secs).padStart(2, '0')}`;
-    };
-
-    const updateSeekVisual = (input, audio) => {
-      const max = Number(input.max) || 0;
-      const value = Number(input.value) || 0;
-      const percent =
-        max > 0 ? Math.min(Math.max((value / max) * 100, 0), 100) : 0;
-      input.style.setProperty('--seek-percent', `${percent}%`);
-      if (audio instanceof HTMLAudioElement) {
-        const seconds = Number.isFinite(value) ? value : audio.currentTime;
-        const resolvedSeconds = Number.isFinite(seconds) ? seconds : 0;
-        input.setAttribute(
-          'aria-valuenow',
-          String(Math.floor(resolvedSeconds))
-        );
-        input.setAttribute('aria-valuetext', formatTime(resolvedSeconds));
-        input.setAttribute('aria-valuemax', input.max || '0');
-      }
+      return `${mins}:${String(secs).padStart(2, '0')}`;
     };
 
     const escapeHtml = (value) =>
-      value.replace(/[&<>"']/g, (char) => {
+      String(value ?? '').replace(/[&<>"']/g, (char) => {
         const map = {
           '&': '&amp;',
           '<': '&lt;',
@@ -323,7 +310,7 @@ const transcriptEntryClasses = 'audio-player__transcript-entry';
         return map[char] || char;
       });
 
-    const parseTime = (value) => {
+    const parseTime = (value = '') => {
       const parts = value.split(':').map((segment) => segment.trim());
       if (parts.length === 3) {
         const [hours, minutes, seconds] = parts;
@@ -366,27 +353,67 @@ const transcriptEntryClasses = 'audio-player__transcript-entry';
           text: cueText,
         });
       });
-      return cues.sort((a, b) => a.start - b.start);
+      return cues;
     };
 
-    players.forEach((player) => {
-      if (!(player instanceof HTMLElement)) return;
-      if (player.dataset.audioHydrated === 'true') return;
-      const audio = player.querySelector('[data-audio]');
-      if (!(audio instanceof HTMLAudioElement)) return;
-      player.dataset.audioHydrated = 'true';
+    const readDataUri = (uri) => {
+      const commaIndex = uri.indexOf(',');
+      if (commaIndex === -1) {
+        throw new Error('Invalid data URI');
+      }
+      const meta = uri.slice(5, commaIndex);
+      const payload = uri.slice(commaIndex + 1);
+      const isBase64 = meta.includes(';base64');
+      return isBase64 ? atob(payload.trim()) : decodeURIComponent(payload);
+    };
 
-      const playPauseBtn = player.querySelector('[data-play-pause]');
-      const playIcon = player.querySelector('[data-play-icon]');
-      const pauseIcon = player.querySelector('[data-pause-icon]');
-      const muteBtn = player.querySelector('[data-mute]');
-      const volumeIcon = player.querySelector('[data-volume-icon]');
-      const muteIcon = player.querySelector('[data-mute-icon]');
-      const currentTimeEl = player.querySelector('[data-current-time]');
-      const durationEl = player.querySelector('[data-duration]');
-      const seekInput = player.querySelector('[data-seek]');
-      const transcriptSrc = player.dataset.transcriptSrc || null;
-      const transcriptLabel = player.dataset.transcriptLabel || 'Transcript';
+    const fetchTranscript = async (src) => {
+      if (transcriptCache.has(src)) return transcriptCache.get(src);
+      const request = (async () => {
+        const text = src.startsWith('data:')
+          ? readDataUri(src)
+          : await fetch(src).then((res) => {
+              if (!res.ok) throw new Error('Transcript request failed');
+              return res.text();
+            });
+        return parseVtt(text);
+      })();
+      transcriptCache.set(src, request);
+      try {
+        return await request;
+      } catch (error) {
+        transcriptCache.delete(src);
+        throw error;
+      }
+    };
+
+    const updateSeekVisual = (input, audio) => {
+      if (
+        !(input instanceof HTMLInputElement) ||
+        !(audio instanceof HTMLAudioElement)
+      ) {
+        return;
+      }
+      const duration =
+        Number.isFinite(audio.duration) && audio.duration > 0
+          ? audio.duration
+          : Number(input.max) || 0;
+      const value = Number(input.value) || 0;
+      const percent =
+        duration > 0 ? clamp((value / duration) * 100, 0, 100) : 0;
+      input.style.setProperty('--seek-percent', `${percent}%`);
+      input.setAttribute('role', 'slider');
+      input.setAttribute('aria-label', 'Seek position');
+      input.setAttribute('aria-valuemin', '0');
+      input.setAttribute('aria-valuemax', `${Math.floor(duration) || 0}`);
+      input.setAttribute('aria-valuenow', `${Math.floor(value)}`);
+      input.setAttribute('aria-valuetext', formatTime(value));
+    };
+
+    const hydrateTranscript = (player, audio) => {
+      const transcriptSrc = player.getAttribute('data-transcript-src');
+      if (!transcriptSrc) return;
+
       const transcriptToggle = player.querySelector('[data-transcript-toggle]');
       const transcriptPanel = player.querySelector('[data-transcript-panel]');
       const transcriptList = player.querySelector('[data-transcript-list]');
@@ -394,80 +421,232 @@ const transcriptEntryClasses = 'audio-player__transcript-entry';
         '[data-transcript-loading]'
       );
       const transcriptError = player.querySelector('[data-transcript-error]');
-      const transcriptToggleLabel = player.querySelector(
-        '[data-transcript-toggle-label]'
-      );
       const transcriptToggleIcon = player.querySelector(
         '[data-transcript-toggle-icon]'
       );
 
-      if (transcriptToggleLabel instanceof HTMLElement) {
+      if (
+        !(transcriptToggle instanceof HTMLElement) ||
+        !(transcriptPanel instanceof HTMLElement) ||
+        !(transcriptList instanceof HTMLOListElement)
+      ) {
+        return;
+      }
+
+      const state = {
+        cues: [],
+        activeIndex: -1,
+        expanded: true,
+        loading: false,
+        loaded: false,
+      };
+
+      const setExpanded = (expanded) => {
+        state.expanded = expanded;
+        transcriptPanel.classList.toggle('hidden', !expanded);
+        transcriptToggle.setAttribute(
+          'aria-expanded',
+          expanded ? 'true' : 'false'
+        );
+        transcriptToggleIcon?.classList.toggle('rotate-180', expanded);
+      };
+
+      const clearHighlights = () => {
+        transcriptList
+          .querySelectorAll('[data-transcript-entry]')
+          .forEach((entry) => entry.setAttribute('data-active', 'false'));
+      };
+
+      const highlightCue = (time) => {
+        if (!state.loaded || !state.cues.length) return;
+        let nextIndex = state.cues.findIndex(
+          (cue) => time >= cue.start && time < cue.end
+        );
+        if (nextIndex === -1 && time >= state.cues[state.cues.length - 1].end) {
+          nextIndex = state.cues.length - 1;
+        }
+        if (nextIndex === state.activeIndex) return;
+        state.activeIndex = nextIndex;
+        clearHighlights();
+        if (state.activeIndex >= 0) {
+          const entry = transcriptList.querySelector(
+            `[data-transcript-entry="${state.activeIndex}"]`
+          );
+          if (entry instanceof HTMLElement) {
+            entry.setAttribute('data-active', 'true');
+            entry.scrollIntoView({ block: 'nearest' });
+          }
+        }
+      };
+
+      const renderTranscript = () => {
+        if (!state.loaded) return;
+        transcriptLoading?.classList.add('hidden');
+        transcriptError?.classList.add('hidden');
+
+        if (!state.cues.length) {
+          if (transcriptError instanceof HTMLElement) {
+            transcriptError.textContent = 'No transcript cues available.';
+            transcriptError.classList.remove('hidden');
+          }
+          return;
+        }
+
+        transcriptList.innerHTML = state.cues
+          .map(
+            (cue, index) => `
+              <li>
+                <button
+                  type="button"
+                  class="${transcriptClassName}"
+                  data-transcript-entry="${index}"
+                  data-cue-start="${cue.start}"
+                  data-active="false"
+                  aria-label="Jump to transcript at ${formatTime(cue.start)}"
+                >
+                  ${escapeHtml(cue.text)}
+                </button>
+              </li>
+            `
+          )
+          .join('');
+        transcriptList.classList.remove('hidden');
+      };
+
+      const ensureTranscript = async () => {
+        if (state.loaded || state.loading) return;
+        state.loading = true;
+        transcriptLoading?.classList.remove('hidden');
+        transcriptError?.classList.add('hidden');
+        try {
+          state.cues = await fetchTranscript(transcriptSrc);
+          state.loaded = true;
+          renderTranscript();
+          highlightCue(audio.currentTime);
+        } catch {
+          if (transcriptError instanceof HTMLElement) {
+            transcriptError.textContent = 'Unable to load transcript.';
+            transcriptError.classList.remove('hidden');
+          }
+        } finally {
+          state.loading = false;
+          transcriptLoading?.classList.add('hidden');
+        }
+      };
+
+      transcriptToggle.addEventListener('click', () => {
+        const nextExpanded = !state.expanded;
+        setExpanded(nextExpanded);
+        if (nextExpanded) {
+          ensureTranscript();
+        }
+      });
+
+      transcriptList.addEventListener('click', (event) => {
+        const target =
+          event.target instanceof HTMLElement
+            ? event.target.closest('[data-transcript-entry]')
+            : null;
+        if (!(target instanceof HTMLElement)) return;
+        const start = Number(target.getAttribute('data-cue-start'));
+        if (Number.isFinite(start)) {
+          audio.currentTime = Math.max(start, 0);
+          audio.play().catch(() => {});
+        }
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        highlightCue(audio.currentTime);
+      });
+
+      audio.addEventListener('seeked', () => {
+        highlightCue(audio.currentTime);
+      });
+
+      setExpanded(true);
+      ensureTranscript();
+    };
+
+    const hydratePlayer = (player) => {
+      if (!(player instanceof HTMLElement)) return;
+      if (player.getAttribute(HYDRATED_ATTR) === 'true') return;
+      if (hydratedPlayers.has(player)) return;
+      const audio = player.querySelector('[data-audio]');
+      if (!(audio instanceof HTMLAudioElement)) return;
+
+      hydratedPlayers.add(player);
+      player.setAttribute(HYDRATED_ATTR, 'true');
+
+      const playPauseBtn = player.querySelector('[data-play-pause]');
+      const playIcon = player.querySelector('[data-play-icon]');
+      const pauseIcon = player.querySelector('[data-pause-icon]');
+      const muteBtn = player.querySelector('[data-mute]');
+      const volumeIcon = player.querySelector('[data-volume-icon]');
+      const muteIcon = player.querySelector('[data-mute-icon]');
+      const seekInput = player.querySelector('[data-seek]');
+      const currentTimeEl = player.querySelector('[data-current-time]');
+      const durationEl = player.querySelector('[data-duration]');
+      const transcriptToggleLabel = player.querySelector(
+        '[data-transcript-toggle-label]'
+      );
+      const transcriptLabel = player.getAttribute('data-transcript-label');
+
+      if (transcriptToggleLabel instanceof HTMLElement && transcriptLabel) {
         transcriptToggleLabel.textContent = transcriptLabel;
       }
 
-      if (seekInput instanceof HTMLInputElement) {
-        seekInput.setAttribute('aria-valuemin', '0');
-        seekInput.setAttribute('role', 'slider');
-        seekInput.setAttribute('aria-label', 'Seek position');
-        updateSeekVisual(seekInput, audio);
-      }
+      const setPlayState = (isPlaying) => {
+        playIcon?.classList.toggle('hidden', isPlaying);
+        pauseIcon?.classList.toggle('hidden', !isPlaying);
+        if (playPauseBtn instanceof HTMLElement) {
+          playPauseBtn.setAttribute(
+            'aria-label',
+            isPlaying ? 'Pause audio' : 'Play audio'
+          );
+          playPauseBtn.setAttribute(
+            'aria-pressed',
+            isPlaying ? 'true' : 'false'
+          );
+        }
+      };
+
+      const setMuteState = (muted) => {
+        volumeIcon?.classList.toggle('hidden', muted);
+        muteIcon?.classList.toggle('hidden', !muted);
+        if (muteBtn instanceof HTMLElement) {
+          muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+          muteBtn.setAttribute(
+            'aria-label',
+            muted ? 'Unmute audio' : 'Mute audio'
+          );
+        }
+      };
 
       playPauseBtn?.addEventListener('click', () => {
         if (audio.paused) {
-          audio.play().catch(() => {
-            /* ignore */
-          });
+          audio.play().catch(() => {});
         } else {
           audio.pause();
         }
       });
 
-      audio.addEventListener('play', () => {
-        playIcon?.classList.add('hidden');
-        pauseIcon?.classList.remove('hidden');
-        if (playPauseBtn instanceof HTMLElement) {
-          playPauseBtn.setAttribute('aria-label', 'Pause audio');
-          playPauseBtn.setAttribute('aria-pressed', 'true');
-        }
-      });
-
-      audio.addEventListener('pause', () => {
-        playIcon?.classList.remove('hidden');
-        pauseIcon?.classList.add('hidden');
-        if (playPauseBtn instanceof HTMLElement) {
-          playPauseBtn.setAttribute('aria-label', 'Play audio');
-          playPauseBtn.setAttribute('aria-pressed', 'false');
-        }
-      });
-
       muteBtn?.addEventListener('click', () => {
         audio.muted = !audio.muted;
-        if (volumeIcon instanceof HTMLElement)
-          volumeIcon.classList.toggle('hidden', audio.muted);
-        if (muteIcon instanceof HTMLElement)
-          muteIcon.classList.toggle('hidden', !audio.muted);
-        if (muteBtn instanceof HTMLElement) {
-          muteBtn.setAttribute('aria-pressed', audio.muted ? 'true' : 'false');
-          muteBtn.setAttribute(
-            'aria-label',
-            audio.muted ? 'Unmute audio' : 'Mute audio'
-          );
-        }
+        setMuteState(audio.muted);
       });
 
-      audio.addEventListener('loadedmetadata', () => {
+      const syncDuration = () => {
+        const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
         if (durationEl instanceof HTMLElement) {
-          durationEl.textContent = formatTime(audio.duration);
+          durationEl.textContent = formatTime(duration);
         }
         if (seekInput instanceof HTMLInputElement) {
-          seekInput.max = Number.isFinite(audio.duration)
-            ? String(audio.duration)
-            : '0';
+          seekInput.max = duration > 0 ? String(duration) : '0';
           updateSeekVisual(seekInput, audio);
         }
-      });
+      };
 
-      audio.addEventListener('timeupdate', () => {
+      const syncCurrentTime = () => {
         if (currentTimeEl instanceof HTMLElement) {
           currentTimeEl.textContent = formatTime(audio.currentTime);
         }
@@ -479,200 +658,87 @@ const transcriptEntryClasses = 'audio-player__transcript-entry';
           seekInput.value = String(audio.currentTime);
           updateSeekVisual(seekInput, audio);
         }
+      };
+
+      audio.addEventListener('loadedmetadata', () => {
+        syncDuration();
+        syncCurrentTime();
       });
 
-      seekInput?.addEventListener('input', () => {
+      audio.addEventListener('durationchange', syncDuration);
+      audio.addEventListener('timeupdate', syncCurrentTime);
+      audio.addEventListener('play', () => setPlayState(true));
+      audio.addEventListener('pause', () => setPlayState(false));
+      audio.addEventListener('volumechange', () => setMuteState(audio.muted));
+
+      const handleSeek = () => {
         if (!(seekInput instanceof HTMLInputElement)) return;
         const next = Number(seekInput.value);
-        if (Number.isFinite(next) && audio.duration > 0) {
-          audio.currentTime = Math.min(Math.max(next, 0), audio.duration);
+        if (
+          Number.isFinite(next) &&
+          Number.isFinite(audio.duration) &&
+          audio.duration > 0
+        ) {
+          audio.currentTime = clamp(next, 0, audio.duration);
         }
         updateSeekVisual(seekInput, audio);
-      });
+      };
 
-      seekInput?.addEventListener('change', () => {
-        if (!(seekInput instanceof HTMLInputElement)) return;
-        const next = Number(seekInput.value);
-        if (Number.isFinite(next) && audio.duration > 0) {
-          audio.currentTime = Math.min(Math.max(next, 0), audio.duration);
-        }
-      });
-
-      if (
-        transcriptSrc &&
-        transcriptToggle instanceof HTMLElement &&
-        transcriptPanel instanceof HTMLElement &&
-        transcriptList instanceof HTMLOListElement
-      ) {
-        let cues = [];
-        let activeCueIndex = -1;
-        let transcriptLoaded = false;
-        let transcriptLoadingState = false;
-
-        const setTranscriptExpanded = (expanded) => {
-          transcriptPanel.classList.toggle('hidden', !expanded);
-          transcriptToggle.setAttribute(
-            'aria-expanded',
-            expanded ? 'true' : 'false'
-          );
-          transcriptToggleIcon?.classList.toggle('rotate-180', expanded);
-        };
-
-        const clearHighlights = () => {
-          transcriptList
-            .querySelectorAll('[data-transcript-entry]')
-            .forEach((entry) => entry.setAttribute('data-active', 'false'));
-        };
-
-        const updateActiveCue = (time) => {
-          if (!transcriptLoaded || !cues.length) return;
-          let nextIndex = cues.findIndex(
-            (cue) => time >= cue.start && time < cue.end
-          );
-          if (nextIndex === -1 && time >= cues[cues.length - 1].end) {
-            nextIndex = cues.length - 1;
-          }
-          if (nextIndex === activeCueIndex) return;
-          activeCueIndex = nextIndex;
-          clearHighlights();
-          if (activeCueIndex >= 0) {
-            const entry = transcriptList.querySelector(
-              `[data-transcript-entry="${activeCueIndex}"]`
-            );
-            if (entry instanceof HTMLElement) {
-              entry.setAttribute('data-active', 'true');
-              entry.scrollIntoView({ block: 'nearest' });
-            }
-          }
-        };
-
-        const renderTranscript = () => {
-          if (!transcriptLoaded) return;
-          if (transcriptLoading instanceof HTMLElement) {
-            transcriptLoading.classList.add('hidden');
-          }
-          if (transcriptError instanceof HTMLElement) {
-            transcriptError.classList.add('hidden');
-          }
-          if (!cues.length) {
-            if (transcriptError instanceof HTMLElement) {
-              transcriptError.textContent = 'No transcript cues available.';
-              transcriptError.classList.remove('hidden');
-            }
-            return;
-          }
-          transcriptList.innerHTML = cues
-            .map(
-              (cue, index) => `
-                <li>
-                  <button
-                    type="button"
-                    class="${transcriptEntryClass}"
-                    data-transcript-entry="${index}"
-        data-cue-start="${cue.start}"
-        data-active="false"
-        aria-label="Jump to transcript at ${formatTime(cue.start)}"
-                  >
-                    ${escapeHtml(cue.text)}
-                  </button>
-                </li>
-              `
-            )
-            .join('');
-          transcriptList.classList.remove('hidden');
-        };
-
-        const loadTranscript = async () => {
-          if (transcriptLoaded || transcriptLoadingState) return;
-          transcriptLoadingState = true;
-          try {
-            if (transcriptLoading instanceof HTMLElement) {
-              transcriptLoading.classList.remove('hidden');
-            }
-            let text = '';
-            if (transcriptSrc.startsWith('data:')) {
-              const commaIndex = transcriptSrc.indexOf(',');
-              if (commaIndex === -1) throw new Error('Invalid data URI');
-              const dataPortion = transcriptSrc.slice(commaIndex + 1);
-              const isBase64 = transcriptSrc
-                .slice(5, commaIndex)
-                .includes(';base64');
-              text = isBase64
-                ? atob(dataPortion.trim())
-                : decodeURIComponent(dataPortion);
-            } else {
-              const response = await fetch(transcriptSrc);
-              if (!response.ok) throw new Error('Request failed');
-              text = await response.text();
-            }
-            cues = parseVtt(text);
-            transcriptLoaded = true;
-            renderTranscript();
-            updateActiveCue(audio.currentTime);
-          } catch {
-            if (transcriptError instanceof HTMLElement) {
-              transcriptError.textContent = 'Unable to load transcript.';
-              transcriptError.classList.remove('hidden');
-            }
-            if (transcriptLoading instanceof HTMLElement) {
-              transcriptLoading.classList.add('hidden');
-            }
-          } finally {
-            transcriptLoadingState = false;
-          }
-        };
-
-        transcriptToggle.addEventListener('click', () => {
-          const expanded =
-            transcriptToggle.getAttribute('aria-expanded') === 'true';
-          const nextExpanded = !expanded;
-          setTranscriptExpanded(nextExpanded);
-          if (nextExpanded) {
-            loadTranscript();
-          }
-        });
-
-        transcriptList.addEventListener('click', (event) => {
-          const target =
-            event.target instanceof HTMLElement
-              ? event.target.closest('[data-transcript-entry]')
-              : null;
-          if (!(target instanceof HTMLElement)) return;
-          const start = Number(target.getAttribute('data-cue-start'));
-          if (Number.isFinite(start)) {
-            audio.currentTime = Math.max(start, 0);
-            audio.play().catch(() => {});
-          }
-        });
-
-        audio.addEventListener('timeupdate', () => {
-          updateActiveCue(audio.currentTime);
-        });
-
-        audio.addEventListener('seeked', () => {
-          updateActiveCue(audio.currentTime);
-        });
-
-        if (
-          transcriptList instanceof HTMLElement &&
-          transcriptList.hasChildNodes()
-        ) {
-          updateActiveCue(audio.currentTime);
-        }
-
-        setTranscriptExpanded(true);
-        loadTranscript();
+      if (seekInput instanceof HTMLInputElement) {
+        seekInput.addEventListener('input', handleSeek);
+        seekInput.addEventListener('change', handleSeek);
+        updateSeekVisual(seekInput, audio);
       }
-    });
-  };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAudioPlayers, {
-      once: true,
-    });
-  } else {
-    initAudioPlayers();
-  }
+      setPlayState(!audio.paused);
+      setMuteState(audio.muted);
+      syncDuration();
+      syncCurrentTime();
+
+      hydrateTranscript(player, audio);
+    };
+
+    const hydrateAllPlayers = () => {
+      document
+        .querySelectorAll('[data-audio-player]')
+        .forEach((player) => hydratePlayer(player));
+    };
+
+    const observeNewPlayers = () => {
+      if (!('MutationObserver' in window)) return;
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (!(node instanceof HTMLElement)) return;
+            if (node.matches('[data-audio-player]')) {
+              hydratePlayer(node);
+            } else {
+              node
+                .querySelectorAll?.('[data-audio-player]')
+                .forEach((player) => hydratePlayer(player));
+            }
+          });
+        });
+      });
+      observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      });
+    };
+
+    const init = () => {
+      hydrateAllPlayers();
+      observeNewPlayers();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+      init();
+    }
+
+    document.addEventListener('astro:page-load', hydrateAllPlayers);
+  })();
 </script>
 
 <style is:inline>
