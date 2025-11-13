@@ -18,6 +18,12 @@ interface Props {
   maxVisibleOptions?: number;
   className?: string;
   inputName?: string;
+  color?:
+    | 'classicBlue'
+    | 'natureGreen'
+    | 'warmPurple'
+    | 'skyCyan'
+    | 'orangeAccent';
 }
 
 const {
@@ -29,19 +35,31 @@ const {
   maxVisibleOptions = 8,
   className = '',
   inputName,
+  color = 'classicBlue',
 } = Astro.props as Props;
+
+const paletteMap = {
+  classicBlue: 'classic',
+  natureGreen: 'nature',
+  warmPurple: 'warm',
+  skyCyan: 'sky',
+  orangeAccent: 'orange',
+};
+
+const paletteKey =
+  paletteMap[(color as keyof typeof paletteMap) || 'classicBlue'] || 'classic';
 
 const id = `autocomplete-${Math.random().toString(36).slice(2, 10)}`;
 const encodedOptions = encodeURIComponent(JSON.stringify(options));
-const maxVisibleAttr = String(maxVisibleOptions);
+const encodedEmpty = encodeURIComponent(emptyStateText);
 const statusId = `${id}-status`;
 const describedBy = statusId;
-const encodedEmpty = encodeURIComponent(emptyStateText);
+const maxVisibleAttr = String(maxVisibleOptions);
 ---
 
 <div
   id={id}
-  class={`relative space-y-3 text-slate-900 dark:text-slate-100 ${className}`.trim()}
+  class={`autocomplete autocomplete--palette-${paletteKey} ${className}`.trim()}
   data-autocomplete-root
   data-autocomplete-options={encodedOptions}
   data-autocomplete-max-visible={maxVisibleAttr}
@@ -49,20 +67,17 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
 >
   {
     label && (
-      <label
-        for={`${id}-input`}
-        class="mb-1 block text-sm font-semibold text-slate-800 dark:text-slate-200"
-      >
+      <label for={`${id}-input`} class="autocomplete__label">
         {label}
       </label>
     )
   }
-  <div class="relative">
+  <div class="autocomplete__field">
     <input
       id={`${id}-input`}
       name={inputName}
       type="text"
-      class="peer w-full rounded-xl border border-slate-300/90 bg-white px-4 py-3 text-sm font-medium text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-400 dark:focus-visible:ring-offset-slate-950"
+      class="autocomplete__input"
       placeholder={placeholder}
       aria-label={ariaLabel}
       aria-describedby={describedBy || undefined}
@@ -78,7 +93,7 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
     />
     <button
       type="button"
-      class="absolute right-2.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-transparent text-slate-500 transition hover:border-blue-500 hover:bg-blue-500/10 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:text-slate-300 dark:hover:bg-blue-500/20 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-950"
+      class="autocomplete__clear"
       data-autocomplete-clear
       aria-label="Clear input"
       hidden
@@ -88,7 +103,7 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
   </div>
   <div
     id={statusId}
-    class="sr-only"
+    class="autocomplete__sr-only"
     aria-live="polite"
     data-autocomplete-status
   >
@@ -99,45 +114,25 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
     }
   </div>
   <div
-    class="absolute left-0 top-full z-40 mt-2 w-full translate-y-2 overflow-hidden rounded-xl border border-slate-200/75 bg-white/95 text-slate-900 shadow-xl backdrop-blur supports-backdrop-filter:bg-white/80 dark:border-slate-700/70 dark:bg-slate-950/95 dark:text-slate-100"
+    class="autocomplete__panel"
     data-autocomplete-panel
     hidden
     id={`${id}-panel`}
     role="listbox"
     aria-hidden="true"
   >
-    <ul
-      class="max-h-72 overflow-y-auto scroll-py-2 divide-y divide-slate-200/80 dark:divide-slate-700/60"
-      data-autocomplete-list
-    >
-    </ul>
-    <div
-      class="p-4 text-sm font-medium text-slate-500 dark:text-slate-300"
-      data-autocomplete-empty
-      hidden
-    >
+    <ul class="autocomplete__list" data-autocomplete-list></ul>
+    <div class="autocomplete__empty" data-autocomplete-empty hidden>
       {emptyStateText}
     </div>
   </div>
   <input type="hidden" data-autocomplete-value />
 </div>
 
-<script is:inline data-autocomplete-root={id}>
-  (function setupAutocomplete() {
-    const script = document.currentScript;
-    const rootId = script?.getAttribute('data-autocomplete-root');
-    const previous =
-      script instanceof HTMLElement ? script.previousElementSibling : null;
-    const fallbackRoot =
-      previous instanceof HTMLElement
-        ? previous.closest('[data-autocomplete-root]')
-        : null;
-    const root = rootId ? document.getElementById(rootId) : fallbackRoot;
+<script type="module" is:inline>
+  const initAutocomplete = (root) => {
     if (!(root instanceof HTMLElement)) return;
-    const emptyStateMessage = root.dataset.autocompleteEmptyText
-      ? decodeURIComponent(root.dataset.autocompleteEmptyText)
-      : 'No results found.';
-
+    if (root.dataset.autocompleteReady === 'true') return;
     const input = root.querySelector('[data-autocomplete-input]');
     const panel = root.querySelector('[data-autocomplete-panel]');
     const list = root.querySelector('[data-autocomplete-list]');
@@ -153,6 +148,10 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
       !(hidden instanceof HTMLInputElement)
     )
       return;
+
+    const emptyStateMessage = root.dataset.autocompleteEmptyText
+      ? decodeURIComponent(root.dataset.autocompleteEmptyText)
+      : 'No results found.';
 
     const serializedOptions = root.dataset.autocompleteOptions;
     let optionsData = [];
@@ -204,7 +203,7 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
         .map((segment, index) => {
           if (segment === '') return '';
           if (index % 2 === 1) {
-            return `<span class="rounded bg-blue-500/20 px-1 text-blue-700 dark:bg-blue-400/20 dark:text-blue-100">${escapeHTML(segment)}</span>`;
+            return `<span class="autocomplete__highlight">${escapeHTML(segment)}</span>`;
           }
           return escapeHTML(segment);
         })
@@ -246,6 +245,7 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
 
     const closePanel = () => {
       panel.hidden = true;
+      root.classList.remove('autocomplete--open');
       input.setAttribute('aria-expanded', 'false');
       panel.setAttribute('aria-hidden', 'true');
       activeIndex = -1;
@@ -254,6 +254,7 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
 
     const openPanel = () => {
       panel.hidden = false;
+      root.classList.add('autocomplete--open');
       input.setAttribute('aria-expanded', 'true');
       panel.setAttribute('aria-hidden', 'false');
     };
@@ -301,18 +302,18 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
           (option, index) => `
             <li
               id="${optionIdPrefix}-option-${index}"
-              class="group cursor-pointer px-4 py-3 text-sm leading-5 text-slate-800 transition-colors hover:bg-blue-600/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:text-slate-100 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-950 data-[active='true']:bg-blue-600/15 dark:data-[active='true']:bg-blue-500/30"
+              class="autocomplete__option"
               data-autocomplete-option="${escapeHTML(option.value)}"
               role="option"
               tabindex="-1"
             >
-              <div class="min-w-0 space-y-1">
-                <div class="truncate font-semibold text-slate-900 dark:text-slate-50">
+              <div class="autocomplete__option-content">
+                <div class="autocomplete__option-label">
                   ${highlight(option.label)}
                 </div>
                 ${
                   option.description
-                    ? `<div class="truncate text-xs text-slate-600 dark:text-slate-300">${highlight(option.description)}</div>`
+                    ? `<div class="autocomplete__option-description">${highlight(option.description)}</div>`
                     : ''
                 }
               </div>
@@ -457,5 +458,326 @@ const encodedEmpty = encodeURIComponent(emptyStateText);
     panel.setAttribute('aria-hidden', panel.hidden ? 'true' : 'false');
     updateClearButton();
     resetToDefaultAnnouncement();
-  })();
+    root.dataset.autocompleteReady = 'true';
+  };
+
+  const hydrateAutocomplete = () => {
+    document
+      .querySelectorAll('[data-autocomplete-root]')
+      .forEach((root) => initAutocomplete(root));
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hydrateAutocomplete, {
+      once: true,
+    });
+  } else {
+    hydrateAutocomplete();
+  }
+
+  document.addEventListener('astro:page-load', hydrateAutocomplete);
 </script>
+
+<style is:inline>
+  .autocomplete {
+    --auto-border: rgba(148, 163, 184, 0.7);
+    --auto-bg: #ffffff;
+    --auto-text: #0f172a;
+    --auto-muted: #475467;
+    --auto-panel-bg: #ffffff;
+    --auto-panel-border: rgba(148, 163, 184, 0.5);
+    --auto-highlight-bg: rgba(59, 130, 246, 0.15);
+    --auto-highlight-text: #1d4ed8;
+    --auto-focus: #3b82f6;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .autocomplete__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--auto-muted);
+  }
+
+  .autocomplete__field {
+    position: relative;
+    width: 100%;
+  }
+
+  .autocomplete__input {
+    width: 100%;
+    border-radius: 1rem;
+    border: 1px solid var(--auto-border);
+    padding: 0.8rem 3rem 0.8rem 1rem;
+    font-size: 0.95rem;
+    background-color: var(--auto-bg);
+    color: var(--auto-text);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .autocomplete__input:focus-visible {
+    outline: 2px solid var(--auto-focus);
+    outline-offset: 2px;
+    border-color: var(--auto-focus);
+    box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25);
+  }
+
+  .autocomplete__clear {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--auto-muted);
+    font-size: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .autocomplete__clear:hover {
+    color: var(--auto-focus);
+    border-color: var(--auto-focus);
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  .autocomplete__clear:focus-visible {
+    outline: 2px solid var(--auto-focus);
+    outline-offset: 2px;
+  }
+
+  .autocomplete__panel {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 0.5rem);
+    width: 100%;
+    border-radius: 1rem;
+    background: var(--auto-panel-bg);
+    border: 1px solid var(--auto-panel-border);
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+    z-index: 40;
+    overflow: hidden;
+    transition: opacity 0.15s ease;
+  }
+
+  .autocomplete:not(.autocomplete--open) .autocomplete__panel {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .autocomplete__list {
+    max-height: 18rem;
+    overflow-y: auto;
+    scroll-padding: 0.75rem;
+  }
+
+  .autocomplete__option {
+    cursor: pointer;
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    color: var(--auto-text);
+    display: block;
+    transition: background-color 0.15s ease;
+  }
+
+  .autocomplete__option:hover,
+  .autocomplete__option[data-active='true'] {
+    background: rgba(59, 130, 246, 0.12);
+  }
+
+  .autocomplete__option:focus-visible {
+    outline: 2px solid var(--auto-focus);
+    outline-offset: 2px;
+  }
+
+  .autocomplete__option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .autocomplete__option-label {
+    font-weight: 600;
+    color: var(--auto-text);
+  }
+
+  .autocomplete__option-description {
+    font-size: 0.8rem;
+    color: var(--auto-muted);
+  }
+
+  .autocomplete__empty {
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: var(--auto-muted);
+  }
+
+  .autocomplete__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .autocomplete__highlight {
+    background: var(--auto-highlight-bg);
+    color: var(--auto-highlight-text);
+    border-radius: 0.4rem;
+    padding: 0 0.1rem;
+  }
+
+  :where(.dark) .autocomplete {
+    --auto-border: rgba(148, 163, 184, 0.4);
+    --auto-bg: #0f172a;
+    --auto-text: #f8fafc;
+    --auto-muted: #94a3b8;
+    --auto-panel-bg: #0b1220;
+    --auto-panel-border: rgba(59, 73, 99, 0.6);
+    --auto-highlight-bg: rgba(96, 165, 250, 0.15);
+    --auto-highlight-text: #bfdbfe;
+    --auto-focus: #60a5fa;
+  }
+
+  :where(.dark) .autocomplete__panel {
+    box-shadow: 0 25px 45px rgba(2, 6, 23, 0.65);
+  }
+
+  .autocomplete--palette-classic {
+    --auto-bg: #ffffff;
+    --auto-text: #111827;
+    --auto-muted: #4b5563;
+    --auto-border: #e5e7eb;
+    --auto-panel-bg: #ffffff;
+    --auto-panel-border: #e5e7eb;
+    --auto-highlight-bg: #eff6ff;
+    --auto-highlight-text: #2563eb;
+    --auto-focus: #2563eb;
+  }
+
+  :where(.dark) .autocomplete--palette-classic {
+    --auto-bg: #111827;
+    --auto-text: #ffffff;
+    --auto-muted: #cbd5f5;
+    --auto-border: #374151;
+    --auto-panel-bg: #0f172a;
+    --auto-panel-border: #1f2937;
+    --auto-highlight-bg: rgba(96, 165, 250, 0.2);
+    --auto-highlight-text: #93c5fd;
+    --auto-focus: #60a5fa;
+  }
+
+  .autocomplete--palette-nature {
+    --auto-bg: #fafaf9;
+    --auto-text: #1c1917;
+    --auto-muted: #44403c;
+    --auto-border: #e7e5e4;
+    --auto-panel-bg: #ffffff;
+    --auto-panel-border: #d6d3d1;
+    --auto-highlight-bg: #ecfdf5;
+    --auto-highlight-text: #059669;
+    --auto-focus: #10b981;
+  }
+
+  :where(.dark) .autocomplete--palette-nature {
+    --auto-bg: #0c0a09;
+    --auto-text: #f5f5f4;
+    --auto-muted: #d6d3d1;
+    --auto-border: #292524;
+    --auto-panel-bg: #181716;
+    --auto-panel-border: #292524;
+    --auto-highlight-bg: rgba(16, 185, 129, 0.2);
+    --auto-highlight-text: #34d399;
+    --auto-focus: #34d399;
+  }
+
+  .autocomplete--palette-warm {
+    --auto-bg: #f9fafb;
+    --auto-text: #111827;
+    --auto-muted: #4b5563;
+    --auto-border: #d1d5db;
+    --auto-panel-bg: #ffffff;
+    --auto-panel-border: #d1d5db;
+    --auto-highlight-bg: #faf5ff;
+    --auto-highlight-text: #7c3aed;
+    --auto-focus: #7c3aed;
+  }
+
+  :where(.dark) .autocomplete--palette-warm {
+    --auto-bg: #030712;
+    --auto-text: #f9fafb;
+    --auto-muted: #cbd5f5;
+    --auto-border: #312e81;
+    --auto-panel-bg: #0f172a;
+    --auto-panel-border: #312e81;
+    --auto-highlight-bg: rgba(167, 139, 250, 0.2);
+    --auto-highlight-text: #c4b5fd;
+    --auto-focus: #a78bfa;
+  }
+
+  .autocomplete--palette-sky {
+    --auto-bg: #f8fafc;
+    --auto-text: #0f172a;
+    --auto-muted: #334155;
+    --auto-border: #e2e8f0;
+    --auto-panel-bg: #ffffff;
+    --auto-panel-border: #e2e8f0;
+    --auto-highlight-bg: #ecfeff;
+    --auto-highlight-text: #0891b2;
+    --auto-focus: #0ea5e9;
+  }
+
+  :where(.dark) .autocomplete--palette-sky {
+    --auto-bg: #0f172a;
+    --auto-text: #f8fafc;
+    --auto-muted: #cbd5f5;
+    --auto-border: #1e293b;
+    --auto-panel-bg: #0b1220;
+    --auto-panel-border: #1e293b;
+    --auto-highlight-bg: rgba(34, 211, 238, 0.2);
+    --auto-highlight-text: #67e8f9;
+    --auto-focus: #22d3ee;
+  }
+
+  .autocomplete--palette-orange {
+    --auto-bg: #fafafa;
+    --auto-text: #18181b;
+    --auto-muted: #52525b;
+    --auto-border: #e4e4e7;
+    --auto-panel-bg: #ffffff;
+    --auto-panel-border: #e4e4e7;
+    --auto-highlight-bg: #fff7ed;
+    --auto-highlight-text: #f97316;
+    --auto-focus: #f97316;
+  }
+
+  :where(.dark) .autocomplete--palette-orange {
+    --auto-bg: #09090b;
+    --auto-text: #f5f5f5;
+    --auto-muted: #d4d4d8;
+    --auto-border: #27272a;
+    --auto-panel-bg: #141416;
+    --auto-panel-border: #27272a;
+    --auto-highlight-bg: rgba(251, 146, 60, 0.2);
+    --auto-highlight-text: #fdba74;
+    --auto-focus: #fb923c;
+  }
+</style>

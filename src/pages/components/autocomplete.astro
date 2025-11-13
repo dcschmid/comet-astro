@@ -107,6 +107,14 @@ const commandOptions = [
   },
 ];
 
+const paletteExamples = [
+  { key: 'classicBlue', label: 'Classic Blue' },
+  { key: 'natureGreen', label: 'Nature Green' },
+  { key: 'warmPurple', label: 'Warm Purple' },
+  { key: 'skyCyan', label: 'Sky Cyan' },
+  { key: 'orangeAccent', label: 'Orange Accent' },
+];
+
 const usageSnippet = `---
 import { Autocomplete } from 'comet-astro';
 
@@ -124,6 +132,7 @@ const languages = [
   placeholder="Search languages…"
   maxVisibleOptions={5}
   inputName="language"
+  color="classicBlue"
 />`;
 
 const eventSnippet = `// Listen for selection events
@@ -261,7 +270,61 @@ document.addEventListener('autocomplete:select', (event) => {
           Forwarded to the native input for form submissions.
         </dd>
       </div>
+      <div
+        class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm"
+      >
+        <dt
+          class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+        >
+          color?
+        </dt>
+        <dd class="text-sm text-slate-200">
+          Palette token applied to the component surface. Choose from
+          <code>classicBlue</code>, <code>natureGreen</code>,
+          <code>warmPurple</code>, <code>skyCyan</code>, or
+          <code>orangeAccent</code>.
+        </dd>
+      </div>
     </dl>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Styling &amp; Theming</h2>
+    <p class="text-base text-slate-200">
+      Autocomplete now mirrors the Accordion’s BEM/CSS-variable API. The root
+      element renders as <code>.autocomplete</code> with modifiers like
+      <code>.autocomplete--palette-classic</code>. Slots inside the component (<code
+        >.autocomplete__input</code
+      >, <code>.autocomplete__panel</code>,
+      <code>.autocomplete__option</code>, <code>.autocomplete__clear</code>) can
+      be targeted via scoped CSS for advanced tweaks.
+    </p>
+    <p class="text-base text-slate-200">
+      Palette tokens (background, borders, highlights, focus states) are
+      controlled via CSS variables such as <code>--auto-bg</code>,
+      <code>--auto-border</code>, <code>--auto-highlight-bg</code>, and
+      <code>--auto-focus</code>. Override these in a wrapper class to retheme
+      the input or suggestion list.
+    </p>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        paletteExamples.map((variant) => (
+          <div class="space-y-2" key={variant.key}>
+            <p class="text-sm font-semibold text-slate-100">
+              {variant.label}{' '}
+              <span class="text-xs text-slate-400">({variant.key})</span>
+            </p>
+            <Autocomplete
+              options={frameworkOptions.slice(0, 3)}
+              label={`${variant.label} search`}
+              placeholder="Type to search…"
+              color={variant.key as any}
+              className="max-w-md"
+            />
+          </div>
+        ))
+      }
+    </div>
   </section>
 
   <section class="mt-10 space-y-6">
@@ -299,6 +362,7 @@ document.addEventListener('autocomplete:select', (event) => {
         placeholder="Search frameworks…"
         maxVisibleOptions={6}
         className="max-w-lg"
+        color="classicBlue"
       />
     </article>
 
@@ -318,6 +382,7 @@ document.addEventListener('autocomplete:select', (event) => {
         ariaLabel="Select a city"
         placeholder="Search cities…"
         className="max-w-md"
+        color="skyCyan"
       />
     </article>
 
@@ -335,6 +400,7 @@ document.addEventListener('autocomplete:select', (event) => {
         placeholder="Type a command…"
         maxVisibleOptions={4}
         className="max-w-lg"
+        color="warmPurple"
       />
     </article>
   </section>
