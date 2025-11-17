@@ -43,87 +43,33 @@ const {
   className: legacyClassName,
 } = Astro.props;
 
-const finalClassName = className || legacyClassName || '';
-
-// Generate unique ID for accessibility
 const navId = `comet-nav-${Math.random().toString(36).slice(2, 9)}`;
+const userClasses = [className, legacyClassName].filter(Boolean).join(' ');
 
-// Position classes
-const positionClasses = {
-  static: '',
-  sticky: 'sticky top-0 z-40',
-  fixed: 'fixed top-0 left-0 right-0 z-40',
-};
+const widthMap = {
+  sm: '42rem',
+  md: '56rem',
+  lg: '72rem',
+  xl: '80rem',
+  full: '100%',
+} as const;
 
-// Max width classes
-const maxWidthClasses = {
-  sm: 'max-w-2xl',
-  md: 'max-w-4xl',
-  lg: 'max-w-6xl',
-  xl: 'max-w-7xl',
-  full: 'max-w-none',
-};
-
-// Variant styles with WCAG AAA contrast ratios
-const variantClasses = {
-  default: {
-    header:
-      'border-b border-gray-200 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-50',
-    brand:
-      'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
-    toggleButton:
-      'border-gray-300 bg-white text-gray-900 hover:bg-gray-50 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-700 dark:hover:border-gray-500',
-    navLink:
-      'text-gray-700 hover:text-blue-700 hover:bg-gray-50 focus:text-blue-700 focus:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800 dark:focus:text-blue-300 dark:focus:bg-gray-800',
-    activeNavLink:
-      'text-blue-700 bg-blue-50 dark:text-blue-300 dark:bg-blue-950',
-  },
-  minimal: {
-    header: 'bg-transparent text-gray-900 dark:text-gray-50',
-    brand:
-      'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
-    toggleButton:
-      'border-gray-300 bg-white/80 backdrop-blur text-gray-900 hover:bg-white hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-50 dark:hover:bg-gray-800 dark:hover:border-gray-500',
-    navLink:
-      'text-gray-700 hover:text-blue-700 hover:bg-white/50 focus:text-blue-700 focus:bg-white/50 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800/50 dark:focus:text-blue-300 dark:focus:bg-gray-800/50',
-    activeNavLink:
-      'text-blue-700 bg-white/70 dark:text-blue-300 dark:bg-gray-800/70',
-  },
-  glass: {
-    header:
-      'border-b border-gray-200/20 bg-white/70 backdrop-blur-md text-gray-900 dark:border-gray-700/20 dark:bg-gray-900/70 dark:text-gray-50',
-    brand:
-      'text-gray-900 hover:text-blue-700 focus:text-blue-700 dark:text-gray-50 dark:hover:text-blue-300 dark:focus:text-blue-300',
-    toggleButton:
-      'border-gray-300/50 bg-white/60 backdrop-blur text-gray-900 hover:bg-white/80 hover:border-gray-400/70 dark:border-gray-600/50 dark:bg-gray-800/60 dark:text-gray-50 dark:hover:bg-gray-800/80 dark:hover:border-gray-500/70',
-    navLink:
-      'text-gray-700 hover:text-blue-700 hover:bg-white/30 focus:text-blue-700 focus:bg-white/30 dark:text-gray-300 dark:hover:text-blue-300 dark:hover:bg-gray-800/30 dark:focus:text-blue-300 dark:focus:bg-gray-800/30',
-    activeNavLink:
-      'text-blue-700 bg-white/50 dark:text-blue-300 dark:bg-gray-800/50',
-  },
-};
-
-const currentVariant = variantClasses[variant];
+const rootClasses = [
+  'navbar',
+  `navbar--variant-${variant}`,
+  `navbar--position-${position}`,
+  userClasses,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<header
-  class={`w-full ${positionClasses[position]} ${currentVariant.header} ${finalClassName}`.trim()}
-  role="banner"
->
-  <div
-    class={`mx-auto flex items-center justify-between gap-4 px-4 py-3 sm:px-6 ${maxWidthClasses[maxWidth]}`}
-  >
+<header class={rootClasses} role="banner">
+  <div class="navbar__inner" style={`--navbar-max-width: ${widthMap[maxWidth]}`}>
     <!-- Brand/Logo -->
     <a
       href={brandHref}
-      class={`
-        text-lg font-semibold no-underline transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
-        dark:focus:ring-offset-gray-900 rounded-md px-2 py-1 -mx-2 -my-1
-        ${currentVariant.brand}
-      `
-        .trim()
-        .replace(/\s+/g, ' ')}
+      class="navbar__brand"
       aria-label={`${brand} - Go to homepage`}
     >
       {brand}
@@ -132,24 +78,15 @@ const currentVariant = variantClasses[variant];
     <!-- Mobile Menu Toggle -->
     <button
       type="button"
-      class={`
-        inline-flex min-h-12 min-w-12 items-center justify-center gap-2 
-        rounded-lg border px-3 py-2 text-sm font-semibold shadow-sm 
-        transition-all duration-200 md:hidden
-        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
-        dark:focus:ring-offset-gray-900
-        ${currentVariant.toggleButton}
-      `
-        .trim()
-        .replace(/\s+/g, ' ')}
+      class="navbar__toggle"
       data-nav-toggle
       aria-controls={navId}
       aria-expanded="false"
       aria-label="Toggle navigation menu"
     >
-      <span class="text-sm font-medium">Menu</span>
+      <span class="navbar__toggle-label">Menu</span>
       <span
-        class="text-base transition-transform duration-200"
+        class="navbar__toggle-icon"
         aria-hidden="true"
         data-nav-icon>☰</span
       >
@@ -158,14 +95,12 @@ const currentVariant = variantClasses[variant];
     <!-- Navigation -->
     <nav
       id={navId}
-      class="hidden w-full md:block md:w-auto"
+      class="navbar__menu"
       data-nav
       role="navigation"
       aria-label={ariaLabel}
     >
-      <ul
-        class="mt-3 flex flex-col gap-1 md:mt-0 md:flex-row md:items-center md:gap-2"
-      >
+      <ul class="navbar__list">
         {
           items.map((item) => (
             <li>
@@ -173,21 +108,13 @@ const currentVariant = variantClasses[variant];
                 href={item.href}
                 target={item.external ? '_blank' : undefined}
                 rel={item.external ? 'noopener noreferrer' : undefined}
-                class={`
-                inline-flex min-h-11 items-center rounded-lg px-3 py-2 
-                text-sm font-medium no-underline transition-all duration-200
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
-                dark:focus:ring-offset-gray-900
-                ${item.active ? currentVariant.activeNavLink : currentVariant.navLink}
-              `
-                  .trim()
-                  .replace(/\s+/g, ' ')}
+                class={`navbar__link ${item.active ? 'navbar__link--active' : ''}`.trim()}
                 aria-current={item.active ? 'page' : undefined}
               >
                 {item.label}
                 {item.external && (
                   <>
-                    <span class="ml-1 text-xs" aria-hidden="true">
+                    <span class="navbar__external-icon" aria-hidden="true">
                       ↗
                     </span>
                     <span class="sr-only"> (opens in new window)</span>
@@ -199,7 +126,7 @@ const currentVariant = variantClasses[variant];
         }
 
         <!-- Actions Slot -->
-        <li class="mt-3 md:mt-0 md:ml-4">
+        <li class="navbar__actions">
           <slot name="actions" />
         </li>
       </ul>
@@ -209,8 +136,7 @@ const currentVariant = variantClasses[variant];
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    // Find all navbar instances
-    const navbars = document.querySelectorAll('header[role="banner"]');
+    const navbars = document.querySelectorAll('.navbar');
 
     navbars.forEach((navbar) => {
       const toggle = navbar.querySelector('[data-nav-toggle]');
@@ -226,23 +152,19 @@ const currentVariant = variantClasses[variant];
         isOpen = nextOpen;
         toggle.setAttribute('aria-expanded', String(nextOpen));
 
-        // Update icon
         if (icon) {
           icon.textContent = nextOpen ? '✕' : '☰';
           icon.style.transform = nextOpen ? 'rotate(180deg)' : 'rotate(0deg)';
         }
 
-        // Handle mobile/desktop visibility
         if (window.innerWidth >= 768) {
-          nav.classList.remove('hidden');
+          nav.classList.remove('navbar__menu--hidden');
           return;
         }
 
-        nav.classList.toggle('hidden', !nextOpen);
+        nav.classList.toggle('navbar__menu--hidden', !nextOpen);
 
-        // Focus management
         if (nextOpen) {
-          // Focus first nav link when menu opens
           const firstLink = nav.querySelector('a');
           if (firstLink) {
             firstLink.focus();
@@ -281,10 +203,10 @@ const currentVariant = variantClasses[variant];
         const isDesktop = window.innerWidth >= 768;
 
         if (isDesktop) {
-          nav.classList.remove('hidden');
+          nav.classList.remove('navbar__menu--hidden');
           updateVisibility(false);
         } else {
-          nav.classList.toggle('hidden', !isOpen);
+          nav.classList.toggle('navbar__menu--hidden', !isOpen);
         }
       };
 
@@ -295,3 +217,179 @@ const currentVariant = variantClasses[variant];
     });
   });
 </script>
+
+<style>
+  .navbar {
+    width: 100%;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+    background-color: #ffffff;
+    color: #0f172a;
+  }
+
+  .navbar--position-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .navbar--position-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+  }
+
+  .navbar__inner {
+    margin: 0 auto;
+    max-width: var(--navbar-max-width, 80rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .navbar__brand {
+    font-size: 1.125rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: inherit;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  .navbar__brand:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .navbar__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    border-radius: 0.75rem;
+    background-color: rgba(248, 250, 252, 0.9);
+    color: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .navbar__toggle:hover {
+    background-color: rgba(248, 250, 252, 1);
+  }
+
+  .navbar__toggle:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .navbar__toggle-icon {
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+  }
+
+  .navbar__menu {
+    width: 100%;
+  }
+
+  .navbar__menu--hidden {
+    display: none;
+  }
+
+  .navbar__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .navbar__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .navbar__link:hover,
+  .navbar__link:focus-visible {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #1d4ed8;
+  }
+
+  .navbar__link--active {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #1d4ed8;
+  }
+
+  .navbar__external-icon {
+    font-size: 0.75rem;
+  }
+
+  .navbar__actions {
+    margin-top: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .navbar__toggle {
+      display: none;
+    }
+
+    .navbar__menu {
+      display: block !important;
+      width: auto;
+    }
+
+    .navbar__list {
+      flex-direction: row;
+      align-items: center;
+      margin-top: 0;
+      gap: 0.5rem;
+    }
+
+    .navbar__actions {
+      margin-top: 0;
+      margin-left: 1rem;
+    }
+  }
+
+  :where(.dark) .navbar {
+    border-color: rgba(51, 65, 85, 0.6);
+    background-color: rgba(15, 23, 42, 0.9);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .navbar__toggle {
+    border-color: rgba(148, 163, 184, 0.3);
+    background-color: rgba(15, 23, 42, 0.8);
+  }
+
+  .navbar--variant-glass {
+    background-color: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    border-color: rgba(148, 163, 184, 0.4);
+  }
+
+  .navbar--variant-minimal {
+    border-color: transparent;
+    background-color: transparent;
+  }
+
+  :where(.dark) .navbar--variant-glass {
+    background-color: rgba(15, 23, 42, 0.75);
+  }
+</style>

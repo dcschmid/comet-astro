@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 /**
  * Slider - WCAG AAA compliant range input component
  * Provides accessible value selection with keyboard navigation and screen reader support
@@ -53,186 +51,206 @@ const {
   ariaDescription,
 } = Astro.props as Props;
 
-const sizeClasses = {
-  sm: {
-    track: 'h-1.5',
-    thumb:
-      '[&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4',
-    label: 'text-xs',
-    value: 'text-xs',
-  },
-  md: {
-    track: 'h-2',
-    thumb:
-      '[&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5',
-    label: 'text-sm',
-    value: 'text-sm',
-  },
-  lg: {
-    track: 'h-2.5',
-    thumb:
-      '[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6',
-    label: 'text-base',
-    value: 'text-base',
-  },
-};
+const fillPercent = max === min ? 0 : ((value - min) / (max - min)) * 100;
 
-const variantClasses = {
-  default: {
-    track: 'bg-slate-200 dark:bg-slate-800',
-    fill: 'bg-blue-600 dark:bg-blue-500',
-    thumb:
-      '[&::-webkit-slider-thumb]:bg-blue-600 dark:[&::-webkit-slider-thumb]:bg-blue-500 [&::-moz-range-thumb]:bg-blue-600 dark:[&::-moz-range-thumb]:bg-blue-500',
-    value: 'text-blue-700 dark:text-blue-300',
-    focus: 'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-  },
-  success: {
-    track: 'bg-slate-200 dark:bg-slate-800',
-    fill: 'bg-green-600 dark:bg-green-500',
-    thumb:
-      '[&::-webkit-slider-thumb]:bg-green-600 dark:[&::-webkit-slider-thumb]:bg-green-500 [&::-moz-range-thumb]:bg-green-600 dark:[&::-moz-range-thumb]:bg-green-500',
-    value: 'text-green-700 dark:text-green-300',
-    focus: 'focus-visible:ring-green-600 dark:focus-visible:ring-green-400',
-  },
-  warning: {
-    track: 'bg-slate-200 dark:bg-slate-800',
-    fill: 'bg-amber-600 dark:bg-amber-500',
-    thumb:
-      '[&::-webkit-slider-thumb]:bg-amber-600 dark:[&::-webkit-slider-thumb]:bg-amber-500 [&::-moz-range-thumb]:bg-amber-600 dark:[&::-moz-range-thumb]:bg-amber-500',
-    value: 'text-amber-700 dark:text-amber-300',
-    focus: 'focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400',
-  },
-  error: {
-    track: 'bg-slate-200 dark:bg-slate-800',
-    fill: 'bg-red-600 dark:bg-red-500',
-    thumb:
-      '[&::-webkit-slider-thumb]:bg-red-600 dark:[&::-webkit-slider-thumb]:bg-red-500 [&::-moz-range-thumb]:bg-red-600 dark:[&::-moz-range-thumb]:bg-red-500',
-    value: 'text-red-700 dark:text-red-300',
-    focus: 'focus-visible:ring-red-600 dark:focus-visible:ring-red-400',
-  },
-};
-
-const currentSize = sizeClasses[size];
-const currentVariant = variantClasses[variant];
-
-const sliderClasses = cn(
-  // Base styles
-  'w-full appearance-none rounded-lg transition-all duration-200',
-  'cursor-pointer',
-  // Disabled state
-  'disabled:cursor-not-allowed disabled:opacity-60',
-  // Focus styles for WCAG AAA
-  'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2',
-  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900',
-  // Track styles
-  currentSize.track,
-  currentVariant.track,
-  currentVariant.focus,
-  // WebKit thumb styles
-  '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full',
-  '[&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white',
-  '[&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:transition-all',
-  '[&::-webkit-slider-thumb]:duration-200 [&::-webkit-slider-thumb]:cursor-pointer',
-  '[&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:active:scale-105',
-  'dark:[&::-webkit-slider-thumb]:border-slate-900',
-  // Firefox thumb styles
-  '[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0',
-  '[&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:transition-all',
-  '[&::-moz-range-thumb]:duration-200 [&::-moz-range-thumb]:cursor-pointer',
-  '[&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:active:scale-105',
-  // Variant-specific thumb styles
-  currentSize.thumb,
-  currentVariant.thumb
-);
-
-const containerClasses = cn(
-  'space-y-2 text-slate-900 dark:text-slate-100',
-  className
-);
+const rootClasses = [
+  'slider',
+  `slider--size-${size}`,
+  `slider--variant-${variant}`,
+  disabled ? 'slider--disabled' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<style>
-  .slider-container {
-    /* Enhanced contrast for WCAG AAA compliance */
-    --slider-track-contrast: 0 0 0 1px rgb(148 163 184 / 0.3);
-    --slider-thumb-shadow:
-      0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+<style is:inline>
+  .slider {
+    --slider-track-height: 0.4rem;
+    --slider-thumb-size: 1rem;
+    --slider-color: #2563eb;
+    --slider-track-color: #e2e8f0;
+    --slider-value-color: #2563eb;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: #0f172a;
   }
 
-  .slider-container input[type='range'] {
-    /* Enhanced focus indicator */
-    &:focus-visible {
-      box-shadow:
-        var(--slider-track-contrast),
-        0 0 0 4px var(--focus-ring-color);
-    }
-
-    /* WebKit specific enhancements */
-    &::-webkit-slider-thumb {
-      box-shadow: var(--slider-thumb-shadow);
-    }
-
-    /* Firefox specific enhancements */
-    &::-moz-range-thumb {
-      box-shadow: var(--slider-thumb-shadow);
-    }
-
-    /* High contrast mode support */
-    @media (prefers-contrast: high) {
-      &::-webkit-slider-thumb {
-        border-width: 3px !important;
-      }
-      &::-moz-range-thumb {
-        border: 3px solid white !important;
-      }
-    }
-
-    /* Reduced motion support */
-    @media (prefers-reduced-motion: reduce) {
-      &,
-      &::-webkit-slider-thumb,
-      &::-moz-range-thumb {
-        transition: none !important;
-      }
-    }
+  .slider__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  .slider-fill {
-    /* Smooth transition for fill animation */
-    transition: width 0.2s ease-out;
+  .slider__label {
+    font-weight: 600;
+  }
+
+  .slider__value {
+    font-weight: 700;
+    color: var(--slider-value-color);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .slider__track {
+    position: relative;
+    width: 100%;
+  }
+
+  .slider__input {
+    width: 100%;
+    appearance: none;
+    border-radius: 999px;
+    height: var(--slider-track-height);
+    background-color: var(--slider-track-color);
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .slider__input::-webkit-slider-thumb {
+    appearance: none;
+    width: var(--slider-thumb-size);
+    height: var(--slider-thumb-size);
+    border-radius: 50%;
+    background-color: var(--slider-color);
+    border: 3px solid #ffffff;
+    box-shadow:
+      0 4px 6px rgba(15, 23, 42, 0.2),
+      0 2px 4px rgba(15, 23, 42, 0.1);
+    transition: transform 0.2s ease;
+  }
+
+  .slider__input::-moz-range-thumb {
+    width: var(--slider-thumb-size);
+    height: var(--slider-thumb-size);
+    border-radius: 50%;
+    background-color: var(--slider-color);
+    border: 3px solid #ffffff;
+    box-shadow:
+      0 4px 6px rgba(15, 23, 42, 0.2),
+      0 2px 4px rgba(15, 23, 42, 0.1);
+    transition: transform 0.2s ease;
+  }
+
+  .slider__input:focus-visible::-webkit-slider-thumb,
+  .slider__input:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--slider-color);
+    outline-offset: 2px;
+  }
+
+  .slider__input:active::-webkit-slider-thumb,
+  .slider__input:active::-moz-range-thumb {
+    transform: scale(1.05);
+  }
+
+  .slider__fill {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: var(--slider-track-height);
+    border-radius: 999px;
+    transform: translateY(-50%);
+    background-color: var(--slider-color);
+    transition: width 0.2s ease;
+    pointer-events: none;
+  }
+
+  .slider__minmax {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #475569;
+  }
+
+  .slider__minmax-text {
+    font-weight: 600;
+  }
+
+  .slider--size-sm {
+    --slider-track-height: 0.35rem;
+    --slider-thumb-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .slider--size-lg {
+    --slider-track-height: 0.5rem;
+    --slider-thumb-size: 1.3rem;
+    font-size: 1rem;
+  }
+
+  .slider--variant-default {
+    --slider-color: #2563eb;
+    --slider-value-color: #1d4ed8;
+  }
+
+  .slider--variant-success {
+    --slider-color: #16a34a;
+    --slider-value-color: #15803d;
+  }
+
+  .slider--variant-warning {
+    --slider-color: #d97706;
+    --slider-value-color: #b45309;
+  }
+
+  .slider--variant-error {
+    --slider-color: #dc2626;
+    --slider-value-color: #b91c1c;
+  }
+
+  .slider--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .slider--disabled .slider__input {
+    cursor: not-allowed;
+  }
+
+  :where(.dark) .slider {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .slider__input {
+    background-color: rgba(148, 163, 184, 0.3);
+  }
+
+  :where(.dark) .slider__input::-webkit-slider-thumb,
+  :where(.dark) .slider__input::-moz-range-thumb {
+    border-color: #0f172a;
+  }
+
+  :where(.dark) .slider__minmax {
+    color: #cbd5f5;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .slider-fill {
-      transition: none !important;
+    .slider__input,
+    .slider__fill {
+      transition: none;
+    }
+  }
+
+  @media (prefers-contrast: high) {
+    .slider__input::-webkit-slider-thumb,
+    .slider__input::-moz-range-thumb {
+      border-width: 3px;
     }
   }
 </style>
 
-<div class={cn('slider-container', containerClasses)} data-slider-root>
+<div class={rootClasses} data-slider-root>
   {
     label && (
-      <div class="flex items-center justify-between">
-        <label
-          for={id}
-          class={cn(
-            'font-medium text-slate-800 dark:text-slate-200',
-            currentSize.label
-          )}
-        >
+      <div class="slider__header">
+        <label for={id} class="slider__label">
           {label}
         </label>
         {showValue && (
-          <span
-            class={cn(
-              'font-semibold tabular-nums',
-              currentSize.value,
-              currentVariant.value
-            )}
-            data-slider-value
-            aria-live="polite"
-            aria-label={`Current value: ${value}`}
-          >
+          <span class="slider__value" data-slider-value aria-live="polite" aria-label={`Current value: ${value}`}>
             {value}
           </span>
         )}
@@ -240,7 +258,7 @@ const containerClasses = cn(
     )
   }
 
-  <div class="relative">
+  <div class="slider__track">
     <input
       type="range"
       id={id}
@@ -250,7 +268,7 @@ const containerClasses = cn(
       step={step}
       value={value}
       disabled={disabled}
-      class={sliderClasses}
+      class="slider__input"
       aria-label={label || `Slider from ${min} to ${max}`}
       aria-describedby={ariaDescription ? `${id}-description` : undefined}
       aria-valuemin={min}
@@ -261,13 +279,9 @@ const containerClasses = cn(
       data-slider
     />
     <div
-      class={cn(
-        'pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 rounded-lg slider-fill',
-        currentSize.track,
-        currentVariant.fill
-      )}
+      class="slider__fill"
       data-slider-fill
-      style={`width: ${max === min ? 0 : ((value - min) / (max - min)) * 100}%`}
+      style={`width: ${fillPercent}%`}
       aria-hidden="true"
     >
     </div>
@@ -275,9 +289,13 @@ const containerClasses = cn(
 
   {
     showMinMax && (
-      <div class="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-400">
-        <span aria-label={`Minimum value: ${min}`}>{min}</span>
-        <span aria-label={`Maximum value: ${max}`}>{max}</span>
+      <div class="slider__minmax">
+        <span class="slider__minmax-text" aria-label={`Minimum value: ${min}`}>
+          {min}
+        </span>
+        <span class="slider__minmax-text" aria-label={`Maximum value: ${max}`}>
+          {max}
+        </span>
       </div>
     )
   }

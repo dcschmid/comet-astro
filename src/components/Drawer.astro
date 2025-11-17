@@ -17,59 +17,45 @@ const {
   className = '',
 } = Astro.props;
 
-const sizeClasses = {
-  sm: 'max-w-xs w-80',
-  md: 'max-w-md w-96',
-  lg: 'max-w-lg w-[30rem]',
-  full: 'max-w-full w-full sm:w-4/5 lg:w-3/5',
-};
-
-const positionClasses = {
-  left: 'left-0',
-  right: 'right-0',
-};
+const panelClasses = [
+  'drawer__panel',
+  `drawer__panel--${position}`,
+  `drawer__panel--size-${size}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
   id={id}
-  class="fixed inset-0 z-50 invisible"
+  class="drawer"
   data-drawer
   aria-hidden="true"
 >
-  <div
-    class="absolute inset-0 bg-slate-950/80 opacity-0 transition-opacity duration-300"
-    data-drawer-backdrop
-  >
-  </div>
+  <div class="drawer__backdrop" data-drawer-backdrop></div>
 
   <div
-    class={`absolute top-0 ${positionClasses[position]} h-full ${sizeClasses[size]} w-full border-2 border-slate-300/90 bg-white text-slate-900 shadow-2xl ${
-      position === 'left' ? 'border-r-2' : 'border-l-2'
-    } transform transition-transform duration-300 ease-out ${
-      position === 'left' ? '-translate-x-full' : 'translate-x-full'
-    } ${className} dark:border-slate-600/90 dark:bg-slate-800 dark:text-slate-100`}
+    class={panelClasses}
     data-drawer-panel
     data-position={position}
     role="dialog"
     aria-modal="true"
     aria-labelledby={title ? `${id}-title` : undefined}
   >
-    <div class="flex flex-col h-full">
+    <div class="drawer__content">
       {
         (title || dismissible) && (
-          <header class="flex items-center justify-between border-b-2 border-slate-300/80 bg-slate-50/50 px-6 py-4 dark:border-slate-600/80 dark:bg-slate-700/30">
+          <header class="drawer__header">
             {title && (
-              <h2
-                id={`${id}-title`}
-                class="text-lg font-semibold text-slate-900 dark:text-slate-100"
-              >
+              <h2 id={`${id}-title`} class="drawer__title">
                 {title}
               </h2>
             )}
             {dismissible && (
               <button
                 type="button"
-                class="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-white/90 text-slate-800 transition-colors duration-200 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-700/90 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-slate-50 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+                class="drawer__close"
                 data-drawer-close
                 aria-label="Close drawer"
               >
@@ -90,28 +76,26 @@ const positionClasses = {
         )
       }
 
-      <div
-        class="flex-1 overflow-y-auto px-6 py-6 text-sm leading-relaxed text-slate-800 dark:text-slate-200"
-      >
+      <div class="drawer__body">
         <slot />
       </div>
 
-      <footer
-        class="border-t-2 border-slate-300/80 bg-slate-50/30 px-6 py-4 dark:border-slate-600/80 dark:bg-slate-700/20"
-      >
-        <slot name="actions">
-          {
-            dismissible && (
-              <button
-                type="button"
-                class="rounded-lg border border-slate-300/90 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition-colors duration-200 hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-500/90 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-slate-50 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
-                data-drawer-close
-              >
-                Close
-              </button>
-            )
-          }
-        </slot>
+      <footer class="drawer__footer">
+        <div class="drawer__actions">
+          <slot name="actions">
+            {
+              dismissible && (
+                <button
+                  type="button"
+                  class="drawer__button"
+                  data-drawer-close
+                >
+                  Close
+                </button>
+              )
+            }
+          </slot>
+        </div>
       </footer>
     </div>
   </div>
@@ -125,6 +109,10 @@ const positionClasses = {
     if (!drawers.length) return;
 
     const lastFocusMap = new WeakMap();
+    const ROOT_VISIBLE_CLASS = 'drawer--visible';
+    const BACKDROP_VISIBLE_CLASS = 'drawer__backdrop--visible';
+    const PANEL_OPEN_CLASS = 'drawer__panel--open';
+    const TRANSITION_DURATION = 300;
 
     const getFocusableChildren = (container) =>
       Array.from(
@@ -143,21 +131,15 @@ const positionClasses = {
       const backdrop = drawer.querySelector('[data-drawer-backdrop]');
       const panel = drawer.querySelector('[data-drawer-panel]');
       if (backdrop instanceof HTMLElement) {
-        backdrop.classList.remove('opacity-100');
-        backdrop.classList.add('opacity-0');
+        backdrop.classList.remove(BACKDROP_VISIBLE_CLASS);
       }
       if (panel instanceof HTMLElement) {
-        const position =
-          panel.getAttribute('data-position') === 'left' ? 'left' : 'right';
-        panel.classList.remove('translate-x-0');
-        panel.classList.add(
-          position === 'left' ? '-translate-x-full' : 'translate-x-full'
-        );
+        panel.classList.remove(PANEL_OPEN_CLASS);
       }
       drawer.setAttribute('aria-hidden', 'true');
       window.setTimeout(() => {
-        drawer.classList.add('invisible');
-      }, 200);
+        drawer.classList.remove(ROOT_VISIBLE_CLASS);
+      }, TRANSITION_DURATION);
       const last = lastFocusMap.get(drawer);
       if (last instanceof HTMLElement) {
         last.focus({ preventScroll: true });
@@ -211,14 +193,12 @@ const positionClasses = {
           ? document.activeElement
           : null
       );
-      drawer.classList.remove('invisible');
+      drawer.classList.add(ROOT_VISIBLE_CLASS);
       requestAnimationFrame(() => {
         if (backdrop instanceof HTMLElement) {
-          backdrop.classList.remove('opacity-0');
-          backdrop.classList.add('opacity-100');
+          backdrop.classList.add(BACKDROP_VISIBLE_CLASS);
         }
-        panel.classList.remove('-translate-x-full', 'translate-x-full');
-        panel.classList.add('translate-x-0');
+        panel.classList.add(PANEL_OPEN_CLASS);
       });
       drawer.setAttribute('aria-hidden', 'false');
       document.body.style.setProperty('overflow', 'hidden');
@@ -240,3 +220,181 @@ const positionClasses = {
     });
   })();
 </script>
+
+<style is:inline>
+  .drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .drawer--visible {
+    pointer-events: auto;
+    visibility: visible;
+  }
+  .drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.8);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    backdrop-filter: blur(2px);
+  }
+  .drawer__backdrop--visible {
+    opacity: 1;
+  }
+  .drawer__panel {
+    --drawer-panel-width: 24rem;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: min(100%, var(--drawer-panel-width));
+    background: var(--drawer-bg, #ffffff);
+    color: var(--drawer-text, #0f172a);
+    border: 1px solid var(--drawer-border, rgba(15, 23, 42, 0.08));
+    box-shadow: 0 25px 80px rgba(15, 23, 42, 0.25);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .drawer__panel--left {
+    left: 0;
+    transform: translateX(-100%);
+    border-right-width: 2px;
+  }
+  .drawer__panel--right {
+    right: 0;
+    transform: translateX(100%);
+    border-left-width: 2px;
+  }
+  .drawer__panel--open {
+    transform: translateX(0);
+  }
+  .drawer__panel--size-sm {
+    --drawer-panel-width: 20rem;
+  }
+  .drawer__panel--size-md {
+    --drawer-panel-width: 24rem;
+  }
+  .drawer__panel--size-lg {
+    --drawer-panel-width: 30rem;
+  }
+  .drawer__panel--size-full {
+    --drawer-panel-width: clamp(22rem, 80vw, 60rem);
+  }
+  :where(.dark) .drawer__panel {
+    --drawer-bg: #0f172a;
+    --drawer-text: #f8fafc;
+    --drawer-border: rgba(148, 163, 184, 0.4);
+    box-shadow: 0 30px 80px rgba(2, 6, 23, 0.75);
+  }
+  .drawer__content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .drawer__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--drawer-border, rgba(15, 23, 42, 0.08));
+    background: rgba(15, 23, 42, 0.03);
+  }
+  :where(.dark) .drawer__header {
+    background: rgba(148, 163, 184, 0.12);
+  }
+  .drawer__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: inherit;
+  }
+  .drawer__close {
+    border: 1px solid transparent;
+    border-radius: 999px;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .drawer__close:hover {
+    background: rgba(37, 99, 235, 0.1);
+  }
+  .drawer__close:focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.7);
+    outline-offset: 2px;
+  }
+  :where(.dark) .drawer__close {
+    background: rgba(15, 23, 42, 0.75);
+  }
+  .drawer__body {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .drawer__footer {
+    border-top: 1px solid var(--drawer-border, rgba(15, 23, 42, 0.08));
+    background: rgba(15, 23, 42, 0.02);
+    padding: 1rem 1.5rem;
+  }
+  :where(.dark) .drawer__footer {
+    background: rgba(148, 163, 184, 0.08);
+  }
+  .drawer__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .drawer__actions {
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+    }
+  }
+  .drawer__button {
+    border-radius: 0.85rem;
+    border: 1px solid var(--drawer-border, rgba(15, 23, 42, 0.08));
+    background: var(--drawer-bg, #ffffff);
+    padding: 0.65rem 1.5rem;
+    font-weight: 600;
+    color: inherit;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .drawer__button:hover {
+    border-color: rgba(37, 99, 235, 0.7);
+    background: rgba(37, 99, 235, 0.08);
+  }
+  .drawer__button:focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.7);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .drawer__panel,
+    .drawer__backdrop,
+    .drawer__close,
+    .drawer__button {
+      transition: none;
+    }
+  }
+</style>

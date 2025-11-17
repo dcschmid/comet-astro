@@ -12,13 +12,9 @@ interface Props {
     | 'indigo'
     | 'slate'
     | 'neutral';
-  /** Optional semantic element; defaults to span */
   as?: 'span' | 'div';
-  /** Optional link target turning badge into anchor */
   href?: string;
-  /** Optional aria-label if label text not descriptive */
   ariaLabel?: string;
-  /** Size variant */
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
@@ -34,104 +30,144 @@ const {
   className = '',
 } = Astro.props as Props;
 
-const display = label ?? category ?? '';
-const normalizedDisplay = typeof display === 'string' ? display.trim() : '';
-const normalizedCategory =
-  typeof category === 'string' ? category.trim().toLowerCase() : '';
-const normalizedTone =
-  typeof tone === 'string' ? tone.trim().toLowerCase() : '';
-
-// WCAG AAA friendly color pairs: ensure small text contrast >= 7:1
-// Using slightly darker/lighter adjustments in dark mode.
-const toneStyles: Record<string, string> = {
-  purple:
-    'border-purple-700 bg-purple-700 text-white dark:border-purple-500 dark:bg-purple-500 dark:text-white',
-  blue: 'border-blue-700 bg-blue-700 text-white dark:border-blue-500 dark:bg-blue-500 dark:text-white',
-  emerald:
-    'border-emerald-700 bg-emerald-700 text-white dark:border-emerald-600 dark:bg-emerald-600 dark:text-white',
-  amber:
-    'border-amber-600 bg-amber-500 text-slate-900 dark:border-amber-500 dark:bg-amber-400 dark:text-slate-900',
-  rose: 'border-rose-700 bg-rose-600 text-white dark:border-rose-500 dark:bg-rose-500 dark:text-white',
-  sky: 'border-sky-700 bg-sky-700 text-white dark:border-sky-600 dark:bg-sky-600 dark:text-white',
-  indigo:
-    'border-indigo-700 bg-indigo-700 text-white dark:border-indigo-500 dark:bg-indigo-500 dark:text-white',
-  slate:
-    'border-slate-600 bg-slate-600 text-white dark:border-slate-500 dark:bg-slate-500 dark:text-white',
-  neutral:
-    'border-neutral-600 bg-neutral-600 text-white dark:border-neutral-500 dark:bg-neutral-500 dark:text-white',
+const text = (label ?? category ?? 'Category').trim();
+const categoryKey = (category ?? text).toLowerCase();
+const heuristics = () => {
+  if (!categoryKey) return 'slate';
+  if (categoryKey.includes('rock')) return 'purple';
+  if (categoryKey.includes('pop')) return 'sky';
+  if (categoryKey.includes('jazz')) return 'amber';
+  if (categoryKey.includes('hip') || categoryKey.includes('rap'))
+    return 'emerald';
+  if (categoryKey.includes('classical')) return 'indigo';
+  return 'slate';
 };
+const toneKey = (tone || heuristics()) as NonNullable<Props['tone']>;
+const sizeKey = size ?? 'md';
 
-const heuristicColor = () => {
-  const key = normalizedCategory || normalizedDisplay.toLowerCase();
-  if (!key) {
-    return toneStyles.slate;
-  }
-  if (key.includes('rock')) {
-    return toneStyles.purple;
-  }
-  if (key.includes('pop')) {
-    return toneStyles.sky;
-  }
-  if (key.includes('jazz')) {
-    return toneStyles.amber;
-  }
-  if (key.includes('hip') || key.includes('rap')) {
-    return toneStyles.emerald;
-  }
-  if (key.includes('classical')) {
-    return toneStyles.indigo;
-  }
-  return toneStyles.slate;
-};
-
-const color =
-  (normalizedTone && toneStyles[normalizedTone]) || heuristicColor();
-const text = normalizedDisplay || 'Category';
-
-const sizeStyles: Record<string, string> = {
-  sm: 'text-[10px] px-2 py-0.5',
-  md: 'text-xs px-2.5 py-1',
-  lg: 'text-sm px-3 py-1.5',
-};
-const finalSize = sizeStyles[size] || sizeStyles.md;
-const base =
-  'inline-flex items-center rounded-full border font-semibold uppercase tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400';
-const interactive = href
-  ? 'transition-colors hover:brightness-110 focus-visible:brightness-110'
-  : '';
+const Tag = href ? 'a' : as === 'div' ? 'div' : 'span';
+const classes = [
+  'category-badge',
+  `category-badge--tone-${toneKey}`,
+  `category-badge--size-${sizeKey}`,
+  href ? 'category-badge--interactive' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 const ariaAttrs: Record<string, string> = {};
 if (ariaLabel) ariaAttrs['aria-label'] = ariaLabel;
-if (href) ariaAttrs['href'] = href;
 ---
 
-{
-  href && (
-    <a
-      class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()}
-      aria-label={ariaAttrs['aria-label']}
-      href={href}
-    >
-      <span class="leading-none">{text}</span>
-    </a>
-  )
-}
-{
-  !href && as === 'div' && (
-    <div
-      class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()}
-      aria-label={ariaAttrs['aria-label']}
-    >
-      <span class="leading-none">{text}</span>
-    </div>
-  )
-}
-{
-  !href && as !== 'div' && (
-    <span
-      class={`${base} ${finalSize} ${color} ${interactive} ${className}`.trim()}
-      aria-label={ariaAttrs['aria-label']}
-    >
-      <span class="leading-none">{text}</span>
-    </span>
-  )
-}
+<Tag class={classes} href={href} {...ariaAttrs}>
+  <span class="category-badge__text">{text}</span>
+</Tag>
+
+<style is:inline>
+  .category-badge {
+    --category-bg: #0f172a;
+    --category-border: rgba(148, 163, 184, 0.55);
+    --category-text: #f8fafc;
+    --category-font-size: 0.75rem;
+    --category-padding-y: 0.2rem;
+    --category-padding-x: 0.75rem;
+    --category-letter-spacing: 0.14em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    border-radius: 999px;
+    border: 1px solid var(--category-border);
+    background: var(--category-bg);
+    color: var(--category-text);
+    padding: var(--category-padding-y) var(--category-padding-x);
+    font-size: var(--category-font-size);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--category-letter-spacing);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .category-badge__text {
+    line-height: 1;
+  }
+
+  .category-badge:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+  }
+
+  .category-badge--interactive {
+    cursor: pointer;
+  }
+
+  .category-badge--interactive:hover,
+  .category-badge--interactive:focus-visible {
+    transform: translateY(-1px);
+  }
+
+  .category-badge--size-sm {
+    --category-font-size: 0.65rem;
+    --category-padding-y: 0.15rem;
+    --category-padding-x: 0.55rem;
+  }
+
+  .category-badge--size-lg {
+    --category-font-size: 0.85rem;
+    --category-padding-y: 0.3rem;
+    --category-padding-x: 1rem;
+  }
+
+  .category-badge--tone-purple {
+    --category-bg: #6d28d9;
+    --category-border: #8b5cf6;
+    --category-text: #f8fafc;
+  }
+
+  .category-badge--tone-blue {
+    --category-bg: #1d4ed8;
+    --category-border: #60a5fa;
+    --category-text: #f8fafc;
+  }
+
+  .category-badge--tone-emerald {
+    --category-bg: #047857;
+    --category-border: #34d399;
+    --category-text: #f0fdf4;
+  }
+
+  .category-badge--tone-amber {
+    --category-bg: #d97706;
+    --category-border: #fbbf24;
+    --category-text: #1c1917;
+  }
+
+  .category-badge--tone-rose {
+    --category-bg: #be123c;
+    --category-border: #fb7185;
+    --category-text: #fff1f2;
+  }
+
+  .category-badge--tone-sky {
+    --category-bg: #0ea5e9;
+    --category-border: #38bdf8;
+    --category-text: #022c22;
+  }
+
+  .category-badge--tone-indigo {
+    --category-bg: #4338ca;
+    --category-border: #6366f1;
+    --category-text: #eef2ff;
+  }
+
+  .category-badge--tone-slate {
+    --category-bg: #475569;
+    --category-border: #94a3b8;
+    --category-text: #f8fafc;
+  }
+
+  .category-badge--tone-neutral {
+    --category-bg: #52525b;
+    --category-border: #a1a1aa;
+    --category-text: #f8fafc;
+  }
+</style>

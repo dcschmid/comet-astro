@@ -45,17 +45,18 @@ const resolvedContainerSize = 'lg';
   <div slot="header">
     {
       !hideHeader && (
-        <header class="mb-8">
+        <header class="docs-layout__header">
           <Container
             size={resolvedContainerSize}
-            className="flex flex-col md:flex-row items-center md:items-center gap-4 md:justify-between"
+            className="docs-layout__header-inner"
           >
-            <div className="min-w-0 text-center md:text-left">
+            <div className="docs-layout__back">
               <a
                 href="/"
-                class="inline-flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300 hover:text-sky-600"
+                class="docs-layout__back-link"
               >
                 <svg
+                  class="docs-layout__back-icon"
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"
                   height="18"
@@ -65,17 +66,16 @@ const resolvedContainerSize = 'lg';
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  class="text-slate-700 dark:text-slate-200"
                 >
                   <>
                     <path d="M19 12H6" />
                     <path d="M12 19L5 12 12 5" />
                   </>
                 </svg>
-                <span>Back</span>
+                <span class="docs-layout__back-text">Back</span>
               </a>
             </div>
-            <div className="flex items-center justify-center md:justify-end">
+            <div className="docs-layout__toggle">
               <ThemeToggle />
             </div>
           </Container>
@@ -84,23 +84,128 @@ const resolvedContainerSize = 'lg';
     }
   </div>
   <div slot="main">
-    {
-      prose ? (
-        <Prose variant="default" size="md" maxWidth="lg" class="mb-10">
-          <slot name="showcase" />
-        </Prose>
-      ) : (
-        <slot name="showcase" />
-      )
-    }
-    {
-      prose ? (
-        <Prose variant="article" size="lg" maxWidth="xl" readingMode={true}>
-          <slot />
-        </Prose>
-      ) : (
-        <slot />
-      )
-    }
+    <div class="docs-layout">
+      {
+        prose ? (
+          <Prose
+            variant="default"
+            size="md"
+            maxWidth="lg"
+            class="docs-layout__showcase"
+          >
+            <slot name="showcase" />
+          </Prose>
+        ) : (
+          <div class="docs-layout__showcase">
+            <slot name="showcase" />
+          </div>
+        )
+      }
+      {
+        prose ? (
+          <Prose
+            variant="article"
+            size="lg"
+            maxWidth="xl"
+            readingMode={true}
+            class="docs-layout__content"
+          >
+            <slot />
+          </Prose>
+        ) : (
+          <div class="docs-layout__content">
+            <slot />
+          </div>
+        )
+      }
+    </div>
   </div>
 </BaseLayout>
+
+<style is:inline>
+  .docs-layout {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 3vw, 2rem);
+    padding-bottom: 2rem;
+  }
+
+  .docs-layout__header {
+    margin-bottom: 1.5rem;
+  }
+
+  .docs-layout__header-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  @media (min-width: 48rem) {
+    .docs-layout__header-inner {
+      flex-direction: row;
+      gap: 1.5rem;
+    }
+  }
+
+  .docs-layout__back {
+    min-width: 0;
+    text-align: center;
+  }
+
+  @media (min-width: 48rem) {
+    .docs-layout__back {
+      text-align: left;
+    }
+  }
+
+  .docs-layout__back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--bl-text, #0f172a);
+    text-decoration: none;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .docs-layout__back-link:hover {
+    background-color: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
+  }
+
+  .docs-layout__back-icon {
+    color: inherit;
+  }
+
+  .docs-layout__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .docs-layout__showcase {
+    margin-bottom: 1.25rem;
+  }
+
+  .docs-layout__content {
+    margin: 0;
+  }
+
+  :where(.dark) .docs-layout__back-link:hover {
+    background-color: rgba(96, 165, 250, 0.18);
+    color: #93c5fd;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .docs-layout__back-link {
+      transition: none !important;
+    }
+  }
+</style>

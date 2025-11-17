@@ -1,10 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
-/**
- * WCAG AAA compliant Tabs component
- * Provides accessible tabbed interface with keyboard navigation and screen reader support
- */
 interface Tab {
   id: string;
   label: string;
@@ -44,469 +38,508 @@ const {
   ariaLabel = 'Tabs',
 } = Astro.props as Props;
 
-// Size variants with WCAG AAA spacing
-const sizeClasses = {
-  sm: {
-    tab: 'px-3 py-1.5 text-sm min-h-[32px]',
-    panel: 'p-3 text-sm',
-    gap: 'gap-1',
-  },
-  md: {
-    tab: 'px-4 py-2 text-base min-h-[40px]',
-    panel: 'p-4 text-base',
-    gap: 'gap-2',
-  },
-  lg: {
-    tab: 'px-6 py-3 text-lg min-h-[48px]',
-    panel: 'p-6 text-lg',
-    gap: 'gap-3',
-  },
-};
+const enabledTabs = tabs.filter((tab) => !tab.disabled);
+const validActiveId =
+  activeId && tabs.some((tab) => tab.id === activeId && !tab.disabled)
+    ? activeId
+    : enabledTabs[0]?.id;
 
-// Variant styles with WCAG AAA contrast ratios (9:1)
-const variantClasses = {
-  default: {
-    container: 'space-y-4',
-    tablist: 'border-b border-slate-200 dark:border-slate-700',
-    tab: {
-      base: 'border-b-2 border-transparent font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 motion-safe:transition-all motion-reduce:transition-none contrast-more:border contrast-more:border-slate-950 contrast-more:dark:border-white',
-      active:
-        'border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-blue-50/50 dark:bg-blue-950/30 contrast-more:bg-blue-100 contrast-more:dark:bg-blue-900',
-      inactive:
-        'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:border-slate-600 contrast-more:text-slate-950 contrast-more:dark:text-white',
-      disabled:
-        'border-transparent text-slate-400 dark:text-slate-600 cursor-not-allowed contrast-more:text-slate-500 contrast-more:dark:text-slate-500',
-    },
-    panel:
-      'bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm contrast-more:border-slate-950 contrast-more:dark:border-white',
-  },
-  minimal: {
-    container: 'space-y-4',
-    tablist: '',
-    tab: {
-      base: 'font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 motion-safe:transition-all motion-reduce:transition-none contrast-more:border contrast-more:border-slate-950 contrast-more:dark:border-white',
-      active:
-        'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/30 rounded-md contrast-more:bg-blue-100 contrast-more:dark:bg-blue-900',
-      inactive:
-        'text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-900/50 rounded-md contrast-more:text-slate-950 contrast-more:dark:text-white',
-      disabled:
-        'text-slate-400 dark:text-slate-600 cursor-not-allowed contrast-more:text-slate-500 contrast-more:dark:text-slate-500',
-    },
-    panel: 'bg-transparent border-none p-0',
-  },
-  pills: {
-    container: 'space-y-4',
-    tablist: 'bg-slate-100 dark:bg-slate-800/50 rounded-lg p-1',
-    tab: {
-      base: 'font-medium transition-all duration-150 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 dark:focus-visible:ring-offset-slate-800 motion-safe:transition-all motion-reduce:transition-none contrast-more:border contrast-more:border-slate-950 contrast-more:dark:border-white',
-      active:
-        'bg-white text-slate-900 shadow-sm dark:bg-slate-950 dark:text-slate-100 contrast-more:bg-slate-50 contrast-more:dark:bg-slate-900',
-      inactive:
-        'text-slate-600 hover:text-slate-900 hover:bg-white/50 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-950/50 contrast-more:text-slate-950 contrast-more:dark:text-white',
-      disabled:
-        'text-slate-400 dark:text-slate-600 cursor-not-allowed contrast-more:text-slate-500 contrast-more:dark:text-slate-500',
-    },
-    panel:
-      'bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm contrast-more:border-slate-950 contrast-more:dark:border-white',
-  },
-  cards: {
-    container: 'space-y-4',
-    tablist: '',
-    tab: {
-      base: 'border font-medium transition-all duration-150 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 motion-safe:transition-all motion-reduce:transition-none contrast-more:border-2 contrast-more:border-slate-950 contrast-more:dark:border-white',
-      active:
-        'border-blue-600 bg-blue-600 text-white shadow-md dark:border-blue-500 dark:bg-blue-500 dark:text-slate-900 contrast-more:bg-blue-500 contrast-more:dark:bg-blue-400',
-      inactive:
-        'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:border-slate-600 shadow-sm contrast-more:text-slate-950 contrast-more:dark:text-white contrast-more:border-slate-950 contrast-more:dark:border-white',
-      disabled:
-        'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed dark:border-slate-700 dark:bg-slate-800 dark:text-slate-600 contrast-more:text-slate-500 contrast-more:dark:text-slate-500',
-    },
-    panel:
-      'bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm contrast-more:border-slate-950 contrast-more:dark:border-white',
-  },
-};
-
-const currentSize = sizeClasses[size];
-const currentVariant = variantClasses[variant];
-const isVertical = orientation === 'vertical';
-
-// Generate unique IDs for this tabs instance
-const tabsId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
+const tabsId = `tabs-${Math.random().toString(36).slice(2, 9)}`;
 const getTabId = (id: string) => `${tabsId}-tab-${id}`;
 const getPanelId = (id: string) => `${tabsId}-panel-${id}`;
 
-// Filter out disabled tabs for default active selection
-const enabledTabs = tabs.filter((tab) => !tab.disabled);
-const validActiveId =
-  activeId && tabs.find((tab) => tab.id === activeId && !tab.disabled)
-    ? activeId
-    : enabledTabs[0]?.id;
+const rootClasses = [
+  'tabs',
+  `tabs--size-${size}`,
+  `tabs--variant-${variant}`,
+  `tabs--orientation-${orientation}`,
+  centered ? 'tabs--centered' : '',
+  fullWidth ? 'tabs--full' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const hasBadge = (tab: Tab) => tab.badge !== undefined && tab.badge !== null && tab.badge !== '';
 ---
 
-<div
-  class={cn(
-    'text-slate-900 dark:text-slate-100',
-    isVertical ? 'flex gap-6' : currentVariant.container,
-    className
-  )}
-  data-tabs-orientation={orientation}
-  data-tabs-variant={variant}
-  data-tabs-size={size}
->
-  <!-- Tab List -->
+<div id={tabsId} class={rootClasses} data-auto-activate="true">
   <div
     role="tablist"
     aria-label={ariaLabel}
     aria-orientation={orientation}
-    class={cn(
-      'flex',
-      isVertical ? 'flex-col' : 'flex-row',
-      currentSize.gap,
-      currentVariant.tablist,
-      centered && !isVertical && 'justify-center',
-      fullWidth && !isVertical && 'w-full',
-      isVertical && 'min-w-[200px] flex-shrink-0'
-    )}
+    class="tabs__list"
   >
-    {
-      tabs.map((tab) => {
-        const isActive = tab.id === validActiveId;
-        const isDisabled = tab.disabled;
-
-        return (
-          <button
-            type="button"
-            role="tab"
-            id={getTabId(tab.id)}
-            aria-selected={isActive}
-            aria-controls={getPanelId(tab.id)}
-            aria-disabled={isDisabled}
-            data-tab-id={tab.id}
-            tabindex={isActive ? 0 : -1}
-            disabled={isDisabled}
-            class={cn(
-              currentVariant.tab.base,
-              currentSize.tab,
-              fullWidth && !isVertical && 'flex-1',
-              isActive && currentVariant.tab.active,
-              !isActive && !isDisabled && currentVariant.tab.inactive,
-              isDisabled && currentVariant.tab.disabled,
-              tab.icon && 'flex items-center gap-2',
-              'relative'
-            )}
-            title={isDisabled ? `${tab.label} (disabled)` : tab.label}
-          >
-            {/* Icon */}
-            {tab.icon && (
-              <span
-                class="flex-shrink-0"
-                aria-hidden="true"
-                set:html={tab.icon}
-              />
-            )}
-
-            {/* Label */}
-            <span class="truncate">{tab.label}</span>
-
-            {/* Badge */}
-            {tab.badge && (
-              <span
-                class={cn(
-                  'ml-2 inline-flex items-center justify-center rounded-full text-xs font-medium min-w-[1.25rem] h-5 px-1.5',
-                  isActive
-                    ? 'bg-white/20 text-current'
-                    : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
-                )}
-                aria-label={`${tab.badge} notifications`}
-              >
-                {tab.badge}
-              </span>
-            )}
-
-            {/* Focus indicator for better visibility */}
-            <span
-              class="absolute inset-0 rounded-md ring-2 ring-transparent group-focus-visible:ring-blue-600"
-              aria-hidden="true"
-            />
-          </button>
-        );
-      })
-    }
+    {tabs.map((tab) => {
+      const isActive = tab.id === validActiveId;
+      return (
+        <button
+          type="button"
+          role="tab"
+          id={getTabId(tab.id)}
+          data-tab-id={tab.id}
+          aria-selected={isActive}
+          aria-controls={getPanelId(tab.id)}
+          aria-disabled={tab.disabled}
+          tabindex={isActive ? 0 : -1}
+          disabled={tab.disabled}
+          class={[
+            'tabs__tab',
+            tab.disabled ? 'tabs__tab--disabled' : '',
+            isActive ? 'tabs__tab--active' : '',
+            tab.icon ? 'tabs__tab--with-icon' : '',
+            hasBadge(tab) ? 'tabs__tab--with-badge' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          title={tab.disabled ? `${tab.label} (disabled)` : tab.label}
+        >
+          {tab.icon && (
+            <span class="tabs__icon" aria-hidden="true" set:html={tab.icon} />
+          )}
+          <span class="tabs__label">{tab.label}</span>
+          {tab.badge && (
+            <span class="tabs__badge" aria-label={`${tab.badge} notifications`}>
+              {tab.badge}
+            </span>
+          )}
+        </button>
+      );
+    })}
   </div>
 
-  <!-- Tab Panels Container -->
-  <div
-    class={cn(
-      'flex-1',
-      variant !== 'minimal' && currentVariant.panel,
-      variant === 'minimal' ? currentSize.panel : '',
-      isVertical && 'min-h-0'
-    )}
-  >
-    {
-      tabs.map((tab) => {
-        const isActive = tab.id === validActiveId;
-        const shouldRender = !destroyInactive || isActive;
-
-        return shouldRender ? (
+  <div class="tabs__panels">
+    {tabs.map((tab) => {
+      const isActive = tab.id === validActiveId;
+      if (!destroyInactive || isActive) {
+        return (
           <div
             role="tabpanel"
             id={getPanelId(tab.id)}
-            aria-labelledby={getTabId(tab.id)}
             data-panel-id={tab.id}
+            aria-labelledby={getTabId(tab.id)}
             aria-hidden={!isActive}
             tabindex={isActive ? 0 : -1}
-            class={cn(
-              variant !== 'minimal' && currentSize.panel,
-              !isActive && 'hidden',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2',
-              variant !== 'minimal'
-                ? 'focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950'
-                : 'focus-visible:ring-offset-transparent'
-            )}
+            class={['tabs__panel', isActive ? 'tabs__panel--active' : 'tabs__panel--hidden']
+              .filter(Boolean)
+              .join(' ')}
           >
             {tab.content ? (
               <div set:html={tab.content} />
             ) : (
-              <div class="text-slate-500 dark:text-slate-400 italic">
-                No content provided for this tab
-              </div>
+              <div class="tabs__empty">No content provided for this tab</div>
             )}
           </div>
-        ) : null;
-      })
-    }
+        );
+      }
+      return null;
+    })}
 
-    {/* Empty state */}
-    {
-      tabs.length === 0 && (
-        <div
-          class={cn(
-            'text-slate-500 dark:text-slate-400 italic text-center',
-            currentSize.panel,
-            'contrast-more:text-slate-700 contrast-more:dark:text-slate-300'
-          )}
-          role="status"
-          aria-live="polite"
-        >
-          No tabs available
-        </div>
-      )
-    }
+    {tabs.length === 0 && (
+      <div class="tabs__empty tabs__empty--global" role="status" aria-live="polite">
+        No tabs available
+      </div>
+    )}
   </div>
 </div>
 
-{/* Enhanced Tabs Script with WCAG compliance */}
-<script is:inline define:vars={{ orientation }}>
+<script
+  is:inline
+  define:vars={{ tabsId, destroyInactive }}
+>
   (function () {
-    const container = document.querySelector(
-      `[data-tabs-orientation="${orientation}"][data-tabs-variant][data-tabs-size]`
-    );
-    if (!container) return;
+    const root = document.getElementById(tabsId);
+    if (!root) return;
 
-    const tablist = container.querySelector('[role="tablist"]');
-    const tabs = Array.from(
-      container.querySelectorAll('[role="tab"]:not([disabled])')
-    );
-    const panels = Array.from(container.querySelectorAll('[role="tabpanel"]'));
+    const tablist = root.querySelector('.tabs__list');
+    const tabs = Array.from(root.querySelectorAll('.tabs__tab'));
+    const panels = Array.from(root.querySelectorAll('.tabs__panel'));
 
     if (!tablist || !tabs.length || !panels.length) return;
 
-    // Set active tab and panel
-    const setActiveTab = (targetId, focus = false) => {
+    const setActive = (targetId, focus) => {
       tabs.forEach((tab) => {
-        const tabId = tab.getAttribute('data-tab-id');
+        const tabId = tab.dataset.tabId;
         const isActive = tabId === targetId;
-
-        // Update tab states
         tab.setAttribute('aria-selected', String(isActive));
         tab.tabIndex = isActive ? 0 : -1;
-
-        if (focus && isActive) {
-          tab.focus();
-        }
+        tab.classList.toggle('tabs__tab--active', isActive);
+        if (focus && isActive) tab.focus();
       });
 
       panels.forEach((panel) => {
-        const panelId = panel.getAttribute('data-panel-id');
+        const panelId = panel.dataset.panelId;
         const isActive = panelId === targetId;
-
-        // Update panel states
         panel.setAttribute('aria-hidden', String(!isActive));
         panel.tabIndex = isActive ? 0 : -1;
-        panel.classList.toggle('hidden', !isActive);
+        panel.classList.toggle('tabs__panel--active', isActive);
+        panel.classList.toggle('tabs__panel--hidden', !isActive);
+        if (destroyInactive && !isActive) {
+          panel.classList.add('tabs__panel--destroyed');
+        } else {
+          panel.classList.remove('tabs__panel--destroyed');
+        }
       });
 
-      // Announce change to screen readers (non-intrusive)
-      const activeTab = tabs.find(
-        (tab) => tab.getAttribute('data-tab-id') === targetId
-      );
+      const activeTab = tabs.find((tab) => tab.dataset.tabId === targetId);
       if (activeTab) {
-        const announcement = document.createElement('div');
-        announcement.setAttribute('aria-live', 'polite');
-        announcement.setAttribute('aria-atomic', 'true');
-        announcement.className = 'sr-only';
-        announcement.textContent = `Switched to ${activeTab.textContent?.trim()} tab`;
-
-        document.body.appendChild(announcement);
-        setTimeout(() => {
-          document.body.removeChild(announcement);
-        }, 1000);
+        const liveRegion = document.createElement('div');
+        liveRegion.className = 'sr-only';
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.textContent = `Switched to ${activeTab.textContent?.trim()} tab`;
+        document.body.appendChild(liveRegion);
+        setTimeout(() => liveRegion.remove(), 1000);
       }
     };
 
-    // Navigate between tabs
-    const navigateTab = (currentIndex, direction) => {
-      const enabledTabs = tabs.filter((tab) => !tab.hasAttribute('disabled'));
+    const moveFocus = (currentIndex, direction) => {
+      const enabledTabs = tabs.filter((tab) => !tab.disabled);
       if (!enabledTabs.length) return;
-
-      let nextIndex;
-
+      let nextIndex = currentIndex;
       if (direction === 'next') {
         nextIndex = (currentIndex + 1) % enabledTabs.length;
       } else if (direction === 'previous') {
-        nextIndex =
-          (currentIndex - 1 + enabledTabs.length) % enabledTabs.length;
+        nextIndex = (currentIndex - 1 + enabledTabs.length) % enabledTabs.length;
       } else if (direction === 'first') {
         nextIndex = 0;
       } else if (direction === 'last') {
         nextIndex = enabledTabs.length - 1;
-      } else {
-        return;
       }
-
       const nextTab = enabledTabs[nextIndex];
-      const nextTabId = nextTab?.getAttribute('data-tab-id');
-
-      if (nextTabId) {
-        setActiveTab(nextTabId, true);
-      }
+      const targetId = nextTab?.dataset.tabId;
+      if (targetId) setActive(targetId, true);
     };
 
-    // Add event listeners
     tabs.forEach((tab) => {
-      // Click handler
-      tab.addEventListener('click', (e) => {
-        e.preventDefault();
-        const tabId = tab.getAttribute('data-tab-id');
-        if (tabId && !tab.hasAttribute('disabled')) {
-          setActiveTab(tabId);
+      tab.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (!tab.disabled) {
+          const tabId = tab.dataset.tabId;
+          if (tabId) setActive(tabId, true);
         }
       });
 
-      // Keyboard navigation
-      tab.addEventListener('keydown', (e) => {
-        const currentIndex = tabs
-          .filter((t) => !t.hasAttribute('disabled'))
-          .findIndex((t) => t === tab);
+      tab.addEventListener('keydown', (event) => {
+        const enabledTabs = tabs.filter((t) => !t.disabled);
+        const currentIndex = enabledTabs.findIndex((t) => t === tab);
 
-        switch (e.key) {
+        switch (event.key) {
           case 'ArrowRight':
-          case 'ArrowDown': {
-            e.preventDefault();
-            navigateTab(currentIndex, 'next');
+          case 'ArrowDown':
+            event.preventDefault();
+            moveFocus(currentIndex, 'next');
             break;
-          }
           case 'ArrowLeft':
-          case 'ArrowUp': {
-            e.preventDefault();
-            navigateTab(currentIndex, 'previous');
+          case 'ArrowUp':
+            event.preventDefault();
+            moveFocus(currentIndex, 'previous');
             break;
-          }
-          case 'Home': {
-            e.preventDefault();
-            navigateTab(currentIndex, 'first');
+          case 'Home':
+            event.preventDefault();
+            moveFocus(0, 'first');
             break;
-          }
-          case 'End': {
-            e.preventDefault();
-            navigateTab(currentIndex, 'last');
+          case 'End':
+            event.preventDefault();
+            moveFocus(enabledTabs.length - 1, 'last');
             break;
-          }
-          case 'Enter':
-          case ' ': {
-            e.preventDefault();
-            const tabId = tab.getAttribute('data-tab-id');
-            if (tabId && !tab.hasAttribute('disabled')) {
-              setActiveTab(tabId);
-            }
-            break;
-          }
-        }
-      });
-
-      // Focus management
-      tab.addEventListener('focus', () => {
-        // Auto-activate tab on focus (optional behavior)
-        const autoActivate =
-          container.getAttribute('data-auto-activate') !== 'false';
-        if (autoActivate) {
-          const tabId = tab.getAttribute('data-tab-id');
-          if (tabId && !tab.hasAttribute('disabled')) {
-            setActiveTab(tabId);
-          }
         }
       });
     });
 
-    // Panel focus management
     panels.forEach((panel) => {
-      panel.addEventListener('keydown', (e) => {
-        // Ctrl+PageUp/PageDown for tab switching from panel
-        if (e.ctrlKey && (e.key === 'PageUp' || e.key === 'PageDown')) {
-          e.preventDefault();
-          const activeTab = tabs.find(
-            (tab) => tab.getAttribute('aria-selected') === 'true'
-          );
-          if (activeTab) {
-            const currentIndex = tabs
-              .filter((t) => !t.hasAttribute('disabled'))
-              .findIndex((t) => t === activeTab);
-            navigateTab(currentIndex, e.key === 'PageUp' ? 'previous' : 'next');
-          }
+      panel.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && (event.key === 'PageUp' || event.key === 'PageDown')) {
+          event.preventDefault();
+          const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
+          if (!activeTab) return;
+          const enabledTabs = tabs.filter((t) => !t.disabled);
+          const currentIndex = enabledTabs.findIndex((t) => t === activeTab);
+          moveFocus(currentIndex, event.key === 'PageUp' ? 'previous' : 'next');
         }
       });
     });
 
-    // Handle dynamic tab changes via mutation observer
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === 'attributes' &&
-          (mutation.attributeName === 'aria-selected' ||
-            mutation.attributeName === 'disabled')
-        ) {
-          // Re-sync states if tabs are modified externally
-          const activeTab = tabs.find(
-            (tab) => tab.getAttribute('aria-selected') === 'true'
-          );
-          if (activeTab) {
-            const tabId = activeTab.getAttribute('data-tab-id');
-            if (tabId) setActiveTab(tabId);
-          }
-        }
-      });
+    const observer = new MutationObserver(() => {
+      const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
+      if (activeTab?.dataset.tabId) {
+        setActive(activeTab.dataset.tabId);
+      }
     });
 
     tabs.forEach((tab) => {
-      observer.observe(tab, {
-        attributes: true,
-        attributeFilter: ['aria-selected', 'disabled'],
-      });
+      observer.observe(tab, { attributes: true, attributeFilter: ['aria-selected', 'disabled'] });
     });
 
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-      observer.disconnect();
-    });
+    window.addEventListener('beforeunload', () => observer.disconnect());
 
-    // Initialize with correct active state
-    const initialActiveTab = tabs.find(
-      (tab) => tab.getAttribute('aria-selected') === 'true'
-    );
-    if (initialActiveTab) {
-      const tabId = initialActiveTab.getAttribute('data-tab-id');
-      if (tabId) setActiveTab(tabId);
-    }
+    const initialActive = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
+    if (initialActive?.dataset.tabId) setActive(initialActive.dataset.tabId);
   })();
 </script>
+
+<style>
+  .tabs {
+    --tabs-gap: 0.5rem;
+    --tabs-padding: 0.75rem;
+    --tabs-font-size: 0.95rem;
+    --tabs-panel-gap: 1rem;
+    --tabs-tab-bg: transparent;
+    --tabs-tab-border: transparent;
+    --tabs-color: #0f172a;
+    --tabs-muted: #475569;
+    --tabs-hover-bg: rgba(59, 130, 246, 0.08);
+    --tabs-active-bg: rgba(59, 130, 246, 0.1);
+    --tabs-active-border: #2563eb;
+    width: 100%;
+    color: var(--tabs-color);
+    display: flex;
+    flex-direction: column;
+    gap: var(--tabs-panel-gap);
+  }
+
+  :where(.dark) .tabs {
+    --tabs-color: #f8fafc;
+    --tabs-muted: #cbd5f5;
+    --tabs-hover-bg: rgba(148, 163, 184, 0.15);
+    --tabs-active-bg: rgba(59, 130, 246, 0.25);
+    --tabs-active-border: #60a5fa;
+  }
+
+  .tabs--orientation-vertical {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+
+  .tabs--size-sm {
+    --tabs-gap: 0.4rem;
+    --tabs-padding: 0.5rem;
+    --tabs-font-size: 0.85rem;
+  }
+
+  .tabs--size-lg {
+    --tabs-gap: 0.75rem;
+    --tabs-padding: 0.9rem;
+    --tabs-font-size: 1rem;
+  }
+
+  .tabs__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tabs-gap);
+  }
+
+  .tabs--orientation-vertical .tabs__list {
+    flex-direction: column;
+    min-width: 220px;
+    flex-shrink: 0;
+  }
+
+  .tabs__tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: var(--tabs-padding);
+    border-radius: 0.8rem;
+    border: 2px solid var(--tabs-tab-border);
+    background: var(--tabs-tab-bg);
+    color: inherit;
+    font-size: var(--tabs-font-size);
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 2.5rem;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .tabs--variant-default .tabs__list {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    padding-bottom: 0.25rem;
+  }
+
+  .tabs--variant-default .tabs__tab {
+    border-radius: 0;
+    border-width: 0 0 3px 0;
+    border-color: transparent;
+  }
+
+  .tabs--variant-minimal .tabs__tab {
+    border: none;
+    border-radius: 0.65rem;
+  }
+
+  .tabs--variant-minimal .tabs__tab--active {
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  .tabs--variant-pills .tabs__tab {
+    border: none;
+    border-radius: 0.75rem;
+    background: transparent;
+  }
+
+  .tabs--variant-pills .tabs__tab--active {
+    background: #fff;
+    color: var(--tabs-color);
+  }
+
+  :where(.dark) .tabs--variant-pills .tabs__tab--active {
+    background: rgba(15, 23, 42, 0.8);
+  }
+
+  .tabs--variant-cards .tabs__tab {
+    border-radius: 1rem;
+    border-width: 2px;
+    background: #fff;
+  }
+
+  :where(.dark) .tabs--variant-cards .tabs__tab {
+    background: #0f172a;
+  }
+
+  .tabs--variant-cards .tabs__tab--active {
+    background: var(--tabs-active-border);
+    color: #fff;
+    border-color: var(--tabs-active-border);
+    box-shadow: 0 15px 30px rgba(37, 99, 235, 0.2);
+  }
+
+  :where(.dark) .tabs--variant-cards .tabs__tab--active {
+    color: #0f172a;
+  }
+
+  .tabs__tab:hover {
+    background: var(--tabs-hover-bg);
+  }
+
+  .tabs__tab:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.4);
+    outline-offset: 2px;
+  }
+
+  .tabs__tab--active {
+    background: var(--tabs-active-bg);
+    border-color: var(--tabs-active-border);
+    color: var(--tabs-active-border);
+  }
+
+  .tabs__tab--disabled {
+    color: var(--tabs-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .tabs__tab--with-icon .tabs__icon {
+    display: inline-flex;
+    width: 1.1em;
+    height: 1.1em;
+  }
+
+  .tabs__label {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .tabs__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.25);
+    font-size: 0.75rem;
+  }
+
+  .tabs__panels {
+    flex: 1;
+  }
+
+  .tabs--variant-default .tabs__panel,
+  .tabs--variant-pills .tabs__panel,
+  .tabs--variant-cards .tabs__panel {
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  :where(.dark) .tabs--variant-default .tabs__panel,
+  :where(.dark) .tabs--variant-pills .tabs__panel,
+  :where(.dark) .tabs--variant-cards .tabs__panel {
+    background: #0f172a;
+    border-color: rgba(71, 85, 105, 0.6);
+  }
+
+  .tabs--variant-minimal .tabs__panel {
+    padding: 0.25rem 0;
+  }
+
+  .tabs__panel {
+    display: none;
+    outline: none;
+  }
+
+  .tabs__panel:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.4);
+    outline-offset: 4px;
+  }
+
+  .tabs__panel--active {
+    display: block;
+  }
+
+  .tabs__panel--hidden {
+    display: none;
+  }
+
+  .tabs__panel--destroyed {
+    display: none;
+  }
+
+  .tabs__empty {
+    font-style: italic;
+    color: var(--tabs-muted);
+    line-height: 1.5;
+  }
+
+  .tabs__empty--global {
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .tabs--variant-pills .tabs__list {
+    background: rgba(226, 232, 240, 0.5);
+    border-radius: 1rem;
+    padding: 0.4rem;
+  }
+
+  .tabs--variant-cards .tabs__tab {
+    border-radius: 1rem;
+    border-width: 2px;
+  }
+
+  .tabs--centered .tabs__list {
+    justify-content: center;
+  }
+
+  .tabs--full .tabs__list .tabs__tab {
+    flex: 1;
+  }
+
+  @media (prefers-contrast: high) {
+    .tabs__tab {
+      border-color: currentColor;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tabs * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>

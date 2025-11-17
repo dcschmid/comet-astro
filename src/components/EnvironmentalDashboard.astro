@@ -35,20 +35,11 @@ const tempDisplay =
     ? `${Math.round(fallback.temperatureC)}°C`
     : `${Math.round((fallback.temperatureC * 9) / 5 + 32)}°F`;
 
-const rootCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
-const gridCls =
-  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6';
-const cardCls =
-  'flex flex-col gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[86px]';
-const labelCls =
-  'text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400';
-const valueCls =
-  'text-base md:text-lg font-bold text-slate-900 dark:text-slate-50';
-const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+const rootClasses = ['env-dashboard', className].filter(Boolean).join(' ');
 ---
 
 <div
-  class={rootCls}
+  class={rootClasses}
   role="region"
   aria-label={label}
   aria-busy={latitude && longitude && !disableFetch ? 'true' : 'false'}
@@ -60,20 +51,12 @@ const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
   data-disable-fetch={disableFetch}
   data-state={latitude && longitude && !disableFetch ? 'loading' : 'static'}
 >
-  <header
-    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
-  >
-    <h2
-      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
-    >
-      <span aria-hidden="true" class="text-2xl">🌍</span>
-      <span class="truncate" data-location>{location}</span>
+  <header class="env-dashboard__header">
+    <h2 class="env-dashboard__title">
+      <span aria-hidden="true" class="env-dashboard__title-icon">🌍</span>
+      <span class="env-dashboard__location" data-location>{location}</span>
     </h2>
-    <p
-      class="text-xs font-medium text-slate-600 dark:text-slate-300"
-      aria-live="polite"
-      data-status
-    >
+    <p class="env-dashboard__status" aria-live="polite" data-status>
       {
         latitude && longitude && !disableFetch
           ? 'Loading live environmental data…'
@@ -82,28 +65,32 @@ const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
     </p>
   </header>
 
-  <div class={gridCls} data-metrics>
-    <div class={cardCls} data-metric="temperature">
-      <span class={labelCls}>Temperature</span>
-      <span class={valueCls} data-temp>{tempDisplay}</span>
-      <span class={subCls} data-condition>{fallback.condition}</span>
+  <div class="env-dashboard__metrics" data-metrics>
+    <div class="env-dashboard__metric" data-metric="temperature">
+      <span class="env-dashboard__metric-label">Temperature</span>
+      <span class="env-dashboard__metric-value" data-temp>{tempDisplay}</span>
+      <span class="env-dashboard__metric-subtext" data-condition
+        >{fallback.condition}</span
+      >
     </div>
-    <div class={cardCls} data-metric="humidity">
-      <span class={labelCls}>Humidity</span>
-      <span class={valueCls} data-humidity>{fallback.humidity}%</span>
-      <span class={subCls} data-daynight
+    <div class="env-dashboard__metric" data-metric="humidity">
+      <span class="env-dashboard__metric-label">Humidity</span>
+      <span class="env-dashboard__metric-value" data-humidity
+        >{fallback.humidity}%</span
+      >
+      <span class="env-dashboard__metric-subtext" data-daynight
         >{fallback.isDay ? 'Daytime' : 'Night'}</span
       >
     </div>
     {
       showWind && (
-        <div class={cardCls} data-metric="wind">
+        <div class="env-dashboard__metric" data-metric="wind">
           <>
-            <span class={labelCls}>Wind</span>
-            <span class={valueCls} data-wind>
+            <span class="env-dashboard__metric-label">Wind</span>
+            <span class="env-dashboard__metric-value" data-wind>
               {fallback.windKph} km/h
             </span>
-            <span class={subCls} data-winddir>
+            <span class="env-dashboard__metric-subtext" data-winddir>
               {fallback.windDir}
             </span>
           </>
@@ -112,13 +99,13 @@ const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
     }
     {
       showAirQuality && (
-        <div class={cardCls} data-metric="aqi">
+        <div class="env-dashboard__metric" data-metric="aqi">
           <>
-            <span class={labelCls}>AQI</span>
-            <span class={valueCls} data-aqi>
+            <span class="env-dashboard__metric-label">AQI</span>
+            <span class="env-dashboard__metric-value" data-aqi>
               {fallback.aqi}
             </span>
-            <span class={subCls} data-aqi-cat>
+            <span class="env-dashboard__metric-subtext" data-aqi-cat>
               Good
             </span>
           </>
@@ -127,35 +114,34 @@ const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
     }
     {
       showAirQuality && (
-        <div class={cardCls} data-metric="pm25">
+        <div class="env-dashboard__metric" data-metric="pm25">
           <>
-            <span class={labelCls}>PM2.5</span>
-            <span class={valueCls} data-pm25>
+            <span class="env-dashboard__metric-label">PM2.5</span>
+            <span class="env-dashboard__metric-value" data-pm25>
               {fallback.pm25}
             </span>
-            <span class={subCls}>µg/m³</span>
+            <span class="env-dashboard__metric-subtext">µg/m³</span>
           </>
         </div>
       )
     }
-    <div class={cardCls} data-metric="updated">
-      <span class={labelCls}>Updated</span>
-      <span class={valueCls} data-updated>Just now</span>
+    <div class="env-dashboard__metric" data-metric="updated">
+      <span class="env-dashboard__metric-label">Updated</span>
+      <span class="env-dashboard__metric-value" data-updated>Just now</span>
       <span
-        class={`${subCls} hidden text-amber-700 dark:text-amber-300`}
-        data-loading>Loading…</span
+        class="env-dashboard__status-tag env-dashboard__status-tag--loading"
+        data-loading
+        >Loading…</span
       >
       <span
-        class={`${subCls} hidden text-rose-700 dark:text-rose-300`}
-        data-error>Error</span
+        class="env-dashboard__status-tag env-dashboard__status-tag--error"
+        data-error
+        >Error</span
       >
     </div>
   </div>
 
-  <p
-    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
-    data-disclaimer
-  >
+  <p class="env-dashboard__disclaimer" data-disclaimer>
     {
       latitude && longitude && !disableFetch
         ? 'Live Open‑Meteo data (weather + air quality). Fallback values retained on failure.'
@@ -163,17 +149,14 @@ const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
     } AAA contrast maintained.
   </p>
 
-  <footer
-    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
-  >
-    <span
-      >Source: <a
-        href="https://open-meteo.com"
-        class="underline text-slate-800 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300"
+  <footer class="env-dashboard__footer">
+    <span class="env-dashboard__source"
+      >Source:
+      <a href="https://open-meteo.com" class="env-dashboard__link"
         >Open‑Meteo</a
       ></span
     >
-    <span class="ml-auto" data-refresh-indicator
+    <span class="env-dashboard__refresh" data-refresh-indicator
       >{
         refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'No auto refresh'
       }</span
@@ -242,11 +225,17 @@ const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
               : v <= 300
                 ? 'Very Unhealthy'
                 : 'Hazardous';
+    const LOADING_CLASS = 'env-dashboard--loading';
+    const STATUS_VISIBLE_CLASS = 'env-dashboard__status-tag--visible';
+
     const setState = (s) => {
       el.dataset.state = s;
       el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
-      if (loadingEl) loadingEl.classList.toggle('hidden', s !== 'loading');
-      if (errorEl) errorEl.classList.toggle('hidden', s !== 'error');
+      el.classList.toggle(LOADING_CLASS, s === 'loading');
+      if (loadingEl)
+        loadingEl.classList.toggle(STATUS_VISIBLE_CLASS, s === 'loading');
+      if (errorEl)
+        errorEl.classList.toggle(STATUS_VISIBLE_CLASS, s === 'error');
     };
 
     async function fetchData() {
@@ -337,44 +326,198 @@ const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
   });
 </script>
 
-<style>
-  @media (prefers-reduced-motion: reduce) {
-    [data-env-dashboard] * {
-      transition: none !important;
-      animation: none !important;
+<style is:inline>
+  .env-dashboard {
+    --env-bg: #ffffff;
+    --env-border: rgba(15, 23, 42, 0.1);
+    --env-heading: #0f172a;
+    --env-subtext: #475569;
+    --env-card-bg: rgba(248, 250, 252, 0.9);
+    --env-card-border: rgba(15, 23, 42, 0.08);
+    --env-card-text: #0f172a;
+    --env-card-muted: #475569;
+    --env-accent: #2563eb;
+    width: 100%;
+    border-radius: 1.75rem;
+    border: 1px solid var(--env-border);
+    background: var(--env-bg);
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  :where(.dark) .env-dashboard {
+    --env-bg: #0f172a;
+    --env-border: rgba(148, 163, 184, 0.4);
+    --env-heading: #f8fafc;
+    --env-subtext: #cbd5f5;
+    --env-card-bg: rgba(15, 23, 42, 0.65);
+    --env-card-border: rgba(148, 163, 184, 0.3);
+    --env-card-text: #f8fafc;
+    --env-card-muted: #cbd5f5;
+    --env-accent: #60a5fa;
+    box-shadow: 0 30px 70px rgba(2, 6, 23, 0.6);
+  }
+  .env-dashboard__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  @media (min-width: 48rem) {
+    .env-dashboard__header {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
     }
   }
-  @media (prefers-contrast: high) {
-    [data-env-dashboard] {
-      outline: 2px solid currentColor;
+  .env-dashboard__title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--env-heading);
+    margin: 0;
+  }
+  .env-dashboard__title-icon {
+    font-size: 2rem;
+  }
+  .env-dashboard__location {
+    min-width: 0;
+    display: inline-flex;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .env-dashboard__status {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--env-subtext);
+  }
+  .env-dashboard__metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media (min-width: 40rem) {
+    .env-dashboard__metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
-
-  [data-env-dashboard][data-state='loading'] [data-metric] {
+  @media (min-width: 72rem) {
+    .env-dashboard__metrics {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+  .env-dashboard__metric {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    border-radius: 1rem;
+    border: 1px solid var(--env-card-border);
+    background: var(--env-card-bg);
+    padding: 0.9rem 1rem;
+    min-height: 5rem;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
   }
-  [data-env-dashboard][data-state='loading'] [data-metric]::after {
+  .env-dashboard__metric-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--env-card-muted);
+  }
+  .env-dashboard__metric-value {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 700;
+    color: var(--env-card-text);
+  }
+  .env-dashboard__metric-subtext {
+    font-size: 0.75rem;
+    color: var(--env-card-muted);
+  }
+  .env-dashboard__status-tag {
+    display: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .env-dashboard__status-tag--loading {
+    color: #b45309;
+  }
+  .env-dashboard__status-tag--error {
+    color: #b91c1c;
+  }
+  .env-dashboard__status-tag--visible {
+    display: inline;
+  }
+  .env-dashboard__disclaimer {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--env-subtext);
+  }
+  .env-dashboard__footer {
+    border-top: 1px solid var(--env-border);
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--env-subtext);
+  }
+  .env-dashboard__source {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+  }
+  .env-dashboard__link {
+    color: var(--env-heading);
+    text-decoration: underline;
+  }
+  .env-dashboard__refresh {
+    margin-left: auto;
+    font-weight: 600;
+  }
+  .env-dashboard--loading .env-dashboard__metric::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     background: linear-gradient(
       90deg,
       rgba(148, 163, 184, 0.15),
       rgba(148, 163, 184, 0.35),
       rgba(148, 163, 184, 0.15)
     );
-    animation: env-pulse 1.4s ease-in-out infinite;
-    opacity: 0.35;
+    animation: env-dashboard-pulse 1.4s ease-in-out infinite;
+    opacity: 0.4;
   }
-
-  @keyframes env-pulse {
+  @keyframes env-dashboard-pulse {
     0%,
     100% {
       opacity: 0.35;
     }
     50% {
       opacity: 0.65;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-dashboard__metric::after,
+    .env-dashboard__status,
+    .env-dashboard__metric,
+    .env-dashboard__button {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+  @media (prefers-contrast: high) {
+    .env-dashboard {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
     }
   }
 </style>

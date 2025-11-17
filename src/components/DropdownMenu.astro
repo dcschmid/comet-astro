@@ -17,22 +17,20 @@ interface Props {
 
 const { items, align = 'left', size = 'md', className = '' } = Astro.props;
 
-const alignClass = align === 'right' ? 'right-0' : 'left-0';
-
-const sizeClasses = {
-  sm: 'w-48',
-  md: 'w-60',
-  lg: 'w-72',
-};
+const rootClasses = ['dropdown', className].filter(Boolean).join(' ');
+const menuClasses = [
+  'dropdown__menu',
+  `dropdown__menu--${align}`,
+  `dropdown__menu--size-${size}`,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<div
-  class={`relative inline-block text-slate-900 dark:text-slate-100 ${className}`}
-  data-dropdown
->
+<div class={rootClasses} data-dropdown>
   <button
     type="button"
-    class="inline-flex items-center gap-2 rounded-lg border border-slate-300/90 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-colors duration-200 hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/90 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 dark:hover:text-slate-50 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+    class="dropdown__trigger"
     data-dropdown-trigger
     aria-haspopup="menu"
     aria-expanded="false"
@@ -41,7 +39,7 @@ const sizeClasses = {
   </button>
 
   <div
-    class={`absolute ${alignClass} z-50 mt-2 ${sizeClasses[size]} rounded-xl border border-slate-300/90 bg-white py-2 shadow-2xl ring-1 ring-black/10 opacity-0 invisible transition-all duration-200 ease-out dark:border-slate-600/90 dark:bg-slate-800 dark:ring-white/10`}
+    class={menuClasses}
     data-dropdown-menu
     role="menu"
     aria-orientation="vertical"
@@ -50,38 +48,30 @@ const sizeClasses = {
       {
         items.map((item) =>
           item.divider ? (
-            <hr class="my-2 border-slate-300/80 dark:border-slate-600/80" />
+            <hr class="dropdown__divider" />
           ) : item.onClick ? (
             <button
               type="button"
               onclick={item.onClick}
-              class={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium transition-colors duration-200 ${
-                item.disabled
-                  ? 'cursor-not-allowed text-slate-400 dark:text-slate-600'
-                  : 'text-slate-800 hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-inset dark:text-slate-200 dark:hover:bg-blue-500/20 dark:hover:text-blue-300 dark:focus-visible:ring-blue-400'
-              }`}
+              class={`dropdown__item ${item.disabled ? 'dropdown__item--disabled' : ''}`}
               role="menuitem"
               tabindex={-1}
               disabled={item.disabled}
               data-dropdown-item
             >
-              {item.icon && <span class="text-lg">{item.icon}</span>}
+              {item.icon && <span class="dropdown__icon">{item.icon}</span>}
               {item.label}
             </button>
           ) : (
             <a
               href={item.disabled ? undefined : item.href || '#'}
-              class={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-200 ${
-                item.disabled
-                  ? 'cursor-not-allowed text-slate-400 dark:text-slate-600'
-                  : 'text-slate-800 hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-inset dark:text-slate-200 dark:hover:bg-blue-500/20 dark:hover:text-blue-300 dark:focus-visible:ring-blue-400'
-              }`}
+              class={`dropdown__item ${item.disabled ? 'dropdown__item--disabled' : ''}`}
               role="menuitem"
               tabindex={-1}
               aria-disabled={item.disabled}
               data-dropdown-item
             >
-              {item.icon && <span class="text-lg">{item.icon}</span>}
+              {item.icon && <span class="dropdown__icon">{item.icon}</span>}
               {item.label}
             </a>
           )
@@ -98,13 +88,14 @@ const sizeClasses = {
     ).filter((el) => el instanceof HTMLElement);
     if (!dropdowns.length) return;
 
+    const MENU_VISIBLE_CLASS = 'dropdown__menu--visible';
+
     const closeAll = () => {
       dropdowns.forEach((dropdown) => {
         const trigger = dropdown.querySelector('[data-dropdown-trigger]');
         const menu = dropdown.querySelector('[data-dropdown-menu]');
         if (menu instanceof HTMLElement) {
-          menu.classList.add('invisible');
-          menu.classList.add('opacity-0');
+          menu.classList.remove(MENU_VISIBLE_CLASS);
         }
         if (trigger instanceof HTMLElement) {
           trigger.setAttribute('aria-expanded', 'false');
@@ -118,9 +109,8 @@ const sizeClasses = {
       if (!(trigger instanceof HTMLElement) || !(menu instanceof HTMLElement))
         return;
       closeAll();
-      menu.classList.remove('invisible');
       requestAnimationFrame(() => {
-        menu.classList.remove('opacity-0');
+        menu.classList.add(MENU_VISIBLE_CLASS);
       });
       trigger.setAttribute('aria-expanded', 'true');
       const items = Array.from(
@@ -142,7 +132,7 @@ const sizeClasses = {
 
       trigger.addEventListener('click', (event) => {
         event.stopPropagation();
-        const isOpen = !menu.classList.contains('invisible');
+        const isOpen = menu.classList.contains(MENU_VISIBLE_CLASS);
         if (isOpen) {
           closeAll();
         } else {
@@ -222,3 +212,144 @@ const sizeClasses = {
     });
   })();
 </script>
+
+<style is:inline>
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    color: var(--dropdown-text, #0f172a);
+  }
+  :where(.dark) .dropdown {
+    --dropdown-text: #f8fafc;
+  }
+  .dropdown__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background: var(--dropdown-trigger-bg, #ffffff);
+    color: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.65rem 1rem;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.08);
+  }
+  .dropdown__trigger:hover {
+    border-color: rgba(37, 99, 235, 0.6);
+    background: rgba(37, 99, 235, 0.05);
+  }
+  .dropdown__trigger:focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.7);
+    outline-offset: 2px;
+  }
+  :where(.dark) .dropdown__trigger {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(148, 163, 184, 0.4);
+  }
+  .dropdown__menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    z-index: 50;
+    min-width: 12rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: var(--dropdown-menu-bg, #ffffff);
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.2s ease,
+      visibility 0.2s ease,
+      transform 0.2s ease;
+    padding: 0.35rem 0;
+  }
+  :where(.dark) .dropdown__menu {
+    --dropdown-menu-bg: #0f172a;
+    border-color: rgba(148, 163, 184, 0.35);
+    box-shadow: 0 25px 60px rgba(2, 6, 23, 0.65);
+  }
+  .dropdown__menu--visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .dropdown__menu--left {
+    left: 0;
+  }
+  .dropdown__menu--right {
+    right: 0;
+  }
+  .dropdown__menu--size-sm {
+    width: 12rem;
+  }
+  .dropdown__menu--size-md {
+    width: 15rem;
+  }
+  .dropdown__menu--size-lg {
+    width: 18rem;
+  }
+  .dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .dropdown__item:hover,
+  .dropdown__item:focus-visible {
+    background: rgba(37, 99, 235, 0.1);
+    color: rgba(15, 23, 42, 0.95);
+  }
+  :where(.dark) .dropdown__item:hover,
+  :where(.dark) .dropdown__item:focus-visible {
+    background: rgba(37, 99, 235, 0.25);
+    color: #e0f2fe;
+  }
+  .dropdown__item:focus-visible {
+    outline: none;
+  }
+  .dropdown__item--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .dropdown__item--disabled:hover {
+    background: transparent;
+    color: inherit;
+  }
+  .dropdown__icon {
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+  }
+  .dropdown__divider {
+    margin: 0.4rem 0;
+    border: 0;
+    border-top: 1px solid rgba(15, 23, 42, 0.1);
+  }
+  :where(.dark) .dropdown__divider {
+    border-color: rgba(148, 163, 184, 0.3);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dropdown__trigger,
+    .dropdown__menu,
+    .dropdown__item {
+      transition: none;
+    }
+  }
+</style>

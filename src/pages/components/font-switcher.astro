@@ -1,0 +1,69 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import FontSwitcherComponent from '../../components/FontSwitcher.astro';
+
+const usageSnippet = `---
+import { FontSwitcher } from 'comet-astro';
+
+---
+<FontSwitcher
+  label="Interface font"
+  options={[
+    { id: 'default', label: 'Default' },
+    { id: 'atkinson', label: 'Atkinson Hyperlegible' },
+    { id: 'opendyslexic', label: 'OpenDyslexic' },
+  ]}
+/>`;
+---
+
+<DocsLayout
+  seoTitle="FontSwitcher"
+  seoDescription="Accessible font preference switcher with persistent storage and aria-live announcements."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      FontSwitcher lets visitors choose between bundled typefaces (e.g., Default,
+      Atkinson Hyperlegible, OpenDyslexic). The component stores the selection in
+      <code>localStorage</code>, updates <code>data-font-mode</code> on the root, and
+      announces changes via an aria-live region for screen readers.
+    </p>
+    <p class="text-base text-slate-200">
+      Drop the switcher anywhere in your layout to expose font preferences. Hook
+      into <code>document.body.classList</code> (already handled in the component) to
+      scope custom font stacks across the site.
+    </p>
+  </section>
+
+  <section class="mt-8 space-y-6">
+    <div class="rounded-2xl border border-slate-800/70 bg-slate-900/40 p-6 shadow-lg">
+      <FontSwitcherComponent />
+    </div>
+    <pre class="overflow-auto rounded-xl border border-slate-800/70 bg-slate-950/60 p-4 text-sm text-slate-200">
+      <code>{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-8 space-y-4">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <dl class="grid gap-4 sm:grid-cols-2">
+      <div class="space-y-1 rounded-lg border border-slate-800/60 bg-slate-900/40 p-4">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-300">value?</dt>
+        <dd class="text-sm text-slate-200">Initial font id. Defaults to <code>"default"</code>.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-800/60 bg-slate-900/40 p-4">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-300">options?</dt>
+        <dd class="text-sm text-slate-200">Array of {`{ id, label, description? }`} describing each font option.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-800/60 bg-slate-900/40 p-4">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-300">label?</dt>
+        <dd class="text-sm text-slate-200">Accessible label for the select control. Defaults to “Select font”.</dd>
+      </div>
+      <div class="space-y-1 rounded-lg border border-slate-800/60 bg-slate-900/40 p-4">
+        <dt class="text-sm font-semibold uppercase tracking-wide text-slate-300">storageKey?</dt>
+        <dd class="text-sm text-slate-200">
+          Key used with <code>localStorage</code>. Defaults to <code>"comet-font"</code>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+</DocsLayout>

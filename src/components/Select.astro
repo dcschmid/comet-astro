@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 /**
  * Select - Accessible dropdown select with WCAG AAA compliance
  */
@@ -67,119 +65,40 @@ const errorId = error ? `${selectId}-error` : undefined;
 const finalAriaDescribedBy =
   [helpId, errorId].filter(Boolean).join(' ') || undefined;
 
-// Size configurations
-const sizeClasses = {
-  sm: {
-    select: 'min-h-[36px] px-3 py-1.5 text-sm',
-    selectSingle: 'pr-8',
-    icon: 'w-4 h-4 right-2',
-    label: 'text-sm',
-    help: 'text-xs',
-  },
-  md: {
-    select: 'min-h-[44px] px-4 py-2.5 text-base',
-    selectSingle: 'pr-10',
-    icon: 'w-5 h-5 right-3',
-    label: 'text-sm',
-    help: 'text-xs',
-  },
-  lg: {
-    select: 'min-h-[52px] px-5 py-3.5 text-lg',
-    selectSingle: 'pr-12',
-    icon: 'w-6 h-6 right-4',
-    label: 'text-base',
-    help: 'text-sm',
-  },
-};
+const rootClasses = [
+  'select-field',
+  `select-field--variant-${variant}`,
+  `select-field--size-${size}`,
+  multiple ? 'select-field--multiple' : 'select-field--single',
+  error ? 'select-field--error' : '',
+  disabled ? 'select-field--disabled' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-// Variant styles with WCAG AAA compliance
-const variantClasses = {
-  default: {
-    select: cn(
-      'bg-white dark:bg-gray-900',
-      'border border-gray-300 dark:border-gray-600',
-      'text-gray-900 dark:text-gray-100',
-      'focus:border-blue-600 dark:focus:border-blue-400',
-      'focus:ring-blue-600 dark:focus:ring-blue-400',
-      'hover:border-gray-400 dark:hover:border-gray-500',
-      'shadow-sm hover:shadow-md transition-shadow'
-    ),
-    icon: 'text-gray-500 dark:text-gray-400',
-  },
-  minimal: {
-    select: cn(
-      'bg-gray-50 dark:bg-gray-800',
-      'border border-gray-200 dark:border-gray-600',
-      'text-gray-900 dark:text-gray-100',
-      'focus:border-blue-500 dark:focus:border-blue-400',
-      'focus:ring-blue-500 dark:focus:ring-blue-400',
-      'hover:bg-gray-100 dark:hover:bg-gray-700'
-    ),
-    icon: 'text-gray-500 dark:text-gray-400',
-  },
-  outlined: {
-    select: cn(
-      'bg-white dark:bg-gray-900',
-      'border-2 border-gray-300 dark:border-gray-600',
-      'text-gray-900 dark:text-gray-100',
-      'focus:border-blue-600 dark:focus:border-blue-400',
-      'focus:ring-blue-600 dark:focus:ring-blue-400',
-      'hover:border-gray-400 dark:hover:border-gray-500'
-    ),
-    icon: 'text-gray-600 dark:text-gray-300',
-  },
-  filled: {
-    select: cn(
-      'bg-gray-100 dark:bg-gray-800',
-      'border border-transparent',
-      'text-gray-900 dark:text-gray-100',
-      'focus:border-blue-500 dark:focus:border-blue-400',
-      'focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400',
-      'hover:bg-gray-200 dark:hover:bg-gray-700'
-    ),
-    icon: 'text-gray-600 dark:text-gray-300',
-  },
-};
+const labelClasses = [
+  'select-field__label',
+  required ? 'select-field__label--required' : '',
+  disabled ? 'select-field__label--disabled' : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
-const selectClasses = cn(
-  'w-full rounded-lg transition-all duration-200',
-  'focus:outline-none focus:ring-2 focus:ring-offset-2',
-  'focus:ring-offset-white dark:focus:ring-offset-gray-900',
-  'disabled:opacity-50 disabled:cursor-not-allowed',
-  'placeholder:text-gray-500 dark:placeholder:text-gray-400',
-  'font-medium block',
-  sizeClasses[size].select,
-  !multiple && sizeClasses[size].selectSingle,
-  variantClasses[variant].select,
-  error &&
-    'border-red-500 dark:border-red-400 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500 dark:focus:ring-red-400',
-  disabled && 'cursor-not-allowed',
-  // Multi-select specific styling
-  multiple && 'min-h-[120px] overflow-y-auto py-2'
-);
+const helpClasses = [
+  'select-field__message',
+  'select-field__message--help',
+  error ? 'select-field__message--error' : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
-const iconClasses = cn(
-  'absolute inset-y-0 flex items-center pointer-events-none',
-  sizeClasses[size].icon,
-  variantClasses[variant].icon
-);
-
-const labelClasses = cn(
-  'block font-medium text-gray-900 dark:text-gray-100 mb-2',
-  sizeClasses[size].label,
-  disabled && 'opacity-50',
-  required &&
-    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
-);
-
-const helpClasses = cn(
-  'mt-2 text-gray-600 dark:text-gray-300',
-  sizeClasses[size].help,
-  error && 'text-red-600 dark:text-red-300'
-);
+const errorClasses = ['select-field__message', 'select-field__message--error']
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<div class={cn('space-y-2', className)}>
+<div class={rootClasses}>
   {
     label && (
       <label for={selectId} class={labelClasses}>
@@ -188,7 +107,7 @@ const helpClasses = cn(
     )
   }
 
-  <div class="relative">
+  <div class="select-field__control">
     <select
       id={selectId}
       name={name}
@@ -202,7 +121,7 @@ const helpClasses = cn(
       aria-describedby={finalAriaDescribedBy}
       aria-required={required ? 'true' : 'false'}
       aria-invalid={error ? 'true' : 'false'}
-      class={selectClasses}
+      class="select-field__input"
       style={!multiple ? 'background-image: none;' : undefined}
       data-testid="select"
     >
@@ -234,13 +153,13 @@ const helpClasses = cn(
 
     {
       !multiple && (
-        <div class={iconClasses}>
+        <div class="select-field__icon">
           <svg
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
             aria-hidden="true"
-            class="pointer-events-none"
+            class="select-field__icon-graphic"
           >
             <path
               stroke-linecap="round"
@@ -254,35 +173,200 @@ const helpClasses = cn(
     }
   </div>
 
-  <div class="space-y-1">
-    {
-      helpText && (
-        <p id={helpId} class={helpClasses}>
-          {helpText}
-        </p>
-      )
-    }
-    {
-      error && (
-        <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
-          {typeof error === 'string' ? error : 'Please check your selection.'}
-        </p>
-      )
-    }
-  </div>
+  {
+    (helpText || error) && (
+      <div class="select-field__messages">
+        {helpText && (
+          <p id={helpId} class={helpClasses}>
+            {helpText}
+          </p>
+        )}
+        {error && (
+          <p id={errorId} class={errorClasses} role="alert">
+            {typeof error === 'string'
+              ? error
+              : 'Please check your selection.'}
+          </p>
+        )}
+      </div>
+    )
+  }
 </div>
 
 <style>
+  .select-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .select-field__label {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 0.95rem;
+  }
+
+  .select-field__label--required::after {
+    content: ' *';
+    color: #dc2626;
+  }
+
+  .select-field__label--disabled {
+    opacity: 0.6;
+  }
+
+  .select-field__control {
+    position: relative;
+  }
+
+  .select-field__input {
+    width: 100%;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    padding: 0.75rem 1rem;
+    padding-right: 2.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0f172a;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+  }
+
+  .select-field--multiple .select-field__input {
+    min-height: 7rem;
+    padding-right: 1rem;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+    overflow-y: auto;
+  }
+
+  .select-field__input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+
+  .select-field--error .select-field__input {
+    border-color: #dc2626;
+  }
+
+  .select-field--error .select-field__input:focus {
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25);
+  }
+
+  .select-field--disabled .select-field__input {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .select-field--variant-minimal .select-field__input {
+    background-color: #f8fafc;
+    border-color: rgba(226, 232, 240, 0.8);
+  }
+
+  .select-field--variant-outlined .select-field__input {
+    border-width: 2px;
+  }
+
+  .select-field--variant-filled .select-field__input {
+    background-color: #e2e8f0;
+    border-color: transparent;
+  }
+
+  .select-field__icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 1rem;
+    pointer-events: none;
+    color: #94a3b8;
+  }
+
+  .select-field__icon-graphic {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .select-field__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .select-field__message {
+    font-size: 0.85rem;
+    color: #475569;
+  }
+
+  .select-field__message--error {
+    color: #dc2626;
+  }
+
+  .select-field--size-sm .select-field__input {
+    padding: 0.6rem 0.85rem;
+    padding-right: 2.25rem;
+    font-size: 0.9rem;
+  }
+
+  .select-field--size-sm .select-field__icon-graphic {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .select-field--size-lg .select-field__input {
+    padding: 0.85rem 1.15rem;
+    padding-right: 3rem;
+    font-size: 1.05rem;
+  }
+
+  .select-field--size-lg .select-field__icon-graphic {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
   select:not([multiple]) {
     -webkit-appearance: none;
     -moz-appearance: none;
-    appearance: none;
     background-image: none;
   }
 
-  /* Remove Firefox focus outline since we use our own */
   select:-moz-focusring {
     color: transparent;
     text-shadow: 0 0 0 #000;
+  }
+
+  :where(.dark) .select-field__label {
+    color: #e2e8f0;
+  }
+
+  :where(.dark) .select-field__input {
+    background-color: #0f172a;
+    border-color: rgba(148, 163, 184, 0.5);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .select-field--variant-minimal .select-field__input {
+    background-color: #1f2937;
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+
+  :where(.dark) .select-field--variant-filled .select-field__input {
+    background-color: #1f2937;
+    border-color: transparent;
+  }
+
+  :where(.dark) .select-field__icon {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .select-field__message {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .select-field__message--error {
+    color: #f87171;
   }
 </style>

@@ -2,12 +2,38 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Button from '../../components/Button.astro';
 
+const highlightCards = [
+  {
+    title: 'BEM + tokens',
+    detail:
+      'Buttons render as `.button` plus modifier classes so you can override CSS variables without battling Tailwind utilities.',
+  },
+  {
+    title: 'WCAG AAA palettes',
+    detail:
+      'Every variant, including the five “classic” palettes, ships with light/dark colors that maintain AAA contrast.',
+  },
+  {
+    title: 'Smart behaviors',
+    detail:
+      'Automatically renders anchors vs. buttons, handles external link semantics, and exposes loading states with spinners + `aria-busy`.',
+  },
+];
+
+const paletteVariants = [
+  { variant: 'classic', label: 'Classic Blue', helper: 'Default marketing palette.' },
+  { variant: 'nature', label: 'Nature Green', helper: 'Earthy neutral actions.' },
+  { variant: 'warm', label: 'Warm Purple', helper: 'Editorial callouts.' },
+  { variant: 'sky', label: 'Sky Cyan', helper: 'Informational banners.' },
+  { variant: 'orange', label: 'Orange Accent', helper: 'Promo / urgency moments.' },
+];
+
 const usageSnippet = `---
 import { Button } from 'comet-astro';
 
 ---
 
-<div class="flex gap-3 flex-wrap">
+<div class="flex flex-wrap gap-3">
   <Button variant="primary">Publish</Button>
   <Button variant="secondary">Preview</Button>
   <Button variant="ghost">Cancel</Button>
@@ -20,6 +46,111 @@ import { Button } from 'comet-astro';
   <Button loading>Saving...</Button>
   <Button variant="destructive" loading>Deleting...</Button>
 </div>`;
+
+const paletteSnippet = `:root {
+  /* Classic Blue */
+  --palette1-bg: #ffffff;
+  --palette1-text: #111827;
+  --palette1-accent: #2563eb;
+  --palette1-border: #e5e7eb;
+  --palette1-hover-bg: #eff6ff;
+  --palette1-hover-border: #60a5fa;
+}
+
+:root {
+  /* Nature Green */
+  --palette2-bg: #fafaf9;
+  --palette2-text: #1c1917;
+  --palette2-accent: #059669;
+  --palette2-border: #e7e5e4;
+  --palette2-hover-bg: #f7f3f9;
+  --palette2-hover-border: #34d399;
+}
+
+:root {
+  /* Warm Purple */
+  --palette3-bg: #f9fafb;
+  --palette3-text: #111827;
+  --palette3-accent: #7c3aed;
+  --palette3-border: #d1d5db;
+  --palette3-hover-bg: #faf5ff;
+  --palette3-hover-border: #a78bfa;
+}
+
+:root {
+  /* Sky Cyan */
+  --palette4-bg: #f8fafc;
+  --palette4-text: #0f172a;
+  --palette4-accent: #0891b2;
+  --palette4-border: #e2e8f0;
+  --palette4-hover-bg: #ecfeff;
+  --palette4-hover-border: #22d3ee;
+}
+
+:root {
+  /* Orange Accent */
+  --palette5-bg: #fafafa;
+  --palette5-text: #18181b;
+  --palette5-accent: #f97316;
+  --palette5-border: #e4e4e7;
+  --palette5-hover-bg: #fff7ed;
+  --palette5-hover-border: #fb923c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --palette1-bg: #111827;
+    --palette1-text: #ffffff;
+    --palette1-accent: #60a5fa;
+    --palette1-border: #374151;
+    --palette1-hover-bg: #1f2937;
+    --palette1-hover-border: #3b82f6;
+
+    --palette2-bg: #0c0a09;
+    --palette2-text: #f5f5f4;
+    --palette2-accent: #34d399;
+    --palette2-border: #292524;
+    --palette2-hover-bg: #181716;
+    --palette2-hover-border: #10b981;
+
+    --palette3-bg: #030712;
+    --palette3-text: #f9fafb;
+    --palette3-accent: #a78bfa;
+    --palette3-border: #374151;
+    --palette3-hover-bg: #111827;
+    --palette3-hover-border: #8b5cf6;
+
+    --palette4-bg: #0f172a;
+    --palette4-text: #f8fafc;
+    --palette4-accent: #67e8f9;
+    --palette4-border: #1e293b;
+    --palette4-hover-bg: #020617;
+    --palette4-hover-border: #06b6d4;
+
+    --palette5-bg: #09090b;
+    --palette5-text: #fafafa;
+    --palette5-accent: #fdba74;
+    --palette5-border: #27272a;
+    --palette5-hover-bg: #18181b;
+    --palette5-hover-border: #fb923c;
+  }
+}
+
+.palette-1 {
+  background-color: var(--palette1-bg);
+  color: var(--palette1-text);
+  border-color: var(--palette1-border);
+}
+
+.palette-1:hover {
+  background-color: var(--palette1-hover-bg);
+  border-color: var(--palette1-hover-border);
+}
+
+.palette-1 .accent {
+  color: var(--palette1-accent);
+}
+`;
 ---
 
 <DocsLayout
@@ -28,23 +159,75 @@ import { Button } from 'comet-astro';
 >
   <section class="space-y-4">
     <p class="text-base text-slate-100">
-      Buttons are the primary action affordances in Comet. We ship a compact API
-      that covers the most common surface styles while holding contrast ratios
-      above WCAG AAA in both themes and states (default, hover, focus).
+      Buttons are the primary action affordances in Comet. Each BEM-style button exposes CSS variables
+      for surface, border, and typography tokens so you can theme them just like the Accordion or Autocomplete components.
+      All variants—including the five WCAG AAA palettes listed below—ship with built-in light/dark values.
     </p>
+    <div class="grid gap-4 md:grid-cols-3">
+      {highlightCards.map((card) => (
+        <div class="rounded-xl border border-slate-800/70 bg-slate-950/50 p-4 text-sm text-slate-200 shadow-sm">
+          <p class="text-sm font-semibold text-slate-50">{card.title}</p>
+          <p class="mt-2 text-slate-300">{card.detail}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6" id="variants">
+    <h2 class="text-xl font-semibold text-slate-100">Palette variants</h2>
     <p class="text-base text-slate-200">
-      Each variant provides strong focus rings with theme-aware offsets so
-      keyboard users never lose track of intent, even against busy backgrounds.
+      Use the five WCAG AAA palettes for marketing or system actions. They map to `variant="classic"`, `variant="nature"`,
+      `variant="warm"`, `variant="sky"`, and `variant="orange"` respectively.
     </p>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {paletteVariants.map((entry) => (
+        <div class="space-y-3 rounded-xl border border-slate-800/70 bg-slate-950/60 p-4 shadow-inner">
+          <div class="flex items-center justify-between text-slate-200">
+            <p class="text-sm font-semibold">{entry.label}</p>
+            <code class="text-xs text-slate-400">{entry.variant}</code>
+          </div>
+          <Button variant={entry.variant as any} class="w-full justify-center">
+            {entry.label}
+          </Button>
+          <p class="text-xs text-slate-400">{entry.helper}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6" id="usage">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
     <p class="text-base text-slate-200">
-      Built on top of <strong>ButtonBase</strong>, this component provides
-      intelligent rendering as either a button or anchor element based on the
-      presence of an href prop, with consistent styling and accessibility
-      features across all variants.
+      Import the component, choose a variant/size, and let Button decide whether to render a semantic button or anchor.
+      Loading states enable the spinner and add `aria-busy` automatically.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-800/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"
+    >
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-6" id="styling">
+    <h2 class="text-xl font-semibold text-slate-100">Styling &amp; Theming</h2>
+    <p class="text-base text-slate-200">
+      The root element renders as <code>.button</code> with modifiers such as <code>.button--variant-primary</code>
+      and <code>.button--size-lg</code>. Override CSS variables like <code>--button-bg</code>, <code>--button-text</code>,
+      and <code>--button-focus-ring</code> at any scope. You can also adopt the palette utility classes below (mirroring the
+      Accordion docs) to theme surrounding surfaces.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-800/70 bg-slate-950/80 p-4 text-xs text-slate-50 shadow-inner"
+    >
+      <code class="language-css">{paletteSnippet}</code>
+    </pre>
+    <p class="text-sm text-slate-300">
+      Apply `.palette-1`–`.palette-5` to wrappers to sync headings, copy, and button accents, or override
+      `--button-*` tokens directly for bespoke themes.
     </p>
   </section>
 
-  <section id="props" class="space-y-4">
+  <section id="props" class="mt-10 space-y-4">
     <div class="flex items-center justify-between gap-4">
       <h2
         class="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50"
@@ -79,7 +262,8 @@ import { Button } from 'comet-astro';
             <td class="p-2 font-mono">variant</td>
             <td class="p-2 font-mono"
               >'primary' | 'secondary' | 'ghost' | 'success' | 'destructive' |
-              'warning' | 'cyan' | 'teal' | 'purple' | 'indigo' | 'info'</td
+              'warning' | 'cyan' | 'teal' | 'purple' | 'indigo' | 'info' |
+              'classic' | 'nature' | 'warm' | 'sky' | 'orange'</td
             >
             <td class="p-2 font-mono">'primary'</td>
             <td class="p-2"

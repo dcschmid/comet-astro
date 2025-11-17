@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 interface Props {
   // Core pagination props
   currentPage: number;
@@ -150,43 +148,29 @@ const sizeStyles = {
   },
 };
 
-const containerClasses = cn(
-  'flex flex-wrap items-center justify-center',
-  variantStyles[variant].container,
-  className
-);
-
-const baseButtonClasses = cn(
-  'inline-flex items-center justify-center font-medium transition-all duration-200',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
-  variant === 'rounded' ? 'rounded-full' : 'rounded-lg',
-  sizeStyles[size].button,
-  // WCAG AAA contrast ratios
-  'text-gray-900 dark:text-gray-100'
-);
+const rootClasses = [
+  'pagination',
+  `pagination--variant-${variant}`,
+  `pagination--size-${size}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 const getButtonClasses = (isActive = false, isDisabled = false) => {
-  return cn(
-    baseButtonClasses,
-    isDisabled
-      ? variantStyles[variant].buttonDisabled
-      : isActive
-        ? variantStyles[variant].buttonActive
-        : cn(variantStyles[variant].button, variantStyles[variant].buttonHover)
-  );
+  return [
+    'pagination__button',
+    isActive ? 'pagination__button--active' : '',
+    isDisabled ? 'pagination__button--disabled' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 };
-
-const ellipsisClasses = cn(
-  'flex items-center justify-center',
-  sizeStyles[size].button,
-  sizeStyles[size].text,
-  'text-gray-500 dark:text-gray-400'
-);
 ---
 
 <nav
   id={paginationId}
-  class={containerClasses}
+  class={rootClasses}
   role="navigation"
   aria-label={ariaLabel}
 >
@@ -216,7 +200,7 @@ const ellipsisClasses = cn(
           title={`${previousLabel} - ${pageLabel} ${currentPage - 1}`}
         >
           <span aria-hidden="true">‹</span>
-          <span class="hidden sm:inline ml-1">{previousLabel}</span>
+          <span class="pagination__label">{previousLabel}</span>
           <span class="sr-only">{previousLabel}</span>
         </a>
       ) : (
@@ -228,7 +212,7 @@ const ellipsisClasses = cn(
           title={`${previousLabel} - disabled`}
         >
           <span aria-hidden="true">‹</span>
-          <span class="hidden sm:inline ml-1">{previousLabel}</span>
+          <span class="pagination__label">{previousLabel}</span>
           <span class="sr-only">{previousLabel} - disabled</span>
         </span>
       ))
@@ -239,7 +223,7 @@ const ellipsisClasses = cn(
     showPageNumbers &&
       visiblePages.map((page) =>
         page === '...' ? (
-          <span class={ellipsisClasses} aria-hidden="true" role="separator">
+          <span class="pagination__ellipsis" aria-hidden="true" role="separator">
             …
           </span>
         ) : (
@@ -270,7 +254,7 @@ const ellipsisClasses = cn(
           aria-label={`${nextLabel} - ${pageLabel} ${currentPage + 1}`}
           title={`${nextLabel} - ${pageLabel} ${currentPage + 1}`}
         >
-          <span class="hidden sm:inline mr-1">{nextLabel}</span>
+          <span class="pagination__label">{nextLabel}</span>
           <span aria-hidden="true">›</span>
           <span class="sr-only">{nextLabel}</span>
         </a>
@@ -282,7 +266,7 @@ const ellipsisClasses = cn(
           aria-label={`${nextLabel} - disabled`}
           title={`${nextLabel} - disabled`}
         >
-          <span class="hidden sm:inline mr-1">{nextLabel}</span>
+          <span class="pagination__label">{nextLabel}</span>
           <span aria-hidden="true">›</span>
           <span class="sr-only">{nextLabel} - disabled</span>
         </span>
@@ -304,3 +288,116 @@ const ellipsisClasses = cn(
     )
   }
 </nav>
+
+<style>
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .pagination__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    background-color: #ffffff;
+    color: #1f2937;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .pagination__button:hover {
+    background-color: #f1f5f9;
+  }
+
+  .pagination__button:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .pagination__button--active {
+    background-color: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+  }
+
+  .pagination__button--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pagination__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    color: #64748b;
+  }
+
+  .pagination__label {
+    display: none;
+    margin-inline: 0.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .pagination__label {
+      display: inline;
+    }
+  }
+
+  .pagination--variant-minimal .pagination__button {
+    border: none;
+    background-color: transparent;
+  }
+
+  .pagination--variant-minimal .pagination__button:hover {
+    background-color: rgba(15, 23, 42, 0.05);
+  }
+
+  .pagination--variant-outline .pagination__button {
+    border-width: 2px;
+    background-color: transparent;
+  }
+
+  .pagination--variant-rounded .pagination__button {
+    border-radius: 999px;
+  }
+
+  .pagination--size-sm .pagination__button {
+    min-width: 2rem;
+    min-height: 2rem;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .pagination--size-lg .pagination__button {
+    min-width: 3rem;
+    min-height: 3rem;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  :where(.dark) .pagination__button {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-color: rgba(148, 163, 184, 0.4);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .pagination__button:hover {
+    background-color: rgba(30, 41, 59, 0.8);
+  }
+
+  :where(.dark) .pagination__button--active {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+</style>

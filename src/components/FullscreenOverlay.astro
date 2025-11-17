@@ -40,20 +40,33 @@ const {
 } = Astro.props as Props;
 
 // Enhanced size variants with responsive design
-const sizeClasses = {
-  sm: 'w-[min(90vw,400px)]',
-  md: 'w-[min(92vw,600px)]',
-  lg: 'w-[min(94vw,800px)]',
-  xl: 'w-[min(96vw,1000px)]',
-};
+const sizeClassMap = {
+  sm: 'fullscreen-overlay__dialog--sm',
+  md: 'fullscreen-overlay__dialog--md',
+  lg: 'fullscreen-overlay__dialog--lg',
+  xl: 'fullscreen-overlay__dialog--xl',
+} as const;
 
 const overlayId = 'comet-fullscreen-overlay';
 const titleId = title ? 'comet-overlay-title' : undefined;
+const overlayClasses = [
+  'fullscreen-overlay',
+  open ? '' : 'fullscreen-overlay--hidden',
+]
+  .filter(Boolean)
+  .join(' ');
+const dialogClasses = [
+  'fullscreen-overlay__dialog',
+  sizeClassMap[size],
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
   id={overlayId}
-  class={`fixed inset-0 z-50 flex items-center justify-center p-4 ${open ? '' : 'hidden'}`}
+  class={overlayClasses}
   role="dialog"
   aria-modal="true"
   aria-labelledby={titleId}
@@ -62,32 +75,25 @@ const titleId = title ? 'comet-overlay-title' : undefined;
 >
   <!-- Enhanced backdrop with WCAG AAA contrast -->
   <div
-    class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity duration-200"
+    class="fullscreen-overlay__backdrop"
     data-overlay-backdrop={!preventBackdropClose ? '' : undefined}
     aria-hidden="true"
-  >
-  </div>
+  ></div>
 
   <!-- Main dialog content with enhanced styling and accessibility -->
   <div
-    class={`
-      relative mx-auto ${sizeClasses[size]} max-w-full rounded-2xl 
-      border-2 border-slate-200/20 bg-white/95 backdrop-blur-md
-      shadow-2xl ring-1 ring-slate-900/5
-      dark:border-slate-700/30 dark:bg-slate-900/95 dark:ring-slate-100/5
-      ${className}
-    `.trim()}
+    class={dialogClasses}
     role="document"
   >
     <!-- Enhanced header with better contrast and spacing -->
     <header
-      class="flex items-start justify-between gap-4 border-b border-slate-200/50 p-6 dark:border-slate-700/50"
+      class="fullscreen-overlay__header"
     >
       {
         title && (
           <h2
             id={titleId}
-            class="text-xl font-semibold leading-tight text-slate-900 dark:text-slate-50"
+            class="fullscreen-overlay__title"
           >
             {title}
           </h2>
@@ -97,23 +103,12 @@ const titleId = title ? 'comet-overlay-title' : undefined;
         closable && (
           <button
             type="button"
-            class={`
-              inline-flex items-center justify-center rounded-lg border-2
-              border-slate-300 bg-white px-4 py-2 text-sm font-semibold
-              text-slate-800 shadow-sm transition-all duration-150
-              hover:border-slate-400 hover:bg-slate-50 hover:shadow-md
-              focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2
-              active:bg-slate-100 active:scale-95
-              dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200
-              dark:hover:border-slate-500 dark:hover:bg-slate-700
-              dark:focus:ring-blue-400 dark:focus:ring-offset-slate-900
-              dark:active:bg-slate-600
-            `.trim()}
+            class="fullscreen-overlay__close-button"
             data-overlay-close
             aria-label={`${closeLabel} dialog`}
           >
             <svg
-              class="mr-2 h-4 w-4"
+              class="fullscreen-overlay__close-icon"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -134,18 +129,14 @@ const titleId = title ? 'comet-overlay-title' : undefined;
 
     <!-- Content area with enhanced scrolling and readability -->
     <div
-      class={`
-        max-h-[calc(80vh-8rem)] overflow-auto p-6 text-base leading-relaxed
-        text-slate-700 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300
-        dark:text-slate-200 dark:scrollbar-track-slate-800 dark:scrollbar-thumb-slate-600
-      `.trim()}
+      class="fullscreen-overlay__body"
     >
       <slot />
     </div>
 
     <!-- Enhanced actions footer -->
-    <div class="border-t border-slate-200/50 p-6 dark:border-slate-700/50">
-      <div class="flex flex-wrap items-center justify-end gap-3">
+    <div class="fullscreen-overlay__footer">
+      <div class="fullscreen-overlay__actions">
         <slot name="actions" />
       </div>
     </div>
@@ -165,6 +156,7 @@ const titleId = title ? 'comet-overlay-title' : undefined;
     const panel = root.querySelector('[role="dialog"]') || root;
     let lastFocused = null;
     let isOpen = false;
+    const HIDDEN_CLASS = 'fullscreen-overlay--hidden';
 
     // Enhanced focusable element detection
     const getFocusable = () => {
@@ -194,7 +186,7 @@ const titleId = title ? 'comet-overlay-title' : undefined;
 
     // Enhanced open function with better focus management
     const open = () => {
-      if (isOpen || !root.classList.contains('hidden')) return;
+      if (isOpen || !root.classList.contains(HIDDEN_CLASS)) return;
 
       // Store current focus
       lastFocused =
@@ -203,7 +195,7 @@ const titleId = title ? 'comet-overlay-title' : undefined;
           : null;
 
       // Show overlay
-      root.classList.remove('hidden');
+      root.classList.remove(HIDDEN_CLASS);
       isOpen = true;
 
       // Prevent body scroll with enhanced support
@@ -236,9 +228,9 @@ const titleId = title ? 'comet-overlay-title' : undefined;
 
     // Enhanced close function
     const close = () => {
-      if (!isOpen || root.classList.contains('hidden')) return;
+      if (!isOpen || root.classList.contains(HIDDEN_CLASS)) return;
 
-      root.classList.add('hidden');
+      root.classList.add(HIDDEN_CLASS);
       isOpen = false;
 
       // Restore body scroll
@@ -336,3 +328,206 @@ const titleId = title ? 'comet-overlay-title' : undefined;
     window.addEventListener('beforeunload', cleanup);
   })();
 </script>
+
+<style is:inline>
+  .fullscreen-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .fullscreen-overlay--hidden {
+    display: none;
+  }
+
+  .fullscreen-overlay__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(2, 6, 23, 0.8);
+    backdrop-filter: blur(4px);
+    transition: opacity 0.2s ease;
+  }
+
+  .fullscreen-overlay__dialog {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    border-radius: 1rem;
+    border: 2px solid rgba(226, 232, 240, 0.2);
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 25px 50px rgba(15, 23, 42, 0.2),
+      0 0 0 1px rgba(15, 23, 42, 0.05);
+    color: #0f172a;
+    overflow: hidden;
+  }
+
+  .fullscreen-overlay__dialog--sm {
+    width: min(90vw, 400px);
+  }
+
+  .fullscreen-overlay__dialog--md {
+    width: min(92vw, 600px);
+  }
+
+  .fullscreen-overlay__dialog--lg {
+    width: min(94vw, 800px);
+  }
+
+  .fullscreen-overlay__dialog--xl {
+    width: min(96vw, 1000px);
+  }
+
+  .fullscreen-overlay__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  }
+
+  .fullscreen-overlay__title {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .fullscreen-overlay__close-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    border: 2px solid #cbd5f5;
+    background-color: #ffffff;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .fullscreen-overlay__close-button:hover {
+    border-color: #94a3b8;
+    background-color: #f8fafc;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+  }
+
+  .fullscreen-overlay__close-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.9);
+  }
+
+  .fullscreen-overlay__close-button:active {
+    transform: scale(0.97);
+    background-color: #f1f5f9;
+  }
+
+  .fullscreen-overlay__close-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .fullscreen-overlay__body {
+    max-height: calc(80vh - 8rem);
+    overflow: auto;
+    padding: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #334155;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5f5 #f1f5f9;
+  }
+
+  .fullscreen-overlay__body::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .fullscreen-overlay__body::-webkit-scrollbar-thumb {
+    background-color: #cbd5f5;
+    border-radius: 999px;
+  }
+
+  .fullscreen-overlay__body::-webkit-scrollbar-track {
+    background-color: #f1f5f9;
+  }
+
+  .fullscreen-overlay__footer {
+    border-top: 1px solid rgba(226, 232, 240, 0.5);
+    padding: 1.5rem;
+  }
+
+  .fullscreen-overlay__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  :where(.dark) .fullscreen-overlay__dialog {
+    border-color: rgba(51, 65, 85, 0.3);
+    background-color: rgba(15, 23, 42, 0.95);
+    box-shadow:
+      0 20px 45px rgba(2, 6, 23, 0.7),
+      0 0 0 1px rgba(241, 245, 249, 0.05);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .fullscreen-overlay__header,
+  :where(.dark) .fullscreen-overlay__footer {
+    border-color: rgba(51, 65, 85, 0.5);
+  }
+
+  :where(.dark) .fullscreen-overlay__title {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .fullscreen-overlay__body {
+    color: #e2e8f0;
+    scrollbar-color: #475569 #0f172a;
+  }
+
+  :where(.dark) .fullscreen-overlay__body::-webkit-scrollbar-thumb {
+    background-color: #475569;
+  }
+
+  :where(.dark) .fullscreen-overlay__body::-webkit-scrollbar-track {
+    background-color: #0f172a;
+  }
+
+  :where(.dark) .fullscreen-overlay__close-button {
+    border-color: #475569;
+    background-color: #1f2937;
+    color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(2, 6, 23, 0.6);
+  }
+
+  :where(.dark) .fullscreen-overlay__close-button:hover {
+    border-color: #64748b;
+    background-color: #334155;
+  }
+
+  :where(.dark) .fullscreen-overlay__close-button:focus-visible {
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.9);
+  }
+
+  :where(.dark) .fullscreen-overlay__close-button:active {
+    background-color: #475569;
+  }
+</style>

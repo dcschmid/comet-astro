@@ -11,6 +11,7 @@ interface Props {
   label?: string;
   /** Storage key override (default: comet-font) */
   storageKey?: string;
+  className?: string;
 }
 
 const {
@@ -34,23 +35,25 @@ const {
       description: 'Dyslexia-friendly open font',
     },
   ],
+  className = '',
 } = Astro.props as Props;
 
 const id = `font-switcher-${Math.random().toString(36).slice(2, 8)}`;
 const liveId = `${id}-live`;
+const rootClasses = ['font-switcher', className].filter(Boolean).join(' ');
 ---
 
-<div class="space-y-2" data-font-storage-key={storageKey}>
+<div class={rootClasses} data-font-storage-key={storageKey}>
   <label
     for={id}
-    class="text-sm font-medium text-slate-800 dark:text-slate-200"
+    class="font-switcher__label"
   >
     {label}
   </label>
-  <div class="relative">
+  <div class="font-switcher__control">
     <select
       id={id}
-      class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-blue-300"
+      class="font-switcher__select"
       aria-describedby={liveId}
       data-font-select
     >
@@ -63,18 +66,17 @@ const liveId = `${id}-live`;
       }
     </select>
   </div>
-  <ul
-    class="list-disc pl-5 space-y-1 text-xs text-slate-600 dark:text-slate-400"
-  >
+  <ul class="font-switcher__options">
     {
       options.map((o) => (
-        <li data-font-opt={o.id}>
-          <strong>{o.label}:</strong> {o.description}
+        <li class="font-switcher__option" data-font-opt={o.id}>
+          <span class="font-switcher__option-label">{o.label}:</span>
+          <span class="font-switcher__option-desc">{o.description}</span>
         </li>
       ))
     }
   </ul>
-  <div id={liveId} class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <div id={liveId} class="font-switcher__live" aria-live="polite" aria-atomic="true"></div>
 </div>
 
 <script is:inline>
@@ -126,3 +128,84 @@ const liveId = `${id}-live`;
     });
   })();
 </script>
+
+<style is:inline>
+  .font-switcher {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .font-switcher__label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  :where(.dark) .font-switcher__label {
+    color: #f8fafc;
+  }
+  .font-switcher__control {
+    position: relative;
+  }
+  .font-switcher__select {
+    width: 100%;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(15, 23, 42, 0.2);
+    background: #ffffff;
+    padding: 0.55rem 0.85rem;
+    color: #0f172a;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .font-switcher__select:focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.75);
+    outline-offset: 2px;
+  }
+  .font-switcher__select:hover {
+    border-color: rgba(37, 99, 235, 0.5);
+  }
+  :where(.dark) .font-switcher__select {
+    background: #0f172a;
+    border-color: rgba(148, 163, 184, 0.35);
+    color: #f8fafc;
+  }
+  .font-switcher__options {
+    list-style: disc;
+    margin: 0;
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: rgba(71, 85, 105, 1);
+  }
+  :where(.dark) .font-switcher__options {
+    color: rgba(203, 213, 225, 1);
+  }
+  .font-switcher__option {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .font-switcher__option-label {
+    font-weight: 600;
+  }
+  .font-switcher__option-desc {
+    color: inherit;
+  }
+  .font-switcher__live {
+    position: absolute;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+</style>
+</style>

@@ -5,10 +5,30 @@
  * - className?: string - additional utility classes
  */
 const { className = '' } = Astro.props;
+const classes = ['inline-code', className].filter(Boolean).join(' ');
 ---
 
 <code
-  class={`rounded font-mono text-[13px] px-1 py-0.5 bg-slate-800/60 text-slate-100 ${className}`}
+  class={classes}
 >
   <slot />
 </code>
+
+<style is:inline>
+  .inline-code {
+    display: inline-block;
+    padding: 0.125rem 0.35rem;
+    border-radius: 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    background-color: rgba(15, 23, 42, 0.7);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .inline-code {
+    background-color: rgba(226, 232, 240, 0.15);
+    color: #f8fafc;
+  }
+</style>

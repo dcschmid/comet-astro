@@ -38,52 +38,35 @@ const {
 
 // Enhanced size classes with responsive typography
 const sizeClasses = {
-  sm: {
-    container: 'space-y-1.5 text-sm',
-    name: 'text-base font-semibold',
-    content: 'text-sm',
-    meta: 'text-xs',
-  },
-  md: {
-    container: 'space-y-2 text-sm',
-    name: 'text-lg font-semibold',
-    content: 'text-sm',
-    meta: 'text-sm',
-  },
-  lg: {
-    container: 'space-y-3 text-base',
-    name: 'text-xl font-semibold',
-    content: 'text-base',
-    meta: 'text-sm',
-  },
-};
+  sm: 'imprint-address--size-sm',
+  md: 'imprint-address--size-md',
+  lg: 'imprint-address--size-lg',
+} as const;
 
-// Layout spacing configurations
 const layoutClasses = {
-  compact: 'space-y-1',
-  default: 'space-y-2',
-  expanded: 'space-y-4',
-};
+  compact: 'imprint-address--layout-compact',
+  default: 'imprint-address--layout-default',
+  expanded: 'imprint-address--layout-expanded',
+} as const;
 
-// WCAG AAA compliant color classes with 7:1+ contrast ratios
-const colorClasses = {
-  text: 'text-slate-800 dark:text-slate-100',
-  textSecondary: 'text-slate-700 dark:text-slate-200',
-  textMuted: 'text-slate-600 dark:text-slate-300',
-  link: 'text-blue-700 dark:text-blue-300',
-  linkHover: 'hover:text-blue-800 dark:hover:text-blue-200',
-  linkFocus: 'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-};
+const wrapperClasses = [
+  'imprint-address',
+  sizeClasses[size],
+  layoutClasses[layout],
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <address
-  class={`${sizeClasses[size].container} ${layoutClasses[layout]} not-italic ${colorClasses.textSecondary} ${className}`.trim()}
+  class={wrapperClasses}
   itemscope
   itemtype="https://schema.org/Organization"
   role="contentinfo"
   aria-label="Organization contact information"
 >
-  <div itemprop="name" class={`${sizeClasses[size].name} ${colorClasses.text}`}>
+  <div itemprop="name" class="imprint-address__name">
     {name}
   </div>
 
@@ -93,20 +76,20 @@ const colorClasses = {
         itemprop="address"
         itemscope
         itemtype="https://schema.org/PostalAddress"
-        class={`${sizeClasses[size].content}`}
+        class="imprint-address__section imprint-address__section--address"
       >
         {showLabels && (
-          <div class={`font-medium ${colorClasses.text} mb-1`}>Address</div>
+          <div class="imprint-address__label">Address</div>
         )}
 
         {street && (
-          <div itemprop="streetAddress" class="leading-relaxed">
+          <div itemprop="streetAddress" class="imprint-address__line">
             {street}
           </div>
         )}
 
         {(postalCode || city) && (
-          <div class="leading-relaxed">
+          <div class="imprint-address__line">
             {postalCode && <span itemprop="postalCode">{postalCode}</span>}
             {postalCode && city && ' '}
             {city && <span itemprop="addressLocality">{city}</span>}
@@ -114,7 +97,7 @@ const colorClasses = {
         )}
 
         {country && (
-          <div itemprop="addressCountry" class="leading-relaxed">
+          <div itemprop="addressCountry" class="imprint-address__line">
             {country}
           </div>
         )}
@@ -122,27 +105,23 @@ const colorClasses = {
     )
   }
 
-  <div
-    class={`${layout === 'compact' ? 'mt-2' : 'mt-3'} flex flex-col gap-1.5 ${sizeClasses[size].content}`}
-  >
+  <div class="imprint-address__section imprint-address__section--contact">
     {
       showLabels && (email || phone || website) && (
-        <div class={`font-medium ${colorClasses.text} mb-1`}>Contact</div>
+        <div class="imprint-address__label">Contact</div>
       )
     }
 
     {
       email && (
-        <div class="flex items-center gap-2">
+        <div class="imprint-address__row">
           {showLabels && (
-            <span class={`${colorClasses.textMuted} min-w-0 shrink-0`}>
-              Email:
-            </span>
+            <span class="imprint-address__row-label">Email:</span>
           )}
           <a
             href={`mailto:${email}`}
             itemprop="email"
-            class={`${colorClasses.link} ${colorClasses.linkHover} no-underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${colorClasses.linkFocus} focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 rounded-sm break-all`}
+            class="imprint-address__link imprint-address__link--break"
             aria-label={`Send email to ${email}`}
           >
             {email}
@@ -153,16 +132,14 @@ const colorClasses = {
 
     {
       phone && (
-        <div class="flex items-center gap-2">
+        <div class="imprint-address__row">
           {showLabels && (
-            <span class={`${colorClasses.textMuted} min-w-0 shrink-0`}>
-              Phone:
-            </span>
+            <span class="imprint-address__row-label">Phone:</span>
           )}
           <a
             href={`tel:${phone}`}
             itemprop="telephone"
-            class={`${colorClasses.link} ${colorClasses.linkHover} no-underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${colorClasses.linkFocus} focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 rounded-sm`}
+            class="imprint-address__link"
             aria-label={`Call ${phone}`}
           >
             {phone}
@@ -173,18 +150,16 @@ const colorClasses = {
 
     {
       website && (
-        <div class="flex items-center gap-2">
+        <div class="imprint-address__row">
           {showLabels && (
-            <span class={`${colorClasses.textMuted} min-w-0 shrink-0`}>
-              Website:
-            </span>
+            <span class="imprint-address__row-label">Website:</span>
           )}
           <a
             href={website}
             target="_blank"
             rel="noopener noreferrer"
             itemprop="url"
-            class={`${colorClasses.link} ${colorClasses.linkHover} no-underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${colorClasses.linkFocus} focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 rounded-sm break-all`}
+            class="imprint-address__link imprint-address__link--break"
             aria-label={`Visit ${website} (opens in new window)`}
           >
             {website}
@@ -197,27 +172,179 @@ const colorClasses = {
 
   {
     (vatId || register) && (
-      <div
-        class={`${layout === 'compact' ? 'mt-2' : 'mt-3'} ${sizeClasses[size].meta} ${colorClasses.textMuted} space-y-1`}
-      >
+      <div class="imprint-address__section imprint-address__section--legal">
         {showLabels && (
-          <div class={`font-medium ${colorClasses.text} mb-1`}>
+          <div class="imprint-address__label">
             Legal Information
           </div>
         )}
 
         {vatId && (
-          <div class="leading-relaxed">
-            <span class="font-medium">VAT-ID:</span> {vatId}
+          <div class="imprint-address__line">
+            <span class="imprint-address__inline-label">VAT-ID:</span> {vatId}
           </div>
         )}
 
         {register && (
-          <div class="leading-relaxed">
-            <span class="font-medium">Register:</span> {register}
+          <div class="imprint-address__line">
+            <span class="imprint-address__inline-label">Register:</span> {register}
           </div>
         )}
       </div>
     )
   }
 </address>
+
+<style is:inline>
+  .imprint-address {
+    display: block;
+    color: #1f2937;
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .imprint-address--size-sm {
+    font-size: 0.875rem;
+  }
+
+  .imprint-address--size-lg {
+    font-size: 1rem;
+  }
+
+  .imprint-address--layout-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .imprint-address--layout-default {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .imprint-address--layout-expanded {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .imprint-address__name {
+    font-size: 1.125em;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .imprint-address--size-sm .imprint-address__name {
+    font-size: 1em;
+  }
+
+  .imprint-address--size-lg .imprint-address__name {
+    font-size: 1.25em;
+  }
+
+  .imprint-address__section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .imprint-address__section--contact {
+    margin-top: 0.75rem;
+    gap: 0.6rem;
+  }
+
+  .imprint-address--layout-compact .imprint-address__section--contact,
+  .imprint-address--layout-compact .imprint-address__section--legal {
+    margin-top: 0.5rem;
+  }
+
+  .imprint-address__section--legal {
+    margin-top: 0.75rem;
+    gap: 0.35rem;
+    color: #475569;
+    font-size: 0.85em;
+  }
+
+  .imprint-address__label {
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.2rem;
+  }
+
+  .imprint-address__line {
+    color: inherit;
+  }
+
+  .imprint-address__row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .imprint-address__row-label {
+    color: #475569;
+    font-weight: 500;
+    min-width: 3rem;
+  }
+
+  .imprint-address__inline-label {
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .imprint-address__link {
+    color: #1d4ed8;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    padding: 0.05rem 0;
+    transition: color 0.2s ease;
+    outline: none;
+  }
+
+  .imprint-address__link:hover {
+    color: #1e40af;
+  }
+
+  .imprint-address__link:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
+  .imprint-address__link--break {
+    word-break: break-all;
+  }
+
+  :where(.dark) .imprint-address {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .imprint-address__name {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .imprint-address__section--legal {
+    color: #94a3b8;
+  }
+
+  :where(.dark) .imprint-address__row-label {
+    color: #94a3b8;
+  }
+
+  :where(.dark) .imprint-address__inline-label {
+    color: #e2e8f0;
+  }
+
+  :where(.dark) .imprint-address__link {
+    color: #60a5fa;
+  }
+
+  :where(.dark) .imprint-address__link:hover {
+    color: #bfdbfe;
+  }
+
+  :where(.dark) .imprint-address__link:focus-visible {
+    outline-color: #60a5fa;
+  }
+</style>

@@ -62,46 +62,37 @@ const combinedDescribedBy =
   describedByParts.length > 0 ? describedByParts.join(' ') : undefined;
 
 // Size-based spacing classes
-const sizeClasses = {
-  sm: 'space-y-1',
-  md: 'space-y-2',
-  lg: 'space-y-3',
-};
-
-// Layout classes
-const layoutClasses =
-  layout === 'horizontal'
-    ? 'md:flex md:items-start md:gap-6'
-    : sizeClasses[size];
+const rootClasses = [
+  'form-group',
+  `form-group--size-${size}`,
+  `form-group--layout-${layout}`,
+  fieldsetMode ? 'form-group--fieldset' : 'form-group--standard',
+  error ? 'form-group--has-error' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 const Element = fieldsetMode ? 'fieldset' : 'div';
 ---
 
 <Element
-  class={`form-group ${layoutClasses} text-slate-800 dark:text-slate-100 ${className}`.trim()}
+  class={rootClasses}
   data-form-group
-  data-has-error={Boolean(error)}
-  data-layout={layout}
-  data-size={size}
   aria-describedby={combinedDescribedBy}
 >
   {/* Legend for fieldset mode */}
   {
     fieldsetMode && legend && (
-      <legend
-        class={`block text-sm font-semibold text-slate-800 dark:text-slate-100 mb-2 ${labelClassName}`}
-      >
+      <legend class={`form-group__legend ${labelClassName}`}>
         {legend}
         {required && (
-          <span
-            class="ml-1 text-red-700 dark:text-red-400"
-            aria-label="required"
-          >
+          <span class="form-group__required" aria-label="required">
             *
           </span>
         )}
         {!required && optionalText && (
-          <span class="ml-2 text-xs font-normal uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <span class="form-group__optional">
             {optionalText}
           </span>
         )}
@@ -112,34 +103,26 @@ const Element = fieldsetMode ? 'fieldset' : 'div';
   {/* Label section for regular mode */}
   {
     !fieldsetMode && label && (
-      <div
-        class={`${layout === 'horizontal' ? 'md:w-48 md:shrink-0' : ''} ${sizeClasses[size]}`}
-      >
+      <div class={`form-group__label-block ${layout === 'horizontal' ? 'form-group__label-block--horizontal' : ''}`}>
         <label
-          class={`block text-sm font-semibold text-slate-800 dark:text-slate-100 ${hideLabel ? 'sr-only' : ''} ${labelClassName}`.trim()}
+          class={`form-group__label ${hideLabel ? 'sr-only' : ''} ${labelClassName}`.trim()}
           for={labelFor}
         >
           {label}
           {required && (
-            <span
-              class="ml-1 text-red-700 dark:text-red-400"
-              aria-label="required"
-            >
+            <span class="form-group__required" aria-label="required">
               *
             </span>
           )}
           {!required && optionalText && (
-            <span class="ml-2 text-xs font-normal uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            <span class="form-group__optional">
               {optionalText}
             </span>
           )}
         </label>
 
         {description && (
-          <p
-            id={generatedDescriptionId}
-            class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
-          >
+          <p id={generatedDescriptionId} class="form-group__description">
             {description}
           </p>
         )}
@@ -148,19 +131,14 @@ const Element = fieldsetMode ? 'fieldset' : 'div';
   }
 
   {/* Content section */}
-  <div
-    class={`${layout === 'horizontal' ? 'md:flex-1 md:min-w-0' : ''} ${sizeClasses[size]}`}
-  >
-    <div class={sizeClasses[size]}>
+  <div class={`form-group__field ${layout === 'horizontal' ? 'form-group__field--horizontal' : ''}`}>
+    <div class="form-group__controls">
       <slot />
 
       {/* Help text */}
       {
         helpText && (
-          <p
-            id={generatedHelpTextId}
-            class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
-          >
+          <p id={generatedHelpTextId} class="form-group__help">
             {helpText}
           </p>
         )
@@ -171,12 +149,12 @@ const Element = fieldsetMode ? 'fieldset' : 'div';
         error && (
           <div
             id={generatedErrorId}
-            class="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-800/50"
+            class="form-group__error"
             role="alert"
             aria-live="assertive"
           >
             <svg
-              class="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0"
+              class="form-group__error-icon"
               fill="currentColor"
               viewBox="0 0 20 20"
               aria-hidden="true"
@@ -187,7 +165,7 @@ const Element = fieldsetMode ? 'fieldset' : 'div';
                 clip-rule="evenodd"
               />
             </svg>
-            <p class="text-sm font-medium text-red-700 dark:text-red-300">
+            <p class="form-group__error-text">
               {error}
             </p>
           </div>
@@ -196,3 +174,133 @@ const Element = fieldsetMode ? 'fieldset' : 'div';
     </div>
   </div>
 </Element>
+
+<style is:inline>
+  .form-group {
+    color: #0f172a;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  :where(.dark) .form-group {
+    color: #f8fafc;
+  }
+  .form-group--layout-horizontal {
+    gap: 0.5rem;
+  }
+  @media (min-width: 48rem) {
+    .form-group--layout-horizontal {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+  }
+  .form-group--fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+  .form-group__legend {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .form-group__label-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  @media (min-width: 48rem) {
+    .form-group--layout-horizontal .form-group__label-block {
+      width: 12rem;
+      flex-shrink: 0;
+    }
+  }
+  .form-group__label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: inherit;
+  }
+  .form-group__description {
+    font-size: 0.9rem;
+    color: rgba(71, 85, 105, 1);
+    margin: 0;
+  }
+  :where(.dark) .form-group__description {
+    color: rgba(203, 213, 225, 1);
+  }
+  .form-group__field {
+    width: 100%;
+  }
+  .form-group__field--horizontal {
+    flex: 1;
+    min-width: 0;
+  }
+  .form-group__controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .form-group__help {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(71, 85, 105, 1);
+  }
+  :where(.dark) .form-group__help {
+    color: rgba(203, 213, 225, 1);
+  }
+  .form-group__error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    border-radius: 0.85rem;
+    background: rgba(254, 226, 226, 0.9);
+    border: 1px solid rgba(248, 113, 113, 0.6);
+    padding: 0.75rem;
+  }
+  :where(.dark) .form-group__error {
+    background: rgba(127, 29, 29, 0.35);
+    border-color: rgba(248, 113, 113, 0.4);
+  }
+  .form-group__error-icon {
+    width: 1rem;
+    height: 1rem;
+    color: rgba(185, 28, 28, 1);
+    flex-shrink: 0;
+  }
+  .form-group__error-text {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(185, 28, 28, 1);
+  }
+  :where(.dark) .form-group__error-text {
+    color: rgba(254, 202, 202, 1);
+  }
+  .form-group__required {
+    color: #b91c1c;
+    margin-left: 0.25rem;
+  }
+  :where(.dark) .form-group__required {
+    color: #fca5a5;
+  }
+  .form-group__optional {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(148, 163, 184, 1);
+  }
+  .form-group--size-sm .form-group__controls {
+    gap: 0.35rem;
+  }
+  .form-group--size-lg .form-group__controls {
+    gap: 0.75rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .form-group * {
+      transition: none !important;
+    }
+  }
+</style>

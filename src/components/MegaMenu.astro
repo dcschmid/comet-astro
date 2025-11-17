@@ -62,103 +62,100 @@ const {
 const menuId = `mega-menu-${Math.random().toString(36).slice(2, 10)}`;
 const panelId = `${menuId}-panel`;
 
-// Variant styles
-const variantClasses = {
-  default: 'border border-gray-300 dark:border-gray-600 shadow-sm',
-  compact: 'border border-gray-200 dark:border-gray-700 shadow-sm',
-  detailed: 'border-2 border-gray-300 dark:border-gray-600 shadow-lg',
-  minimal: 'border-0 shadow-none',
-};
-
-// Size styles - Fixed column widths to prevent overlap
-const sizeClasses = {
+const sizeTokens = {
   sm: {
-    trigger: 'px-3 py-1.5 text-sm',
-    panel: 'p-6 gap-6',
-    icon: 'text-sm',
-    title: 'text-xs font-medium',
-    item: 'p-3 text-sm',
-    description: 'text-xs',
-    columnWidth: 'w-[240px]',
+    triggerPaddingInline: '0.75rem',
+    triggerPaddingBlock: '0.375rem',
+    triggerFontSize: '0.875rem',
+    panelPadding: '1.5rem',
+    panelGap: '1.5rem',
+    iconSize: '0.85rem',
+    titleSize: '0.75rem',
+    itemPadding: '0.75rem',
+    itemFontSize: '0.875rem',
+    descriptionSize: '0.75rem',
+    columnWidth: '240px',
   },
   md: {
-    trigger: 'px-4 py-2 text-sm',
-    panel: 'p-8 gap-8',
-    icon: 'text-base',
-    title: 'text-sm font-semibold',
-    item: 'p-4 text-sm',
-    description: 'text-xs',
-    columnWidth: 'w-[280px]',
+    triggerPaddingInline: '1rem',
+    triggerPaddingBlock: '0.5rem',
+    triggerFontSize: '0.95rem',
+    panelPadding: '2rem',
+    panelGap: '2rem',
+    iconSize: '1rem',
+    titleSize: '0.85rem',
+    itemPadding: '1rem',
+    itemFontSize: '0.95rem',
+    descriptionSize: '0.8rem',
+    columnWidth: '280px',
   },
   lg: {
-    trigger: 'px-6 py-3 text-base',
-    panel: 'p-10 gap-10',
-    icon: 'text-lg',
-    title: 'text-base font-semibold',
-    item: 'p-5 text-base',
-    description: 'text-sm',
-    columnWidth: 'w-[320px]',
+    triggerPaddingInline: '1.25rem',
+    triggerPaddingBlock: '0.75rem',
+    triggerFontSize: '1rem',
+    panelPadding: '2.5rem',
+    panelGap: '2.5rem',
+    iconSize: '1.125rem',
+    titleSize: '1rem',
+    itemPadding: '1.25rem',
+    itemFontSize: '1rem',
+    descriptionSize: '0.9rem',
+    columnWidth: '320px',
   },
-};
+} as const;
 
-const currentSize = sizeClasses[size];
+const widthVars = {
+  auto: { maxWidth: '80rem', width: 'auto' },
+  full: { maxWidth: '80rem', width: '100%' },
+  screen: { maxWidth: '100vw', width: '100vw' },
+} as const;
 
-// Width styles - Better scaling for fixed column layouts
-const widthClasses = {
-  auto: 'min-w-fit max-w-7xl',
-  full: 'w-full min-w-fit max-w-7xl',
-  screen: 'w-screen max-w-screen-2xl',
-};
+const sizeConfig = sizeTokens[size];
+const widthConfig = widthVars[width];
+const columnWidthValue = Number.parseFloat(sizeConfig.columnWidth);
+const columnCount = Math.min(columns.length, maxColumns);
+const panelMinColumnsWidth =
+  width === 'screen'
+    ? '100vw'
+    : `${Math.max(columnCount, 1) * columnWidthValue}px`;
 
-// Grid columns based on actual columns and maxColumns - Fixed width distribution
-const actualColumns = Math.min(columns.length, maxColumns);
-const gridClasses = {
-  1: 'grid-cols-1 min-w-[320px]',
-  2: 'grid-cols-2 min-w-[640px]',
-  3: 'grid-cols-3 min-w-[960px]',
-  4: 'grid-cols-4 min-w-[1280px]',
-};
+const inlineStyles = Object.entries({
+  '--mega-trigger-px': sizeConfig.triggerPaddingInline,
+  '--mega-trigger-py': sizeConfig.triggerPaddingBlock,
+  '--mega-trigger-font': sizeConfig.triggerFontSize,
+  '--mega-panel-padding': sizeConfig.panelPadding,
+  '--mega-panel-gap': sizeConfig.panelGap,
+  '--mega-icon-size': sizeConfig.iconSize,
+  '--mega-title-size': sizeConfig.titleSize,
+  '--mega-item-padding': sizeConfig.itemPadding,
+  '--mega-item-font': sizeConfig.itemFontSize,
+  '--mega-description-size': sizeConfig.descriptionSize,
+  '--mega-column-width': sizeConfig.columnWidth,
+  '--mega-panel-width': widthConfig.width,
+  '--mega-panel-max-width': widthConfig.maxWidth,
+  '--mega-column-count': columnCount.toString(),
+  '--mega-panel-min-columns': panelMinColumnsWidth,
+}).reduce((acc, [key, val]) => `${acc}${key}: ${val}; `, '');
 
-// Base trigger classes with WCAG AAA contrast
-const triggerClasses = `
-  inline-flex items-center gap-2 rounded-lg font-medium
-  ${currentSize.trigger}
-  ${variantClasses[variant]}
-  ${variant !== 'minimal' ? 'bg-white dark:bg-gray-900' : 'bg-transparent'}
-  text-gray-900 dark:text-gray-50
-  hover:bg-gray-50 dark:hover:bg-gray-800
-  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-  dark:focus:ring-offset-gray-900
-  transition-all duration-200 ease-in-out
-  ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
-`
-  .trim()
-  .replace(/\s+/g, ' ');
+const userClasses = [className, legacyClassName].filter(Boolean).join(' ');
 
-// Panel classes with WCAG AAA contrast
-const panelClasses = `
-  absolute left-0 z-50 mt-2 rounded-lg
-  ${widthClasses[width]}
-  ${variant !== 'minimal' ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'}
-  ${variant !== 'minimal' ? 'border border-gray-200 dark:border-gray-700' : ''}
-  ${variant === 'detailed' ? 'shadow-2xl' : variant !== 'minimal' ? 'shadow-lg' : 'shadow-md'}
-  ${variant !== 'minimal' ? 'ring-1 ring-black/5 dark:ring-white/10' : ''}
-  opacity-0 invisible pointer-events-none transition-all duration-200 ease-out
-`
-  .trim()
-  .replace(/\s+/g, ' ');
-
-const finalClassName = className || legacyClassName || '';
+const rootClasses = [
+  'mega-menu',
+  `mega-menu--variant-${variant}`,
+  `mega-menu--size-${size}`,
+  `mega-menu--width-${width}`,
+  disabled ? 'mega-menu--disabled' : '',
+  userClasses,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<div
-  id={menuId}
-  class={`relative inline-block ${finalClassName}`}
-  data-mega-menu
->
+<div id={menuId} class={rootClasses} data-mega-menu style={inlineStyles}>
   <button
     type="button"
-    class={triggerClasses}
+    class="mega-menu__trigger"
+    id={`${menuId}-trigger`}
     data-mega-trigger
     aria-haspopup="true"
     aria-expanded="false"
@@ -168,134 +165,86 @@ const finalClassName = className || legacyClassName || '';
     disabled={disabled}
   >
     {trigger}
-    <span
-      class={`${currentSize.icon} transition-transform duration-200`}
-      aria-hidden="true">▼</span
-    >
+    <span class="mega-menu__trigger-icon" aria-hidden="true">▼</span>
   </button>
 
   <div
     id={panelId}
-    class={panelClasses}
+    class="mega-menu__panel mega-menu__panel--hidden"
     data-mega-panel
     role="menu"
     aria-hidden="true"
     aria-labelledby={`${menuId}-trigger`}
     hidden
   >
-    <div
-      class={`grid ${gridClasses[actualColumns] || 'grid-cols-1'} ${currentSize.panel} w-full`}
-    >
-      {
-        columns.map((column, columnIndex) => (
-          <div
-            key={columnIndex}
-            class={`${currentSize.columnWidth} overflow-hidden`}
-          >
-            {column.href ? (
-              <a
-                href={column.href}
-                class={`
-                block mb-4 ${currentSize.title} uppercase tracking-wide
-                text-gray-700 dark:text-gray-300
-                hover:text-blue-700 dark:hover:text-blue-300
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                dark:focus:ring-offset-gray-900
-                transition-colors duration-200
-                truncate
-              `
-                  .trim()
-                  .replace(/\s+/g, ' ')}
-                title={column.title}
-              >
-                {column.title}
-              </a>
-            ) : (
-              <h3
-                class={`mb-4 ${currentSize.title} uppercase tracking-wide text-gray-700 dark:text-gray-300 truncate`}
-                title={column.title}
-              >
-                {column.title}
-              </h3>
-            )}
+    <div class="mega-menu__columns">
+      {columns.map((column, columnIndex) => (
+        <div key={columnIndex} class="mega-menu__column">
+          {column.href ? (
+            <a
+              href={column.href}
+              class="mega-menu__column-title mega-menu__column-title--link"
+              title={column.title}
+            >
+              {column.title}
+            </a>
+          ) : (
+            <h3 class="mega-menu__column-title" title={column.title}>
+              {column.title}
+            </h3>
+          )}
 
-            {column.description && (
-              <p
-                class={`mb-4 ${currentSize.description} text-gray-600 dark:text-gray-400 break-words`}
-              >
-                {column.description}
-              </p>
-            )}
+          {column.description && (
+            <p class="mega-menu__column-description">{column.description}</p>
+          )}
 
-            <ul class="space-y-2" role="none">
-              {column.items.map((item, itemIndex) => (
-                <li key={itemIndex} role="none">
-                  <a
-                    href={item.href}
-                    target={item.target || '_self'}
-                    rel={
-                      item.target === '_blank'
-                        ? 'noopener noreferrer'
-                        : undefined
-                    }
-                    class={`
-                    group flex items-start gap-3 rounded-lg border border-transparent w-full
-                    ${currentSize.item}
-                    text-gray-900 dark:text-gray-50
-                    hover:border-blue-200 dark:hover:border-blue-700
-                    hover:bg-blue-50 dark:hover:bg-blue-950
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                    dark:focus:ring-offset-gray-900
-                    transition-all duration-200
-                  `
-                      .trim()
-                      .replace(/\s+/g, ' ')}
-                    role="menuitem"
-                    tabindex="-1"
-                    title={`${item.label}${item.description ? ': ' + item.description : ''}`}
-                  >
-                    {item.icon && (
-                      <span
-                        class={`shrink-0 ${currentSize.icon} text-blue-700 dark:text-blue-300`}
-                        aria-hidden="true"
-                      >
-                        {item.icon}
-                      </span>
-                    )}
-                    <div class="flex-1 min-w-0 overflow-hidden">
-                      <div
-                        class={`font-medium text-gray-900 dark:text-gray-50 group-hover:text-blue-800 dark:group-hover:text-blue-200 break-words`}
-                      >
-                        <span class="break-words">{item.label}</span>
-                        {item.badge && (
-                          <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 shrink-0">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                      {item.description && (
-                        <p
-                          class={`mt-1 ${currentSize.description} text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 break-words`}
-                        >
-                          {item.description}
-                        </p>
+          <ul class="mega-menu__item-list" role="none">
+            {column.items.map((item, itemIndex) => (
+              <li key={itemIndex} role="none">
+                <a
+                  href={item.href}
+                  target={item.target || '_self'}
+                  rel={
+                    item.target === '_blank'
+                      ? 'noopener noreferrer'
+                      : undefined
+                  }
+                  class="mega-menu__item"
+                  role="menuitem"
+                  tabindex="-1"
+                  title={`${item.label}${item.description ? ': ' + item.description : ''}`}
+                >
+                  {item.icon && (
+                    <span class="mega-menu__item-icon" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                  )}
+                  <div class="mega-menu__item-body">
+                    <div class="mega-menu__item-label">
+                      <span>{item.label}</span>
+                      {item.badge && (
+                        <span class="mega-menu__item-badge">
+                          {item.badge}
+                        </span>
                       )}
                     </div>
-                    {item.target === '_blank' && (
-                      <span
-                        class={`shrink-0 ${currentSize.icon} text-gray-400`}
-                        aria-hidden="true"
-                      >
-                        ↗
-                      </span>
+                    {item.description && (
+                      <p class="mega-menu__item-description">
+                        {item.description}
+                      </p>
                     )}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
+                  </div>
+                  {item.target === '_blank' && (
+                    <span class="mega-menu__item-external" aria-hidden="true">
+                      ↗
+                    </span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   </div>
 </div>
@@ -325,7 +274,7 @@ const finalClassName = className || legacyClassName || '';
       const panel = menu.querySelector('[data-mega-panel]');
       if (!(trigger instanceof HTMLElement) || !(panel instanceof HTMLElement))
         return;
-      panel.classList.add('opacity-0', 'invisible', 'pointer-events-none');
+      panel.classList.add('mega-menu__panel--hidden');
       panel.setAttribute('aria-hidden', 'true');
       panel.hidden = true;
       trigger.setAttribute('aria-expanded', 'false');
@@ -352,9 +301,8 @@ const finalClassName = className || legacyClassName || '';
       closeAll();
       panel.hidden = false;
       panel.setAttribute('aria-hidden', 'false');
-      panel.classList.remove('invisible');
       requestAnimationFrame(() => {
-        panel.classList.remove('opacity-0', 'pointer-events-none');
+        panel.classList.remove('mega-menu__panel--hidden');
       });
       trigger.setAttribute('aria-expanded', 'true');
       setTabStops(panel, 0);
@@ -499,3 +447,279 @@ const finalClassName = className || legacyClassName || '';
     }
   })();
 </script>
+
+<style>
+  .mega-menu {
+    position: relative;
+    display: inline-block;
+  }
+
+  .mega-menu__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-inline: var(--mega-trigger-px, 1rem);
+    padding-block: var(--mega-trigger-py, 0.5rem);
+    font-size: var(--mega-trigger-font, 0.95rem);
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: #0f172a;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .mega-menu--variant-compact .mega-menu__trigger {
+    border-color: #e2e8f0;
+  }
+
+  .mega-menu--variant-detailed .mega-menu__trigger {
+    border-width: 2px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+  }
+
+  .mega-menu--variant-minimal .mega-menu__trigger {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .mega-menu__trigger:hover {
+    background-color: #f8fafc;
+  }
+
+  .mega-menu__trigger:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .mega-menu--disabled .mega-menu__trigger {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .mega-menu__trigger-icon {
+    font-size: var(--mega-icon-size, 1rem);
+    transition: transform 0.2s ease;
+  }
+
+  .mega-menu__panel {
+    position: absolute;
+    left: 0;
+    z-index: 50;
+    margin-top: 0.5rem;
+    width: var(--mega-panel-width, auto);
+    min-width: var(--mega-panel-min-columns, fit-content);
+    max-width: var(--mega-panel-max-width, 80rem);
+    background-color: #ffffff;
+    color: #0f172a;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 35px 120px rgba(15, 23, 42, 0.18);
+    transform-origin: top;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .mega-menu__panel--hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .mega-menu--variant-minimal .mega-menu__panel {
+    background-color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
+  }
+
+  .mega-menu--variant-detailed .mega-menu__panel {
+    border-width: 2px;
+    box-shadow: 0 40px 140px rgba(15, 23, 42, 0.25);
+  }
+
+  .mega-menu__columns {
+    display: grid;
+    grid-template-columns: repeat(
+      var(--mega-column-count, 1),
+      minmax(var(--mega-column-width, 280px), 1fr)
+    );
+    gap: var(--mega-panel-gap, 2rem);
+    padding: var(--mega-panel-padding, 2rem);
+  }
+
+  .mega-menu__column {
+    min-width: var(--mega-column-width, 280px);
+  }
+
+  .mega-menu__column-title {
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    font-size: var(--mega-title-size, 0.85rem);
+    letter-spacing: 0.08em;
+    color: #475569;
+    font-weight: 600;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mega-menu__column-title--link {
+    color: #1d4ed8;
+    text-decoration: none;
+  }
+
+  .mega-menu__column-title--link:hover,
+  .mega-menu__column-title--link:focus-visible {
+    color: #1e40af;
+    text-decoration: underline;
+  }
+
+  .mega-menu__column-description {
+    margin-bottom: 1rem;
+    font-size: var(--mega-description-size, 0.8rem);
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .mega-menu__item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .mega-menu__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    border-radius: 0.85rem;
+    border: 1px solid transparent;
+    padding: var(--mega-item-padding, 1rem);
+    font-size: var(--mega-item-font, 0.95rem);
+    color: #0f172a;
+    text-decoration: none;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .mega-menu__item:hover,
+  .mega-menu__item:focus-visible {
+    border-color: #bfdbfe;
+    background-color: #eff6ff;
+  }
+
+  .mega-menu__item:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .mega-menu__item-icon {
+    font-size: var(--mega-icon-size, 1rem);
+    color: #1d4ed8;
+  }
+
+  .mega-menu__item-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mega-menu__item-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .mega-menu__item-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    white-space: nowrap;
+  }
+
+  .mega-menu__item-description {
+    margin-top: 0.35rem;
+    font-size: var(--mega-description-size, 0.8rem);
+    color: #475569;
+    line-height: 1.4;
+  }
+
+  .mega-menu__item-external {
+    font-size: var(--mega-icon-size, 1rem);
+    color: #94a3b8;
+  }
+
+  :where(.dark) .mega-menu__trigger {
+    background-color: #0f172a;
+    border-color: #1e293b;
+    color: #f8fafc;
+  }
+
+  :where(.dark) .mega-menu__trigger:hover {
+    background-color: #1e293b;
+  }
+
+  :where(.dark) .mega-menu__panel {
+    background-color: #0f172a;
+    border-color: #1e293b;
+    color: #f8fafc;
+  }
+
+  :where(.dark) .mega-menu__column-title {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .mega-menu__column-title--link {
+    color: #60a5fa;
+  }
+
+  :where(.dark) .mega-menu__column-description {
+    color: #94a3b8;
+  }
+
+  :where(.dark) .mega-menu__item {
+    color: #f1f5f9;
+  }
+
+  :where(.dark) .mega-menu__item:hover,
+  :where(.dark) .mega-menu__item:focus-visible {
+    border-color: #2563eb;
+    background-color: #1e293b;
+  }
+
+  :where(.dark) .mega-menu__item-description {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .mega-menu__item-badge {
+    background-color: #1e3a8a;
+    color: #bfdbfe;
+  }
+
+  @media (max-width: 768px) {
+    .mega-menu__columns {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+  }
+
+  @keyframes mega-menu-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>

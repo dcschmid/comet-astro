@@ -192,6 +192,13 @@ export const componentCatalog: ComponentDoc[] = [
     category: 'Typography',
   },
   {
+    slug: 'font-switcher',
+    name: 'FontSwitcher',
+    description:
+      'Accessible font preference switcher with local persistence and aria-live announcements.',
+    category: 'Utilities',
+  },
+  {
     slug: 'breadcrumbs',
     name: 'Breadcrumbs',
     description: 'Hierarchical navigation trail with current-page indicator.',

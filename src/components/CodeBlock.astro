@@ -1,6 +1,7 @@
 ---
 interface Props {
   code?: string; // Raw code string
+  highlighted?: string; // Pre-highlighted HTML (e.g. from Shiki)
   language?: string; // Prism / Shiki language id
   title?: string; // Optional title bar string
   filename?: string; // Alternate to title (takes precedence if provided)
@@ -9,10 +10,13 @@ interface Props {
   wrap?: boolean; // Soft wrap long lines
   copyable?: boolean; // Show copy button
   className?: string; // Extra utility classes
+  useShiki?: boolean; // Automatically highlight with Shiki
+  shikiTheme?: string; // Theme when using Shiki
 }
 
 const {
   code,
+  highlighted,
   language = 'plaintext',
   title,
   filename,
@@ -21,36 +25,84 @@ const {
   wrap = false,
   copyable = true,
   className = '',
+  useShiki = false,
+  shikiTheme = 'github-dark',
 } = Astro.props as Props;
 
 const displayTitle = filename || title;
 const lines = code?.split('\n') || [];
 const highlightSet = new Set(highlightLines);
+
+let shikiOutput = highlighted;
+if (!shikiOutput && useShiki && code) {
+  const { codeToHtml } = await import('shiki');
+  shikiOutput = await codeToHtml(code, {
+    lang: language,
+    theme: shikiTheme,
+  });
+}
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (char) => {
+    switch (char) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#39;';
+      default:
+        return char;
+    }
+  });
+
+const variantClasses = [
+  'code-block',
+  displayTitle ? 'code-block--with-header' : '',
+  wrap ? 'code-block--wrap' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+const numberedHtml = (() => {
+  const content = lines
+    .map((line, i) => {
+      const lineNum = i + 1;
+      const isHighlighted = highlightSet.has(lineNum);
+      const highlightCls = isHighlighted
+        ? 'code-block__line code-block__line--highlight'
+        : 'code-block__line';
+      return `<span class="${highlightCls}"><span class="code-block__line-number">${lineNum}</span>${escapeHtml(line || ' ')}</span>`;
+    })
+    .join('\n');
+  return `<code class="language-${language}">${content}</code>`;
+})();
 ---
 
-<div
-  class={`group rounded-xl border border-slate-300 bg-slate-50 text-slate-800 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 ${className}`}
->
+<div class={variantClasses}>
   {
     displayTitle && (
-      <div class="flex items-center justify-between border-b border-slate-200 bg-slate-100/80 px-4 py-2 dark:border-slate-800 dark:bg-slate-900/60">
-        <span class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+      <div class="code-block__header">
+        <span class="code-block__title">
           {displayTitle}
         </span>
         {language && (
-          <span class="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <span class="code-block__language">
             {language}
           </span>
         )}
       </div>
     )
   }
-  <div class="relative">
+  <div class="code-block__body">
     {
       copyable && (
         <button
           type="button"
-          class="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md border border-slate-400 bg-white/70 px-3 py-1 text-xs font-medium text-slate-700 backdrop-blur-sm transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:border-slate-600 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-950"
+          class="code-block__copy"
           data-copy-button
           aria-describedby="copy-status"
         >
@@ -59,17 +111,18 @@ const highlightSet = new Set(highlightLines);
       )
     }
     <span id="copy-status" class="sr-only" aria-live="polite"></span>
-    <pre
-      class={`p-4 overflow-x-auto text-[13px] leading-relaxed ${wrap ? 'whitespace-pre-wrap wrap-break-word' : 'whitespace-pre'} font-medium`}><code class={`language-${language}`}>{
-        showLineNumbers
-          ? lines.map((line, i) => {
-              const lineNum = i + 1;
-              const isHighlighted = highlightSet.has(lineNum);
-              const highlightCls = isHighlighted ? 'bg-blue-500/15 ring-1 ring-inset ring-blue-500/30 dark:bg-blue-400/10 -mx-4 px-4 rounded-md' : '';
-              return `<span class="block ${highlightCls}"><span class="inline-block w-8 select-none pr-2 text-right text-slate-400 dark:text-slate-600">${lineNum}</span>${line || ' '}</span>`;
-            }).join('\n')
-          : code
-      }</code></pre>
+    {shikiOutput ? (
+      <div
+        class="code-block__pre code-block__pre--shiki"
+        set:html={shikiOutput}
+      ></div>
+    ) : showLineNumbers ? (
+      <pre class="code-block__pre" set:html={`<code class="language-${language}">${numberedHtml}</code>`}></pre>
+    ) : (
+      <pre class="code-block__pre">
+        <code class={`language-${language}`}>{code}</code>
+      </pre>
+    )}
   </div>
 </div>
 
@@ -113,13 +166,136 @@ const highlightSet = new Set(highlightLines);
 </script>
 
 <style>
-  pre {
-    tab-size: 2;
+  .code-block {
+    position: relative;
+    border-radius: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: #f8fafc;
+    color: #0f172a;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
   }
-  code {
+
+  :where(.dark) .code-block {
+    background: #0f172a;
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+
+  .code-block__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.85rem 1.2rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(226, 232, 240, 0.6);
+  }
+
+  :where(.dark) .code-block__header {
+    background: rgba(15, 23, 42, 0.9);
+  }
+
+  .code-block__title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(15, 23, 42, 0.8);
+  }
+
+  :where(.dark) .code-block__title {
+    color: rgba(248, 250, 252, 0.8);
+  }
+
+  .code-block__language {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(15, 23, 42, 0.65);
+  }
+
+  :where(.dark) .code-block__language {
+    color: rgba(248, 250, 252, 0.6);
+  }
+
+  .code-block__body {
+    position: relative;
+    padding: 1rem 1rem 1rem 1rem;
+  }
+
+  .code-block__copy {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: rgba(255, 255, 255, 0.75);
+    color: #0f172a;
+    padding: 0.25rem 0.85rem;
+    font-size: 0.75rem;
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+  }
+
+  :where(.dark) .code-block__copy {
+    background: rgba(15, 23, 42, 0.85);
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.5);
+  }
+
+  .code-block__copy:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.65);
+    outline-offset: 2px;
+  }
+
+  .code-block__pre {
+    margin: 0;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.65;
     font-family:
       'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
       'Liberation Mono', 'Courier New', monospace;
-    font-weight: 450;
+    white-space: pre;
+    tab-size: 2;
+  }
+
+  .code-block--wrap .code-block__pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .code-block__line {
+    display: block;
+    padding-left: 0.25rem;
+  }
+
+  .code-block__line-number {
+    display: inline-block;
+    width: 2rem;
+    margin-right: 0.75rem;
+    text-align: right;
+    color: rgba(148, 163, 184, 0.7);
+    user-select: none;
+  }
+
+  :where(.dark) .code-block__line-number {
+    color: rgba(148, 163, 184, 0.5);
+  }
+
+  .code-block__line--highlight {
+    background: rgba(99, 102, 241, 0.1);
+    border-left: 2px solid rgba(99, 102, 241, 0.6);
+    padding-left: 0.25rem;
+    border-radius: 0.35rem;
+  }
+
+  :where(.dark) .code-block__line--highlight {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: rgba(165, 180, 252, 0.8);
   }
 </style>

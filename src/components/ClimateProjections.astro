@@ -76,121 +76,86 @@ const fallback: ClimateDatum[] = [
 ];
 const rows = data.length ? data : fallback;
 
-const sizeClasses = variant === 'compact' ? 'p-4 text-sm' : 'p-6 md:p-8';
-const containerClasses = `rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm ${sizeClasses} ${className}`;
+const classes = [
+  'climate',
+  variant === 'compact' ? 'climate--compact' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 const confidenceBadge = (c: ClimateDatum['confidence']) => {
-  const base =
-    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold tracking-wide';
-  if (c === 'high')
-    return `${base} bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100`;
-  if (c === 'medium')
-    return `${base} bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100`;
-  return `${base} bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-100`;
+  return `climate__confidence climate__confidence--${c}`;
 };
 
 // Utility: derive color class for change cell
 const changeClass = (val: string) => {
-  if (val.startsWith('+'))
-    return 'text-rose-700 dark:text-rose-300 font-semibold';
-  if (val.startsWith('-'))
-    return 'text-sky-700 dark:text-sky-300 font-semibold';
-  return 'text-slate-700 dark:text-slate-300';
+  if (val.startsWith('+')) return 'climate__change climate__change--warm';
+  if (val.startsWith('-')) return 'climate__change climate__change--cool';
+  return 'climate__change climate__change--neutral';
 };
 
 const label = ariaLabel || `Climate projections for ${location || region}`;
 ---
 
 <div
-  class={containerClasses}
+  class={classes}
   role="region"
   aria-label={label}
   data-climate-projections
   data-scenario={scenario}
   {...rest}
 >
-  <header class="flex flex-col gap-4 mb-6">
-    <div
-      class="flex flex-col md:flex-row md:items-center md:justify-between gap-3"
-    >
-      <h2
-        class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
-      >
-        <span aria-hidden="true" class="text-2xl md:text-3xl">🌡️</span>
+  <header class="climate__header">
+    <div class="climate__title-row">
+      <h2 class="climate__title">
+        <span aria-hidden="true" class="climate__title-icon">🌡️</span>
         <span>Climate Projections</span>
       </h2>
-      <div
-        class="flex flex-wrap items-center gap-2 text-xs md:text-sm"
-        aria-label="Projection horizon and scenario"
-      >
-        <span
-          class="rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 font-medium text-slate-700 dark:text-slate-200"
-          >Baseline {startYear}</span
-        >
-        <span
-          class="rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 font-medium text-slate-700 dark:text-slate-200"
-          >Horizon {endYear}</span
-        >
-        <span
-          class="rounded-md bg-indigo-100 dark:bg-indigo-900 px-2 py-1 font-semibold text-indigo-700 dark:text-indigo-100"
-          >Scenario {scenario}</span
-        >
+      <div class="climate__meta" aria-label="Projection horizon and scenario">
+        <span class="climate__badge">Baseline {startYear}</span>
+        <span class="climate__badge">Horizon {endYear}</span>
+        <span class="climate__badge climate__badge--scenario">
+          Scenario {scenario}
+        </span>
       </div>
     </div>
-    <p
-      class="text-sm md:text-base leading-relaxed text-slate-700 dark:text-slate-200 max-w-prose"
-    >
-      Summary for <strong class="text-slate-900 dark:text-slate-100"
-        >{location || region}</strong
-      >. Placeholder multi‑model mean under <code
-        class="font-mono text-indigo-700 dark:text-indigo-300">{scenario}</code
-      >. Confidence badges use simple evidence agreement.
+    <p class="climate__intro">
+      Summary for
+      <strong>{location || region}</strong>. Placeholder multi‑model mean under
+      <code>{scenario}</code>. Confidence badges use simple evidence agreement.
     </p>
   </header>
 
-  <div
-    class="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700"
-  >
-    <table
-      class="w-full text-sm md:text-base border-collapse"
-      aria-describedby="climate-caption"
-    >
+  <div class="climate__table-wrapper">
+    <table class="climate__table" aria-describedby="climate-caption">
       <caption id="climate-caption" class="sr-only"
         >Baseline vs projected climate metrics and changes for {
           location || region
         } under {scenario} scenario.</caption
       >
-      <thead
-        class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wide"
-      >
+      <thead class="climate__head">
         <tr>
-          <th scope="col" class="px-3 py-2 text-left">Metric</th>
-          <th scope="col" class="px-3 py-2 text-left">Baseline</th>
-          <th scope="col" class="px-3 py-2 text-left">Projected {endYear}</th>
-          <th scope="col" class="px-3 py-2 text-left">Change</th>
-          <th scope="col" class="px-3 py-2 text-left">Confidence</th>
+          <th scope="col">Metric</th>
+          <th scope="col">Baseline</th>
+          <th scope="col">Projected {endYear}</th>
+          <th scope="col">Change</th>
+          <th scope="col">Confidence</th>
         </tr>
       </thead>
-      <tbody
-        class="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-900"
-      >
+      <tbody class="climate__body">
         {
           rows.map((r) => (
-            <tr>
-              <th
-                scope="row"
-                class="px-3 py-2 font-semibold text-slate-900 dark:text-slate-100"
-              >
+            <tr class="climate__row">
+              <th scope="row" class="climate__cell climate__cell--metric">
                 {r.metric}
               </th>
-              <td class="px-3 py-2 text-slate-700 dark:text-slate-200">
-                {r.baseline}
+              <td class="climate__cell">{r.baseline}</td>
+              <td class="climate__cell">{r.projected}</td>
+              <td class="climate__cell">
+                <span class={changeClass(r.change)}>{r.change}</span>
               </td>
-              <td class="px-3 py-2 text-slate-700 dark:text-slate-200">
-                {r.projected}
-              </td>
-              <td class={`px-3 py-2 ${changeClass(r.change)}`}>{r.change}</td>
-              <td class="px-3 py-2">
+              <td class="climate__cell">
                 <span class={confidenceBadge(r.confidence)}>
                   {r.confidence}
                 </span>
@@ -204,35 +169,26 @@ const label = ariaLabel || `Climate projections for ${location || region}`;
 
   {
     showExtremes && (
-      <section class="mt-8" aria-labelledby="extremes-heading">
-        <h3
-          id="extremes-heading"
-          class="text-sm font-bold tracking-wide text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2"
-        >
+      <section class="climate__extremes" aria-labelledby="extremes-heading">
+        <h3 id="extremes-heading" class="climate__extremes-title">
           <span aria-hidden="true">⚠️</span> Extremes (illustrative)
         </h3>
-        <div class="grid gap-4 md:grid-cols-3">
-          <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-800">
-            <p class="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
-              Hot Days &gt;30°C
-            </p>
-            <p class="text-sm text-slate-700 dark:text-slate-200">
+        <div class="climate__extremes-grid">
+          <div class="climate__extreme-card">
+            <p class="climate__extreme-label">Hot Days &gt;30°C</p>
+            <p class="climate__extreme-value">
               Baseline: 5 → Projected: 12
             </p>
           </div>
-          <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-800">
-            <p class="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
-              Heavy Rain Events
-            </p>
-            <p class="text-sm text-slate-700 dark:text-slate-200">
+          <div class="climate__extreme-card">
+            <p class="climate__extreme-label">Heavy Rain Events</p>
+            <p class="climate__extreme-value">
               Baseline: 7 → Projected: 9
             </p>
           </div>
-          <div class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-800">
-            <p class="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
-              Frost Days
-            </p>
-            <p class="text-sm text-slate-700 dark:text-slate-200">
+          <div class="climate__extreme-card">
+            <p class="climate__extreme-label">Frost Days</p>
+            <p class="climate__extreme-value">
               Baseline: 20 → Projected: 14
             </p>
           </div>
@@ -241,25 +197,20 @@ const label = ariaLabel || `Climate projections for ${location || region}`;
     )
   }
 
-  <footer class="mt-8 space-y-3" aria-labelledby="confidence-heading">
+  <footer class="climate__legend" aria-labelledby="confidence-heading">
     <h3 id="confidence-heading" class="sr-only">Confidence legend</h3>
-    <div class="flex flex-wrap gap-2 text-xs">
-      <span
-        class="rounded-md bg-emerald-100 dark:bg-emerald-900 px-2 py-1 font-medium text-emerald-800 dark:text-emerald-100"
-        >High: robust agreement</span
-      >
-      <span
-        class="rounded-md bg-amber-100 dark:bg-amber-900 px-2 py-1 font-medium text-amber-800 dark:text-amber-100"
-        >Medium: moderate agreement</span
-      >
-      <span
-        class="rounded-md bg-slate-200 dark:bg-slate-700 px-2 py-1 font-medium text-slate-800 dark:text-slate-100"
-        >Low: limited evidence</span
-      >
+    <div class="climate__legend-badges">
+      <span class="climate__legend-pill climate__legend-pill--high">
+        High: robust agreement
+      </span>
+      <span class="climate__legend-pill climate__legend-pill--medium">
+        Medium: moderate agreement
+      </span>
+      <span class="climate__legend-pill climate__legend-pill--low">
+        Low: limited evidence
+      </span>
     </div>
-    <p
-      class="text-xs md:text-sm leading-relaxed text-slate-600 dark:text-slate-400"
-    >
+    <p class="climate__legend-note">
       Illustrative values only. Use authoritative datasets for planning.
       Scenario <code class="font-mono text-indigo-700 dark:text-indigo-300"
         >{scenario}</code
@@ -268,12 +219,303 @@ const label = ariaLabel || `Climate projections for ${location || region}`;
   </footer>
 </div>
 
-<style>
+<style is:inline>
+  .climate {
+    border-radius: 1.25rem;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    background: #ffffff;
+    color: #0f172a;
+    padding: 1.5rem;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+  }
+
+  :where(.dark) .climate {
+    background: #0f172a;
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+
+  .climate--compact {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .climate__header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .climate__title-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .climate__title-row {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .climate__title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .climate__title-icon {
+    font-size: 1.8rem;
+  }
+
+  .climate__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .climate__badge {
+    border-radius: 0.55rem;
+    padding: 0.2rem 0.65rem;
+    font-weight: 600;
+    background: rgba(15, 23, 42, 0.08);
+    color: inherit;
+  }
+
+  :where(.dark) .climate__badge {
+    background: rgba(248, 250, 252, 0.1);
+  }
+
+  .climate__badge--scenario {
+    background: rgba(99, 102, 241, 0.15);
+    color: #4338ca;
+  }
+
+  :where(.dark) .climate__badge--scenario {
+    background: rgba(99, 102, 241, 0.2);
+    color: #c4b5fd;
+  }
+
+  .climate__intro {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(15, 23, 42, 0.8);
+  }
+
+  :where(.dark) .climate__intro {
+    color: rgba(248, 250, 252, 0.75);
+  }
+
+  .climate__intro code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    color: #4338ca;
+  }
+
+  :where(.dark) .climate__intro code {
+    color: #c4b5fd;
+  }
+
+  .climate__table-wrapper {
+    border-radius: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    overflow: hidden;
+  }
+
+  .climate__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .climate__head {
+    background: rgba(226, 232, 240, 0.6);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  :where(.dark) .climate__head {
+    background: rgba(15, 23, 42, 0.9);
+  }
+
+  .climate__head th {
+    text-align: left;
+    padding: 0.85rem;
+  }
+
+  .climate__row {
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+  }
+
+  :where(.dark) .climate__row {
+    border-color: rgba(148, 163, 184, 0.12);
+  }
+
+  .climate__cell {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .climate__cell--metric {
+    font-weight: 600;
+  }
+
+  .climate__change {
+    font-weight: 600;
+  }
+
+  .climate__change--warm {
+    color: #dc2626;
+  }
+
+  .climate__change--cool {
+    color: #0284c7;
+  }
+
+  .climate__confidence {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .climate__confidence--high {
+    background: rgba(16, 185, 129, 0.2);
+    color: #065f46;
+  }
+
+  .climate__confidence--medium {
+    background: rgba(251, 191, 36, 0.26);
+    color: #92400e;
+  }
+
+  .climate__confidence--low {
+    background: rgba(100, 116, 139, 0.25);
+    color: #334155;
+  }
+
+  .climate__extremes {
+    margin-top: 1.75rem;
+  }
+
+  .climate__extremes-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .climate__extremes-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .climate__extremes-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .climate__extreme-card {
+    border-radius: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(248, 250, 252, 0.6);
+    padding: 1rem;
+  }
+
+  :where(.dark) .climate__extreme-card {
+    background: rgba(15, 23, 42, 0.75);
+    border-color: rgba(148, 163, 184, 0.2);
+  }
+
+  .climate__extreme-label {
+    margin: 0 0 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .climate__extreme-value {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(15, 23, 42, 0.8);
+  }
+
+  :where(.dark) .climate__extreme-value {
+    color: rgba(248, 250, 252, 0.85);
+  }
+
+  .climate__legend {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .climate__legend-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .climate__legend-pill {
+    border-radius: 0.6rem;
+    padding: 0.25rem 0.7rem;
+    font-weight: 600;
+  }
+
+  .climate__legend-pill--high {
+    background: rgba(16, 185, 129, 0.2);
+    color: #065f46;
+  }
+
+  .climate__legend-pill--medium {
+    background: rgba(251, 191, 36, 0.25);
+    color: #92400e;
+  }
+
+  .climate__legend-pill--low {
+    background: rgba(100, 116, 139, 0.25);
+    color: #334155;
+  }
+
+  .climate__legend-note {
+    margin: 0;
+    font-size: 0.8rem;
+    color: rgba(15, 23, 42, 0.7);
+  }
+
+  :where(.dark) .climate__legend-note {
+    color: rgba(248, 250, 252, 0.65);
+  }
+
+  .climate__legend-note code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    color: #4338ca;
+  }
+
+  :where(.dark) .climate__legend-note code {
+    color: #c4b5fd;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     [data-climate-projections] * {
       transition: none !important;
     }
   }
+
   @media (prefers-contrast: high) {
     [data-climate-projections] {
       outline: 2px solid currentColor;

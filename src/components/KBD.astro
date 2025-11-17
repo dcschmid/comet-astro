@@ -25,88 +25,40 @@ const {
   platform = 'auto',
 } = Astro.props;
 
-// Enhanced size classes with responsive design
 const sizeClasses = {
   xs: {
-    key: 'text-xs px-1 py-0.5 min-w-[1.25rem] leading-3',
-    gap: 'gap-0.5',
-    separator: 'text-xs',
-    icon: 'w-2.5 h-2.5',
+    root: 'kbd--size-xs',
+    key: 'kbd__key--size-xs',
+    separator: 'kbd__separator--size-xs',
   },
   sm: {
-    key: 'text-xs px-1.5 py-0.5 min-w-[1.5rem] leading-4',
-    gap: 'gap-1',
-    separator: 'text-xs',
-    icon: 'w-3 h-3',
+    root: 'kbd--size-sm',
+    key: 'kbd__key--size-sm',
+    separator: 'kbd__separator--size-sm',
   },
   md: {
-    key: 'text-sm px-2 py-1 min-w-[2rem] leading-4',
-    gap: 'gap-1.5',
-    separator: 'text-sm',
-    icon: 'w-3.5 h-3.5',
+    root: 'kbd--size-md',
+    key: 'kbd__key--size-md',
+    separator: 'kbd__separator--size-md',
   },
   lg: {
-    key: 'text-base px-2.5 py-1.5 min-w-[2.5rem] leading-5',
-    gap: 'gap-2',
-    separator: 'text-base',
-    icon: 'w-4 h-4',
+    root: 'kbd--size-lg',
+    key: 'kbd__key--size-lg',
+    separator: 'kbd__separator--size-lg',
   },
   xl: {
-    key: 'text-lg px-3 py-2 min-w-[3rem] leading-6',
-    gap: 'gap-2.5',
-    separator: 'text-lg',
-    icon: 'w-5 h-5',
+    root: 'kbd--size-xl',
+    key: 'kbd__key--size-xl',
+    separator: 'kbd__separator--size-xl',
   },
-};
+} as const;
 
-// WCAG AAA compliant color classes with 7:1+ contrast ratios
-const colorClasses = {
-  // Text colors
-  text: 'text-slate-900 dark:text-slate-50',
-  textSecondary: 'text-slate-800 dark:text-slate-100',
-  textMuted: 'text-slate-700 dark:text-slate-200',
-  // Background colors
-  bg: 'bg-white dark:bg-slate-950',
-  bgSubtle: 'bg-slate-50 dark:bg-slate-900',
-  bgElevated: 'bg-slate-100 dark:bg-slate-800',
-  // Border colors
-  border: 'border-slate-400 dark:border-slate-500',
-  borderSubtle: 'border-slate-300 dark:border-slate-600',
-  borderStrong: 'border-slate-500 dark:border-slate-400',
-  // Shadow colors
-  shadow: 'shadow-sm shadow-slate-200 dark:shadow-slate-800',
-  shadowStrong: 'shadow-md shadow-slate-300 dark:shadow-slate-700',
-};
-
-// Variant styles
 const variantClasses = {
-  default: `
-    ${colorClasses.bgElevated} 
-    ${colorClasses.border} 
-    ${colorClasses.shadow}
-    border-b-2 border-r-2
-    hover:${colorClasses.bgSubtle}
-    active:translate-y-0.5 active:shadow-none
-  `,
-  outlined: `
-    ${colorClasses.bg} 
-    border-2 ${colorClasses.borderStrong} 
-    ${colorClasses.shadow}
-    hover:${colorClasses.bgSubtle}
-  `,
-  minimal: `
-    ${colorClasses.bgSubtle} 
-    ${colorClasses.borderSubtle} 
-    border
-    hover:${colorClasses.bgElevated}
-  `,
-  filled: `
-    ${colorClasses.bgElevated} 
-    ${colorClasses.borderSubtle} 
-    border
-    ${colorClasses.shadowStrong}
-  `,
-};
+  default: 'kbd--variant-default',
+  outlined: 'kbd--variant-outlined',
+  minimal: 'kbd--variant-minimal',
+  filled: 'kbd--variant-filled',
+} as const;
 
 // Separator symbols and labels
 const separatorConfig = {
@@ -199,13 +151,11 @@ const generateDescription = () => {
   return `Press ${keyNames.join(` ${separatorLabel} `)} keys`;
 };
 
-// Compute classes
-const baseClasses = `
-  inline-flex items-center justify-center rounded-md font-mono font-semibold
-  transition-all duration-150 ease-in-out
-  ${colorClasses.text}
-  select-none cursor-default
-`.trim();
+const rootClasses = ['kbd', sizeClasses[size].root, variantClasses[variant], className]
+  .filter(Boolean)
+  .join(' ');
+const keyClass = ['kbd__key', sizeClasses[size].key].join(' ');
+const separatorClass = ['kbd__separator', sizeClasses[size].separator].join(' ');
 
 const separatorSymbol = separatorConfig[separator].symbol;
 const accessibleDescription = generateDescription();
@@ -219,7 +169,7 @@ const descriptionId = description
 {
   keys.length > 0 ? (
     <span
-      class={`inline-flex items-center ${sizeClasses[size].gap} ${className}`}
+      class={rootClasses}
       role="group"
       aria-label={ariaLabel || accessibleDescription}
       aria-describedby={descriptionId}
@@ -227,22 +177,14 @@ const descriptionId = description
       {keys.map((key, i) => (
         <>
           <kbd
-            class={`
-            ${baseClasses} 
-            ${sizeClasses[size].key} 
-            ${variantClasses[variant]}
-          `}
+            class={keyClass}
             title={`${transformKey(key)} key`}
           >
             {transformKey(key)}
           </kbd>
           {i < keys.length - 1 && (
             <span
-              class={`
-              ${sizeClasses[size].separator} 
-              ${colorClasses.textMuted} 
-              mx-1 font-medium
-            `}
+              class={separatorClass}
               aria-hidden="true"
             >
               {separatorSymbol}
@@ -258,54 +200,207 @@ const descriptionId = description
       )}
     </span>
   ) : (
-    <kbd
-      class={`
-      ${baseClasses} 
-      ${sizeClasses[size].key} 
-      ${variantClasses[variant]} 
-      ${className}
-    `}
-      aria-label={ariaLabel}
-      aria-describedby={descriptionId}
-      title="Keyboard shortcut"
-    >
-      <slot />
+    <span class={rootClasses}>
+      <kbd
+        class={keyClass}
+        aria-label={ariaLabel}
+        aria-describedby={descriptionId}
+        title="Keyboard shortcut"
+      >
+        <slot />
 
-      {description && (
-        <span id={descriptionId} class="sr-only">
-          {description}
-        </span>
-      )}
-    </kbd>
+        {description && (
+          <span id={descriptionId} class="sr-only">
+            {description}
+          </span>
+        )}
+      </kbd>
+    </span>
   )
 }
 
-<style>
-  /* Enhanced visual feedback for better accessibility */
-  kbd:focus-visible {
-    outline: 2px solid rgb(59 130 246);
+<style is:inline>
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      'Liberation Mono', 'Courier New', monospace;
+  }
+
+  .kbd--size-xs {
+    gap: 0.25rem;
+  }
+
+  .kbd--size-sm {
+    gap: 0.4rem;
+  }
+
+  .kbd--size-md {
+    gap: 0.6rem;
+  }
+
+  .kbd--size-lg {
+    gap: 0.8rem;
+  }
+
+  .kbd--size-xl {
+    gap: 1rem;
+  }
+
+  .kbd__key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    border-radius: 0.45rem;
+    border: 1px solid #cbd5f5;
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-weight: 600;
+    line-height: 1.2;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease,
+      box-shadow 0.15s ease,
+      border-color 0.15s ease;
+    padding: 0.45rem 0.85rem;
+    cursor: default;
+    user-select: none;
+  }
+
+  .kbd__key:focus-visible {
+    outline: 2px solid #2563eb;
     outline-offset: 2px;
   }
 
-  /* Subtle animation for key press effect */
-  kbd:active {
+  .kbd__key:active {
     transform: translateY(1px);
-    transition-duration: 50ms;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2);
   }
 
-  /* High contrast mode support */
+  .kbd__key--size-xs {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    min-width: 1.25rem;
+  }
+
+  .kbd__key--size-sm {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.55rem;
+    min-width: 1.5rem;
+  }
+
+  .kbd__key--size-md {
+    font-size: 0.9rem;
+    min-width: 2rem;
+  }
+
+  .kbd__key--size-lg {
+    font-size: 1rem;
+    padding: 0.55rem 1rem;
+    min-width: 2.5rem;
+  }
+
+  .kbd__key--size-xl {
+    font-size: 1.125rem;
+    padding: 0.65rem 1.2rem;
+    min-width: 3rem;
+  }
+
+  .kbd__separator {
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .kbd__separator--size-xs {
+    font-size: 0.7rem;
+  }
+
+  .kbd__separator--size-sm {
+    font-size: 0.8rem;
+  }
+
+  .kbd__separator--size-md {
+    font-size: 0.9rem;
+  }
+
+  .kbd__separator--size-lg {
+    font-size: 1rem;
+  }
+
+  .kbd__separator--size-xl {
+    font-size: 1.125rem;
+  }
+
+  .kbd--variant-default .kbd__key {
+    background-color: #eef2ff;
+    border-color: #c7d2fe;
+  }
+
+  .kbd--variant-outlined .kbd__key {
+    background-color: #ffffff;
+    border-width: 2px;
+    border-color: #94a3b8;
+  }
+
+  .kbd--variant-minimal .kbd__key {
+    background-color: #f1f5f9;
+    border-color: #e2e8f0;
+    box-shadow: none;
+  }
+
+  .kbd--variant-filled .kbd__key {
+    background-color: #0f172a;
+    color: #f8fafc;
+    border-color: rgba(248, 250, 252, 0.3);
+  }
+
+  :where(.dark) .kbd__key {
+    background-color: #1f2937;
+    border-color: #475569;
+    color: #f8fafc;
+    box-shadow: 0 2px 6px rgba(2, 6, 23, 0.8);
+  }
+
+  :where(.dark) .kbd__key:focus-visible {
+    outline-color: #818cf8;
+  }
+
+  :where(.dark) .kbd--variant-default .kbd__key {
+    background-color: #1e1b4b;
+    border-color: #4338ca;
+  }
+
+  :where(.dark) .kbd--variant-outlined .kbd__key {
+    background-color: transparent;
+    border-color: #94a3b8;
+  }
+
+  :where(.dark) .kbd--variant-minimal .kbd__key {
+    background-color: #0f172a;
+    border-color: #1e293b;
+  }
+
+  :where(.dark) .kbd__separator {
+    color: #cbd5f5;
+  }
+
   @media (prefers-contrast: high) {
-    kbd {
+    .kbd__key {
       border-width: 2px;
       font-weight: 700;
     }
   }
 
-  /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
-    kbd {
+    .kbd__key {
       transition: none;
-      transform: none !important;
+    }
+
+    .kbd__key:active {
+      transform: none;
     }
   }
 </style>

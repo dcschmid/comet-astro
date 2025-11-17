@@ -27,16 +27,7 @@ const {
 } = props;
 
 const label = ariaLabel || `Solar radiation for ${location}`;
-const baseCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
-const gridCls =
-  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5';
-const cardCls =
-  'flex flex-col gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[86px]';
-const labelCls =
-  'text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400';
-const valueCls =
-  'text-base md:text-lg font-bold text-slate-900 dark:text-slate-50';
-const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+const rootClass = ['solar-card', className].filter(Boolean).join(' ');
 
 // Fallback demo values
 const fallback = {
@@ -47,25 +38,25 @@ const fallback = {
 };
 
 function classifyRadiation(v: number) {
-  if (v >= 900) return ['Extreme', 'bg-rose-700 dark:bg-rose-400'];
-  if (v >= 700) return ['Very High', 'bg-orange-700 dark:bg-orange-400'];
-  if (v >= 400) return ['High', 'bg-amber-700 dark:bg-amber-400'];
-  if (v >= 200) return ['Moderate', 'bg-emerald-700 dark:bg-emerald-400'];
-  return ['Low', 'bg-emerald-600 dark:bg-emerald-300'];
+  if (v >= 900) return ['Extreme', 'solar-card__badge--extreme'];
+  if (v >= 700) return ['Very High', 'solar-card__badge--very-high'];
+  if (v >= 400) return ['High', 'solar-card__badge--high'];
+  if (v >= 200) return ['Moderate', 'solar-card__badge--moderate'];
+  return ['Low', 'solar-card__badge--low'];
 }
 function classifyUV(v: number) {
-  if (v <= 2) return ['Low', 'bg-emerald-600 dark:bg-emerald-300'];
-  if (v <= 5) return ['Moderate', 'bg-amber-700 dark:bg-amber-400'];
-  if (v <= 7) return ['High', 'bg-orange-700 dark:bg-orange-400'];
-  if (v <= 10) return ['Very High', 'bg-rose-700 dark:bg-rose-400'];
-  return ['Extreme', 'bg-rose-800 dark:bg-rose-300'];
+  if (v <= 2) return ['Low', 'solar-card__badge--low'];
+  if (v <= 5) return ['Moderate', 'solar-card__badge--moderate'];
+  if (v <= 7) return ['High', 'solar-card__badge--high'];
+  if (v <= 10) return ['Very High', 'solar-card__badge--very-high'];
+  return ['Extreme', 'solar-card__badge--extreme'];
 }
 const initialRad = classifyRadiation(fallback.radiation);
 const initialUV = classifyUV(fallback.uv);
 ---
 
 <div
-  class={baseCls}
+  class={rootClass}
   role="region"
   aria-label={label}
   aria-busy={!disableFetch && latitude != null && longitude != null
@@ -80,20 +71,12 @@ const initialUV = classifyUV(fallback.uv);
     ? 'loading'
     : 'static'}
 >
-  <header
-    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
-  >
-    <h2
-      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
-    >
-      <span aria-hidden="true" class="text-2xl">☀️</span>
-      <span class="truncate" data-location>{location}</span>
+  <header class="solar-card__header">
+    <h2 class="solar-card__title">
+      <span aria-hidden="true" class="solar-card__icon">☀️</span>
+      <span class="solar-card__location" data-location>{location}</span>
     </h2>
-    <p
-      class="text-xs font-medium text-slate-600 dark:text-slate-300"
-      aria-live="polite"
-      data-status
-    >
+    <p class="solar-card__status" aria-live="polite" data-status>
       {
         !disableFetch && latitude != null && longitude != null
           ? 'Lade Solardaten …'
@@ -101,99 +84,81 @@ const initialUV = classifyUV(fallback.uv);
       }
     </p>
   </header>
-  <div class={gridCls} data-metrics>
-    <div class={cardCls} data-metric="radiation">
-      <span class={labelCls}>Radiation</span>
-      <span class={valueCls} data-radiation>{fallback.radiation} W/m²</span>
+  <div class="solar-card__grid" data-metrics>
+    <div class="solar-card__metric" data-metric="radiation">
+      <span class="solar-card__metric-label">Radiation</span>
+      <span class="solar-card__metric-value" data-radiation>{fallback.radiation} W/m²</span>
       <span
-        class="text-[11px] font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-1"
+        class="solar-card__metric-state"
         data-radiation-cond
       >
-        <span
-          class={`inline-block w-2 h-2 rounded-full ${initialRad[1]}`}
-          data-radiation-ind
-          aria-hidden="true"></span>
+        <span class={`solar-card__badge ${initialRad[1]}`} data-radiation-ind aria-hidden="true"></span>
         <span data-radiation-label>{initialRad[0]}</span>
       </span>
     </div>
-    <div class={cardCls} data-metric="uv">
-      <span class={labelCls}>UV Index</span>
-      <span class={valueCls} data-uv>{fallback.uv}</span>
+    <div class="solar-card__metric" data-metric="uv">
+      <span class="solar-card__metric-label">UV Index</span>
+      <span class="solar-card__metric-value" data-uv>{fallback.uv}</span>
       <span
-        class="text-[11px] font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-1"
+        class="solar-card__metric-state"
         data-uv-cond
       >
-        <span
-          class={`inline-block w-2 h-2 rounded-full ${initialUV[1]}`}
-          data-uv-ind
-          aria-hidden="true"></span>
+        <span class={`solar-card__badge ${initialUV[1]}`} data-uv-ind aria-hidden="true"></span>
         <span data-uv-label>{initialUV[0]}</span>
       </span>
     </div>
-    <div class={cardCls} data-metric="daylight">
-      <span class={labelCls}>Daylight Left</span>
-      <span class={valueCls} data-daylight>--h</span>
-      <span class={subCls} data-sunrise-sunset>Sunrise/Sunset</span>
+    <div class="solar-card__metric" data-metric="daylight">
+      <span class="solar-card__metric-label">Daylight Left</span>
+      <span class="solar-card__metric-value" data-daylight>--h</span>
+      <span class="solar-card__metric-sub" data-sunrise-sunset>Sunrise/Sunset</span>
     </div>
-    <div class={cardCls} data-metric="updated">
-      <span class={labelCls}>Updated</span>
-      <span class={valueCls} data-updated>Just now</span>
-      <span
-        class={`${subCls} hidden text-amber-700 dark:text-amber-300`}
-        data-loading>Lädt…</span
-      >
-      <span
-        class={`${subCls} hidden text-rose-700 dark:text-rose-300`}
-        data-error>Fehler</span
-      >
+    <div class="solar-card__metric" data-metric="updated">
+      <span class="solar-card__metric-label">Updated</span>
+      <span class="solar-card__metric-value" data-updated>Just now</span>
+      <span class="solar-card__metric-sub solar-card__metric-sub--hidden" data-loading>Lädt…</span>
+      <span class="solar-card__metric-sub solar-card__metric-sub--error solar-card__metric-sub--hidden" data-error>
+        Fehler
+      </span>
     </div>
-    <div class={cardCls} data-metric="notes">
-      <span class={labelCls}>Notes</span>
-      <span class={valueCls} data-note>Snapshot</span>
-      <span class={subCls}>Fallback safe</span>
+    <div class="solar-card__metric" data-metric="notes">
+      <span class="solar-card__metric-label">Notes</span>
+      <span class="solar-card__metric-value" data-note>Snapshot</span>
+      <span class="solar-card__metric-sub">Fallback safe</span>
     </div>
   </div>
-  <p
-    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
-    data-disclaimer
-  >
+  <p class="solar-card__disclaimer" data-disclaimer>
     {
       !disableFetch && latitude != null && longitude != null
         ? `Live Daten (Open‑Meteo Solar). ${refreshInterval > 0 ? `Auto Refresh alle ${refreshInterval}m.` : ''} Fallback bei Fehler.`
         : 'Demodaten. latitude+longitude setzen für Live-Aktualisierung.'
     } AAA Kontrast eingehalten.
   </p>
-  <footer
-    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
-  >
-    <span
-      >Quelle: <span class="underline text-slate-800 dark:text-slate-200"
-        >Open‑Meteo</span
-      ></span
-    >
-    <span class="ml-auto" data-refresh-indicator
-      >{
-        refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'Kein Auto-Refresh'
-      }</span
-    >
+  <footer class="solar-card__footer">
+    <span>
+      Quelle:
+      <span class="solar-card__source">Open‑Meteo</span>
+    </span>
+    <span class="solar-card__refresh" data-refresh-indicator>
+      {refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'Kein Auto-Refresh'}
+    </span>
   </footer>
 </div>
 
 <script>
   // Helpers duplicated for client runtime
   function classifyRadiation(v) {
-    if (v >= 900) return ['Extreme', 'bg-rose-700 dark:bg-rose-400'];
-    if (v >= 700) return ['Very High', 'bg-orange-700 dark:bg-orange-400'];
-    if (v >= 400) return ['High', 'bg-amber-700 dark:bg-amber-400'];
-    if (v >= 200) return ['Moderate', 'bg-emerald-700 dark:bg-emerald-400'];
-    return ['Low', 'bg-emerald-600 dark:bg-emerald-300'];
+    if (v >= 900) return ['Extreme', 'solar-card__badge--extreme'];
+    if (v >= 700) return ['Very High', 'solar-card__badge--very-high'];
+    if (v >= 400) return ['High', 'solar-card__badge--high'];
+    if (v >= 200) return ['Moderate', 'solar-card__badge--moderate'];
+    return ['Low', 'solar-card__badge--low'];
   }
   function classifyUV(v) {
-    if (v <= 2) return ['Low', 'bg-emerald-600 dark:bg-emerald-300'];
-    if (v <= 5) return ['Moderate', 'bg-amber-700 dark:bg-amber-400'];
-    if (v <= 7) return ['High', 'bg-orange-700 dark:bg-orange-400'];
-    if (v <= 10) return ['Very High', 'bg-rose-700 dark:bg-rose-400'];
-    return ['Extreme', 'bg-rose-800 dark:bg-rose-300'];
+    if (v <= 2) return ['Low', 'solar-card__badge--low'];
+    if (v <= 5) return ['Moderate', 'solar-card__badge--moderate'];
+    if (v <= 7) return ['High', 'solar-card__badge--high'];
+    if (v <= 10) return ['Very High', 'solar-card__badge--very-high'];
+    return ['Extreme', 'solar-card__badge--extreme'];
   }
   function initSolar(el) {
     const disableFetch = el.dataset.disableFetch === 'true';
@@ -215,8 +180,9 @@ const initialUV = classifyUV(fallback.uv);
     const setState = (s) => {
       el.dataset.state = s;
       el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
-      if (loadingEl) loadingEl.classList.toggle('hidden', s !== 'loading');
-      if (errorEl) errorEl.classList.toggle('hidden', s !== 'error');
+      const hiddenClass = 'solar-card__metric-sub--hidden';
+      if (loadingEl) loadingEl.classList.toggle(hiddenClass, s !== 'loading');
+      if (errorEl) errorEl.classList.toggle(hiddenClass, s !== 'error');
     };
     function daylightRemaining(sunriseStr, sunsetStr) {
       if (!sunriseStr || !sunsetStr) return '--h';
@@ -256,14 +222,14 @@ const initialUV = classifyUV(fallback.uv);
           const [lbl, cls] = classifyRadiation(radiation);
           if (radLabelEl) radLabelEl.textContent = lbl;
           if (radIndEl)
-            radIndEl.className = `inline-block w-2 h-2 rounded-full ${cls}`;
+            radIndEl.className = `solar-card__badge ${cls}`;
         }
         if (uv != null && uvEl) {
           uvEl.textContent = `${Math.round(uv)}`;
           const [ulbl, ucls] = classifyUV(uv);
           if (uvLabelEl) uvLabelEl.textContent = ulbl;
           if (uvIndEl)
-            uvIndEl.className = `inline-block w-2 h-2 rounded-full ${ucls}`;
+            uvIndEl.className = `solar-card__badge ${ucls}`;
         }
         if (daylightEl) {
           daylightEl.textContent = daylightRemaining(sunrise, sunset);
@@ -305,25 +271,203 @@ const initialUV = classifyUV(fallback.uv);
 </script>
 
 <style>
+  .solar-card {
+    --solar-card-border: rgba(15, 23, 42, 0.08);
+    --solar-card-surface: rgba(241, 245, 249, 0.7);
+    --solar-card-text: #0f172a;
+    --solar-card-text-muted: #475569;
+    width: 100%;
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+    color: var(--solar-card-text);
+    border: 1px solid var(--solar-card-border);
+    box-shadow: 0 25px 45px rgba(15, 23, 42, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  :where(.dark) .solar-card {
+    --solar-card-border: rgba(148, 163, 184, 0.25);
+    --solar-card-surface: rgba(15, 23, 42, 0.6);
+    --solar-card-text: #f8fafc;
+    --solar-card-text-muted: #cbd5f5;
+    background: radial-gradient(circle at top, #0f172a, #020617 70%);
+    box-shadow: 0 25px 45px rgba(2, 6, 23, 0.75),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .solar-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  .solar-card__title {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+    color: inherit;
+  }
+
+  .solar-card__icon {
+    font-size: 1.75rem;
+    filter: drop-shadow(0 4px 8px rgba(249, 115, 22, 0.35));
+  }
+
+  .solar-card__location {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .solar-card__status {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--solar-card-text-muted);
+  }
+
+  .solar-card__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .solar-card__metric {
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--solar-card-border);
+    background-color: var(--solar-card-surface);
+    backdrop-filter: blur(12px);
+    min-height: 134px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .solar-card__metric-label {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--solar-card-text-muted);
+  }
+
+  .solar-card__metric-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--solar-card-text);
+  }
+
+  .solar-card__metric-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  .solar-card__badge {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  .solar-card__badge--low {
+    background: linear-gradient(135deg, #10b981, #34d399);
+  }
+  .solar-card__badge--moderate {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  }
+  .solar-card__badge--high {
+    background: linear-gradient(135deg, #f97316, #fb923c);
+  }
+  .solar-card__badge--very-high {
+    background: linear-gradient(135deg, #f43f5e, #fb7185);
+  }
+  .solar-card__badge--extreme {
+    background: linear-gradient(135deg, #be123c, #e11d48);
+  }
+
+  .solar-card__metric-sub {
+    font-size: 0.875rem;
+    color: var(--solar-card-text-muted);
+  }
+
+  .solar-card__metric-sub--error {
+    color: #ef4444;
+  }
+
+  .solar-card__metric-sub--hidden {
+    display: none;
+  }
+
+  .solar-card__disclaimer {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--solar-card-text-muted);
+  }
+
+  .solar-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--solar-card-text-muted);
+  }
+
+  .solar-card__source {
+    font-weight: 700;
+    color: var(--solar-card-text);
+  }
+
+  .solar-card__refresh {
+    font-weight: 600;
+    color: var(--solar-card-text);
+  }
+
+  @media (max-width: 640px) {
+    .solar-card {
+      padding: 1.25rem;
+    }
+
+    .solar-card__header {
+      flex-direction: column;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     [data-solar] * {
       transition: none !important;
       animation: none !important;
     }
   }
+
   @media (prefers-contrast: high) {
     [data-solar] {
       outline: 2px solid currentColor;
     }
   }
-  [data-solar][data-state='loading'] [data-metric] {
+
+  [data-solar][data-state='loading'] .solar-card__metric {
     position: relative;
+    overflow: hidden;
   }
-  [data-solar][data-state='loading'] [data-metric]::after {
+
+  [data-solar][data-state='loading'] .solar-card__metric::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     background: linear-gradient(
       90deg,
       rgba(148, 163, 184, 0.15),
@@ -333,6 +477,7 @@ const initialUV = classifyUV(fallback.uv);
     animation: solar-pulse 1.4s ease-in-out infinite;
     opacity: 0.35;
   }
+
   @keyframes solar-pulse {
     0%,
     100% {

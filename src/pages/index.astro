@@ -29,17 +29,15 @@ const totalComponents = componentCatalog.length;
   prose={false}
   hideHeader={true}
 >
-  <div class="space-y-12">
+  <div class="home">
     <!-- Centered Hero -->
-    <section
-      class="flex min-h-[70vh] flex-col items-center justify-center text-center gap-7"
-    >
+    <section class="home__hero">
       <Headline
         level="h1"
         textSize="2xl"
         weight="extrabold"
         textAlign="center"
-        className="tracking-tight"
+        className="home__hero-title"
       >
         Comet Astro
       </Headline>
@@ -53,8 +51,8 @@ const totalComponents = componentCatalog.length;
         keyboard interaction patterns, high contrast (WCAG AAA) defaults,
         Tailwind utility styling, and minimal client JavaScript.
       </Paragraph>
-      <div class="mx-auto max-w-5xl grid gap-6 md:grid-cols-3">
-        <Card elevation={2} class="p-5 flex flex-col gap-2">
+      <div class="home__pill-grid">
+        <Card elevation={2} class="home__pill">
           <Headline level="h3" textSize="sm" weight="bold" color="default"
             >Accessibility</Headline
           >
@@ -63,7 +61,7 @@ const totalComponents = componentCatalog.length;
             reduced motion support.</Paragraph
           >
         </Card>
-        <Card elevation={2} class="p-5 flex flex-col gap-2">
+        <Card elevation={2} class="home__pill">
           <Headline level="h3" textSize="sm" weight="bold" color="default"
             >Performance</Headline
           >
@@ -72,7 +70,7 @@ const totalComponents = componentCatalog.length;
             client framework.</Paragraph
           >
         </Card>
-        <Card elevation={2} class="p-5 flex flex-col gap-2">
+        <Card elevation={2} class="home__pill">
           <Headline level="h3" textSize="sm" weight="bold" color="default"
             >Customization</Headline
           >
@@ -85,22 +83,20 @@ const totalComponents = componentCatalog.length;
     </section>
 
     <!-- Stats -->
-    <section
-      class="grid grid-cols-1 gap-6 max-w-4xl mx-auto sm:grid-cols-3 mt-4"
-    >
-      <Card elevation={1} class="p-5 text-center flex flex-col gap-1">
+    <section class="home__stats">
+      <Card elevation={1} class="home__stat-card">
         <Headline level="h3" textSize="sm" weight="bold" color="accent"
           >{totalComponents}</Headline
         >
         <Paragraph size="xs" variant="muted">Components</Paragraph>
       </Card>
-      <Card elevation={1} class="p-5 text-center flex flex-col gap-1">
+      <Card elevation={1} class="home__stat-card">
         <Headline level="h3" textSize="sm" weight="bold" color="accent"
           >{catalogByCategory.length}</Headline
         >
         <Paragraph size="xs" variant="muted">Categories</Paragraph>
       </Card>
-      <Card elevation={1} class="p-5 text-center flex flex-col gap-1">
+      <Card elevation={1} class="home__stat-card">
         <Headline level="h3" textSize="sm" weight="bold" color="success"
           >AAA</Headline
         >
@@ -108,88 +104,12 @@ const totalComponents = componentCatalog.length;
       </Card>
     </section>
 
-    <!-- New Docs Links -->
-    <section
-      class="max-w-5xl mx-auto space-y-5"
-      aria-labelledby="recent-additions"
-    >
-      <Headline
-        id="recent-additions"
-        level="h2"
-        textSize="sm"
-        weight="bold"
-        color="default"
-        className="flex items-center gap-2 m-0"
-      >
-        Neu hinzugefügt
-        <Badge label="Update" variant="accent" />
-      </Headline>
-      <div class="grid gap-6 md:grid-cols-2">
-        <Card elevation={2} class="p-5 flex flex-col gap-2">
-          <Headline
-            level="h3"
-            textSize="xs"
-            weight="semibold"
-            color="accent"
-            className="m-0"
-          >
-            <a
-              href="/components/preferences-panel"
-              class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-300"
-              >PreferencesPanel</a
-            >
-          </Headline>
-          <Paragraph size="xs" variant="muted">
-            Einstellungs-Panel für Theme, Schrift & Lesbarkeit mit sofortiger
-            Persistenz und WCAG AAA Fokus-/Kontrastmustern.
-          </Paragraph>
-          <div class="mt-auto flex items-center justify-between">
-            <a
-              href="/components/preferences-panel"
-              class="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline"
-              >Dokumentation lesen</a
-            >
-            <Badge label="AAA" variant="success" />
-          </div>
-        </Card>
-        <Card elevation={2} class="p-5 flex flex-col gap-2">
-          <Headline
-            level="h3"
-            textSize="xs"
-            weight="semibold"
-            color="accent"
-            className="m-0"
-          >
-            <a
-              href="/base-layout"
-              class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-300"
-              >BaseLayout</a
-            >
-          </Headline>
-          <Paragraph size="xs" variant="muted">
-            Semantisches Grundlayout mit Skip-Link, Landmark-Struktur,
-            Theme-Controller und konfigurierbaren Schrift-/Legibility-Optionen.
-          </Paragraph>
-          <div class="mt-auto flex items-center justify-between">
-            <a
-              href="/base-layout"
-              class="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline"
-              >Dokumentation lesen</a
-            >
-            <Badge label="AAA" variant="success" />
-          </div>
-        </Card>
-      </div>
-    </section>
-
     <!-- Components by Category -->
     {
       catalogByCategory.map((category) => (
-        <section class="space-y-5">
-          <div class="flex items-center gap-3">
-            <div
-              class={`text-xl w-10 h-10 rounded-lg bg-linear-to-br ${category.color} flex items-center justify-center`}
-            >
+        <section class="home__category">
+          <div class="home__category-header">
+            <div class={`home__category-icon ${category.color}`}>
               {category.icon}
             </div>
             <Headline
@@ -197,29 +117,29 @@ const totalComponents = componentCatalog.length;
               textSize="sm"
               weight="bold"
               color="default"
-              className="m-0"
+              className="home__category-title"
             >
               {category.id}
             </Headline>
             <Badge label={`${category.items.length}`} variant="neutral" />
           </div>
-          <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="home__category-grid">
             {category.items.map((component) => (
               <Card
                 as="article"
                 elevation={2}
-                class="p-5 flex flex-col gap-2 hover:shadow-lg transition-shadow"
+                class="home__category-card"
               >
                 <Headline
                   level="h3"
                   textSize="xs"
                   weight="semibold"
                   color="accent"
-                  className="m-0"
+                  className="home__category-heading"
                 >
                   <a
                     href={`/components/${component.slug}`}
-                    class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-300"
+                    class="home__link"
                   >
                     {component.name}
                   </a>
@@ -227,10 +147,10 @@ const totalComponents = componentCatalog.length;
                 <Paragraph size="xs" variant="muted">
                   {component.description}
                 </Paragraph>
-                <div class="mt-auto flex items-center justify-between">
+                <div class="home__category-footer">
                   <a
                     href={`/components/${component.slug}`}
-                    class="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline"
+                    class="home__link"
                   >
                     View docs
                   </a>
@@ -244,9 +164,7 @@ const totalComponents = componentCatalog.length;
     }
 
     <!-- Footer CTA -->
-    <section
-      class="text-center space-y-6 py-16 border-t border-slate-300 dark:border-slate-800"
-    >
+    <section class="home__cta">
       <Headline level="h2" textSize="lg" weight="bold" textAlign="center"
         >Ready to build?</Headline
       >
@@ -254,12 +172,226 @@ const totalComponents = componentCatalog.length;
         Install via npm and start composing accessible, production‑grade UI
         without reinventing foundation pieces.
       </Paragraph>
-      <Card
-        elevation={3}
-        class="inline-flex items-center gap-3 px-6 py-4 font-mono text-sm bg-slate-900 dark:bg-slate-800 text-slate-50 border border-slate-700 dark:border-slate-600"
-      >
+      <Card elevation={3} class="home__cta-command">
         npm install comet-astro
       </Card>
     </section>
   </div>
 </DocsLayout>
+
+<style is:inline>
+  .home {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1rem, 4vw, 2rem) 0;
+  }
+
+  .home__hero {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .home__hero-title {
+    letter-spacing: -0.01em;
+  }
+
+  .home__pill-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    max-width: 60rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .home__pill {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .home__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1rem;
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .home__stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .home__recent {
+    max-width: 64rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .home__recent-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+  }
+
+  .home__recent-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  }
+
+  .home__recent-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+  }
+
+  .home__recent-heading {
+    margin: 0;
+  }
+
+  .home__recent-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .home__link {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    outline: none;
+  }
+
+  .home__link:hover {
+    text-decoration: underline;
+  }
+
+  .home__category {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .home__category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .home__category-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.85rem;
+    font-size: 1.25rem;
+    color: #0f172a;
+  }
+
+  .home__category-title {
+    margin: 0;
+  }
+
+  .home__category-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  }
+
+  .home__category-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .home__category-card:hover {
+    box-shadow: 0 12px 20px rgba(15, 23, 42, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .home__category-heading {
+    margin: 0;
+  }
+
+  .home__category-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .home__cta {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 3rem 0;
+    border-top: 1px solid var(--bl-border, #e2e8f0);
+  }
+
+  .home__cta-command {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.25rem;
+    font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco,
+      Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 48rem) {
+    .home__hero {
+      min-height: auto;
+      padding-top: 1rem;
+    }
+
+    .home__recent-footer,
+    .home__category-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .home {
+      gap: 1.75rem;
+    }
+
+    .home__pill {
+      padding: 1rem;
+    }
+
+    .home__category-header {
+      gap: 0.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home,
+    .home * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>

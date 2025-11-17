@@ -41,34 +41,21 @@ const fallback = {
   updated: new Date().toISOString(),
 };
 const label = ariaLabel || `Flood monitor for ${location}`;
-const baseCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
-const gridCls =
-  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5';
-const cardCls =
-  'flex flex-col gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[86px]';
-const labelCls =
-  'text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400';
-const valueCls =
-  'text-base md:text-lg font-bold text-slate-900 dark:text-slate-50';
-const subCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
-const riskLabelCls =
-  'text-[11px] font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-1';
+const rootClasses = ['flood-monitor', className].filter(Boolean).join(' ');
 
-// Return only indicator color classes; text remains high-contrast neutral for AAA.
-function classify(d: number) {
+const classifyRisk = (d: number) => {
   if (d >= thresholds.emergency)
-    return { level: 'Emergency', indicator: 'bg-rose-700 dark:bg-rose-400' };
+    return { level: 'Emergency', modifier: 'emergency' };
   if (d >= thresholds.warning)
-    return { level: 'Warning', indicator: 'bg-orange-700 dark:bg-orange-400' };
-  if (d >= thresholds.watch)
-    return { level: 'Watch', indicator: 'bg-amber-700 dark:bg-amber-400' };
-  return { level: 'Normal', indicator: 'bg-emerald-700 dark:bg-emerald-400' };
-}
-const initialRisk = classify(fallback.discharge);
+    return { level: 'Warning', modifier: 'warning' };
+  if (d >= thresholds.watch) return { level: 'Watch', modifier: 'watch' };
+  return { level: 'Normal', modifier: 'normal' };
+};
+const initialRisk = classifyRisk(fallback.discharge);
 ---
 
 <div
-  class={baseCls}
+  class={rootClasses}
   role="region"
   aria-label={label}
   aria-busy={!disableFetch &&
@@ -88,83 +75,76 @@ const initialRisk = classify(fallback.discharge);
     : 'static'}
   data-thresholds={JSON.stringify(thresholds)}
 >
-  <header
-    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
-  >
-    <h2
-      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
-    >
-      <span aria-hidden="true" class="text-2xl">🌊</span>
-      <span class="truncate" data-location>{location}</span>
+  <header class="flood-monitor__header">
+    <h2 class="flood-monitor__title">
+      <span aria-hidden="true" class="flood-monitor__title-icon">🌊</span>
+      <span class="flood-monitor__location" data-location>{location}</span>
     </h2>
-    <p
-      class="text-xs font-medium text-slate-600 dark:text-slate-300"
-      aria-live="polite"
-      data-status
-    >
+    <p class="flood-monitor__status" aria-live="polite" data-status>
       {!disableFetch && apiUrl ? 'Lade Flussdaten …' : 'Statische Demodaten'}
     </p>
   </header>
 
-  <div class={gridCls} data-metrics>
-    <div class={cardCls} data-metric="discharge">
-      <span class={labelCls}>Discharge</span>
-      <span class={valueCls} data-discharge
+  <div class="flood-monitor__metrics" data-metrics>
+    <div class="flood-monitor__metric" data-metric="discharge">
+      <span class="flood-monitor__metric-label">Discharge</span>
+      <span class="flood-monitor__metric-value" data-discharge
         >{fallback.discharge.toFixed(1)} m³/s</span
       >
-      <span class={riskLabelCls} data-risk>
+      <span class="flood-monitor__risk" data-risk>
         <span
-          class={`inline-block w-2 h-2 rounded-full ${initialRisk.indicator}`}
+          class={`flood-monitor__risk-dot flood-monitor__risk-dot--${initialRisk.modifier}`}
           data-risk-indicator
           aria-hidden="true"></span>
-        <span data-risk-text>{initialRisk.level}</span>
+        <span class="flood-monitor__risk-text" data-risk-text
+          >{initialRisk.level}</span
+        >
       </span>
     </div>
-    <div class={cardCls} data-metric="level">
-      <span class={labelCls}>Level</span>
-      <span class={valueCls} data-level>{fallback.level.toFixed(2)} m</span>
-      <span class={subCls}>{riverName}</span>
+    <div class="flood-monitor__metric" data-metric="level">
+      <span class="flood-monitor__metric-label">Level</span>
+      <span class="flood-monitor__metric-value" data-level
+        >{fallback.level.toFixed(2)} m</span
+      >
+      <span class="flood-monitor__metric-subtext">{riverName}</span>
     </div>
     {
       showTrend && (
-        <div class={cardCls} data-metric="trend">
-          <span class={labelCls}>Trend</span>
-          <span class={valueCls} data-trend>
+        <div class="flood-monitor__metric" data-metric="trend">
+          <span class="flood-monitor__metric-label">Trend</span>
+          <span class="flood-monitor__metric-value" data-trend>
             {fallback.trend}
           </span>
-          <span class={subCls} data-trend-arrow aria-hidden="true">
+          <span class="flood-monitor__metric-subtext" data-trend-arrow aria-hidden="true">
             →
           </span>
         </div>
       )
     }
-    <div class={cardCls} data-metric="thresholds">
-      <span class={labelCls}>Thresholds</span>
-      <span class={valueCls} data-th
+    <div class="flood-monitor__metric" data-metric="thresholds">
+      <span class="flood-monitor__metric-label">Thresholds</span>
+      <span class="flood-monitor__metric-value" data-th
         >{
           `${thresholds.watch}/${thresholds.warning}/${thresholds.emergency}`
         }</span
       >
-      <span class={subCls}>watch/warn/emerg</span>
+      <span class="flood-monitor__metric-subtext">watch/warn/emerg</span>
     </div>
-    <div class={cardCls} data-metric="updated">
-      <span class={labelCls}>Updated</span>
-      <span class={valueCls} data-updated>Just now</span>
+    <div class="flood-monitor__metric" data-metric="updated">
+      <span class="flood-monitor__metric-label">Updated</span>
+      <span class="flood-monitor__metric-value" data-updated>Just now</span>
       <span
-        class={`${subCls} hidden text-amber-700 dark:text-amber-300`}
+        class="flood-monitor__status-note flood-monitor__status-note--loading"
         data-loading>Lädt…</span
       >
       <span
-        class={`${subCls} hidden text-rose-700 dark:text-rose-300`}
+        class="flood-monitor__status-note flood-monitor__status-note--error"
         data-error>Fehler</span
       >
     </div>
   </div>
 
-  <p
-    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
-    data-disclaimer
-  >
+  <p class="flood-monitor__disclaimer" data-disclaimer>
     {
       !disableFetch && (apiUrl || (latitude != null && longitude != null))
         ? 'Live Daten (Open‑Meteo Flood API oder benutzerdefinierter Endpunkt). Fallback bei Fehler.'
@@ -172,15 +152,12 @@ const initialRisk = classify(fallback.discharge);
     } AAA Kontrast eingehalten.
   </p>
 
-  <footer
-    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
-  >
-    <span
-      >Quelle: <span class="underline text-slate-800 dark:text-slate-200"
-        >Hydro Service</span
-      ></span
+  <footer class="flood-monitor__footer">
+    <span class="flood-monitor__source"
+      >Quelle:
+      <span class="flood-monitor__link">Hydro Service</span></span
     >
-    <span class="ml-auto" data-refresh-indicator
+    <span class="flood-monitor__refresh" data-refresh-indicator
       >{
         refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'Kein Auto-Refresh'
       }</span
@@ -213,20 +190,25 @@ const initialRisk = classify(fallback.discharge);
     const errorEl = el.querySelector('[data-error]');
 
     const classify = (d) => {
-      if (d >= thresholds.emergency)
-        return ['Emergency', 'bg-rose-700 dark:bg-rose-400'];
-      if (d >= thresholds.warning)
-        return ['Warning', 'bg-orange-700 dark:bg-orange-400'];
-      if (d >= thresholds.watch)
-        return ['Watch', 'bg-amber-700 dark:bg-amber-400'];
-      return ['Normal', 'bg-emerald-700 dark:bg-emerald-400'];
+      if (d >= thresholds.emergency) return ['Emergency', 'emergency'];
+      if (d >= thresholds.warning) return ['Warning', 'warning'];
+      if (d >= thresholds.watch) return ['Watch', 'watch'];
+      return ['Normal', 'normal'];
     };
+
+    const LOADING_CLASS = 'flood-monitor--loading';
+    const STATUS_VISIBLE_CLASS = 'flood-monitor__status-note--visible';
+    const RISK_DOT_BASE = 'flood-monitor__risk-dot';
+    const RISK_DOT_PREFIX = 'flood-monitor__risk-dot--';
 
     const setState = (s) => {
       el.dataset.state = s;
       el.setAttribute('aria-busy', s === 'loading' ? 'true' : 'false');
-      if (loadingEl) loadingEl.classList.toggle('hidden', s !== 'loading');
-      if (errorEl) errorEl.classList.toggle('hidden', s !== 'error');
+      el.classList.toggle(LOADING_CLASS, s === 'loading');
+      if (loadingEl)
+        loadingEl.classList.toggle(STATUS_VISIBLE_CLASS, s === 'loading');
+      if (errorEl)
+        errorEl.classList.toggle(STATUS_VISIBLE_CLASS, s === 'error');
     };
 
     function buildAutoApi() {
@@ -291,14 +273,15 @@ const initialRisk = classify(fallback.discharge);
             : window.__floodFallbackLevel || 2.18;
         if (discharge !== null && dischargeEl) {
           dischargeEl.textContent = `${discharge.toFixed(1)} m³/s`;
-          const [txt, indCls] = classify(discharge);
+          const [txt, indicatorMod] = classify(discharge);
           const riskTextEl = riskEl?.querySelector('[data-risk-text]');
           const riskIndicatorEl = riskEl?.querySelector(
             '[data-risk-indicator]'
           );
           if (riskTextEl) riskTextEl.textContent = txt;
-          if (riskIndicatorEl)
-            riskIndicatorEl.className = `inline-block w-2 h-2 rounded-full ${indCls}`;
+          if (riskIndicatorEl) {
+            riskIndicatorEl.className = `${RISK_DOT_BASE} ${RISK_DOT_PREFIX}${indicatorMod}`;
+          }
         }
         if (levelEl) {
           levelEl.textContent = `${level.toFixed(2)} m`;
@@ -336,42 +319,226 @@ const initialRisk = classify(fallback.discharge);
   });
 </script>
 
-<style>
+<style is:inline>
+  .flood-monitor {
+    --flood-bg: #ffffff;
+    --flood-border: rgba(15, 23, 42, 0.12);
+    --flood-heading: #0f172a;
+    --flood-subtext: #475569;
+    --flood-card-bg: rgba(248, 250, 252, 0.9);
+    --flood-card-border: rgba(15, 23, 42, 0.08);
+    width: 100%;
+    border-radius: 1.75rem;
+    border: 1px solid var(--flood-border);
+    background: var(--flood-bg);
+    box-shadow: 0 28px 65px rgba(15, 23, 42, 0.08);
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  :where(.dark) .flood-monitor {
+    --flood-bg: #0f172a;
+    --flood-border: rgba(148, 163, 184, 0.4);
+    --flood-heading: #f8fafc;
+    --flood-subtext: #cbd5f5;
+    --flood-card-bg: rgba(15, 23, 42, 0.65);
+    --flood-card-border: rgba(148, 163, 184, 0.3);
+    box-shadow: 0 32px 70px rgba(2, 6, 23, 0.65);
+  }
+  .flood-monitor__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  @media (min-width: 48rem) {
+    .flood-monitor__header {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  }
+  .flood-monitor__title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: clamp(1.25rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--flood-heading);
+    margin: 0;
+  }
+  .flood-monitor__title-icon {
+    font-size: 2rem;
+  }
+  .flood-monitor__location {
+    min-width: 0;
+    display: inline-flex;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .flood-monitor__status {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--flood-subtext);
+  }
+  .flood-monitor__metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media (min-width: 40rem) {
+    .flood-monitor__metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 70rem) {
+    .flood-monitor__metrics {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+  .flood-monitor__metric {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    border-radius: 1rem;
+    border: 1px solid var(--flood-card-border);
+    background: var(--flood-card-bg);
+    padding: 0.85rem 1rem;
+    min-height: 5rem;
+  }
+  .flood-monitor__metric-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--flood-subtext);
+  }
+  .flood-monitor__metric-value {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 700;
+    color: var(--flood-heading);
+  }
+  .flood-monitor__metric-subtext {
+    font-size: 0.75rem;
+    color: var(--flood-subtext);
+  }
+  .flood-monitor__risk {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--flood-heading);
+  }
+  .flood-monitor__risk-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    display: inline-flex;
+  }
+  .flood-monitor__risk-dot--normal {
+    background: #10b981;
+  }
+  .flood-monitor__risk-dot--watch {
+    background: #f59e0b;
+  }
+  .flood-monitor__risk-dot--warning {
+    background: #ea580c;
+  }
+  .flood-monitor__risk-dot--emergency {
+    background: #dc2626;
+  }
+  :where(.dark) .flood-monitor__risk-dot--normal {
+    background: #34d399;
+  }
+  :where(.dark) .flood-monitor__risk-dot--watch {
+    background: #fbbf24;
+  }
+  :where(.dark) .flood-monitor__risk-dot--warning {
+    background: #fb923c;
+  }
+  :where(.dark) .flood-monitor__risk-dot--emergency {
+    background: #f87171;
+  }
+  .flood-monitor__status-note {
+    display: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .flood-monitor__status-note--loading {
+    color: #b45309;
+  }
+  .flood-monitor__status-note--error {
+    color: #b91c1c;
+  }
+  .flood-monitor__status-note--visible {
+    display: inline;
+  }
+  .flood-monitor__disclaimer {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--flood-subtext);
+  }
+  .flood-monitor__footer {
+    border-top: 1px solid var(--flood-border);
+    padding-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--flood-subtext);
+  }
+  .flood-monitor__source {
+    display: inline-flex;
+    gap: 0.25rem;
+  }
+  .flood-monitor__link {
+    text-decoration: underline;
+    color: var(--flood-heading);
+  }
+  .flood-monitor__refresh {
+    margin-left: auto;
+    font-weight: 600;
+  }
+  .flood-monitor--loading .flood-monitor__metric::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    background: linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.12),
+      rgba(148, 163, 184, 0.35),
+      rgba(148, 163, 184, 0.12)
+    );
+    animation: flood-monitor-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes flood-monitor-pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
-    [data-flood-monitor] * {
+    .flood-monitor__metric::after,
+    .flood-monitor__status,
+    .flood-monitor__metric,
+    .flood-monitor__risk-dot {
       transition: none !important;
       animation: none !important;
     }
   }
   @media (prefers-contrast: high) {
-    [data-flood-monitor] {
+    .flood-monitor {
       outline: 2px solid currentColor;
-    }
-  }
-  [data-flood-monitor][data-state='loading'] [data-metric] {
-    position: relative;
-  }
-  [data-flood-monitor][data-state='loading'] [data-metric]::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 0.5rem;
-    background: linear-gradient(
-      90deg,
-      rgba(148, 163, 184, 0.15),
-      rgba(148, 163, 184, 0.35),
-      rgba(148, 163, 184, 0.15)
-    );
-    animation: flood-pulse 1.4s ease-in-out infinite;
-    opacity: 0.35;
-  }
-  @keyframes flood-pulse {
-    0%,
-    100% {
-      opacity: 0.35;
-    }
-    50% {
-      opacity: 0.65;
+      outline-offset: 4px;
     }
   }
 </style>

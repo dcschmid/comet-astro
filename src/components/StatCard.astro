@@ -1,70 +1,17 @@
 ---
-import { cn } from '../utils/cn';
-
 interface Props {
-  /**
-   * The label/title of the statistic
-   */
   label: string;
-
-  /**
-   * The main value to display
-   */
   value: string | number;
-
-  /**
-   * Optional icon to display (emoji or text)
-   */
   icon?: string;
-
-  /**
-   * Trend percentage (positive/negative)
-   */
   trend?: number;
-
-  /**
-   * Additional context for the trend
-   */
   trendLabel?: string;
-
-  /**
-   * Visual variant of the card
-   */
   variant?: 'default' | 'gradient' | 'bordered' | 'elevated';
-
-  /**
-   * Size variant for responsive design
-   */
   size?: 'sm' | 'md' | 'lg';
-
-  /**
-   * Semantic HTML element to render
-   */
   as?: 'div' | 'article' | 'section';
-
-  /**
-   * ARIA role for accessibility
-   */
   role?: string;
-
-  /**
-   * ARIA label for accessibility
-   */
   ariaLabel?: string;
-
-  /**
-   * ARIA labelledby reference
-   */
   ariaLabelledby?: string;
-
-  /**
-   * Enable visual debugging
-   */
   debug?: boolean;
-
-  /**
-   * Additional CSS classes
-   */
   class?: string;
 }
 
@@ -84,263 +31,347 @@ const {
   class: className = '',
 } = Astro.props as Props;
 
-// Trend calculations
-const isPositiveTrend = trend !== undefined && trend > 0;
-const isNegativeTrend = trend !== undefined && trend < 0;
-const isNeutralTrend = trend !== undefined && trend === 0;
+const trendState =
+  trend === undefined
+    ? undefined
+    : trend > 0
+      ? 'positive'
+      : trend < 0
+        ? 'negative'
+        : 'neutral';
 
-// Size classes for responsive design
-const sizeClasses = {
-  sm: {
-    container: 'p-4 rounded-lg',
-    label: 'text-xs',
-    value: 'text-xl',
-    icon: 'text-lg',
-    trend: 'text-xs',
-  },
-  md: {
-    container: 'p-6 rounded-xl',
-    label: 'text-sm',
-    value: 'text-3xl',
-    icon: 'text-2xl',
-    trend: 'text-sm',
-  },
-  lg: {
-    container: 'p-8 rounded-2xl',
-    label: 'text-base',
-    value: 'text-4xl',
-    icon: 'text-3xl',
-    trend: 'text-base',
-  },
-};
+const rootClasses = [
+  'stat-card',
+  `stat-card--variant-${variant}`,
+  `stat-card--size-${size}`,
+  debug ? 'stat-card--debug' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-// Variant classes with WCAG AAA compliance
-const variantClasses = {
-  default: cn(
-    // Light mode - 9:1 contrast ratio
-    'border border-slate-200 bg-white shadow-sm',
-    // Dark mode - 9:1 contrast ratio
-    'dark:border-slate-700 dark:bg-slate-900',
-    // High contrast support
-    '@media (prefers-contrast: high) {',
-    '  border-slate-900 bg-white text-slate-900',
-    '  dark:border-slate-100 dark:bg-slate-900 dark:text-slate-100',
-    '}'
-  ),
-  gradient: cn(
-    // Light mode gradient with high contrast
-    'border border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 shadow-md',
-    // Dark mode gradient with high contrast
-    'dark:border-blue-600 dark:from-blue-950 dark:via-purple-950 dark:to-blue-950',
-    // High contrast support
-    '@media (prefers-contrast: high) {',
-    '  border-blue-900 from-blue-100 via-indigo-100 to-purple-100',
-    '  dark:border-blue-200 dark:from-blue-900 dark:via-purple-900 dark:to-blue-900',
-    '}'
-  ),
-  bordered: cn(
-    // Enhanced border variant
-    'border-2 border-slate-300 bg-white shadow-sm',
-    'dark:border-slate-600 dark:bg-slate-900',
-    // High contrast support
-    '@media (prefers-contrast: high) {',
-    '  border-slate-900 bg-white',
-    '  dark:border-slate-100 dark:bg-slate-900',
-    '}'
-  ),
-  elevated: cn(
-    // Elevated shadow variant
-    'border border-slate-200 bg-white shadow-lg shadow-slate-200/50',
-    'dark:border-slate-700 dark:bg-slate-900 dark:shadow-slate-900/50',
-    // High contrast support
-    '@media (prefers-contrast: high) {',
-    '  border-slate-900 bg-white shadow-slate-900/25',
-    '  dark:border-slate-100 dark:bg-slate-900 dark:shadow-slate-100/25',
-    '}'
-  ),
-};
+const trendClasses = [
+  'stat-card__trend',
+  trendState ? `stat-card__trend--${trendState}` : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
-// Label classes with WCAG AAA contrast
-const labelClasses = cn(
-  'font-semibold uppercase tracking-wide',
-  // Light mode - 9:1 contrast
-  'text-slate-700',
-  // Dark mode - 9:1 contrast
-  'dark:text-slate-200',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 dark:text-slate-100',
-  '}',
-  sizeClasses[size].label
-);
+const debugInfo = debug ? `${variant} ${size}` : undefined;
+const labelId = `stat-label-${Math.random().toString(36).slice(2, 9)}`;
+const valueId = `stat-value-${Math.random().toString(36).slice(2, 9)}`;
 
-// Value classes with maximum contrast
-const valueClasses = cn(
-  'font-bold',
-  // Light mode - maximum contrast
-  'text-slate-900',
-  // Dark mode - maximum contrast
-  'dark:text-slate-50',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 dark:text-slate-100',
-  '}',
-  sizeClasses[size].value
-);
+const trendAbsValue =
+  trend !== undefined ? Math.abs(trend).toLocaleString() : undefined;
 
-// Icon classes with proper contrast
-const iconClasses = cn(
-  // Light mode
-  'text-slate-600',
-  // Dark mode
-  'dark:text-slate-300',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 dark:text-slate-100',
-  '}',
-  sizeClasses[size].icon
-);
-
-// Trend classes with semantic colors and WCAG AAA contrast
-const trendClasses = cn(
-  'inline-flex items-center font-semibold',
-  // Positive trend - green with high contrast
-  isPositiveTrend && 'text-emerald-800 dark:text-emerald-300',
-  // Negative trend - red with high contrast
-  isNegativeTrend && 'text-red-800 dark:text-red-300',
-  // Neutral trend - gray with high contrast
-  isNeutralTrend && 'text-slate-700 dark:text-slate-200',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  isPositiveTrend && '  text-emerald-900 dark:text-emerald-200',
-  isNegativeTrend && '  text-red-900 dark:text-red-200',
-  isNeutralTrend && '  text-slate-900 dark:text-slate-100',
-  '}',
-  sizeClasses[size].trend
-);
-
-// Trend label classes
-const trendLabelClasses = cn(
-  // Light mode
-  'text-slate-600',
-  // Dark mode
-  'dark:text-slate-300',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 dark:text-slate-100',
-  '}',
-  sizeClasses[size].trend
-);
-
-// Main container classes
-const containerClasses = cn(
-  // Base styles
-  'relative transition-colors duration-200',
-  // Size-specific container classes
-  sizeClasses[size].container,
-  // Variant styles
-  variantClasses[variant],
-  // Debug mode
-  debug && 'debug-stat-card',
-  // Focus management for interactive cards
-  'focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2',
-  'dark:focus-within:ring-blue-400 dark:focus-within:ring-offset-slate-900',
-  // Custom classes
-  className
-);
-
-// Generate unique IDs for accessibility
-const labelId = `stat-label-${Math.random().toString(36).substr(2, 9)}`;
-const valueId = `stat-value-${Math.random().toString(36).substr(2, 9)}`;
+const trendAriaLabel =
+  trend === undefined
+    ? undefined
+    : `Trend: ${trendState === 'positive' ? 'positive' : trendState === 'negative' ? 'negative' : 'neutral'} ${trendAbsValue}%`;
 ---
 
-<style>
-  .debug-stat-card {
-    /* Debug visualization */
-    outline: 2px dashed rgba(255, 0, 255, 0.5);
-    outline-offset: 2px;
-    position: relative;
-  }
-
-  .debug-stat-card::after {
-    content: attr(data-debug-info);
-    position: absolute;
-    top: -1.5rem;
-    left: 0;
-    font-size: 0.75rem;
-    color: rgb(255 0 255);
-    background: rgba(255, 255, 255, 0.9);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-family: monospace;
-    z-index: 10;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .debug-stat-card::after {
-      background: rgba(0, 0, 0, 0.9);
-      color: rgb(255 0 255);
-    }
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    .debug-stat-card,
-    .stat-card-container {
-      transition: none !important;
-    }
-  }
-
-  /* High contrast mode adjustments */
-  @media (prefers-contrast: high) {
-    .debug-stat-card {
-      outline-color: rgb(255 0 255) !important;
-    }
-  }
-</style>
-
 <Element
-  class={containerClasses}
+  class={rootClasses}
   role={role}
   aria-label={ariaLabel}
   aria-labelledby={ariaLabelledby || `${labelId} ${valueId}`}
-  data-debug-info={debug ? `${variant} ${size}` : undefined}
+  data-debug-info={debugInfo}
 >
-  <div class="mb-2 flex items-start justify-between">
-    <p id={labelId} class={labelClasses}>
+  <div class="stat-card__header">
+    <p id={labelId} class="stat-card__label">
       {label}
     </p>
     {
       icon && (
-        <span class={iconClasses} aria-hidden="true">
+        <span class="stat-card__icon" aria-hidden="true">
           {icon}
         </span>
       )
     }
   </div>
 
-  <div class="mb-3">
-    <p id={valueId} class={valueClasses}>
+  <div class="stat-card__value-wrapper">
+    <p id={valueId} class="stat-card__value">
       {value}
     </p>
   </div>
 
   {
     (trend !== undefined || trendLabel) && (
-      <div class="flex items-center gap-2">
+      <div class="stat-card__trend-row">
         {trend !== undefined && (
-          <span
-            class={trendClasses}
-            aria-label={`Trend: ${isPositiveTrend ? 'positive' : isNegativeTrend ? 'negative' : 'neutral'} ${Math.abs(trend)}%`}
-          >
-            {isPositiveTrend && <span aria-hidden="true">↗</span>}
-            {isNegativeTrend && <span aria-hidden="true">↘</span>}
-            {isNeutralTrend && <span aria-hidden="true">→</span>}
-            <span class="ml-1">{Math.abs(trend)}%</span>
+          <span class={trendClasses} aria-label={trendAriaLabel}>
+            <span class="stat-card__trend-symbol" aria-hidden="true">
+              {trendState === 'positive' && '↗'}
+              {trendState === 'negative' && '↘'}
+              {trendState === 'neutral' && '→'}
+            </span>
+            <span class="stat-card__trend-value">{trendAbsValue}%</span>
           </span>
         )}
-        {trendLabel && <span class={trendLabelClasses}>{trendLabel}</span>}
+        {trendLabel && (
+          <span class="stat-card__trend-label">
+            {trendLabel}
+          </span>
+        )}
       </div>
     )
   }
 </Element>
+
+<style>
+  .stat-card {
+    --stat-card-padding: 1.5rem;
+    --stat-card-radius: 1.25rem;
+    --stat-card-label-size: 0.85rem;
+    --stat-card-value-size: 2.5rem;
+    --stat-card-icon-size: 1.75rem;
+    --stat-card-trend-size: 0.9rem;
+    --stat-card-border: rgba(226, 232, 240, 1);
+    --stat-card-background: #fff;
+    --stat-card-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    --stat-card-text: #0f172a;
+    --stat-card-muted: #475569;
+    border: 1px solid var(--stat-card-border);
+    border-radius: var(--stat-card-radius);
+    padding: var(--stat-card-padding);
+    background: var(--stat-card-background);
+    box-shadow: var(--stat-card-shadow);
+    color: var(--stat-card-text);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: background 0.2s ease, border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  :where(.dark) .stat-card {
+    --stat-card-border: rgba(71, 85, 105, 1);
+    --stat-card-background: #0f172a;
+    --stat-card-shadow: 0 15px 30px rgba(2, 8, 23, 0.75);
+    --stat-card-text: #f8fafc;
+    --stat-card-muted: #cbd5f5;
+  }
+
+  .stat-card--variant-default {
+    --stat-card-border: rgba(226, 232, 240, 1);
+    --stat-card-background: #fff;
+    --stat-card-shadow: 0 12px 24px rgba(148, 163, 184, 0.2);
+  }
+
+  :where(.dark) .stat-card--variant-default {
+    --stat-card-border: rgba(51, 65, 85, 1);
+    --stat-card-background: #0f172a;
+    --stat-card-shadow: 0 20px 40px rgba(2, 6, 23, 0.85);
+  }
+
+  .stat-card--variant-gradient {
+    --stat-card-border: rgba(191, 219, 254, 1);
+    --stat-card-background: linear-gradient(
+      135deg,
+      rgba(219, 234, 254, 0.95),
+      rgba(224, 231, 255, 0.95),
+      rgba(238, 242, 255, 0.95)
+    );
+    --stat-card-shadow: 0 25px 35px rgba(99, 102, 241, 0.2);
+  }
+
+  :where(.dark) .stat-card--variant-gradient {
+    --stat-card-border: rgba(37, 99, 235, 0.6);
+    --stat-card-background: linear-gradient(
+      135deg,
+      rgba(15, 23, 42, 0.95),
+      rgba(30, 27, 75, 0.95),
+      rgba(8, 47, 73, 0.95)
+    );
+    --stat-card-shadow: 0 30px 40px rgba(5, 17, 43, 0.8);
+  }
+
+  .stat-card--variant-bordered {
+    --stat-card-border: rgba(148, 163, 184, 1);
+    --stat-card-background: #fff;
+    --stat-card-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+    border-width: 2px;
+  }
+
+  :where(.dark) .stat-card--variant-bordered {
+    --stat-card-border: rgba(71, 85, 105, 1);
+    --stat-card-background: #020617;
+  }
+
+  .stat-card--variant-elevated {
+    --stat-card-border: rgba(226, 232, 240, 0.8);
+    --stat-card-background: #fff;
+    --stat-card-shadow: 0 30px 45px rgba(15, 23, 42, 0.25);
+  }
+
+  :where(.dark) .stat-card--variant-elevated {
+    --stat-card-border: rgba(71, 85, 105, 0.8);
+    --stat-card-background: #0f172a;
+    --stat-card-shadow: 0 30px 45px rgba(2, 6, 23, 0.85);
+  }
+
+  .stat-card--size-sm {
+    --stat-card-padding: 1rem;
+    --stat-card-radius: 0.85rem;
+    --stat-card-label-size: 0.75rem;
+    --stat-card-value-size: 1.75rem;
+    --stat-card-icon-size: 1.25rem;
+    --stat-card-trend-size: 0.75rem;
+  }
+
+  .stat-card--size-md {
+    --stat-card-padding: 1.5rem;
+    --stat-card-radius: 1.25rem;
+    --stat-card-label-size: 0.85rem;
+    --stat-card-value-size: 2.5rem;
+    --stat-card-icon-size: 1.75rem;
+    --stat-card-trend-size: 0.9rem;
+  }
+
+  .stat-card--size-lg {
+    --stat-card-padding: 2rem;
+    --stat-card-radius: 1.75rem;
+    --stat-card-label-size: 1rem;
+    --stat-card-value-size: 3rem;
+    --stat-card-icon-size: 2.25rem;
+    --stat-card-trend-size: 1rem;
+  }
+
+  .stat-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .stat-card__label {
+    margin: 0;
+    font-size: var(--stat-card-label-size);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--stat-card-muted);
+  }
+
+  .stat-card__icon {
+    font-size: var(--stat-card-icon-size);
+    line-height: 1;
+    color: var(--stat-card-muted);
+  }
+
+  .stat-card__value-wrapper {
+    margin-block-start: 0.25rem;
+  }
+
+  .stat-card__value {
+    margin: 0;
+    font-size: var(--stat-card-value-size);
+    font-weight: 700;
+    color: var(--stat-card-text);
+    line-height: 1.1;
+  }
+
+  .stat-card__trend-row {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .stat-card__trend {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--stat-card-trend-size);
+    font-weight: 600;
+    color: var(--stat-card-muted);
+    gap: 0.35rem;
+  }
+
+  .stat-card__trend-symbol {
+    font-size: var(--stat-card-trend-size);
+  }
+
+  .stat-card__trend-value {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-card__trend--positive {
+    color: #065f46;
+  }
+
+  :where(.dark) .stat-card__trend--positive {
+    color: #6ee7b7;
+  }
+
+  .stat-card__trend--negative {
+    color: #b91c1c;
+  }
+
+  :where(.dark) .stat-card__trend--negative {
+    color: #fca5a5;
+  }
+
+  .stat-card__trend--neutral {
+    color: var(--stat-card-muted);
+  }
+
+  .stat-card__trend-label {
+    font-size: var(--stat-card-trend-size);
+    color: var(--stat-card-muted);
+    font-weight: 500;
+  }
+
+  .stat-card:focus-within {
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+  }
+
+  :where(.dark) .stat-card:focus-within {
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.4);
+  }
+
+  .stat-card--debug {
+    outline: 2px dashed rgba(255, 0, 255, 0.5);
+    outline-offset: 2px;
+    position: relative;
+  }
+
+  .stat-card--debug::after {
+    content: attr(data-debug-info);
+    position: absolute;
+    top: -1.75rem;
+    left: 0;
+    background: rgba(255, 255, 255, 0.95);
+    color: #db2777;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-family: monospace;
+    pointer-events: none;
+  }
+
+  :where(.dark) .stat-card--debug::after {
+    background: rgba(2, 6, 23, 0.9);
+    color: #f472b6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stat-card {
+      transition: none !important;
+    }
+  }
+
+  @media (prefers-contrast: high) {
+    .stat-card {
+      --stat-card-border: currentColor;
+      --stat-card-shadow: none;
+    }
+
+    .stat-card__label,
+    .stat-card__trend,
+    .stat-card__trend-label {
+      color: currentColor;
+    }
+  }
+</style>

@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 /**
  * Spacer - WCAG AAA compliant spacing component
  * Provides semantic spacing between elements with responsive sizing
@@ -44,141 +42,150 @@ const {
   role = 'presentation',
 } = Astro.props as Props;
 
-const sizeClasses = {
-  xs: '0.25rem', // 4px
-  sm: '0.5rem', // 8px
-  md: '1rem', // 16px
-  lg: '1.5rem', // 24px
-  xl: '2rem', // 32px
-  '2xl': '3rem', // 48px
-  '3xl': '4rem', // 64px
-  '4xl': '5rem', // 80px
-  '5xl': '6rem', // 96px
+const sizeMap: Record<Props['size'], string> = {
+  xs: '0.25rem',
+  sm: '0.5rem',
+  md: '1rem',
+  lg: '1.5rem',
+  xl: '2rem',
+  '2xl': '3rem',
+  '3xl': '4rem',
+  '4xl': '5rem',
+  '5xl': '6rem',
   auto: 'auto',
 };
 
-const spacerSize = sizeClasses[size];
+const baseWidth =
+  axis === 'vertical' ? '100%' : axis === 'horizontal' ? sizeMap[size] : sizeMap[size];
+const baseHeight =
+  axis === 'horizontal' ? '100%' : axis === 'vertical' ? sizeMap[size] : sizeMap[size];
 
-// Build responsive styles
-const styles: Record<string, string> = {};
+const spacerId = `spacer-${Math.random().toString(36).slice(2, 9)}`;
 
-// Base size
-if (axis === 'vertical' || axis === 'both') {
-  styles.height = spacerSize;
-}
-if (axis === 'horizontal' || axis === 'both') {
-  styles.width = spacerSize;
-}
-if (axis === 'vertical') {
-  styles.width = '100%';
-}
-if (axis === 'horizontal') {
-  styles.height = '100%';
-}
+const styleEntries: Record<string, string> = {
+  width: baseWidth || 'auto',
+  height: baseHeight || 'auto',
+};
 
-// Build responsive classes instead of inline styles
-const responsiveClasses = responsive
+const responsiveStyles = responsive
   ? Object.entries(responsive)
-      .map(([breakpoint, responsiveSize]) => {
-        const prefix =
-          breakpoint === 'sm'
-            ? 'sm:'
-            : breakpoint === 'md'
-              ? 'md:'
-              : breakpoint === 'lg'
-                ? 'lg:'
-                : 'xl:';
-        if (axis === 'vertical') {
-          return `${prefix}h-${responsiveSize === 'xs' ? '1' : responsiveSize === 'sm' ? '2' : responsiveSize === 'md' ? '4' : responsiveSize === 'lg' ? '6' : responsiveSize === 'xl' ? '8' : responsiveSize === '2xl' ? '12' : responsiveSize === '3xl' ? '16' : responsiveSize === '4xl' ? '20' : responsiveSize === '5xl' ? '24' : '4'}`;
-        } else if (axis === 'horizontal') {
-          return `${prefix}w-${responsiveSize === 'xs' ? '1' : responsiveSize === 'sm' ? '2' : responsiveSize === 'md' ? '4' : responsiveSize === 'lg' ? '6' : responsiveSize === 'xl' ? '8' : responsiveSize === '2xl' ? '12' : responsiveSize === '3xl' ? '16' : responsiveSize === '4xl' ? '20' : responsiveSize === '5xl' ? '24' : '4'}`;
-        } else {
-          const heightClass = `${prefix}h-${responsiveSize === 'xs' ? '1' : responsiveSize === 'sm' ? '2' : responsiveSize === 'md' ? '4' : responsiveSize === 'lg' ? '6' : responsiveSize === 'xl' ? '8' : responsiveSize === '2xl' ? '12' : responsiveSize === '3xl' ? '16' : responsiveSize === '4xl' ? '20' : responsiveSize === '5xl' ? '24' : '4'}`;
-          const widthClass = `${prefix}w-${responsiveSize === 'xs' ? '1' : responsiveSize === 'sm' ? '2' : responsiveSize === 'md' ? '4' : responsiveSize === 'lg' ? '6' : responsiveSize === 'xl' ? '8' : responsiveSize === '2xl' ? '12' : responsiveSize === '3xl' ? '16' : responsiveSize === '4xl' ? '20' : responsiveSize === '5xl' ? '24' : '4'}`;
-          return `${heightClass} ${widthClass}`;
-        }
+      .map(([bp, val]) => {
+        const widthValue =
+          axis === 'vertical'
+            ? '100%'
+            : axis === 'horizontal'
+              ? sizeMap[val]
+              : sizeMap[val];
+        const heightValue =
+          axis === 'horizontal'
+            ? '100%'
+            : axis === 'vertical'
+              ? sizeMap[val]
+              : sizeMap[val];
+        const queries: Record<string, number> = {
+          sm: 640,
+          md: 768,
+          lg: 1024,
+          xl: 1280,
+        };
+        const minWidth = queries[bp as keyof typeof queries];
+        if (!minWidth) return '';
+        return `
+          @media (min-width: ${minWidth}px) {
+            #${spacerId} {
+              width: ${widthValue};
+              height: ${heightValue};
+            }
+          }
+        `;
       })
-      .join(' ')
+      .join('\n')
   : '';
 
-const styleString = Object.entries(styles)
+const styleString = Object.entries(styleEntries)
   .map(([key, value]) => `${key}: ${value}`)
   .join('; ');
 
-// Debug styles for development
-const spacerClasses = cn(
-  'flex-shrink-0',
-  {
-    'spacer-debug': debug,
-  },
-  responsiveClasses,
-  className
-);
+const spacerClass = [
+  'spacer',
+  `spacer--axis-${axis}`,
+  `spacer--size-${size}`,
+  debug ? 'spacer--debug' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<style>
-  .spacer-debug {
-    background: repeating-linear-gradient(
-      45deg,
-      rgba(255, 0, 0, 0.1),
-      rgba(255, 0, 0, 0.1) 2px,
-      transparent 2px,
-      transparent 6px
-    );
-    border: 1px dashed rgba(255, 0, 0, 0.3);
-    position: relative;
+<style is:inline>
+  .spacer {
+    display: block;
+    flex-shrink: 0;
   }
 
-  .spacer-debug::after {
+  .spacer--axis-horizontal {
+    display: inline-block;
+  }
+
+  .spacer--debug {
+    position: relative;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 0, 0, 0.08),
+      rgba(255, 0, 0, 0.08) 3px,
+      transparent 3px,
+      transparent 6px
+    );
+    border: 1px dashed rgba(255, 0, 0, 0.4);
+  }
+
+  .spacer--debug::after {
     content: attr(data-spacer-info);
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(255, 0, 0, 0.8);
-    color: white;
-    padding: 2px 6px;
     font-size: 10px;
     font-family: monospace;
-    border-radius: 2px;
-    white-space: nowrap;
+    padding: 2px 6px;
+    background-color: rgba(255, 0, 0, 0.85);
+    color: white;
+    border-radius: 4px;
     pointer-events: none;
-    z-index: 1000;
   }
 
-  /* Dark mode debug styles */
   @media (prefers-color-scheme: dark) {
-    .spacer-debug {
+    .spacer--debug {
       background: repeating-linear-gradient(
         45deg,
-        rgba(255, 255, 0, 0.1),
-        rgba(255, 255, 0, 0.1) 2px,
-        transparent 2px,
+        rgba(255, 255, 0, 0.15),
+        rgba(255, 255, 0, 0.15) 3px,
+        transparent 3px,
         transparent 6px
       );
-      border: 1px dashed rgba(255, 255, 0, 0.4);
+      border-color: rgba(255, 255, 0, 0.5);
     }
 
-    .spacer-debug::after {
-      background: rgba(255, 255, 0, 0.9);
-      color: black;
+    .spacer--debug::after {
+      background-color: rgba(255, 255, 0, 0.9);
+      color: #111;
     }
   }
 
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    .spacer-debug {
-      border-width: 2px !important;
-    }
-
-    .spacer-debug::after {
-      font-weight: bold !important;
+  @media (prefers-reduced-motion: reduce) {
+    .spacer {
+      transition: none;
     }
   }
 </style>
 
+{responsiveStyles && (
+  <style is:inline set:html={responsiveStyles}></style>
+)}
+
 <div
-  class={spacerClasses}
+  id={spacerId}
+  class={spacerClass}
   style={styleString}
   role={role}
   aria-hidden={role === 'presentation' ? 'true' : undefined}

@@ -1,7 +1,7 @@
 ---
 /**
  * WeatherForecast – Minimal daily forecast snapshot (WCAG AAA)
- * Astro-only, Tailwind-only, no overengineering.
+ * Astro-only, BEM-based CSS, no overengineering.
  * Metrics (per day): Day label (Today/Tomorrow/Weekday), icon, condition text, high/low temp, precip %.
  * Optional live fetch via Open‑Meteo daily forecast.
  */
@@ -29,17 +29,7 @@ const {
 } = props;
 
 const label = ariaLabel || `Daily forecast for ${location}`;
-const baseCls = `rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-7 flex flex-col gap-6 ${className}`;
-const gridCls =
-  'grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-5';
-const cardCls =
-  'flex flex-col gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 px-3 py-3 md:py-4 min-h-[120px]';
-const dayLabelCls =
-  'text-[11px] font-bold text-slate-900 dark:text-slate-50 flex items-center gap-1';
-const condCls =
-  'text-[11px] font-medium text-slate-600 dark:text-slate-300 truncate';
-const tempCls = 'text-[11px] font-semibold text-slate-700 dark:text-slate-200';
-const precipCls = 'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+const baseClasses = ['weather-forecast', className].filter(Boolean).join(' ');
 
 // Fallback demo data (simple predictable sequence)
 const fallback = Array.from({ length: days }, (_, i) => ({
@@ -51,29 +41,23 @@ const fallback = Array.from({ length: days }, (_, i) => ({
 
 function mapWeather(code: number) {
   if ([0].includes(code))
-    return ['Clear', '☀️', 'bg-amber-600 dark:bg-amber-400'];
-  if ([1, 2, 3].includes(code))
-    return ['Partly Cloudy', '⛅', 'bg-slate-500 dark:bg-slate-400'];
-  if ([45, 48].includes(code))
-    return ['Fog', '🌫️', 'bg-slate-600 dark:bg-slate-500'];
-  if ([51, 53, 55].includes(code))
-    return ['Drizzle', '🌦️', 'bg-cyan-600 dark:bg-cyan-400'];
+    return ['Clear', '☀️', 'clear'];
+  if ([1, 2, 3].includes(code)) return ['Partly Cloudy', '⛅', 'cloud'];
+  if ([45, 48].includes(code)) return ['Fog', '🌫️', 'fog'];
+  if ([51, 53, 55].includes(code)) return ['Drizzle', '🌦️', 'drizzle'];
   if ([61, 63, 65, 80, 81, 82].includes(code))
-    return ['Rain', '🌧️', 'bg-blue-700 dark:bg-blue-400'];
-  if ([66, 67].includes(code))
-    return ['Freezing Rain', '🧊', 'bg-indigo-700 dark:bg-indigo-400'];
-  if ([71, 73, 75, 77, 85, 86].includes(code))
-    return ['Snow', '❄️', 'bg-sky-700 dark:bg-sky-400'];
-  if ([95, 96, 99].includes(code))
-    return ['Storm', '⛈️', 'bg-rose-700 dark:bg-rose-400'];
-  return ['Unknown', '❓', 'bg-slate-500 dark:bg-slate-400'];
+    return ['Rain', '🌧️', 'rain'];
+  if ([66, 67].includes(code)) return ['Freezing Rain', '🧊', 'ice'];
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return ['Snow', '❄️', 'snow'];
+  if ([95, 96, 99].includes(code)) return ['Storm', '⛈️', 'storm'];
+  return ['Unknown', '❓', 'unknown'];
 }
 
 const initialMapped = fallback.map((d) => mapWeather(d.code));
 ---
 
 <div
-  class={baseCls}
+  class={baseClasses}
   role="region"
   aria-label={label}
   aria-busy={!disableFetch && latitude != null && longitude != null
@@ -89,20 +73,12 @@ const initialMapped = fallback.map((d) => mapWeather(d.code));
     ? 'loading'
     : 'static'}
 >
-  <header
-    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
-  >
-    <h2
-      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
-    >
+  <header class="weather-forecast__header">
+    <h2 class="weather-forecast__title">
       <span aria-hidden="true">📅</span>
-      <span class="truncate" data-location>{location}</span>
+      <span class="weather-forecast__location" data-location>{location}</span>
     </h2>
-    <p
-      class="text-xs font-medium text-slate-600 dark:text-slate-300"
-      aria-live="polite"
-      data-status
-    >
+    <p class="weather-forecast__status" aria-live="polite" data-status>
       {
         !disableFetch && latitude != null && longitude != null
           ? 'Lade Vorhersage …'
@@ -110,23 +86,23 @@ const initialMapped = fallback.map((d) => mapWeather(d.code));
       }
     </p>
   </header>
-  <div class={gridCls} data-days-wrapper>
+  <div class="weather-forecast__grid" data-days-wrapper>
     {
       fallback.map((d, i) => (
         <div
-          class={cardCls}
+          class="weather-forecast__card"
           data-day-card
           data-idx={i}
           aria-label={`Forecast day ${i + 1}`}
         >
-          <div class="flex items-start justify-between">
-            <div class={dayLabelCls} data-day-label>
+          <div class="weather-forecast__card-top">
+            <div class="weather-forecast__day" data-day-label>
               <span
-                class={`inline-block w-2 h-2 rounded-full ${initialMapped[i][2]}`}
+                class={`weather-forecast__dot weather-forecast__dot--${initialMapped[i][2]}`}
                 aria-hidden="true"
                 data-day-dot
               />
-              <span data-day-name>
+              <span class="weather-forecast__day-name" data-day-name>
                 {i === 0
                   ? 'Today'
                   : i === 1
@@ -136,21 +112,24 @@ const initialMapped = fallback.map((d) => mapWeather(d.code));
                       ).toLocaleDateString([], { weekday: 'short' })}
               </span>
             </div>
-            <span class="text-lg" data-day-icon>
+            <span class="weather-forecast__icon" data-day-icon>
               {initialMapped[i][1]}
             </span>
           </div>
-          <div class={condCls} data-day-cond>
+          <div class="weather-forecast__condition" data-day-cond>
             {initialMapped[i][0]}
           </div>
-          <div class="flex flex-wrap gap-2 items-center">
-            <span class={tempCls} data-day-temp-high>
+          <div class="weather-forecast__metrics">
+            <span class="weather-forecast__metric" data-day-temp-high>
               H: {Math.round(d.tmax)}°C
             </span>
-            <span class={tempCls} data-day-temp-low>
+            <span class="weather-forecast__metric" data-day-temp-low>
               L: {Math.round(d.tmin)}°C
             </span>
-            <span class={precipCls} data-day-precip>
+            <span
+              class="weather-forecast__metric weather-forecast__metric--precip"
+              data-day-precip
+            >
               {Math.round(d.precip)}%
             </span>
           </div>
@@ -158,51 +137,38 @@ const initialMapped = fallback.map((d) => mapWeather(d.code));
       ))
     }
   </div>
-  <p
-    class="text-[11px] md:text-xs leading-relaxed text-slate-600 dark:text-slate-300 mt-2"
-    data-disclaimer
-  >
+  <p class="weather-forecast__disclaimer" data-disclaimer>
     {
       !disableFetch && latitude != null && longitude != null
         ? `Live Daten (Open‑Meteo Daily). ${refreshInterval > 0 ? `Auto Refresh alle ${refreshInterval}m.` : ''} Fallback bei Fehler.`
         : 'Demodaten. latitude+longitude setzen für Live-Aktualisierung.'
     } AAA Kontrast eingehalten.
   </p>
-  <footer
-    class="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 flex flex-wrap gap-3 text-[11px] md:text-xs text-slate-600 dark:text-slate-400"
-  >
-    <span
-      >Quelle: <span class="underline text-slate-800 dark:text-slate-200"
-        >Open‑Meteo</span
-      ></span
-    >
-    <span class="ml-auto" data-refresh-indicator
-      >{
+  <footer class="weather-forecast__footer">
+    <span class="weather-forecast__source">
+      Quelle:
+      <span class="weather-forecast__source-link">Open‑Meteo</span>
+    </span>
+    <span class="weather-forecast__refresh" data-refresh-indicator>
+      {
         refreshInterval > 0 ? `Auto ${refreshInterval}m` : 'Kein Auto-Refresh'
-      }</span
-    >
+      }
+    </span>
   </footer>
 </div>
 
 <script>
   function mapWeather(code) {
-    if ([0].includes(code))
-      return ['Clear', '☀️', 'bg-amber-600 dark:bg-amber-400'];
-    if ([1, 2, 3].includes(code))
-      return ['Partly Cloudy', '⛅', 'bg-slate-500 dark:bg-slate-400'];
-    if ([45, 48].includes(code))
-      return ['Fog', '🌫️', 'bg-slate-600 dark:bg-slate-500'];
-    if ([51, 53, 55].includes(code))
-      return ['Drizzle', '🌦️', 'bg-cyan-600 dark:bg-cyan-400'];
+    if ([0].includes(code)) return ['Clear', '☀️', 'clear'];
+    if ([1, 2, 3].includes(code)) return ['Partly Cloudy', '⛅', 'cloud'];
+    if ([45, 48].includes(code)) return ['Fog', '🌫️', 'fog'];
+    if ([51, 53, 55].includes(code)) return ['Drizzle', '🌦️', 'drizzle'];
     if ([61, 63, 65, 80, 81, 82].includes(code))
-      return ['Rain', '🌧️', 'bg-blue-700 dark:bg-blue-400'];
-    if ([66, 67].includes(code))
-      return ['Freezing Rain', '🧊', 'bg-indigo-700 dark:bg-indigo-400'];
-    if ([71, 73, 75, 77, 85, 86].includes(code))
-      return ['Snow', '❄️', 'bg-sky-700 dark:bg-sky-400'];
-    if ([95, 96, 99].includes(code))
-      return ['Storm', '⛈️', 'bg-rose-700 dark:bg-rose-400'];
-    return ['Unknown', '❓', 'bg-slate-500 dark:bg-slate-400'];
+      return ['Rain', '🌧️', 'rain'];
+    if ([66, 67].includes(code)) return ['Freezing Rain', '🧊', 'ice'];
+    if ([71, 73, 75, 77, 85, 86].includes(code)) return ['Snow', '❄️', 'snow'];
+    if ([95, 96, 99].includes(code)) return ['Storm', '⛈️', 'storm'];
+    return ['Unknown', '❓', 'unknown'];
   }
   function initForecast(el) {
     const disableFetch = el.dataset.disableFetch === 'true';
@@ -244,9 +210,10 @@ const initialMapped = fallback.map((d) => mapWeather(d.code));
           const tmin = d.temperature_2m_min?.[i];
           const precip = d.precipitation_probability_max?.[i];
           if (code != null) {
-            const [cond, icon, cls] = mapWeather(code);
+            const [cond, icon, token] = mapWeather(code);
             const dot = card.querySelector('[data-day-dot]');
-            if (dot) dot.className = `inline-block w-2 h-2 rounded-full ${cls}`;
+            if (dot)
+              dot.className = `weather-forecast__dot weather-forecast__dot--${token}`;
             const iconEl = card.querySelector('[data-day-icon]');
             if (iconEl) iconEl.textContent = icon;
             const condEl = card.querySelector('[data-day-cond]');
@@ -293,26 +260,224 @@ const initialMapped = fallback.map((d) => mapWeather(d.code));
   });
 </script>
 
-<style>
-  @media (prefers-reduced-motion: reduce) {
-    [data-forecast] * {
-      transition: none !important;
-      animation: none !important;
-    }
+<style is:inline>
+  .weather-forecast {
+    --wf-bg: #ffffff;
+    --wf-text: #0f172a;
+    --wf-muted: #475569;
+    --wf-border: #e5e7eb;
+    --wf-card-bg: #f8fafc;
+    --wf-card-border: #e2e8f0;
+    --wf-accent: #1d4ed8;
+    --wf-radius: 1rem;
+    --wf-gap: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--wf-gap);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    background-color: var(--wf-bg);
+    color: var(--wf-text);
+    border: 1px solid var(--wf-border);
+    border-radius: 1.25rem;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
   }
-  @media (prefers-contrast: high) {
-    [data-forecast] {
-      outline: 2px solid currentColor;
-    }
+
+  .weather-forecast__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
-  [data-forecast][data-state='loading'] [data-day-card] {
+
+  .weather-forecast__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: clamp(1.2rem, 3vw, 1.35rem);
+    font-weight: 700;
+    color: var(--wf-text);
+  }
+
+  .weather-forecast__location {
+    display: inline-block;
+    max-width: 20rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .weather-forecast__status {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--wf-muted);
+  }
+
+  .weather-forecast__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 0.9rem;
+  }
+
+  .weather-forecast__card {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid var(--wf-card-border);
+    border-radius: var(--wf-radius);
+    background-color: var(--wf-card-bg);
   }
-  [data-forecast][data-state='loading'] [data-day-card]::after {
+
+  .weather-forecast__card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .weather-forecast__day {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--wf-text);
+  }
+
+  .weather-forecast__dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 999px;
+    background-color: var(--wf-muted);
+  }
+
+  .weather-forecast__dot--clear {
+    background-color: #f59e0b;
+  }
+
+  .weather-forecast__dot--cloud {
+    background-color: #6b7280;
+  }
+
+  .weather-forecast__dot--fog {
+    background-color: #4b5563;
+  }
+
+  .weather-forecast__dot--drizzle {
+    background-color: #0891b2;
+  }
+
+  .weather-forecast__dot--rain {
+    background-color: #2563eb;
+  }
+
+  .weather-forecast__dot--ice {
+    background-color: #6366f1;
+  }
+
+  .weather-forecast__dot--snow {
+    background-color: #0ea5e9;
+  }
+
+  .weather-forecast__dot--storm {
+    background-color: #dc2626;
+  }
+
+  .weather-forecast__dot--unknown {
+    background-color: #94a3b8;
+  }
+
+  .weather-forecast__icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .weather-forecast__condition {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--wf-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .weather-forecast__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+  }
+
+  .weather-forecast__metric {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--wf-text);
+  }
+
+  .weather-forecast__metric--precip {
+    color: var(--wf-muted);
+    font-weight: 600;
+  }
+
+  .weather-forecast__disclaimer {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--wf-muted);
+  }
+
+  .weather-forecast__footer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--wf-border);
+    font-size: 0.78rem;
+    color: var(--wf-muted);
+    flex-wrap: wrap;
+  }
+
+  .weather-forecast__source-link {
+    text-decoration: underline;
+    color: var(--wf-text);
+    font-weight: 700;
+  }
+
+  .weather-forecast__refresh {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--wf-text);
+  }
+
+  :where(.dark) .weather-forecast {
+    --wf-bg: #0f172a;
+    --wf-text: #e5e7eb;
+    --wf-muted: #cbd5e1;
+    --wf-border: #1f2937;
+    --wf-card-bg: rgba(30, 41, 59, 0.75);
+    --wf-card-border: #334155;
+    --wf-accent: #60a5fa;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  }
+
+  :where(.dark) .weather-forecast__source-link {
+    color: var(--wf-text);
+  }
+
+  [data-forecast][data-state='loading'] .weather-forecast__card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  [data-forecast][data-state='loading'] .weather-forecast__card::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 0.5rem;
+    border-radius: var(--wf-radius);
     background: linear-gradient(
       90deg,
       rgba(148, 163, 184, 0.15),
@@ -320,15 +485,51 @@ const initialMapped = fallback.map((d) => mapWeather(d.code));
       rgba(148, 163, 184, 0.15)
     );
     animation: forecast-pulse 1.4s ease-in-out infinite;
-    opacity: 0.35;
+    opacity: 0.4;
+    pointer-events: none;
   }
+
   @keyframes forecast-pulse {
     0%,
     100% {
       opacity: 0.35;
     }
     50% {
-      opacity: 0.65;
+      opacity: 0.7;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .weather-forecast__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .weather-forecast__location {
+      max-width: 100%;
+      white-space: normal;
+    }
+
+    .weather-forecast__refresh {
+      margin-left: 0;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .weather-forecast {
+      border-width: 2px;
+    }
+
+    .weather-forecast__card {
+      border-width: 2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .weather-forecast,
+    .weather-forecast * {
+      transition: none !important;
+      animation: none !important;
     }
   }
 </style>

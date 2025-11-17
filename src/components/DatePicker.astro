@@ -30,140 +30,120 @@ const id = `date-picker-${Math.random().toString(36).slice(2, 10)}`;
 const minAttr = min ?? '';
 const maxAttr = max ?? '';
 const firstDayAttr = String(firstDayOfWeek);
+const baseClasses = ['date-picker', className].filter(Boolean).join(' ');
 ---
 
 <div
   id={id}
   data-date-picker
-  class={`relative space-y-2 ${className}`.trim()}
+  class={baseClasses}
   data-date-min={minAttr}
   data-date-max={maxAttr}
   data-date-first-day={firstDayAttr}
 >
   {
     label && (
-      <label
-        for={`${id}-input`}
-        class="block text-sm font-semibold text-slate-900 dark:text-slate-100"
-      >
+      <label for={`${id}-input`} class="date-picker__label">
         {label}
       </label>
     )
   }
-  <div class="relative">
+  <div class="date-picker__control">
     <input type="hidden" value={value} name={inputName} data-date-value />
     <button
       id={`${id}-input`}
       type="button"
-      class="flex w-full items-center justify-between gap-3 rounded-lg border border-slate-300/80 bg-white px-4 py-3 text-left text-sm font-medium text-slate-900 shadow-sm transition-colors duration-200 hover:border-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-600/80 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 dark:focus:ring-offset-slate-900"
+      class="date-picker__toggle"
       data-date-toggle
       aria-haspopup="dialog"
       aria-expanded="false"
     >
-      <span
-        data-date-display
-        class="truncate text-slate-600 dark:text-slate-300">{placeholder}</span
-      >
-      <span
-        class="shrink-0 text-slate-600 dark:text-slate-300"
-        aria-hidden="true">📅</span
-      >
+      <span data-date-display class="date-picker__display">{placeholder}</span>
+      <span class="date-picker__icon" aria-hidden="true">📅</span>
     </button>
     <div
-      class="absolute z-40 mt-2 w-full min-w-80 max-w-sm overflow-hidden rounded-lg border border-slate-300/80 bg-white text-slate-900 shadow-2xl ring-1 ring-black/10 dark:border-slate-600/80 dark:bg-slate-800 dark:text-slate-100 dark:ring-white/10"
+      class="date-picker__panel"
       data-date-panel
       hidden
       role="dialog"
       aria-modal="true"
       aria-label="Calendar"
     >
-      <div
-        class="flex items-center justify-between border-b border-slate-300/60 px-4 py-3 text-sm font-semibold text-slate-900 dark:border-slate-600/60 dark:text-slate-100"
-      >
-        <div class="flex-1">
+      <div class="date-picker__panel-header">
+        <div class="date-picker__current">
           <button
             type="button"
             data-date-month
-            class="font-semibold hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 dark:hover:text-blue-400 dark:focus-visible:ring-blue-400"
+            class="date-picker__current-button date-picker__current-button--month"
             aria-label="Select month"></button>
           <button
             type="button"
             data-date-year
-            class="block text-xs font-medium text-slate-700 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 dark:text-slate-200 dark:hover:text-blue-400 dark:focus-visible:ring-blue-400"
+            class="date-picker__current-button date-picker__current-button--year"
             aria-label="Select year"></button>
         </div>
-        <div class="flex gap-1">
+        <div class="date-picker__nav">
           <button
             type="button"
-            class="rounded-md border border-slate-300/80 bg-white p-1 text-slate-800 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/80 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+            class="date-picker__nav-button"
             data-date-prev-year
             aria-label="Previous year">«</button
           >
           <button
             type="button"
-            class="rounded-md border border-slate-300/80 bg-white p-1 text-slate-800 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/80 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+            class="date-picker__nav-button"
             data-date-prev
             aria-label="Previous month">‹</button
           >
           <button
             type="button"
-            class="rounded-md border border-slate-300/80 bg-white p-1 text-slate-800 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/80 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+            class="date-picker__nav-button"
             data-date-next
             aria-label="Next month">›</button
           >
           <button
             type="button"
-            class="rounded-md border border-slate-300/80 bg-white p-1 text-slate-800 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/80 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+            class="date-picker__nav-button"
             data-date-next-year
             aria-label="Next year">»</button
           >
         </div>
       </div>
-      <div class="px-3 pb-3">
-        <div
-          class="grid grid-cols-7 gap-1 px-1 pb-2 text-center text-xs font-semibold uppercase tracking-widest text-slate-700 dark:text-slate-200"
-          data-date-weekdays
-        >
-        </div>
-        <div class="grid grid-cols-7 gap-1" data-date-grid></div>
+      <div class="date-picker__calendar">
+        <div class="date-picker__weekdays" data-date-weekdays></div>
+        <div class="date-picker__grid" data-date-grid></div>
       </div>
 
-      <!-- Month Picker -->
       <div
-        class="absolute inset-0 hidden bg-white dark:bg-slate-800"
+        class="date-picker__picker date-picker__picker--month"
         data-month-picker
         role="dialog"
         aria-label="Select month"
+        style="display: none;"
       >
-        <div
-          class="border-b border-slate-300/60 px-4 py-3 text-sm font-semibold text-slate-900 dark:border-slate-600/60 dark:text-slate-100"
-        >
+        <div class="date-picker__picker-header">
           <span data-month-picker-year></span>
         </div>
-        <div class="grid grid-cols-3 gap-2 p-4" data-month-grid></div>
+        <div class="date-picker__month-grid" data-month-grid></div>
       </div>
 
-      <!-- Year Picker -->
       <div
-        class="absolute inset-0 hidden bg-white dark:bg-slate-800"
+        class="date-picker__picker date-picker__picker--year"
         data-year-picker
         role="dialog"
         aria-label="Select year"
+        style="display: none;"
       >
-        <div
-          class="border-b border-slate-300/60 px-4 py-3 text-sm font-semibold text-slate-900 dark:border-slate-600/60 dark:text-slate-100"
-        >
-          Select Year
-        </div>
-        <div class="grid grid-cols-4 gap-1 p-4" data-year-grid></div>
+        <div class="date-picker__picker-header">Select Year</div>
+        <div class="date-picker__year-grid" data-year-grid></div>
       </div>
 
       {
         showTodayShortcut && (
-          <div class="border-t border-slate-300/60 px-4 py-2 text-right dark:border-slate-600/60">
+          <div class="date-picker__footer">
             <button
               type="button"
-              class="text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-blue-300 dark:hover:text-blue-200 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800"
+              class="date-picker__today-button"
               data-date-today
             >
               Today
@@ -219,6 +199,8 @@ const firstDayAttr = String(firstDayOfWeek);
       const firstDayOfWeekValue = Number.isInteger(firstDayDataset)
         ? firstDayDataset
         : 1;
+
+      const DISPLAY_ACTIVE_CLASS = 'date-picker__display--value';
 
       const monthNames = [
         'January',
@@ -308,7 +290,7 @@ const firstDayAttr = String(firstDayOfWeek);
         const offset = ((firstDayOfWeekValue % 7) + 7) % 7;
         const rotated = order.slice(offset).concat(order.slice(0, offset));
         weekdaysRow.innerHTML = rotated
-          .map((name) => `<span>${name}</span>`)
+          .map((name) => `<span class="date-picker__weekday">${name}</span>`)
           .join('');
       };
 
@@ -323,15 +305,17 @@ const firstDayAttr = String(firstDayOfWeek);
             const isDisabled = !canNavigateToMonth(currentYear, index);
             const isCurrent = index === currentView.getMonth();
 
+            const classes = [
+              'date-picker__month-button',
+              isCurrent ? 'date-picker__month-button--current' : '',
+              isDisabled ? 'date-picker__month-button--disabled' : '',
+            ]
+              .filter(Boolean)
+              .join(' ');
+
             return `<button
           type="button"
-          class="rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            isDisabled
-              ? 'cursor-not-allowed text-slate-400 dark:text-slate-600'
-              : isCurrent
-                ? 'bg-blue-600 text-white dark:bg-blue-500'
-                : 'text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-slate-700'
-          }"
+          class="${classes}"
           data-month="${index}"
           ${isDisabled ? 'disabled' : ''}
         >${name.slice(0, 3)}</button>`;
@@ -351,13 +335,13 @@ const firstDayAttr = String(firstDayOfWeek);
         // Add navigation arrows for year ranges
         years.push(`<button
         type="button"
-        class="rounded-md px-2 py-2 text-sm font-medium transition-colors text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-slate-700 col-span-2"
+        class="date-picker__year-range-button"
         data-year-prev-range
       >‹ ${startYear - 20}-${startYear - 1}</button>`);
 
         years.push(`<button
         type="button"
-        class="rounded-md px-2 py-2 text-sm font-medium transition-colors text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-slate-700 col-span-2"
+        class="date-picker__year-range-button"
         data-year-next-range
       >${startYear + 20}-${startYear + 39} ›</button>`);
 
@@ -369,15 +353,17 @@ const firstDayAttr = String(firstDayOfWeek);
             canNavigateToMonth(year, 11);
           const isCurrent = year === currentYear;
 
+          const classes = [
+            'date-picker__year-button',
+            isCurrent ? 'date-picker__year-button--current' : '',
+            !hasValidDays ? 'date-picker__year-button--disabled' : '',
+          ]
+            .filter(Boolean)
+            .join(' ');
+
           years.push(`<button
           type="button"
-          class="rounded-md px-2 py-2 text-sm font-medium transition-colors ${
-            !hasValidDays
-              ? 'cursor-not-allowed text-slate-400 dark:text-slate-600'
-              : isCurrent
-                ? 'bg-blue-600 text-white dark:bg-blue-500'
-                : 'text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-slate-700'
-          }"
+          class="${classes}"
           data-year="${year}"
           ${!hasValidDays ? 'disabled' : ''}
         >${year}</button>`);
@@ -389,19 +375,19 @@ const firstDayAttr = String(firstDayOfWeek);
       const showView = (mode) => {
         viewMode = mode;
         if (mode === 'calendar') {
-          grid.parentElement.style.display = 'block';
+          grid.parentElement.style.display = 'flex';
           if (monthPicker) monthPicker.style.display = 'none';
           if (yearPicker) yearPicker.style.display = 'none';
           render();
         } else if (mode === 'month') {
           grid.parentElement.style.display = 'none';
-          if (monthPicker) monthPicker.style.display = 'block';
+          if (monthPicker) monthPicker.style.display = 'flex';
           if (yearPicker) yearPicker.style.display = 'none';
           renderMonthPicker();
         } else if (mode === 'year') {
           grid.parentElement.style.display = 'none';
           if (monthPicker) monthPicker.style.display = 'none';
-          if (yearPicker) yearPicker.style.display = 'block';
+          if (yearPicker) yearPicker.style.display = 'flex';
           renderYearPicker();
         }
       };
@@ -431,28 +417,12 @@ const firstDayAttr = String(firstDayOfWeek);
           const isToday = startOfDay(date).getTime() === today.getTime();
           const disabled = !withinRange(date);
 
-          const interactionClass = disabled
-            ? 'cursor-not-allowed text-slate-400 opacity-70 dark:text-slate-600'
-            : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1';
-          const hoverClass = disabled
-            ? ''
-            : isSelected
-              ? 'hover:bg-blue-800 dark:hover:bg-blue-100'
-              : 'hover:bg-blue-50 dark:hover:bg-blue-500/20';
-
           const classes = [
-            'grid place-items-center rounded-md px-0 py-2 text-sm font-medium transition-colors',
-            interactionClass,
-            hoverClass,
-            isCurrentMonth
-              ? 'text-slate-900 dark:text-slate-100'
-              : 'text-slate-500 dark:text-slate-400',
-            isSelected
-              ? 'bg-blue-700 text-white dark:bg-blue-200 dark:text-slate-900'
-              : '',
-            isToday && !isSelected
-              ? 'ring-2 ring-blue-600 dark:ring-blue-400'
-              : '',
+            'date-picker__cell',
+            isCurrentMonth ? '' : 'date-picker__cell--muted',
+            isSelected ? 'date-picker__cell--selected' : '',
+            isToday && !isSelected ? 'date-picker__cell--today' : '',
+            disabled ? 'date-picker__cell--disabled' : '',
           ]
             .filter(Boolean)
             .join(' ');
@@ -477,7 +447,6 @@ const firstDayAttr = String(firstDayOfWeek);
       const open = () => {
         panel.hidden = false;
         panel.setAttribute('aria-hidden', 'false');
-        panel.classList.remove('opacity-0');
         document.addEventListener('click', handleOutsideClick);
       };
 
@@ -499,8 +468,7 @@ const firstDayAttr = String(firstDayOfWeek);
         selected = new Date(date);
         hidden.value = fmtISO(selected);
         display.textContent = fmtDisplay(selected);
-        display.classList.remove('text-slate-600', 'dark:text-slate-300');
-        display.classList.add('text-slate-900', 'dark:text-slate-100');
+        display.classList.add(DISPLAY_ACTIVE_CLASS);
         currentView = new Date(date);
         currentView.setDate(1);
         render();
@@ -647,8 +615,8 @@ const firstDayAttr = String(firstDayOfWeek);
         selectDate(date);
       });
 
-      document.addEventListener('keydown', (event) => {
-        if (panel.hidden) return;
+  document.addEventListener('keydown', (event) => {
+    if (panel.hidden) return;
         if (event.key === 'Escape') {
           if (viewMode !== 'calendar') {
             showView('calendar');
@@ -663,8 +631,7 @@ const firstDayAttr = String(firstDayOfWeek);
         const initial = parseDate(hidden.value);
         if (initial) {
           display.textContent = fmtDisplay(initial);
-          display.classList.remove('text-slate-600', 'dark:text-slate-300');
-          display.classList.add('text-slate-900', 'dark:text-slate-100');
+          display.classList.add(DISPLAY_ACTIVE_CLASS);
           selected = initial;
           currentView = new Date(initial);
           currentView.setDate(1);
@@ -675,3 +642,362 @@ const firstDayAttr = String(firstDayOfWeek);
     }); // End forEach
   })();
 </script>
+
+<style is:inline>
+  .date-picker {
+    --dp-bg: var(--dp-bg-light, #ffffff);
+    --dp-panel-bg: var(--dp-panel-bg-light, #ffffff);
+    --dp-border: var(--dp-border-light, #d7dce5);
+    --dp-border-strong: var(--dp-border-strong-light, #cbd5f5);
+    --dp-text: var(--dp-text-light, #0f172a);
+    --dp-muted: var(--dp-muted-light, #475569);
+    --dp-placeholder: var(--dp-placeholder-light, #94a3b8);
+    --dp-accent: var(--dp-accent-light, #2563eb);
+    --dp-accent-strong: var(--dp-accent-strong-light, #1d4ed8);
+    --dp-focus: var(--dp-focus-light, #2563eb);
+    --dp-focus-offset: var(--dp-focus-offset-light, rgba(255, 255, 255, 0.95));
+    --dp-shadow: var(--dp-shadow-light, 0 20px 45px rgba(15, 23, 42, 0.15));
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    color: var(--dp-text);
+    position: relative;
+  }
+  :where(.dark) .date-picker {
+    --dp-bg: var(--dp-bg-dark, #0f172a);
+    --dp-panel-bg: var(--dp-panel-bg-dark, #0f172a);
+    --dp-border: var(--dp-border-dark, #334155);
+    --dp-border-strong: var(--dp-border-strong-dark, #475569);
+    --dp-text: var(--dp-text-dark, #f8fafc);
+    --dp-muted: var(--dp-muted-dark, #cbd5f5);
+    --dp-placeholder: var(--dp-placeholder-dark, #94a3b8);
+    --dp-accent: var(--dp-accent-dark, #38bdf8);
+    --dp-accent-strong: var(--dp-accent-strong-dark, #0ea5e9);
+    --dp-focus: var(--dp-focus-dark, #93c5fd);
+    --dp-focus-offset: var(--dp-focus-offset-dark, rgba(15, 23, 42, 0.95));
+    --dp-shadow: var(--dp-shadow-dark, 0 28px 55px rgba(2, 6, 23, 0.65));
+  }
+  .date-picker__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--dp-text);
+  }
+  .date-picker__control {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .date-picker__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    border-radius: 0.9rem;
+    border: 1px solid var(--dp-border);
+    background: var(--dp-bg);
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--dp-text);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+    text-align: left;
+    cursor: pointer;
+  }
+  .date-picker__toggle:hover {
+    border-color: var(--dp-border-strong);
+  }
+  .date-picker__toggle:focus-visible {
+    outline: 2px solid var(--dp-focus);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px var(--dp-focus-offset);
+  }
+  .date-picker__display {
+    flex: 1;
+    min-width: 0;
+    color: var(--dp-placeholder);
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .date-picker__display--value {
+    color: var(--dp-text);
+  }
+  .date-picker__icon {
+    font-size: 1.2rem;
+    color: var(--dp-muted);
+    flex-shrink: 0;
+  }
+  .date-picker__panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    width: min(22rem, 100%);
+    max-width: 24rem;
+    z-index: 40;
+    background: var(--dp-panel-bg);
+    border: 1px solid var(--dp-border);
+    border-radius: 1rem;
+    box-shadow: var(--dp-shadow);
+    overflow: hidden;
+    color: var(--dp-text);
+  }
+  .date-picker__panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--dp-border);
+    font-weight: 600;
+  }
+  .date-picker__current {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+  }
+  .date-picker__current-button {
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-weight: 600;
+    text-align: left;
+    padding: 0;
+    cursor: pointer;
+  }
+  .date-picker__current-button--month {
+    font-size: 1rem;
+  }
+  .date-picker__current-button--year {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dp-muted);
+  }
+  .date-picker__current-button:focus-visible {
+    outline: 2px solid var(--dp-focus);
+    outline-offset: 2px;
+    border-radius: 0.4rem;
+  }
+  .date-picker__nav {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .date-picker__nav-button {
+    border-radius: 0.5rem;
+    border: 1px solid var(--dp-border);
+    background: var(--dp-panel-bg);
+    color: var(--dp-text);
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .date-picker__nav-button:hover {
+    border-color: var(--dp-border-strong);
+    background: rgba(37, 99, 235, 0.08);
+  }
+  .date-picker__nav-button:focus-visible {
+    outline: 2px solid var(--dp-focus);
+    outline-offset: 2px;
+  }
+  .date-picker__calendar {
+    padding: 0.75rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .date-picker__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.35rem;
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dp-muted);
+  }
+  .date-picker__weekday {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .date-picker__grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+  .date-picker__cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.65rem;
+    padding: 0.35rem 0;
+    border: 1px solid transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--dp-text);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .date-picker__cell:hover:not(.date-picker__cell--disabled) {
+    background: rgba(37, 99, 235, 0.12);
+  }
+  .date-picker__cell:focus-visible {
+    outline: 2px solid var(--dp-focus);
+    outline-offset: 2px;
+  }
+  .date-picker__cell--muted {
+    color: var(--dp-muted);
+    opacity: 0.7;
+  }
+  .date-picker__cell--disabled {
+    cursor: not-allowed;
+    color: var(--dp-muted);
+    opacity: 0.45;
+  }
+  .date-picker__cell--selected {
+    background: var(--dp-accent);
+    color: #fff;
+  }
+  :where(.dark) .date-picker__cell--selected {
+    color: var(--dp-text);
+    background: var(--dp-accent);
+  }
+  .date-picker__cell--today:not(.date-picker__cell--selected) {
+    border-color: var(--dp-accent);
+    box-shadow: 0 0 0 1px var(--dp-accent);
+  }
+  .date-picker__picker {
+    position: absolute;
+    inset: 0;
+    background: var(--dp-panel-bg);
+    display: none;
+    flex-direction: column;
+    z-index: 5;
+  }
+  .date-picker__picker-header {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--dp-border);
+    font-weight: 600;
+  }
+  .date-picker__month-grid {
+    flex: 1;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .date-picker__month-button,
+  .date-picker__year-button,
+  .date-picker__year-range-button {
+    border-radius: 0.65rem;
+    border: 1px solid transparent;
+    padding: 0.45rem 0.75rem;
+    background: transparent;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--dp-text);
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .date-picker__month-button:hover,
+  .date-picker__year-button:hover,
+  .date-picker__year-range-button:hover {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: var(--dp-border-strong);
+  }
+  .date-picker__month-button:focus-visible,
+  .date-picker__year-button:focus-visible,
+  .date-picker__year-range-button:focus-visible {
+    outline: 2px solid var(--dp-focus);
+    outline-offset: 2px;
+  }
+  .date-picker__month-button--current,
+  .date-picker__year-button--current {
+    background: var(--dp-accent);
+    color: #fff;
+  }
+  :where(.dark)
+    .date-picker__month-button--current,
+  :where(.dark)
+    .date-picker__year-button--current {
+    color: var(--dp-text);
+  }
+  .date-picker__month-button--disabled,
+  .date-picker__year-button--disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    color: var(--dp-muted);
+  }
+  .date-picker__year-grid {
+    flex: 1;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .date-picker__year-range-button {
+    grid-column: span 2;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dp-muted);
+  }
+  .date-picker__footer {
+    border-top: 1px solid var(--dp-border);
+    padding: 0.5rem 1rem;
+    text-align: right;
+  }
+  .date-picker__today-button {
+    border: none;
+    background: transparent;
+    color: var(--dp-accent-strong);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+  }
+  .date-picker__today-button:hover {
+    text-decoration: underline;
+  }
+  .date-picker__today-button:focus-visible {
+    outline: 2px solid var(--dp-focus);
+    outline-offset: 2px;
+  }
+  @media (max-width: 30rem) {
+    .date-picker__panel {
+      width: 100%;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .date-picker__toggle,
+    .date-picker__nav-button,
+    .date-picker__cell,
+    .date-picker__month-button,
+    .date-picker__year-button,
+    .date-picker__year-range-button {
+      transition: none;
+    }
+  }
+</style>

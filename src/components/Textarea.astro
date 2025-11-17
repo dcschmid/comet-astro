@@ -1,10 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
-/**
- * WCAG AAA compliant Textarea component
- * Provides accessible multi-line text input with comprehensive features
- */
 type TextareaSize = 'sm' | 'md' | 'lg';
 type TextareaVariant = 'default' | 'minimal' | 'bordered' | 'filled';
 type ResizeOption = 'none' | 'vertical' | 'horizontal' | 'both';
@@ -59,105 +53,44 @@ const {
   ariaDescribedBy,
 } = Astro.props as Props;
 
-// Generate unique IDs
 const textareaId = id || `textarea-${Math.random().toString(36).slice(2, 9)}`;
 const helperId = (error || helperText) ? `${textareaId}-help` : undefined;
 const counterId = showCounter ? `${textareaId}-counter` : undefined;
+const describedBy =
+  [helperId, counterId, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
 
-// Combine all describedby IDs
-const allDescribedBy = [helperId, counterId, ariaDescribedBy].filter(Boolean).join(' ') || undefined;
-
-// Size variants with WCAG AAA spacing
-const sizeClasses = {
-  sm: {
-    textarea: 'px-3 py-2 text-sm min-h-[80px]',
-    label: 'text-sm',
-    helper: 'text-xs',
-    counter: 'text-xs',
-  },
-  md: {
-    textarea: 'px-4 py-2.5 text-base min-h-[100px]',
-    label: 'text-sm',
-    helper: 'text-sm',
-    counter: 'text-sm',
-  },
-  lg: {
-    textarea: 'px-6 py-3 text-lg min-h-[120px]',
-    label: 'text-base',
-    helper: 'text-base',
-    counter: 'text-base',
-  },
-};
-
-// Variant styles with WCAG AAA contrast ratios (9:1)
-const variantClasses = {
-  default: {
-    textarea: 'bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg shadow-sm',
-    focus: 'focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600/20',
-    error: 'border-red-600 dark:border-red-500 focus-visible:border-red-600 focus-visible:ring-red-600/20',
-  },
-  minimal: {
-    textarea: 'bg-transparent border-0 border-b-2 border-slate-300 dark:border-slate-700 rounded-none',
-    focus: 'focus-visible:border-blue-600 focus-visible:ring-0',
-    error: 'border-red-600 dark:border-red-500 focus-visible:border-red-600',
-  },
-  bordered: {
-    textarea: 'bg-white dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 rounded-lg',
-    focus: 'focus-visible:border-blue-600 focus-visible:ring-0',
-    error: 'border-red-600 dark:border-red-500 focus-visible:border-red-600',
-  },
-  filled: {
-    textarea: 'bg-slate-100 dark:bg-slate-800 border border-transparent rounded-lg',
-    focus: 'focus-visible:bg-white dark:focus-visible:bg-slate-950 focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600/20',
-    error: 'bg-red-50 dark:bg-red-950/20 border-red-600 dark:border-red-500 focus-visible:border-red-600 focus-visible:ring-red-600/20',
-  },
-};
-
-// Resize options
-const resizeClasses = {
-  none: 'resize-none',
-  vertical: 'resize-y',
-  horizontal: 'resize-x', 
-  both: 'resize',
-};
-
-const currentSize = sizeClasses[size];
-const currentVariant = variantClasses[variant];
-const hasError = !!error;
-
-// Character count
 const currentLength = value.length;
 const isOverLimit = maxLength && currentLength > maxLength;
+const hasError = Boolean(error);
+
+const rootClasses = [
+  'textarea',
+  `textarea--size-${size}`,
+  `textarea--variant-${variant}`,
+  `textarea--resize-${resize}`,
+  hasError ? 'textarea--error' : '',
+  disabled ? 'textarea--disabled' : '',
+  readonly ? 'textarea--readonly' : '',
+  autoGrow ? 'textarea--auto' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<div class={cn('space-y-2', className)}>
-  {/* Label */}
+<div class={rootClasses}>
   {label && (
-    <label
-      for={textareaId}
-      class={cn(
-        'block font-medium transition-colors',
-        'text-slate-900 dark:text-slate-100',
-        'contrast-more:text-slate-950 contrast-more:dark:text-white',
-        currentSize.label,
-        disabled && 'text-slate-500 dark:text-slate-400 cursor-not-allowed'
-      )}
-    >
+    <label for={textareaId} class="textarea__label">
       {label}
       {required && (
-        <span
-          class="ml-1 text-red-600 dark:text-red-400"
-          aria-hidden="true"
-          title="Required field"
-        >
+        <span class="textarea__required" aria-hidden="true" title="Required field">
           *
         </span>
       )}
     </label>
   )}
 
-  {/* Textarea */}
-  <div class="relative">
+  <div class="textarea__field">
     <textarea
       id={textareaId}
       name={name}
@@ -171,63 +104,20 @@ const isOverLimit = maxLength && currentLength > maxLength;
       minlength={minLength}
       aria-label={ariaLabel || label}
       aria-invalid={hasError ? 'true' : 'false'}
-      aria-describedby={allDescribedBy}
+      aria-describedby={describedBy}
       aria-required={required ? 'true' : undefined}
-      class={cn(
-        // Base styles
-        'w-full transition-all duration-150 outline-none',
-        'text-slate-900 dark:text-slate-100',
-        'placeholder:text-slate-500 dark:placeholder:text-slate-400',
-        'contrast-more:text-slate-950 contrast-more:dark:text-white',
-        'contrast-more:placeholder:text-slate-600 contrast-more:dark:placeholder:text-slate-400',
-        
-        // Size and spacing
-        currentSize.textarea,
-        
-        // Variant styles
-        hasError ? currentVariant.error : currentVariant.textarea,
-        !hasError && currentVariant.focus,
-        
-        // Resize behavior
-        resizeClasses[resize],
-        
-        // Auto-grow
-        autoGrow && 'overflow-hidden',
-        
-        // States
-        disabled && [
-          'cursor-not-allowed opacity-60',
-          'bg-slate-100 dark:bg-slate-800',
-          'text-slate-500 dark:text-slate-400',
-          'contrast-more:bg-slate-200 contrast-more:dark:bg-slate-700'
-        ],
-        
-        readonly && [
-          'cursor-default',
-          'bg-slate-50 dark:bg-slate-900/50',
-          'focus-visible:ring-0 focus-visible:border-current'
-        ],
-        
-        // Motion preferences
-        'motion-safe:transition-all motion-reduce:transition-none',
-        
-        // Focus ring offset
-        'focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950'
-      )}
+      class="textarea__input"
       style={autoGrow ? `field-sizing: content; max-height: ${Math.max(rows * 1.5, 6)}rem;` : undefined}
     >{value}</textarea>
 
-    {/* Character counter overlay */}
     {showCounter && maxLength && (
       <div
-        class={cn(
-          'absolute bottom-2 right-3 pointer-events-none',
-          'text-xs font-medium tabular-nums',
-          isOverLimit 
-            ? 'text-red-600 dark:text-red-400' 
-            : 'text-slate-500 dark:text-slate-400',
-          'contrast-more:text-slate-950 contrast-more:dark:text-white'
-        )}
+        class={[
+          'textarea__counter-overlay',
+          isOverLimit ? 'textarea__counter-overlay--alert' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         aria-hidden="true"
       >
         {currentLength}/{maxLength}
@@ -235,47 +125,39 @@ const isOverLimit = maxLength && currentLength > maxLength;
     )}
   </div>
 
-  {/* Helper text and counter */}
-  <div class="flex items-start justify-between gap-3">
+  <div class="textarea__meta">
     {(error || helperText) && (
       <div
         id={helperId}
-        class={cn(
-          'flex-1',
-          currentSize.helper,
-          hasError 
-            ? 'text-red-600 dark:text-red-400' 
-            : 'text-slate-600 dark:text-slate-400',
-          'contrast-more:text-slate-950 contrast-more:dark:text-white'
-        )}
+        class={[
+          'textarea__helper',
+          hasError ? 'textarea__helper--error' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         role={hasError ? 'alert' : 'status'}
         aria-live={hasError ? 'assertive' : 'polite'}
       >
-        {hasError && (
-          <span class="sr-only">Error: </span>
-        )}
+        {hasError && <span class="sr-only">Error: </span>}
         {error || helperText}
       </div>
     )}
 
-    {/* Accessible character counter */}
     {showCounter && maxLength && (
       <div
         id={counterId}
-        class={cn(
-          'flex-shrink-0 font-medium tabular-nums',
-          currentSize.counter,
-          isOverLimit 
-            ? 'text-red-600 dark:text-red-400' 
-            : 'text-slate-500 dark:text-slate-400',
-          'contrast-more:text-slate-950 contrast-more:dark:text-white'
-        )}
+        class={[
+          'textarea__counter',
+          isOverLimit ? 'textarea__counter--alert' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         aria-live="polite"
         aria-atomic="true"
       >
         <span class="sr-only">
-          {isOverLimit 
-            ? `Character limit exceeded: ${currentLength} of ${maxLength} characters` 
+          {isOverLimit
+            ? `Character limit exceeded: ${currentLength} of ${maxLength} characters`
             : `${currentLength} of ${maxLength} characters used`}
         </span>
         <span aria-hidden="true">
@@ -285,72 +167,40 @@ const isOverLimit = maxLength && currentLength > maxLength;
     )}
   </div>
 
-  {/* Length validation message */}
   {isOverLimit && (
-    <div
-      class={cn(
-        'text-red-600 dark:text-red-400',
-        currentSize.helper,
-        'contrast-more:text-red-700 contrast-more:dark:text-red-300'
-      )}
-      role="alert"
-      aria-live="assertive"
-    >
+    <div class="textarea__limit" role="alert" aria-live="assertive">
       Text exceeds maximum length of {maxLength} characters
     </div>
   )}
 
-  {/* Minimum length helper */}
   {minLength && currentLength < minLength && currentLength > 0 && (
-    <div
-      class={cn(
-        'text-amber-600 dark:text-amber-400',
-        currentSize.helper,
-        'contrast-more:text-amber-700 contrast-more:dark:text-amber-300'
-      )}
-      role="status"
-      aria-live="polite"
-    >
+    <div class="textarea__minimum" role="status" aria-live="polite">
       At least {minLength - currentLength} more character{minLength - currentLength === 1 ? '' : 's'} required
     </div>
   )}
 </div>
 
-{/* Auto-grow script for dynamic height adjustment */}
 {autoGrow && (
   <script is:inline define:vars={{ textareaId }}>
-    (function() {
+    (function () {
       const textarea = document.getElementById(textareaId);
       if (!textarea) return;
 
       const adjustHeight = () => {
-        // Reset height to auto to get the correct scrollHeight
         textarea.style.height = 'auto';
-        // Set height to scrollHeight to accommodate content
         textarea.style.height = textarea.scrollHeight + 'px';
       };
 
-      // Adjust height on input
       textarea.addEventListener('input', adjustHeight);
-      
-      // Adjust height on content change
       textarea.addEventListener('change', adjustHeight);
-      
-      // Adjust height on paste
       textarea.addEventListener('paste', () => {
-        // Use setTimeout to ensure content is pasted before adjustment
         setTimeout(adjustHeight, 0);
       });
 
-      // Initial adjustment
-      if (textarea.value) {
-        adjustHeight();
-      }
+      if (textarea.value) adjustHeight();
 
-      // Adjust on window resize
       window.addEventListener('resize', adjustHeight);
-      
-      // Cleanup on page unload
+
       window.addEventListener('beforeunload', () => {
         textarea.removeEventListener('input', adjustHeight);
         textarea.removeEventListener('change', adjustHeight);
@@ -359,3 +209,205 @@ const isOverLimit = maxLength && currentLength > maxLength;
     })();
   </script>
 )}
+
+<style>
+  .textarea {
+    --textarea-font-size: 0.95rem;
+    --textarea-label-size: 0.85rem;
+    --textarea-helper-size: 0.85rem;
+    --textarea-counter-size: 0.85rem;
+    --textarea-padding: 0.75rem 1rem;
+    --textarea-min-height: 6rem;
+    --textarea-border: rgba(148, 163, 184, 0.8);
+    --textarea-background: #fff;
+    --textarea-color: #0f172a;
+    --textarea-placeholder: #64748b;
+    --textarea-muted: #64748b;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  :where(.dark) .textarea {
+    --textarea-border: rgba(71, 85, 105, 0.8);
+    --textarea-background: #0f172a;
+    --textarea-color: #f8fafc;
+    --textarea-placeholder: #cbd5f5;
+    --textarea-muted: #cbd5f5;
+  }
+
+  .textarea--size-sm {
+    --textarea-font-size: 0.85rem;
+    --textarea-label-size: 0.8rem;
+    --textarea-helper-size: 0.75rem;
+    --textarea-counter-size: 0.75rem;
+    --textarea-padding: 0.5rem 0.75rem;
+    --textarea-min-height: 5rem;
+  }
+
+  .textarea--size-lg {
+    --textarea-font-size: 1rem;
+    --textarea-label-size: 0.95rem;
+    --textarea-helper-size: 0.95rem;
+    --textarea-counter-size: 0.95rem;
+    --textarea-padding: 1rem 1.25rem;
+    --textarea-min-height: 7.5rem;
+  }
+
+  .textarea__label {
+    font-size: var(--textarea-label-size);
+    font-weight: 600;
+    color: var(--textarea-color);
+  }
+
+  .textarea__required {
+    margin-left: 0.25rem;
+    color: #dc2626;
+  }
+
+  .textarea__field {
+    position: relative;
+  }
+
+  .textarea__input {
+    width: 100%;
+    min-height: var(--textarea-min-height);
+    padding: var(--textarea-padding);
+    border-radius: 0.85rem;
+    border: 1px solid var(--textarea-border);
+    background: var(--textarea-background);
+    color: var(--textarea-color);
+    font-size: var(--textarea-font-size);
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+  }
+
+  .textarea--resize-none .textarea__input {
+    resize: none;
+  }
+
+  .textarea--resize-horizontal .textarea__input {
+    resize: horizontal;
+  }
+
+  .textarea--resize-both .textarea__input {
+    resize: both;
+  }
+
+  .textarea--variant-default .textarea__input {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  }
+
+  .textarea--variant-minimal .textarea__input {
+    border-radius: 0;
+    border-width: 0 0 2px 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .textarea--variant-bordered .textarea__input {
+    border-width: 2px;
+  }
+
+  .textarea--variant-filled .textarea__input {
+    background: rgba(226, 232, 240, 0.6);
+    border-color: transparent;
+  }
+
+  .textarea__input:focus-visible {
+    border-color: rgb(59, 130, 246);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  }
+
+  .textarea--error .textarea__input {
+    border-color: #dc2626;
+  }
+
+  .textarea--error .textarea__input:focus-visible {
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25);
+  }
+
+  .textarea--disabled .textarea__input {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background: rgba(226, 232, 240, 0.6);
+  }
+
+  .textarea--readonly .textarea__input {
+    background: rgba(241, 245, 249, 0.4);
+  }
+
+  .textarea__input::placeholder {
+    color: var(--textarea-placeholder);
+  }
+
+  .textarea__counter-overlay {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    color: var(--textarea-muted);
+    pointer-events: none;
+    font-weight: 600;
+  }
+
+  .textarea__counter-overlay--alert {
+    color: #dc2626;
+  }
+
+  .textarea__meta {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .textarea__helper {
+    flex: 1;
+    font-size: var(--textarea-helper-size);
+    color: var(--textarea-placeholder);
+  }
+
+  .textarea__helper--error {
+    color: #dc2626;
+  }
+
+  .textarea__counter {
+    font-size: var(--textarea-counter-size);
+    color: var(--textarea-placeholder);
+    font-weight: 600;
+  }
+
+  .textarea__counter--alert {
+    color: #dc2626;
+  }
+
+  .textarea__limit,
+  .textarea__minimum {
+    font-size: var(--textarea-helper-size);
+    font-weight: 600;
+  }
+
+  .textarea__limit {
+    color: #dc2626;
+  }
+
+  .textarea__minimum {
+    color: #d97706;
+  }
+
+  @media (prefers-contrast: high) {
+    .textarea__input {
+      border-color: currentColor;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .textarea * {
+      transition: none !important;
+    }
+  }
+</style>

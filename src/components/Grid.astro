@@ -33,56 +33,53 @@ const {
   ariaLabel,
 } = Astro.props as Props;
 
-// Enhanced responsive column classes with better breakpoint coverage
-const colClasses = {
-  1: 'grid-cols-1',
-  2: 'grid-cols-1 sm:grid-cols-2',
-  3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-  4: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
-  5: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
-  6: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
-  auto: 'grid-cols-[repeat(auto-fit,minmax(120px,1fr))]',
-};
+// BEM-based class maps for responsive behavior
+const columnClassMap = {
+  1: 'comet-grid--cols-1',
+  2: 'comet-grid--cols-2',
+  3: 'comet-grid--cols-3',
+  4: 'comet-grid--cols-4',
+  5: 'comet-grid--cols-5',
+  6: 'comet-grid--cols-6',
+  auto: 'comet-grid--cols-auto',
+} as const;
 
-// Enhanced gap system with more granular control
-const gapClasses = {
-  none: 'gap-0',
-  xs: 'gap-1',
-  sm: 'gap-2 sm:gap-3',
-  md: 'gap-3 sm:gap-4 lg:gap-6',
-  lg: 'gap-4 sm:gap-6 lg:gap-8',
-  xl: 'gap-6 sm:gap-8 lg:gap-10',
-  '2xl': 'gap-8 sm:gap-10 lg:gap-12',
-};
+const gapClassMap = {
+  none: 'comet-grid--gap-none',
+  xs: 'comet-grid--gap-xs',
+  sm: 'comet-grid--gap-sm',
+  md: 'comet-grid--gap-md',
+  lg: 'comet-grid--gap-lg',
+  xl: 'comet-grid--gap-xl',
+  '2xl': 'comet-grid--gap-2xl',
+} as const;
 
-// Alignment classes
-const alignClasses = {
-  start: 'items-start',
-  center: 'items-center',
-  end: 'items-end',
-  stretch: 'items-stretch',
-};
+const alignClassMap = {
+  start: 'comet-grid--align-start',
+  center: 'comet-grid--align-center',
+  end: 'comet-grid--align-end',
+  stretch: 'comet-grid--align-stretch',
+} as const;
 
-// Justification classes
-const justifyClasses = {
-  start: 'justify-items-start',
-  center: 'justify-items-center',
-  end: 'justify-items-end',
-  between: 'justify-between',
-  around: 'justify-around',
-  evenly: 'justify-evenly',
-};
+const justifyClassMap = {
+  start: 'comet-grid--justify-items-start',
+  center: 'comet-grid--justify-items-center',
+  end: 'comet-grid--justify-items-end',
+  between: 'comet-grid--justify-between',
+  around: 'comet-grid--justify-around',
+  evenly: 'comet-grid--justify-evenly',
+} as const;
 
 // Use auto-fit if cols is 'auto' or autoFit is explicitly true
-const effectiveCols = cols === 'auto' || autoFit ? 'auto' : cols;
+const effectiveCols = (cols === 'auto' || autoFit ? 'auto' : cols) as keyof typeof columnClassMap;
 
 // Build comprehensive class string
 const gridClasses = [
-  'grid',
-  colClasses[effectiveCols],
-  gapClasses[gap],
-  alignClasses[align],
-  justifyClasses[justify],
+  'comet-grid',
+  columnClassMap[effectiveCols],
+  gapClassMap[gap],
+  alignClassMap[align],
+  justifyClassMap[justify],
   className,
 ]
   .filter(Boolean)
@@ -124,3 +121,190 @@ const gridClasses = [
     </div>
   )
 }
+
+<style is:inline>
+  .comet-grid {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .comet-grid--cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .comet-grid--cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .comet-grid--cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .comet-grid--cols-4 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .comet-grid--cols-5 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .comet-grid--cols-6 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .comet-grid--cols-auto {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  @media (min-width: 640px) {
+    .comet-grid--cols-2,
+    .comet-grid--cols-3,
+    .comet-grid--cols-4,
+    .comet-grid--cols-5,
+    .comet-grid--cols-6 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 768px) {
+    .comet-grid--cols-4,
+    .comet-grid--cols-5,
+    .comet-grid--cols-6 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .comet-grid--cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .comet-grid--cols-4,
+    .comet-grid--cols-5,
+    .comet-grid--cols-6 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .comet-grid--cols-5,
+    .comet-grid--cols-6 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .comet-grid--cols-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  .comet-grid--gap-none {
+    gap: 0;
+  }
+
+  .comet-grid--gap-xs {
+    gap: 0.25rem;
+  }
+
+  .comet-grid--gap-sm {
+    gap: 0.5rem;
+  }
+
+  .comet-grid--gap-md {
+    gap: 0.75rem;
+  }
+
+  .comet-grid--gap-lg {
+    gap: 1rem;
+  }
+
+  .comet-grid--gap-xl {
+    gap: 1.5rem;
+  }
+
+  .comet-grid--gap-2xl {
+    gap: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .comet-grid--gap-sm {
+      gap: 0.75rem;
+    }
+
+    .comet-grid--gap-md {
+      gap: 1rem;
+    }
+
+    .comet-grid--gap-lg {
+      gap: 1.5rem;
+    }
+
+    .comet-grid--gap-xl {
+      gap: 2rem;
+    }
+
+    .comet-grid--gap-2xl {
+      gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .comet-grid--gap-md {
+      gap: 1.5rem;
+    }
+
+    .comet-grid--gap-lg {
+      gap: 2rem;
+    }
+
+    .comet-grid--gap-xl {
+      gap: 2.5rem;
+    }
+
+    .comet-grid--gap-2xl {
+      gap: 3rem;
+    }
+  }
+
+  .comet-grid--align-start {
+    align-items: start;
+  }
+
+  .comet-grid--align-center {
+    align-items: center;
+  }
+
+  .comet-grid--align-end {
+    align-items: end;
+  }
+
+  .comet-grid--align-stretch {
+    align-items: stretch;
+  }
+
+  .comet-grid--justify-items-start {
+    justify-items: start;
+  }
+
+  .comet-grid--justify-items-center {
+    justify-items: center;
+  }
+
+  .comet-grid--justify-items-end {
+    justify-items: end;
+  }
+
+  .comet-grid--justify-between {
+    justify-content: space-between;
+  }
+
+  .comet-grid--justify-around {
+    justify-content: space-around;
+  }
+
+  .comet-grid--justify-evenly {
+    justify-content: space-evenly;
+  }
+</style>

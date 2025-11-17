@@ -1,5 +1,4 @@
 ---
-import { cn } from '../utils/cn';
 import LoadingSpinner from './LoadingSpinner.astro';
 
 export interface EmbedBaseProps {
@@ -62,119 +61,50 @@ const {
   className = '',
 } = Astro.props;
 
-// Aspect ratio classes
-const aspectRatioClasses = {
-  '16:9': 'aspect-video',
-  '4:3': 'aspect-[4/3]',
-  '1:1': 'aspect-square',
-  '21:9': 'aspect-[21/9]',
-  '9:16': 'aspect-[9/16]',
-  auto: 'aspect-video',
-  none: '',
+const aspectRatioMap: Record<string, string> = {
+  '16:9': '16-9',
+  '4:3': '4-3',
+  '1:1': '1-1',
+  '21:9': '21-9',
+  '9:16': '9-16',
+  auto: '16-9',
 };
 
-// Size classes
-const sizeClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-2xl',
-  lg: 'max-w-4xl',
-  xl: 'max-w-6xl',
-};
-
-// Variant styles with WCAG AAA compliance
-const variantClasses = {
-  default: cn(
-    'relative overflow-hidden rounded-xl',
-    'border-2 border-slate-300/90 dark:border-slate-600/90',
-    'bg-slate-50 dark:bg-slate-800',
-    'shadow-lg dark:shadow-slate-950/30',
-    'ring-1 ring-slate-950/10 dark:ring-white/10'
-  ),
-  inline: cn(
-    'relative overflow-hidden rounded-lg',
-    'border border-slate-200 dark:border-slate-700',
-    'bg-white dark:bg-slate-900',
-    'shadow-sm'
-  ),
-  featured: cn(
-    'relative overflow-hidden rounded-2xl',
-    'border-2 border-blue-200 dark:border-blue-800',
-    'bg-gradient-to-br from-blue-50 to-slate-50 dark:from-blue-950/20 dark:to-slate-900',
-    'shadow-xl shadow-blue-500/10 dark:shadow-blue-500/5',
-    'ring-1 ring-blue-500/20 dark:ring-blue-400/20'
-  ),
-  minimal: cn(
-    'relative overflow-hidden rounded',
-    'border border-slate-200 dark:border-slate-700'
-  ),
-  card: cn(
-    'relative overflow-hidden rounded-xl',
-    'border border-slate-200 dark:border-slate-700',
-    'bg-white dark:bg-slate-900',
-    'shadow-md hover:shadow-lg transition-shadow'
-  ),
-};
-
+const ratioKey = aspectRatio === 'none' ? 'none' : aspectRatioMap[aspectRatio] || '16-9';
 const hasAspectRatio = aspectRatio !== 'none';
 
-const containerClasses = cn(
-  'w-full',
-  responsive && 'mx-auto',
-  responsive && sizeClasses[size],
-  !responsive && maxWidth && `max-w-[${maxWidth}]`,
-  className
-);
+const rootClasses = [
+  'embed',
+  `embed--variant-${variant}`,
+  `embed--size-${size}`,
+  hasAspectRatio ? `embed--ratio-${ratioKey}` : 'embed--no-ratio',
+  rounded ? 'embed--rounded' : 'embed--square',
+  responsive ? 'embed--responsive' : 'embed--static',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-const wrapperClasses = cn(
-  variantClasses[variant],
-  hasAspectRatio && aspectRatioClasses[aspectRatio],
-  !rounded && 'rounded-none'
-);
-
-const iframeClasses = cn(
-  hasAspectRatio ? 'absolute inset-0 w-full h-full' : 'w-full',
-  'border-0',
-  rounded ? 'rounded-lg' : 'rounded-none',
-  'focus-visible:outline-none focus-visible:ring-4',
-  'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-  'focus-visible:ring-offset-2',
-  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-800'
-);
-
-// Loading state classes
-const loadingOverlayClasses = cn(
-  'absolute inset-0 z-10',
-  'flex items-center justify-center',
-  'bg-slate-100/80 dark:bg-slate-800/80',
-  'backdrop-blur-sm',
-  loading ? 'opacity-100' : 'opacity-0 pointer-events-none',
-  'transition-opacity duration-300'
-);
-
-// Error state classes
-const errorClasses = cn(
-  'absolute inset-0 z-10',
-  'flex flex-col items-center justify-center gap-3 p-6',
-  'bg-red-50 dark:bg-red-950/20',
-  'border-2 border-red-200 dark:border-red-800',
-  'text-center'
-);
+const rootStyle = maxWidth
+  ? `--embed-max-width-custom: ${maxWidth};`
+  : undefined;
 
 const uniqueId = Math.random().toString(36).substr(2, 9);
 ---
 
-<div class={containerClasses}>
+<div class={rootClasses} style={rootStyle}>
   <div
-    class={wrapperClasses}
+    class="embed__frame"
     role="region"
     aria-label={ariaLabel || `${title} embed`}
     aria-describedby={description ? `embed-desc-${uniqueId}` : ariaDescribedby}
+    data-embed-title={title}
   >
     {
       error ? (
-        <div class={errorClasses} role="alert">
+        <div class="embed__error" role="alert">
           <svg
-            class="w-12 h-12 text-red-500 dark:text-red-400"
+            class="embed__error-icon"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -187,16 +117,14 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"
             />
           </svg>
-          <div>
-            <h3 class="text-lg font-semibold text-red-900 dark:text-red-100">
-              Content could not be loaded
-            </h3>
-            <p class="text-sm text-red-700 dark:text-red-300 mt-1">{error}</p>
+          <div class="embed__error-text">
+            <h3 class="embed__error-title">Content could not be loaded</h3>
+            <p class="embed__error-message">{error}</p>
           </div>
         </div>
       ) : (
-        <div>
-          <div class={loadingOverlayClasses} aria-hidden={!loading}>
+        <>
+          <div class={`embed__loading ${loading ? 'embed__loading--visible' : ''}`} aria-hidden={!loading}>
             <LoadingSpinner
               size="lg"
               variant="primary"
@@ -208,7 +136,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
           <iframe
             src={src}
             title={title}
-            class={iframeClasses}
+            class="embed__iframe"
             allowfullscreen={allowFullscreen}
             loading={lazy ? 'lazy' : 'eager'}
             sandbox={sandbox}
@@ -219,14 +147,13 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
             }
             data-embed-type="generic"
           />
-        </div>
+        </>
       )
     }
 
-    <!-- Description (hidden but accessible) -->
     {
       description && (
-        <div id={`embed-desc-${uniqueId}`} class="sr-only">
+        <div id={`embed-desc-${uniqueId}`} class="embed__description">
           {description}
         </div>
       )
@@ -234,34 +161,222 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
   </div>
 </div>
 
-<style>
-  /* Ensure iframe responsiveness */
-  iframe {
-    max-width: 100%;
+<style is:inline>
+  .embed {
+    width: 100%;
+    --embed-max-width: 56rem;
+    --embed-bg: #f8fafc;
+    --embed-border: rgba(15, 23, 42, 0.1);
+    --embed-shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
+    --embed-ring: rgba(15, 23, 42, 0.12);
+    --embed-radius: 1.25rem;
   }
-
-  /* High contrast mode support */
+  .embed--responsive {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: var(--embed-max-width-custom, var(--embed-max-width));
+  }
+  .embed--size-sm {
+    --embed-max-width: 28rem;
+  }
+  .embed--size-md {
+    --embed-max-width: 48rem;
+  }
+  .embed--size-lg {
+    --embed-max-width: 64rem;
+  }
+  .embed--size-xl {
+    --embed-max-width: 80rem;
+  }
+  .embed--static {
+    max-width: var(--embed-max-width-custom, 100%);
+  }
+  .embed--no-ratio .embed__frame {
+    aspect-ratio: auto;
+    min-height: 18rem;
+  }
+  .embed--ratio-16-9 .embed__frame {
+    aspect-ratio: 16 / 9;
+  }
+  .embed--ratio-4-3 .embed__frame {
+    aspect-ratio: 4 / 3;
+  }
+  .embed--ratio-1-1 .embed__frame {
+    aspect-ratio: 1 / 1;
+  }
+  .embed--ratio-21-9 .embed__frame {
+    aspect-ratio: 21 / 9;
+  }
+  .embed--ratio-9-16 .embed__frame {
+    aspect-ratio: 9 / 16;
+  }
+  .embed__frame {
+    position: relative;
+    width: 100%;
+    background: var(--embed-bg);
+    border: 1px solid var(--embed-border);
+    box-shadow: var(--embed-shadow), 0 0 0 1px var(--embed-ring);
+    border-radius: var(--embed-radius);
+    overflow: hidden;
+  }
+  .embed--rounded .embed__frame {
+    border-radius: var(--embed-radius);
+  }
+  .embed--square .embed__frame {
+    border-radius: 0;
+  }
+  .embed--variant-default {
+    --embed-bg: #f8fafc;
+    --embed-border: rgba(15, 23, 42, 0.15);
+    --embed-shadow: 0 18px 40px rgba(15, 23, 42, 0.15);
+    --embed-ring: rgba(15, 23, 42, 0.12);
+  }
+  .embed--variant-inline {
+    --embed-bg: #ffffff;
+    --embed-border: rgba(15, 23, 42, 0.08);
+    --embed-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    --embed-radius: 1rem;
+  }
+  .embed--variant-featured {
+    --embed-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(15, 23, 42, 0.05));
+    --embed-border: rgba(59, 130, 246, 0.2);
+    --embed-shadow: 0 25px 60px rgba(59, 130, 246, 0.25);
+    --embed-ring: rgba(59, 130, 246, 0.25);
+    --embed-radius: 1.5rem;
+  }
+  .embed--variant-minimal {
+    --embed-bg: transparent;
+    --embed-border: rgba(15, 23, 42, 0.12);
+    --embed-shadow: none;
+    --embed-radius: 0.75rem;
+  }
+  .embed--variant-card {
+    --embed-bg: #ffffff;
+    --embed-border: rgba(15, 23, 42, 0.12);
+    --embed-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
+    --embed-radius: 1.35rem;
+  }
+  :where(.dark) .embed--variant-default {
+    --embed-bg: #0f1828;
+    --embed-border: rgba(148, 163, 184, 0.4);
+    --embed-shadow: 0 25px 55px rgba(2, 6, 23, 0.8);
+    --embed-ring: rgba(148, 163, 184, 0.3);
+  }
+  :where(.dark) .embed--variant-inline {
+    --embed-bg: #0b1220;
+    --embed-border: rgba(148, 163, 184, 0.25);
+  }
+  :where(.dark) .embed--variant-featured {
+    --embed-bg: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(15, 23, 42, 0.6));
+    --embed-border: rgba(96, 165, 250, 0.4);
+    --embed-shadow: 0 30px 70px rgba(15, 118, 255, 0.35);
+  }
+  :where(.dark) .embed--variant-minimal {
+    --embed-border: rgba(148, 163, 184, 0.35);
+  }
+  :where(.dark) .embed--variant-card {
+    --embed-bg: #0f172a;
+    --embed-border: rgba(148, 163, 184, 0.35);
+  }
+  .embed__loading,
+  .embed__error {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .embed__loading {
+    backdrop-filter: blur(4px);
+    background: rgba(248, 250, 252, 0.9);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+  }
+  :where(.dark) .embed__loading {
+    background: rgba(15, 23, 42, 0.85);
+  }
+  .embed__loading--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .embed__error {
+    flex-direction: column;
+    gap: 0.75rem;
+    background: rgba(254, 226, 226, 0.95);
+    border: 1px solid rgba(248, 113, 113, 0.6);
+    z-index: 3;
+  }
+  :where(.dark) .embed__error {
+    background: rgba(127, 29, 29, 0.35);
+    border-color: rgba(248, 113, 113, 0.4);
+  }
+  .embed__error-icon {
+    width: 3rem;
+    height: 3rem;
+    color: rgba(220, 38, 38, 0.9);
+  }
+  .embed__error-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #991b1b;
+  }
+  :where(.dark) .embed__error-title {
+    color: #fecaca;
+  }
+  .embed__error-message {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #b91c1c;
+  }
+  :where(.dark) .embed__error-message {
+    color: #fecaca;
+  }
+  .embed__iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    border-radius: inherit;
+  }
+  .embed--no-ratio .embed__iframe {
+    height: 100%;
+    min-height: 18rem;
+  }
+  .embed__iframe:focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.8);
+    outline-offset: 4px;
+  }
+  .embed__description {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+  }
   @media (prefers-contrast: high) {
-    .relative {
+    .embed__frame {
       border-width: 3px;
     }
   }
-
-  /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
-    .transition-opacity,
-    .transition-shadow {
-      transition-duration: 0s;
+    .embed__loading {
+      transition: none;
     }
   }
-
-  /* Print styles */
   @media print {
-    iframe {
+    .embed__iframe {
       display: none;
     }
-    .relative::after {
-      content: 'Embedded content: ' attr(title);
+    .embed__frame::after {
+      content: 'Embedded content: ' attr(data-embed-title);
       display: block;
       padding: 1rem;
       background: #f3f4f6;

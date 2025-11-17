@@ -33,15 +33,11 @@ const {
   class: className = '',
 } = props;
 const label = ariaLabel || 'Search for weather location';
-const baseCls = `rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-4 md:p-5 flex flex-col gap-3 ${className}`;
-const inputCls =
-  'w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm md:text-base text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500';
-const listCls =
-  'mt-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm divide-y divide-slate-200 dark:divide-slate-700 overflow-hidden';
+const baseClasses = ['weather-locsearch', className].filter(Boolean).join(' ');
 ---
 
 <div
-  class={baseCls}
+  class={baseClasses}
   role="region"
   aria-label={label}
   data-locsearch
@@ -52,30 +48,30 @@ const listCls =
 >
   <label
     for="locsearch-input"
-    class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400"
+    class="weather-locsearch__label"
     >Location</label
   >
   <input
     id="locsearch-input"
     type="text"
-    class={inputCls}
+    class="weather-locsearch__input"
     placeholder={placeholder}
     autocomplete="off"
     aria-autocomplete="list"
     aria-controls="locsearch-results"
     aria-expanded="false"
   />
-  <div class="relative" data-results-wrapper>
+  <div class="weather-locsearch__results" data-results-wrapper>
     <ul
       id="locsearch-results"
       role="listbox"
-      class={listCls + ' hidden'}
+      class="weather-locsearch__list is-hidden"
       data-results
     >
     </ul>
   </div>
   <p
-    class="text-[11px] md:text-xs text-slate-600 dark:text-slate-300"
+    class="weather-locsearch__status"
     aria-live="polite"
     data-status
   >
@@ -85,18 +81,14 @@ const listCls =
         : 'Warten auf Eingabe (min. 2 Zeichen)'
     }
   </p>
-  <p class="text-[10px] md:text-[11px] text-slate-500 dark:text-slate-400">
-    AAA Kontrast Hinweis.
-  </p>
+  <p class="weather-locsearch__hint">AAA Kontrast Hinweis.</p>
 </div>
 
 <script>
   // Minimal geocoding search implementation
-  const ITEM_BASE =
-    'px-3 py-2 text-[13px] md:text-sm flex items-center justify-between gap-3 cursor-pointer focus:outline-none';
-  const ITEM_NEUTRAL = 'text-slate-800 dark:text-slate-100';
-  const ITEM_MUTED =
-    'text-[11px] font-medium text-slate-600 dark:text-slate-300';
+  const ITEM_BASE = 'weather-locsearch__item';
+  const ITEM_NEUTRAL = 'weather-locsearch__item-text';
+  const ITEM_MUTED = 'weather-locsearch__item-sub';
   const FALLBACK = [
     { name: 'Berlin', country: 'Germany', latitude: 52.52, longitude: 13.405 },
     {
@@ -111,18 +103,18 @@ const listCls =
     { name: 'New York', country: 'USA', latitude: 40.7128, longitude: -74.006 },
   ];
   function initWeatherLocationSearch(el) {
-    const disableFetch = el.dataset.disableFetch === 'true';
-    const max = parseInt(el.dataset.max || '6');
-    const debounceMs = parseInt(el.dataset.debounce || '350');
-    const input = el.querySelector('#weather-locsearch-input');
-    const list = el.querySelector('[data-results]');
-    const status = el.querySelector('[data-status]');
+  const disableFetch = el.dataset.disableFetch === 'true';
+  const max = parseInt(el.dataset.max || '6');
+  const debounceMs = parseInt(el.dataset.debounce || '350');
+  const input = el.querySelector('#locsearch-input');
+  const list = el.querySelector('[data-results]');
+  const status = el.querySelector('[data-status]');
     let timer;
     let activeIndex = -1;
     let current = [];
     function clearList() {
       list.innerHTML = '';
-      list.classList.add('hidden');
+      list.classList.add('is-hidden');
       activeIndex = -1;
       input.setAttribute('aria-expanded', 'false');
     }
@@ -133,14 +125,14 @@ const listCls =
         li.role = 'option';
         li.tabIndex = -1;
         li.dataset.index = String(i);
-        li.className = `${ITEM_BASE} ${ITEM_NEUTRAL} hover:bg-slate-100 dark:hover:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-700`;
-        li.innerHTML = `<span class='truncate'>${loc.name}, ${loc.country}</span><span class='${ITEM_MUTED}'>${loc.latitude.toFixed(2)}, ${loc.longitude.toFixed(2)}</span>`;
+        li.className = `${ITEM_BASE}`;
+        li.innerHTML = `<span class='${ITEM_NEUTRAL}'>${loc.name}, ${loc.country}</span><span class='${ITEM_MUTED}'>${loc.latitude.toFixed(2)}, ${loc.longitude.toFixed(2)}</span>`;
         li.addEventListener('click', () => select(i));
         li.addEventListener('mouseenter', () => setActive(i));
         list.appendChild(li);
       });
       if (items.length) {
-        list.classList.remove('hidden');
+        list.classList.remove('is-hidden');
         input.setAttribute('aria-expanded', 'true');
       } else {
         clearList();
@@ -223,7 +215,7 @@ const listCls =
       timer = setTimeout(() => search(q), debounceMs);
     });
     input.addEventListener('keydown', (e) => {
-      if (list.classList.contains('hidden')) return;
+      if (list.classList.contains('is-hidden')) return;
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         setActive(Math.min(activeIndex + 1, current.length - 1));

@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 /**
  * SEO - Comprehensive SEO component with WCAG AAA compliance
  * Manages meta tags, structured data, and optional visual elements
@@ -173,35 +171,9 @@ const websiteSchema = {
 const allSchemas = [websiteSchema, breadcrumbSchema].filter(Boolean);
 
 // Visual breadcrumbs styling with WCAG AAA compliance
-const breadcrumbClasses = cn(
-  'flex flex-wrap items-center gap-2 text-sm',
-  'text-gray-700 dark:text-gray-300',
-  'mb-4 p-3 rounded-lg',
-  'bg-gray-50 dark:bg-gray-800',
-  'border border-gray-200 dark:border-gray-700',
-  className
-);
-
-const breadcrumbLinkClasses = cn(
-  'text-blue-700 dark:text-blue-300',
-  'hover:text-blue-800 dark:hover:text-blue-200',
-  'underline decoration-blue-700 dark:decoration-blue-300',
-  'underline-offset-2 decoration-2',
-  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
-  'focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-800',
-  'rounded-sm px-1 py-0.5',
-  'transition-colors duration-200'
-);
-
-const breadcrumbSeparatorClasses = cn(
-  'text-gray-500 dark:text-gray-400',
-  'select-none'
-);
-
-const breadcrumbCurrentClasses = cn(
-  'text-gray-900 dark:text-gray-100',
-  'font-medium'
-);
+const breadcrumbRootClass = ['seo-breadcrumbs', className]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <!-- Basic Meta Tags -->
@@ -296,20 +268,20 @@ const breadcrumbCurrentClasses = cn(
 <!-- Visual Breadcrumbs (if enabled) -->
 {
   showBreadcrumbs && breadcrumbs.length > 0 && (
-    <nav aria-label="Breadcrumb" class={breadcrumbClasses}>
-      <ol class="flex flex-wrap items-center gap-2" role="list">
+    <nav aria-label="Breadcrumb" class={breadcrumbRootClass}>
+      <ol class="seo-breadcrumbs__list" role="list">
         {breadcrumbs.map((breadcrumb, index) => (
-          <li class="flex items-center gap-2">
+          <li class="seo-breadcrumbs__item">
             {index < breadcrumbs.length - 1 ? (
               <>
                 <a
                   href={breadcrumb.url}
-                  class={breadcrumbLinkClasses}
+                  class="seo-breadcrumbs__link"
                   aria-describedby={`breadcrumb-${index + 1}`}
                 >
                   {breadcrumb.name}
                 </a>
-                <span class={breadcrumbSeparatorClasses} aria-hidden="true">
+                <span class="seo-breadcrumbs__separator" aria-hidden="true">
                   <svg
                     width="16"
                     height="16"
@@ -322,7 +294,7 @@ const breadcrumbCurrentClasses = cn(
                 </span>
               </>
             ) : (
-              <span class={breadcrumbCurrentClasses} aria-current="page">
+              <span class="seo-breadcrumbs__current" aria-current="page">
                 {breadcrumb.name}
               </span>
             )}
@@ -332,3 +304,89 @@ const breadcrumbCurrentClasses = cn(
     </nav>
   )
 }
+
+{showBreadcrumbs && (
+  <style is:inline>
+    .seo-breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+      font-size: 0.9rem;
+      color: #475569;
+      background-color: #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      border-radius: 1rem;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .seo-breadcrumbs__list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .seo-breadcrumbs__item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .seo-breadcrumbs__link {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      border-radius: 0.25rem;
+      padding: 0.15rem 0.3rem;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .seo-breadcrumbs__link:hover {
+      color: #1e3a8a;
+    }
+
+    .seo-breadcrumbs__link:focus-visible {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+      background-color: rgba(59, 130, 246, 0.15);
+    }
+
+    .seo-breadcrumbs__separator {
+      display: inline-flex;
+      color: #94a3b8;
+    }
+
+    .seo-breadcrumbs__current {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    :where(.dark) .seo-breadcrumbs {
+      background-color: rgba(15, 23, 42, 0.8);
+      border-color: rgba(148, 163, 184, 0.35);
+      color: #cbd5f5;
+    }
+
+    :where(.dark) .seo-breadcrumbs__link {
+      color: #93c5fd;
+    }
+
+    :where(.dark) .seo-breadcrumbs__link:focus-visible {
+      outline-color: #60a5fa;
+      background-color: rgba(96, 165, 250, 0.25);
+    }
+
+    :where(.dark) .seo-breadcrumbs__separator {
+      color: #94a3b8;
+    }
+
+    :where(.dark) .seo-breadcrumbs__current {
+      color: #f8fafc;
+    }
+  </style>
+)}

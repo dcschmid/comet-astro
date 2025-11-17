@@ -46,90 +46,31 @@ const {
   footerAriaLabel = 'Site footer',
 } = Astro.props as Props;
 
-// Background variants with WCAG AAA compliant colors
-const backgroundClasses = {
-  default: 'bg-white dark:bg-slate-950',
-  muted: 'bg-slate-50 dark:bg-slate-900',
-  accent: 'bg-blue-50 dark:bg-blue-950/30',
-  gradient:
-    'bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/50',
-};
-
-// Spacing variants
-const spacingClasses = {
-  tight: 'gap-4',
-  normal: 'gap-6 lg:gap-8',
-  loose: 'gap-8 lg:gap-12',
-};
-
-// Container max-width classes
-const maxWidthClasses = {
-  sm: 'max-w-3xl',
-  md: 'max-w-5xl',
-  lg: 'max-w-7xl',
-  xl: 'max-w-screen-xl',
-  '2xl': 'max-w-screen-2xl',
-  full: 'max-w-none',
-};
-
-// Layout variant styles
-const getLayoutClasses = () => {
-  const base = 'min-h-screen flex';
-
-  switch (variant) {
-    case 'wide':
-      return `${base} flex-col`;
-    case 'narrow':
-      return `${base} flex-col`;
-    case 'sidebar':
-      return `${base} ${sidebarPosition === 'left' ? 'flex-row' : 'flex-row-reverse'} lg:flex-row`;
-    default:
-      return `${base} flex-col`;
-  }
-};
-
-// Container classes based on variant
-const getContainerClasses = () => {
-  if (!container) return 'flex-1';
-
-  const baseContainer = `container mx-auto px-4 sm:px-6 lg:px-8 flex-1 ${maxWidthClasses[maxWidth]}`;
-
-  switch (variant) {
-    case 'narrow':
-      return `${baseContainer} max-w-4xl`;
-    case 'sidebar':
-      return 'flex-1 px-4 sm:px-6 lg:px-8';
-    default:
-      return baseContainer;
-  }
-};
-
-// Header classes
-const getHeaderClasses = () => {
-  const base = 'w-full';
-  const sticky = stickyHeader ? 'sticky top-0 z-40' : '';
-  const bg = stickyHeader
-    ? 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800'
-    : '';
-
-  return cn(base, sticky, bg);
-};
-
-// Footer classes
-const getFooterClasses = () => {
-  const base = 'w-full';
-  const sticky = stickyFooter ? 'sticky bottom-0 z-40' : '';
-  const bg = stickyFooter
-    ? 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-800'
-    : '';
-
-  return cn(base, sticky, bg);
-};
-
-// Sidebar classes for sidebar variant
-const getSidebarClasses = () => {
-  return 'w-full lg:w-80 flex-shrink-0 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800';
-};
+const rootClasses = cn(
+  'layout',
+  `layout--variant-${variant}`,
+  `layout--background-${background}`,
+  `layout--spacing-${spacing}`,
+  `layout--max-${maxWidth}`,
+  stickyHeader ? 'layout--sticky-header' : '',
+  stickyFooter ? 'layout--sticky-footer' : '',
+  variant === 'sidebar' ? `layout--sidebar-${sidebarPosition}` : '',
+  container ? 'layout--container' : 'layout--fluid',
+  'text-slate-900 dark:text-slate-100',
+  className
+);
+const headerClasses = cn('layout__header', stickyHeader && 'layout__header--sticky');
+const footerClasses = cn('layout__footer', stickyFooter && 'layout__footer--sticky');
+const mainClasses = cn(
+  'layout__main',
+  container ? 'layout__main--container' : 'layout__main--fluid',
+  stickyHeader && 'layout__main--with-sticky-header',
+  stickyFooter && 'layout__main--with-sticky-footer'
+);
+const sidebarClasses = [
+  'layout__sidebar',
+  sidebarPosition === 'right' ? 'layout__sidebar--right' : 'layout__sidebar--left',
+].join(' ');
 
 // Generate unique IDs for skip links
 const skipLinkId = `main-content-${Math.random().toString(36).substr(2, 9)}`;
@@ -152,26 +93,14 @@ const skipLinkId = `main-content-${Math.random().toString(36).substr(2, 9)}`;
   {skipToMainLabel}
 </a>
 
-<div
-  class={cn(
-    getLayoutClasses(),
-    backgroundClasses[background],
-    spacingClasses[spacing],
-    'text-slate-900 dark:text-slate-100',
-    className
-  )}
->
-  <header class={getHeaderClasses()} aria-label={headerAriaLabel} role="banner">
+<div class={rootClasses}>
+  <header class={headerClasses} aria-label={headerAriaLabel} role="banner">
     <slot name="header" />
   </header>
 
   {
     variant === 'sidebar' && (
-      <aside
-        class={getSidebarClasses()}
-        aria-label="Sidebar navigation"
-        role="complementary"
-      >
+      <aside class={sidebarClasses} aria-label="Sidebar navigation" role="complementary">
         <slot name="sidebar" />
       </aside>
     )
@@ -179,14 +108,7 @@ const skipLinkId = `main-content-${Math.random().toString(36).substr(2, 9)}`;
 
   <main
     id={skipLinkId}
-    class={cn(
-      getContainerClasses(),
-      'focus:outline-none',
-      // Ensure sufficient spacing from header when sticky
-      stickyHeader && 'pt-4',
-      // Ensure sufficient spacing from footer when sticky
-      stickyFooter && 'pb-4'
-    )}
+    class={mainClasses}
     aria-label={mainAriaLabel}
     role="main"
     tabindex="-1"
@@ -194,37 +116,174 @@ const skipLinkId = `main-content-${Math.random().toString(36).substr(2, 9)}`;
     <slot />
   </main>
 
-  <footer
-    class={getFooterClasses()}
-    aria-label={footerAriaLabel}
-    role="contentinfo"
-  >
+  <footer class={footerClasses} aria-label={footerAriaLabel} role="contentinfo">
     <slot name="footer" />
   </footer>
 </div>
 
-<style>
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    .bg-gradient-to-br {
-      background-image: none;
-      background-color: white;
+<style is:inline>
+  .layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: #0f172a;
+    background-color: #ffffff;
+  }
+
+  .layout--spacing-tight {
+    gap: 1rem;
+  }
+
+  .layout--spacing-loose {
+    gap: 2rem;
+  }
+
+  .layout--variant-sidebar {
+    flex-direction: column;
+  }
+
+  .layout--variant-sidebar.layout--sidebar-left {
+    flex-direction: column;
+  }
+
+  @media (min-width: 1024px) {
+    .layout--variant-sidebar.layout--sidebar-left {
+      flex-direction: row;
     }
 
-    .dark .bg-gradient-to-br {
-      background-color: black;
+    .layout--variant-sidebar.layout--sidebar-right {
+      flex-direction: row-reverse;
     }
   }
 
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    .transition-colors {
-      transition-duration: 0.01ms;
-    }
+  .layout__header,
+  .layout__footer {
+    width: 100%;
   }
 
-  /* Focus management for skip link */
-  [tabindex='-1']:focus {
-    outline: 2px solid transparent;
+  .layout__header--sticky {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  }
+
+  .layout__footer--sticky {
+    position: sticky;
+    bottom: 0;
+    z-index: 40;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+  }
+
+  .layout__main {
+    flex: 1;
+    outline: none;
+    width: 100%;
+  }
+
+  .layout__main--container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+  }
+
+  .layout__main--fluid {
+    padding: 1rem 1.5rem;
+  }
+
+  .layout__main--with-sticky-header {
+    padding-top: 1.25rem;
+  }
+
+  .layout__main--with-sticky-footer {
+    padding-bottom: 1.25rem;
+  }
+
+  .layout--variant-sidebar {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .layout__sidebar {
+    width: 100%;
+    max-width: 20rem;
+    background-color: #f1f5f9;
+    padding: 1rem;
+  }
+
+  .layout--variant-sidebar.layout--sidebar-left .layout__sidebar {
+    border-right: 1px solid #e2e8f0;
+  }
+
+  .layout--variant-sidebar.layout--sidebar-right .layout__sidebar {
+    border-left: 1px solid #e2e8f0;
+  }
+
+  .layout--background-muted {
+    background-color: #f8fafc;
+  }
+
+  .layout--background-accent {
+    background-color: #eff6ff;
+  }
+
+  .layout--background-gradient {
+    background-image: linear-gradient(135deg, #f8fafc, #dbeafe);
+  }
+
+  .layout--max-sm .layout__main--container {
+    max-width: 48rem;
+  }
+
+  .layout--max-md .layout__main--container {
+    max-width: 60rem;
+  }
+
+  .layout--max-xl .layout__main--container {
+    max-width: 80rem;
+  }
+
+  .layout--max-2xl .layout__main--container {
+    max-width: 90rem;
+  }
+
+  .layout--max-full .layout__main--container {
+    max-width: none;
+  }
+
+  .layout--variant-wide .layout__main--container {
+    max-width: 90rem;
+  }
+
+  .layout--variant-narrow .layout__main--container {
+    max-width: 50rem;
+  }
+
+  :where(.dark) .layout {
+    color: #f8fafc;
+    background-color: #020617;
+  }
+
+  :where(.dark) .layout--background-muted {
+    background-color: #0f172a;
+  }
+
+  :where(.dark) .layout--background-accent {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  :where(.dark) .layout--background-gradient {
+    background-image: linear-gradient(135deg, #020617, #1e3a8a);
+  }
+
+  :where(.dark) .layout__header--sticky,
+  :where(.dark) .layout__footer--sticky {
+    background-color: rgba(2, 6, 23, 0.9);
+    border-color: rgba(51, 65, 85, 0.8);
   }
 </style>

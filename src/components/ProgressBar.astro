@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 interface Props {
   /** Current progress value */
   value: number;
@@ -54,79 +52,31 @@ const percentage = indeterminate
   ? 0
   : Math.min(Math.max((value / max) * 100, 0), 100);
 
-const sizeClasses = {
-  xs: 'h-1',
-  sm: 'h-1.5',
-  md: 'h-2.5',
-  lg: 'h-4',
-  xl: 'h-6',
-};
-
-const variantClasses = {
-  default: 'bg-blue-600 dark:bg-blue-400',
-  success: 'bg-emerald-600 dark:bg-emerald-400',
-  warning: 'bg-amber-500 dark:bg-amber-400',
-  error: 'bg-red-600 dark:bg-red-400',
-  info: 'bg-cyan-600 dark:bg-cyan-400',
-  gradient:
-    'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400',
-  minimal: 'bg-gray-700 dark:bg-gray-300',
-};
-
-const backgroundClasses = {
-  default: 'bg-gray-200 dark:bg-gray-700',
-  success: 'bg-emerald-100 dark:bg-emerald-900/30',
-  warning: 'bg-amber-100 dark:bg-amber-900/30',
-  error: 'bg-red-100 dark:bg-red-900/30',
-  info: 'bg-cyan-100 dark:bg-cyan-900/30',
-  gradient: 'bg-gray-200 dark:bg-gray-700',
-  minimal: 'bg-gray-100 dark:bg-gray-800',
-};
-
-const labelSizeClasses = {
-  xs: 'text-xs',
-  sm: 'text-xs',
-  md: 'text-sm',
-  lg: 'text-base',
-  xl: 'text-lg',
-};
-
-const progressBarClasses = cn(
-  'relative w-full overflow-hidden rounded-full transition-all duration-200',
-  sizeClasses[size],
-  backgroundClasses[variant],
-  disabled && 'opacity-50 cursor-not-allowed',
-  className
-);
-
-const progressFillClasses = cn(
-  'h-full rounded-full transition-all duration-500 ease-out',
-  variantClasses[variant],
-  indeterminate && 'animate-pulse bg-opacity-60'
-);
-
-const labelClasses = cn(
-  'font-medium text-gray-900 dark:text-gray-100',
-  labelSizeClasses[size],
-  disabled && 'text-gray-500 dark:text-gray-400'
-);
-
 const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
+const rootClasses = [
+  'progress-bar',
+  `progress-bar--variant-${variant}`,
+  `progress-bar--size-${size}`,
+  disabled ? 'progress-bar--disabled' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
-  class={cn('w-full', className)}
+  class={rootClasses}
   role="group"
   aria-labelledby={displayLabel ? 'progress-label' : undefined}
 >
   {
     displayLabel && labelPosition === 'top' && (
-      <div class="mb-2 flex items-baseline justify-between">
-        <span id="progress-label" class={labelClasses}>
+      <div class="progress-bar__label-row progress-bar__label-row--top">
+        <span id="progress-label" class="progress-bar__label">
           {label || 'Progress'}
         </span>
         {showLabel && (
-          <span class={cn(labelClasses, 'tabular-nums')}>
+          <span class="progress-bar__value">
             {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
           </span>
         )}
@@ -139,27 +89,22 @@ const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
       labelPosition === 'inline' &&
       size !== 'xs' &&
       size !== 'sm' && (
-        <div class="relative">
-          <div class={progressBarClasses}>
+        <div class="progress-bar__track progress-bar__track--inline">
+          <div
+            class={`progress-bar__fill ${indeterminate ? 'progress-bar__fill--indeterminate' : ''}`}
+            style={indeterminate ? undefined : `width: ${percentage}%`}
+            role="progressbar"
+            aria-valuenow={indeterminate ? undefined : value}
+            aria-valuemin="0"
+            aria-valuemax={max}
+            aria-label={ariaLabel || displayLabel || 'Progress'}
+            aria-describedby={ariaDescribedBy}
+          />
+          <div class="progress-bar__inline-label">
             <div
-              class={progressFillClasses}
-              style={indeterminate ? undefined : `width: ${percentage}%`}
-              role="progressbar"
-              aria-valuenow={indeterminate ? undefined : value}
-              aria-valuemin="0"
-              aria-valuemax={max}
-              aria-label={ariaLabel || displayLabel || 'Progress'}
-              aria-describedby={ariaDescribedBy}
-            />
-            <div class="absolute inset-0 flex items-center justify-center">
-              <span
-                class={cn(
-                  labelClasses,
-                  'text-xs font-semibold mix-blend-difference'
-                )}
-              >
-                {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
-              </span>
+              class="progress-bar__inline-text"
+            >
+              {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
             </div>
           </div>
         </div>
@@ -167,16 +112,16 @@ const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
   }
 
   {
-    (!displayLabel ||
-      labelPosition !== 'inline' ||
-      size === 'xs' ||
-      size === 'sm') && (
-      <div class={progressBarClasses}>
-        <div
-          class={progressFillClasses}
-          style={indeterminate ? undefined : `width: ${percentage}%`}
-          role="progressbar"
-          aria-valuenow={indeterminate ? undefined : value}
+        (!displayLabel ||
+          labelPosition !== 'inline' ||
+          size === 'xs' ||
+          size === 'sm') && (
+          <div class="progress-bar__track">
+            <div
+              class={`progress-bar__fill ${indeterminate ? 'progress-bar__fill--indeterminate' : ''}`}
+              style={indeterminate ? undefined : `width: ${percentage}%`}
+              role="progressbar"
+              aria-valuenow={indeterminate ? undefined : value}
           aria-valuemin="0"
           aria-valuemax={max}
           aria-label={ariaLabel || displayLabel || 'Progress'}
@@ -184,11 +129,7 @@ const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
         />
         {indeterminate && (
           <div
-            class={cn(
-              'absolute inset-0 rounded-full',
-              'bg-gradient-to-r from-transparent via-white/20 to-transparent',
-              'animate-[shimmer_1.5s_ease-in-out_infinite]'
-            )}
+            class="progress-bar__shimmer"
           />
         )}
       </div>
@@ -197,10 +138,10 @@ const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
 
   {
     displayLabel && labelPosition === 'bottom' && (
-      <div class="mt-2 flex items-baseline justify-between">
-        <span class={labelClasses}>{label || 'Progress'}</span>
+      <div class="progress-bar__label-row progress-bar__label-row--bottom">
+        <span class="progress-bar__label">{label || 'Progress'}</span>
         {showLabel && (
-          <span class={cn(labelClasses, 'tabular-nums')}>
+          <span class="progress-bar__value">
             {indeterminate ? 'Loading...' : `${Math.round(percentage)}%`}
           </span>
         )}
@@ -210,6 +151,171 @@ const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
 </div>
 
 <style>
+  .progress-bar {
+    width: 100%;
+  }
+
+  .progress-bar__track {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 999px;
+    background-color: rgba(148, 163, 184, 0.4);
+    transition: opacity 0.2s ease;
+  }
+
+  .progress-bar--disabled .progress-bar__track {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .progress-bar__fill {
+    height: 100%;
+    border-radius: inherit;
+    transition: width 0.4s ease;
+    background-color: #2563eb;
+  }
+
+  .progress-bar__track--inline {
+    position: relative;
+  }
+
+  .progress-bar__inline-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .progress-bar__inline-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+    mix-blend-mode: difference;
+  }
+
+  .progress-bar__shimmer {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .progress-bar__label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-bar__label-row--bottom {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .progress-bar__label {
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .progress-bar__value {
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+  }
+
+  .progress-bar--size-xs .progress-bar__label,
+  .progress-bar--size-xs .progress-bar__value {
+    font-size: 0.75rem;
+  }
+
+  .progress-bar--size-sm .progress-bar__label,
+  .progress-bar--size-sm .progress-bar__value {
+    font-size: 0.85rem;
+  }
+
+  .progress-bar--size-lg .progress-bar__label,
+  .progress-bar--size-lg .progress-bar__value {
+    font-size: 1rem;
+  }
+
+  .progress-bar--size-xl .progress-bar__label,
+  .progress-bar--size-xl .progress-bar__value {
+    font-size: 1.1rem;
+  }
+
+  .progress-bar--size-xs .progress-bar__track {
+    height: 0.25rem;
+  }
+
+  .progress-bar--size-sm .progress-bar__track {
+    height: 0.35rem;
+  }
+
+  .progress-bar--size-md .progress-bar__track {
+    height: 0.5rem;
+  }
+
+  .progress-bar--size-lg .progress-bar__track {
+    height: 0.75rem;
+  }
+
+  .progress-bar--size-xl .progress-bar__track {
+    height: 1rem;
+  }
+
+  .progress-bar--variant-success .progress-bar__fill {
+    background-color: #16a34a;
+  }
+
+  .progress-bar--variant-warning .progress-bar__fill {
+    background-color: #d97706;
+  }
+
+  .progress-bar--variant-error .progress-bar__fill {
+    background-color: #dc2626;
+  }
+
+  .progress-bar--variant-info .progress-bar__fill {
+    background-color: #0ea5e9;
+  }
+
+  .progress-bar--variant-gradient .progress-bar__fill {
+    background-image: linear-gradient(
+      90deg,
+      #2563eb,
+      #7c3aed,
+      #db2777
+    );
+  }
+
+  .progress-bar--variant-minimal .progress-bar__fill {
+    background-color: #475569;
+  }
+
+  .progress-bar--variant-success .progress-bar__track {
+    background-color: rgba(16, 185, 129, 0.2);
+  }
+
+  .progress-bar--variant-warning .progress-bar__track {
+    background-color: rgba(251, 191, 36, 0.25);
+  }
+
+  .progress-bar--variant-error .progress-bar__track {
+    background-color: rgba(239, 68, 68, 0.25);
+  }
+
+  .progress-bar--variant-info .progress-bar__track {
+    background-color: rgba(14, 165, 233, 0.25);
+  }
+
   @keyframes shimmer {
     0% {
       transform: translateX(-100%);
@@ -217,5 +323,33 @@ const displayLabel = label || (showLabel ? `${Math.round(percentage)}%` : null);
     100% {
       transform: translateX(100%);
     }
+  }
+
+  :where(.dark) .progress-bar__track {
+    background-color: rgba(71, 85, 105, 0.6);
+  }
+
+  :where(.dark) .progress-bar__label {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .progress-bar__value {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .progress-bar--variant-success .progress-bar__track {
+    background-color: rgba(34, 197, 94, 0.25);
+  }
+
+  :where(.dark) .progress-bar--variant-warning .progress-bar__track {
+    background-color: rgba(251, 191, 36, 0.25);
+  }
+
+  :where(.dark) .progress-bar--variant-error .progress-bar__track {
+    background-color: rgba(248, 113, 113, 0.25);
+  }
+
+  :where(.dark) .progress-bar--variant-info .progress-bar__track {
+    background-color: rgba(56, 189, 248, 0.25);
   }
 </style>

@@ -28,10 +28,10 @@ const description =
         <div>
           <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg">
             <button
-              onclick="openModal('example-modal')"
+              data-modal-open="example-modal"
               class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Open Modal (Direct)
+              Open Modal
             </button>
 
             <button
@@ -71,7 +71,7 @@ const description =
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <button
-              onclick="openModal('default-modal')"
+              data-modal-open="default-modal"
               class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >Default Modal</button
             >
@@ -84,7 +84,7 @@ const description =
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <button
-              onclick="openModal('danger-modal')"
+              data-modal-open="danger-modal"
               class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >Danger Modal</button
             >
@@ -97,7 +97,7 @@ const description =
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <button
-              onclick="openModal('success-modal')"
+              data-modal-open="success-modal"
               class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >Success Modal</button
             >
@@ -110,7 +110,7 @@ const description =
           </h3>
           <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
             <button
-              onclick="openModal('warning-modal')"
+              data-modal-open="warning-modal"
               class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
               >Warning Modal</button
             >
@@ -160,7 +160,7 @@ const description =
     </p>
     <div slot="footer" class="flex justify-end gap-3">
       <button
-        onclick="closeModal('example-modal')"
+        data-modal-close
         class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button
       >
       <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -175,7 +175,7 @@ const description =
     </p>
     <div slot="footer" class="flex justify-end gap-3">
       <button
-        onclick="closeModal('default-modal')"
+        data-modal-close
         class="px-4 py-2 text-gray-600 hover:text-gray-800">Close</button
       >
     </div>
@@ -187,7 +187,7 @@ const description =
     </p>
     <div slot="footer" class="flex justify-end gap-3">
       <button
-        onclick="closeModal('danger-modal')"
+        data-modal-close
         class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button
       >
       <button class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
@@ -202,7 +202,7 @@ const description =
     </p>
     <div slot="footer" class="flex justify-end gap-3">
       <button
-        onclick="closeModal('success-modal')"
+        data-modal-close
         class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
         >Continue</button
       >
@@ -215,7 +215,7 @@ const description =
     </p>
     <div slot="footer" class="flex justify-end gap-3">
       <button
-        onclick="closeModal('warning-modal')"
+        data-modal-close
         class="px-4 py-2 text-gray-600 hover:text-gray-800">Review</button
       >
       <button
@@ -225,37 +225,3 @@ const description =
     </div>
   </Modal>
 </DocsLayout>
-
-<script is:inline>
-  console.log('Modal page script loading...');
-
-  function openModal(modalId) {
-    console.log('Opening modal:', modalId);
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.classList.remove('hidden');
-      modal.setAttribute('data-open', 'true');
-      document.body.style.overflow = 'hidden';
-      console.log('Modal opened successfully');
-    } else {
-      console.log('Modal not found:', modalId);
-    }
-  }
-
-  function closeModal(modalId) {
-    console.log('Closing modal:', modalId);
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.classList.add('hidden');
-      modal.setAttribute('data-open', 'false');
-      document.body.style.overflow = '';
-      console.log('Modal closed successfully');
-    }
-  }
-
-  // Make functions globally available
-  window.openModal = openModal;
-  window.closeModal = closeModal;
-
-  console.log('Modal page script loaded');
-</script>

@@ -1,10 +1,8 @@
 ---
-import { cn } from '../utils/cn';
-
 /**
  * Skeleton - Accessible animated placeholder with WCAG AAA compliance
  * Provides visual feedback during content loading with proper contrast ratios
- */
+*/
 
 interface Props {
   /** Width of the skeleton */
@@ -39,89 +37,16 @@ const {
   class: className = '',
 } = Astro.props;
 
-// Size configurations with WCAG AAA compliant dimensions
-const sizeClasses = {
-  sm: {
-    default: 'h-4',
-    circle: 'w-8 h-8',
-    text: 'h-3',
-    card: 'h-32',
-  },
-  md: {
-    default: 'h-6',
-    circle: 'w-12 h-12',
-    text: 'h-4',
-    card: 'h-48',
-  },
-  lg: {
-    default: 'h-8',
-    circle: 'w-16 h-16',
-    text: 'h-5',
-    card: 'h-64',
-  },
-  xl: {
-    default: 'h-12',
-    circle: 'w-24 h-24',
-    text: 'h-6',
-    card: 'h-80',
-  },
-};
-
-// Rounded variants
-const roundedClasses = {
-  none: 'rounded-none',
-  sm: 'rounded-sm',
-  md: 'rounded-md',
-  lg: 'rounded-lg',
-  full: 'rounded-full',
-};
-
-// Animation classes with WCAG AAA compliant contrast
-const animationClasses = {
-  pulse: 'animate-pulse',
-  wave: 'animate-shimmer',
-  none: '',
-};
-
-// Variant-specific classes
-const variantClasses = {
-  default: '',
-  circle: 'rounded-full aspect-square',
-  rectangle: 'rounded-md',
-  text: 'rounded-sm',
-  card: 'rounded-lg',
-};
-
-// WCAG AAA compliant background colors (9:1 contrast ratio)
-const backgroundClasses = cn(
-  'bg-gray-200 dark:bg-gray-700',
-  'border border-gray-300 dark:border-gray-600'
-);
-
-// Get appropriate size class
-const getSizeClass = () => {
-  if (variant === 'circle') {
-    return sizeClasses[size].circle;
-  }
-  if (variant === 'text') {
-    return sizeClasses[size].text;
-  }
-  if (variant === 'card') {
-    return sizeClasses[size].card;
-  }
-  return sizeClasses[size].default;
-};
-
-// Build final classes
-const skeletonClasses = cn(
-  backgroundClasses,
-  animationClasses[animation],
-  variantClasses[variant],
-  variant !== 'circle' && roundedClasses[rounded],
-  getSizeClass(),
-  'transition-colors duration-200',
-  className
-);
+const rootClass = [
+  'skeleton',
+  `skeleton--variant-${variant}`,
+  `skeleton--size-${size}`,
+  `skeleton--rounded-${rounded}`,
+  `skeleton--animation-${animation}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Custom styles for width/height overrides
 const customStyles = {
@@ -139,13 +64,13 @@ const skeletonId = `skeleton-${Math.random().toString(36).slice(2, 9)}`;
       role="status"
       aria-live="polite"
       aria-label={loadingText}
-      class="space-y-2"
+      class="skeleton-group"
     >
       {Array.from({ length: lines }, (_, index) => (
         <div
           key={index}
           id={`${skeletonId}-line-${index}`}
-          class={cn(skeletonClasses, index === lines - 1 && 'w-3/4')}
+          class={`${rootClass} ${index === lines - 1 ? 'skeleton--short-line' : ''}`.trim()}
           style={customStyles}
           aria-hidden="true"
         />
@@ -158,7 +83,7 @@ const skeletonId = `skeleton-${Math.random().toString(36).slice(2, 9)}`;
       aria-live="polite"
       aria-label={loadingText}
       id={skeletonId}
-      class={skeletonClasses}
+      class={rootClass}
       style={customStyles}
       aria-hidden="false"
     >
@@ -168,7 +93,170 @@ const skeletonId = `skeleton-${Math.random().toString(36).slice(2, 9)}`;
 }
 
 <style>
-  /* Custom shimmer animation for wave effect */
+  .skeleton {
+    display: block;
+    width: 100%;
+    margin: 0;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background-color: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.2s ease;
+  }
+
+  .skeleton--variant-circle {
+    border-radius: 999px;
+    aspect-ratio: 1 / 1;
+  }
+
+  .skeleton--variant-card {
+    height: 12rem;
+    border-radius: 1rem;
+  }
+
+  .skeleton--variant-text {
+    height: 0.9rem;
+    border-radius: 0.4rem;
+  }
+
+  .skeleton--variant-rectangle {
+    border-radius: 0.75rem;
+  }
+
+  .skeleton--size-sm {
+    height: 1rem;
+  }
+
+  .skeleton--size-md {
+    height: 1.5rem;
+  }
+
+  .skeleton--size-lg {
+    height: 2rem;
+  }
+
+  .skeleton--size-xl {
+    height: 3rem;
+  }
+
+  .skeleton--variant-circle.skeleton--size-sm {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .skeleton--variant-circle.skeleton--size-md {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .skeleton--variant-circle.skeleton--size-lg {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .skeleton--variant-circle.skeleton--size-xl {
+    width: 6rem;
+    height: 6rem;
+  }
+
+  .skeleton--variant-text.skeleton--size-sm {
+    height: 0.75rem;
+  }
+
+  .skeleton--variant-text.skeleton--size-md {
+    height: 0.95rem;
+  }
+
+  .skeleton--variant-text.skeleton--size-lg {
+    height: 1.1rem;
+  }
+
+  .skeleton--variant-text.skeleton--size-xl {
+    height: 1.35rem;
+  }
+
+  .skeleton--variant-card.skeleton--size-sm {
+    height: 8rem;
+  }
+
+  .skeleton--variant-card.skeleton--size-md {
+    height: 12rem;
+  }
+
+  .skeleton--variant-card.skeleton--size-lg {
+    height: 16rem;
+  }
+
+  .skeleton--variant-card.skeleton--size-xl {
+    height: 20rem;
+  }
+
+  .skeleton--rounded-none {
+    border-radius: 0;
+  }
+
+  .skeleton--rounded-sm {
+    border-radius: 0.25rem;
+  }
+
+  .skeleton--rounded-md {
+    border-radius: 0.5rem;
+  }
+
+  .skeleton--rounded-lg {
+    border-radius: 0.75rem;
+  }
+
+  .skeleton--rounded-full {
+    border-radius: 999px;
+  }
+
+  .skeleton--animation-pulse {
+    animation: skeletonPulse 1.5s ease-in-out infinite;
+  }
+
+  .skeleton--animation-wave::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0)
+    );
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .skeleton--animation-none,
+  .skeleton--animation-none::after {
+    animation: none;
+  }
+
+  .skeleton-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .skeleton--short-line {
+    width: 70%;
+  }
+
+  @keyframes skeletonPulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
   @keyframes shimmer {
     0% {
       background-position: -200px 0;
@@ -178,46 +266,36 @@ const skeletonId = `skeleton-${Math.random().toString(36).slice(2, 9)}`;
     }
   }
 
-  .animate-shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.4),
-      transparent
-    );
-    background-size: 200px 100%;
-    animation: shimmer 1.5s infinite;
+  :where(.dark) .skeleton {
+    background-color: #1f2937;
+    border-color: rgba(148, 163, 184, 0.4);
   }
 
-  /* Dark mode shimmer */
-  .dark .animate-shimmer {
+  :where(.dark) .skeleton--animation-wave::after {
     background: linear-gradient(
       90deg,
-      transparent,
-      rgba(255, 255, 255, 0.1),
-      transparent
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.15),
+      rgba(255, 255, 255, 0)
     );
-    background-size: 200px 100%;
   }
 
-  /* Improved accessibility for reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .animate-pulse,
-    .animate-shimmer {
+    .skeleton,
+    .skeleton::after {
       animation: none;
     }
   }
 
-  /* High contrast mode support */
   @media (prefers-contrast: high) {
-    .bg-gray-200 {
-      background-color: #e5e5e5;
-      border-color: #999999;
+    .skeleton {
+      background-color: #d1d5db;
+      border-color: #6b7280;
     }
 
-    .dark .bg-gray-700 {
-      background-color: #404040;
-      border-color: #666666;
+    :where(.dark) .skeleton {
+      background-color: #374151;
+      border-color: #9ca3af;
     }
   }
 </style>

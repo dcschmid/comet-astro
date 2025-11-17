@@ -8,41 +8,28 @@ interface Props {
 
 const { author, source, variant = 'default', className = '' } = Astro.props;
 
-const variantClasses = {
-  default:
-    'border-l-4 border-slate-400 bg-slate-50 pl-6 pr-5 italic text-slate-900 shadow-sm dark:border-slate-500 dark:bg-slate-900/80 dark:text-slate-100',
-  accent:
-    'rounded-xl border border-blue-900 bg-blue-950 px-6 py-5 italic text-blue-50 shadow-md dark:border-blue-200 dark:bg-blue-100 dark:text-blue-950',
-  bordered:
-    'rounded-xl border border-slate-300 bg-white p-6 text-slate-900 shadow-sm dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-50',
-};
+const variants = ['default', 'accent', 'bordered'] as const;
+type VariantKey = (typeof variants)[number];
 
-const footerClasses = {
-  default:
-    'mt-4 flex flex-wrap gap-x-2 text-sm not-italic text-slate-700 dark:text-slate-200',
-  accent:
-    'mt-4 flex flex-wrap gap-x-2 text-sm not-italic text-blue-100 dark:text-blue-900',
-  bordered:
-    'mt-4 flex flex-wrap gap-x-2 text-sm not-italic text-slate-700 dark:text-slate-200',
-} as const;
+const variantKey = variants.includes(variant as VariantKey)
+  ? (variant as VariantKey)
+  : 'default';
 
-const citeClasses = {
-  default: 'font-semibold text-slate-900 dark:text-slate-100',
-  accent: 'font-semibold text-blue-50 dark:text-blue-950',
-  bordered: 'font-semibold text-slate-900 dark:text-slate-100',
-} as const;
+const rootClasses = ['blockquote', `blockquote--${variantKey}`, className]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<blockquote class={`${variantClasses[variant]} ${className}`}>
-  <div class="text-lg leading-relaxed">
+<blockquote class={rootClasses} data-blockquote>
+  <div class="blockquote__content">
     <slot />
   </div>
   {
     (author || source) && (
-      <footer class={footerClasses[variant]}>
-        {author && <cite class={citeClasses[variant]}>{author}</cite>}
+      <footer class="blockquote__footer">
+        {author && <cite class="blockquote__author">{author}</cite>}
         {source && (
-          <span>
+          <span class="blockquote__source">
             {author ? ', ' : ''}
             {source}
           </span>
@@ -51,3 +38,95 @@ const citeClasses = {
     )
   }
 </blockquote>
+
+<style is:inline>
+  .blockquote {
+    --blockquote-bg: #f8fafc;
+    --blockquote-border: #94a3b8;
+    --blockquote-text: #0f172a;
+    --blockquote-accent: #475569;
+    --blockquote-author: #0f172a;
+    --blockquote-radius: 0.85rem;
+    --blockquote-padding-x: 1.5rem;
+    --blockquote-padding-y: 1.5rem;
+    --blockquote-border-width: 4px;
+    position: relative;
+    padding: var(--blockquote-padding-y) var(--blockquote-padding-x);
+    border-radius: var(--blockquote-radius);
+    background: var(--blockquote-bg);
+    color: var(--blockquote-text);
+    border-left: var(--blockquote-border-width) solid var(--blockquote-border);
+    font-style: italic;
+    box-shadow: 0 12px 25px rgba(15, 23, 42, 0.08);
+  }
+
+  :where(.dark) .blockquote {
+    --blockquote-bg: rgba(15, 23, 42, 0.8);
+    --blockquote-text: #f1f5f9;
+    --blockquote-accent: #cbd5f5;
+    --blockquote-border: rgba(148, 163, 184, 0.65);
+    --blockquote-author: #f8fafc;
+  }
+
+  .blockquote__content {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+
+  .blockquote__footer {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    font-style: normal;
+    color: var(--blockquote-accent);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .blockquote__author {
+    font-weight: 600;
+    font-style: normal;
+    color: var(--blockquote-author);
+  }
+
+  .blockquote__source {
+    color: inherit;
+  }
+
+  .blockquote--accent {
+    --blockquote-bg: #0f172a;
+    --blockquote-text: #dbeafe;
+    --blockquote-accent: #bfdbfe;
+    --blockquote-border: #1d4ed8;
+    --blockquote-author: #e0f2fe;
+    --blockquote-radius: 1.25rem;
+    --blockquote-border-width: 0;
+    border: 1px solid rgba(59, 130, 246, 0.45);
+  }
+
+  :where(.dark) .blockquote--accent {
+    --blockquote-bg: #e0f2fe;
+    --blockquote-text: #1e3a8a;
+    --blockquote-accent: #1d4ed8;
+    --blockquote-author: #0f172a;
+    border-color: rgba(37, 99, 235, 0.6);
+  }
+
+  .blockquote--bordered {
+    --blockquote-bg: #ffffff;
+    --blockquote-text: #0f172a;
+    --blockquote-accent: #475569;
+    --blockquote-author: #0f172a;
+    --blockquote-border: rgba(148, 163, 184, 0.5);
+    --blockquote-border-width: 1px;
+    border: 1px solid var(--blockquote-border);
+  }
+
+  :where(.dark) .blockquote--bordered {
+    --blockquote-bg: rgba(15, 23, 42, 0.85);
+    --blockquote-text: #f1f5f9;
+    --blockquote-accent: #cbd5f5;
+    --blockquote-author: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+</style>

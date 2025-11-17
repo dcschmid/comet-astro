@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 interface Props {
   // Content props
   text?: string;
@@ -64,79 +62,22 @@ const elementId =
     ? `paragraph-${Math.random().toString(36).substr(2, 9)}`
     : undefined);
 
-// Size styles with responsive scaling
-const sizeStyles = {
-  xs: 'text-xs lg:text-sm',
-  sm: 'text-sm lg:text-base',
-  md: 'text-base lg:text-lg',
-  lg: 'text-lg lg:text-xl',
-  xl: 'text-xl lg:text-2xl',
-  '2xl': 'text-2xl lg:text-3xl',
-};
-
-// Weight styles
-const weightStyles = {
-  light: 'font-light',
-  normal: 'font-normal',
-  medium: 'font-medium',
-  semibold: 'font-semibold',
-  bold: 'font-bold',
-};
-
-// Line height styles
-const lineHeightStyles = {
-  tight: 'leading-tight',
-  normal: 'leading-normal',
-  relaxed: 'leading-relaxed',
-  loose: 'leading-loose',
-};
-
-// Variant styles with WCAG AAA contrast ratios
-const variantStyles = {
-  default: 'text-gray-900 dark:text-gray-100',
-  muted: 'text-gray-600 dark:text-gray-400',
-  subtle: 'text-gray-700 dark:text-gray-300',
-  accent: 'text-blue-700 dark:text-blue-300',
-  error: 'text-red-700 dark:text-red-300',
-  success: 'text-green-700 dark:text-green-300',
-  warning: 'text-amber-700 dark:text-amber-300',
-};
-
-// Alignment styles
-const alignStyles = {
-  left: 'text-left',
-  center: 'text-center',
-  right: 'text-right',
-  justify: 'text-justify',
-};
-
-// Max width styles
-const maxWidthStyles = {
-  none: '',
-  prose: 'max-w-prose',
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  '2xl': 'max-w-2xl',
-};
-
 // Handle backward compatibility
 const finalVariant = muted ? 'muted' : variant;
 
 // Build classes
-const classes = cn(
-  // Base typography
-  sizeStyles[size],
-  weightStyles[weight],
-  lineHeightStyles[lineHeight],
-  variantStyles[finalVariant],
-  alignStyles[align],
-  maxWidthStyles[maxWidth],
-  // Responsive margins for better readability
-  'mb-0',
-  className
-);
+const classes = [
+  'paragraph',
+  `paragraph--size-${size}`,
+  `paragraph--weight-${weight}`,
+  `paragraph--line-${lineHeight}`,
+  `paragraph--variant-${finalVariant}`,
+  `paragraph--align-${align}`,
+  `paragraph--width-${maxWidth}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Dynamic tag
 const Tag = as;
@@ -151,3 +92,142 @@ const Tag = as;
 >
   {text ? text : <slot />}
 </Tag>
+
+<style>
+  .paragraph {
+    margin-bottom: 0;
+    color: #0f172a;
+  }
+
+  .paragraph--size-xs {
+    font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  }
+
+  .paragraph--size-sm {
+    font-size: clamp(0.95rem, 1.7vw, 1.05rem);
+  }
+
+  .paragraph--size-md {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+  }
+
+  .paragraph--size-lg {
+    font-size: clamp(1.1rem, 2.2vw, 1.25rem);
+  }
+
+  .paragraph--size-xl {
+    font-size: clamp(1.2rem, 2.6vw, 1.4rem);
+  }
+
+  .paragraph--size-2xl {
+    font-size: clamp(1.4rem, 3vw, 1.6rem);
+  }
+
+  .paragraph--weight-light {
+    font-weight: 300;
+  }
+
+  .paragraph--weight-normal {
+    font-weight: 400;
+  }
+
+  .paragraph--weight-medium {
+    font-weight: 500;
+  }
+
+  .paragraph--weight-semibold {
+    font-weight: 600;
+  }
+
+  .paragraph--weight-bold {
+    font-weight: 700;
+  }
+
+  .paragraph--line-tight {
+    line-height: 1.35;
+  }
+
+  .paragraph--line-normal {
+    line-height: 1.5;
+  }
+
+  .paragraph--line-relaxed {
+    line-height: 1.7;
+  }
+
+  .paragraph--line-loose {
+    line-height: 1.85;
+  }
+
+  .paragraph--variant-default {
+    color: #0f172a;
+  }
+
+  .paragraph--variant-muted {
+    color: #475569;
+  }
+
+  .paragraph--variant-subtle {
+    color: #334155;
+  }
+
+  .paragraph--variant-accent {
+    color: #1d4ed8;
+  }
+
+  .paragraph--variant-error {
+    color: #b91c1c;
+  }
+
+  .paragraph--variant-success {
+    color: #15803d;
+  }
+
+  .paragraph--variant-warning {
+    color: #b45309;
+  }
+
+  .paragraph--align-left {
+    text-align: left;
+  }
+
+  .paragraph--align-center {
+    text-align: center;
+  }
+
+  .paragraph--align-right {
+    text-align: right;
+  }
+
+  .paragraph--align-justify {
+    text-align: justify;
+  }
+
+  .paragraph--width-prose {
+    max-width: 60ch;
+  }
+
+  .paragraph--width-sm {
+    max-width: 40ch;
+  }
+
+  .paragraph--width-md {
+    max-width: 50ch;
+  }
+
+  .paragraph--width-lg {
+    max-width: 65ch;
+  }
+
+  .paragraph--width-xl {
+    max-width: 72ch;
+  }
+
+  .paragraph--width-2xl {
+    max-width: 80ch;
+  }
+
+  :where(.dark) .paragraph {
+    color: #f8fafc;
+  }
+</style>

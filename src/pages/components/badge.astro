@@ -1,0 +1,176 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Badge from '../../components/Badge.astro';
+import Table from '../../components/Table.astro';
+
+const highlights = [
+  {
+    title: 'AAA contrast',
+    detail:
+      'Color tokens are tuned for light and dark surfaces so status labels remain legible everywhere.',
+  },
+  {
+    title: 'BEM + CSS tokens',
+    detail:
+      'Badges expose `.badge` + modifier classes and CSS variables for quick theming without Tailwind overrides.',
+  },
+  {
+    title: 'Flexible copy',
+    detail:
+      'Supports short uppercase keywords, status text, and dynamic labels pulled from CMS data.',
+  },
+];
+
+const variantPreviews = [
+  { variant: 'neutral', label: 'Neutral', helper: 'Default metadata or tags.' },
+  { variant: 'primary', label: 'Primary', helper: 'Highlights key states.' },
+  { variant: 'success', label: 'Success', helper: 'Positive confirmations.' },
+  { variant: 'warning', label: 'Warning', helper: 'Attention-grabbing states.' },
+  { variant: 'danger', label: 'Danger', helper: 'Blocking or error states.' },
+];
+
+const usageSnippet = `---
+import { Badge } from 'comet-astro';
+
+---
+
+<div class="flex gap-3 items-center">
+  <Badge label="Beta" variant="primary" />
+  <Badge label="LIVE" variant="success" />
+  <Badge label="Deprecated" variant="danger" className="uppercase tracking-widest" />
+</div>`;
+
+const themingSnippet = `---
+import { Badge } from 'comet-astro';
+
+const customBadgeClass = 'badge-demo';
+---
+
+<Badge label="Orbit" className={customBadgeClass} />
+<Badge label="Telemetry" className={customBadgeClass} />
+
+<style is:inline>
+  :global(.badge-demo) {
+    --badge-bg: #020617;
+    --badge-border: #f97316;
+    --badge-text: #fed7aa;
+    --badge-bg-dark: #fff7ed;
+    --badge-border-dark: #fb923c;
+    --badge-text-dark: #7c2d12;
+    letter-spacing: 0.12em;
+  }
+</style>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'label',
+    type: 'string',
+    default: '—',
+    description: 'Text rendered inside the badge. Keep it short for best readability.',
+  },
+  {
+    name: 'variant',
+    type: `'neutral' | 'primary' | 'success' | 'warning' | 'danger'`,
+    default: `'neutral'`,
+    description: 'Controls the status color scale. Swaps CSS variables for background, border, and text.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: `''`,
+    description: 'Optional class that merges onto the root `.badge`. Useful for layout tweaks or advanced theming.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="Badge"
+  seoDescription="Color-coded badges built with a BEM API, WCAG-friendly palettes, and CSS tokens for rapid theming."
+>
+  <section class="space-y-4">
+    <p class="text-base text-slate-100">
+      Badges provide compact status indicators and metadata labels that stay crisp on dark or light surfaces.
+      Each variant ships with AAA-ready colors, rounded pill styling, and uppercase typography for quick scanning.
+    </p>
+    <div class="grid gap-4 md:grid-cols-3">
+      {highlights.map((item) => (
+        <div
+          class="rounded-xl border border-slate-700/70 bg-slate-900/50 p-4 text-sm text-slate-200 shadow-sm"
+        >
+          <p class="text-sm font-semibold text-slate-50">{item.title}</p>
+          <p class="mt-2 text-slate-300">{item.detail}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6" id="variants">
+    <h2 class="text-xl font-semibold text-slate-100">Variants</h2>
+    <p class="text-base text-slate-200">
+      Use the predefined variants for common states. All share identical padding and rounded corners, so layouts
+      remain consistent even when colors change dynamically.
+    </p>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {variantPreviews.map((option) => (
+        <div class="space-y-2 rounded-xl border border-slate-800/70 bg-slate-950/60 p-4 shadow-inner">
+          <div class="flex items-center justify-between text-slate-200">
+            <p class="text-sm font-semibold">{option.label}</p>
+            <code class="text-xs text-slate-400">{option.variant}</code>
+          </div>
+          <Badge label={option.label} variant={option.variant as any} />
+          <p class="text-xs text-slate-400">{option.helper}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6" id="usage">
+    <h2 class="text-xl font-semibold text-slate-100">Usage</h2>
+    <p class="text-base text-slate-200">
+      Import the component, pass a label, and pick a variant. Because badges use semantic text, they remain readable by screen readers and support translations straight from CMS fields.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-800/70 bg-slate-950/80 p-4 text-xs text-slate-50 shadow-inner"
+    >
+      <code class="language-astro">{usageSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-6" id="styling">
+    <h2 class="text-xl font-semibold text-slate-100">Styling &amp; Theming</h2>
+    <p class="text-base text-slate-200">
+      The root element renders as <code>.badge</code> and accepts modifier classes like
+      <code>.badge--primary</code> or <code>.badge--warning</code>. Customize colors through CSS variables such as
+      <code>--badge-bg</code>, <code>--badge-border</code>, and <code>--badge-text</code>.
+    </p>
+    <p class="text-base text-slate-200">
+      Since the component is built with plain CSS, you can override tokens globally or scope them with a custom class. Use <code>className</code> to attach a theme wrapper and override variables in a colocated
+      <code>&lt;style&gt;</code> block (see below).
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-800/70 bg-slate-950/80 p-4 text-xs text-slate-50 shadow-inner"
+    >
+      <code class="language-astro">{themingSnippet}</code>
+    </pre>
+  </section>
+
+  <section class="mt-10 space-y-6" id="props">
+    <h2 class="text-xl font-semibold text-slate-100">Props</h2>
+    <Table
+      columns={propsColumns}
+      data={propsData}
+      striped
+      bordered
+      caption="Badge properties"
+      captionSrOnly
+      class="bg-slate-950/60"
+    />
+  </section>
+</DocsLayout>

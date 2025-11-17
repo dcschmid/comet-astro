@@ -80,109 +80,97 @@ const itemId = `media-list-item-${Math.random().toString(36).substr(2, 9)}`;
 const titleId = `${itemId}-title`;
 const descId = `${itemId}-desc`;
 
-// Variant styles
-const variantClasses = {
-  default: 'flex items-center gap-4',
-  compact: 'flex items-center gap-2',
-  detailed: 'flex items-start gap-4',
-  minimal:
-    'flex items-center gap-3 border-0 shadow-none bg-transparent dark:bg-transparent',
-};
+const aspectRatioValues = {
+  square: '1 / 1',
+  '16:9': '16 / 9',
+  '4:3': '4 / 3',
+  '3:2': '3 / 2',
+} as const;
 
-// Aspect ratio styles
-const aspectRatioClasses = {
-  square: 'aspect-square',
-  '16:9': 'aspect-video',
-  '4:3': 'aspect-[4/3]',
-  '3:2': 'aspect-[3/2]',
-};
-
-// Size styles for different variants and aspect ratios
-const sizeClasses = {
+const sizeTokens = {
   sm: {
-    container: 'p-2',
-    imageWidth: variant === 'compact' ? 'w-8' : 'w-10',
-    imageHeight:
-      imageAspectRatio === 'square'
-        ? variant === 'compact'
-          ? 'h-8'
-          : 'h-10'
-        : '',
-    title: 'text-sm',
-    subtitle: 'text-xs',
-    meta: 'text-xs',
-    actions: 'text-xs px-2 py-1',
+    padding: '0.5rem',
+    titleSize: '0.875rem',
+    subtitleSize: '0.75rem',
+    metaSize: '0.75rem',
+    actionFontSize: '0.75rem',
+    actionPaddingInline: '0.5rem',
+    actionPaddingBlock: '0.25rem',
+    imageStandard: '2.5rem',
+    imageCompact: '2rem',
   },
   md: {
-    container: 'p-3',
-    imageWidth: variant === 'compact' ? 'w-10' : 'w-14',
-    imageHeight:
-      imageAspectRatio === 'square'
-        ? variant === 'compact'
-          ? 'h-10'
-          : 'h-14'
-        : '',
-    title: 'text-base',
-    subtitle: 'text-sm',
-    meta: 'text-xs',
-    actions: 'text-sm px-3 py-1.5',
+    padding: '0.75rem',
+    titleSize: '1rem',
+    subtitleSize: '0.875rem',
+    metaSize: '0.75rem',
+    actionFontSize: '0.875rem',
+    actionPaddingInline: '0.75rem',
+    actionPaddingBlock: '0.375rem',
+    imageStandard: '3.5rem',
+    imageCompact: '2.5rem',
   },
   lg: {
-    container: 'p-4',
-    imageWidth: variant === 'compact' ? 'w-12' : 'w-16',
-    imageHeight:
-      imageAspectRatio === 'square'
-        ? variant === 'compact'
-          ? 'h-12'
-          : 'h-16'
-        : '',
-    title: 'text-lg',
-    subtitle: 'text-base',
-    meta: 'text-sm',
-    actions: 'text-sm px-4 py-2',
+    padding: '1rem',
+    titleSize: '1.125rem',
+    subtitleSize: '1rem',
+    metaSize: '0.875rem',
+    actionFontSize: '0.875rem',
+    actionPaddingInline: '1rem',
+    actionPaddingBlock: '0.5rem',
+    imageStandard: '4rem',
+    imageCompact: '3rem',
   },
-};
+} as const;
 
-const currentSize = sizeClasses[size];
+const sizeConfig = sizeTokens[size];
+const variantGaps = {
+  default: '1rem',
+  compact: '0.5rem',
+  detailed: '1rem',
+  minimal: '0.75rem',
+} as const;
 
-// Base container classes with WCAG AAA contrast
-const baseClasses = `
-  ${variantClasses[variant]}
-  ${currentSize.container}
-  ${variant !== 'minimal' ? 'bg-white dark:bg-gray-900' : ''}
-  ${variant !== 'minimal' ? 'border border-gray-200 dark:border-gray-700' : ''}
-  ${variant !== 'minimal' ? 'rounded-lg shadow-sm' : ''}
-  ${variant !== 'minimal' ? 'hover:shadow-md' : ''}
-  ${selected ? 'ring-2 ring-blue-500 border-blue-300 dark:border-blue-600' : ''}
-  transition-all duration-200 ease-in-out
-  ${disabled ? 'opacity-50 pointer-events-none' : ''}
-  ${loading ? 'animate-pulse' : ''}
-  group
-`
-  .trim()
-  .replace(/\s+/g, ' ');
+const imageWidth =
+  variant === 'compact'
+    ? sizeConfig.imageCompact
+    : sizeConfig.imageStandard;
 
-// Image container classes
-const imageClasses = `
-  ${currentSize.imageWidth}
-  ${currentSize.imageHeight}
-  ${imageAspectRatio !== 'square' ? aspectRatioClasses[imageAspectRatio] : ''}
-  rounded-lg object-cover shrink-0
-  ${variant !== 'minimal' ? 'shadow-sm' : ''}
-  ${variant !== 'minimal' ? 'bg-gray-100 dark:bg-gray-800' : ''}
-`
-  .trim()
-  .replace(/\s+/g, ' ');
+const inlineStyle = Object.entries({
+  '--media-list-padding': sizeConfig.padding,
+  '--media-list-gap': variantGaps[variant],
+  '--media-list-image-width': imageWidth,
+  '--media-list-image-height':
+    imageAspectRatio === 'square' ? imageWidth : 'auto',
+  '--media-list-image-aspect': aspectRatioValues[imageAspectRatio],
+  '--media-list-title-size': sizeConfig.titleSize,
+  '--media-list-subtitle-size': sizeConfig.subtitleSize,
+  '--media-list-meta-size': sizeConfig.metaSize,
+  '--media-list-action-font-size': sizeConfig.actionFontSize,
+  '--media-list-action-padding-inline': sizeConfig.actionPaddingInline,
+  '--media-list-action-padding-block': sizeConfig.actionPaddingBlock,
+}).reduce((acc, [key, value]) => `${acc}${key}: ${value}; `, '');
 
-// Content container classes
-const contentClasses = `
-  min-w-0 flex-1
-  ${variant === 'detailed' ? 'space-y-1' : ''}
-`
-  .trim()
-  .replace(/\s+/g, ' ');
+const userClasses = [className, legacyClassName].filter(Boolean).join(' ');
 
-const finalClassName = className || legacyClassName || '';
+const variantModifiers = {
+  default: 'media-list-item--variant-default',
+  compact: 'media-list-item--variant-compact',
+  detailed: 'media-list-item--variant-detailed',
+  minimal: 'media-list-item--variant-minimal',
+} as const;
+
+const rootClasses = [
+  'media-list-item',
+  variantModifiers[variant],
+  `media-list-item--size-${size}`,
+  loading ? 'media-list-item--loading' : '',
+  disabled ? 'media-list-item--disabled' : '',
+  selected ? 'media-list-item--selected' : '',
+  userClasses,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
@@ -191,22 +179,23 @@ const finalClassName = className || legacyClassName || '';
   aria-label={ariaLabel}
   aria-describedby={ariaDescribedBy || (subtitle ? descId : undefined)}
   aria-selected={selected}
-  class={`${baseClasses} ${finalClassName}`}
+  class={rootClasses}
+  style={inlineStyle}
 >
   {
     showImage && imageSrc && (
-      <div class="shrink-0">
+      <div class="media-list-item__image-wrapper">
         {href ? (
           <a
             href={href}
-            class="block focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg"
+            class="media-list-item__image-link"
             tabindex="-1"
             aria-hidden="true"
           >
             <img
               src={imageSrc}
               alt={imageAlt || title}
-              class={imageClasses}
+              class="media-list-item__image"
               loading="lazy"
               decoding="async"
             />
@@ -215,64 +204,32 @@ const finalClassName = className || legacyClassName || '';
           <img
             src={imageSrc}
             alt={imageAlt || title}
-            class={imageClasses}
+            class="media-list-item__image"
             loading="lazy"
             decoding="async"
           />
         )}
         {loading && (
-          <div
-            class={`
-            ${currentSize.imageWidth} 
-            ${currentSize.imageHeight}
-            ${imageAspectRatio !== 'square' ? aspectRatioClasses[imageAspectRatio] : ''}
-            rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse
-          `
-              .trim()
-              .replace(/\s+/g, ' ')}
-            aria-label="Loading image..."
-          />
+          <div class="media-list-item__image-placeholder" aria-label="Loading image..." />
         )}
       </div>
     )
   }
 
-  <div class={contentClasses}>
-    <div class={variant === 'compact' ? 'truncate' : ''}>
+  <div class="media-list-item__content">
+    <div class="media-list-item__title-wrapper">
       {
         href ? (
           <a
             href={href}
             id={titleId}
-            class={`
-            ${currentSize.title} font-semibold
-            text-gray-900 dark:text-gray-50
-            hover:text-blue-700 dark:hover:text-blue-300
-            focus:text-blue-700 dark:focus:text-blue-300
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            dark:focus:ring-offset-gray-900
-            transition-colors duration-200
-            underline-offset-4 hover:underline focus:underline
-            no-underline
-            ${variant === 'compact' ? 'truncate block' : ''}
-          `
-              .trim()
-              .replace(/\s+/g, ' ')}
+            class="media-list-item__title-link"
             aria-describedby={subtitle ? descId : undefined}
           >
             {title}
           </a>
         ) : (
-          <div
-            id={titleId}
-            class={`
-            ${currentSize.title} font-semibold
-            text-gray-900 dark:text-gray-50
-            ${variant === 'compact' ? 'truncate' : ''}
-          `
-              .trim()
-              .replace(/\s+/g, ' ')}
-          >
+          <div id={titleId} class="media-list-item__title-text">
             {title}
           </div>
         )
@@ -281,16 +238,7 @@ const finalClassName = className || legacyClassName || '';
 
     {
       subtitle && (
-        <div
-          id={descId}
-          class={`
-          ${currentSize.subtitle}
-          text-gray-700 dark:text-gray-300
-          ${variant === 'compact' ? 'truncate' : ''}
-        `
-            .trim()
-            .replace(/\s+/g, ' ')}
-        >
+        <div id={descId} class="media-list-item__subtitle">
           {subtitle}
         </div>
       )
@@ -298,26 +246,12 @@ const finalClassName = className || legacyClassName || '';
 
     {
       showMeta && meta.length > 0 && (
-        <div
-          class={`
-          ${variant === 'detailed' ? 'mt-2' : 'mt-1'}
-          flex flex-wrap items-center gap-2
-          ${currentSize.meta}
-          text-gray-600 dark:text-gray-400
-        `
-            .trim()
-            .replace(/\s+/g, ' ')}
-          role="group"
-          aria-label="Item metadata"
-        >
+        <div class="media-list-item__meta" role="group" aria-label="Item metadata">
           {meta.map((metaItem, index) => (
-            <span key={index}>
+            <span key={index} class="media-list-item__meta-item">
               {metaItem}
               {index < meta.length - 1 && variant !== 'compact' && (
-                <span
-                  class="mx-1 text-gray-400 dark:text-gray-500"
-                  aria-hidden="true"
-                >
+                <span class="media-list-item__meta-dot" aria-hidden="true">
                   •
                 </span>
               )}
@@ -330,44 +264,16 @@ const finalClassName = className || legacyClassName || '';
 
   {
     showActions && actions.length > 0 && (
-      <div
-        class={`
-        shrink-0 flex flex-wrap gap-2
-        ${variant === 'detailed' ? 'items-start' : 'items-center'}
-        ${variant === 'compact' ? 'ml-1' : 'ml-2'}
-      `
-          .trim()
-          .replace(/\s+/g, ' ')}
-        role="group"
-        aria-label="Item actions"
-      >
+      <div class="media-list-item__actions" role="group" aria-label="Item actions">
         {actions.map((action, index) => {
           const actionId = `${itemId}-action-${index}`;
-          const buttonClasses = `
-          ${currentSize.actions} rounded-md font-medium
-          transition-all duration-200 ease-in-out
-          focus:outline-none focus:ring-2 focus:ring-offset-2
-          dark:focus:ring-offset-gray-900
-          disabled:opacity-50 disabled:cursor-not-allowed
-          no-underline
-          ${
-            action.variant === 'primary'
-              ? `bg-blue-700 dark:bg-blue-600 text-white
-               hover:bg-blue-800 dark:hover:bg-blue-700
-               focus:ring-blue-500`
-              : action.variant === 'danger'
-                ? `bg-red-700 dark:bg-red-600 text-white
-               hover:bg-red-800 dark:hover:bg-red-700
-               focus:ring-red-500`
-                : `bg-gray-200 dark:bg-gray-700 
-               text-gray-900 dark:text-gray-100
-               hover:bg-gray-300 dark:hover:bg-gray-600
-               focus:ring-gray-500
-               border border-gray-300 dark:border-gray-600`
-          }
-        `
-            .trim()
-            .replace(/\s+/g, ' ');
+          const actionVariant = action.variant ?? 'secondary';
+          const actionClasses = [
+            'media-list-item__action',
+            `media-list-item__action--${actionVariant}`,
+          ]
+            .filter(Boolean)
+            .join(' ');
 
           if (action.href) {
             return (
@@ -378,12 +284,12 @@ const finalClassName = className || legacyClassName || '';
                 rel={
                   action.target === '_blank' ? 'noopener noreferrer' : undefined
                 }
-                class={buttonClasses}
+                class={actionClasses}
                 role="button"
                 tabindex="0"
               >
                 {action.icon && (
-                  <span class="mr-1.5" aria-hidden="true">
+                  <span class="media-list-item__action-icon" aria-hidden="true">
                     {action.icon}
                   </span>
                 )}
@@ -396,11 +302,11 @@ const finalClassName = className || legacyClassName || '';
                 id={actionId}
                 type="button"
                 onclick={action.onClick}
-                class={buttonClasses}
+                class={actionClasses}
                 disabled={disabled}
               >
                 {action.icon && (
-                  <span class="mr-1.5" aria-hidden="true">
+                  <span class="media-list-item__action-icon" aria-hidden="true">
                     {action.icon}
                   </span>
                 )}
@@ -413,3 +319,296 @@ const finalClassName = className || legacyClassName || '';
     )
   }
 </div>
+
+<style>
+  .media-list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--media-list-gap, 1rem);
+    padding: var(--media-list-padding, 0.75rem);
+    border: 1px solid #e2e8f0;
+    border-radius: 0.85rem;
+    background-color: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .media-list-item:hover {
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  .media-list-item--variant-detailed {
+    align-items: flex-start;
+  }
+
+  .media-list-item--variant-minimal {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  .media-list-item--selected {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+  }
+
+  .media-list-item--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .media-list-item--loading {
+    animation: media-list-item-pulse 1.4s ease-in-out infinite;
+  }
+
+  .media-list-item__image-wrapper {
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .media-list-item__image-link {
+    display: block;
+    border-radius: 0.65rem;
+    outline: none;
+  }
+
+  .media-list-item__image-link:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 3px;
+  }
+
+  .media-list-item__image {
+    width: var(--media-list-image-width, 3rem);
+    height: var(--media-list-image-height, auto);
+    aspect-ratio: var(--media-list-image-aspect, 1 / 1);
+    object-fit: cover;
+    border-radius: 0.65rem;
+    background-color: #f1f5f9;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12);
+    display: block;
+  }
+
+  .media-list-item__image-placeholder {
+    position: absolute;
+    inset: 0;
+    border-radius: 0.65rem;
+    background-color: rgba(203, 213, 225, 0.8);
+    animation: media-list-item-pulse 1.4s ease-in-out infinite;
+  }
+
+  .media-list-item__content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .media-list-item__title-wrapper {
+    min-width: 0;
+  }
+
+  .media-list-item__title-link,
+  .media-list-item__title-text {
+    font-size: var(--media-list-title-size, 1rem);
+    font-weight: 600;
+    color: inherit;
+    line-height: 1.35;
+    text-decoration: none;
+    display: inline-flex;
+    gap: 0.4rem;
+  }
+
+  .media-list-item__title-link:hover,
+  .media-list-item__title-link:focus-visible {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+
+  .media-list-item__title-link:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+
+  .media-list-item--variant-compact .media-list-item__title-link,
+  .media-list-item--variant-compact .media-list-item__title-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .media-list-item__subtitle {
+    margin: 0;
+    font-size: var(--media-list-subtitle-size, 0.875rem);
+    color: #475569;
+    line-height: 1.4;
+  }
+
+  .media-list-item--variant-compact .media-list-item__subtitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .media-list-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    font-size: var(--media-list-meta-size, 0.75rem);
+    color: #64748b;
+  }
+
+  .media-list-item--variant-detailed .media-list-item__meta {
+    margin-top: 0.5rem;
+  }
+
+  .media-list-item__meta-dot {
+    margin: 0 0.35rem;
+    color: #94a3b8;
+  }
+
+  .media-list-item__actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+    align-items: center;
+  }
+
+  .media-list-item--variant-compact .media-list-item__actions {
+    margin-left: 0.25rem;
+  }
+
+  .media-list-item--variant-detailed .media-list-item__actions {
+    align-items: flex-start;
+  }
+
+  .media-list-item__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--media-list-action-font-size, 0.875rem);
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding-inline: var(--media-list-action-padding-inline, 0.75rem);
+    padding-block: var(--media-list-action-padding-block, 0.375rem);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .media-list-item__action:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .media-list-item__action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .media-list-item__action--primary {
+    background-color: #1d4ed8;
+    color: #ffffff;
+  }
+
+  .media-list-item__action--primary:hover {
+    background-color: #1e40af;
+  }
+
+  .media-list-item__action--secondary {
+    background-color: #e2e8f0;
+    color: #0f172a;
+    border: 1px solid #cbd5f5;
+  }
+
+  .media-list-item__action--secondary:hover {
+    background-color: #cbd5f5;
+  }
+
+  .media-list-item__action--danger {
+    background-color: #b91c1c;
+    color: #ffffff;
+  }
+
+  .media-list-item__action--danger:hover {
+    background-color: #991b1b;
+  }
+
+  .media-list-item__action-icon {
+    display: inline-flex;
+    margin-right: 0.35rem;
+  }
+
+  :where(.dark) .media-list-item {
+    background-color: #0f172a;
+    border-color: #1e293b;
+    color: #f1f5f9;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+  }
+
+  :where(.dark) .media-list-item--selected {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+
+  :where(.dark) .media-list-item--variant-minimal {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  :where(.dark) .media-list-item__image {
+    background-color: #1f2937;
+  }
+
+  :where(.dark) .media-list-item__image-placeholder {
+    background-color: rgba(30, 41, 59, 0.75);
+  }
+
+  :where(.dark) .media-list-item__subtitle {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .media-list-item__meta {
+    color: #94a3b8;
+  }
+
+  :where(.dark) .media-list-item__meta-dot {
+    color: #64748b;
+  }
+
+  :where(.dark) .media-list-item__action--secondary {
+    background-color: #1f2937;
+    border-color: #334155;
+    color: #e2e8f0;
+  }
+
+  :where(.dark) .media-list-item__action--secondary:hover {
+    background-color: #334155;
+  }
+
+  :where(.dark) .media-list-item__action--primary:hover {
+    background-color: #2563eb;
+  }
+
+  :where(.dark) .media-list-item__action--danger:hover {
+    background-color: #dc2626;
+  }
+
+  @keyframes media-list-item-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+</style>

@@ -68,63 +68,26 @@ const {
   className: legacyClassName
 } = Astro.props;
 
-const finalClassName = className || legacyClassName || '';
+const userClasses = [className, legacyClassName].filter(Boolean).join(' ');
 
-// Generate unique IDs for accessibility
 const imageId = `comet-img-${Math.random().toString(36).slice(2, 9)}`;
 const captionId = caption ? `${imageId}-caption` : undefined;
+const widthAttr =
+  typeof width === 'number' || typeof width === 'string' ? width : undefined;
+const heightAttr =
+  typeof height === 'number' || typeof height === 'string' ? height : undefined;
 
-// Dimension attributes
-const widthAttr = typeof width === 'number' || typeof width === 'string' ? width : undefined;
-const heightAttr = typeof height === 'number' || typeof height === 'string' ? height : undefined;
-
-// Variant styles
-const variantClasses = {
-  default: '',
-  rounded: 'rounded-lg',
-  circle: 'rounded-full',
-  bordered: 'border-2 border-gray-200 dark:border-gray-700 rounded-lg'
-};
-
-// Aspect ratio classes
-const aspectRatioClasses = {
-  'auto': '',
-  '1/1': 'aspect-square',
-  '4/3': 'aspect-[4/3]',
-  '3/2': 'aspect-[3/2]',
-  '16/9': 'aspect-video',
-  '21/9': 'aspect-[21/9]'
-};
-
-// Object fit classes
-const objectFitClasses = {
-  contain: 'object-contain',
-  cover: 'object-cover',
-  fill: 'object-fill',
-  none: 'object-none',
-  'scale-down': 'object-scale-down'
-};
-
-// Base image classes with responsive and accessibility features
-const baseImageClasses = `
-  max-w-full h-auto transition-all duration-300
-  ${aspectRatioClasses[aspectRatio]}
-  ${objectFitClasses[objectFit]}
-  ${variantClasses[variant]}
-  ${finalClassName}
-`.trim().replace(/\s+/g, ' ');
-
-// Caption styles with WCAG AAA contrast
-const captionClasses = {
-  bottom: 'mt-3 text-sm text-gray-700 dark:text-gray-300',
-  top: 'mb-3 text-sm text-gray-700 dark:text-gray-300',
-  overlay: 'absolute bottom-0 left-0 right-0 bg-gray-900/80 text-gray-50 p-3 text-sm backdrop-blur-sm'
-};
-
-// Figure classes for different caption positions
-const figureClasses = captionPosition === 'overlay' 
-  ? 'relative inline-block' 
-  : 'inline-flex flex-col';
+const rootClasses = [
+  'optimized-image',
+  `optimized-image--variant-${variant}`,
+  `optimized-image--aspect-${aspectRatio.replace('/', '-')}`,
+  `optimized-image--object-${objectFit}`,
+  caption ? `optimized-image--caption-${captionPosition}` : '',
+  figure ? 'optimized-image--figure' : '',
+  userClasses,
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Error handling script
 const errorScript = errorFallback ? `
@@ -141,11 +104,11 @@ const errorScript = errorFallback ? `
 ---
 
 {figure ? (
-  <figure class={figureClasses}>
+  <figure class={rootClasses}>
     {caption && captionPosition === 'top' && (
       <figcaption 
         id={captionId}
-        class={captionClasses[captionPosition]}
+        class="optimized-image__caption"
       >
         {caption}
       </figcaption>
@@ -162,7 +125,7 @@ const errorScript = errorFallback ? `
       fetchpriority={fetchPriority}
       sizes={sizes}
       srcset={srcset}
-      class={baseImageClasses}
+      class="optimized-image__media"
       role={role}
       aria-describedby={ariaDescribedBy || captionId}
     />
@@ -170,7 +133,7 @@ const errorScript = errorFallback ? `
     {caption && (captionPosition === 'bottom' || captionPosition === 'overlay') && (
       <figcaption 
         id={captionId}
-        class={captionClasses[captionPosition]}
+        class="optimized-image__caption"
       >
         {caption}
       </figcaption>
@@ -188,7 +151,7 @@ const errorScript = errorFallback ? `
     fetchpriority={fetchPriority}
     sizes={sizes}
     srcset={srcset}
-    class={baseImageClasses}
+    class="optimized-image__media optimized-image__media--standalone"
     role={role}
     aria-describedby={ariaDescribedBy}
   />
@@ -197,6 +160,96 @@ const errorScript = errorFallback ? `
 {errorFallback && (
   <script is:inline set:html={errorScript} />
 )}
+
+<style>
+  .optimized-image {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .optimized-image--caption-overlay {
+    position: relative;
+    display: inline-block;
+  }
+
+  .optimized-image__media {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    transition: transform 0.3s ease;
+  }
+
+  .optimized-image--variant-circle .optimized-image__media {
+    border-radius: 999px;
+  }
+
+  .optimized-image--variant-bordered .optimized-image__media {
+    border: 2px solid rgba(148, 163, 184, 0.5);
+  }
+
+  .optimized-image--aspect-1-1 .optimized-image__media {
+    aspect-ratio: 1 / 1;
+  }
+
+  .optimized-image--aspect-4-3 .optimized-image__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .optimized-image--aspect-3-2 .optimized-image__media {
+    aspect-ratio: 3 / 2;
+  }
+
+  .optimized-image--aspect-16-9 .optimized-image__media {
+    aspect-ratio: 16 / 9;
+  }
+
+  .optimized-image--aspect-21-9 .optimized-image__media {
+    aspect-ratio: 21 / 9;
+  }
+
+  .optimized-image--object-contain .optimized-image__media {
+    object-fit: contain;
+  }
+
+  .optimized-image--object-cover .optimized-image__media {
+    object-fit: cover;
+  }
+
+  .optimized-image--object-fill .optimized-image__media {
+    object-fit: fill;
+  }
+
+  .optimized-image--object-none .optimized-image__media {
+    object-fit: none;
+  }
+
+  .optimized-image--object-scale-down .optimized-image__media {
+    object-fit: scale-down;
+  }
+
+  .optimized-image__caption {
+    font-size: 0.9rem;
+    color: #475569;
+  }
+
+  .optimized-image--caption-overlay .optimized-image__caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0.75rem;
+    background: rgba(15, 23, 42, 0.75);
+    color: #f8fafc;
+    backdrop-filter: blur(6px);
+  }
+
+  :where(.dark) .optimized-image__caption {
+    color: #cbd5f5;
+  }
+</style>
 
 {placeholder && (
   <style set:html={`

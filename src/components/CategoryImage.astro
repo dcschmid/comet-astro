@@ -3,17 +3,17 @@ interface Props {
   category?: string;
   title?: string;
   description?: string;
-  href?: string; // if provided renders link
-  image?: string; // background image URL
-  alt?: string; // alt for image/fallback
-  height?: number | string; // explicit height overrides size preset
-  rounded?: boolean; // rounded corners (2xl vs lg)
-  className?: string; // extra classes
-  ariaLabel?: string; // override accessible label (link)
-  overlayStrength?: 'soft' | 'medium' | 'strong'; // darkness for AAA contrast
-  size?: 'sm' | 'md' | 'lg'; // height presets
-  headingLevel?: 2 | 3 | 4 | 5 | 6; // semantic heading for title
-  interactive?: boolean; // enable hover motion/scale
+  href?: string;
+  image?: string;
+  alt?: string;
+  height?: number | string;
+  rounded?: boolean;
+  className?: string;
+  ariaLabel?: string;
+  overlayStrength?: 'soft' | 'medium' | 'strong';
+  size?: 'sm' | 'md' | 'lg';
+  headingLevel?: 2 | 3 | 4 | 5 | 6;
+  interactive?: boolean;
 }
 
 const {
@@ -35,22 +35,21 @@ const {
 
 const displayTitle = title ?? category ?? 'Category';
 const displayCategory = category ?? '';
+const resolvedAlt = alt ?? `${displayTitle} preview`;
 
-// Fallback gradient heuristic based on title/category keywords.
 const key = displayTitle.trim().toLowerCase();
-const gradient = key.includes('rock')
-  ? 'from-purple-700 to-rose-500'
+const gradientTone = key.includes('rock')
+  ? 'purple'
   : key.includes('pop')
-    ? 'from-blue-700 to-sky-500'
+    ? 'blue'
     : key.includes('jazz')
-      ? 'from-amber-600 to-orange-500'
+      ? 'amber'
       : key.includes('hip') || key.includes('rap')
-        ? 'from-emerald-600 to-teal-500'
+        ? 'emerald'
         : key.includes('classical')
-          ? 'from-indigo-700 to-blue-500'
-          : 'from-slate-800 to-slate-950';
+          ? 'indigo'
+          : 'slate';
 
-// Height presets.
 const sizeHeights: Record<string, string> = {
   sm: '10rem',
   md: '14rem',
@@ -58,40 +57,13 @@ const sizeHeights: Record<string, string> = {
 };
 const resolvedHeight = height || sizeHeights[size] || sizeHeights.md;
 
-// Container classes.
-const containerClasses = [
-  'group relative block overflow-hidden border border-slate-300/40 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-900 shadow-sm dark:shadow-none',
-  interactive ? 'transition will-change-transform hover:-translate-y-0.5' : '',
-  href
-    ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
-    : 'focus:outline-none',
-  rounded ? 'rounded-2xl' : 'rounded-lg',
-  className,
-]
-  .filter(Boolean)
-  .join(' ')
-  .trim();
+const overlayKey =
+  overlayStrength === 'soft'
+    ? 'soft'
+    : overlayStrength === 'strong'
+      ? 'strong'
+      : 'medium';
 
-// Image classes.
-const mediaClasses = [
-  'h-full w-full object-cover',
-  interactive
-    ? 'transition duration-500 ease-out motion-reduce:transition-none'
-    : 'motion-reduce:transition-none',
-  interactive && image ? 'scale-100 group-hover:scale-[1.03]' : '',
-]
-  .filter(Boolean)
-  .join(' ');
-
-// Overlay strengths tuned for AAA contrast.
-const overlayMap: Record<string, string> = {
-  soft: 'from-slate-950/75 via-slate-950/35',
-  medium: 'from-slate-950/82 via-slate-950/42',
-  strong: 'from-slate-950/90 via-slate-950/55',
-};
-const overlayGradient = overlayMap[overlayStrength] || overlayMap.medium;
-
-const resolvedAlt = alt ?? `${displayTitle} preview`;
 const label = ariaLabel || resolvedAlt;
 const descId =
   href && description
@@ -101,108 +73,207 @@ const descId =
         .replace(/[^a-z0-9]+/g, '-')}-desc`
     : undefined;
 
-const headingClass =
-  'text-base sm:text-lg font-semibold text-white leading-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]';
+const headingClass = 'category-image__title';
+const Tag = href ? 'a' : 'div';
+const classes = [
+  'category-image',
+  rounded ? 'category-image--rounded' : '',
+  interactive ? 'category-image--interactive' : '',
+  `category-image--gradient-${gradientTone}`,
+  `category-image--overlay-${overlayKey}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-{
-  href ? (
-    <a
-      href={href}
-      class={containerClasses}
-      aria-label={label}
-      aria-describedby={descId}
-    >
-      <div class="relative h-full" style={`height:${resolvedHeight}`}>
-        {image ? (
-          <img
-            src={image}
-            alt={resolvedAlt}
-            class={mediaClasses}
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <div
-            class={`flex h-full w-full items-center justify-center bg-linear-to-br ${gradient}`}
-            role="img"
-            aria-label={resolvedAlt}
-          >
-            <span class="text-lg font-semibold uppercase tracking-wide text-white/80 drop-shadow">
-              {displayTitle}
-            </span>
-          </div>
-        )}
-        <div
-          class={`pointer-events-none absolute inset-0 bg-linear-to-t ${overlayGradient} to-transparent`}
-          aria-hidden="true"
-        />
-        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-4 sm:p-5">
-          {displayCategory && (
-            <span class="text-xs font-semibold uppercase tracking-wide text-white/70">
-              {displayCategory}
-            </span>
-          )}
-          {headingLevel === 2 && <h2 class={headingClass}>{displayTitle}</h2>}
-          {headingLevel === 3 && <h3 class={headingClass}>{displayTitle}</h3>}
-          {headingLevel === 4 && <h4 class={headingClass}>{displayTitle}</h4>}
-          {headingLevel === 5 && <h5 class={headingClass}>{displayTitle}</h5>}
-          {headingLevel === 6 && <h6 class={headingClass}>{displayTitle}</h6>}
-          {description && (
-            <span
-              id={descId}
-              class="text-xs sm:text-sm text-white/85 leading-snug"
-            >
-              {description}
-            </span>
-          )}
-        </div>
+<Tag
+  class={classes}
+  href={href}
+  aria-label={href ? label : ariaLabel || undefined}
+  aria-describedby={href ? descId : undefined}
+>
+  <div class="category-image__media" style={`height:${resolvedHeight}`}>
+    {image ? (
+      <img
+        src={image}
+        alt={resolvedAlt}
+        class="category-image__image"
+        loading="lazy"
+        decoding="async"
+      />
+    ) : (
+      <div class="category-image__gradient" role="img" aria-label={resolvedAlt}>
+        <span class="category-image__gradient-text">{displayTitle}</span>
       </div>
-    </a>
-  ) : (
-    <div class={containerClasses} aria-label={ariaLabel || undefined}>
-      <div class="relative h-full" style={`height:${resolvedHeight}`}>
-        {image ? (
-          <img
-            src={image}
-            alt={resolvedAlt}
-            class={mediaClasses}
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <div
-            class={`flex h-full w-full items-center justify-center bg-linear-to-br ${gradient}`}
-            role="img"
-            aria-label={resolvedAlt}
-          >
-            <span class="text-lg font-semibold uppercase tracking-wide text-white/80 drop-shadow">
-              {displayTitle}
-            </span>
-          </div>
-        )}
-        <div
-          class={`pointer-events-none absolute inset-0 bg-linear-to-t ${overlayGradient} to-transparent`}
-          aria-hidden="true"
-        />
-        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-4 sm:p-5">
-          {displayCategory && (
-            <span class="text-xs font-semibold uppercase tracking-wide text-white/70">
-              {displayCategory}
-            </span>
-          )}
-          {headingLevel === 2 && <h2 class={headingClass}>{displayTitle}</h2>}
-          {headingLevel === 3 && <h3 class={headingClass}>{displayTitle}</h3>}
-          {headingLevel === 4 && <h4 class={headingClass}>{displayTitle}</h4>}
-          {headingLevel === 5 && <h5 class={headingClass}>{displayTitle}</h5>}
-          {headingLevel === 6 && <h6 class={headingClass}>{displayTitle}</h6>}
-          {description && (
-            <span class="text-xs sm:text-sm text-white/85 leading-snug">
-              {description}
-            </span>
-          )}
-        </div>
-      </div>
+    )}
+    <div class="category-image__overlay" aria-hidden="true" />
+    <div class="category-image__content">
+      {displayCategory && (
+        <span class="category-image__category">{displayCategory}</span>
+      )}
+      {headingLevel === 2 && <h2 class={headingClass}>{displayTitle}</h2>}
+      {headingLevel === 3 && <h3 class={headingClass}>{displayTitle}</h3>}
+      {headingLevel === 4 && <h4 class={headingClass}>{displayTitle}</h4>}
+      {headingLevel === 5 && <h5 class={headingClass}>{displayTitle}</h5>}
+      {headingLevel === 6 && <h6 class={headingClass}>{displayTitle}</h6>}
+      {description && (
+        <span
+          id={href ? descId : undefined}
+          class="category-image__description"
+        >
+          {description}
+        </span>
+      )}
     </div>
-  )
-}
+  </div>
+</Tag>
+
+<style is:inline>
+  .category-image {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.85);
+    box-shadow: 0 20px 45px rgba(2, 6, 23, 0.4);
+  }
+
+  .category-image--rounded {
+    border-radius: 1.5rem;
+  }
+
+  .category-image:not(.category-image--rounded) {
+    border-radius: 1rem;
+  }
+
+  .category-image--interactive {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .category-image--interactive:hover,
+  .category-image--interactive:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 55px rgba(2, 6, 23, 0.45);
+  }
+
+  .category-image--interactive:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.5);
+    outline-offset: 3px;
+  }
+
+  .category-image__media {
+    position: relative;
+    width: 100%;
+  }
+
+  .category-image__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .category-image--interactive:hover .category-image__image {
+    transform: scale(1.03);
+  }
+
+  .category-image__gradient {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f8fafc;
+  }
+
+  .category-image__gradient-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .category-image__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(2, 6, 23, 0) 0%,
+      rgba(2, 6, 23, 0.8) 85%,
+      rgba(2, 6, 23, 0.95) 100%
+    );
+  }
+
+  .category-image__content {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    color: #f8fafc;
+  }
+
+  .category-image__category {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(248, 250, 252, 0.75);
+  }
+
+  .category-image__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .category-image__description {
+    font-size: 0.85rem;
+    color: rgba(248, 250, 252, 0.85);
+  }
+
+  .category-image--gradient-purple .category-image__gradient {
+    background: linear-gradient(135deg, #6d28d9, #db2777);
+  }
+
+  .category-image--gradient-blue .category-image__gradient {
+    background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+  }
+
+  .category-image--gradient-amber .category-image__gradient {
+    background: linear-gradient(135deg, #d97706, #f97316);
+  }
+
+  .category-image--gradient-emerald .category-image__gradient {
+    background: linear-gradient(135deg, #047857, #0d9488);
+  }
+
+  .category-image--gradient-indigo .category-image__gradient {
+    background: linear-gradient(135deg, #3730a3, #2563eb);
+  }
+
+  .category-image--gradient-slate .category-image__gradient {
+    background: linear-gradient(135deg, #475569, #0f172a);
+  }
+
+  .category-image--overlay-soft .category-image__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(2, 6, 23, 0) 0%,
+      rgba(2, 6, 23, 0.5) 70%,
+      rgba(2, 6, 23, 0.75) 100%
+    );
+  }
+
+  .category-image--overlay-strong .category-image__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(2, 6, 23, 0) 0%,
+      rgba(2, 6, 23, 0.85) 70%,
+      rgba(2, 6, 23, 0.98) 100%
+    );
+  }
+</style>

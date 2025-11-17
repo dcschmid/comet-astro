@@ -31,7 +31,7 @@ const autoStartAttr = autoStart ? 'true' : 'false';
 
 <div
   id={id}
-  class={`${fullscreen ? 'fixed inset-0 z-40' : 'relative'} ${className}`.trim()}
+  class={`confetti ${fullscreen ? 'confetti--fullscreen' : ''} ${className}`.trim()}
   data-confetti-root
   data-confetti-colors={encodedColors}
   data-confetti-duration={durationAttr}
@@ -39,22 +39,16 @@ const autoStartAttr = autoStart ? 'true' : 'false';
   data-confetti-auto-start={autoStartAttr}
   data-confetti-fullscreen={fullscreen ? 'true' : 'false'}
 >
-  <canvas
-    data-confetti-canvas
-    class="pointer-events-none absolute inset-0 h-full w-full z-0"
-    aria-hidden="true"></canvas>
+  <canvas data-confetti-canvas class="confetti__canvas" aria-hidden="true"></canvas>
   {
     !autoStart && (
       <button
         type="button"
-        class="relative z-10 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold shadow-sm transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
-        style="background-color:var(--confetti-btn-bg, #0ea5e9); color:var(--confetti-btn-fg, #fff); border-color:var(--confetti-btn-border, #0369a1)"
+        class="confetti__button"
         aria-label={buttonLabel}
         data-confetti-trigger
       >
-        <span aria-hidden class="text-lg">
-          🎉
-        </span>
+        <span aria-hidden class="confetti__button-icon">🎉</span>
         <span>{buttonLabel}</span>
       </button>
     )
@@ -173,8 +167,6 @@ const autoStartAttr = autoStart ? 'true' : 'false';
 
       const start = () => {
         if (prefersReducedMotion.matches) return;
-        // Debug log can be removed later
-        console.debug('[Confetti] start');
         resize();
         createParticles();
         startTime = performance.now();
@@ -205,12 +197,7 @@ const autoStartAttr = autoStart ? 'true' : 'false';
       });
 
       const trigger = root.querySelector('[data-confetti-trigger]');
-      if (trigger) {
-        trigger.addEventListener('click', () => {
-          console.log('[Confetti] Button clicked!');
-          start();
-        });
-      }
+      trigger?.addEventListener('click', start);
 
       if (autoStartEnabled && !prefersReducedMotion.matches) {
         start();
@@ -220,3 +207,58 @@ const autoStartAttr = autoStart ? 'true' : 'false';
     }); // End forEach
   })();
 </script>
+
+<style is:inline>
+  .confetti {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: var(--confetti-min-height, 4rem);
+  }
+
+  .confetti--fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+  }
+
+  .confetti__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .confetti__button {
+    position: relative;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--confetti-btn-border, #0369a1);
+    background: var(--confetti-btn-bg, #0ea5e9);
+    color: var(--confetti-btn-fg, #ffffff);
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(14, 165, 233, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin: 0 auto;
+  }
+
+  .confetti__button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(14, 165, 233, 0.35);
+  }
+
+  .confetti__button:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.7);
+    outline-offset: 2px;
+  }
+
+  .confetti__button-icon {
+    font-size: 1.35rem;
+  }
+</style>

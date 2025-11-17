@@ -1,35 +1,17 @@
 ---
-import { cn } from '../utils/cn';
-
-/**
- * RichTextEditor - Accessible WYSIWYG editor built on contenteditable with WCAG AAA compliance
- */
 interface Props {
-  /** Initial HTML content value */
   value?: string;
-  /** Placeholder text for empty editor */
   placeholder?: string;
-  /** Label text for the editor */
   label?: string;
-  /** Help text displayed below the editor */
   helpText?: string;
-  /** Whether the editor is read-only */
   readOnly?: boolean;
-  /** Whether the editor is disabled */
   disabled?: boolean;
-  /** Whether the editor is required */
   required?: boolean;
-  /** Whether the editor has an error state */
   error?: boolean;
-  /** Visual variant of the editor */
   variant?: 'default' | 'minimal' | 'bordered' | 'elevated';
-  /** Size of the editor */
   size?: 'sm' | 'md' | 'lg';
-  /** Maximum character count */
   maxLength?: number;
-  /** Show character count */
   showCharCount?: boolean;
-  /** Custom toolbar configuration */
   toolbar?: Array<
     | 'bold'
     | 'italic'
@@ -45,15 +27,10 @@ interface Props {
     | 'undo'
     | 'redo'
   >;
-  /** Form name attribute */
   name?: string;
-  /** Custom ID for the editor */
   id?: string;
-  /** Custom aria-label for accessibility */
   ariaLabel?: string;
-  /** ID of element that describes the editor */
   ariaDescribedBy?: string;
-  /** Additional CSS classes */
   class?: string;
 }
 
@@ -92,6 +69,8 @@ const {
   class: className = '',
 } = Astro.props;
 
+const hasError = Boolean(error);
+
 const id = propId || `rich-text-${Math.random().toString(36).slice(2, 10)}`;
 const helpId = helpText ? `${id}-help` : undefined;
 const errorId = error ? `${id}-error` : undefined;
@@ -100,154 +79,36 @@ const finalAriaDescribedBy =
   [ariaDescribedBy, helpId, errorId, charCountId].filter(Boolean).join(' ') ||
   undefined;
 
-// Size configurations
-const sizeClasses = {
-  sm: {
-    editor: 'min-h-[120px] px-3 py-2 text-sm',
-    toolbar: 'p-1.5 gap-0.5',
-    button: 'px-1.5 py-1 text-xs',
-    label: 'text-sm',
-    help: 'text-xs',
-  },
-  md: {
-    editor: 'min-h-[180px] px-4 py-3 text-sm',
-    toolbar: 'p-2 gap-1',
-    button: 'px-2 py-1 text-sm',
-    label: 'text-sm',
-    help: 'text-xs',
-  },
-  lg: {
-    editor: 'min-h-[240px] px-5 py-4 text-base',
-    toolbar: 'p-3 gap-1.5',
-    button: 'px-3 py-1.5 text-sm',
-    label: 'text-base',
-    help: 'text-sm',
-  },
-};
-
-// Variant styles
-const variantClasses = {
-  default: {
-    toolbar: 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900',
-    editor: cn(
-      'border-gray-300 dark:border-gray-700',
-      'bg-white dark:bg-gray-950',
-      'focus-within:border-blue-500 dark:focus-within:border-blue-400',
-      'focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
-      error &&
-        'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
-    ),
-    button:
-      'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-  },
-  minimal: {
-    toolbar: 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800',
-    editor: cn(
-      'border-gray-200 dark:border-gray-600',
-      'bg-gray-50 dark:bg-gray-800',
-      'focus-within:border-gray-400 dark:focus-within:border-gray-500',
-      'focus-within:ring-gray-400 dark:focus-within:ring-gray-500',
-      error &&
-        'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
-    ),
-    button:
-      'text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus-visible:ring-gray-500 dark:focus-visible:ring-gray-400',
-  },
-  bordered: {
-    toolbar:
-      'border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900',
-    editor: cn(
-      'border-2 border-gray-300 dark:border-gray-600',
-      'bg-white dark:bg-gray-950',
-      'focus-within:border-blue-600 dark:focus-within:border-blue-400',
-      'focus-within:ring-blue-600 dark:focus-within:ring-blue-400',
-      error &&
-        'border-red-600 dark:border-red-400 focus-within:border-red-600 dark:focus-within:border-red-400 focus-within:ring-red-600 dark:focus-within:ring-red-400'
-    ),
-    button:
-      'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-  },
-  elevated: {
-    toolbar:
-      'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-md',
-    editor: cn(
-      'border border-gray-300 dark:border-gray-700',
-      'bg-white dark:bg-gray-950 shadow-sm',
-      'focus-within:border-blue-500 dark:focus-within:border-blue-400',
-      'focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
-      'focus-within:shadow-md',
-      error &&
-        'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400'
-    ),
-    button:
-      'text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-  },
-};
-
-const toolbarClasses = cn(
-  'flex flex-wrap items-center rounded-lg text-sm',
-  sizeClasses[size].toolbar,
-  variantClasses[variant].toolbar,
-  disabled && 'opacity-50 cursor-not-allowed'
-);
-
-const toolbarButtonClasses = cn(
-  'rounded-md transition-all duration-200 ease-in-out',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
-  'disabled:opacity-50 disabled:cursor-not-allowed',
-  sizeClasses[size].button,
-  variantClasses[variant].button
-);
-
-const editorClasses = cn(
-  'rounded-xl leading-relaxed text-gray-900 dark:text-gray-100',
-  'focus-within:ring-2 transition-all duration-200',
-  sizeClasses[size].editor,
-  variantClasses[variant].editor,
-  disabled && 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-800'
-);
-
-const labelClasses = cn(
-  'block font-medium text-gray-900 dark:text-gray-100',
-  sizeClasses[size].label,
-  disabled && 'opacity-50',
-  required &&
-    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
-);
-
-const helpClasses = cn(
-  'text-gray-600 dark:text-gray-300',
-  sizeClasses[size].help,
-  error && 'text-red-600 dark:text-red-300'
-);
-
-const charCountClasses = cn(
-  'text-right tabular-nums',
-  sizeClasses[size].help,
-  'text-gray-500 dark:text-gray-400'
-);
+const rootClasses = [
+  'rich-text',
+  `rich-text--variant-${variant}`,
+  `rich-text--size-${size}`,
+  disabled ? 'rich-text--disabled' : '',
+  hasError ? 'rich-text--error' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
   id={id}
-  class={cn('space-y-3 text-gray-900 dark:text-gray-100', className)}
+  class={rootClasses}
   data-rich-text-root
   data-max-length={maxLength}
   data-show-char-count={showCharCount}
 >
-  {
-    label && (
-      <label class={labelClasses} for={`${id}-content`}>
-        {label}
-      </label>
-    )
-  }
+  {label && (
+    <label class="rich-text__label" for={`${id}-content`}>
+      {label}
+      {required && <span class="rich-text__required">*</span>}
+    </label>
+  )}
 
   {
     !readOnly && !disabled && (
       <div
-        class={toolbarClasses}
+        class="rich-text__toolbar"
         data-rich-text-toolbar
         role="toolbar"
         aria-label="Text formatting options"
@@ -255,7 +116,7 @@ const charCountClasses = cn(
         {toolbar.includes('bold') && (
           <button
             type="button"
-            class={cn(toolbarButtonClasses, 'font-bold')}
+            class="rich-text__button rich-text__button--bold"
             data-rich-text-action="bold"
             aria-label="Bold"
             title="Bold (Ctrl+B)"
@@ -267,7 +128,7 @@ const charCountClasses = cn(
         {toolbar.includes('italic') && (
           <button
             type="button"
-            class={cn(toolbarButtonClasses, 'italic')}
+            class="rich-text__button rich-text__button--italic"
             data-rich-text-action="italic"
             aria-label="Italic"
             title="Italic (Ctrl+I)"
@@ -279,7 +140,7 @@ const charCountClasses = cn(
         {toolbar.includes('underline') && (
           <button
             type="button"
-            class={cn(toolbarButtonClasses, 'underline')}
+            class="rich-text__button rich-text__button--underline"
             data-rich-text-action="underline"
             aria-label="Underline"
             title="Underline (Ctrl+U)"
@@ -291,7 +152,7 @@ const charCountClasses = cn(
         {toolbar.includes('strike') && (
           <button
             type="button"
-            class={cn(toolbarButtonClasses, 'line-through')}
+            class="rich-text__button"
             data-rich-text-action="strikeThrough"
             aria-label="Strikethrough"
             title="Strikethrough"
@@ -303,7 +164,7 @@ const charCountClasses = cn(
         {toolbar.includes('heading') && (
           <button
             type="button"
-            class={cn(toolbarButtonClasses, 'font-bold')}
+            class="rich-text__button rich-text__button--bold"
             data-rich-text-action="formatBlock"
             data-arg="h3"
             aria-label="Heading"
@@ -316,7 +177,7 @@ const charCountClasses = cn(
         {toolbar.includes('quote') && (
           <button
             type="button"
-            class={toolbarButtonClasses}
+            class="rich-text__button"
             data-rich-text-action="formatBlock"
             data-arg="blockquote"
             aria-label="Quote"
@@ -329,7 +190,7 @@ const charCountClasses = cn(
         {toolbar.includes('code') && (
           <button
             type="button"
-            class={cn(toolbarButtonClasses, 'font-mono')}
+            class="rich-text__button rich-text__button--mono"
             data-rich-text-action="formatBlock"
             data-arg="pre"
             aria-label="Code"
@@ -342,7 +203,7 @@ const charCountClasses = cn(
         {toolbar.includes('link') && (
           <button
             type="button"
-            class={toolbarButtonClasses}
+            class="rich-text__button"
             data-rich-text-action="link"
             aria-label="Insert link"
             title="Insert link"
@@ -354,7 +215,7 @@ const charCountClasses = cn(
         {toolbar.includes('ordered-list') && (
           <button
             type="button"
-            class={toolbarButtonClasses}
+            class="rich-text__button"
             data-rich-text-action="insertOrderedList"
             aria-label="Numbered list"
             title="Numbered list"
@@ -366,7 +227,7 @@ const charCountClasses = cn(
         {toolbar.includes('unordered-list') && (
           <button
             type="button"
-            class={toolbarButtonClasses}
+            class="rich-text__button"
             data-rich-text-action="insertUnorderedList"
             aria-label="Bullet list"
             title="Bullet list"
@@ -375,14 +236,11 @@ const charCountClasses = cn(
             •
           </button>
         )}
-        <div
-          class="h-5 w-px bg-gray-300 dark:bg-gray-600 mx-1"
-          aria-hidden="true"
-        />
+        <div class="rich-text__divider" aria-hidden="true" />
         {toolbar.includes('undo') && (
           <button
             type="button"
-            class={toolbarButtonClasses}
+            class="rich-text__button"
             data-rich-text-action="undo"
             aria-label="Undo"
             title="Undo (Ctrl+Z)"
@@ -394,7 +252,7 @@ const charCountClasses = cn(
         {toolbar.includes('redo') && (
           <button
             type="button"
-            class={toolbarButtonClasses}
+            class="rich-text__button"
             data-rich-text-action="redo"
             aria-label="Redo"
             title="Redo (Ctrl+Y)"
@@ -406,24 +264,36 @@ const charCountClasses = cn(
         {toolbar.includes('clear') && (
           <button
             type="button"
-            class={toolbarButtonClasses}
+            class="rich-text__button"
             data-rich-text-action="clear"
             aria-label="Clear formatting"
             title="Clear formatting"
             disabled={disabled}
           >
-            Clear
+            ✕
           </button>
         )}
       </div>
     )
   }
 
+  <textarea
+    name={name ?? undefined}
+    hidden
+    data-rich-text-input
+    required={required}
+    disabled={disabled}
+    aria-hidden="true"
+  >{value}</textarea>
+
+  <div class="sr-only" aria-live="polite" aria-atomic="true" data-rich-text-live></div>
+
   <div
     id={`${id}-content`}
-    class={editorClasses}
+    class={`rich-text__editor ${readOnly ? 'rich-text__editor--readonly' : ''}`}
     data-rich-text-editor
     data-placeholder={placeholder}
+    data-empty={value ? 'false' : 'true'}
     contenteditable={!readOnly && !disabled}
     role="textbox"
     aria-multiline="true"
@@ -432,194 +302,271 @@ const charCountClasses = cn(
     aria-readonly={readOnly ? 'true' : 'false'}
     aria-disabled={disabled ? 'true' : 'false'}
     aria-required={required ? 'true' : 'false'}
-    aria-invalid={error ? 'true' : 'false'}
+    aria-invalid={hasError ? 'true' : 'false'}
     spellcheck="true"
-    data-testid="rich-text-editor"
-  >
-    {value ? <Fragment set:html={value} /> : ''}
-  </div>
+    set:html={value || ''}
+  ></div>
 
-  <textarea
-    name={name ?? undefined}
-    hidden
-    data-rich-text-input
-    required={required}
-    disabled={disabled}
-    aria-hidden="true">{value}</textarea
-  >
-
-  <div class="flex justify-between items-start gap-4">
-    <div class="flex-1">
+  {(helpText || error || showCharCount) && (
+    <div class="rich-text__messages">
+      {helpText && (
+        <p id={helpId} class="rich-text__help">
+          {helpText}
+        </p>
+      )}
+      {error && (
+        <p id={errorId} class="rich-text__error" role="alert">
+          {typeof error === 'string' ? error : 'Please check the content.'}
+        </p>
+      )}
       {
-        helpText && (
-          <p id={helpId} class={helpClasses}>
-            {helpText}
-          </p>
-        )
-      }
-      {
-        error && (
-          <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
-            {typeof error === 'string'
-              ? error
-              : 'Please correct the errors above.'}
+        showCharCount && (
+          <p id={charCountId} class="rich-text__count">
+            <span data-rich-text-count>0</span>
+            <span aria-hidden="true">
+              {' '}
+              / {maxLength ?? '∞'}
+            </span>
           </p>
         )
       }
     </div>
-
-    {
-      showCharCount && (
-        <div id={charCountId} class={charCountClasses} aria-live="polite">
-          <span data-char-count>0</span>
-          {maxLength && <span>/{maxLength}</span>}
-        </div>
-      )
-    }
-  </div>
+  )}
 </div>
 
-<style is:inline>
-  [data-rich-text-editor][contenteditable='true']:empty::before,
-  [data-rich-text-editor][data-empty='true']::before {
+<style>
+  .rich-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rich-text__label {
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .rich-text__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: #ffffff;
+  }
+
+  .rich-text__button {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.35rem 0.5rem;
+    background: transparent;
+    color: #1e293b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .rich-text__button:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  .rich-text__button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
+  .rich-text__divider {
+    width: 1px;
+    height: 1.5rem;
+    background-color: rgba(148, 163, 184, 0.6);
+  }
+
+  .rich-text__editor {
+    min-height: 180px;
+    border-radius: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    padding: 1rem;
+    background-color: #ffffff;
+    color: #0f172a;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .rich-text__editor[contenteditable='true']:empty::before,
+  .rich-text__editor[data-empty='true']::before {
     content: attr(data-placeholder);
-    color: rgb(107 114 128 / 0.7);
+    color: rgba(51, 65, 85, 0.65);
     pointer-events: none;
   }
 
-  @media (prefers-color-scheme: dark) {
-    [data-rich-text-editor][contenteditable='true']:empty::before,
-    [data-rich-text-editor][data-empty='true']::before {
-      color: rgb(156 163 175 / 0.75);
-    }
+  .rich-text__editor:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
   }
 
-  [data-rich-text-editor] h1,
-  [data-rich-text-editor] h2,
-  [data-rich-text-editor] h3,
-  [data-rich-text-editor] h4,
-  [data-rich-text-editor] h5,
-  [data-rich-text-editor] h6 {
-    font-weight: 600;
-    margin: 0.5em 0;
-    line-height: 1.3;
+  .rich-text__editor--readonly {
+    background-color: #f8fafc;
   }
 
-  [data-rich-text-editor] h3 {
-    font-size: 1.125em;
+  .rich-text__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
   }
 
-  [data-rich-text-editor] blockquote {
-    border-left: 4px solid rgb(59 130 246);
-    padding-left: 1rem;
-    margin: 1rem 0;
-    font-style: italic;
-    color: rgb(75 85 99);
+  .rich-text__help {
+    color: #475569;
   }
 
-  @media (prefers-color-scheme: dark) {
-    [data-rich-text-editor] blockquote {
-      border-left-color: rgb(147 197 253);
-      color: rgb(156 163 175);
-    }
+  .rich-text__error {
+    color: #dc2626;
   }
 
-  [data-rich-text-editor] pre {
-    background-color: rgb(243 244 246);
-    border: 1px solid rgb(209 213 219);
-    border-radius: 0.375rem;
+  .rich-text__count {
+    text-align: right;
+    color: #64748b;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rich-text__count--limit {
+    color: #dc2626;
+  }
+
+  .rich-text--size-sm .rich-text__editor {
+    min-height: 120px;
     padding: 0.75rem;
-    margin: 1rem 0;
-    font-family:
-      ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas,
-      'Liberation Mono', 'Courier New', monospace;
-    font-size: 0.875em;
-    overflow-x: auto;
   }
 
-  @media (prefers-color-scheme: dark) {
-    [data-rich-text-editor] pre {
-      background-color: rgb(31 41 55);
-      border-color: rgb(75 85 99);
-      color: rgb(209 213 219);
-    }
+  .rich-text--size-lg .rich-text__editor {
+    min-height: 240px;
+    padding: 1.25rem;
   }
 
-  [data-rich-text-editor] ul,
-  [data-rich-text-editor] ol {
-    margin: 1rem 0;
-    padding-left: 2rem;
+  .rich-text--variant-minimal .rich-text__toolbar,
+  .rich-text--variant-minimal .rich-text__editor {
+    background-color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.4);
   }
 
-  [data-rich-text-editor] li {
-    margin: 0.25rem 0;
+  .rich-text--variant-bordered .rich-text__toolbar,
+  .rich-text--variant-bordered .rich-text__editor {
+    border-width: 2px;
   }
 
-  [data-rich-text-editor] a {
-    color: rgb(59 130 246);
-    text-decoration: underline;
+  .rich-text--variant-elevated .rich-text__toolbar,
+  .rich-text--variant-elevated .rich-text__editor {
+    box-shadow: 0 25px 75px rgba(15, 23, 42, 0.1);
   }
 
-  @media (prefers-color-scheme: dark) {
-    [data-rich-text-editor] a {
-      color: rgb(147 197 253);
-    }
+  .rich-text--error .rich-text__editor {
+    border-color: rgba(239, 68, 68, 0.8);
   }
 
-  [data-rich-text-editor] a:hover {
-    color: rgb(37 99 235);
+  .rich-text__editor--limit {
+    border-color: rgba(239, 68, 68, 0.8);
   }
 
-  @media (prefers-color-scheme: dark) {
-    [data-rich-text-editor] a:hover {
-      color: rgb(96 165 250);
-    }
+  :where(.dark) .rich-text__toolbar,
+  :where(.dark) .rich-text__editor {
+    background-color: #0f172a;
+    border-color: rgba(71, 85, 105, 0.6);
+    color: #f1f5f9;
   }
 
-  [data-rich-text-editor]:focus {
-    outline: none;
+  :where(.dark) .rich-text__button {
+    color: #e2e8f0;
+  }
+
+  :where(.dark) .rich-text__button:hover {
+    background-color: rgba(59, 130, 246, 0.25);
+  }
+
+  :where(.dark)
+    .rich-text__editor[contenteditable='true']:empty::before,
+  :where(.dark) .rich-text__editor[data-empty='true']::before {
+    color: rgba(226, 232, 240, 0.65);
   }
 </style>
 
-<script is:inline define:vars={{ id, maxLength, showCharCount }}>
-  (function setupRichTextEditor() {
+<script
+  is:inline
+  define:vars={{
+    id,
+    maxLength,
+    showCharCount,
+    readOnly,
+    disabled,
+    hasError,
+  }}
+>
+  (() => {
     const root = document.getElementById(id);
     if (!(root instanceof HTMLElement)) return;
 
     const editor = root.querySelector('[data-rich-text-editor]');
-    const input = root.querySelector('[data-rich-text-input]');
+    const hiddenInput = root.querySelector('[data-rich-text-input]');
     const toolbar = root.querySelector('[data-rich-text-toolbar]');
-    const charCountElement = root.querySelector('[data-char-count]');
+    const charCount = root.querySelector('[data-rich-text-count]');
+    const liveRegion = root.querySelector('[data-rich-text-live]');
 
-    if (
-      !(editor instanceof HTMLElement) ||
-      !(input instanceof HTMLTextAreaElement)
-    )
-      return;
+    if (!(editor instanceof HTMLElement)) return;
+
+    const limit = typeof maxLength === 'number' ? maxLength : null;
+    const showCount = Boolean(showCharCount);
+    const isReadOnly = Boolean(readOnly);
+    const isDisabled = Boolean(disabled);
+    const baseError = Boolean(hasError);
+
+    const allowedKeys = new Set([
+      'Backspace',
+      'Delete',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+      'Home',
+      'End',
+      'PageUp',
+      'PageDown',
+      'Tab',
+      'Escape',
+      'Shift',
+    ]);
+
+    const announce = (message) => {
+      if (!(liveRegion instanceof HTMLElement)) return;
+      liveRegion.textContent = message;
+    };
 
     const updateEmptyState = () => {
-      const text = editor.innerText.trim();
-      editor.setAttribute('data-empty', String(text.length === 0));
+      const length = editor.textContent
+        ? editor.textContent.trim().length
+        : 0;
+      editor.setAttribute('data-empty', String(length === 0));
     };
 
     const updateCharCount = () => {
-      if (!showCharCount || !charCountElement) return;
-      const text = editor.innerText.trim();
-      const count = text.length;
-      charCountElement.textContent = count.toString();
-
-      if (maxLength && count > maxLength) {
-        charCountElement.style.color = 'rgb(239 68 68)'; // red-500
+      if (!showCount || !(charCount instanceof HTMLElement)) return;
+      const textLength = editor.innerText.trim().length;
+      charCount.textContent = textLength.toString();
+      const overLimit = limit !== null && textLength > limit;
+      charCount.classList.toggle('rich-text__count--limit', overLimit);
+      editor.classList.toggle('rich-text__editor--limit', overLimit);
+      if (overLimit) {
         editor.setAttribute('aria-invalid', 'true');
-      } else {
-        charCountElement.style.color = '';
+        announce(`Character limit exceeded by ${textLength - limit}`);
+      } else if (!baseError) {
         editor.setAttribute('aria-invalid', 'false');
+        announce('');
       }
     };
 
     const sync = (emit = true) => {
       const html = editor.innerHTML.trim();
-      input.value = html;
+      if (hiddenInput instanceof HTMLTextAreaElement) {
+        hiddenInput.value = html;
+      }
       if (emit) {
         root.dispatchEvent(
           new CustomEvent('rich-text:change', {
@@ -633,6 +580,7 @@ const charCountClasses = cn(
     };
 
     const exec = (command, value) => {
+      if (!command) return;
       if (command === 'clear') {
         document.execCommand('removeFormat');
         document.execCommand('unlink');
@@ -649,58 +597,43 @@ const charCountClasses = cn(
       document.execCommand(command, false, formatValue);
     };
 
-    // Keyboard shortcuts
+    updateEmptyState();
+    updateCharCount();
+
+    if (isReadOnly || isDisabled) {
+      return;
+    }
+
     editor.addEventListener('keydown', (event) => {
       if (event.ctrlKey || event.metaKey) {
-        switch (event.key.toLowerCase()) {
-          case 'b':
-            event.preventDefault();
-            exec('bold');
-            sync();
-            break;
-          case 'i':
-            event.preventDefault();
-            exec('italic');
-            sync();
-            break;
-          case 'u':
-            event.preventDefault();
-            exec('underline');
-            sync();
-            break;
-          case 'z':
-            if (event.shiftKey) {
-              event.preventDefault();
-              exec('redo');
-            } else {
-              event.preventDefault();
-              exec('undo');
-            }
-            sync();
-            break;
-          case 'y':
-            event.preventDefault();
-            exec('redo');
-            sync();
-            break;
+        const key = event.key.toLowerCase();
+        if (key === 'b' || key === 'i' || key === 'u') {
+          event.preventDefault();
+          exec(
+            key === 'b' ? 'bold' : key === 'i' ? 'italic' : 'underline'
+          );
+          sync();
+          return;
+        }
+        if (key === 'z') {
+          event.preventDefault();
+          exec(event.shiftKey ? 'redo' : 'undo');
+          sync();
+          return;
+        }
+        if (key === 'y') {
+          event.preventDefault();
+          exec('redo');
+          sync();
+          return;
         }
       }
 
-      // Character limit enforcement
-      if (maxLength && !event.ctrlKey && !event.metaKey) {
-        const text = editor.innerText;
-        if (
-          text.length >= maxLength &&
-          ![
-            'Backspace',
-            'Delete',
-            'ArrowLeft',
-            'ArrowRight',
-            'ArrowUp',
-            'ArrowDown',
-          ].includes(event.key)
-        ) {
+      if (limit !== null && !event.ctrlKey && !event.metaKey) {
+        const textLength = editor.innerText.length;
+        if (textLength >= limit && !allowedKeys.has(event.key)) {
           event.preventDefault();
+          announce(`Character limit of ${limit} reached`);
         }
       }
     });
@@ -713,7 +646,6 @@ const charCountClasses = cn(
             : null;
         if (!(target instanceof HTMLElement)) return;
         const action = target.getAttribute('data-rich-text-action');
-        if (!action) return;
         const arg = target.getAttribute('data-arg') || undefined;
         exec(action, arg);
         editor.focus();
@@ -722,128 +654,20 @@ const charCountClasses = cn(
     }
 
     editor.addEventListener('input', () => sync());
-    editor.addEventListener('blur', () => sync());
+    editor.addEventListener('blur', () => sync(false));
     editor.addEventListener('paste', () => {
-      // Clean up pasted content after a delay
       setTimeout(() => sync(), 10);
     });
 
     root.addEventListener('rich-text:set', (event) => {
       const detail = event && 'detail' in event ? event.detail : null;
-      const value =
+      const nextValue =
         detail && typeof detail.value === 'string' ? detail.value : '';
-      editor.innerHTML = value || '';
+      editor.innerHTML = nextValue;
       sync(false);
     });
 
-    // Observe mutations caused by external scripts formatting content
     const observer = new MutationObserver(() => sync(false));
     observer.observe(editor, { childList: true, subtree: true });
-
-    // Initialize
-    updateEmptyState();
-    updateCharCount();
-  })();
-</script>
-
-<style is:inline>
-  [data-rich-text-editor][contenteditable='true']:empty::before,
-  [data-rich-text-editor][data-empty='true']::before {
-    content: attr(data-placeholder);
-    color: rgba(51, 65, 85, 0.7);
-    pointer-events: none;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    [data-rich-text-editor][contenteditable='true']:empty::before,
-    [data-rich-text-editor][data-empty='true']::before {
-      color: rgba(148, 163, 184, 0.75);
-    }
-  }
-</style>
-
-<script is:inline>
-  (function setupRichTextEditor() {
-    const root = document.getElementById('${id}');
-    if (!(root instanceof HTMLElement)) return;
-
-    const editor = root.querySelector('[data-rich-text-editor]');
-    const input = root.querySelector('[data-rich-text-input]');
-    const toolbar = root.querySelector('[data-rich-text-toolbar]');
-
-    if (
-      !(editor instanceof HTMLElement) ||
-      !(input instanceof HTMLTextAreaElement)
-    )
-      return;
-
-    const updateEmptyState = () => {
-      const text = editor.innerText.trim();
-      editor.setAttribute('data-empty', String(text.length === 0));
-    };
-
-    const sync = (emit = true) => {
-      const html = editor.innerHTML.trim();
-      input.value = html;
-      if (emit) {
-        root.dispatchEvent(
-          new CustomEvent('rich-text:change', {
-            bubbles: true,
-            detail: { value: html },
-          })
-        );
-      }
-      updateEmptyState();
-    };
-
-    const exec = (command, value) => {
-      if (command === 'clear') {
-        document.execCommand('removeFormat');
-        document.execCommand('unlink');
-        return;
-      }
-      if (command === 'link') {
-        const url = window.prompt('Enter URL');
-        if (url) {
-          document.execCommand('createLink', false, url);
-        }
-        return;
-      }
-      const formatValue = command === 'formatBlock' && !value ? 'p' : value;
-      document.execCommand(command, false, formatValue);
-    };
-
-    if (toolbar instanceof HTMLElement) {
-      toolbar.addEventListener('click', (event) => {
-        const target =
-          event.target instanceof HTMLElement
-            ? event.target.closest('[data-rich-text-action]')
-            : null;
-        if (!(target instanceof HTMLElement)) return;
-        const action = target.getAttribute('data-rich-text-action');
-        if (!action) return;
-        const arg = target.getAttribute('data-arg') || undefined;
-        exec(action, arg);
-        editor.focus();
-        sync();
-      });
-    }
-
-    editor.addEventListener('input', () => sync());
-    editor.addEventListener('blur', () => sync());
-
-    root.addEventListener('rich-text:set', (event) => {
-      const detail = event && 'detail' in event ? event.detail : null;
-      const value =
-        detail && typeof detail.value === 'string' ? detail.value : '';
-      editor.innerHTML = value || '';
-      sync(false);
-    });
-
-    // Observe mutations caused by external scripts formatting content
-    const observer = new MutationObserver(() => sync(false));
-    observer.observe(editor, { childList: true, subtree: true });
-
-    updateEmptyState();
   })();
 </script>

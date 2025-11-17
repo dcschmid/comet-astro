@@ -32,44 +32,24 @@ const {
 } = Astro.props as Props;
 
 // Size map (box + label spacing)
-const sizeMap: Record<string, string> = {
-  sm: 'h-4 w-4',
-  md: 'h-5 w-5',
-  lg: 'h-6 w-6',
-};
-const boxSize = sizeMap[size];
+const sizeKey = size ?? 'md';
+const classes = [
+  'checkbox',
+  `checkbox--size-${sizeKey}`,
+  indeterminate ? 'checkbox--indeterminate' : '',
+  error ? 'checkbox--error' : '',
+  disabled ? 'checkbox--disabled' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-// Label typography & spacing per size
-const labelSizeMap: Record<string, string> = {
-  sm: 'text-xs leading-4',
-  md: 'text-sm leading-5',
-  lg: 'text-base leading-6',
-};
-const labelSize = labelSizeMap[size];
-
-const gapSizeMap: Record<string, string> = {
-  sm: 'gap-1.5',
-  md: 'gap-2',
-  lg: 'gap-2.5',
-};
-const gapSize = gapSizeMap[size];
-
-// Compose classes ensuring AAA contrast for default (border slate-500 dark: slate-400) and checked (bg-blue-600 dark:bg-blue-500 + white check) states.
-const baseBox =
-  'rounded-sm border transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:focus-visible:ring-offset-slate-900';
-const uncheckedBorder =
-  'border-slate-500 dark:border-slate-400 bg-white dark:bg-slate-900';
-const checkedClasses =
-  'checked:bg-blue-600 dark:checked:bg-blue-500 checked:border-blue-600 dark:checked:border-blue-500';
-const indeterminateClasses = indeterminate
-  ? 'bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500'
-  : '';
-const errorClasses = error
-  ? 'border-rose-600 dark:border-rose-500 focus-visible:ring-rose-600 dark:focus-visible:ring-rose-500'
-  : '';
-const disabledClasses = disabled
-  ? 'opacity-60 cursor-not-allowed'
-  : 'cursor-pointer';
+const inputClasses = [
+  'checkbox__input',
+  indeterminate ? 'checkbox__input--indeterminate' : '',
+  error ? 'checkbox__input--error' : '',
+  disabled ? 'checkbox__input--disabled' : '',
+].join(' ');
 
 // Helper/error description id
 const descriptionId = error || helperText ? `${id}-desc` : undefined;
@@ -80,9 +60,7 @@ const script = indeterminate
   : '';
 ---
 
-<div
-  class={`flex items-start ${gapSize} text-slate-800 dark:text-slate-100 ${className}`}
->
+<div class={classes}>
   <input
     type="checkbox"
     id={id}
@@ -94,36 +72,27 @@ const script = indeterminate
     aria-invalid={error ? 'true' : undefined}
     aria-describedby={descriptionId}
     aria-label={!label && ariaLabel ? ariaLabel : undefined}
-    class={`${boxSize} ${baseBox} ${uncheckedBorder} ${checkedClasses} ${indeterminateClasses} ${errorClasses} ${disabledClasses} mt-0.5 appearance-none`}
+    class={inputClasses}
   />
   {
     label && (
-      <label
-        for={id}
-        class={`${labelSize} ${disabled ? 'opacity-50' : 'cursor-pointer'}`}
-      >
+      <label for={id} class="checkbox__label">
         {label}
         {required && <span class="ml-1 text-rose-500">*</span>}
       </label>
     )
   }
-  <div class="flex flex-col">
+  <div class="checkbox__messages">
     {
       error && (
-        <p
-          id={descriptionId}
-          class="mt-1 text-xs font-medium text-rose-600 dark:text-rose-500"
-        >
+        <p id={descriptionId} class="checkbox__error">
           {error}
         </p>
       )
     }
     {
       !error && helperText && (
-        <p
-          id={descriptionId}
-          class="mt-1 text-xs text-slate-600 dark:text-slate-300"
-        >
+        <p id={descriptionId} class="checkbox__helper">
           {helperText}
         </p>
       )
@@ -131,3 +100,141 @@ const script = indeterminate
   </div>
   {indeterminate && <Fragment set:html={script} />}
 </div>
+
+<style is:inline>
+  .checkbox {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    color: #0f172a;
+  }
+
+  :where(.dark) .checkbox {
+    color: #f8fafc;
+  }
+
+  .checkbox--size-sm {
+    gap: 0.35rem;
+  }
+
+  .checkbox--size-md {
+    gap: 0.45rem;
+  }
+
+  .checkbox--size-lg {
+    gap: 0.5rem;
+  }
+
+  .checkbox__input {
+    appearance: none;
+    border-radius: 0.2rem;
+    border: 1px solid rgba(71, 85, 105, 0.9);
+    background: #ffffff;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .checkbox--size-sm .checkbox__input {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .checkbox--size-lg .checkbox__input {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+
+  :where(.dark) .checkbox__input {
+    background: #0f172a;
+    border-color: rgba(148, 163, 184, 0.7);
+  }
+
+  .checkbox__input:checked {
+    background: #2563eb;
+    border-color: #2563eb;
+    box-shadow: inset 0 0 0 2px #ffffff;
+  }
+
+  :where(.dark) .checkbox__input:checked {
+    border-color: #60a5fa;
+    background: #60a5fa;
+    box-shadow: inset 0 0 0 2px #0f172a;
+  }
+
+  .checkbox__input:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.65);
+    outline-offset: 2px;
+  }
+
+  .checkbox__input--indeterminate {
+    background: #2563eb;
+    border-color: #2563eb;
+    box-shadow: inset 0 0 0 2px #ffffff;
+  }
+
+  :where(.dark) .checkbox__input--indeterminate {
+    background: #60a5fa;
+    border-color: #60a5fa;
+    box-shadow: inset 0 0 0 2px #0f172a;
+  }
+
+  .checkbox__input--error {
+    border-color: #dc2626;
+  }
+
+  :where(.dark) .checkbox__input--error {
+    border-color: #fb7185;
+  }
+
+  .checkbox__input--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .checkbox__label {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    cursor: pointer;
+  }
+
+  .checkbox--size-sm .checkbox__label {
+    font-size: 0.8rem;
+  }
+
+  .checkbox--size-lg .checkbox__label {
+    font-size: 1rem;
+  }
+
+  .checkbox--disabled .checkbox__label {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .checkbox__messages {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .checkbox__error {
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: #dc2626;
+  }
+
+  :where(.dark) .checkbox__error {
+    color: #fb7185;
+  }
+
+  .checkbox__helper {
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: rgba(15, 23, 42, 0.75);
+  }
+
+  :where(.dark) .checkbox__helper {
+    color: rgba(248, 250, 252, 0.7);
+  }
+</style>

@@ -3,11 +3,11 @@
  * WeatherBase - Comprehensive weather component with Open-Meteo API integration
  *
  * Provides unified weather data display with full accessibility compliance,
- * responsive design, and modern Tailwind 4 styling.
+ * responsive design, and modern BEM-based styling.
  *
  * Features:
  * - WCAG AAA accessibility compliance (4.5:1 contrast minimum)
- * - Tailwind 4 styling with CSS custom properties
+ * - BEM class naming with CSS custom properties
  * - Responsive design for all screen sizes
  * - Multiple weather data types and forecasting
  * - Automatic location detection with fallback
@@ -126,23 +126,15 @@ const {
   ...rest
 } = Astro.props;
 
-// Tailwind 4 CSS classes based on props
-const sizeClasses = {
-  xs: 'text-xs p-2 rounded-md',
-  sm: 'text-sm p-3 rounded-lg',
-  md: 'text-base p-4 rounded-lg',
-  lg: 'text-lg p-6 rounded-xl',
-  xl: 'text-xl p-8 rounded-2xl',
-};
-
-const themeClasses = {
-  default: 'weather-card weather-card--default',
-  blue: 'weather-card weather-card--blue',
-  green: 'weather-card weather-card--green',
-  orange: 'weather-card weather-card--orange',
-  red: 'weather-card weather-card--red',
-  purple: 'weather-card weather-card--purple',
-};
+const baseClasses = [
+  'weather-base',
+  `weather-base--variant-${variant}`,
+  `weather-base--size-${size}`,
+  `weather-base--theme-${theme}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Generate API URL based on parameters
 function buildApiUrl() {
@@ -194,18 +186,16 @@ const apiUrl = buildApiUrl();
 ---
 
 <div
-  class={`
-    weather-base relative border transition-all duration-200 ease-in-out
-    ${sizeClasses[size]}
-    ${themeClasses[theme]}
-    ${className}
-  `}
+  class={baseClasses}
   role="region"
   aria-label={ariaLabel || `Weather information for ${location}`}
   data-weather-component
   data-variant={variant}
   data-size={size}
   data-theme={theme}
+  data-temperature-unit={temperatureUnit}
+  data-wind-speed-unit={windSpeedUnit}
+  data-precipitation-unit={precipitationUnit}
   data-api-url={apiUrl}
   data-coordinates={latitude && longitude ? `${latitude},${longitude}` : ''}
   data-show-alerts={showAlerts}
@@ -216,27 +206,26 @@ const apiUrl = buildApiUrl();
 >
   <!-- Loading State -->
   <div
-    class="flex items-center justify-center gap-3 weather-loading"
+    class="weather-base__loading"
     aria-live="polite"
     aria-label="Loading weather data"
   >
     <div
-      class="w-6 h-6 border-2 border-current opacity-30 border-t-current rounded-full animate-spin"
+      class="weather-base__spinner"
       aria-hidden="true"
     >
     </div>
-    <span class="font-medium"> Loading weather data... </span>
+    <span class="weather-base__loading-text"> Loading weather data... </span>
   </div>
 
   <!-- Error State -->
-  <div class="text-center space-y-4 weather-error hidden" role="alert">
-    <div class="text-4xl" aria-hidden="true">⚠️</div>
-    <div class="space-y-2">
-      <h3 class="text-lg font-semibold">Weather data unavailable</h3>
-      <p class="text-sm error-message"></p>
+  <div class="weather-base__error is-hidden" role="alert">
+    <div class="weather-base__error-icon" aria-hidden="true">⚠️</div>
+    <div class="weather-base__error-body">
+      <h3 class="weather-base__error-title">Weather data unavailable</h3>
+      <p class="weather-base__error-message"></p>
       <button
-        class="retry-button px-4 py-2 font-semibold rounded-lg
-          transition-colors duration-200 focus:outline-none"
+        class="weather-base__retry"
         onclick="this.closest('.weather-base').weatherBase.init()"
         type="button"
         aria-label="Retry loading weather data"
@@ -247,38 +236,38 @@ const apiUrl = buildApiUrl();
   </div>
 
   <!-- Weather Content -->
-  <div class="weather-content hidden">
+  <div class="weather-base__content is-hidden">
     <slot>
       <!-- Default weather display when no slot content is provided -->
-      <div class="weather-default-content">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-bold weather-location">{location}</h3>
-            <p class="text-sm font-semibold weather-description">
+      <div class="weather-base__default">
+        <div class="weather-base__default-header">
+          <div class="weather-base__meta">
+            <h3 class="weather-base__location">{location}</h3>
+            <p class="weather-base__description">
               Loading weather data...
             </p>
           </div>
-          <div class="text-center">
-            <div class="text-3xl weather-icon" aria-hidden="true">☀️</div>
-            <span class="text-xl font-black weather-temperature">--°</span>
+          <div class="weather-base__summary">
+            <div class="weather-base__icon" aria-hidden="true">☀️</div>
+            <span class="weather-base__temperature">--°</span>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-4 text-sm">
-          <div class="weather-detail">
-            <span class="weather-text-muted font-semibold">Feels like</span>
-            <span class="weather-feels-like font-bold">--°</span>
+        <div class="weather-base__details">
+          <div class="weather-base__detail">
+            <span class="weather-base__label">Feels like</span>
+            <span class="weather-base__value weather-base__feels-like">--°</span>
           </div>
-          <div class="weather-detail">
-            <span class="weather-text-muted font-semibold">Humidity</span>
-            <span class="weather-humidity font-bold">--%</span>
+          <div class="weather-base__detail">
+            <span class="weather-base__label">Humidity</span>
+            <span class="weather-base__value weather-base__humidity">--%</span>
           </div>
-          <div class="weather-detail">
-            <span class="weather-text-muted font-semibold">Wind</span>
-            <span class="weather-wind font-bold">-- km/h</span>
+          <div class="weather-base__detail">
+            <span class="weather-base__label">Wind</span>
+            <span class="weather-base__value weather-base__wind">-- km/h</span>
           </div>
-          <div class="weather-detail">
-            <span class="weather-text-muted font-semibold">Pressure</span>
-            <span class="weather-pressure font-bold">-- hPa</span>
+          <div class="weather-base__detail">
+            <span class="weather-base__label">Pressure</span>
+            <span class="weather-base__value weather-base__pressure">-- hPa</span>
           </div>
         </div>
       </div>
@@ -344,10 +333,10 @@ const apiUrl = buildApiUrl();
       this.showForecast = element.dataset.showForecast === 'true';
       this.showDetails = element.dataset.showDetails === 'true';
       this.refreshInterval = parseInt(element.dataset.refreshInterval || '0');
-      this.loadingEl = element.querySelector('.weather-loading');
-      this.errorEl = element.querySelector('.weather-error');
-      this.contentEl = element.querySelector('.weather-content');
-      this.retryButton = element.querySelector('.retry-button');
+      this.loadingEl = element.querySelector('.weather-base__loading');
+      this.errorEl = element.querySelector('.weather-base__error');
+      this.contentEl = element.querySelector('.weather-base__content');
+      this.retryButton = element.querySelector('.weather-base__retry');
 
       this.init();
     }
@@ -465,9 +454,7 @@ const apiUrl = buildApiUrl();
     }
 
     updateDefaultDisplay(data) {
-      const defaultContent = this.element.querySelector(
-        '.weather-default-content'
-      );
+      const defaultContent = this.element.querySelector('.weather-base__default');
       if (!defaultContent) return;
 
       // Update based on data variant
@@ -484,15 +471,15 @@ const apiUrl = buildApiUrl();
 
       // Update weather icon and description
       const weatherInfo = this.getWeatherInfo(current.weather_code);
-      const iconEl = container.querySelector('.weather-icon');
-      const descEl = container.querySelector('.weather-description');
+      const iconEl = container.querySelector('.weather-base__icon');
+      const descEl = container.querySelector('.weather-base__description');
       if (iconEl && descEl) {
         iconEl.textContent = weatherInfo.icon;
         descEl.textContent = weatherInfo.description;
       }
 
       // Update temperature
-      const tempEl = container.querySelector('.weather-temperature');
+      const tempEl = container.querySelector('.weather-base__temperature');
       if (tempEl && current.temperature_2m != null) {
         tempEl.textContent = this.formatTemperature(
           current.temperature_2m,
@@ -501,7 +488,7 @@ const apiUrl = buildApiUrl();
       }
 
       // Update feels like temperature
-      const feelsLikeEl = container.querySelector('.weather-feels-like');
+      const feelsLikeEl = container.querySelector('.weather-base__feels-like');
       if (feelsLikeEl && current.apparent_temperature != null) {
         feelsLikeEl.textContent = this.formatTemperature(
           current.apparent_temperature,
@@ -510,13 +497,13 @@ const apiUrl = buildApiUrl();
       }
 
       // Update humidity
-      const humidityEl = container.querySelector('.weather-humidity');
+      const humidityEl = container.querySelector('.weather-base__humidity');
       if (humidityEl && current.relative_humidity_2m != null) {
         humidityEl.textContent = `${Math.round(current.relative_humidity_2m)}%`;
       }
 
       // Update wind
-      const windEl = container.querySelector('.weather-wind');
+      const windEl = container.querySelector('.weather-base__wind');
       if (windEl && current.wind_speed_10m != null) {
         windEl.textContent = this.formatWindSpeed(
           current.wind_speed_10m,
@@ -525,7 +512,7 @@ const apiUrl = buildApiUrl();
       }
 
       // Update pressure
-      const pressureEl = container.querySelector('.weather-pressure');
+      const pressureEl = container.querySelector('.weather-base__pressure');
       if (pressureEl && current.pressure_msl != null) {
         pressureEl.textContent = `${Math.round(current.pressure_msl)} hPa`;
       }
@@ -540,8 +527,8 @@ const apiUrl = buildApiUrl();
       // Update weather icon and description
       if (daily.weather_code && daily.weather_code[todayIndex] != null) {
         const weatherInfo = this.getWeatherInfo(daily.weather_code[todayIndex]);
-        const iconEl = container.querySelector('.weather-icon');
-        const descEl = container.querySelector('.weather-description');
+        const iconEl = container.querySelector('.weather-base__icon');
+        const descEl = container.querySelector('.weather-base__description');
         if (iconEl && descEl) {
           iconEl.textContent = weatherInfo.icon;
           descEl.textContent = weatherInfo.description;
@@ -549,7 +536,7 @@ const apiUrl = buildApiUrl();
       }
 
       // Update temperature (show high/low for daily)
-      const tempEl = container.querySelector('.weather-temperature');
+      const tempEl = container.querySelector('.weather-base__temperature');
       if (tempEl && daily.temperature_2m_max && daily.temperature_2m_min) {
         const high = this.formatTemperature(
           daily.temperature_2m_max[todayIndex],
@@ -563,9 +550,9 @@ const apiUrl = buildApiUrl();
       }
 
       // Hide irrelevant fields for daily view
-      const feelsLikeEl = container.querySelector('.weather-feels-like');
-      const windEl = container.querySelector('.weather-wind');
-      const pressureEl = container.querySelector('.weather-pressure');
+      const feelsLikeEl = container.querySelector('.weather-base__feels-like');
+      const windEl = container.querySelector('.weather-base__wind');
+      const pressureEl = container.querySelector('.weather-base__pressure');
 
       if (feelsLikeEl) feelsLikeEl.textContent = '--';
       if (windEl && daily.wind_speed_10m_max) {
@@ -578,27 +565,27 @@ const apiUrl = buildApiUrl();
     }
 
     showLoading() {
-      this.loadingEl.classList.remove('hidden');
-      this.loadingEl.classList.add('flex');
-      this.errorEl.classList.add('hidden');
-      this.contentEl.classList.add('hidden');
+      this.loadingEl?.classList.remove('is-hidden');
+      this.errorEl?.classList.add('is-hidden');
+      this.contentEl?.classList.add('is-hidden');
     }
 
     showError(message) {
-      this.loadingEl.classList.add('hidden');
-      this.errorEl.classList.remove('hidden');
-      this.contentEl.classList.add('hidden');
+      this.loadingEl?.classList.add('is-hidden');
+      this.errorEl?.classList.remove('is-hidden');
+      this.contentEl?.classList.add('is-hidden');
 
-      const messageEl = this.errorEl.querySelector('.error-message');
+      const messageEl =
+        this.errorEl?.querySelector('.weather-base__error-message');
       if (messageEl) {
         messageEl.textContent = message;
       }
     }
 
     showContent() {
-      this.loadingEl.classList.add('hidden');
-      this.errorEl.classList.add('hidden');
-      this.contentEl.classList.remove('hidden');
+      this.loadingEl?.classList.add('is-hidden');
+      this.errorEl?.classList.add('is-hidden');
+      this.contentEl?.classList.remove('is-hidden');
     }
 
     // Utility method to get weather icon and description
@@ -742,445 +729,418 @@ const apiUrl = buildApiUrl();
   window.WeatherBase = WeatherBase;
 </script>
 
-<style>
-  /* Tailwind 4 CSS Custom Properties for Weather Base Component - WCAG AAA Enhanced */
-  @layer components {
+<style is:inline>
+  .weather-base {
+    --weather-bg: #ffffff;
+    --weather-surface: rgba(15, 23, 42, 0.03);
+    --weather-border: #e5e7eb;
+    --weather-text: #0f172a;
+    --weather-text-muted: #475569;
+    --weather-info: #1e40af;
+    --weather-info-strong: #1d4ed8;
+    --weather-error: #b91c1c;
+    --weather-error-bg: #fef2f2;
+    --weather-radius: 1rem;
+    --weather-padding: clamp(1rem, 3vw, 1.25rem);
+    --weather-gap: clamp(0.8rem, 2vw, 1.1rem);
+    --weather-transition: cubic-bezier(0.4, 0, 0.2, 1);
+    --weather-duration: 200ms;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--weather-gap);
+    padding: var(--weather-padding);
+    border: 1px solid var(--weather-border);
+    border-radius: var(--weather-radius);
+    background-color: var(--weather-bg);
+    color: var(--weather-text);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    transition:
+      border-color var(--weather-duration) var(--weather-transition),
+      box-shadow var(--weather-duration) var(--weather-transition),
+      background-color var(--weather-duration) var(--weather-transition),
+      color var(--weather-duration) var(--weather-transition);
+  }
+
+  .weather-base:hover {
+    border-color: var(--weather-info);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+  }
+
+  .weather-base--size-xs {
+    --weather-padding: 0.75rem;
+    --weather-radius: 0.75rem;
+    --weather-gap: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .weather-base--size-sm {
+    --weather-padding: 0.9rem;
+    --weather-radius: 0.85rem;
+    --weather-gap: 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .weather-base--size-md {
+    font-size: 1rem;
+  }
+
+  .weather-base--size-lg {
+    --weather-padding: 1.5rem;
+    --weather-radius: 1.25rem;
+    --weather-gap: 1.15rem;
+    font-size: 1.0625rem;
+  }
+
+  .weather-base--size-xl {
+    --weather-padding: 2rem;
+    --weather-radius: 1.5rem;
+    --weather-gap: 1.35rem;
+    font-size: 1.125rem;
+  }
+
+  .weather-base--theme-default {
+    --weather-bg: #ffffff;
+    --weather-surface: rgba(15, 23, 42, 0.03);
+    --weather-border: #e5e7eb;
+    --weather-text: #0f172a;
+    --weather-text-muted: #475569;
+    --weather-info: #1e40af;
+    --weather-info-strong: #1d4ed8;
+  }
+
+  .weather-base--theme-blue {
+    --weather-bg: #f0f9ff;
+    --weather-surface: rgba(59, 130, 246, 0.08);
+    --weather-border: #bfdbfe;
+    --weather-text: #0f172a;
+    --weather-text-muted: #1e3a8a;
+    --weather-info: #1d4ed8;
+    --weather-info-strong: #1e40af;
+  }
+
+  .weather-base--theme-green {
+    --weather-bg: #f0fdf4;
+    --weather-surface: rgba(16, 185, 129, 0.08);
+    --weather-border: #bbf7d0;
+    --weather-text: #14532d;
+    --weather-text-muted: #166534;
+    --weather-info: #15803d;
+    --weather-info-strong: #166534;
+  }
+
+  .weather-base--theme-orange {
+    --weather-bg: #fff7ed;
+    --weather-surface: rgba(249, 115, 22, 0.08);
+    --weather-border: #fed7aa;
+    --weather-text: #7c2d12;
+    --weather-text-muted: #9a3412;
+    --weather-info: #c2410c;
+    --weather-info-strong: #9a3412;
+  }
+
+  .weather-base--theme-red {
+    --weather-bg: #fef2f2;
+    --weather-surface: rgba(248, 113, 113, 0.08);
+    --weather-border: #fecdd3;
+    --weather-text: #7f1d1d;
+    --weather-text-muted: #991b1b;
+    --weather-info: #b91c1c;
+    --weather-info-strong: #991b1b;
+  }
+
+  .weather-base--theme-purple {
+    --weather-bg: #faf5ff;
+    --weather-surface: rgba(124, 58, 237, 0.08);
+    --weather-border: #e9d5ff;
+    --weather-text: #4c1d95;
+    --weather-text-muted: #5b21b6;
+    --weather-info: #7c3aed;
+    --weather-info-strong: #6d28d9;
+  }
+
+  :where(.dark) .weather-base {
+    --weather-bg: #1f2937;
+    --weather-surface: rgba(255, 255, 255, 0.04);
+    --weather-border: #374151;
+    --weather-text: #e5e7eb;
+    --weather-text-muted: #cbd5e1;
+    --weather-info: #60a5fa;
+    --weather-info-strong: #93c5fd;
+    --weather-error: #fca5a5;
+    --weather-error-bg: #7f1d1d;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+  }
+
+  :where(.dark) .weather-base--theme-blue {
+    --weather-bg: #1e3a8a;
+    --weather-surface: rgba(59, 130, 246, 0.16);
+    --weather-border: #3b82f6;
+    --weather-text: #e2e8f0;
+    --weather-text-muted: #bfdbfe;
+    --weather-info: #60a5fa;
+    --weather-info-strong: #93c5fd;
+  }
+
+  :where(.dark) .weather-base--theme-green {
+    --weather-bg: #14532d;
+    --weather-surface: rgba(34, 197, 94, 0.16);
+    --weather-border: #22c55e;
+    --weather-text: #ecfdf3;
+    --weather-text-muted: #bbf7d0;
+    --weather-info: #34d399;
+    --weather-info-strong: #86efac;
+  }
+
+  :where(.dark) .weather-base--theme-orange {
+    --weather-bg: #7c2d12;
+    --weather-surface: rgba(251, 146, 60, 0.16);
+    --weather-border: #f97316;
+    --weather-text: #fff7ed;
+    --weather-text-muted: #fed7aa;
+    --weather-info: #fb923c;
+    --weather-info-strong: #fdba74;
+  }
+
+  :where(.dark) .weather-base--theme-red {
+    --weather-bg: #7f1d1d;
+    --weather-surface: rgba(248, 113, 113, 0.18);
+    --weather-border: #f87171;
+    --weather-text: #fee2e2;
+    --weather-text-muted: #fecaca;
+    --weather-info: #fca5a5;
+    --weather-info-strong: #fecdd3;
+  }
+
+  :where(.dark) .weather-base--theme-purple {
+    --weather-bg: #4c1d95;
+    --weather-surface: rgba(168, 85, 247, 0.16);
+    --weather-border: #c084fc;
+    --weather-text: #f3e8ff;
+    --weather-text-muted: #e9d5ff;
+    --weather-info: #c084fc;
+    --weather-info-strong: #e9d5ff;
+  }
+
+  .weather-base__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.85rem 0.75rem;
+    border-radius: calc(var(--weather-radius) * 0.75);
+    border: 1px dashed var(--weather-border);
+    background-color: var(--weather-surface);
+    color: var(--weather-text-muted);
+  }
+
+  .weather-base__spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    border: 2px solid var(--weather-border);
+    border-top-color: var(--weather-info);
+    animation: weather-spin 0.8s linear infinite;
+    opacity: 0.8;
+  }
+
+  .weather-base__loading-text {
+    font-weight: 600;
+  }
+
+  .weather-base__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: center;
+    padding: 1rem;
+    border-radius: calc(var(--weather-radius) * 0.85);
+    border: 2px solid var(--weather-error);
+    background-color: var(--weather-error-bg);
+    color: var(--weather-error);
+  }
+
+  .weather-base__error-icon {
+    font-size: 1.75rem;
+  }
+
+  .weather-base__error-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .weather-base__error-message {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--weather-text);
+    font-weight: 600;
+  }
+
+  .weather-base__retry {
+    margin-top: 0.35rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.85rem;
+    border: 2px solid var(--weather-info);
+    background-color: var(--weather-info);
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background-color var(--weather-duration) var(--weather-transition),
+      border-color var(--weather-duration) var(--weather-transition),
+      color var(--weather-duration) var(--weather-transition),
+      box-shadow var(--weather-duration) var(--weather-transition);
+  }
+
+  .weather-base__retry:hover {
+    background-color: var(--weather-info-strong);
+    border-color: var(--weather-info-strong);
+  }
+
+  .weather-base__retry:focus-visible {
+    outline: 3px solid var(--weather-info);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.25);
+  }
+
+  :where(.dark) .weather-base__retry:focus-visible {
+    box-shadow: 0 0 0 5px rgba(96, 165, 250, 0.35);
+  }
+
+  .weather-base__content {
+    display: block;
+  }
+
+  .weather-base__default {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .weather-base__default-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.85rem;
+  }
+
+  .weather-base__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .weather-base__location {
+    margin: 0;
+    font-size: clamp(1rem, 3vw, 1.125rem);
+    font-weight: 700;
+    color: var(--weather-text);
+  }
+
+  .weather-base__description {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--weather-text-muted);
+  }
+
+  .weather-base__summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    text-align: center;
+  }
+
+  .weather-base__icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .weather-base__temperature {
+    font-size: clamp(1.35rem, 3vw, 1.6rem);
+    font-weight: 800;
+    color: var(--weather-text);
+  }
+
+  .weather-base__details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  @media (max-width: 640px) {
+    .weather-base__details {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .weather-base__detail {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.9rem;
+    background-color: var(--weather-surface);
+    border: 1px solid var(--weather-border);
+  }
+
+  .weather-base__label {
+    color: var(--weather-text-muted);
+    font-weight: 600;
+  }
+
+  .weather-base__value {
+    color: var(--weather-text);
+    font-weight: 700;
+  }
+
+  .is-hidden {
+    display: none !important;
+  }
+
+  @keyframes weather-spin {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-contrast: more) {
     .weather-base {
-      /* CSS Custom Properties for Light Mode - WCAG AAA Compliant */
-      --weather-bg: #ffffff;
-      --weather-border: #374151;
-      --weather-text: #000000;
-      --weather-text-muted: #1f2937;
-      --weather-loading: #374151;
-      --weather-error: #7f1d1d;
-      --weather-error-bg: #ffffff;
-      --weather-success: #14532d;
-      --weather-warning: #92400e;
-      --weather-info: #1e40af;
-
-      /* Animation timing */
-      --weather-transition: cubic-bezier(0.4, 0, 0.2, 1);
-      --weather-duration: 200ms;
-
-      /* Enhanced spacing and sizing */
-      --weather-radius-xs: 0.375rem;
-      --weather-radius-sm: 0.5rem;
-      --weather-radius-md: 0.5rem;
-      --weather-radius-lg: 0.75rem;
-      --weather-radius-xl: 1rem;
-
-      --weather-padding-xs: 0.5rem;
-      --weather-padding-sm: 0.75rem;
-      --weather-padding-md: 1rem;
-      --weather-padding-lg: 1.5rem;
-      --weather-padding-xl: 2rem;
-
-      /* Ensure proper background and text colors */
-      background-color: var(--weather-bg);
-      color: var(--weather-text);
-      border-color: var(--weather-border);
+      border-width: 2px;
     }
 
-    /* Dark mode color scheme - Multiple selectors for robustness */
-    .dark .weather-base,
-    [data-theme='dark'] .weather-base,
-    html.dark .weather-base,
-    html[data-theme='dark'] .weather-base {
-      --weather-bg: #1f2937 !important;
-      --weather-border: #6b7280 !important;
-      --weather-text: #f9fafb !important;
-      --weather-text-muted: #e5e7eb !important;
-      --weather-loading: #9ca3af !important;
-      --weather-error: #fca5a5 !important;
-      --weather-error-bg: #1f2937 !important;
-      --weather-success: #86efac !important;
-      --weather-warning: #fbbf24 !important;
-      --weather-info: #60a5fa !important;
-
-      background-color: var(--weather-bg) !important;
-      color: var(--weather-text) !important;
-      border-color: var(--weather-border) !important;
-    }
-
-    /* Media query fallback for dark mode */
-    @media (prefers-color-scheme: dark) {
-      .weather-base {
-        --weather-bg: #1f2937 !important;
-        --weather-border: #6b7280 !important;
-        --weather-text: #f9fafb !important;
-        --weather-text-muted: #e5e7eb !important;
-        --weather-loading: #9ca3af !important;
-        --weather-error: #fca5a5 !important;
-        --weather-error-bg: #1f2937 !important;
-        --weather-success: #86efac !important;
-        --weather-warning: #fbbf24 !important;
-        --weather-info: #60a5fa !important;
-
-        background-color: var(--weather-bg) !important;
-        color: var(--weather-text) !important;
-        border-color: var(--weather-border) !important;
-      }
-    }
-
-    /* Default content styling for better visibility */
-    .weather-default-content {
-      color: var(--weather-text);
-    }
-
-    .weather-default-content .weather-detail {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .weather-default-content .weather-detail span:first-child {
-      color: var(--weather-text);
-      font-weight: 600;
-    }
-
-    .weather-default-content .weather-detail span:last-child {
-      color: var(--weather-text);
-      font-weight: 700;
-    }
-
-    /* Explicit text classes for proper contrast based on mode */
-    .weather-text-muted {
-      color: var(--weather-text-muted) !important;
-      font-weight: 600 !important;
-    }
-
-    .weather-temperature,
-    .weather-location,
-    .weather-description,
-    .weather-feels-like,
-    .weather-humidity,
-    .weather-wind,
-    .weather-pressure {
-      color: var(--weather-text) !important;
-      font-weight: 700 !important;
-    }
-
-    /* High contrast mode support */
-    @media (prefers-contrast: high) {
-      .weather-base {
-        --weather-border: currentColor;
-        border-width: 2px;
-      }
-
-      .weather-loading .animate-spin {
-        border-width: 3px;
-      }
-    }
-
-    /* Reduced motion support */
-    @media (prefers-reduced-motion: reduce) {
-      .weather-loading .animate-spin {
-        animation: none;
-      }
-
-      .weather-base * {
-        transition: none !important;
-        animation: none !important;
-      }
-    }
-
-    /* Focus management for accessibility */
-    .weather-base button:focus-visible {
-      outline: 2px solid var(--weather-info);
+    .weather-base__retry {
+      outline: 2px solid currentColor;
       outline-offset: 2px;
     }
+  }
 
-    /* Size-specific adjustments */
-    .weather-base[data-size='xs'] {
-      font-size: 0.75rem;
-      line-height: 1rem;
+  @media (prefers-reduced-motion: reduce) {
+    .weather-base,
+    .weather-base * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
+  @media print {
+    .weather-base {
+      border: 1px solid black;
+      box-shadow: none;
+      break-inside: avoid;
     }
 
-    .weather-base[data-size='sm'] {
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-    }
-
-    .weather-base[data-size='md'] {
-      font-size: 1rem;
-      line-height: 1.5rem;
-    }
-
-    .weather-base[data-size='lg'] {
-      font-size: 1.125rem;
-      line-height: 1.75rem;
-    }
-
-    .weather-base[data-size='xl'] {
-      font-size: 1.25rem;
-      line-height: 1.75rem;
-    }
-
-    /* Theme-specific color overrides - Light Mode WCAG AAA */
-    .weather-base[data-theme='blue'] {
-      --weather-info: #1e40af;
-      --weather-bg: #f0f9ff;
-      --weather-border: #374151;
-      --weather-text: #000000;
-      --weather-text-muted: #1f2937;
-    }
-
-    .weather-base[data-theme='green'] {
-      --weather-info: #14532d;
-      --weather-bg: #f0fdf4;
-      --weather-border: #374151;
-      --weather-text: #000000;
-      --weather-text-muted: #1f2937;
-    }
-
-    .weather-base[data-theme='orange'] {
-      --weather-info: #9a3412;
-      --weather-bg: #fff7ed;
-      --weather-border: #374151;
-      --weather-text: #000000;
-      --weather-text-muted: #1f2937;
-    }
-
-    .weather-base[data-theme='red'] {
-      --weather-info: #7f1d1d;
-      --weather-bg: #fef2f2;
-      --weather-border: #374151;
-      --weather-text: #000000;
-      --weather-text-muted: #1f2937;
-    }
-
-    .weather-base[data-theme='purple'] {
-      --weather-info: #581c87;
-      --weather-bg: #faf5ff;
-      --weather-border: #374151;
-      --weather-text: #000000;
-      --weather-text-muted: #1f2937;
-    }
-
-    /* Dark mode theme adjustments - Multiple selectors with !important */
-    .dark .weather-base[data-theme='blue'],
-    [data-theme='dark'] .weather-base[data-theme='blue'],
-    html.dark .weather-base[data-theme='blue'] {
-      --weather-bg: #1e3a8a !important;
-      --weather-border: #3b82f6 !important;
-      --weather-info: #93c5fd !important;
-      --weather-text: #f9fafb !important;
-      --weather-text-muted: #e5e7eb !important;
-    }
-
-    .dark .weather-base[data-theme='green'],
-    [data-theme='dark'] .weather-base[data-theme='green'],
-    html.dark .weather-base[data-theme='green'] {
-      --weather-bg: #166534 !important;
-      --weather-border: #22c55e !important;
-      --weather-info: #86efac !important;
-      --weather-text: #f9fafb !important;
-      --weather-text-muted: #e5e7eb !important;
-    }
-
-    .dark .weather-base[data-theme='orange'],
-    [data-theme='dark'] .weather-base[data-theme='orange'],
-    html.dark .weather-base[data-theme='orange'] {
-      --weather-bg: #c2410c !important;
-      --weather-border: #f97316 !important;
-      --weather-info: #fed7aa !important;
-      --weather-text: #f9fafb !important;
-      --weather-text-muted: #e5e7eb !important;
-    }
-
-    .dark .weather-base[data-theme='red'],
-    [data-theme='dark'] .weather-base[data-theme='red'],
-    html.dark .weather-base[data-theme='red'] {
-      --weather-bg: #991b1b !important;
-      --weather-border: #ef4444 !important;
-      --weather-info: #fca5a5 !important;
-      --weather-text: #f9fafb !important;
-      --weather-text-muted: #e5e7eb !important;
-    }
-
-    .dark .weather-base[data-theme='purple'],
-    [data-theme='dark'] .weather-base[data-theme='purple'],
-    html.dark .weather-base[data-theme='purple'] {
-      --weather-bg: #7c3aed !important;
-      --weather-border: #a855f7 !important;
-      --weather-info: #d8b4fe !important;
-      --weather-text: #f9fafb !important;
-      --weather-text-muted: #e5e7eb !important;
-    }
-
-    /* Loading spinner animation enhancement */
-    @keyframes weather-pulse {
-      0%,
-      100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.5;
-      }
-    }
-
-    .weather-loading {
-      animation: weather-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    /* Weather severity color coding - WCAG AAA Enhanced (9:1+ contrast) */
-    .weather-severity-none {
-      color: var(--weather-text);
-      font-weight: 600;
-    }
-
-    .weather-severity-low {
-      color: #78350f;
-      font-weight: 700;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    .dark .weather-severity-low {
-      color: #fbbf24;
-      font-weight: 700;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-    }
-
-    .weather-severity-medium {
-      color: #7c2d12;
-      font-weight: 800;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    .dark .weather-severity-medium {
-      color: #fbbf24;
-      font-weight: 800;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-    }
-
-    .weather-severity-high {
-      color: #7f1d1d;
-      font-weight: 900;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    .dark .weather-severity-high {
-      color: #ffffff;
-      font-weight: 900;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    .weather-severity-extreme {
-      color: #7f1d1d;
-      font-weight: 900;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    .dark .weather-severity-extreme {
-      color: #fca5a5;
-      font-weight: 900;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Loading state enhancements */
-    .weather-loading {
-      background-color: var(--weather-bg);
-      color: var(--weather-text-muted);
-    }
-
-    .weather-loading .animate-spin {
-      border-color: var(--weather-border);
-      border-top-color: var(--weather-info);
-    }
-
-    /* Error state enhancements - Proper Light/Dark Mode */
-    .weather-error {
-      background-color: #fef2f2;
-      color: #7f1d1d;
-      border: 2px solid #7f1d1d;
-    }
-
-    .dark .weather-error {
-      background-color: #7f1d1d;
-      border-color: #fca5a5;
-      color: #fef2f2;
-    }
-
-    /* Retry button proper contrast */
-    .retry-button {
-      background-color: #1e40af;
-      color: #ffffff;
-      border: 2px solid #1e40af;
-      font-weight: 700;
-    }
-
-    .retry-button:hover {
-      background-color: #1d4ed8;
-      border-color: #1d4ed8;
-      color: #ffffff;
-    }
-
-    .dark .retry-button {
-      background-color: #60a5fa;
-      color: #1f2937;
-      border-color: #60a5fa;
-      font-weight: 700;
-    }
-
-    .dark .retry-button:hover {
-      background-color: #93c5fd;
-      border-color: #93c5fd;
-      color: #1f2937;
-    }
-
-    /* Print styles */
-    @media print {
-      .weather-base {
-        border: 1px solid black;
-        break-inside: avoid;
-      }
-
-      .weather-loading,
-      .retry-button {
-        display: none !important;
-      }
-    }
-
-    /* WCAG AAA Interactive States */
-    .retry-button:focus {
-      outline: 3px solid var(--weather-info);
-      outline-offset: 2px;
-      box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.3);
-    }
-
-    .dark .retry-button:focus {
-      outline-color: #60a5fa;
-      box-shadow: 0 0 0 5px rgba(96, 165, 250, 0.3);
-    }
-
-    /* High contrast mode support */
-    @media (prefers-contrast: high) {
-      .weather-base {
-        border-width: 2px;
-        border-color: CanvasText;
-      }
-
-      .weather-card {
-        background-color: Canvas;
-        color: CanvasText;
-      }
-
-      .weather-temperature,
-      .weather-location {
-        color: CanvasText;
-        font-weight: 900;
-      }
-    }
-
-    /* Motion reduction support */
-    @media (prefers-reduced-motion: reduce) {
-      .animate-spin {
-        animation: none;
-      }
-
-      .weather-base * {
-        transition: none !important;
-      }
+    .weather-base__loading,
+    .weather-base__retry {
+      display: none !important;
     }
   }
 </style>

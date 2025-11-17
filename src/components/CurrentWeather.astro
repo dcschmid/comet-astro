@@ -1,6 +1,6 @@
 ---
 /**
- * CurrentWeather – Minimal Astro + Tailwind component.
+ * CurrentWeather – Minimal Astro component with dedicated BEM CSS.
  * Focus: WCAG AAA contrast, semantic structure, no overengineering.
  * Optional client fetch if latitude & longitude provided.
  */
@@ -41,7 +41,16 @@ const fallback = {
 };
 
 const label = ariaLabel || `Current weather for ${location}`;
-const containerClasses = `rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8 flex flex-col gap-6 ${className}`;
+const baseClasses = [
+  'current-weather',
+  showDetails ? 'current-weather--has-details' : 'current-weather--compact',
+  latitude && longitude && !disableFetch
+    ? 'current-weather--interactive'
+    : 'current-weather--static',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 const tempUnitSymbol = unit === 'c' ? '°C' : '°F';
 const tempValue =
   unit === 'c'
@@ -60,7 +69,7 @@ const emoji = iconMap[fallback.condition] || '⛅';
 ---
 
 <div
-  class={containerClasses}
+  class={baseClasses}
   role="region"
   aria-label={label}
   aria-busy={latitude && longitude && !disableFetch ? 'true' : 'false'}
@@ -73,20 +82,12 @@ const emoji = iconMap[fallback.condition] || '⛅';
   data-state={latitude && longitude && !disableFetch ? 'loading' : 'static'}
   {...rest}
 >
-  <header
-    class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
-  >
-    <h2
-      class="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-50"
-    >
-      <span aria-hidden="true" class="text-2xl">📍</span>
-      <span class="truncate" data-location>{location}</span>
+  <header class="current-weather__header">
+    <h2 class="current-weather__title">
+      <span aria-hidden="true" class="current-weather__title-icon">📍</span>
+      <span class="current-weather__location" data-location>{location}</span>
     </h2>
-    <p
-      class="text-xs font-medium text-slate-600 dark:text-slate-300"
-      aria-live="polite"
-      data-updated
-    >
+    <p class="current-weather__meta" aria-live="polite" data-updated>
       {
         latitude && longitude && !disableFetch
           ? 'Loading live data…'
@@ -95,81 +96,64 @@ const emoji = iconMap[fallback.condition] || '⛅';
     </p>
   </header>
 
-  <div class="grid gap-6 md:gap-8 md:grid-cols-3 items-start">
-    <div class="flex flex-col items-center gap-3 md:col-span-1">
+  <div class="current-weather__body">
+    <div class="current-weather__summary">
       <div
-        class="text-5xl md:text-6xl transition-opacity"
+        class="current-weather__emoji"
         role="img"
         aria-label={fallback.condition}
         data-icon
       >
         {emoji}
       </div>
-      <div class="flex flex-col items-center gap-1">
-        <span
-          class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 transition-colors"
-          data-temp>{tempValue}{tempUnitSymbol}</span
+      <div class="current-weather__reading">
+        <span class="current-weather__temperature" data-temp
+          >{tempValue}{tempUnitSymbol}</span
         >
-        <span class="text-sm text-slate-700 dark:text-slate-300" data-condition
+        <span class="current-weather__condition" data-condition
           >{fallback.condition}</span
         >
       </div>
-      <span
-        class="text-xs rounded-full px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
-        data-daynight>{fallback.isDay ? 'Daytime' : 'Night'}</span
+      <span class="current-weather__badge" data-daynight
+        >{fallback.isDay ? 'Daytime' : 'Night'}</span
       >
       <div
-        class="hidden text-xs text-slate-600 dark:text-slate-400"
+        class="current-weather__indicator current-weather__indicator--loading"
         data-loading-indicator
       >
         Loading…
       </div>
       <div
-        class="hidden text-xs text-rose-700 dark:text-rose-300"
+        class="current-weather__indicator current-weather__indicator--error"
         data-error-indicator
       >
         Error loading data (showing fallback)
       </div>
     </div>
 
-    <div class="flex flex-col gap-4 md:col-span-2">
+    <div class="current-weather__details">
       {
         showDetails && (
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" data-details>
-            <div class="flex flex-col gap-1" role="group" aria-label="Humidity">
-              <span class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
-                Humidity
-              </span>
-              <span
-                class="text-sm font-semibold text-slate-900 dark:text-slate-50"
-                data-humidity
-              >
+          <div class="current-weather__details-grid" data-details>
+            <div class="current-weather__metric" role="group" aria-label="Humidity">
+              <span class="current-weather__metric-label">Humidity</span>
+              <span class="current-weather__metric-value" data-humidity>
                 {fallback.humidity}%
               </span>
             </div>
-            <div class="flex flex-col gap-1" role="group" aria-label="Wind">
-              <span class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
-                Wind
-              </span>
-              <span
-                class="text-sm font-semibold text-slate-900 dark:text-slate-50"
-                data-wind
-              >
+            <div class="current-weather__metric" role="group" aria-label="Wind">
+              <span class="current-weather__metric-label">Wind</span>
+              <span class="current-weather__metric-value" data-wind>
                 {windDisplay}
               </span>
             </div>
             <div
-              class="flex flex-col gap-1"
+              class="current-weather__metric"
               role="group"
               aria-label="Feels like"
             >
-              <span class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
-                Feels Like
-              </span>
-              <span
-                class="text-sm font-semibold text-slate-900 dark:text-slate-50"
-                data-feels
-              >
+              <span class="current-weather__metric-label">Feels Like</span>
+              <span class="current-weather__metric-value" data-feels>
                 {tempValue}
                 {tempUnitSymbol}
               </span>
@@ -180,17 +164,16 @@ const emoji = iconMap[fallback.condition] || '⛅';
     </div>
   </div>
 
-  <footer
-    class="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap gap-3 text-xs text-slate-600 dark:text-slate-400"
-  >
-    <span
-      >Data source: <a
+  <footer class="current-weather__footer">
+    <span class="current-weather__source"
+      >Data source:
+      <a
         href="https://open-meteo.com"
-        class="underline text-slate-800 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300"
+        class="current-weather__link"
         >Open‑Meteo</a
       ></span
     >
-    <span class="ml-auto" data-refresh-indicator
+    <span class="current-weather__refresh" data-refresh-indicator
       >{
         refreshInterval > 0
           ? `Auto refresh ${refreshInterval}m`
@@ -261,19 +244,21 @@ const emoji = iconMap[fallback.condition] || '⛅';
     const loadingEl = el.querySelector('[data-loading-indicator]');
     const errorEl = el.querySelector('[data-error-indicator]');
 
+    const LOADING_CLASS = 'current-weather--loading';
+    const INDICATOR_VISIBLE_CLASS = 'current-weather__indicator--visible';
+
+    const setIndicatorVisibility = (node, visible) => {
+      if (!node) return;
+      node.classList.toggle(INDICATOR_VISIBLE_CLASS, visible);
+    };
+
     const setState = (state) => {
+      const isLoading = state === 'loading';
       el.dataset.state = state;
-      if (state === 'loading') {
-        el.setAttribute('aria-busy', 'true');
-        if (loadingEl) loadingEl.classList.remove('hidden');
-        if (errorEl) errorEl.classList.add('hidden');
-        el.classList.add('is-loading');
-      } else {
-        el.setAttribute('aria-busy', 'false');
-        if (loadingEl) loadingEl.classList.add('hidden');
-        el.classList.remove('is-loading');
-      }
-      if (state === 'error' && errorEl) errorEl.classList.remove('hidden');
+      el.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+      el.classList.toggle(LOADING_CLASS, isLoading);
+      setIndicatorVisibility(loadingEl, isLoading);
+      setIndicatorVisibility(errorEl, state === 'error');
     };
 
     const canFetch = !!lat && !!lon && !disableFetch;
@@ -347,30 +332,265 @@ const emoji = iconMap[fallback.condition] || '⛅';
   });
 </script>
 
-<style>
+<style is:inline>
+  .current-weather {
+    --cw-bg: var(--cw-bg-light, #ffffff);
+    --cw-border: var(--cw-border-light, #d1d5db);
+    --cw-border-strong: var(--cw-border-strong-light, #e2e8f0);
+    --cw-text: var(--cw-text-light, #0f172a);
+    --cw-subtext: var(--cw-subtext-light, #475569);
+    --cw-muted: var(--cw-muted-light, #64748b);
+    --cw-badge-bg: var(--cw-badge-bg-light, #f1f5f9);
+    --cw-badge-text: var(--cw-badge-text-light, #475569);
+    --cw-link: var(--cw-link-light, #1d4ed8);
+    --cw-link-hover: var(--cw-link-hover-light, #1e40af);
+    --cw-error: var(--cw-error-light, #b91c1c);
+    --cw-shadow: var(--cw-shadow-light, 0 12px 28px rgba(15, 23, 42, 0.08));
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    min-width: 0;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    border: 1px solid var(--cw-border);
+    background: var(--cw-bg);
+    color: var(--cw-text);
+    box-shadow: var(--cw-shadow);
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      color 0.2s ease;
+  }
+  @media (min-width: 48rem) {
+    .current-weather {
+      padding: 2rem;
+      gap: 2rem;
+    }
+  }
+  :where(.dark) .current-weather {
+    --cw-bg: var(--cw-bg-dark, #0f172a);
+    --cw-border: var(--cw-border-dark, #475569);
+    --cw-border-strong: var(--cw-border-strong-dark, #1e293b);
+    --cw-text: var(--cw-text-dark, #f8fafc);
+    --cw-subtext: var(--cw-subtext-dark, #cbd5f5);
+    --cw-muted: var(--cw-muted-dark, #94a3b8);
+    --cw-badge-bg: var(--cw-badge-bg-dark, rgba(148, 163, 184, 0.18));
+    --cw-badge-text: var(--cw-badge-text-dark, #e2e8f0);
+    --cw-link: var(--cw-link-dark, #93c5fd);
+    --cw-link-hover: var(--cw-link-hover-dark, #bfdbfe);
+    --cw-error: var(--cw-error-dark, #fecdd3);
+    --cw-shadow: var(--cw-shadow-dark, 0 18px 40px rgba(2, 6, 23, 0.5));
+  }
+  .current-weather__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  @media (min-width: 48rem) {
+    .current-weather__header {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+  }
+  .current-weather__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    font-weight: 700;
+    margin: 0;
+    color: var(--cw-text);
+  }
+  .current-weather__title-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+  .current-weather__location {
+    display: inline-flex;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .current-weather__meta {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--cw-muted);
+  }
+  .current-weather__body {
+    display: grid;
+    gap: clamp(1.25rem, 4vw, 2rem);
+    align-items: start;
+  }
+  @media (min-width: 48rem) {
+    .current-weather__body {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .current-weather__summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+  }
+  .current-weather__emoji {
+    font-size: clamp(3rem, 6vw, 3.75rem);
+    transition: opacity 0.2s ease;
+  }
+  .current-weather__reading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .current-weather__temperature {
+    font-size: clamp(2.5rem, 7vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--cw-text);
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+  .current-weather__condition {
+    font-size: 0.95rem;
+    color: var(--cw-subtext);
+    text-transform: capitalize;
+  }
+  .current-weather__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.1rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--cw-badge-bg);
+    color: var(--cw-badge-text);
+  }
+  .current-weather__indicator {
+    font-size: 0.75rem;
+    color: var(--cw-muted);
+    display: none;
+  }
+  .current-weather__indicator--visible {
+    display: inline-flex;
+  }
+  .current-weather__indicator--error {
+    color: var(--cw-error);
+  }
+  .current-weather__details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+  @media (min-width: 48rem) {
+    .current-weather__details {
+      grid-column: span 2;
+    }
+  }
+  .current-weather__details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media (min-width: 40rem) {
+    .current-weather__details-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .current-weather__metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(15, 23, 42, 0.03);
+    border: 1px solid var(--cw-border-strong);
+  }
+  :where(.dark) .current-weather__metric {
+    background: rgba(15, 23, 42, 0.35);
+  }
+  .current-weather__metric-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cw-muted);
+  }
+  .current-weather__metric-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--cw-text);
+  }
+  .current-weather__footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--cw-border-strong);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--cw-muted);
+  }
+  .current-weather__source {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .current-weather__link {
+    color: var(--cw-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 600;
+  }
+  .current-weather__link:hover {
+    color: var(--cw-link-hover);
+  }
+  .current-weather__link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+  .current-weather__refresh {
+    margin-left: auto;
+    font-weight: 600;
+  }
+  @media (max-width: 30rem) {
+    .current-weather__refresh {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+  .current-weather--loading .current-weather__emoji,
+  .current-weather--loading .current-weather__temperature {
+    opacity: 0.7;
+  }
+  .current-weather[data-state='loading'] .current-weather__emoji,
+  .current-weather[data-state='loading'] .current-weather__temperature,
+  .current-weather[data-state='loading'] .current-weather__condition {
+    animation: current-weather-pulse 1.4s ease-in-out infinite;
+  }
   @media (prefers-reduced-motion: reduce) {
-    [data-current-weather] * {
+    .current-weather * {
       transition: none !important;
+      animation: none !important;
     }
   }
   @media (prefers-contrast: high) {
-    [data-current-weather] {
+    .current-weather {
       outline: 2px solid currentColor;
+      outline-offset: 2px;
     }
   }
-
-  [data-current-weather].is-loading [data-icon],
-  [data-current-weather].is-loading [data-temp] {
-    opacity: 0.7;
-  }
-
-  [data-current-weather][data-state='loading'] [data-icon],
-  [data-current-weather][data-state='loading'] [data-temp],
-  [data-current-weather][data-state='loading'] [data-condition] {
-    animation: pulse 1.4s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
+  @keyframes current-weather-pulse {
     0%,
     100% {
       opacity: 0.55;

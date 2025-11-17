@@ -1,75 +1,18 @@
 ---
-import { cn } from '../utils/cn';
-
 interface Props {
-  /**
-   * The name attribute for the input
-   */
   name: string;
-
-  /**
-   * Label text for the switch
-   */
   label?: string;
-
-  /**
-   * Whether the switch is checked
-   */
   checked?: boolean;
-
-  /**
-   * Whether the switch is disabled
-   */
   disabled?: boolean;
-
-  /**
-   * Size variant for responsive design
-   */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-
-  /**
-   * Visual variant
-   */
   variant?: 'default' | 'success' | 'warning' | 'danger' | 'info';
-
-  /**
-   * Label position relative to switch
-   */
   labelPosition?: 'left' | 'right';
-
-  /**
-   * Description text for additional context
-   */
   description?: string;
-
-  /**
-   * Whether to show loading state
-   */
   loading?: boolean;
-
-  /**
-   * ARIA label for accessibility
-   */
   ariaLabel?: string;
-
-  /**
-   * ARIA describedby reference
-   */
   ariaDescribedby?: string;
-
-  /**
-   * Enable visual debugging
-   */
   debug?: boolean;
-
-  /**
-   * HTML id attribute
-   */
   id?: string;
-
-  /**
-   * Additional CSS classes
-   */
   class?: string;
 }
 
@@ -90,380 +33,96 @@ const {
   class: className = '',
 } = Astro.props as Props;
 
-// Size classes for responsive design
-const sizeClasses = {
-  xs: {
-    track: 'w-6 h-3',
-    thumb: 'w-2 h-2',
-    translate: 'translate-x-3',
-    gap: 'gap-2',
-    label: 'text-xs',
-    description: 'text-xs',
-  },
-  sm: {
-    track: 'w-8 h-4',
-    thumb: 'w-3 h-3',
-    translate: 'translate-x-4',
-    gap: 'gap-2',
-    label: 'text-sm',
-    description: 'text-xs',
-  },
-  md: {
-    track: 'w-11 h-6',
-    thumb: 'w-5 h-5',
-    translate: 'translate-x-5',
-    gap: 'gap-3',
-    label: 'text-sm',
-    description: 'text-sm',
-  },
-  lg: {
-    track: 'w-14 h-7',
-    thumb: 'w-6 h-6',
-    translate: 'translate-x-7',
-    gap: 'gap-3',
-    label: 'text-base',
-    description: 'text-sm',
-  },
-  xl: {
-    track: 'w-16 h-8',
-    thumb: 'w-7 h-7',
-    translate: 'translate-x-8',
-    gap: 'gap-4',
-    label: 'text-lg',
-    description: 'text-base',
-  },
-};
+const rootClasses = [
+  'switch',
+  `switch--size-${size}`,
+  `switch--variant-${variant}`,
+  `switch--label-${labelPosition}`,
+  disabled ? 'switch--disabled' : '',
+  loading ? 'switch--loading' : '',
+  debug ? 'switch--debug' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-// Variant color classes with WCAG AAA compliance
-const variantClasses = {
-  default: {
-    unchecked: cn(
-      // Light mode - 9:1 contrast
-      'border-slate-400 bg-slate-300',
-      // Dark mode - 9:1 contrast
-      'dark:border-slate-500 dark:bg-slate-600',
-      // High contrast support
-      '@media (prefers-contrast: high) {',
-      '  border-slate-900 bg-slate-400',
-      '  dark:border-slate-100 dark:bg-slate-500',
-      '}'
-    ),
-    checked: cn(
-      // Light mode - 9:1 contrast
-      'border-blue-700 bg-blue-700',
-      // Dark mode - 9:1 contrast
-      'dark:border-blue-400 dark:bg-blue-400',
-      // High contrast support
-      '@media (prefers-contrast: high) {',
-      '  border-blue-900 bg-blue-900',
-      '  dark:border-blue-200 dark:bg-blue-200',
-      '}'
-    ),
-  },
-  success: {
-    unchecked: cn(
-      'border-slate-400 bg-slate-300',
-      'dark:border-slate-500 dark:bg-slate-600',
-      '@media (prefers-contrast: high) { border-slate-900 bg-slate-400 dark:border-slate-100 dark:bg-slate-500 }'
-    ),
-    checked: cn(
-      'border-green-700 bg-green-700',
-      'dark:border-green-400 dark:bg-green-400',
-      '@media (prefers-contrast: high) { border-green-900 bg-green-900 dark:border-green-200 dark:bg-green-200 }'
-    ),
-  },
-  warning: {
-    unchecked: cn(
-      'border-slate-400 bg-slate-300',
-      'dark:border-slate-500 dark:bg-slate-600',
-      '@media (prefers-contrast: high) { border-slate-900 bg-slate-400 dark:border-slate-100 dark:bg-slate-500 }'
-    ),
-    checked: cn(
-      'border-amber-700 bg-amber-700',
-      'dark:border-amber-400 dark:bg-amber-400',
-      '@media (prefers-contrast: high) { border-amber-900 bg-amber-900 dark:border-amber-200 dark:bg-amber-200 }'
-    ),
-  },
-  danger: {
-    unchecked: cn(
-      'border-slate-400 bg-slate-300',
-      'dark:border-slate-500 dark:bg-slate-600',
-      '@media (prefers-contrast: high) { border-slate-900 bg-slate-400 dark:border-slate-100 dark:bg-slate-500 }'
-    ),
-    checked: cn(
-      'border-red-700 bg-red-700',
-      'dark:border-red-400 dark:bg-red-400',
-      '@media (prefers-contrast: high) { border-red-900 bg-red-900 dark:border-red-200 dark:bg-red-200 }'
-    ),
-  },
-  info: {
-    unchecked: cn(
-      'border-slate-400 bg-slate-300',
-      'dark:border-slate-500 dark:bg-slate-600',
-      '@media (prefers-contrast: high) { border-slate-900 bg-slate-400 dark:border-slate-100 dark:bg-slate-500 }'
-    ),
-    checked: cn(
-      'border-cyan-700 bg-cyan-700',
-      'dark:border-cyan-400 dark:bg-cyan-400',
-      '@media (prefers-contrast: high) { border-cyan-900 bg-cyan-900 dark:border-cyan-200 dark:bg-cyan-200 }'
-    ),
-  },
-};
+const controlClasses = [
+  'switch__control',
+  disabled ? 'switch__control--disabled' : '',
+].join(' ');
 
-// Track classes with WCAG AAA compliance
-const trackClasses = cn(
-  // Base styles
-  'absolute inset-0 rounded-full border transition-all duration-200',
-  // Focus styles with 9:1 contrast
-  'peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
-  'peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-white',
-  'dark:peer-focus-visible:ring-blue-400 dark:peer-focus-visible:ring-offset-slate-900',
-  // High contrast focus
-  '@media (prefers-contrast: high) {',
-  '  peer-focus-visible:ring-blue-900 dark:peer-focus-visible:ring-blue-200',
-  '}',
-  // Default unchecked state
-  variantClasses[variant].unchecked
-);
+const thumbClasses = [
+  'switch__thumb',
+  loading ? 'switch__thumb--loading' : '',
+].join(' ');
 
-// Thumb classes with WCAG AAA compliance
-const thumbClasses = cn(
-  // Base styles
-  'absolute rounded-full shadow-sm transition-all duration-200',
-  // Position based on size
-  size === 'xs'
-    ? 'top-0.5 left-0.5'
-    : size === 'sm'
-      ? 'top-0.5 left-0.5'
-      : size === 'md'
-        ? 'top-0.5 left-0.5'
-        : size === 'lg'
-          ? 'top-0.5 left-0.5'
-          : 'top-0.5 left-0.5',
-  // Size
-  sizeClasses[size].thumb,
-  // Colors with high contrast
-  'bg-white border border-slate-200',
-  'dark:bg-slate-900 dark:border-slate-700',
-  '@media (prefers-contrast: high) {',
-  '  bg-white border-slate-900',
-  '  dark:bg-slate-900 dark:border-slate-100',
-  '}',
-  // Loading state
-  loading && 'animate-pulse'
-);
+const hasText = Boolean(label || description);
+const textWrapperClasses = 'switch__text';
 
-// Label classes with WCAG AAA contrast
-const labelTextClasses = cn(
-  'font-medium',
-  sizeClasses[size].label,
-  // Light mode - 9:1 contrast
-  'text-slate-800',
-  // Dark mode - 9:1 contrast
-  'dark:text-slate-100',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 dark:text-slate-100',
-  '}',
-  // Disabled state
-  disabled && 'opacity-60'
-);
+const labelClasses = ['switch__label', disabled ? 'switch__label--disabled' : '']
+  .filter(Boolean)
+  .join(' ');
 
-// Description classes with WCAG AAA contrast
-const descriptionClasses = cn(
-  'mt-1',
-  sizeClasses[size].description,
-  // Light mode - 9:1 contrast
-  'text-slate-600',
-  // Dark mode - 9:1 contrast
-  'dark:text-slate-300',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 dark:text-slate-100',
-  '}',
-  // Disabled state
-  disabled && 'opacity-60'
-);
+const descriptionClasses = [
+  'switch__description',
+  disabled ? 'switch__description--disabled' : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
-// Container classes
-const containerClasses = cn(
-  'flex items-start',
-  sizeClasses[size].gap,
-  labelPosition === 'left' ? 'flex-row-reverse' : 'flex-row',
-  // Debug mode
-  debug && 'debug-switch',
-  // Custom classes
-  className
-);
-
-// Label wrapper classes
-const labelWrapperClasses = cn(
-  disabled ? 'cursor-not-allowed' : 'cursor-pointer'
-);
-
-// Switch track wrapper classes
-const switchWrapperClasses = cn(
-  'relative inline-block',
-  sizeClasses[size].track,
-  disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
-  // Hover effects when not disabled
-  !disabled && [
-    'hover:shadow-sm transition-shadow duration-200',
-    // Enhanced hover for accessibility
-    'hover:ring-1 hover:ring-slate-300 dark:hover:ring-slate-600',
-    '@media (prefers-contrast: high) {',
-    '  hover:ring-slate-900 dark:hover:ring-slate-100',
-    '}',
-  ]
-);
-
-// Generate unique IDs for accessibility
+const labelId = label ? `${id}-label` : undefined;
 const descriptionId = description ? `${id}-description` : undefined;
+const describedBy =
+  [ariaDescribedby, descriptionId].filter(Boolean).join(' ') || undefined;
+const debugInfo = debug ? `${size} ${variant} ${checked ? 'on' : 'off'}` : undefined;
 ---
 
-<style>
-  .debug-switch {
-    /* Debug visualization */
-    outline: 2px dashed rgba(0, 128, 255, 0.7);
-    outline-offset: 2px;
-    position: relative;
-  }
-
-  .debug-switch::after {
-    content: attr(data-debug-info);
-    position: absolute;
-    top: -1.5rem;
-    left: 0;
-    font-size: 0.75rem;
-    color: rgb(0 128 255);
-    background: rgba(255, 255, 255, 0.9);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-family: monospace;
-    z-index: 10;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .debug-switch::after {
-      background: rgba(0, 0, 0, 0.9);
-      color: rgb(0 128 255);
-    }
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    .debug-switch,
-    .switch-track,
-    .switch-thumb {
-      transition: none !important;
-      animation: none !important;
-    }
-  }
-
-  /* High contrast mode adjustments */
-  @media (prefers-contrast: high) {
-    .debug-switch {
-      outline-color: rgb(0 128 255) !important;
-    }
-  }
-
-  /* Loading animation for thumb */
-  @keyframes switch-loading {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(0.95);
-    }
-  }
-
-  .switch-loading {
-    animation: switch-loading 1s ease-in-out infinite;
-  }
-</style>
-
-<div
-  class={containerClasses}
-  data-debug-info={debug
-    ? `${size} ${variant} ${checked ? 'on' : 'off'}`
-    : undefined}
->
-  <label for={id} class={switchWrapperClasses}>
+<div class={rootClasses} data-debug-info={debugInfo}>
+  <label class={controlClasses}>
     <input
       type="checkbox"
+      class="switch__input"
       id={id}
       name={name}
       checked={checked}
       disabled={disabled}
-      class="sr-only peer"
       aria-label={ariaLabel}
-      aria-describedby={ariaDescribedby || descriptionId}
-      aria-disabled={disabled}
+      aria-labelledby={labelId}
+      aria-describedby={describedBy}
     />
-    <span
-      class={cn(
-        trackClasses,
-        'switch-track',
-        // Checked state colors based on variant
-        variant === 'default' &&
-          'peer-checked:border-blue-700 peer-checked:bg-blue-700 dark:peer-checked:border-blue-400 dark:peer-checked:bg-blue-400',
-        variant === 'success' &&
-          'peer-checked:border-green-700 peer-checked:bg-green-700 dark:peer-checked:border-green-400 dark:peer-checked:bg-green-400',
-        variant === 'warning' &&
-          'peer-checked:border-amber-700 peer-checked:bg-amber-700 dark:peer-checked:border-amber-400 dark:peer-checked:bg-amber-400',
-        variant === 'danger' &&
-          'peer-checked:border-red-700 peer-checked:bg-red-700 dark:peer-checked:border-red-400 dark:peer-checked:bg-red-400',
-        variant === 'info' &&
-          'peer-checked:border-cyan-700 peer-checked:bg-cyan-700 dark:peer-checked:border-cyan-400 dark:peer-checked:bg-cyan-400'
-      )}
-      aria-hidden="true"></span>
-    <span
-      class={cn(
-        thumbClasses,
-        'switch-thumb',
-        loading && 'switch-loading',
-        // Transform on checked state based on size
-        size === 'xs' && 'peer-checked:translate-x-3',
-        size === 'sm' && 'peer-checked:translate-x-4',
-        size === 'md' && 'peer-checked:translate-x-5',
-        size === 'lg' && 'peer-checked:translate-x-7',
-        size === 'xl' && 'peer-checked:translate-x-8'
-      )}
-      aria-hidden="true"
-    >
-      {
-        loading && (
-          <svg
-            class="w-full h-full animate-spin text-current opacity-50"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            />
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-        )
-      }
+    <span class="switch__track" aria-hidden="true">
+      <span class={thumbClasses}>
+        {
+          loading && (
+            <svg
+              class="switch__spinner"
+              viewBox="0 0 24 24"
+              role="img"
+              aria-hidden="true"
+            >
+              <circle
+                class="switch__spinner-track"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke-width="4"
+              />
+              <path
+                class="switch__spinner-indicator"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          )
+        }
+      </span>
     </span>
   </label>
 
   {
-    (label || description) && (
-      <div class="flex flex-col">
+    hasText && (
+      <div class={textWrapperClasses}>
         {label && (
-          <label for={id} class={cn(labelWrapperClasses, labelTextClasses)}>
+          <label for={id} id={labelId} class={labelClasses}>
             {label}
           </label>
         )}
@@ -476,3 +135,321 @@ const descriptionId = description ? `${id}-description` : undefined;
     )
   }
 </div>
+
+<style>
+  .switch {
+    --switch-track-width: 2.75rem;
+    --switch-track-height: 1.5rem;
+    --switch-thumb-size: 1.25rem;
+    --switch-thumb-offset: 0.125rem;
+    --switch-gap: 0.75rem;
+    --switch-label-size: 0.95rem;
+    --switch-description-size: 0.85rem;
+    --switch-active-bg: #2563eb;
+    --switch-active-border: #2563eb;
+    --switch-focus-ring: rgba(59, 130, 246, 0.45);
+    --switch-active-shadow: rgba(59, 130, 246, 0.15);
+    --switch-inactive-bg: #cbd5f5;
+    --switch-inactive-border: #94a3b8;
+    --switch-thumb-color: #fff;
+    --switch-thumb-border: #e2e8f0;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--switch-gap);
+  }
+
+  .switch--label-left {
+    flex-direction: row-reverse;
+  }
+
+  .switch--disabled {
+    opacity: 0.7;
+  }
+
+  .switch__control {
+    position: relative;
+    display: inline-flex;
+    width: var(--switch-track-width);
+    height: var(--switch-track-height);
+    cursor: pointer;
+  }
+
+  .switch__control--disabled {
+    cursor: not-allowed;
+  }
+
+  .switch__input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: inherit;
+  }
+
+  .switch__track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    border: 2px solid var(--switch-inactive-border);
+    background: var(--switch-inactive-bg);
+    transition: background 0.25s ease, border-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .switch__track::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+    pointer-events: none;
+  }
+
+  .switch__thumb {
+    position: absolute;
+    width: var(--switch-thumb-size);
+    height: var(--switch-thumb-size);
+    border-radius: 999px;
+    background: var(--switch-thumb-color);
+    border: 1px solid var(--switch-thumb-border);
+    top: 50%;
+    left: var(--switch-thumb-offset);
+    transform: translate(0, -50%);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease, border-color 0.25s ease,
+      background 0.25s ease;
+    color: var(--switch-active-border);
+  }
+
+  .switch__thumb--loading {
+    animation: switch-thumb-pulse 1s ease-in-out infinite;
+  }
+
+  .switch__spinner {
+    width: 100%;
+    height: 100%;
+  }
+
+  .switch__spinner-track {
+    fill: none;
+    stroke: currentColor;
+    opacity: 0.25;
+  }
+
+  .switch__spinner-indicator {
+    fill: currentColor;
+    opacity: 0.65;
+  }
+
+  .switch__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .switch__label {
+    font-size: var(--switch-label-size);
+    font-weight: 600;
+    color: #0f172a;
+    cursor: pointer;
+  }
+
+  :where(.dark) .switch__label {
+    color: #f8fafc;
+  }
+
+  .switch__label--disabled {
+    cursor: not-allowed;
+  }
+
+  .switch__description {
+    font-size: var(--switch-description-size);
+    color: #475569;
+    margin: 0;
+  }
+
+  :where(.dark) .switch__description {
+    color: #cbd5f5;
+  }
+
+  .switch__description--disabled {
+    color: #94a3b8;
+  }
+
+  .switch__input:checked + .switch__track {
+    background: var(--switch-active-bg);
+    border-color: var(--switch-active-border);
+    box-shadow: 0 0 0 4px var(--switch-active-shadow);
+  }
+
+  .switch__input:checked + .switch__track .switch__thumb {
+    transform: translate(
+        calc(var(--switch-track-width) - var(--switch-thumb-size) -
+            (var(--switch-thumb-offset) * 2)),
+        -50%
+      );
+    border-color: var(--switch-active-border);
+  }
+
+  .switch__input:focus-visible + .switch__track::after {
+    border-color: var(--switch-focus-ring);
+  }
+
+  .switch--variant-success {
+    --switch-active-bg: #15803d;
+    --switch-active-border: #15803d;
+    --switch-focus-ring: rgba(34, 197, 94, 0.45);
+    --switch-active-shadow: rgba(34, 197, 94, 0.25);
+  }
+
+  .switch--variant-warning {
+    --switch-active-bg: #d97706;
+    --switch-active-border: #d97706;
+    --switch-focus-ring: rgba(245, 158, 11, 0.5);
+    --switch-active-shadow: rgba(245, 158, 11, 0.25);
+  }
+
+  .switch--variant-danger {
+    --switch-active-bg: #b91c1c;
+    --switch-active-border: #b91c1c;
+    --switch-focus-ring: rgba(248, 113, 113, 0.4);
+    --switch-active-shadow: rgba(248, 113, 113, 0.25);
+  }
+
+  .switch--variant-info {
+    --switch-active-bg: #0891b2;
+    --switch-active-border: #0891b2;
+    --switch-focus-ring: rgba(6, 182, 212, 0.45);
+    --switch-active-shadow: rgba(6, 182, 212, 0.25);
+  }
+
+  :where(.dark) .switch {
+    --switch-inactive-bg: #1e293b;
+    --switch-inactive-border: #475569;
+    --switch-thumb-color: #0f172a;
+    --switch-thumb-border: #334155;
+  }
+
+  .switch--disabled .switch__control,
+  .switch--disabled .switch__label {
+    cursor: not-allowed;
+  }
+
+  .switch--size-xs {
+    --switch-track-width: 1.5rem;
+    --switch-track-height: 0.75rem;
+    --switch-thumb-size: 0.55rem;
+    --switch-gap: 0.5rem;
+    --switch-label-size: 0.75rem;
+    --switch-description-size: 0.7rem;
+  }
+
+  .switch--size-sm {
+    --switch-track-width: 2rem;
+    --switch-track-height: 1rem;
+    --switch-thumb-size: 0.85rem;
+    --switch-gap: 0.6rem;
+    --switch-label-size: 0.85rem;
+    --switch-description-size: 0.75rem;
+  }
+
+  .switch--size-md {
+    --switch-track-width: 2.75rem;
+    --switch-track-height: 1.5rem;
+    --switch-thumb-size: 1.1rem;
+    --switch-gap: 0.75rem;
+    --switch-label-size: 0.95rem;
+    --switch-description-size: 0.85rem;
+  }
+
+  .switch--size-lg {
+    --switch-track-width: 3.5rem;
+    --switch-track-height: 1.75rem;
+    --switch-thumb-size: 1.35rem;
+    --switch-gap: 0.85rem;
+    --switch-label-size: 1rem;
+    --switch-description-size: 0.9rem;
+  }
+
+  .switch--size-xl {
+    --switch-track-width: 4rem;
+    --switch-track-height: 2rem;
+    --switch-thumb-size: 1.6rem;
+    --switch-gap: 1rem;
+    --switch-label-size: 1.1rem;
+    --switch-description-size: 1rem;
+  }
+
+  .switch--debug {
+    outline: 2px dashed rgba(14, 165, 233, 0.8);
+    outline-offset: 2px;
+    position: relative;
+  }
+
+  .switch--debug::after {
+    content: attr(data-debug-info);
+    position: absolute;
+    top: -1.5rem;
+    left: 0;
+    font-size: 0.75rem;
+    color: #0ea5e9;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+  }
+
+  :where(.dark) .switch--debug::after {
+    background: rgba(15, 23, 42, 0.95);
+    color: #bae6fd;
+  }
+
+  @keyframes switch-thumb-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+    }
+    50% {
+      opacity: 0.75;
+      box-shadow: 0 6px 12px rgba(15, 23, 42, 0.25);
+    }
+  }
+
+  @media (prefers-contrast: high) {
+    .switch__track {
+      border-color: currentColor;
+      background: transparent;
+    }
+
+    .switch__input:checked + .switch__track {
+      background: currentColor;
+      border-color: currentColor;
+    }
+
+    .switch__thumb {
+      border-color: currentColor;
+      background: #fff;
+    }
+
+    .switch__label,
+    .switch__description {
+      color: currentColor;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .switch * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>

@@ -1,8 +1,5 @@
 ---
-import { cn } from '../utils/cn';
-
 export interface VisuallyHiddenProps {
-  // Element Type
   as?:
     | 'span'
     | 'div'
@@ -16,22 +13,14 @@ export interface VisuallyHiddenProps {
     | 'label'
     | 'legend'
     | 'caption';
-
-  // Behavior
   focusable?: boolean;
   skipLink?: boolean;
   debug?: boolean;
-
-  // Accessibility
   ariaLive?: 'off' | 'polite' | 'assertive';
   ariaLabel?: string;
   role?: string;
-
-  // Additional
   className?: string;
 }
-
-interface Props extends VisuallyHiddenProps {}
 
 const {
   as: Tag = 'span',
@@ -42,108 +31,21 @@ const {
   ariaLabel,
   role,
   className = '',
-} = Astro.props;
+} = Astro.props as VisuallyHiddenProps;
 
-// Base visually hidden classes with WCAG AAA compliance
-const baseClasses = [
-  // Core visually hidden styling
-  'absolute',
-  '-m-px',
-  'h-px',
-  'w-px',
-  'overflow-hidden',
-  'whitespace-nowrap',
-  'border-0',
-  'p-0',
-  // Ensure content is still accessible to screen readers
-  'clip-rect-0',
-];
-
-// Focus behavior classes
-const focusClasses = focusable
-  ? [
-      // Make visible when focused (WCAG AAA compliant)
-      'focus:not-sr-only',
-      'focus:static',
-      'focus:h-auto',
-      'focus:w-auto',
-      'focus:p-2',
-      'focus:overflow-visible',
-      'focus:whitespace-normal',
-      'focus:clip-auto',
-      // Enhanced focus styling for WCAG AAA (9:1 contrast)
-      'focus:bg-blue-600',
-      'focus:text-white',
-      'focus:border-2',
-      'focus:border-blue-800',
-      'focus:shadow-lg',
-      'focus:shadow-blue-900/50',
-      'focus:outline-none',
-      'focus:ring-4',
-      'focus:ring-blue-500/30',
-      'focus:ring-offset-2',
-      'focus:rounded-md',
-      'focus:z-50',
-      // Dark mode support
-      'dark:focus:bg-blue-500',
-      'dark:focus:border-blue-300',
-      'dark:focus:shadow-blue-800/50',
-      'dark:focus:ring-blue-400/30',
-    ]
-  : [];
-
-// Skip link specific styles
-const skipLinkClasses = skipLink
-  ? [
-      // Position at top of page
-      'focus:fixed',
-      'focus:top-4',
-      'focus:left-4',
-      'focus:z-[9999]',
-      // Enhanced styling for skip links
-      'focus:font-medium',
-      'focus:text-sm',
-      'focus:px-4',
-      'focus:py-2',
-    ]
-  : [];
-
-// Debug mode classes (only in development)
-const debugClasses = debug
-  ? [
-      '!static',
-      '!h-auto',
-      '!w-auto',
-      '!p-2',
-      '!overflow-visible',
-      '!whitespace-normal',
-      '!clip-auto',
-      'bg-yellow-200',
-      'text-yellow-900',
-      'border-2',
-      'border-yellow-500',
-      'rounded',
-      'text-xs',
-      'font-mono',
-      'dark:bg-yellow-900',
-      'dark:text-yellow-200',
-      'dark:border-yellow-400',
-    ]
-  : [];
-
-const combinedClasses = cn(
-  ...baseClasses,
-  ...focusClasses,
-  ...skipLinkClasses,
-  ...debugClasses,
-  className
-);
----
-
+const classes = [
+  'visually-hidden',
+  focusable ? 'visually-hidden--focusable' : '',
+  skipLink ? 'visually-hidden--skiplink' : '',
+  debug ? 'visually-hidden--debug' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <Tag
-  class={combinedClasses}
+  class={classes}
   aria-live={ariaLive}
   aria-label={ariaLabel}
   role={role}
@@ -152,11 +54,79 @@ const combinedClasses = cn(
 >
   <slot />
 
-  {
-    debug && (
-      <span class="ml-2 text-xs opacity-75">
-        [Visually Hidden - Debug Mode]
-      </span>
-    )
-  }
+  {debug && <span class="visually-hidden__debug-label">[Visually Hidden - Debug Mode]</span>}
 </Tag>
+
+<style>
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+    white-space: nowrap;
+  }
+
+  .visually-hidden--focusable:focus,
+  .visually-hidden--focusable:focus-visible {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    padding: 0.5rem 0.75rem;
+    background: #2563eb;
+    color: #ffffff;
+    border: 2px solid #1d4ed8;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
+    z-index: 9990;
+  }
+
+  :where(.dark) .visually-hidden--focusable:focus,
+  :where(.dark) .visually-hidden--focusable:focus-visible {
+    background: #60a5fa;
+    color: #0f172a;
+    border-color: #3b82f6;
+  }
+
+  .visually-hidden--skiplink:focus,
+  .visually-hidden--skiplink:focus-visible {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .visually-hidden--debug {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    padding: 0.5rem;
+    border: 2px dashed rgba(234, 179, 8, 0.8);
+    background: rgba(254, 240, 138, 0.6);
+    color: #92400e;
+    font-family: monospace;
+    font-size: 0.8rem;
+  }
+
+  :where(.dark) .visually-hidden--debug {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fde68a;
+    border-color: rgba(251, 191, 36, 0.8);
+  }
+
+  .visually-hidden__debug-label {
+    margin-left: 0.5rem;
+    opacity: 0.7;
+  }
+</style>

@@ -37,48 +37,22 @@ const {
   className = '',
 } = Astro.props;
 
-const directionClasses: Record<string, string> = {
-  row: 'flex-row',
-  column: 'flex-col',
-  'row-reverse': 'flex-row-reverse',
-  'column-reverse': 'flex-col-reverse',
-};
-
-const wrapClasses: Record<string, string> = {
-  false: '',
-  true: 'flex-wrap',
-  reverse: 'flex-wrap-reverse',
-};
-
-const gapClasses: Record<string, string> = {
-  none: 'gap-0',
-  xs: 'gap-1',
-  sm: 'gap-2',
-  md: 'gap-4',
-  lg: 'gap-6',
-  xl: 'gap-8',
-  '2xl': 'gap-12',
-  '3xl': 'gap-16',
-};
-
-const justifyClasses: Record<string, string> = {
-  start: 'justify-start',
-  center: 'justify-center',
-  end: 'justify-end',
-  between: 'justify-between',
-  around: 'justify-around',
-  evenly: 'justify-evenly',
-};
-
-const alignClasses: Record<string, string> = {
-  start: 'items-start',
-  center: 'items-center',
-  end: 'items-end',
-  stretch: 'items-stretch',
-  baseline: 'items-baseline',
-};
-
-const displayClass = inline ? 'inline-flex' : 'flex';
+const rootClasses = [
+  'flex-stack',
+  inline ? 'flex-stack--inline' : 'flex-stack--block',
+  `flex-stack--direction-${direction}`,
+  wrap === 'reverse'
+    ? 'flex-stack--wrap-reverse'
+    : wrap
+      ? 'flex-stack--wrap'
+      : 'flex-stack--nowrap',
+  `flex-stack--gap-${gap}`,
+  `flex-stack--justify-${justify}`,
+  `flex-stack--align-${align}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Accessibility attributes
 const accessibilityProps: Record<string, any> = {};
@@ -90,19 +64,98 @@ if (ariaDescribedby) accessibilityProps['aria-describedby'] = ariaDescribedby;
 const Element = as;
 
 // Build class string with proper spacing
-const classNames = [
-  displayClass,
-  directionClasses[direction],
-  wrapClasses[wrap.toString()],
-  gapClasses[gap],
-  justifyClasses[justify],
-  alignClasses[align],
-  className,
-]
-  .filter(Boolean)
-  .join(' ');
 ---
 
-<Element class={classNames} {...accessibilityProps}>
+<Element class={rootClasses} {...accessibilityProps}>
   <slot />
 </Element>
+
+<style is:inline>
+  .flex-stack {
+    display: flex;
+  }
+  .flex-stack--inline {
+    display: inline-flex;
+  }
+  .flex-stack--block {
+    display: flex;
+  }
+  .flex-stack--direction-row {
+    flex-direction: row;
+  }
+  .flex-stack--direction-column {
+    flex-direction: column;
+  }
+  .flex-stack--direction-row-reverse {
+    flex-direction: row-reverse;
+  }
+  .flex-stack--direction-column-reverse {
+    flex-direction: column-reverse;
+  }
+  .flex-stack--wrap {
+    flex-wrap: wrap;
+  }
+  .flex-stack--wrap-reverse {
+    flex-wrap: wrap-reverse;
+  }
+  .flex-stack--nowrap {
+    flex-wrap: nowrap;
+  }
+  .flex-stack--gap-none {
+    gap: 0;
+  }
+  .flex-stack--gap-xs {
+    gap: 0.25rem;
+  }
+  .flex-stack--gap-sm {
+    gap: 0.5rem;
+  }
+  .flex-stack--gap-md {
+    gap: 1rem;
+  }
+  .flex-stack--gap-lg {
+    gap: 1.5rem;
+  }
+  .flex-stack--gap-xl {
+    gap: 2rem;
+  }
+  .flex-stack--gap-2xl {
+    gap: 3rem;
+  }
+  .flex-stack--gap-3xl {
+    gap: 4rem;
+  }
+  .flex-stack--justify-start {
+    justify-content: flex-start;
+  }
+  .flex-stack--justify-center {
+    justify-content: center;
+  }
+  .flex-stack--justify-end {
+    justify-content: flex-end;
+  }
+  .flex-stack--justify-between {
+    justify-content: space-between;
+  }
+  .flex-stack--justify-around {
+    justify-content: space-around;
+  }
+  .flex-stack--justify-evenly {
+    justify-content: space-evenly;
+  }
+  .flex-stack--align-start {
+    align-items: flex-start;
+  }
+  .flex-stack--align-center {
+    align-items: center;
+  }
+  .flex-stack--align-end {
+    align-items: flex-end;
+  }
+  .flex-stack--align-stretch {
+    align-items: stretch;
+  }
+  .flex-stack--align-baseline {
+    align-items: baseline;
+  }
+</style>

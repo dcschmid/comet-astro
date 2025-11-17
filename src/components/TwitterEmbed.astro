@@ -84,6 +84,7 @@ const embedUrl = buildTwitterEmbedUrl();
 // Generate appropriate title and ARIA label
 const finalTitle = title || `Twitter tweet ${tweetId}`;
 const finalAriaLabel = ariaLabel || `Twitter embed showing tweet ${tweetId}`;
+const finalClassName = ['twitter-embed', className].filter(Boolean).join(' ');
 
 // Note: Twitter embeds typically use their own widget system rather than iframe embeds.
 // For a simplified iframe-based approach, we use the oEmbed endpoint.
@@ -96,7 +97,7 @@ const finalAriaLabel = ariaLabel || `Twitter embed showing tweet ${tweetId}`;
   aspectRatio="16/9"
   variant={variant}
   showLoading={showLoading}
-  class={className}
+  class={finalClassName}
   ariaLabel={finalAriaLabel}
   allowFullscreen={false}
   loading="lazy"
@@ -108,13 +109,10 @@ const finalAriaLabel = ariaLabel || `Twitter embed showing tweet ${tweetId}`;
 >
   {
     privacyMode && (
-      <div
-        slot="header"
-        class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950"
-      >
-        <div class="flex">
+      <div slot="header" class="twitter-embed__privacy">
+        <div class="twitter-embed__privacy-row">
           <svg
-            class="h-5 w-5 text-amber-400"
+            class="twitter-embed__privacy-icon"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -127,11 +125,11 @@ const finalAriaLabel = ariaLabel || `Twitter embed showing tweet ${tweetId}`;
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.262 16.5c-.77.833.192 2.5 1.732 2.5z"
             />
           </svg>
-          <div class="ml-3">
-            <h3 class="text-sm font-medium text-amber-800 dark:text-amber-200">
+          <div>
+            <h3 class="twitter-embed__privacy-title">
               Privacy Mode Enabled
             </h3>
-            <p class="mt-1 text-xs text-amber-700 dark:text-amber-300">
+            <p class="twitter-embed__privacy-text">
               Do Not Track is enabled. Twitter may not collect tracking data.
             </p>
           </div>
@@ -140,3 +138,55 @@ const finalAriaLabel = ariaLabel || `Twitter embed showing tweet ${tweetId}`;
     )
   }
 </EmbedBase>
+
+<style>
+  .twitter-embed {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .twitter-embed__privacy {
+    margin-bottom: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(251, 191, 36, 0.6);
+    background: rgba(255, 251, 235, 0.9);
+    padding: 0.85rem 1rem;
+    color: #92400e;
+  }
+
+  :where(.dark) .twitter-embed__privacy {
+    border-color: rgba(217, 119, 6, 0.7);
+    background: rgba(120, 53, 15, 0.35);
+    color: #fcd34d;
+  }
+
+  .twitter-embed__privacy-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .twitter-embed__privacy-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    color: #f59e0b;
+  }
+
+  :where(.dark) .twitter-embed__privacy-icon {
+    color: #fcd34d;
+  }
+
+  .twitter-embed__privacy-title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .twitter-embed__privacy-text {
+    margin: 0.35rem 0 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+</style>

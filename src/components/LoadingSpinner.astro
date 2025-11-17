@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 /**
  * LoadingSpinner - WCAG AAA compliant loading indicator
  */
@@ -63,13 +61,6 @@ const {
 } = Astro.props as Props;
 
 // Size mappings with WCAG AAA compliant minimum touch targets
-const sizeClasses = {
-  xs: 'w-4 h-4',
-  sm: 'w-5 h-5',
-  md: 'w-6 h-6',
-  lg: 'w-8 h-8',
-  xl: 'w-12 h-12',
-};
 
 const sizeDimensions = {
   xs: 16,
@@ -79,81 +70,26 @@ const sizeDimensions = {
   xl: 48,
 };
 
-// Text size classes for labels
-const textSizeClasses = {
-  xs: 'text-xs',
-  sm: 'text-sm',
-  md: 'text-base',
-  lg: 'text-lg',
-  xl: 'text-xl',
-};
-
-// Color variants with WCAG AAA compliant colors (7:1+ contrast)
-const variantClasses = {
-  default: {
-    spinner: 'text-slate-600 dark:text-slate-400',
-    background: 'text-slate-200 dark:text-slate-600',
-    text: 'text-slate-700 dark:text-slate-300',
-  },
-  primary: {
-    spinner: 'text-blue-600 dark:text-blue-400',
-    background: 'text-blue-200 dark:text-blue-200/40',
-    text: 'text-blue-700 dark:text-blue-300',
-  },
-  secondary: {
-    spinner: 'text-slate-600 dark:text-slate-400',
-    background: 'text-slate-200 dark:text-slate-600',
-    text: 'text-slate-700 dark:text-slate-300',
-  },
-  success: {
-    spinner: 'text-green-600 dark:text-green-400',
-    background: 'text-green-200 dark:text-green-200/40',
-    text: 'text-green-700 dark:text-green-300',
-  },
-  warning: {
-    spinner: 'text-amber-600 dark:text-amber-400',
-    background: 'text-amber-200 dark:text-amber-200/40',
-    text: 'text-amber-700 dark:text-amber-300',
-  },
-  error: {
-    spinner: 'text-red-600 dark:text-red-400',
-    background: 'text-red-200 dark:text-red-200/40',
-    text: 'text-red-700 dark:text-red-300',
-  },
-  neutral: {
-    spinner: 'text-slate-600 dark:text-slate-400',
-    background: 'text-slate-300 dark:text-slate-600',
-    text: 'text-slate-700 dark:text-slate-300',
-  },
-};
-
-// Animation speed classes
-const speedClasses = {
-  slow: 'duration-2000',
-  normal: 'duration-1000',
-  fast: 'duration-500',
-};
-
-// Stroke thickness
-const thicknessValues = {
-  thin: '2',
-  normal: '3',
-  thick: '4',
-};
-
-// Animation classes
-const animationClasses = {
-  spin: 'animate-spin',
-  pulse: 'animate-pulse',
-  bounce: 'animate-bounce',
-  dots: 'animate-pulse',
-  bars: 'animate-pulse',
-  orbit: 'animate-spin',
-};
-
-const colors = variantClasses[variant] || variantClasses.default;
+const rootClasses = [
+  'loading-spinner',
+  `loading-spinner--size-${size}`,
+  `loading-spinner--variant-${variant}`,
+  `loading-spinner--animation-${animation}`,
+  `loading-spinner--speed-${speed}`,
+  `loading-spinner--thickness-${thickness}`,
+  centered && !overlay ? 'loading-spinner--centered' : '',
+  inline ? 'loading-spinner--inline' : '',
+  disableAnimation ? 'loading-spinner--static' : '',
+  showLabel ? 'loading-spinner--with-label' : '',
+  overlay ? 'loading-spinner--overlay' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+const labelClasses = 'loading-spinner__label';
 const dimension = sizeDimensions[size];
-const strokeWidth = thicknessValues[thickness];
+const strokeWidth = thickness === 'thin' ? 2 : thickness === 'thick' ? 4 : 3;
+const spinnerStyle = color ? ({ '--loading-spinner-color': color } as Record<string, string>) : undefined;
 
 // Calculate progress for determinate loading
 const isProgress =
@@ -165,60 +101,23 @@ const strokeDashoffset = isProgress
   : undefined;
 ---
 
-<!-- Overlay version -->{
-  overlay && (
-    <div
-      class={cn(
-        'fixed inset-0 z-50 flex items-center justify-center',
-        'bg-white/80 backdrop-blur-sm dark:bg-slate-950/80',
-        'transition-opacity duration-300'
-      )}
-      role="status"
-      aria-live="polite"
-      aria-label={label}
-    >
-      <div class="flex flex-col items-center gap-4 p-6 rounded-xl bg-white shadow-xl dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-        {/* Spinner content will be rendered here */}
-      </div>
-    </div>
-  )
-}
-
-<!-- Main spinner container -->
 <div
-  class={cn(
-    // Base layout
-    inline ? 'inline-flex' : 'flex',
-    'items-center',
-    showLabel ? 'gap-3' : 'gap-0',
-
-    // Centering
-    centered && !overlay && 'justify-center',
-
-    // Custom classes
-    className
-  )}
+  class={rootClasses}
   role="status"
   aria-live="polite"
   aria-label={label}
+  style={spinnerStyle}
 >
-  <!-- Spinner SVG -->
-  <div class={cn('relative', sizeClasses[size])} data-animation={animation}>
+  <div class="loading-spinner__icon">
     {
       animation === 'spin' && (
         <svg
-          class={cn(
-            'w-full h-full',
-            !disableAnimation && animationClasses[animation],
-            !disableAnimation && speedClasses[speed],
-            color || colors.spinner
-          )}
+          class="loading-spinner__svg"
           width={dimension}
           height={dimension}
           viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"
-          style={disableAnimation ? { animation: 'none' } : {}}
         >
           {isProgress ? (
             <g>
@@ -228,7 +127,7 @@ const strokeDashoffset = isProgress
                 r="10"
                 stroke="currentColor"
                 stroke-width={strokeWidth}
-                class={cn('opacity-25', colors.background)}
+                class="loading-spinner__track"
                 fill="none"
               />
               <circle
@@ -237,7 +136,7 @@ const strokeDashoffset = isProgress
                 r="10"
                 stroke="currentColor"
                 stroke-width={strokeWidth}
-                class="opacity-90"
+                class="loading-spinner__indicator"
                 fill="none"
                 stroke-dasharray={strokeDasharray}
                 stroke-dashoffset={strokeDashoffset}
@@ -254,10 +153,10 @@ const strokeDashoffset = isProgress
                 r="10"
                 stroke="currentColor"
                 stroke-width={strokeWidth}
-                class={cn('opacity-25', colors.background)}
+                class="loading-spinner__track"
               />
               <path
-                class="opacity-90"
+                class="loading-spinner__indicator"
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
               />
@@ -270,13 +169,7 @@ const strokeDashoffset = isProgress
     {
       animation === 'pulse' && (
         <div
-          class={cn(
-            'w-full h-full rounded-full bg-current',
-            !disableAnimation && 'animate-pulse',
-            !disableAnimation && speedClasses[speed],
-            color || colors.spinner
-          )}
-          style={disableAnimation ? { animation: 'none' } : {}}
+          class={`loading-spinner__pulse${disableAnimation ? ' loading-spinner__pulse--static' : ''}`}
           aria-hidden="true"
         />
       )
@@ -284,45 +177,18 @@ const strokeDashoffset = isProgress
 
     {
       animation === 'dots' && (
-        <div
-          class="flex items-center justify-center gap-1 w-full h-full"
-          aria-hidden="true"
-        >
+        <div class="loading-spinner__dots" aria-hidden="true">
           <div
-            class={cn(
-              'w-2 h-2 rounded-full bg-current',
-              !disableAnimation && 'animate-pulse',
-              color || colors.spinner
-            )}
-            style={
-              disableAnimation
-                ? { animation: 'none' }
-                : { animationDelay: '0s' }
-            }
+            class={`loading-spinner__dot${disableAnimation ? ' loading-spinner__dot--static' : ''}`}
+            style={!disableAnimation ? { animationDelay: '0s' } : {}}
           />
           <div
-            class={cn(
-              'w-2 h-2 rounded-full bg-current',
-              !disableAnimation && 'animate-pulse',
-              color || colors.spinner
-            )}
-            style={
-              disableAnimation
-                ? { animation: 'none' }
-                : { animationDelay: '0.2s' }
-            }
+            class={`loading-spinner__dot${disableAnimation ? ' loading-spinner__dot--static' : ''}`}
+            style={!disableAnimation ? { animationDelay: '0.2s' } : {}}
           />
           <div
-            class={cn(
-              'w-2 h-2 rounded-full bg-current',
-              !disableAnimation && 'animate-pulse',
-              color || colors.spinner
-            )}
-            style={
-              disableAnimation
-                ? { animation: 'none' }
-                : { animationDelay: '0.4s' }
-            }
+            class={`loading-spinner__dot${disableAnimation ? ' loading-spinner__dot--static' : ''}`}
+            style={!disableAnimation ? { animationDelay: '0.4s' } : {}}
           />
         </div>
       )
@@ -330,107 +196,28 @@ const strokeDashoffset = isProgress
 
     {
       animation === 'bars' && (
-        <div
-          class="flex items-end justify-center gap-1 w-full h-full"
-          aria-hidden="true"
-        >
-          <div
-            class={cn(
-              'w-1 bg-current rounded-sm',
-              !disableAnimation && 'animate-pulse',
-              color || colors.spinner
-            )}
-            style={
-              disableAnimation
-                ? { animation: 'none', height: '60%' }
-                : {
-                    animationDelay: '0s',
-                    height: '40%',
-                  }
-            }
-          />
-          <div
-            class={cn(
-              'w-1 bg-current rounded-sm',
-              !disableAnimation && 'animate-pulse',
-              color || colors.spinner
-            )}
-            style={
-              disableAnimation
-                ? { animation: 'none', height: '60%' }
-                : {
-                    animationDelay: '0.1s',
-                    height: '70%',
-                  }
-            }
-          />
-          <div
-            class={cn(
-              'w-1 bg-current rounded-sm',
-              !disableAnimation && 'animate-pulse',
-              color || colors.spinner
-            )}
-            style={
-              disableAnimation
-                ? { animation: 'none', height: '60%' }
-                : {
-                    animationDelay: '0.2s',
-                    height: '50%',
-                  }
-            }
-          />
-          <div
-            class={cn(
-              'w-1 bg-current rounded-sm',
-              !disableAnimation && 'animate-pulse',
-              color || colors.spinner
-            )}
-            style={
-              disableAnimation
-                ? { animation: 'none', height: '60%' }
-                : {
-                    animationDelay: '0.3s',
-                    height: '80%',
-                  }
-            }
-          />
+        <div class="loading-spinner__bars" aria-hidden="true">
+          <div class={`loading-spinner__bar${disableAnimation ? ' loading-spinner__bar--static' : ''}`} style={!disableAnimation ? { animationDelay: '0s', height: '40%' } : { height: '60%' }} />
+          <div class={`loading-spinner__bar${disableAnimation ? ' loading-spinner__bar--static' : ''}`} style={!disableAnimation ? { animationDelay: '0.1s', height: '70%' } : { height: '60%' }} />
+          <div class={`loading-spinner__bar${disableAnimation ? ' loading-spinner__bar--static' : ''}`} style={!disableAnimation ? { animationDelay: '0.2s', height: '50%' } : { height: '60%' }} />
+          <div class={`loading-spinner__bar${disableAnimation ? ' loading-spinner__bar--static' : ''}`} style={!disableAnimation ? { animationDelay: '0.3s', height: '80%' } : { height: '60%' }} />
         </div>
       )
     }
 
     {
       animation === 'bounce' && (
-        <div
-          class={cn(
-            'w-full h-full rounded-full bg-current flex items-center justify-center',
-            !disableAnimation && 'animate-bounce',
-            color || colors.spinner
-          )}
-          style={disableAnimation ? { animation: 'none' } : {}}
-          aria-hidden="true"
-        >
-          <div class="w-1/2 h-1/2 rounded-full bg-current opacity-80" />
+        <div class={`loading-spinner__bounce${disableAnimation ? ' loading-spinner__bounce--static' : ''}`} aria-hidden="true">
+          <div class="loading-spinner__bounce-core" />
         </div>
       )
     }
 
     {
       animation === 'orbit' && (
-        <div
-          class={cn(
-            'relative w-full h-full',
-            !disableAnimation && 'animate-spin',
-            !disableAnimation && speedClasses[speed]
-          )}
-          style={disableAnimation ? { animation: 'none' } : {}}
-          aria-hidden="true"
-        >
-          <div
-            class={cn(
-              'absolute top-0 left-1/2 w-2 h-2 rounded-full bg-current -translate-x-1/2',
-              color || colors.spinner
-            )}
-          />
+        <div class={`loading-spinner__orbit${disableAnimation ? ' loading-spinner__orbit--static' : ''}`} aria-hidden="true">
+          <div class="loading-spinner__orbit-dot" />
+          <div class="loading-spinner__orbit-dot loading-spinner__orbit-dot--trail" />
         </div>
       )
     }
@@ -438,45 +225,352 @@ const strokeDashoffset = isProgress
     <!-- Progress percentage overlay -->
     {
       isProgress && showProgress && (
-        <div class="absolute inset-2 flex items-center justify-center">
-          <span
-            class={cn(
-              'font-bold leading-none',
-              colors.text,
-              size === 'xs' && 'text-[6px]',
-              size === 'sm' && 'text-[8px]',
-              size === 'md' && 'text-[10px]',
-              size === 'lg' && 'text-xs',
-              size === 'xl' && 'text-sm'
-            )}
-          >
-            {Math.round(progress)}%
-          </span>
+        <div class="loading-spinner__progress-overlay">
+          <span class="loading-spinner__progress-value">{Math.round(progress)}%</span>
         </div>
       )
     }
   </div>
 
-  <!-- Text label -->
-  {
-    showLabel && (
-      <span class={cn('font-medium', textSizeClasses[size], colors.text)}>
-        {label}
-        {isProgress && showProgress && ` (${Math.round(progress)}%)`}
-      </span>
-    )
-  }
+  {showLabel && (
+    <span class={labelClasses}>
+      {label}
+      {isProgress && showProgress && <span class="loading-spinner__progress">{Math.round(progress)}%</span>}
+    </span>
+  )}
 
-  <!-- Screen reader only label -->
-  <span class="sr-only">
+  <span class="loading-spinner__sr-only">
     {label}
     {isProgress && ` ${Math.round(progress)}% complete`}
   </span>
 </div>
 
-<style>
-  /* Custom animations for better visual effects */
-  @keyframes dots-bounce {
+<style is:inline>
+  .loading-spinner {
+    --loading-spinner-size: 1.5rem;
+    --loading-spinner-color: #475569;
+    --loading-spinner-track: #cbd5f5;
+    --loading-spinner-text: #0f172a;
+    --loading-spinner-speed: 1s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--loading-spinner-text);
+  }
+
+  .loading-spinner:not(.loading-spinner--with-label) {
+    gap: 0;
+  }
+
+  .loading-spinner--inline {
+    display: inline-flex;
+  }
+
+  .loading-spinner--centered {
+    justify-content: center;
+  }
+
+  .loading-spinner__icon {
+    position: relative;
+    width: var(--loading-spinner-size);
+    height: var(--loading-spinner-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .loading-spinner__svg {
+    width: 100%;
+    height: 100%;
+    color: var(--loading-spinner-color);
+  }
+
+  .loading-spinner--animation-spin .loading-spinner__svg {
+    animation: spinner-rotate var(--loading-spinner-speed) linear infinite;
+  }
+
+  .loading-spinner--static .loading-spinner__svg {
+    animation: none;
+  }
+
+  .loading-spinner__track {
+    color: var(--loading-spinner-track);
+    opacity: 0.35;
+  }
+
+  .loading-spinner__indicator {
+    color: var(--loading-spinner-color);
+  }
+
+  .loading-spinner__pulse {
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background-color: var(--loading-spinner-color);
+    opacity: 0.7;
+    animation: spinner-pulse var(--loading-spinner-speed) ease-in-out infinite;
+  }
+
+  .loading-spinner--static .loading-spinner__pulse {
+    animation: none;
+  }
+
+  .loading-spinner__dots {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+
+  .loading-spinner__dot {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background-color: var(--loading-spinner-color);
+    animation: spinner-dots var(--loading-spinner-speed) ease-in-out infinite;
+  }
+
+  .loading-spinner--static .loading-spinner__dot {
+    animation: none;
+    opacity: 0.7;
+  }
+
+  .loading-spinner__bars {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .loading-spinner__bar {
+    width: 0.2rem;
+    border-radius: 0.125rem;
+    background-color: var(--loading-spinner-color);
+    animation: spinner-bars var(--loading-spinner-speed) ease-in-out infinite;
+  }
+
+  .loading-spinner--static .loading-spinner__bar {
+    animation: none;
+  }
+
+  .loading-spinner__bounce {
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background-color: rgba(226, 232, 240, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: spinner-bounce var(--loading-spinner-speed) ease-in-out infinite;
+  }
+
+  .loading-spinner--static .loading-spinner__bounce {
+    animation: none;
+  }
+
+  .loading-spinner__bounce-core {
+    width: 50%;
+    height: 50%;
+    border-radius: 999px;
+    background-color: var(--loading-spinner-color);
+    opacity: 0.8;
+  }
+
+  .loading-spinner__orbit {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    animation: spinner-rotate var(--loading-spinner-speed) linear infinite;
+  }
+
+  .loading-spinner--static .loading-spinner__orbit {
+    animation: none;
+  }
+
+  .loading-spinner__orbit-dot {
+    position: absolute;
+    left: 50%;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background-color: var(--loading-spinner-color);
+    transform: translateX(-50%);
+  }
+
+  .loading-spinner__orbit-dot--trail {
+    bottom: 0;
+    opacity: 0.5;
+  }
+
+  .loading-spinner__orbit-dot:not(.loading-spinner__orbit-dot--trail) {
+    top: 0;
+  }
+
+  .loading-spinner__progress-overlay {
+    position: absolute;
+    inset: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .loading-spinner__progress-value {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--loading-spinner-text);
+  }
+
+  .loading-spinner__label {
+    font-weight: 600;
+    color: var(--loading-spinner-text);
+  }
+
+  .loading-spinner__progress {
+    margin-left: 0.35rem;
+    font-size: 0.85em;
+    color: var(--loading-spinner-text);
+    opacity: 0.85;
+  }
+
+  .loading-spinner__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  .loading-spinner--size-xs {
+    --loading-spinner-size: 1rem;
+  }
+
+  .loading-spinner--size-sm {
+    --loading-spinner-size: 1.25rem;
+  }
+
+  .loading-spinner--size-lg {
+    --loading-spinner-size: 2rem;
+  }
+
+  .loading-spinner--size-xl {
+    --loading-spinner-size: 3rem;
+  }
+
+  .loading-spinner--speed-slow {
+    --loading-spinner-speed: 2s;
+  }
+
+  .loading-spinner--speed-fast {
+    --loading-spinner-speed: 0.5s;
+  }
+
+  .loading-spinner--variant-default {
+    --loading-spinner-color: #475569;
+    --loading-spinner-track: #cbd5f5;
+    --loading-spinner-text: #0f172a;
+  }
+
+  .loading-spinner--variant-primary {
+    --loading-spinner-color: #2563eb;
+    --loading-spinner-track: rgba(191, 219, 254, 0.8);
+    --loading-spinner-text: #1d4ed8;
+  }
+
+  .loading-spinner--variant-secondary {
+    --loading-spinner-color: #475569;
+    --loading-spinner-track: #cbd5f5;
+    --loading-spinner-text: #1f2937;
+  }
+
+  .loading-spinner--variant-success {
+    --loading-spinner-color: #16a34a;
+    --loading-spinner-track: rgba(187, 247, 208, 0.7);
+    --loading-spinner-text: #166534;
+  }
+
+  .loading-spinner--variant-warning {
+    --loading-spinner-color: #f59e0b;
+    --loading-spinner-track: rgba(254, 243, 199, 0.8);
+    --loading-spinner-text: #b45309;
+  }
+
+  .loading-spinner--variant-error {
+    --loading-spinner-color: #dc2626;
+    --loading-spinner-track: rgba(254, 202, 202, 0.8);
+    --loading-spinner-text: #991b1b;
+  }
+
+  .loading-spinner--variant-neutral {
+    --loading-spinner-color: #64748b;
+    --loading-spinner-track: rgba(226, 232, 240, 0.9);
+    --loading-spinner-text: #1f2937;
+  }
+
+  .loading-spinner--overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    gap: 1rem;
+  }
+
+  .loading-spinner__label {
+    font-weight: 600;
+    color: var(--loading-spinner-text);
+  }
+
+  .loading-spinner--size-xs .loading-spinner__label {
+    font-size: 0.75rem;
+  }
+
+  .loading-spinner--size-sm .loading-spinner__label {
+    font-size: 0.85rem;
+  }
+
+  .loading-spinner--size-md .loading-spinner__label {
+    font-size: 0.95rem;
+  }
+
+  .loading-spinner--size-lg .loading-spinner__label {
+    font-size: 1.05rem;
+  }
+
+  .loading-spinner--size-xl .loading-spinner__label {
+    font-size: 1.2rem;
+  }
+
+  @keyframes spinner-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spinner-pulse {
+    0%,
+    100% {
+      transform: scale(0.9);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+  }
+
+  @keyframes spinner-dots {
     0%,
     80%,
     100% {
@@ -489,57 +583,68 @@ const strokeDashoffset = isProgress
     }
   }
 
-  @keyframes bars-wave {
+  @keyframes spinner-bars {
     0%,
-    40%,
     100% {
       transform: scaleY(0.4);
       opacity: 0.7;
     }
-    20% {
+    50% {
       transform: scaleY(1);
       opacity: 1;
     }
   }
 
-  /* Apply custom animations */
-  [data-animation='dots'] .animate-pulse {
-    animation: dots-bounce 1.4s ease-in-out infinite;
-  }
-
-  [data-animation='bars'] .animate-pulse {
-    animation: bars-wave 1.2s ease-in-out infinite;
-  }
-
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    [role='status'] svg {
-      filter: contrast(2);
+  @keyframes spinner-bounce {
+    0%,
+    100% {
+      transform: scale(0.95);
     }
-
-    [role='status'] div {
-      border: 2px solid currentColor;
+    50% {
+      transform: scale(1.05);
     }
   }
 
-  /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
-    .animate-spin,
-    .animate-pulse,
-    .animate-bounce,
-    [data-animation] .animate-pulse {
+    .loading-spinner__svg,
+    .loading-spinner__pulse,
+    .loading-spinner__dot,
+    .loading-spinner__bar,
+    .loading-spinner__bounce,
+    .loading-spinner__orbit {
       animation: none !important;
     }
-
-    /* Static loading indicator for reduced motion */
-    .animate-spin {
-      opacity: 0.8;
-    }
   }
 
-  /* Ensure proper color inheritance */
-  [role='status'] svg path,
-  [role='status'] svg circle {
-    color: inherit;
+  :where(.dark) .loading-spinner {
+    --loading-spinner-text: #f8fafc;
+  }
+
+  :where(.dark) .loading-spinner--variant-default {
+    --loading-spinner-track: rgba(30, 41, 59, 0.8);
+  }
+
+  :where(.dark) .loading-spinner--variant-primary {
+    --loading-spinner-track: rgba(37, 99, 235, 0.35);
+  }
+
+  :where(.dark) .loading-spinner--variant-success {
+    --loading-spinner-track: rgba(34, 197, 94, 0.35);
+  }
+
+  :where(.dark) .loading-spinner--variant-warning {
+    --loading-spinner-track: rgba(251, 191, 36, 0.35);
+  }
+
+  :where(.dark) .loading-spinner--variant-error {
+    --loading-spinner-track: rgba(248, 113, 113, 0.35);
+  }
+
+  :where(.dark) .loading-spinner--variant-neutral {
+    --loading-spinner-track: rgba(148, 163, 184, 0.5);
+  }
+
+  :where(.dark) .loading-spinner--overlay {
+    background-color: rgba(2, 6, 23, 0.85);
   }
 </style>

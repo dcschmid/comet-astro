@@ -54,74 +54,52 @@ const {
   headingLevel = 'h1',
 } = Astro.props as Props;
 
-// Enhanced variant system
 const variantClasses = {
-  default:
-    'bg-gradient-to-br from-blue-50/80 via-white to-purple-50/80 border-slate-200/60 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 dark:border-slate-700/60',
-  gradient:
-    'bg-gradient-to-br from-indigo-50 via-white to-cyan-50 border-indigo-200/60 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 dark:border-indigo-700/60',
-  minimal: 'bg-white border-slate-200 dark:bg-slate-950 dark:border-slate-800',
-  dark: 'bg-slate-900 border-slate-700 text-slate-100',
-};
+  default: 'hero-section--variant-default',
+  gradient: 'hero-section--variant-gradient',
+  minimal: 'hero-section--variant-minimal',
+  dark: 'hero-section--variant-dark',
+} as const;
 
-// Size variants
 const sizeClasses = {
-  sm: 'p-6 sm:p-8',
-  md: 'p-8 sm:p-12',
-  lg: 'p-10 sm:p-16 lg:p-20',
-  xl: 'p-12 sm:p-20 lg:p-24',
-};
+  sm: 'hero-section--size-sm',
+  md: 'hero-section--size-md',
+  lg: 'hero-section--size-lg',
+  xl: 'hero-section--size-xl',
+} as const;
 
-// Alignment classes
-const alignClasses = {
-  left: 'text-left',
-  center: 'text-center',
-  right: 'text-right',
-};
+const backgroundClass = backgroundImage ? 'hero-section--has-background' : '';
 
-// Content max width based on alignment
-const contentWidthClasses = {
-  left: 'max-w-4xl',
-  center: 'max-w-4xl mx-auto',
-  right: 'max-w-4xl ml-auto',
-};
-
-// Title size based on section size
-const titleSizeClasses = {
-  sm: 'text-3xl sm:text-4xl md:text-5xl',
-  md: 'text-4xl sm:text-5xl md:text-6xl',
-  lg: 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl',
-  xl: 'text-6xl sm:text-7xl md:text-8xl lg:text-9xl',
-};
-
-// Subtitle size based on section size
-const subtitleSizeClasses = {
-  sm: 'text-base sm:text-lg',
-  md: 'text-lg sm:text-xl',
-  lg: 'text-xl sm:text-2xl',
-  xl: 'text-2xl sm:text-3xl',
-};
-
-// Enhanced background classes
-const backgroundClasses = backgroundImage
-  ? `bg-cover bg-center bg-no-repeat`
-  : '';
-
-const patternClasses = showPattern
-  ? 'before:absolute before:inset-0 before:bg-[url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23000" fill-opacity="0.02"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")] before:opacity-50 dark:before:opacity-30'
-  : '';
-
-// Build comprehensive class string
 const sectionClasses = [
-  'relative overflow-hidden rounded-2xl border shadow-xl',
+  'hero-section',
   variantClasses[variant],
   sizeClasses[size],
-  backgroundClasses,
-  patternClasses,
+  backgroundClass,
   className,
 ]
   .filter(Boolean)
   .join(' ');
+
+const contentClasses = [
+  'hero-section__content',
+  `hero-section__content--align-${align}`,
+].join(' ');
+
+const headingClasses = [
+  'hero-section__title',
+  `hero-section__title--size-${size}`,
+].join(' ');
+
+const subtitleClasses = [
+  'hero-section__subtitle',
+  `hero-section__subtitle--size-${size}`,
+  `hero-section__subtitle--align-${align}`,
+].join(' ');
+
+const actionsClasses = [
+  'hero-section__actions',
+  `hero-section__actions--align-${align}`,
+].join(' ');
 
 // Dynamic heading component
 const HeadingTag = headingLevel;
@@ -135,30 +113,16 @@ const HeadingTag = headingLevel;
   aria-label={ariaLabel}
   role="banner"
 >
-  {showPattern && <div class="absolute inset-0 opacity-40 dark:opacity-20" />}
+  {showPattern && <div class="hero-section__pattern" aria-hidden="true" />}
 
-  <div
-    class={`relative z-10 ${contentWidthClasses[align]} ${alignClasses[align]}`}
-  >
-    <HeadingTag
-      class={`
-        mb-4 font-extrabold leading-tight tracking-tight text-balance
-        text-slate-900 dark:text-slate-50
-        ${titleSizeClasses[size]}
-      `.trim()}
-    >
+  <div class={contentClasses}>
+    <HeadingTag class={headingClasses}>
       {title}
     </HeadingTag>
 
     {
       subtitle && (
-        <p
-          class={`
-        mb-8 max-w-3xl leading-relaxed text-slate-700 dark:text-slate-300
-        ${subtitleSizeClasses[size]}
-        ${align === 'center' ? 'mx-auto' : align === 'right' ? 'ml-auto' : ''}
-      `.trim()}
-        >
+        <p class={subtitleClasses}>
           {subtitle}
         </p>
       )
@@ -166,12 +130,7 @@ const HeadingTag = headingLevel;
 
     {
       (primary || secondary) && (
-        <div
-          class={`
-        flex flex-wrap items-center gap-4
-        ${align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : 'justify-start'}
-      `.trim()}
-        >
+        <div class={actionsClasses}>
           {primary && (
             <ButtonLink
               href={primary.href}
@@ -193,3 +152,334 @@ const HeadingTag = headingLevel;
     }
   </div>
 </section>
+
+<style is:inline>
+  .hero-section {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    box-shadow: 0 30px 55px rgba(15, 23, 42, 0.15);
+    background-color: #ffffff;
+    color: #0f172a;
+  }
+
+  .hero-section--has-background {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .hero-section--variant-default {
+    background-image: linear-gradient(
+      135deg,
+      rgba(219, 234, 254, 0.8),
+      #ffffff,
+      rgba(233, 213, 255, 0.8)
+    );
+    border-color: rgba(148, 163, 184, 0.4);
+  }
+
+  .hero-section--variant-gradient {
+    background-image: linear-gradient(
+      135deg,
+      rgba(199, 210, 254, 0.85),
+      #ffffff,
+      rgba(191, 219, 254, 0.85)
+    );
+    border-color: rgba(165, 180, 252, 0.5);
+  }
+
+  .hero-section--variant-minimal {
+    background-color: #ffffff;
+    border-color: rgba(226, 232, 240, 1);
+  }
+
+  .hero-section--variant-dark {
+    background-color: #0f172a;
+    border-color: rgba(71, 85, 105, 0.8);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .hero-section--variant-default {
+    background-image: linear-gradient(
+      135deg,
+      rgba(15, 23, 42, 0.95),
+      rgba(2, 6, 23, 0.98),
+      rgba(15, 23, 42, 0.95)
+    );
+    border-color: rgba(71, 85, 105, 0.6);
+  }
+
+  :where(.dark) .hero-section--variant-gradient {
+    background-image: linear-gradient(
+      135deg,
+      rgba(76, 106, 179, 0.85),
+      rgba(15, 23, 42, 0.95),
+      rgba(15, 118, 110, 0.85)
+    );
+    border-color: rgba(99, 102, 241, 0.6);
+  }
+
+  :where(.dark) .hero-section--variant-minimal {
+    background-color: #020617;
+    border-color: rgba(30, 41, 59, 0.9);
+  }
+
+  .hero-section--size-sm {
+    padding: 1.5rem;
+  }
+
+  .hero-section--size-md {
+    padding: 2rem;
+  }
+
+  .hero-section--size-lg {
+    padding: 2.5rem;
+  }
+
+  .hero-section--size-xl {
+    padding: 3rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section--size-sm {
+      padding: 2rem;
+    }
+
+    .hero-section--size-md {
+      padding: 3rem;
+    }
+
+    .hero-section--size-lg {
+      padding: 4rem;
+    }
+
+    .hero-section--size-xl {
+      padding: 5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-section--size-lg {
+      padding: 5rem;
+    }
+
+    .hero-section--size-xl {
+      padding: 6rem;
+    }
+  }
+
+  .hero-section__pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image: url('data:image/svg+xml,%3Csvg width%3D%2260%22 height%3D%2260%22 viewBox%3D%220 0 60 60%22 xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg fill%3D%22none%22 fill-rule%3D%22evenodd%22%3E%3Cg fill%3D%22%23000%22 fill-opacity%3D%220.02%22%3E%3Ccircle cx%3D%2230%22 cy%3D%2230%22 r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+  }
+
+  :where(.dark) .hero-section__pattern {
+    opacity: 0.2;
+  }
+
+  .hero-section__content {
+    position: relative;
+    z-index: 1;
+    max-width: 56rem;
+  }
+
+  .hero-section__content--align-left {
+    margin-left: 0;
+    margin-right: auto;
+    text-align: left;
+  }
+
+  .hero-section__content--align-center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .hero-section__content--align-right {
+    margin-left: auto;
+    margin-right: 0;
+    text-align: right;
+  }
+
+  .hero-section__title {
+    margin-bottom: 1rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    color: #0f172a;
+  }
+
+  :where(.dark) .hero-section__title,
+  .hero-section--variant-dark .hero-section__title {
+    color: #f8fafc;
+  }
+
+  .hero-section__title--size-sm {
+    font-size: 1.875rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section__title--size-sm {
+      font-size: 2.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-section__title--size-sm {
+      font-size: 3rem;
+    }
+  }
+
+  .hero-section__title--size-md {
+    font-size: 2.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section__title--size-md {
+      font-size: 3rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-section__title--size-md {
+      font-size: 3.75rem;
+    }
+  }
+
+  .hero-section__title--size-lg {
+    font-size: 3rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section__title--size-lg {
+      font-size: 3.75rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-section__title--size-lg {
+      font-size: 4.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-section__title--size-lg {
+      font-size: 6rem;
+    }
+  }
+
+  .hero-section__title--size-xl {
+    font-size: 3.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section__title--size-xl {
+      font-size: 4.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-section__title--size-xl {
+      font-size: 6rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-section__title--size-xl {
+      font-size: 8rem;
+    }
+  }
+
+  .hero-section__subtitle {
+    margin-bottom: 2rem;
+    max-width: 48rem;
+    line-height: 1.6;
+    color: #475569;
+  }
+
+  :where(.dark) .hero-section__subtitle,
+  .hero-section--variant-dark .hero-section__subtitle {
+    color: #cbd5f5;
+  }
+
+  .hero-section__subtitle--size-sm {
+    font-size: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section__subtitle--size-sm {
+      font-size: 1.125rem;
+    }
+  }
+
+  .hero-section__subtitle--size-md {
+    font-size: 1.125rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section__subtitle--size-md {
+      font-size: 1.25rem;
+    }
+  }
+
+  .hero-section__subtitle--size-lg {
+    font-size: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section__subtitle--size-lg {
+      font-size: 1.5rem;
+    }
+  }
+
+  .hero-section__subtitle--size-xl {
+    font-size: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-section__subtitle--size-xl {
+      font-size: 1.875rem;
+    }
+  }
+
+  .hero-section__subtitle--align-left {
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .hero-section__subtitle--align-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-section__subtitle--align-right {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .hero-section__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .hero-section__actions--align-left {
+    justify-content: flex-start;
+  }
+
+  .hero-section__actions--align-center {
+    justify-content: center;
+  }
+
+  .hero-section__actions--align-right {
+    justify-content: flex-end;
+  }
+</style>

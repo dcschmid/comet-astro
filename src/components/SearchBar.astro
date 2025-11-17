@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 /**
  * SearchBar - Accessible search form with WCAG AAA compliance
  */
@@ -78,164 +76,42 @@ const suggestionsId = enableSuggestions ? `${id}-suggestions` : undefined;
 const finalAriaDescribedBy =
   [ariaDescribedBy, helpId, errorId].filter(Boolean).join(' ') || undefined;
 
-// Size configurations
-const sizeClasses = {
-  sm: {
-    input: 'min-h-[40px] px-3 py-2 text-sm',
-    button: 'min-h-[40px] px-3 text-sm',
-    icon: 'w-4 h-4', // Icon size within centered container
-    label: 'text-sm',
-    help: 'text-xs',
-  },
-  md: {
-    input: 'min-h-[44px] px-4 py-3 text-sm',
-    button: 'min-h-[44px] px-4 text-sm',
-    icon: 'w-5 h-5',
-    label: 'text-sm',
-    help: 'text-xs',
-  },
-  lg: {
-    input: 'min-h-[48px] px-5 py-4 text-base',
-    button: 'min-h-[48px] px-6 text-base',
-    icon: 'w-5 h-5',
-    label: 'text-base',
-    help: 'text-sm',
-  },
-};
+const rootClasses = [
+  'search-bar',
+  `search-bar--variant-${variant}`,
+  `search-bar--size-${size}`,
+  showIcon ? 'search-bar--with-icon' : '',
+  showButton ? 'search-bar--with-button' : '',
+  enableSuggestions ? 'search-bar--with-suggestions' : '',
+  error ? 'search-bar--error' : '',
+  disabled ? 'search-bar--disabled' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-// Variant styles with WCAG AAA compliance
-const variantClasses = {
-  default: {
-    container:
-      'bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm',
-    input: cn(
-      'bg-transparent text-gray-900 dark:text-gray-100',
-      'placeholder:text-gray-500 dark:placeholder:text-gray-400',
-      'focus:outline-none'
-    ),
-    button: cn(
-      'bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-900',
-      'border-l border-gray-300 dark:border-gray-600',
-      'hover:bg-blue-700 dark:hover:bg-blue-400',
-      'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
-    ),
-    icon: 'text-gray-500 dark:text-gray-400',
-    focus:
-      'focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
-    error:
-      error &&
-      'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400',
-  },
-  minimal: {
-    container:
-      'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg',
-    input: cn(
-      'bg-transparent text-gray-900 dark:text-gray-100',
-      'placeholder:text-gray-500 dark:placeholder:text-gray-400',
-      'focus:outline-none'
-    ),
-    button: cn(
-      'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
-      'border-l border-gray-300 dark:border-gray-600',
-      'hover:bg-gray-300 dark:hover:bg-gray-600',
-      'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400'
-    ),
-    icon: 'text-gray-500 dark:text-gray-400',
-    focus:
-      'focus-within:border-gray-400 dark:focus-within:border-gray-500 focus-within:ring-2 focus-within:ring-gray-400 dark:focus-within:ring-gray-500',
-    error:
-      error &&
-      'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400 focus-within:ring-red-500 dark:focus-within:ring-red-400',
-  },
-  outlined: {
-    container:
-      'bg-transparent border-2 border-gray-300 dark:border-gray-600 rounded-lg',
-    input: cn(
-      'bg-transparent text-gray-900 dark:text-gray-100',
-      'placeholder:text-gray-500 dark:placeholder:text-gray-400',
-      'focus:outline-none'
-    ),
-    button: cn(
-      'bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-900',
-      'border-l-2 border-gray-300 dark:border-gray-600',
-      'hover:bg-blue-700 dark:hover:bg-blue-400',
-      'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
-    ),
-    icon: 'text-gray-600 dark:text-gray-300',
-    focus:
-      'focus-within:border-blue-600 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-600 dark:focus-within:ring-blue-400',
-    error:
-      error &&
-      'border-red-600 dark:border-red-400 focus-within:border-red-600 dark:focus-within:border-red-400 focus-within:ring-red-600 dark:focus-within:ring-red-400',
-  },
-  filled: {
-    container: 'bg-gray-100 dark:bg-gray-800 border-0 rounded-lg shadow-inner',
-    input: cn(
-      'bg-transparent text-gray-900 dark:text-gray-100',
-      'placeholder:text-gray-600 dark:placeholder:text-gray-300',
-      'focus:outline-none'
-    ),
-    button: cn(
-      'bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-900',
-      'hover:bg-blue-700 dark:hover:bg-blue-400',
-      'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
-    ),
-    icon: 'text-gray-600 dark:text-gray-300',
-    focus:
-      'focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
-    error:
-      error &&
-      'bg-red-50 dark:bg-red-900/20 focus-within:ring-red-500 dark:focus-within:ring-red-400',
-  },
-};
+const labelClasses = [
+  'search-bar__label',
+  required ? 'search-bar__label--required' : '',
+  disabled ? 'search-bar__label--disabled' : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
-const containerClasses = cn(
-  'flex items-center transition-all duration-200', // Added items-center for vertical alignment
-  variantClasses[variant].container,
-  variantClasses[variant].focus,
-  variantClasses[variant].error,
-  disabled && 'opacity-50 cursor-not-allowed',
-  className
-);
+const helpClasses = [
+  'search-bar__message',
+  'search-bar__message--help',
+  error ? 'search-bar__message--error' : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
-const inputClasses = cn(
-  'flex-1 border-0 focus:outline-none focus:ring-0',
-  sizeClasses[size].input,
-  variantClasses[variant].input,
-  disabled && 'cursor-not-allowed'
-);
-
-const buttonClasses = cn(
-  'inline-flex items-center justify-center font-medium rounded-r-lg transition-all duration-200',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
-  'disabled:opacity-50 disabled:cursor-not-allowed',
-  sizeClasses[size].button,
-  variantClasses[variant].button
-);
-
-const iconClasses = cn(
-  'flex items-center justify-center flex-shrink-0',
-  'px-3 h-full', // Padding and full height for proper centering
-  variantClasses[variant].icon
-);
-
-const labelClasses = cn(
-  'block font-medium text-gray-900 dark:text-gray-100 mb-2',
-  sizeClasses[size].label,
-  disabled && 'opacity-50',
-  required &&
-    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
-);
-
-const helpClasses = cn(
-  'mt-2 text-gray-600 dark:text-gray-300',
-  sizeClasses[size].help,
-  error && 'text-red-600 dark:text-red-300'
-);
+const errorClasses = ['search-bar__message', 'search-bar__message--error']
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<div class="space-y-2">
+<div class={rootClasses}>
   {
     label && (
       <label class={labelClasses} for={inputId}>
@@ -244,25 +120,20 @@ const helpClasses = cn(
     )
   }
 
-  <form role="search" method={method} action={action} class="relative">
-    <div class={containerClasses} data-search-container>
+  <form role="search" method={method} action={action} class="search-bar__form">
+    <div class="search-bar__field" data-search-container>
       {
         showIcon && (
-          <div class={iconClasses}>
+          <div class="search-bar__icon">
             <svg
-              class={sizeClasses[size].icon}
+              class="search-bar__icon-graphic"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
-              stroke-width="1.8"
             >
-              <circle cx="11" cy="11" r="8" stroke-width="1.8" />
-              <path
-                d="M21 21l-4.35-4.35"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
             </svg>
           </div>
         )
@@ -274,7 +145,7 @@ const helpClasses = cn(
         name={name}
         value={value}
         placeholder={placeholder}
-        class={inputClasses}
+        class="search-bar__input"
         aria-label={ariaLabel || placeholder}
         aria-describedby={finalAriaDescribedBy}
         aria-expanded={enableSuggestions ? 'false' : undefined}
@@ -294,27 +165,23 @@ const helpClasses = cn(
         showButton && (
           <button
             type="submit"
-            class={buttonClasses}
+            class="search-bar__button"
             disabled={disabled}
             aria-label={submitLabel}
             data-testid="search-button"
           >
-            <span class="sr-only sm:not-sr-only">{submitLabel}</span>
-            <svg
-              class={cn('sm:hidden', sizeClasses[size].icon)}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              stroke-width="1.8"
-            >
-              <circle cx="11" cy="11" r="8" stroke-width="1.8" />
-              <path
-                d="M21 21l-4.35-4.35"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
+            <span class="search-bar__button-text">{submitLabel}</span>
+            <span class="search-bar__button-icon" aria-hidden="true">
+              <svg
+                class="search-bar__button-graphic"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
+              </svg>
+            </span>
           </button>
         )
       }
@@ -324,78 +191,359 @@ const helpClasses = cn(
       enableSuggestions && (
         <div
           id={suggestionsId}
-          class={cn(
-            'absolute top-full left-0 right-0 z-50 mt-1',
-            'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700',
-            'rounded-lg shadow-lg max-h-60 overflow-y-auto',
-            'hidden'
-          )}
+          class="search-bar__suggestions"
           role="listbox"
           aria-label="Search suggestions"
           data-search-suggestions
         >
-          {/* Suggestions will be populated by JavaScript */}
+          {/* Suggestions populated via script */}
         </div>
       )
     }
   </form>
 
-  <div class="space-y-1">
-    {
-      helpText && (
-        <p id={helpId} class={helpClasses}>
-          {helpText}
-        </p>
-      )
-    }
-    {
-      error && (
-        <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
-          {typeof error === 'string'
-            ? error
-            : 'Please check your search query.'}
-        </p>
-      )
-    }
-  </div>
+  {
+    (helpText || error) && (
+      <div class="search-bar__messages">
+        {helpText && (
+          <p id={helpId} class={helpClasses}>
+            {helpText}
+          </p>
+        )}
+        {error && (
+          <p id={errorId} class={errorClasses} role="alert">
+            {typeof error === 'string'
+              ? error
+              : 'Please check your search query.'}
+          </p>
+        )}
+      </div>
+    )
+  }
 </div>
 
 <style is:inline>
-  [data-search-container]:focus-within {
+  .search-bar {
+    --search-bar-border-color: #cbd5f5;
+    --search-bar-border-width: 1px;
+    --search-bar-background: #ffffff;
+    --search-bar-focus-border: #2563eb;
+    --search-bar-focus-ring: rgba(37, 99, 235, 0.25);
+    --search-bar-placeholder-color: #64748b;
+    --search-bar-icon-color: #64748b;
+    --search-bar-field-min-height: 2.75rem;
+    --search-bar-input-padding-y: 0.75rem;
+    --search-bar-input-padding-x: 1rem;
+    --search-bar-font-size: 0.95rem;
+    --search-bar-button-bg: #2563eb;
+    --search-bar-button-color: #f8fafc;
+    --search-bar-button-hover: #1d4ed8;
+    --search-bar-button-border-color: rgba(255, 255, 255, 0.2);
+    --search-bar-button-border-width: 1px;
+    --search-bar-button-padding-x: 1rem;
+    --search-bar-icon-size: 1.1rem;
+    --search-bar-icon-padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: 100%;
+  }
+
+  .search-bar--size-sm {
+    --search-bar-field-min-height: 2.5rem;
+    --search-bar-input-padding-y: 0.5rem;
+    --search-bar-input-padding-x: 0.85rem;
+    --search-bar-font-size: 0.875rem;
+    --search-bar-icon-size: 1rem;
+    --search-bar-button-padding-x: 0.85rem;
+  }
+
+  .search-bar--size-lg {
+    --search-bar-field-min-height: 3rem;
+    --search-bar-input-padding-y: 0.85rem;
+    --search-bar-input-padding-x: 1.25rem;
+    --search-bar-font-size: 1rem;
+    --search-bar-icon-size: 1.25rem;
+    --search-bar-button-padding-x: 1.25rem;
+  }
+
+  .search-bar--variant-minimal {
+    --search-bar-background: #f8fafc;
+    --search-bar-border-color: #e2e8f0;
+    --search-bar-focus-border: #94a3b8;
+    --search-bar-focus-ring: rgba(148, 163, 184, 0.3);
+    --search-bar-button-bg: #e2e8f0;
+    --search-bar-button-color: #0f172a;
+    --search-bar-button-hover: #cbd5f5;
+    --search-bar-icon-color: #94a3b8;
+    --search-bar-placeholder-color: #94a3b8;
+    --search-bar-button-border-color: #d5dbe5;
+  }
+
+  .search-bar--variant-outlined {
+    --search-bar-border-width: 2px;
+    --search-bar-background: transparent;
+    --search-bar-button-border-color: #cbd5f5;
+    --search-bar-button-border-width: 2px;
+  }
+
+  .search-bar--variant-filled {
+    --search-bar-background: #e2e8f0;
+    --search-bar-border-color: transparent;
+    --search-bar-button-border-color: transparent;
+  }
+
+  .search-bar--error {
+    --search-bar-border-color: #dc2626;
+    --search-bar-focus-border: #dc2626;
+    --search-bar-focus-ring: rgba(220, 38, 38, 0.25);
+  }
+
+  .search-bar--disabled {
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  .search-bar__label {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 0.95rem;
+  }
+
+  .search-bar__label--required::after {
+    content: ' *';
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  .search-bar__label--disabled {
+    opacity: 0.6;
+  }
+
+  .search-bar__form {
+    position: relative;
+  }
+
+  .search-bar__field {
+    display: flex;
+    align-items: center;
+    border-radius: 1rem;
+    border: var(--search-bar-border-width, 1px) solid
+      var(--search-bar-border-color);
+    background-color: var(--search-bar-background);
+    min-height: var(--search-bar-field-min-height);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-bar__field:focus-within {
+    border-color: var(--search-bar-focus-border);
+    box-shadow: 0 0 0 2px var(--search-bar-focus-ring);
+  }
+
+  .search-bar__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--search-bar-icon-padding);
+    color: var(--search-bar-icon-color);
+  }
+
+  .search-bar__icon-graphic,
+  .search-bar__button-graphic {
+    width: var(--search-bar-icon-size);
+    height: var(--search-bar-icon-size);
+    stroke-width: 1.8;
+  }
+
+  .search-bar__input {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    padding: var(--search-bar-input-padding-y)
+      var(--search-bar-input-padding-x);
+    font-size: var(--search-bar-font-size);
+    color: #0f172a;
+    min-height: var(--search-bar-field-min-height);
+  }
+
+  .search-bar__input::placeholder {
+    color: var(--search-bar-placeholder-color);
+  }
+
+  .search-bar__input:focus {
     outline: none;
   }
 
-  [data-search-suggestions] {
+  .search-bar__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding-inline: var(--search-bar-button-padding-x);
+    min-height: var(--search-bar-field-min-height);
+    border: 0;
+    border-left: var(--search-bar-button-border-width, 1px) solid
+      var(--search-bar-button-border-color);
+    border-radius: 0 1rem 1rem 0;
+    background-color: var(--search-bar-button-bg);
+    color: var(--search-bar-button-color);
+    font-weight: 600;
+    font-size: var(--search-bar-font-size);
+    transition: background-color 0.2s ease;
+  }
+
+  .search-bar__button-text {
+    display: none;
+  }
+
+  .search-bar__button-icon {
+    display: inline-flex;
+  }
+
+  .search-bar__button:hover:not(:disabled) {
+    background-color: var(--search-bar-button-hover);
+  }
+
+  .search-bar__button:focus-visible {
+    outline: 2px solid var(--search-bar-focus-border);
+    outline-offset: 2px;
+  }
+
+  .search-bar__button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .search-bar__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .search-bar__message {
+    font-size: 0.85rem;
+    color: #475569;
+  }
+
+  .search-bar__message--error {
+    color: #dc2626;
+  }
+
+  .search-bar__suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0.35rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    border-radius: 0.9rem;
+    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.15);
+    max-height: 15rem;
+    overflow-y: auto;
+    display: none;
+    z-index: 40;
+  }
+
+  .search-bar__suggestions--visible {
+    display: block;
+  }
+
+  .search-bar__suggestion {
+    padding: 0.55rem 0.85rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #0f172a;
+    transition: background-color 0.2s ease;
+  }
+
+  .search-bar__suggestion:hover,
+  .search-bar__suggestion--active {
+    background-color: rgba(37, 99, 235, 0.15);
+  }
+
+  .search-bar__suggestion--active {
+    font-weight: 600;
+  }
+
+  .search-bar__suggestions {
     scrollbar-width: thin;
     scrollbar-color: rgb(156 163 175) transparent;
   }
 
-  [data-search-suggestions]::-webkit-scrollbar {
+  .search-bar__suggestions::-webkit-scrollbar {
     width: 8px;
   }
 
-  [data-search-suggestions]::-webkit-scrollbar-track {
+  .search-bar__suggestions::-webkit-scrollbar-track {
     background: transparent;
   }
 
-  [data-search-suggestions]::-webkit-scrollbar-thumb {
+  .search-bar__suggestions::-webkit-scrollbar-thumb {
     background: rgb(156 163 175);
     border-radius: 4px;
   }
 
+  @media (min-width: 640px) {
+    .search-bar__button-text {
+      display: inline;
+    }
+
+    .search-bar__button-icon {
+      display: none;
+    }
+  }
+
   @media (prefers-color-scheme: dark) {
-    [data-search-suggestions] {
+    .search-bar {
+      --search-bar-background: #0f172a;
+      --search-bar-border-color: #475569;
+      --search-bar-focus-border: #60a5fa;
+      --search-bar-focus-ring: rgba(96, 165, 250, 0.35);
+      --search-bar-button-bg: #60a5fa;
+      --search-bar-button-color: #0f172a;
+      --search-bar-button-hover: #3b82f6;
+      --search-bar-placeholder-color: #cbd5f5;
+      --search-bar-icon-color: #cbd5f5;
+      color: #f1f5f9;
+    }
+
+    .search-bar--variant-minimal {
+      --search-bar-background: #1f2937;
+      --search-bar-border-color: #334155;
+      --search-bar-button-bg: #334155;
+      --search-bar-button-color: #e2e8f0;
+      --search-bar-button-hover: #475569;
+      --search-bar-placeholder-color: #cbd5f5;
+      --search-bar-icon-color: #cbd5f5;
+    }
+
+    .search-bar__input {
+      color: #f8fafc;
+    }
+
+    .search-bar__suggestions {
+      background-color: #0f172a;
+      border-color: rgba(148, 163, 184, 0.35);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
       scrollbar-color: rgb(75 85 99) transparent;
     }
 
-    [data-search-suggestions]::-webkit-scrollbar-thumb {
+    .search-bar__suggestions::-webkit-scrollbar-thumb {
       background: rgb(75 85 99);
+    }
+
+    .search-bar__suggestion {
+      color: #f8fafc;
     }
   }
 </style>
 
 <script is:inline>
   (function setupSearchBar() {
+    const SUGGESTIONS_VISIBLE = 'search-bar__suggestions--visible';
+    const SUGGESTION_ACTIVE = 'search-bar__suggestion--active';
+
     const searchContainers = document.querySelectorAll(
       '[data-search-container]'
     );
@@ -413,25 +561,21 @@ const helpClasses = cn(
         let suggestionTimeout;
 
         const showSuggestions = () => {
-          suggestionsContainer.classList.remove('hidden');
+          suggestionsContainer.classList.add(SUGGESTIONS_VISIBLE);
           input.setAttribute('aria-expanded', 'true');
         };
 
         const hideSuggestions = () => {
-          suggestionsContainer.classList.add('hidden');
+          suggestionsContainer.classList.remove(SUGGESTIONS_VISIBLE);
           input.setAttribute('aria-expanded', 'false');
         };
 
         const createSuggestionItem = (text, isHighlighted = false) => {
           const item = document.createElement('div');
-          item.className = [
-            'px-4 py-2 cursor-pointer text-sm',
-            'hover:bg-blue-100 dark:hover:bg-blue-500/20',
-            'text-gray-900 dark:text-gray-100',
-            isHighlighted && 'bg-blue-100 dark:bg-blue-500/20',
-          ]
-            .filter(Boolean)
-            .join(' ');
+          item.className = 'search-bar__suggestion';
+          if (isHighlighted) {
+            item.classList.add(SUGGESTION_ACTIVE);
+          }
           item.textContent = text;
           item.setAttribute('role', 'option');
           item.setAttribute('aria-selected', isHighlighted ? 'true' : 'false');
@@ -487,7 +631,7 @@ const helpClasses = cn(
 
         // Keyboard navigation for suggestions
         input.addEventListener('keydown', (event) => {
-          if (!suggestionsContainer.classList.contains('hidden')) {
+          if (suggestionsContainer.classList.contains(SUGGESTIONS_VISIBLE)) {
             const items = Array.from(
               suggestionsContainer.querySelectorAll('[role="option"]')
             );
@@ -504,11 +648,7 @@ const helpClasses = cn(
                   'aria-selected',
                   index === nextIndex ? 'true' : 'false'
                 );
-                item.classList.toggle('bg-blue-100', index === nextIndex);
-                item.classList.toggle(
-                  'dark:bg-blue-500/20',
-                  index === nextIndex
-                );
+                item.classList.toggle(SUGGESTION_ACTIVE, index === nextIndex);
               });
             } else if (event.key === 'ArrowUp') {
               event.preventDefault();
@@ -519,11 +659,7 @@ const helpClasses = cn(
                   'aria-selected',
                   index === prevIndex ? 'true' : 'false'
                 );
-                item.classList.toggle('bg-blue-100', index === prevIndex);
-                item.classList.toggle(
-                  'dark:bg-blue-500/20',
-                  index === prevIndex
-                );
+                item.classList.toggle(SUGGESTION_ACTIVE, index === prevIndex);
               });
             } else if (event.key === 'Enter') {
               const selectedItem = items.find(

@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 /**
  * ShareOverlay - Accessible share dialog with WCAG AAA compliance
  * Provides social sharing and copy-to-clipboard functionality with proper keyboard navigation
@@ -87,93 +85,13 @@ const defaultTargets: ShareTarget[] = showDefaultTargets
 
 const allTargets = [...defaultTargets, ...customTargets];
 
-// WCAG AAA compliant styling classes
-const overlayClasses = cn(
-  'fixed inset-0 z-50 flex items-center justify-center min-h-screen px-4',
-  'backdrop-blur-sm transition-opacity duration-200',
-  !open && 'hidden'
-);
-
-const backdropClasses = cn(
-  'absolute inset-0 bg-black/75 transition-opacity duration-200'
-);
-
-const dialogClasses = cn(
-  'relative z-10 w-full max-w-lg mx-auto my-auto rounded-xl shadow-2xl',
-  'bg-white dark:bg-gray-900',
-  'border border-gray-200 dark:border-gray-700',
-  'p-6 space-y-6',
-  'transform transition-all duration-200',
-  className
-);
-
-const headerClasses = cn('flex items-center justify-between gap-4');
-
-const titleClasses = cn(
-  'text-xl font-semibold',
-  'text-gray-900 dark:text-gray-100'
-);
-
-const closeButtonClasses = cn(
-  'inline-flex items-center justify-center',
-  'w-10 h-10 rounded-lg',
-  'text-gray-500 dark:text-gray-400',
-  'hover:text-gray-700 dark:hover:text-gray-200',
-  'hover:bg-gray-100 dark:hover:bg-gray-800',
-  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
-  'focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900',
-  'transition-colors duration-200'
-);
-
-const urlSectionClasses = cn('space-y-3');
-
-const labelClasses = cn(
-  'block text-sm font-medium',
-  'text-gray-900 dark:text-gray-100',
-  'mb-2'
-);
-
-const inputWrapperClasses = cn('flex gap-3');
-
-const inputClasses = cn(
-  'flex-1 px-3 py-2.5 text-sm',
-  'bg-white dark:bg-gray-800',
-  'border border-gray-300 dark:border-gray-600',
-  'text-gray-900 dark:text-gray-100',
-  'rounded-lg transition-colors duration-200',
-  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
-  'focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900',
-  'focus:border-blue-600 dark:focus:border-blue-400'
-);
-
-const copyButtonClasses = cn(
-  'inline-flex items-center justify-center gap-2',
-  'px-4 py-2.5 text-sm font-medium',
-  'bg-blue-600 dark:bg-blue-500',
-  'text-white dark:text-gray-900',
-  'border border-blue-600 dark:border-blue-500',
-  'rounded-lg transition-colors duration-200',
-  'hover:bg-blue-700 dark:hover:bg-blue-400',
-  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
-  'focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900',
-  'disabled:opacity-50 disabled:cursor-not-allowed'
-);
-
-const shareButtonsClasses = cn('grid grid-cols-2 sm:grid-cols-4 gap-3');
-
-const shareButtonClasses = cn(
-  'inline-flex flex-col items-center justify-center gap-2',
-  'p-4 text-sm font-medium',
-  'bg-gray-50 dark:bg-gray-800',
-  'text-gray-900 dark:text-gray-100',
-  'border border-gray-200 dark:border-gray-700',
-  'rounded-lg transition-colors duration-200',
-  'hover:bg-gray-100 dark:hover:bg-gray-700',
-  'hover:border-gray-300 dark:hover:border-gray-600',
-  'focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400',
-  'focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900',
-  'no-underline'
-);
+const overlayClasses = [
+  'share-overlay',
+  open ? 'share-overlay--open' : 'share-overlay--closed',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Icon components for social platforms
 const getIcon = (iconType: string) => {
@@ -213,17 +131,14 @@ const getIcon = (iconType: string) => {
   aria-modal="true"
   aria-labelledby={headingId}
 >
-  <!-- Backdrop -->
-  <div class={backdropClasses} data-share-backdrop aria-hidden="true"></div>
+  <div class="share-overlay__backdrop" data-share-backdrop aria-hidden="true"></div>
 
-  <!-- Dialog -->
-  <div class={dialogClasses}>
-    <!-- Header -->
-    <header class={headerClasses}>
-      <h2 id={headingId} class={titleClasses}>Share</h2>
+  <div class="share-overlay__dialog">
+    <header class="share-overlay__header">
+      <h2 id={headingId} class="share-overlay__title">Share</h2>
       <button
         type="button"
-        class={closeButtonClasses}
+        class="share-overlay__close"
         data-share-close
         aria-label="Close share dialog"
       >
@@ -241,20 +156,19 @@ const getIcon = (iconType: string) => {
       </button>
     </header>
 
-    <!-- URL Section -->
-    <div class={urlSectionClasses}>
-      <label for={inputId} class={labelClasses}> Share this link </label>
-      <div class={inputWrapperClasses}>
+    <div class="share-overlay__section">
+      <label for={inputId} class="share-overlay__label">Share this link</label>
+      <div class="share-overlay__copy-row">
         <input
           id={inputId}
-          class={inputClasses}
+          class="share-overlay__input"
           value={shareUrl}
           readonly
           aria-describedby={`${inputId}-description`}
         />
         <button
           type="button"
-          class={copyButtonClasses}
+          class="share-overlay__copy"
           data-share-copy
           aria-describedby={`${inputId}-copy-status`}
         >
@@ -265,12 +179,8 @@ const getIcon = (iconType: string) => {
             fill="currentColor"
             aria-hidden="true"
           >
-            <path
-              d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"
-            ></path>
-            <path
-              d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"
-            ></path>
+            <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+            <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
           </svg>
           Copy
         </button>
@@ -283,30 +193,24 @@ const getIcon = (iconType: string) => {
         class="sr-only"
         aria-live="polite"
         data-copy-status
-      >
-      </p>
+      ></p>
     </div>
 
-    <!-- Share Buttons -->
     {
       allTargets.length > 0 && (
-        <div>
-          <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
-            Share on social media
-          </h3>
-          <div class={shareButtonsClasses}>
+        <div class="share-overlay__section">
+          <h3 class="share-overlay__subtitle">Share on social media</h3>
+          <div class="share-overlay__targets">
             {allTargets.map((target) => (
               <a
                 href={target.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                class={shareButtonClasses}
+                class="share-overlay__target"
                 aria-label={target.label}
               >
                 <span set:html={getIcon(target.icon)} />
-                <span class="text-xs text-center leading-tight">
-                  {target.name}
-                </span>
+                <span class="share-overlay__target-text">{target.name}</span>
                 <span class="sr-only"> (opens in a new tab)</span>
               </a>
             ))}
@@ -316,6 +220,243 @@ const getIcon = (iconType: string) => {
     }
   </div>
 </div>
+
+<style is:inline>
+  .share-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .share-overlay--open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .share-overlay__backdrop {
+    position: absolute;
+    inset: 0;
+  }
+
+  .share-overlay__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 32rem;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background-color: #ffffff;
+    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.35);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .share-overlay__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .share-overlay__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .share-overlay__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.85rem;
+    border: 1px solid transparent;
+    color: #64748b;
+    background-color: transparent;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .share-overlay__close:hover {
+    color: #0f172a;
+    background-color: rgba(15, 23, 42, 0.05);
+  }
+
+  .share-overlay__close:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
+  .share-overlay__section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .share-overlay__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .share-overlay__copy-row {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .share-overlay__input {
+    flex: 1;
+    padding: 0.65rem 0.9rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    background-color: #f8fafc;
+    font-size: 0.95rem;
+    color: #0f172a;
+  }
+
+  .share-overlay__input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+
+  .share-overlay__copy {
+    min-width: 5.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-radius: 0.85rem;
+    border: 1px solid #2563eb;
+    background-color: #2563eb;
+    color: #f8fafc;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.55rem 1rem;
+  }
+
+  .share-overlay__copy:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  .share-overlay__copy:focus-visible {
+    outline: 2px solid #1d4ed8;
+    outline-offset: 2px;
+  }
+
+  .share-overlay__subtitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+  }
+
+  .share-overlay__targets {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .share-overlay__targets {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .share-overlay__target {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.85rem;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background-color: #f8fafc;
+    color: #0f172a;
+    text-decoration: none;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .share-overlay__target:hover {
+    background-color: #eef2ff;
+    border-color: rgba(99, 102, 241, 0.8);
+  }
+
+  .share-overlay__target:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 3px;
+  }
+
+  .share-overlay__target-text {
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
+  :where(.dark) .share-overlay__dialog {
+    background-color: #0f172a;
+    border-color: rgba(148, 163, 184, 0.35);
+    color: #f8fafc;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+  }
+
+  :where(.dark) .share-overlay__title,
+  :where(.dark) .share-overlay__label,
+  :where(.dark) .share-overlay__subtitle {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .share-overlay__close {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .share-overlay__close:hover {
+    background-color: rgba(148, 163, 184, 0.2);
+  }
+
+  :where(.dark) .share-overlay__input {
+    background-color: #111827;
+    border-color: rgba(148, 163, 184, 0.5);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .share-overlay__copy {
+    border-color: #60a5fa;
+    background-color: #60a5fa;
+    color: #0f172a;
+  }
+
+  :where(.dark) .share-overlay__targets {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .share-overlay__target {
+    background-color: rgba(15, 23, 42, 0.85);
+    border-color: rgba(148, 163, 184, 0.25);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .share-overlay__target:hover {
+    background-color: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+</style>
 
 <script is:inline define:vars={{ overlayId }}>
   (function () {
@@ -361,12 +502,14 @@ const getIcon = (iconType: string) => {
     const setOpenState = (isOpen) => {
       const wasOpen = root.getAttribute('data-open') === 'true';
       if (wasOpen === isOpen) {
-        root.classList.toggle('hidden', !isOpen);
+        root.classList.toggle('share-overlay--open', isOpen);
+        root.classList.toggle('share-overlay--closed', !isOpen);
         return;
       }
 
       root.setAttribute('data-open', String(isOpen));
-      root.classList.toggle('hidden', !isOpen);
+      root.classList.toggle('share-overlay--open', isOpen);
+      root.classList.toggle('share-overlay--closed', !isOpen);
 
       if (isOpen) {
         // Lock scroll

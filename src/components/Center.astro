@@ -29,49 +29,24 @@ const {
 
 const axisClass =
   axis === 'both'
-    ? 'items-center justify-center'
+    ? 'center--axis-both'
     : axis === 'horizontal'
-      ? 'justify-center'
+      ? 'center--axis-horizontal'
       : axis === 'vertical'
-        ? 'items-center'
-        : '';
+        ? 'center--axis-vertical'
+        : 'center--axis-both';
 
-const displayClass = inline ? 'inline-flex' : 'flex';
+const displayClass = inline ? 'center--inline' : 'center--block';
 
-const widthMap: Record<string, string> = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  '2xl': 'max-w-2xl',
-  full: 'max-w-full',
-};
-
-const widthClass = widthMap[maxWidth];
-
-// Background variants chosen for AAA contrast with typical foreground text (slate-50 / slate-900)
-// subtle: transparent with slight neutral layer
-// soft: stronger translucent layer
-// solid: opaque high-contrast surface
-const bgMap: Record<string, string> = {
-  none: '',
-  subtle: 'bg-slate-800/30 dark:bg-slate-200/15 backdrop-blur-sm',
-  soft: 'bg-slate-800/60 dark:bg-slate-200/25 backdrop-blur-sm',
-  solid: 'bg-slate-900 dark:bg-slate-100',
-};
-const bgClass = bgMap[background];
-
-const padClass = padded ? 'p-4 md:p-6' : '';
-
-// Compose final classes. Avoid over-engineering: a single pass of concatenation.
+const widthKey = maxWidth || 'full';
+const bgKey = background || 'none';
 const classes = [
+  'center',
   displayClass,
   axisClass,
-  widthClass,
-  padClass,
-  bgClass,
-  'mx-auto',
-  'w-full',
+  `center--width-${widthKey}`,
+  padded ? 'center--padded' : '',
+  `center--background-${bgKey}`,
   className,
 ]
   .filter(Boolean)
@@ -83,3 +58,100 @@ const Tag = as;
 <Tag class={classes} aria-label={ariaLabel}>
   <slot />
 </Tag>
+
+<style is:inline>
+  .center {
+    display: flex;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .center--inline {
+    display: inline-flex;
+  }
+
+  .center--axis-horizontal {
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .center--axis-vertical {
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .center--axis-both {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .center--width-sm {
+    max-width: 24rem;
+  }
+
+  .center--width-md {
+    max-width: 28rem;
+  }
+
+  .center--width-lg {
+    max-width: 32rem;
+  }
+
+  .center--width-xl {
+    max-width: 36rem;
+  }
+
+  .center--width-2xl {
+    max-width: 42rem;
+  }
+
+  .center--width-full {
+    max-width: 100%;
+  }
+
+  .center--padded {
+    padding: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .center--padded {
+      padding: 1.5rem;
+    }
+  }
+
+  .center--background-none {
+    background: transparent;
+  }
+
+  .center--background-subtle {
+    background: rgba(15, 23, 42, 0.08);
+    backdrop-filter: blur(4px);
+  }
+
+  .center--background-soft {
+    background: rgba(15, 23, 42, 0.18);
+    backdrop-filter: blur(8px);
+  }
+
+  .center--background-solid {
+    background: #0f172a;
+    color: #f8fafc;
+  }
+
+  :where(.dark) .center--background-subtle {
+    background: rgba(226, 232, 240, 0.1);
+  }
+
+  :where(.dark) .center--background-soft {
+    background: rgba(226, 232, 240, 0.2);
+  }
+
+  :where(.dark) .center--background-solid {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+</style>

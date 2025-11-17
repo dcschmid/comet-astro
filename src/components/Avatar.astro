@@ -19,44 +19,23 @@ const {
   className = '',
 } = Astro.props as Props;
 
+const sizeOptions = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
+const variantOptions = ['circle', 'square', 'rounded'] as const;
+type SizeKey = (typeof sizeOptions)[number];
+type VariantKey = (typeof variantOptions)[number];
+
+const statusLabels: Record<NonNullable<Props['status']>, string> = {
+  online: 'Online',
+  offline: 'Offline',
+  busy: 'Busy',
+  away: 'Away',
+};
+
 const avatarId = `avatar-${Math.random().toString(36).slice(2, 9)}`;
-
-const sizeClasses: Record<NonNullable<Props['size']>, string> = {
-  xs: 'h-8 w-8 text-xs',
-  sm: 'h-10 w-10 text-sm',
-  md: 'h-12 w-12 text-base',
-  lg: 'h-16 w-16 text-lg',
-  xl: 'h-20 w-20 text-xl',
-  '2xl': 'h-24 w-24 text-2xl',
-};
-
-const variantClasses: Record<NonNullable<Props['variant']>, string> = {
-  circle: 'rounded-full',
-  square: 'rounded-lg',
-  rounded: 'rounded-2xl',
-};
-
-const statusColors: Record<
-  NonNullable<Props['status']>,
-  { dot: string; label: string }
-> = {
-  online: {
-    dot: 'bg-emerald-500 shadow-[0_0_0_2px_rgba(15,23,42,0.6)] dark:bg-emerald-400 dark:shadow-[0_0_0_2px_rgba(15,23,42,0.95)]',
-    label: 'Online',
-  },
-  offline: {
-    dot: 'bg-slate-400 shadow-[0_0_0_2px_rgba(15,23,42,0.6)] dark:bg-slate-500 dark:shadow-[0_0_0_2px_rgba(15,23,42,0.95)]',
-    label: 'Offline',
-  },
-  busy: {
-    dot: 'bg-rose-500 shadow-[0_0_0_2px_rgba(15,23,42,0.6)] dark:bg-rose-400 dark:shadow-[0_0_0_2px_rgba(15,23,42,0.95)]',
-    label: 'Busy',
-  },
-  away: {
-    dot: 'bg-amber-400 shadow-[0_0_0_2px_rgba(15,23,42,0.6)] dark:bg-amber-300 dark:shadow-[0_0_0_2px_rgba(15,23,42,0.95)]',
-    label: 'Away',
-  },
-};
+const sizeKey = sizeOptions.includes(size as SizeKey) ? (size as SizeKey) : 'md';
+const variantKey = variantOptions.includes(variant as VariantKey)
+  ? (variant as VariantKey)
+  : 'circle';
 
 const getInitials = (fullName: string) =>
   fullName
@@ -70,26 +49,28 @@ const getInitials = (fullName: string) =>
 const initials = name ? getInitials(name) : '?';
 const imageAlt = alt || name || 'Avatar';
 const fallbackLabel = name ? `Avatar for ${name}` : imageAlt;
-const hasStatus = Boolean(status && statusColors[status]);
+const hasStatus = Boolean(status && statusLabels[status]);
 const statusId = hasStatus ? `${avatarId}-status` : undefined;
 const wrapperDescribedBy = hasStatus ? statusId : undefined;
-const sizeClass = sizeClasses[size] ?? sizeClasses.md;
-const variantClass = variantClasses[variant] ?? variantClasses.circle;
-const statusConfig = status ? statusColors[status] : undefined;
-const dotSize = ['xs', 'sm'].includes(size) ? 'h-3 w-3' : 'h-3.5 w-3.5';
-const textColor =
-  'text-slate-50 dark:text-slate-100 font-semibold tracking-wide uppercase';
-const fallbackBackground =
-  'bg-slate-700 dark:bg-slate-600 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.25)_0,transparent_55%)]';
+const rootClasses = [
+  'avatar',
+  `avatar--size-${sizeKey}`,
+  `avatar--variant-${variantKey}`,
+  hasStatus && status ? `avatar--status-${status}` : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+const statusLabel = status ? statusLabels[status] : undefined;
 ---
 
 <div
-  class={`relative inline-flex items-center justify-center ${className}`.trim()}
+  class={rootClasses}
   aria-describedby={wrapperDescribedBy}
   data-avatar
 >
   <div
-    class={`${sizeClass} ${variantClass} flex items-center justify-center overflow-hidden bg-slate-200 text-slate-900 shadow-inner ring-1 ring-slate-300/70 transition dark:bg-slate-800/90 dark:text-slate-50 dark:ring-white/10`}
+    class="avatar__media"
     role={!src ? 'img' : undefined}
     aria-label={!src ? fallbackLabel : undefined}
     title={name || alt || undefined}
@@ -99,30 +80,196 @@ const fallbackBackground =
         <img
           src={src}
           alt={imageAlt}
-          class="h-full w-full object-cover"
+          class="avatar__image"
           loading="lazy"
           decoding="async"
         />
       ) : (
-        <span
-          class={`flex h-full w-full items-center justify-center ${textColor} ${fallbackBackground}`}
-        >
+        <span class="avatar__initials">
           {initials}
         </span>
       )
     }
   </div>
   {
-    hasStatus && statusConfig && (
+    hasStatus && statusLabel && (
       <>
         <span
-          class={`absolute bottom-1 right-1 rounded-full ${dotSize} ${statusConfig.dot}`}
+          class="avatar__status-dot"
           aria-hidden="true"
         />
-        <span id={statusId} class="sr-only">
-          Status: {statusConfig.label}
+        <span id={statusId} class="avatar__sr-only">
+          Status: {statusLabel}
         </span>
       </>
     )
   }
 </div>
+
+<style is:inline>
+  .avatar {
+    --avatar-size: 3rem;
+    --avatar-font-size: 0.95rem;
+    --avatar-radius: 999px;
+    --avatar-bg: #e2e8f0;
+    --avatar-bg-dark: #1e293b;
+    --avatar-text: #0f172a;
+    --avatar-text-dark: #f8fafc;
+    --avatar-ring: rgba(148, 163, 184, 0.7);
+    --avatar-ring-dark: rgba(255, 255, 255, 0.15);
+    --avatar-dot-size: 0.7rem;
+    --avatar-dot-bg: #22c55e;
+    --avatar-dot-bg-dark: #4ade80;
+    --avatar-dot-shadow: 0 0 0 2px rgba(15, 23, 42, 0.65);
+    --avatar-dot-shadow-dark: 0 0 0 2px rgba(2, 6, 23, 0.95);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar__media {
+    width: var(--avatar-size);
+    height: var(--avatar-size);
+    border-radius: var(--avatar-radius);
+    overflow: hidden;
+    background: var(--avatar-bg);
+    color: var(--avatar-text);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: var(--avatar-font-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 12px 24px rgba(15, 23, 42, 0.12);
+    border: 1px solid var(--avatar-ring);
+    transition: box-shadow 0.2s ease;
+  }
+
+  :where(.dark) .avatar__media {
+    background: var(--avatar-bg-dark);
+    color: var(--avatar-text-dark);
+    border-color: var(--avatar-ring-dark);
+  }
+
+  .avatar__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .avatar__initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.25),
+      transparent 55%
+    );
+    color: inherit;
+  }
+
+  .avatar__status-dot {
+    position: absolute;
+    right: 0.4rem;
+    bottom: 0.4rem;
+    width: var(--avatar-dot-size);
+    height: var(--avatar-dot-size);
+    border-radius: 999px;
+    background: var(--avatar-dot-bg);
+    box-shadow: var(--avatar-dot-shadow);
+  }
+
+  :where(.dark) .avatar__status-dot {
+    background: var(--avatar-dot-bg-dark);
+    box-shadow: var(--avatar-dot-shadow-dark);
+  }
+
+  .avatar__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Size modifiers */
+  .avatar--size-xs {
+    --avatar-size: 2rem;
+    --avatar-font-size: 0.7rem;
+    --avatar-dot-size: 0.55rem;
+  }
+
+  .avatar--size-sm {
+    --avatar-size: 2.5rem;
+    --avatar-font-size: 0.8rem;
+    --avatar-dot-size: 0.6rem;
+  }
+
+  .avatar--size-md {
+    --avatar-size: 3rem;
+    --avatar-font-size: 0.95rem;
+    --avatar-dot-size: 0.7rem;
+  }
+
+  .avatar--size-lg {
+    --avatar-size: 4rem;
+    --avatar-font-size: 1.1rem;
+    --avatar-dot-size: 0.85rem;
+  }
+
+  .avatar--size-xl {
+    --avatar-size: 5rem;
+    --avatar-font-size: 1.35rem;
+    --avatar-dot-size: 1rem;
+  }
+
+  .avatar--size-2xl {
+    --avatar-size: 6rem;
+    --avatar-font-size: 1.6rem;
+    --avatar-dot-size: 1.1rem;
+  }
+
+  /* Variant modifiers */
+  .avatar--variant-circle {
+    --avatar-radius: 999px;
+  }
+
+  .avatar--variant-square {
+    --avatar-radius: 0.9rem;
+  }
+
+  .avatar--variant-rounded {
+    --avatar-radius: 1.35rem;
+  }
+
+  /* Status modifiers */
+  .avatar--status-online {
+    --avatar-dot-bg: #22c55e;
+    --avatar-dot-bg-dark: #4ade80;
+  }
+
+  .avatar--status-offline {
+    --avatar-dot-bg: #94a3b8;
+    --avatar-dot-bg-dark: #cbd5f5;
+  }
+
+  .avatar--status-busy {
+    --avatar-dot-bg: #f43f5e;
+    --avatar-dot-bg-dark: #fb7185;
+  }
+
+  .avatar--status-away {
+    --avatar-dot-bg: #fbbf24;
+    --avatar-dot-bg-dark: #fde68a;
+  }
+</style>

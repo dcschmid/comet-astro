@@ -84,9 +84,14 @@ import PageHeader from '../../components/PageHeader.astro';
         >confetti:stop</code
       >, <code>confetti:burst</code>).
     </p>
-    <pre
-      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
       <code class="language-astro">{`<Confetti />`}</code>
+    </pre>
+    <p class="text-base text-slate-200">
+      Need the effect to cover the entire viewport? Pass <code>fullscreen</code> (optionally with <code>autoStart</code>) and the canvas will pin to the window:
+    </p>
+    <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
+      <code class="language-astro">{`<Confetti fullscreen autoStart />`}</code>
     </pre>
   </section>
 
@@ -99,6 +104,22 @@ import PageHeader from '../../components/PageHeader.astro';
       />
       <div class="mt-4">
         <CF />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Fullscreen demo</h2>
+    <p class="text-base text-slate-200">
+      Trigger a burst that covers the entire window—the canvas resizes with the viewport and ignores the surrounding layout.
+    </p>
+    <div class="rounded-lg border border-slate-700/60 bg-slate-900/40 p-4">
+      <PageHeader
+        title="Global celebration"
+        subtitle="Fullscreen burst, auto start"
+      />
+      <div class="mt-4 h-32">
+        <CF fullscreen autoStart />
       </div>
     </div>
   </section>

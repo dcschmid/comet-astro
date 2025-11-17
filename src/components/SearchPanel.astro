@@ -43,61 +43,53 @@ const panelId =
 const inputId = `${panelId}-input`;
 const resultsId = `${panelId}-results`;
 
-// Simple style classes
-const baseClasses = open ? '' : 'hidden';
+const rootClasses = [
+  'search-panel',
+  open ? 'search-panel--open' : 'search-panel--closed',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
   id={panelId}
-  class={`fixed inset-0 z-50 flex items-start justify-center px-4 py-8 bg-black/50 backdrop-blur-sm ${baseClasses} ${className}`}
+  class={rootClasses}
   data-search-panel
   data-open={open}
   role="dialog"
   aria-modal="true"
   aria-label={title}
 >
-  <div class="absolute inset-0" data-search-backdrop aria-hidden="true"></div>
+  <div class="search-panel__backdrop" data-search-backdrop aria-hidden="true"></div>
 
-  <div
-    class="relative z-10 w-full max-w-3xl bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl p-6"
-  >
-    <!-- Header with search input and close button -->
-    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-      <div class="flex-1">
+  <div class="search-panel__dialog">
+    <div class="search-panel__header">
+      <div class="search-panel__input-group">
         <input
           type="search"
           id={inputId}
           placeholder={placeholder}
-          class="w-full min-h-12 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
+          class="search-panel__input"
           data-search-input
           aria-label={placeholder}
           data-testid="search-panel-input"
         />
-
-        {
-          helpText && (
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-              {helpText}
-            </p>
-          )
-        }
-
-        {
-          error && (
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
-              {typeof error === 'string'
-                ? error
-                : 'Please check your search query.'}
-            </p>
-          )
-        }
+        {helpText && <p class="search-panel__help">{helpText}</p>}
+        {error && (
+          <p class="search-panel__error" role="alert">
+            {typeof error === 'string'
+              ? error
+              : 'Please check your search query.'}
+          </p>
+        )}
       </div>
 
       {
         showCloseButton && (
           <button
             type="button"
-            class="inline-flex min-h-11 items-center justify-center px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            class="search-panel__close"
             data-search-close
             aria-label={closeLabel}
           >
@@ -107,57 +99,284 @@ const baseClasses = open ? '' : 'hidden';
       }
     </div>
 
-    <!-- Search results -->
     <div
       id={resultsId}
-      class="max-h-[60vh] space-y-2 overflow-auto"
+      class="search-panel__results"
       role="region"
       aria-label="Search results"
     >
       <slot />
     </div>
 
-    <!-- Keyboard shortcuts -->
     {
       showShortcuts && (
-        <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-3 mt-4">
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1">
-              <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
-                ↑
-              </kbd>
-              <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
-                ↓
-              </kbd>
+        <div class="search-panel__shortcuts">
+          <div class="search-panel__shortcut-group">
+            <div class="search-panel__shortcut">
+              <kbd class="search-panel__kbd">↑</kbd>
+              <kbd class="search-panel__kbd">↓</kbd>
               <span>Navigate</span>
             </div>
-            <div class="flex items-center gap-1">
-              <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
-                ↵
-              </kbd>
+            <div class="search-panel__shortcut">
+              <kbd class="search-panel__kbd">↵</kbd>
               <span>Select</span>
             </div>
-            <div class="flex items-center gap-1">
-              <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
-                Esc
-              </kbd>
+            <div class="search-panel__shortcut">
+              <kbd class="search-panel__kbd">Esc</kbd>
               <span>Close</span>
             </div>
           </div>
-          <div class="flex items-center gap-1">
-            <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
-              ⌘
-            </kbd>
-            <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded">
-              K
-            </kbd>
-            <span class="hidden sm:inline">to search</span>
+          <div class="search-panel__shortcut search-panel__shortcut--hint">
+            <kbd class="search-panel__kbd">⌘</kbd>
+            <kbd class="search-panel__kbd">K</kbd>
+            <span class="search-panel__hint-text">to search</span>
           </div>
         </div>
       )
     }
   </div>
 </div>
+
+<style is:inline>
+  .search-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    background-color: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .search-panel--open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .search-panel__backdrop {
+    position: absolute;
+    inset: 0;
+  }
+
+  .search-panel__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 52rem;
+    background-color: #ffffff;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    box-shadow: 0 35px 80px rgba(15, 23, 42, 0.35);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .search-panel__header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .search-panel__header {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+
+  .search-panel__input-group {
+    flex: 1;
+  }
+
+  .search-panel__input {
+    width: 100%;
+    min-height: 3.25rem;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.8);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: #0f172a;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-panel__input::placeholder {
+    color: #94a3b8;
+  }
+
+  .search-panel__input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+
+  .search-panel__help {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #475569;
+  }
+
+  .search-panel__error {
+    margin-top: 0.35rem;
+    font-size: 0.9rem;
+    color: #dc2626;
+  }
+
+  .search-panel__close {
+    align-self: flex-start;
+    min-height: 2.75rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(148, 163, 184, 0.8);
+    background-color: #ffffff;
+    font-weight: 600;
+    color: #0f172a;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .search-panel__close:hover {
+    background-color: rgba(15, 23, 42, 0.05);
+  }
+
+  .search-panel__close:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
+  .search-panel__results {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .search-panel__results {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.8) transparent;
+  }
+
+  .search-panel__results::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .search-panel__results::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.8);
+    border-radius: 999px;
+  }
+
+  .search-panel__shortcuts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.35);
+    font-size: 0.75rem;
+    color: #475569;
+  }
+
+  @media (min-width: 640px) {
+    .search-panel__shortcuts {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .search-panel__shortcut-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .search-panel__shortcut {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .search-panel__shortcut--hint {
+    font-weight: 600;
+  }
+
+  .search-panel__kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background-color: rgba(241, 245, 249, 0.9);
+    font-weight: 600;
+  }
+
+  .search-panel__hint-text {
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .search-panel__hint-text {
+      display: inline;
+    }
+  }
+
+  :where(.dark) .search-panel {
+    background-color: rgba(2, 6, 23, 0.65);
+  }
+
+  :where(.dark) .search-panel__dialog {
+    background-color: #0f172a;
+    border-color: rgba(148, 163, 184, 0.25);
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6);
+  }
+
+  :where(.dark) .search-panel__input {
+    background-color: #111827;
+    border-color: rgba(148, 163, 184, 0.4);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .search-panel__input::placeholder {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .search-panel__help {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .search-panel__close {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-color: rgba(148, 163, 184, 0.4);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .search-panel__close:hover {
+    background-color: rgba(51, 65, 85, 0.7);
+  }
+
+  :where(.dark) .search-panel__shortcuts {
+    border-color: rgba(148, 163, 184, 0.25);
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .search-panel__kbd {
+    border-color: rgba(148, 163, 184, 0.4);
+    background-color: rgba(30, 41, 59, 0.9);
+    color: #e2e8f0;
+  }
+</style>
 
 <script define:vars={{ panelId }}>
   (function () {
@@ -170,25 +389,33 @@ const baseClasses = open ? '' : 'hidden';
 
     let isOpen = panel.getAttribute('data-open') === 'true';
 
+    function setPanelState(nextOpen) {
+      if (nextOpen) {
+        panel.classList.add('search-panel--open');
+        panel.classList.remove('search-panel--closed');
+        panel.setAttribute('data-open', 'true');
+        document.body.style.overflow = 'hidden';
+      } else {
+        panel.classList.remove('search-panel--open');
+        panel.classList.add('search-panel--closed');
+        panel.setAttribute('data-open', 'false');
+        document.body.style.overflow = '';
+      }
+      isOpen = nextOpen;
+    }
+
     function openPanel() {
       console.log('Opening panel:', panelId);
-      panel.classList.remove('hidden');
-      panel.setAttribute('data-open', 'true');
-      isOpen = true;
+      setPanelState(true);
 
       if (input) {
         setTimeout(() => input.focus(), 100);
       }
-
-      document.body.style.overflow = 'hidden';
     }
 
     function closePanel() {
       console.log('Closing panel:', panelId);
-      panel.classList.add('hidden');
-      panel.setAttribute('data-open', 'false');
-      isOpen = false;
-      document.body.style.overflow = '';
+      setPanelState(false);
     }
 
     // Close button

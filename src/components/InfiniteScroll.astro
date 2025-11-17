@@ -36,37 +36,14 @@ const {
 
 // Enhanced size classes with responsive design
 const sizeClasses = {
-  sm: {
-    container: 'py-3',
-    text: 'text-xs',
-    loader: 'h-1.5 w-1.5',
-    gap: 'gap-1.5',
-  },
-  md: {
-    container: 'py-4',
-    text: 'text-sm',
-    loader: 'h-2 w-2',
-    gap: 'gap-2',
-  },
-  lg: {
-    container: 'py-6',
-    text: 'text-base',
-    loader: 'h-2.5 w-2.5',
-    gap: 'gap-2.5',
-  },
-};
+  sm: 'infinite-scroll--size-sm',
+  md: 'infinite-scroll--size-md',
+  lg: 'infinite-scroll--size-lg',
+} as const;
 
-// WCAG AAA compliant color classes with 7:1+ contrast ratios
-const colorClasses = {
-  text: 'text-slate-800 dark:text-slate-100',
-  textSecondary: 'text-slate-700 dark:text-slate-200',
-  textMuted: 'text-slate-600 dark:text-slate-300',
-  loader: 'bg-blue-700 dark:bg-blue-400',
-  error: 'text-red-700 dark:text-red-400',
-  button:
-    'text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200',
-  buttonFocus: 'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-};
+const rootClasses = ['infinite-scroll', sizeClasses[size], className]
+  .filter(Boolean)
+  .join(' ');
 
 const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
 ---
@@ -82,7 +59,7 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
   data-announce-text={announceText}
   data-error-text={errorText}
   data-retry-text={retryText}
-  class={`relative ${className}`}
+  class={rootClasses}
   role="feed"
   aria-label="Content feed with infinite scroll"
 >
@@ -92,18 +69,18 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
 
   <!-- Loading State -->
   <div
-    class={`flex items-center justify-center ${sizeClasses[size].container} ${sizeClasses[size].text} ${colorClasses.textSecondary}`}
+    class="infinite-scroll__loader"
     data-infinite-loader
     hidden={!loading}
     role="status"
     aria-live="polite"
     aria-label="Loading more content"
   >
-    <span class={`flex items-center ${sizeClasses[size].gap} font-medium`}>
+    <span class="infinite-scroll__loader-content">
       {
         loadingVariant === 'spinner' ? (
           <svg
-            class={`${sizeClasses[size].loader} animate-spin ${colorClasses.loader}`}
+            class="infinite-scroll__spinner"
             viewBox="0 0 24 24"
             fill="none"
             aria-hidden="true"
@@ -124,25 +101,22 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
             />
           </svg>
         ) : loadingVariant === 'dots' ? (
-          <div class={`flex ${sizeClasses[size].gap}`} aria-hidden="true">
+          <div class="infinite-scroll__dots" aria-hidden="true">
             <span
-              class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`}
+              class="infinite-scroll__dot"
               style="animation-delay: 0ms"
             />
             <span
-              class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`}
+              class="infinite-scroll__dot"
               style="animation-delay: 150ms"
             />
             <span
-              class={`${sizeClasses[size].loader} rounded-full ${colorClasses.loader} animate-pulse`}
+              class="infinite-scroll__dot"
               style="animation-delay: 300ms"
             />
           </div>
         ) : (
-          <span
-            class={`${sizeClasses[size].loader} animate-pulse rounded-full ${colorClasses.loader}`}
-            aria-hidden="true"
-          />
+          <span class="infinite-scroll__pulse" aria-hidden="true" />
         )
       }
       <span>{loaderText}</span>
@@ -151,19 +125,19 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
 
   <!-- Error State -->
   <div
-    class={`flex flex-col items-center justify-center ${sizeClasses[size].container} ${sizeClasses[size].text}`}
+    class="infinite-scroll__error"
     data-infinite-error
     hidden
     role="alert"
     aria-live="assertive"
   >
-    <div class={`${colorClasses.error} font-medium mb-2`}>
+    <div class="infinite-scroll__error-text">
       {errorText}
     </div>
     <button
       type="button"
       data-infinite-retry
-      class={`${colorClasses.button} font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${colorClasses.buttonFocus} focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 rounded-sm px-2 py-1 hover:underline`}
+      class="infinite-scroll__retry"
       aria-label="Retry loading content"
     >
       {retryText}
@@ -186,7 +160,7 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
   <div
     aria-hidden="true"
     data-infinite-sentinel
-    class="absolute bottom-0 left-0 right-0 h-1"
+    class="infinite-scroll__sentinel"
   >
   </div>
 </div>
@@ -365,3 +339,199 @@ const id = `infinite-scroll-${Math.random().toString(36).slice(2, 10)}`;
     });
   });
 </script>
+
+<style is:inline>
+  .infinite-scroll {
+    position: relative;
+    display: block;
+    width: 100%;
+    color: #1f2937;
+  }
+
+  .infinite-scroll__loader,
+  .infinite-scroll__error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+    font-size: 0.95rem;
+    color: #475569;
+  }
+
+  .infinite-scroll--size-sm .infinite-scroll__loader,
+  .infinite-scroll--size-sm .infinite-scroll__error {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .infinite-scroll--size-lg .infinite-scroll__loader,
+  .infinite-scroll--size-lg .infinite-scroll__error {
+    padding: 2rem 1rem;
+    font-size: 1rem;
+  }
+
+  .infinite-scroll__loader-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .infinite-scroll--size-sm .infinite-scroll__loader-content {
+    gap: 0.5rem;
+  }
+
+  .infinite-scroll--size-lg .infinite-scroll__loader-content {
+    gap: 1rem;
+  }
+
+  .infinite-scroll__spinner {
+    width: 1rem;
+    height: 1rem;
+    color: #1d4ed8;
+    animation: infinite-scroll-spin 1s linear infinite;
+  }
+
+  .infinite-scroll--size-sm .infinite-scroll__spinner {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .infinite-scroll--size-lg .infinite-scroll__spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .infinite-scroll__dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .infinite-scroll--size-sm .infinite-scroll__dots {
+    gap: 0.3rem;
+  }
+
+  .infinite-scroll--size-lg .infinite-scroll__dots {
+    gap: 0.5rem;
+  }
+
+  .infinite-scroll__dot,
+  .infinite-scroll__pulse {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background-color: #1d4ed8;
+    animation: infinite-scroll-pulse 1s ease-in-out infinite;
+    opacity: 0.75;
+  }
+
+  .infinite-scroll__dot:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .infinite-scroll__dot:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  .infinite-scroll--size-sm .infinite-scroll__dot,
+  .infinite-scroll--size-sm .infinite-scroll__pulse {
+    width: 0.35rem;
+    height: 0.35rem;
+  }
+
+  .infinite-scroll--size-lg .infinite-scroll__dot,
+  .infinite-scroll--size-lg .infinite-scroll__pulse {
+    width: 0.65rem;
+    height: 0.65rem;
+  }
+
+  .infinite-scroll__pulse {
+    animation-duration: 0.9s;
+  }
+
+  .infinite-scroll__error-text {
+    color: #b91c1c;
+    font-weight: 600;
+  }
+
+  .infinite-scroll__retry {
+    color: #1d4ed8;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .infinite-scroll__retry:hover {
+    color: #1e40af;
+    text-decoration: underline;
+  }
+
+  .infinite-scroll__retry:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
+  .infinite-scroll__sentinel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0.25rem;
+  }
+
+  @keyframes infinite-scroll-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes infinite-scroll-pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+  }
+
+  :where(.dark) .infinite-scroll__loader,
+  :where(.dark) .infinite-scroll__error {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .infinite-scroll__dot,
+  :where(.dark) .infinite-scroll__pulse,
+  :where(.dark) .infinite-scroll__spinner {
+    color: #60a5fa;
+    background-color: #60a5fa;
+  }
+
+  :where(.dark) .infinite-scroll__error-text {
+    color: #f87171;
+  }
+
+  :where(.dark) .infinite-scroll__retry {
+    color: #93c5fd;
+  }
+
+  :where(.dark) .infinite-scroll__retry:hover {
+    color: #bfdbfe;
+  }
+
+  :where(.dark) .infinite-scroll__retry:focus-visible {
+    outline-color: #93c5fd;
+  }
+</style>

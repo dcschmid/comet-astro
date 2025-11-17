@@ -43,7 +43,7 @@ const liveId = `${panelId}-live`;
 ---
 
 <div
-  class="rounded-lg border border-slate-300/70 dark:border-slate-600/70 bg-white dark:bg-slate-900 p-4 space-y-5 shadow-sm"
+  class="preferences-panel"
   aria-labelledby={panelId}
   aria-describedby={`${panelId}-help`}
   role="group"
@@ -53,45 +53,37 @@ const liveId = `${panelId}-live`;
   data-default-legibility={String(defaultLegibility)}
   data-storage-prefix={storagePrefix}
 >
-  <h2
-    id={panelId}
-    class="text-base font-semibold tracking-tight m-0 text-slate-800 dark:text-slate-100"
-  >
+  <h2 id={panelId} class="preferences-panel__heading">
     {heading}
   </h2>
-  <p
-    id={`${panelId}-help`}
-    class="m-0 text-xs md:text-sm text-slate-700 dark:text-slate-300"
-  >
+  <p id={`${panelId}-help`} class="preferences-panel__description">
     Adjust appearance & readability. Changes apply instantly and persist
     locally.
   </p>
   <div class="sr-only" id={liveId} aria-live="polite" aria-atomic="true"></div>
 
   <!-- Theme Selection -->
-  <fieldset class="space-y-2" aria-describedby={`${panelId}-theme-desc`}>
-    <legend class="text-sm font-medium text-slate-800 dark:text-slate-100"
-      >Theme</legend
-    >
-    <p
-      id={`${panelId}-theme-desc`}
-      class="text-xs text-slate-700 dark:text-slate-300"
-    >
+  <fieldset
+    class="preferences-panel__group"
+    aria-describedby={`${panelId}-theme-desc`}
+  >
+    <legend class="preferences-panel__legend">Theme</legend>
+    <p id={`${panelId}-theme-desc`} class="preferences-panel__help">
       Choose color scheme (System, Light, Dark).
     </p>
-    <div class="flex flex-wrap gap-3">
+    <div class="preferences-panel__options">
       {
         ['system', 'light', 'dark'].map((mode) => (
-          <label class="inline-flex items-center gap-2 text-sm text-slate-800 dark:text-slate-100">
+          <label class="preferences-panel__option">
             <input
               type="radio"
               name="theme-choice"
               value={mode}
               data-theme-input
-              class="accent-blue-600 dark:accent-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+              class="preferences-panel__radio"
               aria-label={`Theme ${mode}`}
             />
-            <span class="capitalize">{mode}</span>
+            <span class="preferences-panel__label">{mode}</span>
           </label>
         ))
       }
@@ -99,53 +91,51 @@ const liveId = `${panelId}-live`;
   </fieldset>
 
   <!-- Font Selection -->
-  <fieldset class="space-y-2" aria-describedby={`${panelId}-font-desc`}>
-    <legend class="text-sm font-medium text-slate-800 dark:text-slate-100"
-      >Font</legend
-    >
-    <p
-      id={`${panelId}-font-desc`}
-      class="text-xs text-slate-700 dark:text-slate-300"
-    >
+  <fieldset
+    class="preferences-panel__group"
+    aria-describedby={`${panelId}-font-desc`}
+  >
+    <legend class="preferences-panel__legend">Font</legend>
+    <p id={`${panelId}-font-desc`} class="preferences-panel__help">
       Select an accessible font.
     </p>
-    <div class="grid gap-2 sm:grid-cols-2">
+    <div class="preferences-panel__font-grid">
       {
         fonts
           .filter((f) => f.category !== 'code')
           .map((f) => (
-            <label class="flex items-center gap-2 text-sm text-slate-800 dark:text-slate-100">
+            <label class="preferences-panel__option">
               <input
                 type="radio"
                 name="font-choice"
                 value={f.id}
                 data-font-input
-                class="accent-blue-600 dark:accent-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+                class="preferences-panel__radio"
                 aria-label={`Font ${f.label}`}
               />
-              <span class="truncate">{f.label}</span>
+              <span class="preferences-panel__label">{f.label}</span>
             </label>
           ))
       }
     </div>
     {
       includeCodeFonts && (
-        <details class="mt-2">
-          <summary class="cursor-pointer text-sm font-medium text-slate-800 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900">
-            Code Fonts
-          </summary>
-          <div class="mt-2 grid gap-2 sm:grid-cols-2">
+        <details class="preferences-panel__details">
+          <summary class="preferences-panel__summary">Code Fonts</summary>
+          <div class="preferences-panel__font-grid">
             {['sourcecode', 'firacode', 'ibmplexmono'].map((id) => (
-              <label class="flex items-center gap-2 text-xs text-slate-800 dark:text-slate-100">
+              <label class="preferences-panel__option preferences-panel__option--small">
                 <input
                   type="radio"
                   name="font-choice"
                   value={id}
                   data-font-input
-                  class="accent-blue-600 dark:accent-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+                  class="preferences-panel__radio"
                   aria-label={`Code font ${id}`}
                 />
-                <span class="font-mono">{id}</span>
+                <span class="preferences-panel__label preferences-panel__label--mono">
+                  {id}
+                </span>
               </label>
             ))}
           </div>
@@ -155,24 +145,25 @@ const liveId = `${panelId}-live`;
   </fieldset>
 
   <!-- Legibility Toggle -->
-  <div class="flex items-start gap-3">
+  <div class="preferences-panel__toggle">
     <input
       id={`${panelId}-legibility`}
       type="checkbox"
       data-legibility-input
-      class="mt-0.5 accent-blue-600 dark:accent-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+      class="preferences-panel__checkbox"
       aria-describedby={`${panelId}-legibility-desc`}
     />
     <label
       for={`${panelId}-legibility`}
-      class="text-sm leading-5 text-slate-800 dark:text-slate-100"
+      class="preferences-panel__toggle-label"
     >
       High readability mode
       <span
         id={`${panelId}-legibility-desc`}
-        class="block text-xs text-slate-700 dark:text-slate-300"
-        >Increases line height & word spacing.</span
+        class="preferences-panel__toggle-help"
       >
+        Increases line height & word spacing.
+      </span>
     </label>
   </div>
 
@@ -180,7 +171,7 @@ const liveId = `${panelId}-live`;
   <button
     type="button"
     data-prefs-reset
-    class="mt-2 inline-flex items-center gap-2 rounded-md border border-slate-300 dark:border-slate-600 px-3 py-1.5 text-xs font-medium bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+    class="preferences-panel__reset"
     aria-label="Reset to default values"
   >
     Reset
@@ -340,14 +331,141 @@ const liveId = `${panelId}-live`;
 
 <style>
   /* Minor panel specific refinements */
-  details[open] > summary {
-    color: var(--color-accent, #0a5);
+  .preferences-panel {
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    border-radius: 1rem;
+    background: #fff;
+    color: #0f172a;
+    padding: 1.5rem;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
   }
-  summary {
+  .preferences-panel__heading {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .preferences-panel__description {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #475569;
+  }
+  .preferences-panel__group {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .preferences-panel__legend {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .preferences-panel__help {
+    font-size: 0.8rem;
+    color: #475569;
+    margin: 0;
+  }
+  .preferences-panel__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .preferences-panel__option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: inherit;
+  }
+  .preferences-panel__label {
+    text-transform: capitalize;
+  }
+  .preferences-panel__radio {
+    accent-color: #2563eb;
+  }
+  .preferences-panel__font-grid {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  }
+  .preferences-panel__details {
+    margin-top: 0.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+  }
+  .preferences-panel__summary {
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
     outline: none;
   }
-  summary:focus-visible {
-    outline: 2px solid var(--color-accent, #2563eb);
+  .preferences-panel__summary:focus-visible {
+    outline: 2px solid #2563eb;
     outline-offset: 2px;
+  }
+  .preferences-panel__option--small {
+    font-size: 0.85rem;
+  }
+  .preferences-panel__label--mono {
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+      'Courier New', monospace;
+  }
+  .preferences-panel__toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .preferences-panel__checkbox {
+    margin-top: 0.2rem;
+    accent-color: #2563eb;
+  }
+  .preferences-panel__toggle-label {
+    font-size: 0.9rem;
+    color: #0f172a;
+  }
+  .preferences-panel__toggle-help {
+    display: block;
+    font-size: 0.8rem;
+    color: #475569;
+  }
+  .preferences-panel__reset {
+    align-self: flex-start;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    border-radius: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #fff;
+    color: #0f172a;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .preferences-panel__reset:hover {
+    background: #f1f5f9;
+  }
+  :where(.dark) .preferences-panel {
+    background: #0f172a;
+    color: #f8fafc;
+    border-color: rgba(51, 65, 85, 0.7);
+  }
+  :where(.dark) .preferences-panel__description,
+  :where(.dark) .preferences-panel__help,
+  :where(.dark) .preferences-panel__toggle-help {
+    color: #cbd5f5;
+  }
+  :where(.dark) .preferences-panel__details {
+    border-color: rgba(51, 65, 85, 0.6);
+  }
+  :where(.dark) .preferences-panel__reset {
+    background: #1f2937;
+    border-color: rgba(148, 163, 184, 0.5);
   }
 </style>

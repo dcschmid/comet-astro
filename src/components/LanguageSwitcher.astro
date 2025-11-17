@@ -39,85 +39,32 @@ const {
 } = Astro.props as Props;
 
 // Enhanced size classes with responsive design
-const sizeClasses = {
-  sm: {
-    container: 'gap-1',
-    button: 'min-h-[28px] px-2 py-1 text-xs',
-    text: 'text-xs',
-    icon: 'w-3 h-3',
-    flag: 'w-3 h-3',
-  },
-  md: {
-    container: 'gap-2',
-    button: 'min-h-[36px] px-3 py-1.5 text-sm',
-    text: 'text-sm',
-    icon: 'w-4 h-4',
-    flag: 'w-4 h-4',
-  },
-  lg: {
-    container: 'gap-3',
-    button: 'min-h-[44px] px-4 py-2 text-base',
-    text: 'text-base',
-    icon: 'w-5 h-5',
-    flag: 'w-5 h-5',
-  },
-};
-
-// WCAG AAA compliant color classes with 7:1+ contrast ratios
-const colorClasses = {
-  // Background colors
-  bg: 'bg-white dark:bg-slate-950',
-  bgHover: 'hover:bg-slate-50 dark:hover:bg-slate-900',
-  bgActive: 'bg-slate-900 dark:bg-slate-100',
-  bgActiveHover: 'hover:bg-slate-800 dark:hover:bg-slate-200',
-  // Text colors
-  text: 'text-slate-900 dark:text-slate-50',
-  textHover: 'hover:text-slate-800 dark:hover:text-slate-100',
-  textActive: 'text-slate-50 dark:text-slate-900',
-  textMuted: 'text-slate-700 dark:text-slate-200',
-  // Border colors
-  border: 'border-slate-400 dark:border-slate-500',
-  borderHover: 'hover:border-slate-500 dark:hover:border-slate-400',
-  borderActive: 'border-slate-900 dark:border-slate-100',
-  // Focus ring
-  focusRing: 'focus-visible:ring-2 focus-visible:ring-slate-600 dark:focus-visible:ring-slate-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
-};
-
-// Position classes
-const positionClasses = {
-  start: 'justify-start',
-  center: 'justify-center',
-  end: 'justify-end',
-};
-
-// Variant styles
-const variantClasses = {
-  default: `
-    border rounded-lg font-semibold shadow-sm
-    transition-all duration-200
-    ${colorClasses.focusRing}
-    focus-visible:outline-none
-  `,
-  minimal: `
-    border-0 font-medium
-    transition-colors duration-200
-    ${colorClasses.focusRing}
-    focus-visible:outline-none
-    rounded-md
-  `,
-  compact: `
-    border rounded font-medium
-    transition-all duration-150
-    ${colorClasses.focusRing}
-    focus-visible:outline-none
-  `,
-  dropdown: `
-    border rounded-lg font-medium shadow
-    transition-all duration-200
-    ${colorClasses.focusRing}
-    focus-visible:outline-none
-  `,
-};
+const sizeModifier = `language-switcher--size-${size}`;
+const variantModifier = `language-switcher--variant-${variant}`;
+const positionModifier = `language-switcher--position-${position}`;
+const rootClasses = [
+  'language-switcher',
+  sizeModifier,
+  variantModifier,
+  positionModifier,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+const labelClasses = [
+  'language-switcher__label',
+  variant === 'compact' ? 'language-switcher__label--compact' : '',
+]
+  .filter(Boolean)
+  .join(' ');
+const codeClasses = [
+  'language-switcher__code',
+  variant === 'compact' && !showFlags
+    ? 'language-switcher__code--visible'
+    : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Get flag emoji for language code
 const getFlagEmoji = (code: string, customFlag?: string) => {
@@ -141,49 +88,38 @@ const dropdownId = `language-switcher-${Math.random().toString(36).slice(2, 8)}`
 ---
 
 {variant === 'dropdown' ? (
-  <div class={`relative inline-block ${className}`}>
+  <div class={rootClasses}>
     <button
       type="button"
       id={dropdownId}
       aria-haspopup="listbox"
       aria-expanded="false"
       aria-label={ariaLabel}
-      class={`
-        ${variantClasses[variant]}
-        ${sizeClasses[size].button}
-        ${colorClasses.bg}
-        ${colorClasses.bgHover}
-        ${colorClasses.text}
-        ${colorClasses.textHover}
-        ${colorClasses.border}
-        ${colorClasses.borderHover}
-        inline-flex items-center gap-2
-        cursor-pointer select-none
-      `}
+      class="language-switcher__toggle"
     >
       {showFlags && currentLang && (
-        <span 
-          class={`${sizeClasses[size].flag} flex-shrink-0`}
+        <span
+          class="language-switcher__flag"
           aria-hidden="true"
         >
           {getFlagEmoji(currentLang.code, currentLang.flag)}
         </span>
       )}
-      
-      <span class="flex-1 text-left">
+
+      <span class="language-switcher__toggle-label">
         {currentLang?.label || dropdownLabel}
         {showNativeNames && currentLang?.nativeName && (
-          <span class={`block ${sizeClasses[size].text} ${colorClasses.textMuted} font-normal`}>
+          <span class="language-switcher__native-name">
             {currentLang.nativeName}
           </span>
         )}
       </span>
-      
+
       {/* Dropdown Arrow */}
-      <svg 
-        class={`${sizeClasses[size].icon} ${colorClasses.textMuted}`}
-        fill="none" 
-        stroke="currentColor" 
+      <svg
+        class="language-switcher__icon"
+        fill="none"
+        stroke="currentColor"
         viewBox="0 0 24 24"
         aria-hidden="true"
       >
@@ -195,16 +131,16 @@ const dropdownId = `language-switcher-${Math.random().toString(36).slice(2, 8)}`
     <div
       role="listbox"
       aria-labelledby={dropdownId}
-      class={`
-        absolute top-full left-0 mt-1 min-w-full
-        ${colorClasses.bg}
-        ${colorClasses.border}
-        rounded-lg shadow-lg z-50
-        hidden
-      `}
+      class="language-switcher__menu language-switcher__menu--hidden"
     >
       {languages.map((language) => {
         const isActive = current === language.code;
+        const menuItemClasses = [
+          'language-switcher__menu-item',
+          isActive ? 'language-switcher__menu-item--active' : '',
+        ]
+          .filter(Boolean)
+          .join(' ');
         return (
           <a
             href={language.href}
@@ -213,39 +149,30 @@ const dropdownId = `language-switcher-${Math.random().toString(36).slice(2, 8)}`
             dir={language.direction || 'ltr'}
             role="option"
             aria-selected={isActive}
-            class={`
-              ${sizeClasses[size].button}
-              ${isActive ? colorClasses.bgActive : colorClasses.bgHover}
-              ${isActive ? colorClasses.textActive : colorClasses.text}
-              ${colorClasses.focusRing}
-              flex items-center gap-2 w-full
-              first:rounded-t-lg last:rounded-b-lg
-              no-underline transition-colors duration-200
-              focus-visible:outline-none
-            `}
+            class={menuItemClasses}
           >
             {showFlags && (
-              <span 
-                class={`${sizeClasses[size].flag} flex-shrink-0`}
+              <span
+                class="language-switcher__flag"
                 aria-hidden="true"
               >
                 {getFlagEmoji(language.code, language.flag)}
               </span>
             )}
-            
-            <span class="flex-1">
+
+            <span class="language-switcher__menu-label">
               {language.label}
               {showNativeNames && language.nativeName && (
-                <span class={`block ${sizeClasses[size].text} opacity-75 font-normal`}>
+                <span class="language-switcher__native-name">
                   {language.nativeName}
                 </span>
               )}
             </span>
-            
+
             {isActive && (
-              <svg 
-                class={`${sizeClasses[size].icon} ${colorClasses.textActive}`}
-                fill="currentColor" 
+              <svg
+                class="language-switcher__icon language-switcher__icon--active"
+                fill="currentColor"
                 viewBox="0 0 20 20"
                 aria-hidden="true"
               >
@@ -260,16 +187,17 @@ const dropdownId = `language-switcher-${Math.random().toString(36).slice(2, 8)}`
 ) : (
   <nav
     aria-label={ariaLabel}
-    class={`
-      inline-flex items-center 
-      ${sizeClasses[size].container} 
-      ${positionClasses[position]}
-      ${className}
-    `}
+    class={rootClasses}
     role="group"
   >
     {languages.map((language) => {
       const isActive = current === language.code;
+      const optionClasses = [
+        'language-switcher__option',
+        isActive ? 'language-switcher__option--active' : '',
+      ]
+        .filter(Boolean)
+        .join(' ');
       return (
         <a
           href={language.href}
@@ -278,38 +206,29 @@ const dropdownId = `language-switcher-${Math.random().toString(36).slice(2, 8)}`
           dir={language.direction || 'ltr'}
           aria-current={isActive ? 'page' : undefined}
           aria-label={`Switch to ${language.label}${language.nativeName ? ` (${language.nativeName})` : ''}`}
-          class={`
-            ${variantClasses[variant]}
-            ${sizeClasses[size].button}
-            ${isActive 
-              ? `${colorClasses.bgActive} ${colorClasses.bgActiveHover} ${colorClasses.textActive} ${colorClasses.borderActive}`
-              : `${colorClasses.bg} ${colorClasses.bgHover} ${colorClasses.text} ${colorClasses.textHover} ${colorClasses.border} ${colorClasses.borderHover}`
-            }
-            inline-flex items-center gap-2 no-underline
-            transform active:scale-95
-          `}
+          class={optionClasses}
         >
           {showFlags && (
-            <span 
-              class={`${sizeClasses[size].flag} flex-shrink-0`}
+            <span
+              class="language-switcher__flag"
               aria-hidden="true"
               title={`${language.label} flag`}
             >
               {getFlagEmoji(language.code, language.flag)}
             </span>
           )}
-          
-          <span class={variant === 'compact' ? 'sr-only sm:not-sr-only' : ''}>
+
+          <span class={labelClasses}>
             {language.label}
             {showNativeNames && language.nativeName && (
-              <span class={`block ${sizeClasses[size].text} opacity-90 font-normal`}>
+              <span class="language-switcher__native-name">
                 {language.nativeName}
               </span>
             )}
           </span>
-          
+
           {variant === 'compact' && !showFlags && (
-            <span class={`${sizeClasses[size].text} font-mono uppercase sm:hidden`}>
+            <span class={codeClasses}>
               {language.code}
             </span>
           )}
@@ -324,60 +243,61 @@ const dropdownId = `language-switcher-${Math.random().toString(36).slice(2, 8)}`
     // Simple dropdown functionality
     document.addEventListener('DOMContentLoaded', function() {
       const dropdowns = document.querySelectorAll('[aria-haspopup="listbox"]');
-      
+
       dropdowns.forEach(function(button) {
         const menu = button.nextElementSibling;
         if (!menu) return;
-        
+        const hiddenClass = 'language-switcher__menu--hidden';
+
         // Toggle dropdown
         button.addEventListener('click', function(e) {
           e.preventDefault();
           const isOpen = button.getAttribute('aria-expanded') === 'true';
-          
+
           // Close all other dropdowns
           dropdowns.forEach(function(otherButton) {
             if (otherButton !== button) {
               otherButton.setAttribute('aria-expanded', 'false');
               const otherMenu = otherButton.nextElementSibling;
-              if (otherMenu) otherMenu.classList.add('hidden');
+              if (otherMenu) otherMenu.classList.add(hiddenClass);
             }
           });
-          
+
           // Toggle current dropdown
           button.setAttribute('aria-expanded', (!isOpen).toString());
-          menu.classList.toggle('hidden');
+          menu.classList.toggle(hiddenClass);
         });
-        
+
         // Close on outside click
         document.addEventListener('click', function(e) {
           if (!button.contains(e.target) && !menu.contains(e.target)) {
             button.setAttribute('aria-expanded', 'false');
-            menu.classList.add('hidden');
+            menu.classList.add(hiddenClass);
           }
         });
-        
+
         // Close on escape key
         document.addEventListener('keydown', function(e) {
           if (e.key === 'Escape') {
             button.setAttribute('aria-expanded', 'false');
-            menu.classList.add('hidden');
+            menu.classList.add(hiddenClass);
             button.focus();
           }
         });
-        
+
         // Arrow key navigation
         button.addEventListener('keydown', function(e) {
           if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             button.setAttribute('aria-expanded', 'true');
-            menu.classList.remove('hidden');
-            
+            menu.classList.remove(hiddenClass);
+
             // Focus first option
             const firstOption = menu.querySelector('[role="option"]');
             if (firstOption) firstOption.focus();
           }
         });
-        
+
         // Menu navigation
         menu.addEventListener('keydown', function(e) {
           const options = Array.from(menu.querySelectorAll('[role="option"]'));
@@ -404,50 +324,304 @@ const dropdownId = `language-switcher-${Math.random().toString(36).slice(2, 8)}`
   </script>
 )}
 
-<style>
-  /* Enhanced focus styles for better accessibility */
-  [aria-haspopup="listbox"]:focus-visible,
-  nav a:focus-visible {
-    outline: 2px solid rgb(59 130 246);
+<style is:inline>
+  .language-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .language-switcher--size-sm {
+    gap: 0.25rem;
+  }
+
+  .language-switcher--size-md {
+    gap: 0.5rem;
+  }
+
+  .language-switcher--size-lg {
+    gap: 0.75rem;
+  }
+
+  .language-switcher--variant-dropdown {
+    position: relative;
+    display: inline-block;
+    flex-wrap: nowrap;
+  }
+
+  .language-switcher:not(.language-switcher--variant-dropdown).language-switcher--position-start {
+    justify-content: flex-start;
+  }
+
+  .language-switcher:not(.language-switcher--variant-dropdown).language-switcher--position-center {
+    justify-content: center;
+  }
+
+  .language-switcher:not(.language-switcher--variant-dropdown).language-switcher--position-end {
+    justify-content: flex-end;
+  }
+
+  .language-switcher__toggle,
+  .language-switcher__option,
+  .language-switcher__menu-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.8rem;
+    border: 1px solid #cbd5f5;
+    background-color: #ffffff;
+    color: #0f172a;
+    text-decoration: none;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease,
+      transform 0.1s ease;
+    cursor: pointer;
+  }
+
+  .language-switcher__toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .language-switcher__option {
+    font-weight: 600;
+  }
+
+  .language-switcher__option--active,
+  .language-switcher__menu-item--active {
+    background-color: #0f172a;
+    border-color: #0f172a;
+    color: #f8fafc;
+  }
+
+  .language-switcher__toggle:hover,
+  .language-switcher__option:hover,
+  .language-switcher__menu-item:hover {
+    background-color: #f8fafc;
+  }
+
+  .language-switcher__option:active {
+    transform: scale(0.96);
+  }
+
+  .language-switcher__flag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .language-switcher__toggle-label,
+  .language-switcher__menu-label,
+  .language-switcher__label {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: left;
+    line-height: 1.2;
+  }
+
+  .language-switcher__native-name {
+    font-size: 0.8em;
+    color: #475569;
+    font-weight: 400;
+  }
+
+  .language-switcher__icon {
+    width: 1rem;
+    height: 1rem;
+    color: #475569;
+  }
+
+  .language-switcher__icon--active {
+    color: inherit;
+  }
+
+  .language-switcher__menu {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    min-width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.85rem;
+    background-color: #ffffff;
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.15);
+    padding: 0.25rem 0;
+    z-index: 20;
+  }
+
+  .language-switcher__menu--hidden {
+    display: none;
+  }
+
+  .language-switcher__menu-item {
+    display: flex;
+    width: 100%;
+    padding: 0.5rem 1rem;
+  }
+
+  .language-switcher__menu-item:first-of-type {
+    border-top-left-radius: 0.85rem;
+    border-top-right-radius: 0.85rem;
+  }
+
+  .language-switcher__menu-item:last-of-type {
+    border-bottom-left-radius: 0.85rem;
+    border-bottom-right-radius: 0.85rem;
+  }
+
+  .language-switcher--size-sm .language-switcher__option,
+  .language-switcher--size-sm .language-switcher__toggle,
+  .language-switcher--size-sm .language-switcher__menu-item {
+    min-height: 28px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .language-switcher--size-md .language-switcher__option,
+  .language-switcher--size-md .language-switcher__toggle,
+  .language-switcher--size-md .language-switcher__menu-item {
+    min-height: 36px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .language-switcher--size-lg .language-switcher__option,
+  .language-switcher--size-lg .language-switcher__toggle,
+  .language-switcher--size-lg .language-switcher__menu-item {
+    min-height: 44px;
+    padding: 0.65rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .language-switcher--size-sm .language-switcher__flag {
+    font-size: 0.85rem;
+  }
+
+  .language-switcher--size-lg .language-switcher__flag {
+    font-size: 1.2rem;
+  }
+
+  .language-switcher--variant-minimal .language-switcher__option {
+    border-color: transparent;
+    background-color: transparent;
+    font-weight: 500;
+  }
+
+  .language-switcher--variant-compact .language-switcher__option {
+    padding-inline: 0.75rem;
+  }
+
+  .language-switcher__label--compact {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  @media (min-width: 640px) {
+    .language-switcher__label--compact {
+      position: static;
+      width: auto;
+      height: auto;
+      padding: 0;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+    }
+  }
+
+  .language-switcher__code {
+    display: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      'Liberation Mono', 'Courier New', monospace;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  .language-switcher__code--visible {
+    display: inline-block;
+  }
+
+  @media (min-width: 640px) {
+    .language-switcher__code--visible {
+      display: none;
+    }
+  }
+
+  .language-switcher__toggle:focus-visible,
+  .language-switcher__option:focus-visible,
+  .language-switcher__menu-item:focus-visible {
+    outline: 2px solid #2563eb;
     outline-offset: 2px;
   }
-  
-  /* High contrast mode support */
+
   @media (prefers-contrast: high) {
-    nav a {
+    .language-switcher__option,
+    .language-switcher__toggle {
       border-width: 2px;
       font-weight: 600;
     }
-    
-    [aria-current="page"],
-    [aria-selected="true"] {
-      font-weight: 700;
+
+    .language-switcher__option--active,
+    .language-switcher__menu-item--active {
       text-decoration: underline;
     }
   }
-  
-  /* Reduced motion support */
+
   @media (prefers-reduced-motion: reduce) {
-    nav a,
-    [aria-haspopup="listbox"] {
+    .language-switcher__option,
+    .language-switcher__toggle,
+    .language-switcher__menu-item {
       transition: none;
-      transform: none !important;
+    }
+
+    .language-switcher__option:active {
+      transform: none;
     }
   }
-  
-  /* RTL support */
-  [dir="rtl"] {
-    direction: rtl;
+
+  [dir='rtl'] .language-switcher__menu {
+    left: auto;
+    right: 0;
   }
-  
-  /* Hover effects */
-  nav a:hover {
-    text-decoration: none;
+
+  :where(.dark) .language-switcher__option,
+  :where(.dark) .language-switcher__toggle,
+  :where(.dark) .language-switcher__menu-item {
+    background-color: #0f172a;
+    border-color: #475569;
+    color: #f8fafc;
   }
-  
-  /* Active state enhancement */
-  nav a:active {
-    transform: scale(0.95);
-    transition-duration: 50ms;
+
+  :where(.dark) .language-switcher__option--active,
+  :where(.dark) .language-switcher__menu-item--active {
+    background-color: #f8fafc;
+    color: #0f172a;
+    border-color: #f8fafc;
+  }
+
+  :where(.dark) .language-switcher__menu {
+    background-color: #0f172a;
+    border-color: #1f2937;
+    box-shadow: 0 20px 35px rgba(2, 6, 23, 0.7);
+  }
+
+  :where(.dark) .language-switcher__native-name {
+    color: #94a3b8;
+  }
+
+  .language-switcher--variant-dropdown .language-switcher__toggle-label {
+    flex: 1;
+  }
+
+  .language-switcher--variant-dropdown .language-switcher__toggle {
+    gap: 0.5rem;
   }
 </style>

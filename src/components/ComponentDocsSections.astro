@@ -32,19 +32,19 @@ const sections: { id: string; title: string; content?: any }[] = [
 ];
 ---
 
-<div class="space-y-10">
+<div class="component-docs">
   {
     sections
       .filter((s) => !!s.content)
       .map((section) => (
-        <section id={section.id} class="space-y-4">
-          <div class="flex items-center justify-between gap-4">
-            <h2 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+        <section id={section.id} class="component-docs__section">
+          <div class="component-docs__header">
+            <h2 class="component-docs__title">
               {section.title}
             </h2>
             <a
               href={`#${section.id}`}
-              class="ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-transparent text-slate-600 hover:bg-slate-100 hover:text-sky-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-sky-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+              class="component-docs__permalink"
               aria-label={`Permalink ${section.title}`}
             >
               <span aria-hidden class="text-xs font-semibold">
@@ -53,10 +53,83 @@ const sections: { id: string; title: string; content?: any }[] = [
             </a>
           </div>
 
-          <div class="prose max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-3">
+          <div class="component-docs__content prose">
             {section.content}
           </div>
         </section>
       ))
   }
 </div>
+
+<style is:inline>
+  .component-docs {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .component-docs__section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .component-docs__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .component-docs__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 650;
+    color: #0f172a;
+  }
+
+  :where(.dark) .component-docs__title {
+    color: #f8fafc;
+  }
+
+  .component-docs__permalink {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(15, 23, 42, 0.6);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .component-docs__permalink:hover {
+    background: rgba(14, 165, 233, 0.15);
+    color: #0ea5e9;
+  }
+
+  :where(.dark) .component-docs__permalink {
+    color: rgba(248, 250, 252, 0.6);
+  }
+
+  :where(.dark) .component-docs__permalink:hover {
+    background: rgba(14, 165, 233, 0.2);
+    color: #38bdf8;
+  }
+
+  .component-docs__permalink:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.7);
+    outline-offset: 2px;
+  }
+
+  .component-docs__content {
+    max-width: none;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: rgba(15, 23, 42, 0.8);
+  }
+
+  :where(.dark) .component-docs__content {
+    color: rgba(248, 250, 252, 0.75);
+  }
+</style>

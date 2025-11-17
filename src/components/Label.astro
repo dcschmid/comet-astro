@@ -37,88 +37,68 @@ const {
   hideOptionalIndicator = false,
 } = Astro.props;
 
-// Enhanced size classes with responsive design
 const sizeClasses = {
-  xs: {
-    text: 'text-xs leading-4',
-    indicator: 'text-xs',
-    description: 'text-xs leading-3',
-    spacing: 'space-y-0.5',
-  },
-  sm: {
-    text: 'text-sm leading-4',
-    indicator: 'text-xs',
-    description: 'text-xs leading-4',
-    spacing: 'space-y-1',
-  },
-  md: {
-    text: 'text-sm leading-5',
-    indicator: 'text-sm',
-    description: 'text-xs leading-4',
-    spacing: 'space-y-1.5',
-  },
-  lg: {
-    text: 'text-base leading-6',
-    indicator: 'text-sm',
-    description: 'text-sm leading-5',
-    spacing: 'space-y-2',
-  },
-  xl: {
-    text: 'text-lg leading-7',
-    indicator: 'text-base',
-    description: 'text-sm leading-5',
-    spacing: 'space-y-2.5',
-  },
-};
+  xs: 'label--size-xs',
+  sm: 'label--size-sm',
+  md: 'label--size-md',
+  lg: 'label--size-lg',
+  xl: 'label--size-xl',
+} as const;
 
-// Font weight classes
 const weightClasses = {
-  normal: 'font-normal',
-  medium: 'font-medium',
-  semibold: 'font-semibold',
-  bold: 'font-bold',
-};
+  normal: 'label__text--weight-normal',
+  medium: 'label__text--weight-medium',
+  semibold: 'label__text--weight-semibold',
+  bold: 'label__text--weight-bold',
+} as const;
 
-// WCAG AAA compliant color classes with 7:1+ contrast ratios
-const colorClasses = {
-  // Default text colors
-  text: 'text-slate-900 dark:text-slate-50',
-  textSecondary: 'text-slate-800 dark:text-slate-100',
-  textMuted: 'text-slate-700 dark:text-slate-200',
-  textDisabled: 'text-slate-500 dark:text-slate-400',
-  // Status colors
-  error: 'text-red-700 dark:text-red-300',
-  warning: 'text-amber-700 dark:text-amber-300',
-  success: 'text-green-700 dark:text-green-300',
-  // Indicator colors
-  required: 'text-red-700 dark:text-red-300',
-  optional: 'text-slate-600 dark:text-slate-300',
-};
-
-// Status-based text colors
-const statusColors = {
-  default: colorClasses.text,
-  error: colorClasses.error,
-  warning: colorClasses.warning,
-  success: colorClasses.success,
-};
-
-// Variant layout classes
 const variantClasses = {
-  default: 'block',
-  floating: 'block',
-  inline: 'inline-flex items-center gap-2',
-  stacked: 'flex flex-col',
-};
+  default: 'label--variant-default',
+  floating: 'label--variant-floating',
+  inline: 'label--variant-inline',
+  stacked: 'label--variant-stacked',
+} as const;
 
-// Compute final classes
-const textColor = disabled ? colorClasses.textDisabled : statusColors[status];
-const requiredColor = disabled
-  ? colorClasses.textDisabled
-  : colorClasses.required;
-const optionalColor = disabled
-  ? colorClasses.textDisabled
-  : colorClasses.optional;
+const statusClasses = {
+  default: 'label--status-default',
+  error: 'label--status-error',
+  warning: 'label--status-warning',
+  success: 'label--status-success',
+} as const;
+
+const wrapperClasses = [
+  'label',
+  sizeClasses[size],
+  variantClasses[variant],
+  statusClasses[status],
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+const textClasses = ['label__text', weightClasses[weight]]
+  .filter(Boolean)
+  .join(' ');
+const indicatorRequiredClasses = [
+  'label__indicator',
+  'label__indicator--required',
+  disabled ? 'label__indicator--disabled' : '',
+]
+  .filter(Boolean)
+  .join(' ');
+const indicatorOptionalClasses = [
+  'label__indicator',
+  'label__indicator--optional',
+  disabled ? 'label__indicator--disabled' : '',
+]
+  .filter(Boolean)
+  .join(' ');
+const descriptionClasses = [
+  'label__description',
+  status === 'error' ? 'label__description--error' : '',
+  disabled ? 'label__description--disabled' : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
 // Generate unique IDs for accessibility
 const labelId = htmlFor
@@ -131,33 +111,23 @@ const showRequired = required && !hideRequiredIndicator;
 const showOptional = optional && !hideOptionalIndicator && !required;
 ---
 
-<div class={`${sizeClasses[size].spacing} ${className}`}>
+<div class={wrapperClasses}>
   <label
     for={htmlFor}
     id={labelId}
-    class={`
-      ${variantClasses[variant]}
-      ${sizeClasses[size].text}
-      ${weightClasses[weight]}
-      ${textColor}
-      ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
-      transition-colors duration-200
-    `}
+    class={textClasses}
     aria-describedby={descriptionId}
+    aria-disabled={disabled ? 'true' : undefined}
   >
     <!-- Label Text -->
-    <span class="flex items-center gap-2">
+    <span class="label__slot">
       <slot />
 
       <!-- Required Indicator -->
       {
         showRequired && (
           <span
-            class={`
-            ${sizeClasses[size].indicator}
-            ${requiredColor}
-            font-medium
-          `}
+            class={indicatorRequiredClasses}
             aria-label={requiredText}
             title={requiredText}
           >
@@ -170,11 +140,7 @@ const showOptional = optional && !hideOptionalIndicator && !required;
       {
         showOptional && (
           <span
-            class={`
-            ${sizeClasses[size].indicator}
-            ${optionalColor}
-            font-normal
-          `}
+            class={indicatorOptionalClasses}
             aria-label={optionalText}
           >
             ({optionalText.toLowerCase()})
@@ -186,10 +152,10 @@ const showOptional = optional && !hideOptionalIndicator && !required;
     <!-- Status Icon for Error/Warning/Success -->
     {
       status !== 'default' && (
-        <span class={`inline-flex items-center ml-1`} aria-hidden="true">
+        <span class="label__status-icon" aria-hidden="true">
           {status === 'error' && (
             <svg
-              class={`w-4 h-4 ${colorClasses.error}`}
+              class="label__status-icon-graphic label__status-icon-graphic--error"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -202,7 +168,7 @@ const showOptional = optional && !hideOptionalIndicator && !required;
           )}
           {status === 'warning' && (
             <svg
-              class={`w-4 h-4 ${colorClasses.warning}`}
+              class="label__status-icon-graphic label__status-icon-graphic--warning"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -215,7 +181,7 @@ const showOptional = optional && !hideOptionalIndicator && !required;
           )}
           {status === 'success' && (
             <svg
-              class={`w-4 h-4 ${colorClasses.success}`}
+              class="label__status-icon-graphic label__status-icon-graphic--success"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -236,11 +202,7 @@ const showOptional = optional && !hideOptionalIndicator && !required;
     description && (
       <p
         id={descriptionId}
-        class={`
-        ${sizeClasses[size].description}
-        ${disabled ? colorClasses.textDisabled : colorClasses.textMuted}
-        leading-relaxed
-      `}
+        class={descriptionClasses}
         role={status === 'error' ? 'alert' : undefined}
         aria-live={status === 'error' ? 'polite' : undefined}
       >
@@ -250,42 +212,214 @@ const showOptional = optional && !hideOptionalIndicator && !required;
   }
 </div>
 
-<style>
-  /* Enhanced focus styles for better accessibility */
-  label:focus-within {
-    outline: 2px solid rgb(59 130 246);
-    outline-offset: 2px;
-    border-radius: 4px;
+<style is:inline>
+  .label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
   }
 
-  /* High contrast mode support */
+  .label--variant-inline .label__text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .label--variant-stacked .label__text,
+  .label--variant-floating .label__text,
+  .label--variant-default .label__text {
+    display: block;
+  }
+
+  .label__text {
+    color: #0f172a;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .label__text:focus-within {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 0.35rem;
+  }
+
+  .label--status-error .label__text {
+    color: #b91c1c;
+  }
+
+  .label--status-warning .label__text {
+    color: #b45309;
+  }
+
+  .label--status-success .label__text {
+    color: #15803d;
+  }
+
+  .label--size-xs .label__text {
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .label--size-sm .label__text {
+    font-size: 0.85rem;
+  }
+
+  .label--size-lg .label__text {
+    font-size: 1rem;
+  }
+
+  .label--size-xl .label__text {
+    font-size: 1.1rem;
+  }
+
+  .label__text--weight-normal {
+    font-weight: 400;
+  }
+
+  .label__text--weight-medium {
+    font-weight: 500;
+  }
+
+  .label__text--weight-semibold {
+    font-weight: 600;
+  }
+
+  .label__text--weight-bold {
+    font-weight: 700;
+  }
+
+  .label__slot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .label--size-xs .label__slot {
+    gap: 0.25rem;
+  }
+
+  .label--size-lg .label__slot,
+  .label--size-xl .label__slot {
+    gap: 0.65rem;
+  }
+
+  .label__indicator {
+    font-size: 0.75rem;
+  }
+
+  .label__indicator--required {
+    color: #b91c1c;
+    font-weight: 600;
+  }
+
+  .label__indicator--optional {
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .label__indicator--disabled {
+    color: #94a3b8;
+  }
+
+  .label__status-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.35rem;
+  }
+
+  .label__status-icon-graphic {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .label__status-icon-graphic--error {
+    color: #b91c1c;
+  }
+
+  .label__status-icon-graphic--warning {
+    color: #b45309;
+  }
+
+  .label__status-icon-graphic--success {
+    color: #15803d;
+  }
+
+  .label__description {
+    font-size: 0.8rem;
+    color: #475569;
+    line-height: 1.5;
+  }
+
+  .label--size-xs .label__description {
+    font-size: 0.75rem;
+  }
+
+  .label--size-xl .label__description {
+    font-size: 0.9rem;
+  }
+
+  .label__description--disabled {
+    color: #94a3b8;
+  }
+
+  .label__description--error {
+    color: #b91c1c;
+  }
+
+  .label[aria-disabled='true'] .label__text {
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  .label__text:hover:not([aria-disabled='true']) {
+    opacity: 0.9;
+  }
+
   @media (prefers-contrast: high) {
-    label {
+    .label__text {
       font-weight: 600;
     }
 
-    label [aria-label='Required'],
-    label [aria-label='Optional'] {
+    .label__indicator {
       font-weight: 700;
     }
   }
 
-  /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
-    label {
+    .label__text {
       transition: none;
     }
   }
 
-  /* Enhanced hover states */
-  label:hover:not([aria-disabled='true']) {
-    opacity: 0.9;
+  :where(.dark) .label__text {
+    color: #f8fafc;
   }
 
-  /* Disabled state styling */
-  label:has(+ input:disabled),
-  label[aria-disabled='true'] {
-    opacity: 0.6;
-    cursor: not-allowed;
+  :where(.dark) .label__indicator--optional {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .label__description {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .label__description--disabled {
+    color: #94a3b8;
+  }
+
+  :where(.dark) .label__description--error,
+  :where(.dark) .label__indicator--required,
+  :where(.dark) .label__status-icon-graphic--error {
+    color: #f87171;
+  }
+
+  :where(.dark) .label__status-icon-graphic--warning {
+    color: #fbbf24;
+  }
+
+  :where(.dark) .label__status-icon-graphic--success {
+    color: #4ade80;
   }
 </style>

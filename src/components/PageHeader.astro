@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 interface Props {
   // Content props
   title: string;
@@ -46,167 +44,187 @@ const subtitleId = subtitle
   ? `subtitle-${Math.random().toString(36).substr(2, 9)}`
   : undefined;
 
-// Variant styles
-const variantStyles = {
-  default: 'py-8 lg:py-12',
-  centered: 'py-12 lg:py-16 text-center',
-  minimal: 'py-6 lg:py-8',
-  hero: 'py-16 lg:py-24 text-center',
-};
-
-// Size styles for title
-const titleSizeStyles = {
-  sm: 'text-2xl lg:text-3xl',
-  md: 'text-3xl lg:text-4xl',
-  lg: 'text-4xl lg:text-5xl xl:text-6xl',
-  xl: 'text-5xl lg:text-6xl xl:text-7xl',
-};
-
-// Size styles for subtitle
-const subtitleSizeStyles = {
-  sm: 'text-sm lg:text-base',
-  md: 'text-base lg:text-lg',
-  lg: 'text-lg lg:text-xl',
-  xl: 'text-xl lg:text-2xl',
-};
-
-// Background styles
-const backgroundStyles = {
-  none: '',
-  subtle: 'bg-gray-50/50 dark:bg-gray-900/50',
-  pattern:
-    'bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden before:absolute before:inset-0 before:bg-grid-gray-100/50 dark:before:bg-grid-gray-800/50 before:bg-[size:20px_20px] before:opacity-40',
-};
-
-// Alignment styles
-const alignmentStyles = {
-  left: 'text-left',
-  center: 'text-center',
-  right: 'text-right',
-};
-
 // Dynamic title tag
-const containerClasses = cn(
-  'w-full',
-  variantStyles[variant],
-  backgroundStyles[background],
-  alignmentStyles[alignment],
-  // WCAG AAA compliant spacing and readability
-  'focus-within:outline-none',
-  className
-);
+const rootClasses = [
+  'page-header',
+  `page-header--variant-${variant}`,
+  `page-header--size-${size}`,
+  `page-header--alignment-${alignment}`,
+  `page-header--background-${background}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-const titleClasses = cn(
-  titleSizeStyles[size],
-  'font-bold tracking-tight leading-tight',
-  // WCAG AAA contrast ratios
-  'text-gray-900 dark:text-gray-50',
-  // Responsive line height for readability
-  'leading-[1.1] lg:leading-[1.1]'
-);
+const WrapperTag = (`h${titleLevel}`) as keyof HTMLElementTagNameMap;
 
-const subtitleClasses = cn(
-  subtitleSizeStyles[size],
-  'leading-relaxed',
-  // WCAG AAA contrast ratios - slightly muted but still accessible
-  'text-gray-700 dark:text-gray-300',
-  // Responsive spacing
-  'mt-3 lg:mt-4'
-);
-
-const eyebrowClasses = cn(
-  'text-sm font-medium uppercase tracking-wider',
-  // WCAG AAA contrast ratios for accent text
-  'text-blue-600 dark:text-blue-400',
-  'mb-2 lg:mb-3'
-);
-
-// Determine max width based on alignment and variant
-const getMaxWidth = () => {
-  if (variant === 'centered' || variant === 'hero') {
-    return 'max-w-4xl mx-auto';
-  }
-  if (alignment === 'center') {
-    return 'max-w-4xl mx-auto';
-  }
-  return 'max-w-none';
-};
+const contentClasses = [
+  'page-header__content',
+  variant === 'centered' || variant === 'hero' || alignment === 'center'
+    ? 'page-header__content--narrow'
+    : '',
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <header
-  class={containerClasses}
+  class={rootClasses}
   role={role}
   aria-label={ariaLabel}
   aria-describedby={ariaDescribedBy || subtitleId}
 >
-  <div class={cn('px-4 sm:px-6 lg:px-8', getMaxWidth())}>
-    <div class="space-y-1">
-      {eyebrow && <div class={eyebrowClasses}>{eyebrow}</div>}
+  <div class={contentClasses}>
+    {eyebrow && <div class="page-header__eyebrow">{eyebrow}</div>}
 
-      {
-        titleLevel === 1 && (
-          <h1 id={headerId} class={titleClasses}>
-            {title}
-          </h1>
-        )
-      }
-      {
-        titleLevel === 2 && (
-          <h2 id={headerId} class={titleClasses}>
-            {title}
-          </h2>
-        )
-      }
-      {
-        titleLevel === 3 && (
-          <h3 id={headerId} class={titleClasses}>
-            {title}
-          </h3>
-        )
-      }
-      {
-        titleLevel === 4 && (
-          <h4 id={headerId} class={titleClasses}>
-            {title}
-          </h4>
-        )
-      }
-      {
-        titleLevel === 5 && (
-          <h5 id={headerId} class={titleClasses}>
-            {title}
-          </h5>
-        )
-      }
-      {
-        titleLevel === 6 && (
-          <h6 id={headerId} class={titleClasses}>
-            {title}
-          </h6>
-        )
-      }
+    {
+      title && (
+        <WrapperTag id={headerId} class="page-header__title">
+          {title}
+        </WrapperTag>
+      )
+    }
 
-      {
-        subtitle && (
-          <p id={subtitleId} class={subtitleClasses}>
-            {subtitle}
-          </p>
-        )
-      }
+    {
+      subtitle && (
+        <p id={subtitleId} class="page-header__subtitle">
+          {subtitle}
+        </p>
+      )
+    }
 
-      {
-        Astro.slots.has('default') && (
-          <div
-            class={cn(
-              'pt-4 lg:pt-6',
-              alignment === 'center' ? 'flex justify-center' : '',
-              alignment === 'right' ? 'flex justify-end' : ''
-            )}
-          >
-            <slot />
-          </div>
-        )
-      }
-    </div>
+    {
+      Astro.slots.has('default') && (
+        <div class="page-header__actions">
+          <slot />
+        </div>
+      )
+    }
   </div>
 </header>
+
+<style>
+  .page-header {
+    width: 100%;
+    padding: 2rem 1rem;
+  }
+
+  .page-header--variant-centered,
+  .page-header--variant-hero {
+    text-align: center;
+  }
+
+  .page-header--variant-hero {
+    padding-block: 4rem;
+  }
+
+  .page-header--variant-minimal {
+    padding-block: 1.5rem;
+  }
+
+  .page-header--alignment-center {
+    text-align: center;
+  }
+
+  .page-header--alignment-right {
+    text-align: right;
+  }
+
+  .page-header--background-subtle {
+    background-color: rgba(248, 250, 252, 0.6);
+  }
+
+  .page-header--background-pattern {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  }
+
+  .page-header--background-pattern::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      rgba(148, 163, 184, 0.25) 1px,
+      transparent 0
+    );
+    background-size: 20px 20px;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .page-header__content {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding-inline: 1rem;
+  }
+
+  .page-header__content--narrow {
+    max-width: 48rem;
+  }
+
+  .page-header__eyebrow {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #2563eb;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-header__title {
+    margin: 0;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.1;
+  }
+
+  .page-header--size-sm .page-header__title {
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+  }
+
+  .page-header--size-md .page-header__title {
+    font-size: clamp(2.25rem, 4vw, 3rem);
+  }
+
+  .page-header--size-lg .page-header__title {
+    font-size: clamp(2.75rem, 5vw, 4rem);
+  }
+
+  .page-header--size-xl .page-header__title {
+    font-size: clamp(3.25rem, 6vw, 4.5rem);
+  }
+
+  .page-header__subtitle {
+    margin-top: 1rem;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: #475569;
+    line-height: 1.6;
+  }
+
+  .page-header__actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .page-header--alignment-center .page-header__actions {
+    justify-content: center;
+  }
+
+  .page-header--alignment-right .page-header__actions {
+    justify-content: flex-end;
+  }
+
+  :where(.dark) .page-header {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .page-header__title {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .page-header__subtitle {
+    color: #cbd5f5;
+  }
+</style>

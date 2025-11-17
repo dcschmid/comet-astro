@@ -15,7 +15,8 @@ const minimalSnippet = `<HourlyForecast latitude={52.52} longitude={13.41} />`;
     <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
       Minimal stundenweiser Wetter Snapshot: Zeit, Temperatur,
       Niederschlagswahrscheinlichkeit, Symbol. Keine überflüssige Interaktion
-      oder Charts. Astro + Tailwind only. WCAG AAA Kontrast.
+      oder Charts. Astro-Komponente mit eingebautem BEM CSS für konsistente
+      Styles und WCAG AAA Kontrast.
     </p>
 
     <h2>Beispiel</h2>
@@ -79,7 +80,7 @@ const minimalSnippet = `<HourlyForecast latitude={52.52} longitude={13.41} />`;
       <div>
         <dt class="font-semibold text-slate-900 dark:text-slate-50">class?</dt>
         <dd class="text-slate-600 dark:text-slate-300">
-          Zusätzliche Tailwind Utility Klassen.
+          Zusätzliche Klassen für das Wurzelelement (z. B. zusätzliche Abstände).
         </dd>
       </div>
     </dl>
@@ -162,3 +163,34 @@ const minimalSnippet = `<HourlyForecast latitude={52.52} longitude={13.41} />`;
     </ul>
   </div>
 </DocsLayout>
+    <h2>CSS &amp; BEM Klassen</h2>
+    <p class="text-sm text-slate-700 dark:text-slate-300">
+      Die Komponente bringt ein vollständiges Stylesheet auf Basis von BEM
+      Klassen mit. Wichtige Selektoren:
+    </p>
+    <ul
+      class="list-disc pl-6 text-sm text-slate-700 dark:text-slate-300 space-y-1"
+    >
+      <li>
+        <code>.hourly-forecast</code> – Wrapper inkl. Rahmen, Schatten und
+        responsiver Innenabstand.
+      </li>
+      <li>
+        <code>.hourly-forecast__list</code> – Grid mit Breakpoints (3 → 4 → 6 → 8
+        Spalten).
+      </li>
+      <li>
+        <code>.hourly-forecast__item</code> – Einzelne Karten mit Hover Effekt
+        und Skeleton-Zustand.
+      </li>
+      <li>
+        <code>.hourly-forecast__time</code>, <code>__temp</code>,
+        <code>__precip</code> – Typografie für Zeit, Temperatur und
+        Niederschlagswert.
+      </li>
+    </ul>
+    <p class="text-sm text-slate-700 dark:text-slate-300">
+      Eigene Anpassungen können per zusätzlicher Klasse über den
+      <code>class</code>-Prop oder mittels globalen Styles erfolgen, ohne die
+      BEM Struktur zu brechen.
+    </p>

@@ -43,73 +43,60 @@ const {
 } = Astro.props as Props;
 const Tag = level;
 
-// Enhanced base classes with improved typography and accessibility
-const baseClasses = [
-  'leading-tight tracking-tight',
-  balance ? 'text-balance' : '',
-  'break-words hyphens-auto',
-]
-  .filter(Boolean)
-  .join(' ');
-
-// Enhanced text size system with better responsive scaling
-const textSizeClasses: Record<NonNullable<Props['textSize']>, string> = {
-  xs: 'text-base sm:text-lg md:text-xl',
-  sm: 'text-lg sm:text-xl md:text-2xl',
-  base: 'text-xl sm:text-2xl md:text-3xl',
-  lg: 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl',
-  xl: 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl',
-  '2xl': 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl',
-  '3xl': 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl',
-  '4xl': 'text-6xl sm:text-7xl md:text-8xl lg:text-9xl',
+// BEM class maps for typography system
+const sizeClassMap: Record<NonNullable<Props['textSize']>, string> = {
+  xs: 'headline--size-xs',
+  sm: 'headline--size-sm',
+  base: 'headline--size-base',
+  lg: 'headline--size-lg',
+  xl: 'headline--size-xl',
+  '2xl': 'headline--size-2xl',
+  '3xl': 'headline--size-3xl',
+  '4xl': 'headline--size-4xl',
 };
 
-// Enhanced alignment options
-const textAlignClasses: Record<NonNullable<Props['textAlign']>, string> = {
-  left: 'text-left',
-  center: 'text-center mx-auto',
-  right: 'text-right ml-auto',
-  justify: 'text-justify',
+const alignClassMap: Record<NonNullable<Props['textAlign']>, string> = {
+  left: 'headline--align-left',
+  center: 'headline--align-center',
+  right: 'headline--align-right',
+  justify: 'headline--align-justify',
 };
 
-// WCAG AAA compliant color system with enhanced contrast
-const colorClasses: Record<NonNullable<Props['color']>, string> = {
-  default: 'text-slate-900 dark:text-slate-50',
-  muted: 'text-slate-700 dark:text-slate-300',
-  accent: 'text-blue-900 dark:text-blue-100',
-  success: 'text-green-900 dark:text-green-100',
-  warning: 'text-amber-900 dark:text-amber-100',
-  error: 'text-red-900 dark:text-red-100',
+const colorClassMap: Record<NonNullable<Props['color']>, string> = {
+  default: 'headline--color-default',
+  muted: 'headline--color-muted',
+  accent: 'headline--color-accent',
+  success: 'headline--color-success',
+  warning: 'headline--color-warning',
+  error: 'headline--color-error',
 };
 
-// Enhanced weight system
-const weightClasses: Record<NonNullable<Props['weight']>, string> = {
-  normal: 'font-normal',
-  medium: 'font-medium',
-  semibold: 'font-semibold',
-  bold: 'font-bold',
-  extrabold: 'font-extrabold',
+const weightClassMap: Record<NonNullable<Props['weight']>, string> = {
+  normal: 'headline--weight-normal',
+  medium: 'headline--weight-medium',
+  semibold: 'headline--weight-semibold',
+  bold: 'headline--weight-bold',
+  extrabold: 'headline--weight-extrabold',
 };
 
-// Max width system for optimal reading experience
-const maxWidthClasses: Record<NonNullable<Props['maxWidth']>, string> = {
+const widthClassMap: Record<NonNullable<Props['maxWidth']>, string> = {
   none: '',
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  '2xl': 'max-w-2xl',
-  prose: 'max-w-prose',
+  sm: 'headline--width-sm',
+  md: 'headline--width-md',
+  lg: 'headline--width-lg',
+  xl: 'headline--width-xl',
+  '2xl': 'headline--width-2xl',
+  prose: 'headline--width-prose',
 };
 
-// Build comprehensive class string
 const classes = [
-  baseClasses,
-  textSizeClasses[textSize],
-  textAlignClasses[textAlign],
-  colorClasses[color],
-  weightClasses[weight],
-  maxWidthClasses[maxWidth],
+  'headline',
+  balance ? 'headline--balanced' : '',
+  sizeClassMap[textSize],
+  alignClassMap[textAlign],
+  colorClassMap[color],
+  weightClassMap[weight],
+  widthClassMap[maxWidth],
   className,
 ]
   .filter(Boolean)
@@ -125,3 +112,291 @@ const ariaAttributes = {
 <Tag class={classes} {...ariaAttributes}>
   {title || <slot />}
 </Tag>
+
+<style is:inline>
+  .headline {
+    margin: 0;
+    display: block;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .headline--balanced {
+    text-wrap: balance;
+  }
+
+  .headline--align-left {
+    text-align: left;
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .headline--align-center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .headline--align-right {
+    text-align: right;
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .headline--align-justify {
+    text-align: justify;
+  }
+
+  .headline--color-default {
+    color: #0f172a;
+  }
+
+  :where(.dark) .headline--color-default {
+    color: #f8fafc;
+  }
+
+  .headline--color-muted {
+    color: #334155;
+  }
+
+  :where(.dark) .headline--color-muted {
+    color: #cbd5f5;
+  }
+
+  .headline--color-accent {
+    color: #1d4ed8;
+  }
+
+  :where(.dark) .headline--color-accent {
+    color: #bfdbfe;
+  }
+
+  .headline--color-success {
+    color: #166534;
+  }
+
+  :where(.dark) .headline--color-success {
+    color: #bbf7d0;
+  }
+
+  .headline--color-warning {
+    color: #b45309;
+  }
+
+  :where(.dark) .headline--color-warning {
+    color: #fde68a;
+  }
+
+  .headline--color-error {
+    color: #b91c1c;
+  }
+
+  :where(.dark) .headline--color-error {
+    color: #fecaca;
+  }
+
+  .headline--weight-normal {
+    font-weight: 400;
+  }
+
+  .headline--weight-medium {
+    font-weight: 500;
+  }
+
+  .headline--weight-semibold {
+    font-weight: 600;
+  }
+
+  .headline--weight-bold {
+    font-weight: 700;
+  }
+
+  .headline--weight-extrabold {
+    font-weight: 800;
+  }
+
+  .headline--width-sm {
+    max-width: 24rem;
+  }
+
+  .headline--width-md {
+    max-width: 28rem;
+  }
+
+  .headline--width-lg {
+    max-width: 32rem;
+  }
+
+  .headline--width-xl {
+    max-width: 36rem;
+  }
+
+  .headline--width-2xl {
+    max-width: 42rem;
+  }
+
+  .headline--width-prose {
+    max-width: 65ch;
+  }
+
+  .headline--size-xs {
+    font-size: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .headline--size-xs {
+      font-size: 1.125rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .headline--size-xs {
+      font-size: 1.25rem;
+    }
+  }
+
+  .headline--size-sm {
+    font-size: 1.125rem;
+  }
+
+  @media (min-width: 640px) {
+    .headline--size-sm {
+      font-size: 1.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .headline--size-sm {
+      font-size: 1.5rem;
+    }
+  }
+
+  .headline--size-base {
+    font-size: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .headline--size-base {
+      font-size: 1.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .headline--size-base {
+      font-size: 1.875rem;
+    }
+  }
+
+  .headline--size-lg {
+    font-size: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .headline--size-lg {
+      font-size: 1.875rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .headline--size-lg {
+      font-size: 2.25rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .headline--size-lg {
+      font-size: 3rem;
+    }
+  }
+
+  .headline--size-xl {
+    font-size: 1.875rem;
+  }
+
+  @media (min-width: 640px) {
+    .headline--size-xl {
+      font-size: 2.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .headline--size-xl {
+      font-size: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .headline--size-xl {
+      font-size: 3.75rem;
+    }
+  }
+
+  .headline--size-2xl {
+    font-size: 2.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .headline--size-2xl {
+      font-size: 3rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .headline--size-2xl {
+      font-size: 3.75rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .headline--size-2xl {
+      font-size: 4.5rem;
+    }
+  }
+
+  .headline--size-3xl {
+    font-size: 3rem;
+  }
+
+  @media (min-width: 640px) {
+    .headline--size-3xl {
+      font-size: 3.75rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .headline--size-3xl {
+      font-size: 4.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .headline--size-3xl {
+      font-size: 6rem;
+    }
+  }
+
+  .headline--size-4xl {
+    font-size: 3.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .headline--size-4xl {
+      font-size: 4.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .headline--size-4xl {
+      font-size: 6rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .headline--size-4xl {
+      font-size: 8rem;
+    }
+  }
+</style>

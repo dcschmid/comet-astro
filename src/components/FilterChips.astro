@@ -32,92 +32,21 @@ const {
   ariaDescribedby,
 } = Astro.props as Props;
 
-const sizeClasses = {
-  sm: 'px-3 py-1 text-xs',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-5 py-3 text-base',
-};
-
-const variantClasses = {
-  default: {
-    active: [
-      'bg-blue-600',
-      'text-white',
-      'border-blue-600/90',
-      'shadow-lg',
-      'dark:bg-blue-500',
-      'dark:border-blue-500/90',
-    ],
-    inactive: [
-      'bg-white',
-      'text-slate-800',
-      'border-slate-300/90',
-      'hover:bg-slate-50',
-      'hover:border-slate-400',
-      'dark:bg-slate-800',
-      'dark:text-slate-200',
-      'dark:border-slate-600/90',
-      'dark:hover:bg-slate-700',
-      'dark:hover:border-slate-500',
-    ],
-  },
-  outlined: {
-    active: [
-      'bg-blue-50',
-      'text-blue-800',
-      'border-blue-600/90',
-      'shadow-lg',
-      'dark:bg-blue-500/20',
-      'dark:text-blue-300',
-      'dark:border-blue-400/90',
-    ],
-    inactive: [
-      'bg-transparent',
-      'text-slate-700',
-      'border-slate-300/90',
-      'hover:bg-slate-50',
-      'hover:border-slate-400',
-      'dark:text-slate-300',
-      'dark:border-slate-600/90',
-      'dark:hover:bg-slate-800',
-      'dark:hover:border-slate-500',
-    ],
-  },
-  subtle: {
-    active: [
-      'bg-slate-100',
-      'text-slate-900',
-      'border-slate-300/90',
-      'shadow-lg',
-      'dark:bg-slate-700',
-      'dark:text-slate-100',
-      'dark:border-slate-600/90',
-    ],
-    inactive: [
-      'bg-slate-50',
-      'text-slate-700',
-      'border-slate-200/90',
-      'hover:bg-slate-100',
-      'hover:border-slate-300',
-      'dark:bg-slate-800',
-      'dark:text-slate-300',
-      'dark:border-slate-700/90',
-      'dark:hover:bg-slate-700',
-      'dark:hover:border-slate-600',
-    ],
-  },
-};
-
-const activeClasses = variantClasses[variant].active;
-const inactiveClasses = variantClasses[variant].inactive;
+const rootClasses = [
+  'filter-chips',
+  `filter-chips--size-${size}`,
+  `filter-chips--variant-${variant}`,
+  multi ? 'filter-chips--multi' : 'filter-chips--single',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
-  class={`flex flex-wrap gap-3 ${className}`.trim()}
+  class={rootClasses}
   data-multi={multi}
   data-selected={selected.join(',')}
-  data-active-classes={activeClasses.join(' ')}
-  data-inactive-classes={inactiveClasses.join(' ')}
   role={multi ? 'group' : 'radiogroup'}
   aria-label={ariaLabel || (multi ? 'Filter options' : 'Select option')}
   aria-describedby={ariaDescribedby}
@@ -134,18 +63,11 @@ const inactiveClasses = variantClasses[variant].inactive;
           aria-checked={isActive}
           aria-disabled={isDisabled}
           disabled={isDisabled}
-          class:list={[
-            'inline-flex items-center gap-2 rounded-full border-2 font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800',
-            sizeClasses[size],
-            ...(isActive ? activeClasses : inactiveClasses),
-            isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
-          ]}
+          class={`filter-chips__chip ${isActive ? 'filter-chips__chip--active' : ''} ${isDisabled ? 'filter-chips__chip--disabled' : ''}`}
         >
-          <span>{chip.label}</span>
+          <span class="filter-chips__label">{chip.label}</span>
           {chip.count !== undefined && (
-            <span class="ml-1 rounded-full bg-current/20 px-2 py-0.5 text-xs font-medium">
-              {chip.count}
-            </span>
+            <span class="filter-chips__count">{chip.count}</span>
           )}
         </button>
       );
@@ -158,12 +80,6 @@ const inactiveClasses = variantClasses[variant].inactive;
     const root = document.currentScript?.previousElementSibling;
     if (!(root instanceof HTMLElement)) return;
     const multi = root.getAttribute('data-multi') === 'true';
-    const activeClasses = (root.getAttribute('data-active-classes') || '')
-      .split(' ')
-      .filter(Boolean);
-    const inactiveClasses = (root.getAttribute('data-inactive-classes') || '')
-      .split(' ')
-      .filter(Boolean);
 
     const getSelected = () =>
       new Set(
@@ -182,8 +98,7 @@ const inactiveClasses = variantClasses[variant].inactive;
         const id = el.getAttribute('data-id');
         const isActive = id ? selectedSet.has(id) : false;
         el.setAttribute('aria-checked', isActive ? 'true' : 'false');
-        el.classList.remove(...activeClasses, ...inactiveClasses);
-        el.classList.add(...(isActive ? activeClasses : inactiveClasses));
+        el.classList.toggle('filter-chips__chip--active', isActive);
       });
     };
 
@@ -257,3 +172,126 @@ const inactiveClasses = variantClasses[variant].inactive;
     });
   })();
 </script>
+
+<style is:inline>
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    --chip-count-text: #ffffff;
+  }
+  .filter-chips__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 2rem;
+    border: 2px solid transparent;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease;
+    background: var(--chip-bg, #ffffff);
+    color: var(--chip-text, #0f172a);
+    box-shadow: 0 0 0 1px var(--chip-border, rgba(15, 23, 42, 0.15));
+    padding: var(--chip-padding-y, 0.5rem) var(--chip-padding-x, 1rem);
+    font-size: var(--chip-font, 0.9rem);
+  }
+  .filter-chips__chip:focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.75);
+    outline-offset: 2px;
+  }
+  .filter-chips__chip--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .filter-chips__label {
+    white-space: nowrap;
+  }
+  .filter-chips__count {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.75rem;
+    background: currentColor;
+    color: var(--chip-count-text, #ffffff);
+    opacity: 0.2;
+  }
+  .filter-chips--size-sm {
+    --chip-padding-x: 0.85rem;
+    --chip-padding-y: 0.35rem;
+    --chip-font: 0.8rem;
+  }
+  .filter-chips--size-lg {
+    --chip-padding-x: 1.2rem;
+    --chip-padding-y: 0.65rem;
+    --chip-font: 1rem;
+  }
+  .filter-chips--variant-default {
+    --chip-bg: #ffffff;
+    --chip-border: rgba(15, 23, 42, 0.2);
+    --chip-text: #0f172a;
+  }
+  .filter-chips--variant-default .filter-chips__chip--active {
+    --chip-bg: #2563eb;
+    --chip-border: #1d4ed8;
+    --chip-text: #ffffff;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+  }
+  .filter-chips--variant-outlined {
+    --chip-bg: transparent;
+    --chip-border: rgba(15, 23, 42, 0.3);
+    --chip-text: #334155;
+  }
+  .filter-chips--variant-outlined .filter-chips__chip--active {
+    --chip-bg: rgba(37, 99, 235, 0.12);
+    --chip-border: rgba(37, 99, 235, 0.6);
+    --chip-text: #1d4ed8;
+  }
+  .filter-chips--variant-subtle {
+    --chip-bg: rgba(248, 250, 252, 0.9);
+    --chip-border: rgba(148, 163, 184, 0.4);
+    --chip-text: #0f172a;
+  }
+  .filter-chips--variant-subtle .filter-chips__chip--active {
+    --chip-bg: rgba(148, 163, 184, 0.25);
+    --chip-border: rgba(148, 163, 184, 0.6);
+  }
+  :where(.dark) .filter-chips--variant-default {
+    --chip-bg: rgba(15, 23, 42, 0.8);
+    --chip-border: rgba(148, 163, 184, 0.4);
+    --chip-text: #f8fafc;
+  }
+  :where(.dark) .filter-chips--variant-default .filter-chips__chip--active {
+    --chip-bg: #3b82f6;
+    --chip-border: #2563eb;
+  }
+  :where(.dark) .filter-chips--variant-outlined {
+    --chip-border: rgba(148, 163, 184, 0.4);
+    --chip-text: #e2e8f0;
+  }
+  :where(.dark) .filter-chips--variant-outlined .filter-chips__chip--active {
+    --chip-bg: rgba(59, 130, 246, 0.25);
+    --chip-text: #bfdbfe;
+  }
+  :where(.dark) .filter-chips--variant-subtle {
+    --chip-bg: rgba(15, 23, 42, 0.8);
+    --chip-border: rgba(148, 163, 184, 0.25);
+    --chip-text: #f8fafc;
+  }
+  :where(.dark) .filter-chips--variant-subtle .filter-chips__chip--active {
+    --chip-bg: rgba(148, 163, 184, 0.25);
+  }
+  .filter-chips__chip:not(.filter-chips__chip--disabled):hover {
+    border-color: rgba(37, 99, 235, 0.5);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .filter-chips__chip {
+      transition: none;
+    }
+  }
+</style>

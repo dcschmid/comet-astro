@@ -1,31 +1,14 @@
 ---
-import { cn } from '../utils/cn';
-
-/**
- * Accessible Card component.
- * WCAG AAA considerations:
- * - Uses semantic container (<article> default) for standalone content blocks.
- * - Provides configurable element via `as` prop (e.g. 'section', 'div') for layout contexts.
- * - Supports interactive variant via `href` / `on:click` (focus ring + role semantics).
- * - Ensures color contrast by relying on design-token CSS variables and fallback high-contrast values.
- * - Adds clear focus outline (2px) with sufficient contrast in both light and dark themes.
- */
 interface Props {
-  /** Optional element tag name; defaults to 'article'. */
   as?: 'article' | 'section' | 'div' | 'li';
-  /** Optional link target; turns card into an anchor element. */
   href?: string;
-  /** Optional explicit aria-label when no visible heading is present. */
   ariaLabel?: string;
-  /** Custom class names to extend styling. */
   class?: string;
-  /** Disable shadow for flat appearance. */
   flat?: boolean;
-  /** Elevation level (0-3) controlling shadow intensity. */
   elevation?: 0 | 1 | 2 | 3;
-  /** Make card focusable even if not a link/button. */
   tabIndex?: number;
 }
+
 const {
   as = 'article',
   href,
@@ -36,54 +19,107 @@ const {
   tabIndex,
 } = Astro.props as Props;
 
-// Map elevation to shadow utility classes (assumes Tailwind style tokens present)
-const elevationShadow = (
-  {
-    0: 'shadow-none',
-    1: 'shadow-sm',
-    2: 'shadow-md',
-    3: 'shadow-lg',
-  } as const
-)[elevation];
-
-// Base styling with CSS variables to enforce contrast; tokens can be themed externally.
-// --card-bg / --card-fg allow consuming app to adjust for AAA contrast.
-const base = cn(
-  'group relative rounded-lg border bg-[var(--card-bg,theme(colors.white))] dark:bg-[var(--card-bg-dark,theme(colors.neutral.900))] border-neutral-200 dark:border-neutral-800',
-  flat ? 'shadow-none' : elevationShadow,
-  // Text color fallback ensures >= 7:1 contrast on both modes (e.g., neutral-900 vs white).
-  'text-[var(--card-fg,theme(colors.neutral.900))] dark:text-[var(--card-fg-dark,theme(colors.neutral.50))]'
-);
-
-// Focus ring (AA/AAA contrast) uses outline with offset for visibility.
-const focusStyles = cn(
-  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-  'focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400'
-);
-
-// Interactive styles if href provided.
-const interactive = href
-  ? 'cursor-pointer transition-colors hover:bg-[var(--card-bg-hover,theme(colors.neutral.50))] dark:hover:bg-[var(--card-bg-dark-hover,theme(colors.neutral.800))]'
-  : '';
-
-// Decide which element to render; anchor if href, else chosen semantic tag.
 const Tag = href ? 'a' : as;
-
-// Accessibility attributes.
 const ariaAttrs: Record<string, string> = {};
 if (ariaLabel) ariaAttrs['aria-label'] = ariaLabel;
 
-// If interactive and not naturally focusable (anchor handles itself), ensure role and tabindex.
-if (!href && tabIndex !== undefined) {
-  // no extra role needed unless click handler is added externally.
-}
+const classes = [
+  'card',
+  flat ? 'card--flat' : '',
+  `card--elevation-${elevation}`,
+  href ? 'card--interactive' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<Tag
-  class={cn(base, focusStyles, interactive, className)}
-  href={href}
-  tabindex={tabIndex}
-  {...ariaAttrs}
->
+<Tag class={classes} href={href} tabindex={tabIndex} {...ariaAttrs}>
   <slot />
 </Tag>
+
+<style is:inline>
+  .card {
+    --card-bg: #ffffff;
+    --card-bg-dark: #0f172a;
+    --card-text: #0f172a;
+    --card-text-dark: #f8fafc;
+    --card-border: rgba(148, 163, 184, 0.45);
+    --card-border-dark: rgba(148, 163, 184, 0.45);
+    --card-radius: 1.1rem;
+    --card-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
+    --card-shadow-dark: 0 15px 35px rgba(0, 0, 0, 0.35);
+    --card-hover-bg: #f8fafc;
+    --card-hover-bg-dark: #1e293b;
+    --card-focus: rgba(59, 130, 246, 0.65);
+    position: relative;
+    display: block;
+    border-radius: var(--card-radius);
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--card-text);
+    box-shadow: var(--card-shadow);
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  :where(.dark) .card {
+    border-color: var(--card-border-dark);
+    background: var(--card-bg-dark);
+    color: var(--card-text-dark);
+    box-shadow: var(--card-shadow-dark);
+  }
+
+  .card:focus-visible {
+    outline: 3px solid var(--card-focus);
+    outline-offset: 3px;
+  }
+
+  .card--flat {
+    box-shadow: none;
+  }
+
+  .card--elevation-0 {
+    box-shadow: none;
+  }
+
+  .card--elevation-1 {
+    box-shadow: 0 12px 25px rgba(15, 23, 42, 0.12);
+  }
+
+  .card--elevation-2 {
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+  }
+
+  .card--elevation-3 {
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.18);
+  }
+
+  :where(.dark) .card--elevation-1 {
+    box-shadow: 0 12px 30px rgba(2, 6, 23, 0.7);
+  }
+
+  :where(.dark) .card--elevation-2 {
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.8);
+  }
+
+  :where(.dark) .card--elevation-3 {
+    box-shadow: 0 25px 65px rgba(2, 6, 23, 0.85);
+  }
+
+  .card--interactive {
+    cursor: pointer;
+  }
+
+  .card--interactive:hover {
+    background: var(--card-hover-bg);
+    transform: translateY(-1px);
+  }
+
+  :where(.dark) .card--interactive:hover {
+    background: var(--card-hover-bg-dark);
+  }
+</style>

@@ -30,20 +30,6 @@ const {
   className = '',
 } = Astro.props as Props;
 
-// Size variants
-const sizeClasses = {
-  sm: 'gap-2 py-6',
-  md: 'gap-4 py-8',
-  lg: 'gap-6 py-12',
-};
-
-// Text size for labels
-const labelSizes = {
-  sm: 'text-xs',
-  md: 'text-sm',
-  lg: 'text-base',
-};
-
 // Spinner sizes
 const spinnerSizes = {
   sm: 'xs',
@@ -51,22 +37,28 @@ const spinnerSizes = {
   lg: 'md',
 };
 
-// Variant styles with WCAG AAA compliant colors
-const variantClasses = {
-  default:
-    'flex flex-col items-center justify-center text-slate-700 dark:text-slate-200',
-  minimal: 'flex items-center gap-3 text-slate-600 dark:text-slate-300',
-  card: 'flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-8 text-slate-700 dark:text-slate-200',
-  fullscreen:
-    'fixed inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 z-50',
-};
+const baseClasses = [
+  'loading-state',
+  `loading-state--${variant}`,
+  `loading-state--size-${size}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-const containerClasses =
-  `${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
+const labelClasses = [
+  'loading-state__label',
+  `loading-state__label--${size}`,
+  variant === 'minimal'
+    ? 'loading-state__label--inline'
+    : 'loading-state__label--block',
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
-  class={containerClasses}
+  class={baseClasses}
   role="status"
   aria-live="polite"
   aria-label={label}
@@ -75,29 +67,27 @@ const containerClasses =
     variant === 'minimal' ? (
       <>
         <LoadingSpinner
+          className="loading-state__spinner"
           size={spinnerSizes[size] as 'xs' | 'sm' | 'md'}
           animation={animation}
           variant="default"
           aria-hidden="true"
         />
-        <span class={`font-medium ${labelSizes[size]}`}>{label}</span>
+        <span class={labelClasses}>{label}</span>
       </>
     ) : (
       <>
         <LoadingSpinner
+          className="loading-state__spinner"
           size={spinnerSizes[size] as 'xs' | 'sm' | 'md'}
           animation={animation}
           variant="default"
           aria-hidden="true"
         />
-        {label && (
-          <div class={`font-medium ${labelSizes[size]} text-center`}>
-            {label}
-          </div>
-        )}
+        {label && <div class={labelClasses}>{label}</div>}
 
         {skeletonRows > 0 && (
-          <div class="w-full max-w-2xl space-y-2 mt-2">
+          <div class="loading-state__skeletons">
             {skeletonRows >= 1 && (
               <Skeleton
                 width="100%"
@@ -152,3 +142,123 @@ const containerClasses =
     )
   }
 </div>
+
+<style>
+  .loading-state {
+    --loading-state-gap: 1rem;
+    --loading-state-padding-block: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: var(--loading-state-gap);
+    padding-block: var(--loading-state-padding-block);
+    width: 100%;
+    color: #334155;
+  }
+
+  .loading-state--size-sm {
+    --loading-state-gap: 0.5rem;
+    --loading-state-padding-block: 1.5rem;
+  }
+
+  .loading-state--size-md {
+    --loading-state-gap: 1rem;
+    --loading-state-padding-block: 2rem;
+  }
+
+  .loading-state--size-lg {
+    --loading-state-gap: 1.5rem;
+    --loading-state-padding-block: 3rem;
+  }
+
+  .loading-state__spinner {
+    color: inherit;
+  }
+
+  .loading-state__label {
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .loading-state__label--sm {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .loading-state__label--md {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .loading-state__label--lg {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .loading-state__label--inline {
+    display: inline-flex;
+    align-items: center;
+    text-align: left;
+  }
+
+  .loading-state__label--block {
+    display: block;
+    text-align: center;
+  }
+
+  .loading-state__skeletons {
+    width: 100%;
+    max-width: 42rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .loading-state--default {
+    color: #334155;
+  }
+
+  .loading-state--minimal {
+    color: #475569;
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .loading-state--card {
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    padding-inline: 2rem;
+  }
+
+  .loading-state--fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+  }
+
+  :where(.dark) .loading-state--default,
+  :where(.dark) .loading-state--card,
+  :where(.dark) .loading-state--fullscreen {
+    color: #e2e8f0;
+  }
+
+  :where(.dark) .loading-state--minimal {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .loading-state--card {
+    border-color: #334155;
+    background-color: rgba(30, 41, 59, 0.5);
+  }
+
+  :where(.dark) .loading-state--fullscreen {
+    background-color: rgba(15, 23, 42, 0.8);
+  }
+</style>

@@ -1,9 +1,9 @@
 ---
 /* BaseLayout.astro
  * A minimal, extensible, WCAG-focused layout skeleton for apps using Comet Astro.
- * Provides: semantic landmarks, skip link, font preference handling, theme toggle slot, optional nav/sidebar slots.
+ * Provides: semantic landmarks, skip link, font preference handling, theme toggle slot, optional nav/sidebar slots, BEM-based styling.
  */
-import '../styles/tailwind.css';
+import '../styles/normalize.css';
 import '../styles/accessible-fonts.css';
 import '../styles/fontsource.css';
 import SkipLink from '../components/SkipLink.astro';
@@ -57,6 +57,15 @@ const fontClassMap: Record<string, string> = {
   opendyslexic: 'font-opendyslexic',
 };
 const resolvedFontClass = fontClassMap[fontMode] || fontClassMap.default;
+const baseClasses = [
+  'base-layout',
+  `base-layout--font-${fontMode}`,
+  highLegibility && 'base-layout--legibility',
+  highLegibility && 'a11y-highlegibility',
+  resolvedFontClass,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <!doctype html>
@@ -159,13 +168,7 @@ const resolvedFontClass = fontClassMap[fontMode] || fontClassMap.default;
     }
   </head>
   <body
-    class={[
-      'min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100',
-      resolvedFontClass,
-      highLegibility && 'a11y-highlegibility',
-    ]
-      .filter(Boolean)
-      .join(' ')}
+    class={baseClasses}
     data-font-mode={fontMode}
   >
     <SkipLink targetId={mainId} label="Skip to main content" />
@@ -180,24 +183,106 @@ const resolvedFontClass = fontClassMap[fontMode] || fontClassMap.default;
       )
     }
 
-    <Container size={containerSize} as="header">
+    <Container
+      size={containerSize}
+      as="header"
+      class="base-layout__section base-layout__section--header"
+    >
       <slot name="header" />
     </Container>
 
-    <Container size={containerSize} as="nav">
+    <Container
+      size={containerSize}
+      as="nav"
+      class="base-layout__section base-layout__section--nav"
+    >
       <slot name="nav" />
     </Container>
 
-    <Container size={containerSize} as="aside">
+    <Container
+      size={containerSize}
+      as="aside"
+      class="base-layout__section base-layout__section--sidebar"
+    >
       <slot name="sidebar" />
     </Container>
 
-    <Container size={containerSize} as="main" id={mainId}>
+    <Container
+      size={containerSize}
+      as="main"
+      id={mainId}
+      class="base-layout__section base-layout__section--main"
+    >
       <slot name="main" />
     </Container>
-  </body>
 
-  <Container size={containerSize} as="footer">
-    <slot name="footer" />
-  </Container>
+    <Container
+      size={containerSize}
+      as="footer"
+      class="base-layout__section base-layout__section--footer"
+    >
+      <slot name="footer" />
+    </Container>
+  </body>
 </html>
+
+<style is:inline>
+  .base-layout {
+    --bl-bg: #f8fafc;
+    --bl-text: #0f172a;
+    --bl-muted: #475569;
+    --bl-border: #e2e8f0;
+    --bl-radius: 1rem;
+    min-height: 100vh;
+    background-color: var(--bl-bg);
+    color: var(--bl-text);
+    line-height: 1.6;
+  }
+
+  .base-layout--legibility {
+    letter-spacing: 0.01em;
+    word-spacing: 0.05em;
+    line-height: 1.7;
+  }
+
+  .base-layout__section {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .base-layout__section--header {
+    padding-top: 1.5rem;
+  }
+
+  .base-layout__section--footer {
+    padding-bottom: 2rem;
+    border-top: 1px solid var(--bl-border);
+  }
+
+  :where(.dark) .base-layout {
+    --bl-bg: #0b1220;
+    --bl-text: #e5e7eb;
+    --bl-muted: #cbd5e1;
+    --bl-border: #1f2937;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .base-layout,
+    .base-layout * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>

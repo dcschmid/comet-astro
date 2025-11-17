@@ -70,79 +70,72 @@ const cardId = `media-card-${Math.random().toString(36).substr(2, 9)}`;
 const titleId = `${cardId}-title`;
 const descId = `${cardId}-desc`;
 
-// Variant styles
-const variantClasses = {
-  default: 'flex-col',
-  horizontal: 'flex-row md:flex-row',
-  minimal: 'flex-col border-0 shadow-none bg-transparent dark:bg-transparent',
-  featured: 'flex-col border-2',
-};
-
-// Size styles for different variants
-const sizeClasses = {
+const sizeTokens = {
   sm: {
-    card: 'max-w-sm',
-    image: variant === 'horizontal' ? 'w-32 h-24' : 'h-32',
-    padding: 'p-3',
-    title: 'text-base',
-    text: 'text-sm',
+    cardWidth: '24rem',
+    padding: '0.75rem',
+    titleSize: '1rem',
+    textSize: '0.875rem',
+    imageHeight: '8rem',
+    horizontalWidth: '8rem',
+    horizontalHeight: '6rem',
   },
   md: {
-    card: 'max-w-md',
-    image: variant === 'horizontal' ? 'w-48 h-36' : 'h-48',
-    padding: 'p-4',
-    title: 'text-lg',
-    text: 'text-base',
+    cardWidth: '28rem',
+    padding: '1rem',
+    titleSize: '1.125rem',
+    textSize: '1rem',
+    imageHeight: '12rem',
+    horizontalWidth: '12rem',
+    horizontalHeight: '9rem',
   },
   lg: {
-    card: 'max-w-lg',
-    image: variant === 'horizontal' ? 'w-64 h-48' : 'h-64',
-    padding: 'p-6',
-    title: 'text-xl',
-    text: 'text-lg',
+    cardWidth: '32rem',
+    padding: '1.5rem',
+    titleSize: '1.25rem',
+    textSize: '1.125rem',
+    imageHeight: '16rem',
+    horizontalWidth: '16rem',
+    horizontalHeight: '12rem',
   },
-};
+} as const;
 
-const currentSize = sizeClasses[size];
+const sizeVars = sizeTokens[size];
 
-// Base card classes with WCAG AAA contrast
-const baseClasses = `
-  group relative
-  ${variantClasses[variant]}
-  ${currentSize.card}
-  ${variant !== 'minimal' ? 'bg-white dark:bg-gray-900' : ''}
-  ${variant !== 'minimal' ? 'border border-gray-200 dark:border-gray-700' : ''}
-  ${variant === 'featured' ? 'border-blue-200 dark:border-blue-800' : ''}
-  ${variant !== 'minimal' ? 'rounded-lg shadow-sm' : ''}
-  ${variant !== 'minimal' ? 'hover:shadow-md' : ''}
-  transition-all duration-200 ease-in-out
-  ${disabled ? 'opacity-50 pointer-events-none' : ''}
-  ${loading ? 'animate-pulse' : ''}
-  overflow-hidden
-`
-  .trim()
-  .replace(/\s+/g, ' ');
+const inlineStyle = Object.entries({
+  '--media-card-max-width': sizeVars.cardWidth,
+  '--media-card-padding': sizeVars.padding,
+  '--media-card-title-size': sizeVars.titleSize,
+  '--media-card-text-size': sizeVars.textSize,
+  '--media-card-image-height': sizeVars.imageHeight,
+  '--media-card-horizontal-width': sizeVars.horizontalWidth,
+  '--media-card-horizontal-height': sizeVars.horizontalHeight,
+}).reduce((acc, [key, value]) => `${acc}${key}: ${value}; `, '');
 
-// Image container classes
-const imageContainerClasses = `
-  ${variant === 'horizontal' ? 'flex-shrink-0' : ''}
-  ${variant === 'horizontal' ? currentSize.image : 'w-full ' + currentSize.image}
-  relative overflow-hidden
-  ${variant !== 'minimal' ? 'bg-gray-100 dark:bg-gray-800' : ''}
-`
-  .trim()
-  .replace(/\s+/g, ' ');
+const userClasses = [className, legacyClassName].filter(Boolean).join(' ');
 
-// Content container classes
-const contentClasses = `
-  ${currentSize.padding}
-  ${variant === 'horizontal' ? 'flex-1' : ''}
-  flex flex-col justify-between
-`
-  .trim()
-  .replace(/\s+/g, ' ');
+const rootClasses = [
+  'media-card',
+  `media-card--variant-${variant}`,
+  `media-card--size-${size}`,
+  loading ? 'media-card--loading' : '',
+  disabled ? 'media-card--disabled' : '',
+  userClasses,
+]
+  .filter(Boolean)
+  .join(' ');
 
-const finalClassName = className || legacyClassName || '';
+const imageContainerClasses = [
+  'media-card__image',
+  variant === 'horizontal' ? 'media-card__image--horizontal' : '',
+]
+  .filter(Boolean)
+  .join(' ');
+
+const contentClasses = ['media-card__content', variant === 'horizontal' ? 'media-card__content--horizontal' : '']
+  .filter(Boolean)
+  .join(' ');
+
 ---
 
 <article
@@ -150,7 +143,8 @@ const finalClassName = className || legacyClassName || '';
   role={role}
   aria-label={ariaLabel}
   aria-describedby={ariaDescribedBy || (description ? descId : undefined)}
-  class={`${baseClasses} ${finalClassName}`}
+  class={rootClasses}
+  style={inlineStyle}
 >
   {
     showImage && image && (
@@ -158,14 +152,14 @@ const finalClassName = className || legacyClassName || '';
         <img
           src={image}
           alt={alt || title}
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+          class="media-card__img"
           loading="lazy"
           decoding="async"
           aria-describedby={alt ? undefined : titleId}
         />
         {loading && (
           <div
-            class="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse"
+            class="media-card__image-overlay"
             aria-label="Loading image..."
           />
         )}
@@ -174,26 +168,14 @@ const finalClassName = className || legacyClassName || '';
   }
 
   <div class={contentClasses}>
-    <div class="flex-1">
-      <div class="mb-2">
+    <div class="media-card__body">
+      <div class="media-card__title-wrapper">
         {
           href ? (
             <a
               href={href}
               id={titleId}
-              class={`
-              ${currentSize.title} font-semibold
-              text-gray-900 dark:text-gray-50
-              hover:text-blue-700 dark:hover:text-blue-300
-              focus:text-blue-700 dark:focus:text-blue-300
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-              dark:focus:ring-offset-gray-900
-              transition-colors duration-200
-              underline-offset-4 hover:underline focus:underline
-              no-underline
-            `
-                .trim()
-                .replace(/\s+/g, ' ')}
+              class="media-card__title-link"
               aria-describedby={description ? descId : undefined}
             >
               {title}
@@ -201,12 +183,7 @@ const finalClassName = className || legacyClassName || '';
           ) : (
             <h3
               id={titleId}
-              class={`
-              ${currentSize.title} font-semibold
-              text-gray-900 dark:text-gray-50
-            `
-                .trim()
-                .replace(/\s+/g, ' ')}
+              class="media-card__title-text"
             >
               {title}
             </h3>
@@ -218,14 +195,7 @@ const finalClassName = className || legacyClassName || '';
         description && (
           <p
             id={descId}
-            class={`
-            ${currentSize.text}
-            text-gray-700 dark:text-gray-300
-            leading-relaxed
-            ${showActions && actions.length > 0 ? 'mb-4' : ''}
-          `
-              .trim()
-              .replace(/\s+/g, ' ')}
+            class="media-card__description"
           >
             {description}
           </p>
@@ -235,37 +205,16 @@ const finalClassName = className || legacyClassName || '';
 
     {
       showActions && actions.length > 0 && (
-        <div
-          class="flex flex-wrap gap-2 mt-auto"
-          role="group"
-          aria-label="Card actions"
-        >
+        <div class="media-card__actions" role="group" aria-label="Card actions">
           {actions.map((action, index) => {
             const actionId = `${cardId}-action-${index}`;
-            const buttonClasses = `
-            px-3 py-1.5 rounded-md font-medium text-sm
-            transition-all duration-200 ease-in-out
-            focus:outline-none focus:ring-2 focus:ring-offset-2
-            dark:focus:ring-offset-gray-900
-            disabled:opacity-50 disabled:cursor-not-allowed
-            no-underline
-            ${
-              action.variant === 'primary'
-                ? `bg-blue-700 dark:bg-blue-600 text-white
-                 hover:bg-blue-800 dark:hover:bg-blue-700
-                 focus:ring-blue-500`
-                : action.variant === 'danger'
-                  ? `bg-red-700 dark:bg-red-600 text-white
-                 hover:bg-red-800 dark:hover:bg-red-700
-                 focus:ring-red-500`
-                  : `bg-gray-200 dark:bg-gray-700 
-                 text-gray-900 dark:text-gray-100
-                 hover:bg-gray-300 dark:hover:bg-gray-600
-                 focus:ring-gray-500`
-            }
-          `
-              .trim()
-              .replace(/\s+/g, ' ');
+            const actionVariant = action.variant ?? 'secondary';
+            const actionClasses = [
+              'media-card__action',
+              `media-card__action--${actionVariant}`,
+            ]
+              .filter(Boolean)
+              .join(' ');
 
             if (action.href) {
               return (
@@ -278,12 +227,12 @@ const finalClassName = className || legacyClassName || '';
                       ? 'noopener noreferrer'
                       : undefined
                   }
-                  class={buttonClasses}
+                  class={actionClasses}
                   role="button"
                   tabindex="0"
                 >
                   {action.icon && (
-                    <span class="mr-1.5" aria-hidden="true">
+                    <span class="media-card__action-icon" aria-hidden="true">
                       {action.icon}
                     </span>
                   )}
@@ -296,11 +245,11 @@ const finalClassName = className || legacyClassName || '';
                   id={actionId}
                   type="button"
                   onclick={action.onClick}
-                  class={buttonClasses}
+                  class={actionClasses}
                   disabled={disabled}
                 >
                   {action.icon && (
-                    <span class="mr-1.5" aria-hidden="true">
+                    <span class="media-card__action-icon" aria-hidden="true">
                       {action.icon}
                     </span>
                   )}
@@ -314,3 +263,257 @@ const finalClassName = className || legacyClassName || '';
     }
   </div>
 </article>
+
+<style>
+  .media-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: var(--media-card-max-width, 28rem);
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    color: #0f172a;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .media-card:hover {
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+  }
+
+  .media-card--variant-horizontal {
+    flex-direction: row;
+  }
+
+  .media-card--variant-minimal {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .media-card--variant-featured {
+    border-width: 2px;
+    border-color: #bfdbfe;
+  }
+
+  .media-card--loading {
+    animation: media-card-pulse 1.5s ease-in-out infinite;
+  }
+
+  .media-card--disabled {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .media-card__image {
+    position: relative;
+    width: 100%;
+    height: var(--media-card-image-height, 12rem);
+    overflow: hidden;
+    background-color: #f1f5f9;
+    flex-shrink: 0;
+  }
+
+  .media-card__image--horizontal {
+    width: var(--media-card-horizontal-width, 12rem);
+    height: auto;
+  }
+
+  .media-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+    display: block;
+  }
+
+  .media-card:hover .media-card__img {
+    transform: scale(1.05);
+  }
+
+  .media-card__image--horizontal .media-card__img {
+    height: var(--media-card-horizontal-height, 9rem);
+  }
+
+  .media-card__image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(226, 232, 240, 0.8);
+    animation: media-card-pulse 1.5s ease-in-out infinite;
+  }
+
+  .media-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: var(--media-card-padding, 1rem);
+    flex: 1;
+  }
+
+  .media-card__content--horizontal {
+    flex: 1;
+  }
+
+  .media-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .media-card__title-wrapper {
+    margin-bottom: 0.25rem;
+  }
+
+  .media-card__title-link,
+  .media-card__title-text {
+    font-size: var(--media-card-title-size, 1.125rem);
+    font-weight: 600;
+    line-height: 1.4;
+    color: currentColor;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .media-card__title-link:hover,
+  .media-card__title-link:focus-visible {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+
+  .media-card__title-link:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+
+  .media-card__description {
+    margin: 0;
+    font-size: var(--media-card-text-size, 1rem);
+    color: #475569;
+    line-height: 1.6;
+  }
+
+  .media-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+
+  .media-card__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .media-card__action:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .media-card__action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .media-card__action--primary {
+    background-color: #1d4ed8;
+    color: #ffffff;
+  }
+
+  .media-card__action--primary:hover {
+    background-color: #1e40af;
+  }
+
+  .media-card__action--secondary {
+    background-color: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .media-card__action--secondary:hover {
+    background-color: #cbd5f5;
+  }
+
+  .media-card__action--danger {
+    background-color: #b91c1c;
+    color: #ffffff;
+  }
+
+  .media-card__action--danger:hover {
+    background-color: #991b1b;
+  }
+
+  .media-card__action-icon {
+    margin-right: 0.4rem;
+    display: inline-flex;
+  }
+
+  :where(.dark) .media-card {
+    background-color: #0f172a;
+    border-color: #1e293b;
+    color: #f8fafc;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  }
+
+  :where(.dark) .media-card--variant-minimal {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  :where(.dark) .media-card--variant-featured {
+    border-color: #1e3a8a;
+  }
+
+  :where(.dark) .media-card__image {
+    background-color: #1f2937;
+  }
+
+  :where(.dark) .media-card__image-overlay {
+    background: rgba(15, 23, 42, 0.7);
+  }
+
+  :where(.dark) .media-card__description {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .media-card__action--secondary {
+    background-color: #1f2937;
+    color: #f1f5f9;
+  }
+
+  :where(.dark) .media-card__action--secondary:hover {
+    background-color: #334155;
+  }
+
+  :where(.dark) .media-card__action--primary:hover {
+    background-color: #2563eb;
+  }
+
+  :where(.dark) .media-card__action--danger:hover {
+    background-color: #dc2626;
+  }
+
+  @keyframes media-card-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+</style>

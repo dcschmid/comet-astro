@@ -21,7 +21,7 @@ const { items, targetId, className = '' } = Astro.props;
 ---
 
 <div
-  class={`fixed z-50 min-w-60 max-w-80 rounded-lg border border-slate-300/80 bg-white py-2 shadow-2xl ring-1 ring-black/10 transition-all duration-500 ease-out invisible opacity-0 scale-95 backdrop-blur-sm dark:border-slate-600/80 dark:bg-slate-800 dark:ring-white/10 ${className}`}
+  class={`context-menu ${className}`}
   data-context-menu
   data-context-target={targetId}
   role="menu"
@@ -31,16 +31,16 @@ const { items, targetId, className = '' } = Astro.props;
   {
     items.map((item) =>
       item.divider ? (
-        <hr class="my-2 border-slate-300/60 dark:border-slate-600/60" />
+        <hr class="context-menu__divider" />
       ) : (
         <button
           type="button"
-          class={`flex w-full items-center gap-3 px-4 py-2.5 text-sm text-left font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset ${
+          class={`context-menu__item ${
             item.disabled
-              ? 'cursor-not-allowed text-slate-400 dark:text-slate-500'
+              ? 'context-menu__item--disabled'
               : item.danger
-                ? 'text-red-700 hover:bg-red-50 hover:text-red-800 focus-visible:bg-red-50 focus-visible:ring-red-600 dark:text-red-300 dark:hover:bg-red-500/20 dark:hover:text-red-200 dark:focus-visible:bg-red-500/20 dark:focus-visible:ring-red-400'
-                : 'text-slate-800 hover:bg-blue-50 hover:text-blue-800 focus-visible:bg-blue-50 focus-visible:ring-blue-600 dark:text-slate-100 dark:hover:bg-blue-500/20 dark:hover:text-blue-200 dark:focus-visible:bg-blue-500/20 dark:focus-visible:ring-blue-400'
+                ? 'context-menu__item--danger'
+                : ''
           }`}
           data-context-action={item.action}
           disabled={item.disabled}
@@ -49,11 +49,11 @@ const { items, targetId, className = '' } = Astro.props;
           aria-selected="false"
         >
           {item.icon && (
-            <span class="text-base shrink-0" aria-hidden="true">
+            <span class="context-menu__icon" aria-hidden="true">
               {item.icon}
             </span>
           )}
-          <span class="truncate">{item.label}</span>
+          <span class="context-menu__label">{item.label}</span>
         </button>
       )
     )
@@ -71,17 +71,18 @@ const { items, targetId, className = '' } = Astro.props;
 
     const hideMenu = (menu) => {
       if (!menu) return;
-      menu.classList.add('opacity-0', 'scale-95');
+      menu.classList.remove('context-menu--open');
+      menu.classList.add('context-menu--closing');
       menu.setAttribute('aria-hidden', 'true');
-      window.setTimeout(() => {
-        menu.classList.add('invisible');
-      }, 500);
       menu.querySelectorAll('[data-context-action]').forEach((item) => {
         if (item instanceof HTMLElement) {
           item.tabIndex = -1;
           item.setAttribute('aria-selected', 'false');
         }
       });
+      window.setTimeout(() => {
+        menu.classList.remove('context-menu--closing');
+      }, 200);
       openMenu = null;
     };
 
@@ -123,12 +124,9 @@ const { items, targetId, className = '' } = Astro.props;
         event.stopPropagation();
         hideAllMenus();
 
-        // Show menu with animation
-        menu.classList.remove('invisible');
         menu.style.pointerEvents = 'auto';
-        requestAnimationFrame(() => {
-          menu.classList.remove('opacity-0', 'scale-95');
-        });
+        menu.classList.add('context-menu--open');
+        menu.classList.remove('context-menu--closing');
         menu.setAttribute('aria-hidden', 'false');
         positionMenu(menu, event.pageX, event.pageY);
         openMenu = menu;
@@ -234,3 +232,125 @@ const { items, targetId, className = '' } = Astro.props;
     });
   })();
 </script>
+
+<style is:inline>
+  .context-menu {
+    position: fixed;
+    z-index: 60;
+    min-width: 14rem;
+    max-width: 18rem;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+    padding: 0.35rem 0;
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .context-menu--open {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+  .context-menu--closing {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  :where(.dark) .context-menu {
+    background: #020617;
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.35);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  }
+
+  .context-menu__divider {
+    margin: 0.4rem 0;
+    border: none;
+    border-top: 1px solid rgba(148, 163, 184, 0.3);
+  }
+
+  :where(.dark) .context-menu__divider {
+    border-color: rgba(148, 163, 184, 0.2);
+  }
+
+  .context-menu__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.95rem;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .context-menu__item:hover,
+  .context-menu__item--selected {
+    background: rgba(59, 130, 246, 0.12);
+    color: #0f172a;
+  }
+
+  :where(.dark) .context-menu__item:hover,
+  :where(.dark) .context-menu__item--selected {
+    background: rgba(59, 130, 246, 0.2);
+    color: #f8fafc;
+  }
+
+  .context-menu__item--disabled {
+    color: rgba(15, 23, 42, 0.4);
+    cursor: not-allowed;
+  }
+
+  :where(.dark) .context-menu__item--disabled {
+    color: rgba(248, 250, 252, 0.35);
+  }
+
+  .context-menu__item--danger {
+    color: #b91c1c;
+  }
+
+  .context-menu__item--danger:hover,
+  .context-menu__item--danger.context-menu__item--selected {
+    background: rgba(239, 68, 68, 0.18);
+    color: #7f1d1d;
+  }
+
+  :where(.dark) .context-menu__item--danger {
+    color: #fecaca;
+  }
+
+  :where(.dark) .context-menu__item--danger:hover,
+  :where(.dark) .context-menu__item--danger.context-menu__item--selected {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fecaca;
+  }
+
+  .context-menu__icon {
+    font-size: 1rem;
+    color: rgba(14, 165, 233, 0.95);
+  }
+
+  :where(.dark) .context-menu__icon {
+    color: rgba(125, 211, 252, 0.95);
+  }
+
+  .context-menu__label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>

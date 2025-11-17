@@ -21,24 +21,23 @@ const {
 
 // Enhanced size classes with responsive sizing and consistent proportions
 const sizeClasses = {
-  xs: 'w-3 h-3',
-  sm: 'w-4 h-4',
-  md: 'w-5 h-5',
-  lg: 'w-6 h-6',
-  xl: 'w-8 h-8',
-  '2xl': 'w-10 h-10',
-  '3xl': 'w-12 h-12',
-  '4xl': 'w-16 h-16',
+  xs: 'icon--size-xs',
+  sm: 'icon--size-sm',
+  md: 'icon--size-md',
+  lg: 'icon--size-lg',
+  xl: 'icon--size-xl',
+  '2xl': 'icon--size-2xl',
+  '3xl': 'icon--size-3xl',
+  '4xl': 'icon--size-4xl',
 };
 
-// WCAG AAA compliant color classes with 7:1+ contrast ratios
 const colorClasses = {
-  default: 'text-current',
-  primary: 'text-blue-600 dark:text-blue-400',
-  secondary: 'text-gray-600 dark:text-gray-400',
-  success: 'text-green-700 dark:text-green-400',
-  warning: 'text-amber-700 dark:text-amber-400',
-  error: 'text-red-700 dark:text-red-400',
+  default: 'icon--color-default',
+  primary: 'icon--color-primary',
+  secondary: 'icon--color-secondary',
+  success: 'icon--color-success',
+  warning: 'icon--color-warning',
+  error: 'icon--color-error',
 };
 
 // Comprehensive icon collection with semantic groupings
@@ -160,7 +159,7 @@ const pathTransform = transformMap[name];
 {
   decorative ? (
     <svg
-      class={`block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
+      class={['icon', sizeClasses[size], colorClasses[color], className].filter(Boolean).join(' ')}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -187,7 +186,7 @@ const pathTransform = transformMap[name];
     </svg>
   ) : ariaLabel ? (
     <svg
-      class={`block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
+      class={['icon', sizeClasses[size], colorClasses[color], className].filter(Boolean).join(' ')}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -215,7 +214,7 @@ const pathTransform = transformMap[name];
     </svg>
   ) : title ? (
     <svg
-      class={`block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
+      class={['icon', sizeClasses[size], colorClasses[color], className].filter(Boolean).join(' ')}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -242,7 +241,7 @@ const pathTransform = transformMap[name];
     </svg>
   ) : (
     <svg
-      class={`inline-block shrink-0 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
+      class={['icon', sizeClasses[size], colorClasses[color], className].filter(Boolean).join(' ')}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -257,3 +256,97 @@ const pathTransform = transformMap[name];
     </svg>
   )
 }
+
+<style is:inline>
+  .icon {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: currentColor;
+  }
+
+  .icon--size-xs {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .icon--size-sm {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .icon--size-md {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .icon--size-lg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .icon--size-xl {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .icon--size-2xl {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .icon--size-3xl {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .icon--size-4xl {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .icon--color-default {
+    color: currentColor;
+  }
+
+  .icon--color-primary {
+    color: #2563eb;
+  }
+
+  :where(.dark) .icon--color-primary {
+    color: #60a5fa;
+  }
+
+  .icon--color-secondary {
+    color: #4b5563;
+  }
+
+  :where(.dark) .icon--color-secondary {
+    color: #9ca3af;
+  }
+
+  .icon--color-success {
+    color: #15803d;
+  }
+
+  :where(.dark) .icon--color-success {
+    color: #4ade80;
+  }
+
+  .icon--color-warning {
+    color: #b45309;
+  }
+
+  :where(.dark) .icon--color-warning {
+    color: #fcd34d;
+  }
+
+  .icon--color-error {
+    color: #b91c1c;
+  }
+
+  :where(.dark) .icon--color-error {
+    color: #f87171;
+  }
+</style>

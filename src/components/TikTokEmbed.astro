@@ -81,18 +81,7 @@ const buildTikTokEmbedUrl = (): string => {
 };
 
 // Size configurations for container
-const getSizeClass = (): string => {
-  const sizeMap = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-  };
-  return sizeMap[size] || sizeMap.md;
-};
-
 const embedUrl = buildTikTokEmbedUrl();
-const sizeClass = getSizeClass();
 
 // Generate appropriate title and ARIA label
 const finalTitle = title || `TikTok video ${videoId}`;
@@ -100,7 +89,13 @@ const finalAriaLabel =
   ariaLabel || `TikTok video player${title ? `: ${title}` : ''}`;
 
 // Custom class with size constraint
-const finalClassName = `${sizeClass} mx-auto ${className}`.trim();
+const finalClassName = [
+  'tiktok-embed',
+  `tiktok-embed--size-${size}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <EmbedBase
@@ -121,14 +116,47 @@ const finalClassName = `${sizeClass} mx-auto ${className}`.trim();
 >
   {
     caption && (
-      <div
-        slot="caption"
-        class="p-3 text-sm font-medium leading-relaxed text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-slate-700"
-        role="complementary"
-        aria-label="Video caption"
-      >
+      <div slot="caption" class="tiktok-embed__caption">
         {caption}
       </div>
     )
   }
 </EmbedBase>
+
+<style>
+  .tiktok-embed {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .tiktok-embed--size-sm {
+    max-width: 20rem;
+  }
+
+  .tiktok-embed--size-md {
+    max-width: 28rem;
+  }
+
+  .tiktok-embed--size-lg {
+    max-width: 36rem;
+  }
+
+  .tiktok-embed--size-xl {
+    max-width: 48rem;
+  }
+
+  .tiktok-embed__caption {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: #0f172a;
+    border-top: 1px solid rgba(148, 163, 184, 0.4);
+  }
+
+  :where(.dark) .tiktok-embed__caption {
+    color: #e2e8f0;
+    border-color: rgba(71, 85, 105, 0.6);
+  }
+</style>

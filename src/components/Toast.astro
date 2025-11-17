@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 export interface ToastProps {
   variant?: 'default' | 'success' | 'warning' | 'error' | 'info';
   size?: 'sm' | 'md' | 'lg';
@@ -36,90 +34,44 @@ const {
   className = '',
 } = Astro.props as ToastProps;
 
-// WCAG AAA compliant colors with 9:1 contrast ratios
-const variantStyles = {
-  default:
-    'border-slate-300 bg-white text-slate-950 shadow-lg dark:border-slate-600 dark:bg-slate-950 dark:text-slate-50',
-  success:
-    'border-emerald-300 bg-white text-slate-950 shadow-lg dark:border-emerald-600 dark:bg-slate-950 dark:text-slate-50',
-  warning:
-    'border-amber-300 bg-white text-slate-950 shadow-lg dark:border-amber-600 dark:bg-slate-950 dark:text-slate-50',
-  error:
-    'border-red-300 bg-white text-slate-950 shadow-lg dark:border-red-600 dark:bg-slate-950 dark:text-slate-50',
-  info: 'border-blue-300 bg-white text-slate-950 shadow-lg dark:border-blue-600 dark:bg-slate-950 dark:text-slate-50',
-};
-
-const accentStyles = {
-  default: 'bg-slate-600 dark:bg-slate-400',
-  success: 'bg-emerald-600 dark:bg-emerald-400',
-  warning: 'bg-amber-600 dark:bg-amber-400',
-  error: 'bg-red-600 dark:bg-red-400',
-  info: 'bg-blue-600 dark:bg-blue-400',
-};
-
-const iconColors = {
-  default: 'text-slate-600 dark:text-slate-400',
-  success: 'text-emerald-600 dark:text-emerald-400',
-  warning: 'text-amber-600 dark:text-amber-400',
-  error: 'text-red-600 dark:text-red-400',
-  info: 'text-blue-600 dark:text-blue-400',
-};
-
-const sizeStyles = {
-  sm: 'text-xs p-3 max-w-xs',
-  md: 'text-sm p-4 max-w-sm',
-  lg: 'text-base p-5 max-w-md',
-};
-
-const positionStyles = {
-  'top-right': 'top-4 right-4',
-  'top-left': 'top-4 left-4',
-  'bottom-right': 'bottom-4 right-4',
-  'bottom-left': 'bottom-4 left-4',
-  'top-center': 'top-4 left-1/2 -translate-x-1/2',
-  'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2',
-  static: 'relative',
-};
-
 const icons = {
-  default: `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+  default: `<svg class="toast__icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>`,
-  success: `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+  success: `<svg class="toast__icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
   </svg>`,
-  warning: `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+  warning: `<svg class="toast__icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.262 16.5c-.77.833.192 2.5 1.732 2.5z" />
   </svg>`,
-  error: `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+  error: `<svg class="toast__icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>`,
-  info: `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+  info: `<svg class="toast__icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>`,
 };
 
-const closeIcon = `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+const closeIcon = `<svg class="toast__close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 </svg>`;
 
-const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
+const toastId = `toast-${Math.random().toString(36).slice(2, 9)}`;
+const rootClasses = [
+  'toast',
+  `toast--variant-${variant}`,
+  `toast--size-${size}`,
+  `toast--position-${position}`,
+  showIcon ? 'toast--with-icon' : 'toast--no-icon',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
   id={toastId}
-  class={cn(
-    position === 'static' ? 'relative' : 'fixed',
-    'z-50 rounded-lg border backdrop-blur-sm',
-    'transition-all duration-300 ease-in-out',
-    'motion-reduce:transition-none',
-    'focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2',
-    'dark:focus-within:ring-offset-slate-950',
-    variantStyles[variant],
-    sizeStyles[size],
-    position !== 'static' ? positionStyles[position] : '',
-    className
-  )}
+  class={rootClasses}
   role="alert"
   aria-live={variant === 'error' ? 'assertive' : 'polite'}
   aria-atomic="true"
@@ -129,99 +81,42 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
   data-duration={persistent ? '0' : duration.toString()}
   data-variant={variant}
 >
-  <!-- Progress bar -->
-  {
-    showProgress && !persistent && (
-      <div
-        class={cn(
-          'absolute top-0 left-0 h-1 rounded-t-lg transition-all duration-300',
-          accentStyles[variant]
-        )}
-        style="width: 100%"
-        data-toast-progress
-        aria-hidden="true"
-      />
-    )
-  }
+  {showProgress && !persistent && (
+    <div class="toast__progress" data-toast-progress aria-hidden="true" />
+  )}
 
-  <!-- Accent border -->
-  <div
-    class={cn(
-      'absolute left-0 top-0 h-full w-1 rounded-l-lg',
-      accentStyles[variant]
+  <div class="toast__accent" aria-hidden="true" />
+
+  <div class="toast__body">
+    {showIcon && (
+      <div class="toast__icon" aria-hidden="true">
+        <Fragment set:html={icons[variant]} />
+      </div>
     )}
-    aria-hidden="true"
-  >
-  </div>
 
-  <div class="pl-3 flex items-start gap-3">
-    <!-- Icon -->
-    {
-      showIcon && (
-        <div class={cn('shrink-0 mt-0.5', iconColors[variant])}>
-          <Fragment set:html={icons[variant]} />
-        </div>
-      )
-    }
+    <div class="toast__content">
+      {title && (
+        <h3 id={`${toastId}-title`} class="toast__title">
+          {title}
+        </h3>
+      )}
 
-    <!-- Content -->
-    <div class="flex-1 min-w-0">
-      {
-        title && (
-          <h3
-            id={`${toastId}-title`}
-            class={cn(
-              'font-semibold leading-5',
-              size === 'sm'
-                ? 'text-xs'
-                : size === 'lg'
-                  ? 'text-base'
-                  : 'text-sm'
-            )}
-          >
-            {title}
-          </h3>
-        )
-      }
-
-      <div
-        id={`${toastId}-description`}
-        class={cn(
-          'leading-relaxed',
-          title ? 'mt-1' : '',
-          size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-sm' : 'text-sm'
-        )}
-      >
+      <div id={`${toastId}-description`} class="toast__description">
         {description && <p>{description}</p>}
         <slot />
       </div>
     </div>
 
-    <!-- Close button -->
-    {
-      dismissible && (
-        <button
-          type="button"
-          class={cn(
-            'shrink-0 inline-flex items-center justify-center rounded-md',
-            'border border-transparent transition-colors',
-            'hover:bg-slate-100 dark:hover:bg-slate-800',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2',
-            'dark:focus-visible:ring-offset-slate-950',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
-            size === 'sm'
-              ? 'h-6 w-6 text-xs'
-              : size === 'lg'
-                ? 'h-8 w-8 text-base'
-                : 'h-7 w-7 text-sm'
-          )}
-          aria-label={`Close ${variant} notification`}
-          data-toast-close
-        >
-          <Fragment set:html={closeIcon} />
-        </button>
-      )
-    }
+    {dismissible && (
+      <button
+        type="button"
+        class="toast__close"
+        aria-label={`Close ${variant} notification`}
+        data-toast-close
+      >
+        <Fragment set:html={closeIcon} />
+      </button>
+    )}
   </div>
 </div>
 
@@ -230,12 +125,11 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
     const toasts = Array.from(document.querySelectorAll('[data-toast]'));
     if (!toasts.length) return;
 
-    // Toast container for stacking
     let toastContainer = document.querySelector('[data-toast-container]');
     if (!toastContainer) {
       toastContainer = document.createElement('div');
       toastContainer.setAttribute('data-toast-container', '');
-      toastContainer.className = 'fixed inset-0 pointer-events-none z-50';
+      toastContainer.className = 'toast-container';
       toastContainer.setAttribute('aria-live', 'polite');
       toastContainer.setAttribute('aria-label', 'Notifications');
       document.body.appendChild(toastContainer);
@@ -255,13 +149,8 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
       let progressInterval;
       let startTime;
 
-      // Enhanced dismiss function with better accessibility
       const dismiss = () => {
-        if (progressInterval) {
-          clearInterval(progressInterval);
-        }
-
-        // Announce dismissal to screen readers
+        if (progressInterval) clearInterval(progressInterval);
         const announcement = document.createElement('div');
         announcement.setAttribute('aria-live', 'polite');
         announcement.setAttribute('aria-atomic', 'true');
@@ -269,43 +158,26 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
         announcement.textContent = `${variant} notification dismissed`;
         document.body.appendChild(announcement);
 
-        // Animate out
-        toast.style.transition =
-          'opacity 300ms ease-out, transform 300ms ease-out';
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(-8px) scale(0.95)';
         toast.setAttribute('aria-hidden', 'true');
 
-        // Remove after animation
         setTimeout(() => {
-          if (toast.parentNode) {
-            toast.remove();
-          }
-          // Clean up announcement
-          if (announcement.parentNode) {
-            announcement.remove();
-          }
-          // Update stacking
+          toast.remove();
+          announcement.remove();
           updateToastPositions();
         }, 300);
       };
 
-      // Progress bar animation
       const updateProgress = () => {
         if (!progressBar || duration <= 0) return;
-
         const elapsed = Date.now() - startTime;
         const remaining = Math.max(0, duration - elapsed);
         const progress = (remaining / duration) * 100;
-
         progressBar.style.width = `${progress}%`;
-
-        if (remaining <= 0) {
-          clearInterval(progressInterval);
-        }
+        if (remaining <= 0) clearInterval(progressInterval);
       };
 
-      // Keyboard navigation
       const handleKeyDown = (event) => {
         if (event.key === 'Escape') {
           event.preventDefault();
@@ -313,7 +185,6 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
         }
       };
 
-      // Mouse pause/resume
       let isPaused = false;
       let remainingTime = duration;
       let pauseTime;
@@ -322,9 +193,7 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
         if (isPaused || duration <= 0) return;
         isPaused = true;
         pauseTime = Date.now();
-        if (progressInterval) {
-          clearInterval(progressInterval);
-        }
+        if (progressInterval) clearInterval(progressInterval);
       };
 
       const resumeTimer = () => {
@@ -342,7 +211,6 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
         }
       };
 
-      // Event listeners
       if (closeBtn instanceof HTMLElement) {
         closeBtn.addEventListener('click', (event) => {
           event.preventDefault();
@@ -356,25 +224,21 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
       toast.addEventListener('focusin', pauseTimer);
       toast.addEventListener('focusout', resumeTimer);
 
-      // Auto-dismiss setup
       if (duration > 0) {
         startTime = Date.now();
         progressInterval = setInterval(updateProgress, 16);
         setTimeout(dismiss, duration);
       }
 
-      // Make toast focusable for keyboard users
       if (!toast.hasAttribute('tabindex')) {
         toast.setAttribute('tabindex', '-1');
       }
 
-      // Announce to screen readers
       setTimeout(() => {
         toast.focus();
       }, 100);
     });
 
-    // Update positions for stacking
     function updateToastPositions() {
       const activeToasts = Array.from(
         document.querySelectorAll('[data-toast]:not([aria-hidden="true"])')
@@ -387,7 +251,6 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
       });
     }
 
-    // Reduce motion support
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const style = document.createElement('style');
       style.textContent = `
@@ -398,25 +261,231 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
       document.head.appendChild(style);
     }
 
-    // Initial positioning
     updateToastPositions();
   })();
 </script>
 
 <style>
-  [data-toast] {
-    pointer-events: auto;
-    transition:
-      opacity 300ms ease-out,
-      transform 300ms ease-out;
+  .toast {
+    position: fixed;
+    border-radius: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    padding: 1rem 1.25rem;
+    max-width: 24rem;
+    min-width: 14rem;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.95);
+    color: #0f172a;
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
   }
 
-  [data-toast-progress] {
-    animation: toast-progress linear;
-    animation-fill-mode: forwards;
+  :where(.dark) .toast {
+    background: rgba(2, 6, 23, 0.95);
+    color: #f8fafc;
+    border-color: rgba(71, 85, 105, 0.6);
   }
 
-  /* Screen reader only content */
+  .toast--position-static {
+    position: relative;
+  }
+
+  .toast--position-top-right {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .toast--position-top-left {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .toast--position-bottom-right {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .toast--position-bottom-left {
+    bottom: 1rem;
+    left: 1rem;
+  }
+
+  .toast--position-top-center {
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .toast--position-bottom-center {
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .toast__body {
+    display: flex;
+    gap: 0.75rem;
+    alignItems: flex-start;
+  }
+
+  .toast__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    padding-top: 0.15rem;
+    color: inherit;
+  }
+
+  .toast__icon-svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .toast__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .toast__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .toast--size-sm .toast__title {
+    font-size: 0.85rem;
+  }
+
+  .toast--size-lg .toast__title {
+    font-size: 1.1rem;
+  }
+
+  .toast__description {
+    margin-top: 0.35rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .toast--size-sm .toast__description {
+    font-size: 0.8rem;
+  }
+
+  .toast--size-lg .toast__description {
+    font-size: 1rem;
+  }
+
+  .toast__close {
+    border: none;
+    background: transparent;
+    border-radius: 0.6rem;
+    padding: 0.2rem;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .toast__close:hover {
+    background: rgba(148, 163, 184, 0.15);
+  }
+
+  .toast__close:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.4);
+    outline-offset: 2px;
+  }
+
+  .toast__close-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .toast__accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0.35rem;
+    border-radius: 0.5rem 0 0 0.5rem;
+    background: rgba(100, 116, 139, 0.9);
+  }
+
+  .toast__progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 0.25rem;
+    width: 100%;
+    border-radius: 1rem 1rem 0 0;
+    background: rgba(37, 99, 235, 0.85);
+  }
+
+  .toast--variant-success .toast__accent,
+  .toast--variant-success .toast__progress,
+  .toast--variant-success .toast__icon {
+    color: #059669;
+    background: #059669;
+  }
+
+  .toast--variant-warning .toast__accent,
+  .toast--variant-warning .toast__progress,
+  .toast--variant-warning .toast__icon {
+    color: #d97706;
+    background: #d97706;
+  }
+
+  .toast--variant-error .toast__accent,
+  .toast--variant-error .toast__progress,
+  .toast--variant-error .toast__icon {
+    color: #dc2626;
+    background: #dc2626;
+  }
+
+  .toast--variant-info .toast__accent,
+  .toast--variant-info .toast__progress,
+  .toast--variant-info .toast__icon {
+    color: #2563eb;
+    background: #2563eb;
+  }
+
+  .toast--variant-default .toast__accent,
+  .toast--variant-default .toast__progress,
+  .toast--variant-default .toast__icon {
+    color: #475569;
+    background: #475569;
+  }
+
+  .toast--variant-minimal {
+    border-color: rgba(148, 163, 184, 0.3);
+    box-shadow: none;
+  }
+
+  .toast--variant-bordered {
+    border-width: 2px;
+  }
+
+  .toast--variant-filled {
+    background: rgba(248, 250, 252, 0.95);
+  }
+
+  :where(.dark) .toast--variant-filled {
+    background: rgba(15, 23, 42, 0.9);
+  }
+
+  .toast--size-sm {
+    padding: 0.75rem 1rem;
+    max-width: 18rem;
+  }
+
+  .toast--size-lg {
+    padding: 1.25rem 1.5rem;
+    max-width: 28rem;
+  }
+
+  .toast-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;
@@ -429,34 +498,16 @@ const toastId = `toast-${Math.random().toString(36).substr(2, 9)}`;
     border: 0;
   }
 
-  /* High contrast mode support */
   @media (prefers-contrast: high) {
-    [data-toast] {
+    .toast {
       border-width: 2px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     }
   }
 
-  /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
-    [data-toast] {
-      transition: none;
-    }
-
-    [data-toast-progress] {
-      animation: none;
-    }
-  }
-
-  /* Focus improvements for high contrast */
-  @media (forced-colors: active) {
-    [data-toast] {
-      border: 2px solid ButtonText;
-    }
-
-    [data-toast-close]:focus-visible {
-      outline: 2px solid ButtonText;
-      outline-offset: 2px;
+    .toast,
+    .toast__progress {
+      transition: none !important;
     }
   }
 </style>

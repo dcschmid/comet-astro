@@ -9,6 +9,12 @@ const exampleCode = `function greet(name) {
 greet('World');`;
 
 const usageSnippet = `---\nimport { CodeBlock } from 'comet-astro';\n\n---\n\n<CodeBlock\n  language="javascript"\n  filename="example.js"\n  showLineNumbers\n  highlightLines={[2]}\n  code="function greet(name) {\\n  console.log('Hello, ' + name + '!');\\n}\\n\\ngreet('World');"\n/>`;
+
+const shikiComponentSnippet = `---\nimport { CodeBlock } from 'comet-astro';\n\nconst tsSnippet = \`const answer = 42;\`;\n---\n\n<CodeBlock\n  code={tsSnippet}\n  language="ts"\n  filename="answer.ts"\n  useShiki\n  shikiTheme="github-dark"\n/>\n`;
+
+const highlightedUsageSnippet = `---\nimport { CodeBlock } from 'comet-astro';\nimport { codeToHtml } from 'shiki';\n\nconst highlighted = await codeToHtml("const answer = 42", {\n  lang: 'ts',\n  theme: 'github-dark'\n});\n---\n\n<CodeBlock highlighted={highlighted} language="ts" filename="answer.ts" copyable={false} />`;
+
+const shikiCode = `const answer = 42;`;
 ---
 
 <DocsLayout
@@ -124,13 +130,37 @@ const usageSnippet = `---\nimport { CodeBlock } from 'comet-astro';\n\n---\n\n<C
         <dt
           class="text-sm font-semibold uppercase tracking-wide text-slate-200"
         >
-          className?
-        </dt><dd class="text-sm text-slate-200">
-          Append extra classes (padding, margin). Avoid overriding color & focus
-          utilities.
-        </dd>
-      </div>
-    </dl>
+      className?
+    </dt><dd class="text-sm text-slate-200">
+      Append extra classes (padding, margin). Avoid overriding color & focus
+      utilities.
+    </dd>
+  </div>
+  <div
+    class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+  >
+    <dt
+      class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+    >
+      highlighted?
+    </dt><dd class="text-sm text-slate-200">
+      Pass pre-highlighted HTML (e.g. from Shiki) to render exactly what Astro’s syntax
+      highlighting pipeline outputs. When provided, <code>code</code> and line-number props are ignored.
+    </dd>
+  </div>
+  <div
+    class="space-y-1 rounded-lg border border-slate-700/75 bg-slate-900/60 p-4 shadow-sm sm:col-span-2"
+  >
+    <dt
+      class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+    >
+      useShiki? / shikiTheme?
+    </dt><dd class="text-sm text-slate-200">
+      Set <code>useShiki</code> when you want the component to call Shiki automatically using <code>code</code>;
+      customize the theme with <code>shikiTheme</code> (default <code>github-dark</code>). Ideal for docs that follow Astro’s guide.
+    </dd>
+  </div>
+</dl>
   </section>
 
   <section class="mt-10 space-y-6">
@@ -140,6 +170,29 @@ const usageSnippet = `---\nimport { CodeBlock } from 'comet-astro';\n\n---\n\n<C
     </p>
     <pre
       class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{usageSnippet}</code></pre>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <h2 class="text-xl font-semibold text-slate-100">Shiki integration</h2>
+    <p class="text-base text-slate-200">
+      For most projects you can let the component call Shiki directly—just set <code>useShiki</code> and optionally
+      choose a <code>shikiTheme</code>. Astro’s server runtime handles the import, so your markup stays clean.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{shikiComponentSnippet}</code></pre>
+    <CodeBlockComp
+      code={shikiCode}
+      language="ts"
+      filename="answer.ts"
+      useShiki
+      shikiTheme="github-dark"
+      copyable={false}
+    />
+    <p class="text-base text-slate-200">
+      Prefer to run Shiki yourself (e.g. shared cache, static build step)? Follow Astro’s <a class="text-sky-400 underline" href="https://docs.astro.build/de/guides/syntax-highlighting/">syntax highlighting guide</a> and pass the generated HTML via <code>highlighted</code>.
+    </p>
+    <pre
+      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner"><code class="language-astro">{highlightedUsageSnippet}</code></pre>
   </section>
 
   <section class="mt-10 space-y-8">

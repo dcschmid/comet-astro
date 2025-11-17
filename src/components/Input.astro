@@ -75,74 +75,38 @@ const {
   ariaDescribedby,
 } = Astro.props;
 
-// Enhanced size classes with responsive design
 const sizeClasses = {
-  sm: {
-    input: 'px-3 py-1.5 text-sm leading-4',
-    label: 'text-xs',
-    text: 'text-xs',
-    icon: 'w-3.5 h-3.5',
-  },
-  md: {
-    input: 'px-4 py-2.5 text-sm leading-5',
-    label: 'text-sm',
-    text: 'text-xs',
-    icon: 'w-4 h-4',
-  },
-  lg: {
-    input: 'px-5 py-3.5 text-base leading-6',
-    label: 'text-base',
-    text: 'text-sm',
-    icon: 'w-5 h-5',
-  },
-};
+  sm: 'input--size-sm',
+  md: 'input--size-md',
+  lg: 'input--size-lg',
+} as const;
 
-// WCAG AAA compliant color classes with 7:1+ contrast ratios
-const colorClasses = {
-  // Text colors
-  text: 'text-slate-900 dark:text-slate-50',
-  textSecondary: 'text-slate-800 dark:text-slate-100',
-  textMuted: 'text-slate-700 dark:text-slate-200',
-  textDisabled: 'text-slate-500 dark:text-slate-400',
-  // Background colors
-  bg: 'bg-white dark:bg-slate-950',
-  bgFilled: 'bg-slate-50 dark:bg-slate-900',
-  bgDisabled: 'bg-slate-100 dark:bg-slate-800',
-  // Border colors
-  border: 'border-slate-400 dark:border-slate-500',
-  borderHover: 'hover:border-slate-500 dark:hover:border-slate-400',
-  borderFocus:
-    'focus-visible:border-slate-600 dark:focus-visible:border-slate-300',
-  // State colors
-  error: 'border-red-600 dark:border-red-400 bg-red-50 dark:bg-red-950/50',
-  errorText: 'text-red-700 dark:text-red-300',
-  success: 'border-green-600 dark:border-green-400',
-  // Focus ring
-  focusRing:
-    'focus-visible:ring-2 focus-visible:ring-slate-600 dark:focus-visible:ring-slate-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
-};
-
-// Variant styles
 const variantClasses = {
-  default: `${colorClasses.bg} ${colorClasses.border} ${colorClasses.borderHover} ${colorClasses.borderFocus}`,
-  filled: `${colorClasses.bgFilled} ${colorClasses.border} ${colorClasses.borderHover} ${colorClasses.borderFocus}`,
-  outlined: `${colorClasses.bg} border-2 ${colorClasses.border} ${colorClasses.borderHover} ${colorClasses.borderFocus}`,
-};
+  default: 'input__field--variant-default',
+  filled: 'input__field--variant-filled',
+  outlined: 'input__field--variant-outlined',
+} as const;
 
-// Compute classes
-const baseClasses = `
-  w-full rounded-lg transition-all duration-200 
-  ${colorClasses.focusRing}
-  focus-visible:outline-none
-  disabled:cursor-not-allowed
-  ${readonly ? 'cursor-default' : ''}
-`.trim();
+const wrapperClasses = ['input', sizeClasses[size], className]
+  .filter(Boolean)
+  .join(' ');
+const labelClasses = ['input__label', disabled ? 'input__label--disabled' : '']
+  .filter(Boolean)
+  .join(' ');
+const showCount = showCharCount && maxlength;
 
-const stateClasses = error ? colorClasses.error : variantClasses[variant];
-
-const disabledClasses = disabled
-  ? `${colorClasses.bgDisabled} ${colorClasses.textDisabled} opacity-60`
-  : colorClasses.text;
+const inputClasses = [
+  'input__field',
+  variantClasses[variant],
+  error ? 'input__field--error' : '',
+  disabled ? 'input__field--disabled' : '',
+  readonly ? 'input__field--readonly' : '',
+  prefix ? 'input__field--has-prefix' : '',
+  suffix || showCount ? 'input__field--has-suffix' : '',
+].filter(Boolean);
+const helperClasses = ['input__helper', error ? 'input__helper--error' : '']
+  .filter(Boolean)
+  .join(' ');
 
 // Generate IDs
 const inputId = id || `input-${Math.random().toString(36).slice(2, 8)}`;
@@ -157,29 +121,19 @@ const computedAriaDescribedby =
 
 // Character count calculation
 const currentLength = value ? String(value).length : 0;
-const showCount = showCharCount && maxlength;
 ---
 
-<div class={`space-y-2 ${className}`}>
+<div class={wrapperClasses}>
   <!-- Label -->
   {
     label && (
       <label
         for={inputId}
-        class={`
-        block font-medium leading-5
-        ${sizeClasses[size].label}
-        ${colorClasses.textSecondary}
-        ${disabled ? colorClasses.textDisabled : ''}
-      `}
+        class={labelClasses}
       >
         {label}
         {required && (
-          <span
-            class={`ml-1 ${colorClasses.errorText}`}
-            aria-hidden="true"
-            title="Required field"
-          >
+          <span class="input__label-required" aria-hidden="true" title="Required field">
             *
           </span>
         )}
@@ -188,18 +142,11 @@ const showCount = showCharCount && maxlength;
   }
 
   <!-- Input Container -->
-  <div class="relative">
+  <div class="input__wrapper">
     <!-- Prefix -->
     {
       prefix && (
-        <div
-          class={`
-        absolute left-0 top-0 bottom-0 flex items-center pl-3
-        ${sizeClasses[size].text}
-        ${colorClasses.textMuted}
-        pointer-events-none
-      `}
-        >
+        <div class="input__prefix">
           <span>{prefix}</span>
         </div>
       )
@@ -226,27 +173,13 @@ const showCount = showCharCount && maxlength;
       aria-describedby={computedAriaDescribedby}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
-      class={`
-        ${baseClasses}
-        ${sizeClasses[size].input}
-        ${stateClasses}
-        ${disabledClasses}
-        ${prefix ? 'pl-8' : ''}
-        ${suffix || showCount ? 'pr-16' : ''}
-      `}
+      class={inputClasses.join(' ')}
     />
 
     <!-- Suffix -->
     {
       suffix && (
-        <div
-          class={`
-        absolute right-0 top-0 bottom-0 flex items-center pr-3
-        ${sizeClasses[size].text}
-        ${colorClasses.textMuted}
-        pointer-events-none
-      `}
-        >
+        <div class="input__suffix">
           <span>{suffix}</span>
         </div>
       )
@@ -257,12 +190,7 @@ const showCount = showCharCount && maxlength;
       showCount && (
         <div
           id={charCountId}
-          class={`
-          absolute right-0 top-0 bottom-0 flex items-center pr-3
-          ${sizeClasses[size].text}
-          ${currentLength > maxlength! ? colorClasses.errorText : colorClasses.textMuted}
-          pointer-events-none
-        `}
+          class={`input__counter ${currentLength > maxlength! ? 'input__counter--error' : ''}`}
           aria-live="polite"
         >
           <span>
@@ -278,18 +206,14 @@ const showCount = showCharCount && maxlength;
     (error || helperText) && (
       <div
         id={descriptionId}
-        class={`
-        ${sizeClasses[size].text}
-        ${error ? colorClasses.errorText : colorClasses.textMuted}
-        leading-4
-      `}
+        class={helperClasses}
         role={error ? 'alert' : undefined}
         aria-live={error ? 'polite' : undefined}
       >
         {error && (
-          <span class="inline-flex items-center gap-1">
+          <span class="input__helper-row">
             <svg
-              class={`${sizeClasses[size].icon} ${colorClasses.errorText}`}
+              class="input__helper-icon"
               fill="currentColor"
               viewBox="0 0 20 20"
               aria-hidden="true"
@@ -308,3 +232,244 @@ const showCount = showCharCount && maxlength;
     )
   }
 </div>
+
+<style is:inline>
+  .input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .input__label {
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.4;
+  }
+
+  .input--size-sm .input__label {
+    font-size: 0.85rem;
+  }
+
+  .input--size-lg .input__label {
+    font-size: 1rem;
+  }
+
+  .input__label--disabled {
+    color: #94a3b8;
+  }
+
+  .input__label-required {
+    margin-left: 0.25rem;
+    color: #b91c1c;
+  }
+
+  .input__wrapper {
+    position: relative;
+  }
+
+  .input__field {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid #94a3b8;
+    background-color: #ffffff;
+    color: #0f172a;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease,
+      background-color 0.2s ease;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .input--size-sm .input__field {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .input--size-lg .input__field {
+    padding: 0.9rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .input__field:focus-visible {
+    outline: 2px solid #1d4ed8;
+    outline-offset: 2px;
+    border-color: #1d4ed8;
+  }
+
+  .input__field--readonly {
+    cursor: default;
+  }
+
+  .input__field--disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  .input__field--error {
+    border-color: #b91c1c;
+    background-color: rgba(248, 113, 113, 0.15);
+  }
+
+  .input--size-sm .input__field--has-prefix {
+    padding-left: 2.25rem;
+  }
+
+  .input--size-md .input__field--has-prefix {
+    padding-left: 2.5rem;
+  }
+
+  .input--size-lg .input__field--has-prefix {
+    padding-left: 2.75rem;
+  }
+
+  .input--size-sm .input__field--has-suffix {
+    padding-right: 2.25rem;
+  }
+
+  .input--size-md .input__field--has-suffix {
+    padding-right: 3rem;
+  }
+
+  .input--size-lg .input__field--has-suffix {
+    padding-right: 3.5rem;
+  }
+
+  .input__field--variant-default {
+    background-color: #ffffff;
+  }
+
+  .input__field--variant-filled {
+    background-color: #f8fafc;
+  }
+
+  .input__field--variant-outlined {
+    border-width: 2px;
+  }
+
+  .input__prefix,
+  .input__suffix,
+  .input__counter {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    color: #64748b;
+    pointer-events: none;
+    font-size: 0.85rem;
+    padding: 0 0.75rem;
+  }
+
+  .input--size-sm .input__prefix,
+  .input--size-sm .input__suffix,
+  .input--size-sm .input__counter {
+    font-size: 0.75rem;
+  }
+
+  .input--size-lg .input__prefix,
+  .input--size-lg .input__suffix,
+  .input--size-lg .input__counter {
+    font-size: 0.9rem;
+  }
+
+  .input__prefix {
+    left: 0;
+  }
+
+  .input__suffix,
+  .input__counter {
+    right: 0;
+  }
+
+  .input__counter--error {
+    color: #b91c1c;
+  }
+
+  .input__helper {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.4;
+  }
+
+  .input__helper--error {
+    color: #b91c1c;
+  }
+
+  .input--size-sm .input__helper {
+    font-size: 0.7rem;
+  }
+
+  .input--size-lg .input__helper {
+    font-size: 0.85rem;
+  }
+
+  .input__helper-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .input__helper-icon {
+    color: inherit;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .input--size-sm .input__helper-icon {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+
+  .input--size-lg .input__helper-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .input__helper--error .input__helper-icon {
+    color: #b91c1c;
+  }
+
+  :where(.dark) .input__label {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .input__field {
+    background-color: #0f172a;
+    color: #f8fafc;
+    border-color: #475569;
+  }
+
+  :where(.dark) .input__field:focus-visible {
+    outline-color: #60a5fa;
+    border-color: #60a5fa;
+  }
+
+  :where(.dark) .input__field--variant-filled {
+    background-color: #1f2937;
+  }
+
+  :where(.dark) .input__field--error {
+    border-color: #f87171;
+    background-color: rgba(248, 113, 113, 0.2);
+  }
+
+  :where(.dark) .input__field--disabled {
+    background-color: #1e293b;
+    color: #64748b;
+  }
+
+  :where(.dark) .input__prefix,
+  :where(.dark) .input__suffix,
+  :where(.dark) .input__counter {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .input__helper {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .input__helper--error,
+  :where(.dark) .input__counter--error,
+  :where(.dark) .input__label-required {
+    color: #f87171;
+  }

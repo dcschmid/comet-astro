@@ -1,122 +1,23 @@
 ---
-import { cn } from '../utils/cn';
-
-export interface Column {
-  /**
-   * Unique key for the column data
-   */
-  key: string;
-
-  /**
-   * Display label for the column header
-   */
-  label: string;
-
-  /**
-   * Whether the column is sortable
-   */
-  sortable?: boolean;
-
-  /**
-   * Text alignment for the column
-   */
-  align?: 'left' | 'center' | 'right';
-
-  /**
-   * Column width (CSS value)
-   */
-  width?: string;
-
-  /**
-   * Whether the column is sticky
-   */
-  sticky?: boolean;
-}
+import type { Column } from './Table.types';
 
 interface Props {
-  /**
-   * Array of column definitions
-   */
   columns: Column[];
-
-  /**
-   * Array of data rows
-   */
   data: Record<string, any>[];
-
-  /**
-   * Enable striped/zebra rows
-   */
   striped?: boolean;
-
-  /**
-   * Enable hover effects on rows
-   */
   hoverable?: boolean;
-
-  /**
-   * Show borders around cells
-   */
   bordered?: boolean;
-
-  /**
-   * Use compact spacing
-   */
   compact?: boolean;
-
-  /**
-   * Size variant for responsive design
-   */
   size?: 'sm' | 'md' | 'lg';
-
-  /**
-   * Visual variant
-   */
   variant?: 'default' | 'minimal' | 'elevated' | 'bordered';
-
-  /**
-   * Table caption for accessibility
-   */
   caption?: string;
-
-  /**
-   * Hide caption visually but keep for screen readers
-   */
   captionSrOnly?: boolean;
-
-  /**
-   * Enable responsive scroll
-   */
   responsive?: boolean;
-
-  /**
-   * Show loading state
-   */
   loading?: boolean;
-
-  /**
-   * Empty state message
-   */
   emptyMessage?: string;
-
-  /**
-   * ARIA label for the table
-   */
   ariaLabel?: string;
-
-  /**
-   * ARIA describedby reference
-   */
   ariaDescribedby?: string;
-
-  /**
-   * Enable visual debugging
-   */
   debug?: boolean;
-
-  /**
-   * Additional CSS classes
-   */
   class?: string;
 }
 
@@ -126,6 +27,7 @@ const {
   striped = false,
   hoverable = true,
   bordered = false,
+  compact = false,
   size = 'md',
   variant = 'default',
   caption,
@@ -139,390 +41,438 @@ const {
   class: className = '',
 } = Astro.props as Props;
 
-// Size classes for responsive design
-const sizeClasses = {
+const sizeTokens = {
   sm: {
-    table: 'text-xs',
-    header: 'px-2 py-1.5',
-    cell: 'px-2 py-1.5',
-    caption: 'px-2 py-2 text-xs',
+    font: 'var(--table-font-size-sm)',
+    cellPadding: 'var(--table-cell-padding-sm)',
+    captionPadding: 'var(--table-caption-padding-sm)',
   },
   md: {
-    table: 'text-sm',
-    header: 'px-4 py-3',
-    cell: 'px-4 py-3',
-    caption: 'px-4 py-3 text-sm',
+    font: 'var(--table-font-size-md)',
+    cellPadding: 'var(--table-cell-padding-md)',
+    captionPadding: 'var(--table-caption-padding-md)',
   },
   lg: {
-    table: 'text-base',
-    header: 'px-6 py-4',
-    cell: 'px-6 py-4',
-    caption: 'px-6 py-4 text-base',
+    font: 'var(--table-font-size-lg)',
+    cellPadding: 'var(--table-cell-padding-lg)',
+    captionPadding: 'var(--table-caption-padding-lg)',
   },
 };
 
-// Variant classes with WCAG AAA compliance
-const variantClasses = {
-  default: cn(
-    // Light mode - 9:1 contrast
-    'border border-slate-300 bg-white shadow-sm',
-    // Dark mode - 9:1 contrast
-    'dark:border-slate-600 dark:bg-slate-900',
-    // High contrast support
-    '@media (prefers-contrast: high) {',
-    '  border-slate-900 bg-white',
-    '  dark:border-slate-100 dark:bg-slate-900',
-    '}'
-  ),
-  minimal: cn('border-0 bg-transparent shadow-none', 'dark:bg-transparent'),
-  elevated: cn(
-    'border border-slate-200 bg-white shadow-lg shadow-slate-200/50',
-    'dark:border-slate-700 dark:bg-slate-900 dark:shadow-slate-900/50',
-    '@media (prefers-contrast: high) {',
-    '  border-slate-900 bg-white shadow-slate-900/25',
-    '  dark:border-slate-100 dark:bg-slate-900 dark:shadow-slate-100/25',
-    '}'
-  ),
-  bordered: cn(
-    'border-2 border-slate-400 bg-white shadow-sm',
-    'dark:border-slate-500 dark:bg-slate-900',
-    '@media (prefers-contrast: high) {',
-    '  border-slate-900 bg-white',
-    '  dark:border-slate-100 dark:bg-slate-900',
-    '}'
-  ),
-};
+const rootClasses = [
+  'table',
+  `table--size-${size}`,
+  `table--variant-${variant}`,
+  striped ? 'table--striped' : '',
+  hoverable ? 'table--hoverable' : '',
+  bordered ? 'table--bordered' : '',
+  compact ? 'table--compact' : '',
+  responsive ? 'table--responsive' : '',
+  loading ? 'table--loading' : '',
+  debug ? 'table--debug' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
-// Header classes with WCAG AAA contrast
-const headerClasses = cn(
-  'font-semibold uppercase tracking-wide',
-  // Light mode - 9:1 contrast
-  'bg-slate-100 text-slate-800',
-  // Dark mode - 9:1 contrast
-  'dark:bg-slate-800 dark:text-slate-100',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  bg-slate-200 text-slate-900',
-  '  dark:bg-slate-700 dark:text-slate-100',
-  '}',
-  sizeClasses[size].table
-);
-
-// Body classes with WCAG AAA contrast
-const bodyClasses = cn(
-  // Light mode - 9:1 contrast
-  'text-slate-700',
-  // Dark mode - 9:1 contrast
-  'dark:text-slate-200',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 dark:text-slate-100',
-  '}',
-  sizeClasses[size].table
-);
-
-// Row classes with hover and stripe effects
-const getRowClasses = (isStriped: boolean = false) =>
-  cn(
-    'transition-colors duration-150',
-    // Stripe effect
-    striped &&
-      isStriped &&
-      cn(
-        'bg-slate-50 dark:bg-slate-800/50',
-        '@media (prefers-contrast: high) {',
-        '  bg-slate-100 dark:bg-slate-800',
-        '}'
-      ),
-    // Hover effect
-    hoverable &&
-      cn(
-        'hover:bg-blue-50 dark:hover:bg-slate-700/50',
-        '@media (prefers-contrast: high) {',
-        '  hover:bg-blue-100 dark:hover:bg-slate-700',
-        '}'
-      )
-  );
-
-// Cell classes
-const getCellClasses = (align?: string, isHeader: boolean = false) =>
-  cn(
-    'align-top',
-    // Alignment
-    align === 'center'
-      ? 'text-center'
-      : align === 'right'
-        ? 'text-right'
-        : 'text-left',
-    // Spacing
-    isHeader ? sizeClasses[size].header : sizeClasses[size].cell,
-    // Borders
-    bordered &&
-      cn(
-        'border-b border-slate-200 dark:border-slate-700',
-        '@media (prefers-contrast: high) {',
-        '  border-slate-600 dark:border-slate-400',
-        '}'
-      )
-  );
-
-// Caption classes with WCAG AAA contrast
-const captionClasses = cn(
-  'font-semibold text-left',
-  sizeClasses[size].caption,
-  // Light mode - 9:1 contrast
-  'text-slate-800',
-  // Dark mode - 9:1 contrast
-  'dark:text-slate-100',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 dark:text-slate-100',
-  '}',
-  // Screen reader only
-  captionSrOnly && 'sr-only'
-);
-
-// Main table classes
-const tableClasses = cn(
-  'w-full text-left border-collapse',
-  sizeClasses[size].table,
-  // Loading state
-  loading && 'opacity-60'
-);
-
-// Container classes
-const containerClasses = cn(
-  // Base styles
-  'relative',
-  // Responsive scroll
-  responsive && 'overflow-x-auto',
-  // Rounded corners
-  'rounded-xl',
-  // Variant styles
-  variantClasses[variant],
-  // Debug mode
-  debug && 'debug-table',
-  // Custom classes
-  className
-);
-
-// Sortable button classes with WCAG AAA contrast
-const sortableButtonClasses = cn(
-  'inline-flex items-center gap-1 rounded-md px-1 py-0.5 transition-colors duration-150',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
-  // Light mode - 9:1 contrast
-  'text-slate-800 hover:text-blue-700 focus-visible:ring-offset-slate-100',
-  // Dark mode - 9:1 contrast
-  'dark:text-slate-100 dark:hover:text-blue-300 dark:focus-visible:ring-offset-slate-800',
-  // High contrast support
-  '@media (prefers-contrast: high) {',
-  '  text-slate-900 hover:text-blue-900',
-  '  dark:text-slate-100 dark:hover:text-blue-200',
-  '}'
-);
-
-// Generate unique IDs for accessibility
-const tableId = `table-${Math.random().toString(36).substr(2, 9)}`;
-const captionId = caption ? `${tableId}-caption` : undefined;
+const captionId = caption ? `table-caption-${Math.random().toString(36).slice(2, 9)}` : undefined;
+const debugInfo = debug ? `${size} ${variant} ${data.length} rows` : undefined;
 ---
 
+<div class={rootClasses} data-debug-info={debugInfo}>
+  {loading && (
+    <div class="table__loader" aria-hidden="true">
+      <div class="table__spinner" role="status" aria-label="Loading data">
+        <svg class="table__spinner-icon" viewBox="0 0 24 24">
+          <circle class="table__spinner-track" cx="12" cy="12" r="10" stroke-width="4" />
+          <path class="table__spinner-indicator" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg>
+        <span>Loading…</span>
+      </div>
+    </div>
+  )}
+
+  <table
+    class="table__element"
+    aria-label={ariaLabel}
+    aria-describedby={ariaDescribedby || captionId}
+  >
+    {caption && (
+      <caption
+        id={captionId}
+        class={[
+          'table__caption',
+          captionSrOnly ? 'table__caption--sr-only' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {caption}
+      </caption>
+    )}
+
+    <thead class="table__head">
+      <tr class="table__row table__row--head">
+        {columns.map((col) => (
+          <th
+            scope="col"
+            class={[
+              'table__cell table__cell--head',
+              `table__cell--align-${col.align || 'left'}`,
+              col.sticky ? 'table__cell--sticky' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            style={col.width ? `width: ${col.width}` : undefined}
+            aria-sort={col.sortable ? 'none' : undefined}
+          >
+            {col.sortable ? (
+              <button type="button" class="table__sort-button" aria-label={`Sort by ${col.label}`}>
+                <span>{col.label}</span>
+                <span class="table__sort-icon" aria-hidden="true">↕</span>
+              </button>
+            ) : (
+              col.label
+            )}
+          </th>
+        ))}
+      </tr>
+    </thead>
+
+    <tbody class="table__body">
+      {data.length === 0 ? (
+        <tr class="table__row">
+          <td colspan={columns.length} class="table__cell table__cell--empty">
+            {emptyMessage}
+          </td>
+        </tr>
+      ) : (
+        data.map((row, rowIndex) => (
+          <tr
+            class={[
+              'table__row',
+              striped && rowIndex % 2 === 1 ? 'table__row--striped' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {columns.map((col) => (
+              <td
+                class={[
+                  'table__cell',
+                  `table__cell--align-${col.align || 'left'}`,
+                  col.sticky ? 'table__cell--sticky' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                data-column={col.key}
+                set:html={row[col.key]}
+              />
+            ))}
+          </tr>
+        ))
+      )}
+    </tbody>
+  </table>
+</div>
+
 <style>
-  .debug-table {
-    /* Debug visualization */
-    outline: 2px dashed rgba(255, 192, 203, 0.7);
-    outline-offset: 2px;
+  .table {
+    --table-font-size-sm: 0.875rem;
+    --table-font-size-md: 0.95rem;
+    --table-font-size-lg: 1rem;
+    --table-cell-padding-sm: 0.35rem 0.75rem;
+    --table-cell-padding-md: 0.75rem 1rem;
+    --table-cell-padding-lg: 1rem 1.5rem;
+    --table-caption-padding-sm: 0.5rem;
+    --table-caption-padding-md: 0.75rem;
+    --table-caption-padding-lg: 1rem;
+    --table-border-color: rgba(148, 163, 184, 0.7);
+    --table-header-bg: #f1f5f9;
+    --table-header-color: #0f172a;
+    --table-body-color: #1f2937;
+    --table-row-hover: rgba(59, 130, 246, 0.08);
+    --table-row-striped: rgba(226, 232, 240, 0.5);
+    --table-background: #fff;
+    --table-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
     position: relative;
+    border-radius: 1rem;
+    border: 1px solid var(--table-border-color);
+    background: var(--table-background);
+    color: var(--table-body-color);
+    font-size: var(--table-font-size-md);
+    overflow: hidden;
   }
 
-  .debug-table::after {
+  :where(.dark) .table {
+    --table-border-color: rgba(71, 85, 105, 0.6);
+    --table-header-bg: rgba(15, 23, 42, 0.65);
+    --table-header-color: #f8fafc;
+    --table-body-color: #e2e8f0;
+    --table-row-hover: rgba(59, 130, 246, 0.2);
+    --table-row-striped: rgba(30, 41, 59, 0.7);
+    --table-background: #0f172a;
+    --table-shadow: 0 30px 60px rgba(2, 6, 23, 0.75);
+  }
+
+  .table--variant-minimal {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .table--variant-elevated {
+    border-color: rgba(148, 163, 184, 0.5);
+    box-shadow: var(--table-shadow);
+  }
+
+  .table--variant-bordered {
+    border-width: 2px;
+    border-color: rgba(15, 23, 42, 0.35);
+  }
+
+  .table--size-sm {
+    font-size: var(--table-font-size-sm);
+  }
+
+  .table--size-lg {
+    font-size: var(--table-font-size-lg);
+  }
+
+  .table--responsive {
+    overflow-x: auto;
+  }
+
+  .table__element {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .table__caption {
+    padding: var(--table-caption-padding-md);
+    font-weight: 600;
+    color: var(--table-body-color);
+    text-align: left;
+  }
+
+  .table--size-sm .table__caption {
+    padding: var(--table-caption-padding-sm);
+  }
+
+  .table--size-lg .table__caption {
+    padding: var(--table-caption-padding-lg);
+  }
+
+  .table__caption--sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  .table__head {
+    background: var(--table-header-bg);
+    color: var(--table-header-color);
+  }
+
+  .table__row {
+    transition: background 0.15s ease;
+  }
+
+  .table--hoverable .table__row:hover {
+    background: var(--table-row-hover);
+  }
+
+  .table--striped .table__row--striped {
+    background: var(--table-row-striped);
+  }
+
+  .table__row--head {
+    border-bottom: 1px solid var(--table-border-color);
+  }
+
+  .table__body {
+    color: var(--table-body-color);
+  }
+
+  .table__cell {
+    padding: var(--table-cell-padding-md);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    vertical-align: top;
+  }
+
+  .table--size-sm .table__cell {
+    padding: var(--table-cell-padding-sm);
+  }
+
+  .table--size-lg .table__cell {
+    padding: var(--table-cell-padding-lg);
+  }
+
+  .table__cell--head {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .table--bordered .table__cell {
+    border-right: 1px solid rgba(148, 163, 184, 0.35);
+  }
+
+  .table__cell:last-child {
+    border-right: none;
+  }
+
+  .table__cell--align-center {
+    text-align: center;
+  }
+
+  .table__cell--align-right {
+    text-align: right;
+  }
+
+  .table__cell--sticky {
+    position: sticky;
+    left: 0;
+    background: inherit;
+    z-index: 5;
+  }
+
+  .table__cell--empty {
+    text-align: center;
+    font-style: italic;
+    color: rgba(100, 116, 139, 0.9);
+  }
+
+  .table__sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-weight: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+    padding: 0.15rem 0.25rem;
+    border-radius: 0.5rem;
+    transition: background 0.2s ease;
+  }
+
+  .table__sort-button:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.4);
+    outline-offset: 2px;
+  }
+
+  .table__sort-button:hover {
+    background: rgba(59, 130, 246, 0.08);
+  }
+
+  .table__sort-icon {
+    font-size: 0.75em;
+    opacity: 0.6;
+  }
+
+  .table__loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(248, 250, 252, 0.85);
+    z-index: 10;
+    border-radius: inherit;
+  }
+
+  :where(.dark) .table__loader {
+    background: rgba(15, 23, 42, 0.75);
+  }
+
+  .table__spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--table-body-color);
+    font-weight: 600;
+  }
+
+  .table__spinner-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    animation: table-spin 1s linear infinite;
+  }
+
+  .table__spinner-track {
+    fill: none;
+    stroke: currentColor;
+    opacity: 0.2;
+  }
+
+  .table__spinner-indicator {
+    fill: currentColor;
+    opacity: 0.6;
+  }
+
+  @keyframes table-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .table--loading .table__element {
+    opacity: 0.45;
+  }
+
+  .table--debug {
+    outline: 2px dashed rgba(244, 114, 182, 0.8);
+    outline-offset: 3px;
+  }
+
+  .table--debug::after {
     content: attr(data-debug-info);
     position: absolute;
     top: -1.5rem;
     left: 0;
-    font-size: 0.75rem;
-    color: rgb(255 192 203);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: #db2777;
     font-family: monospace;
-    z-index: 10;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .debug-table::after {
-      background: rgba(0, 0, 0, 0.9);
-      color: rgb(255 192 203);
-    }
+  :where(.dark) .table--debug::after {
+    background: rgba(15, 23, 42, 0.95);
+    color: #f472b6;
   }
 
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    .debug-table,
-    .table-row,
-    .sortable-button {
-      transition: none !important;
-    }
-  }
-
-  /* High contrast mode adjustments */
   @media (prefers-contrast: high) {
-    .debug-table {
-      outline-color: rgb(255 192 203) !important;
+    .table,
+    .table__cell,
+    .table__caption,
+    .table__sort-button {
+      color: currentColor;
+      border-color: currentColor;
+    }
+
+    .table__loader {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    :where(.dark) .table__loader {
+      background: rgba(0, 0, 0, 0.6);
     }
   }
 
-  /* Sticky column support */
-  .sticky-column {
-    position: sticky;
-    left: 0;
-    z-index: 10;
-    background: inherit;
-  }
-
-  /* Loading animation */
-  @keyframes table-loading {
-    0%,
-    100% {
-      opacity: 0.6;
+  @media (prefers-reduced-motion: reduce) {
+    .table *,
+    .table__spinner-icon {
+      transition: none !important;
+      animation: none !important;
     }
-    50% {
-      opacity: 0.8;
-    }
-  }
-
-  .table-loading {
-    animation: table-loading 1.5s ease-in-out infinite;
   }
 </style>
-
-<div
-  class={containerClasses}
-  data-debug-info={debug ? `${size} ${variant} ${data.length} rows` : undefined}
->
-  {
-    loading && (
-      <div class="absolute inset-0 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center z-20 rounded-xl">
-        <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-          <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            />
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-          <span class="text-sm">Loading...</span>
-        </div>
-      </div>
-    )
-  }
-
-  <table
-    class={tableClasses}
-    id={tableId}
-    aria-label={ariaLabel}
-    aria-describedby={ariaDescribedby || captionId}
-    role="table"
-  >
-    {
-      caption && (
-        <caption class={captionClasses} id={captionId}>
-          {caption}
-        </caption>
-      )
-    }
-
-    <thead class={headerClasses} role="rowgroup">
-      <tr
-        class={cn(
-          'border-b border-slate-200 dark:border-slate-700',
-          '@media (prefers-contrast: high) { border-slate-600 dark:border-slate-400 }'
-        )}
-        role="row"
-      >
-        {
-          columns.map((col) => (
-            <th
-              scope="col"
-              class={cn(
-                getCellClasses(col.align, true),
-                col.sticky && 'sticky-column'
-              )}
-              style={col.width ? `width: ${col.width}` : undefined}
-              role="columnheader"
-              aria-sort={col.sortable ? 'none' : undefined}
-            >
-              {col.sortable ? (
-                <button
-                  class={cn(sortableButtonClasses, 'sortable-button')}
-                  aria-label={`Sort by ${col.label}`}
-                  type="button"
-                >
-                  {col.label}
-                  <span class="text-xs opacity-60" aria-hidden="true">
-                    ↕
-                  </span>
-                </button>
-              ) : (
-                col.label
-              )}
-            </th>
-          ))
-        }
-      </tr>
-    </thead>
-
-    <tbody
-      class={cn(
-        bodyClasses,
-        'divide-y divide-slate-200 dark:divide-slate-700',
-        '@media (prefers-contrast: high) { divide-slate-600 dark:divide-slate-400 }'
-      )}
-      role="rowgroup"
-    >
-      {
-        data.length === 0 ? (
-          <tr role="row">
-            <td
-              colspan={columns.length}
-              class={cn(
-                getCellClasses('center'),
-                'text-slate-500 dark:text-slate-400 italic',
-                '@media (prefers-contrast: high) { text-slate-700 dark:text-slate-300 }'
-              )}
-              role="cell"
-            >
-              {emptyMessage}
-            </td>
-          </tr>
-        ) : (
-          data.map((row, rowIndex) => (
-            <tr
-              class={cn(getRowClasses(rowIndex % 2 === 1), 'table-row')}
-              role="row"
-            >
-              {columns.map((col) => (
-                <td
-                  class={cn(
-                    getCellClasses(col.align),
-                    col.sticky && 'sticky-column'
-                  )}
-                  data-column={col.key}
-                  role="cell"
-                  set:html={row[col.key]}
-                />
-              ))}
-            </tr>
-          ))
-        )
-      }
-    </tbody>
-  </table>
-</div>

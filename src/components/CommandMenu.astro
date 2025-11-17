@@ -23,24 +23,15 @@ const {
 } = Astro.props as Props & Record<string, any>;
 ---
 
-<div
-  class="fixed inset-0 z-50 flex items-start justify-center bg-black/60 pt-16 backdrop-blur-sm transition duration-200 ease-out invisible opacity-0"
-  data-command-menu
-  aria-hidden="true"
->
-  <div
-    class={`w-full max-w-xl mx-4 overflow-hidden rounded-2xl border border-slate-300 bg-white text-slate-900 shadow-2xl ring-1 ring-black/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 ${className}`}
-    role="dialog"
-    aria-modal="true"
-    aria-label="Command menu"
-  >
-    <div class="relative px-4 py-3">
+<div class={`command-menu ${className}`} data-command-menu aria-hidden="true">
+  <div class="command-menu__dialog" role="dialog" aria-modal="true" aria-label="Command menu">
+    <div class="command-menu__input-wrap">
       <label for="comet-cmd-input" class="sr-only">{placeholder}</label>
       <input
         id="comet-cmd-input"
         type="text"
         placeholder={placeholder}
-        class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 placeholder-slate-500 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-950"
+        class="command-menu__input"
         data-command-input
         role="combobox"
         aria-expanded="false"
@@ -48,17 +39,17 @@ const {
         aria-haspopup="listbox"
         aria-controls="comet-cmd-list"
       />
-      <div
-        class="absolute right-4 top-3.5 hidden gap-1 rounded-md border border-slate-300 bg-white px-2 py-1 text-[10px] font-semibold text-slate-600 sm:inline-flex dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300"
-      >
-        <span class="text-xs">{shortcut}</span>
-        <span class="opacity-60">Esc</span>
+      <div class="command-menu__shortcut">
+        <span class="command-menu__shortcut-key">{shortcut}</span>
+        <span class="command-menu__shortcut-key command-menu__shortcut-key--secondary">
+          Esc
+        </span>
       </div>
     </div>
 
     <div
       id="comet-cmd-list"
-      class="max-h-80 overflow-y-auto px-2 py-3"
+      class="command-menu__list"
       data-command-list
       role="listbox"
       aria-label="Available commands"
@@ -75,22 +66,17 @@ const {
               role="option"
               aria-selected="false"
               tabindex={i === 0 ? 0 : -1}
-              class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors bg-transparent hover:bg-sky-50 focus-visible:bg-sky-100 focus-visible:outline-none dark:hover:bg-sky-800/30 dark:focus-visible:bg-sky-800/30"
+              class="command-menu__item"
             >
               {cmd.icon && (
-                <span
-                  class="shrink-0 text-lg text-sky-600 dark:text-sky-300"
-                  aria-hidden
-                >
+                <span class="command-menu__item-icon" aria-hidden>
                   {cmd.icon}
                 </span>
               )}
-              <div class="flex-1">
-                <div class="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  {cmd.label}
-                </div>
+              <div class="command-menu__item-body">
+                <div class="command-menu__item-label">{cmd.label}</div>
                 {cmd.description && (
-                  <p class="mt-0.5 text-xs text-slate-600 dark:text-slate-300">
+                  <p class="command-menu__item-description">
                     {cmd.description}
                   </p>
                 )}
@@ -98,16 +84,12 @@ const {
             </button>
           ))
         ) : (
-          <div class="px-3 py-6 text-sm text-slate-600 dark:text-slate-400">
-            No commands available
-          </div>
+          <div class="command-menu__empty">No commands available</div>
         )
       }
     </div>
 
-    <div
-      class="border-t border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400"
-    >
+    <div class="command-menu__footer">
       Press {shortcut} or Esc to close
     </div>
   </div>
@@ -117,115 +99,87 @@ const {
   (function () {
     const menu = document.querySelector('[data-command-menu]');
     if (!(menu instanceof HTMLElement)) return;
-    const dialog = menu.querySelector('[role="dialog"]');
     const input = menu.querySelector('[data-command-input]');
     const list = menu.querySelector('[data-command-list]');
-    if (!dialog || !input || !list) return;
+    if (!(input instanceof HTMLInputElement) || !(list instanceof HTMLElement))
+      return;
 
     const getItems = () =>
       Array.from(list.querySelectorAll('[data-command-item]')).filter(
-        function (el) {
-          return el instanceof HTMLElement;
-        }
+        (el): el is HTMLElement => el instanceof HTMLElement
       );
-    const getVisibleItems = function () {
-      return getItems().filter(function (item) {
-        return !item.classList.contains('hidden');
-      });
-    };
+    const getVisibleItems = () => getItems().filter((item) => !item.classList.contains('hidden'));
 
-    var activeIndex = -1;
-    var isOpen = false;
-    var lastFocused = null;
+    let activeIndex = -1;
+    let isOpen = false;
+    let lastFocused: HTMLElement | null = null;
 
-    var setAriaSelected = function (item, selected) {
+    const setAriaSelected = (item: HTMLElement, selected: boolean) => {
       item.setAttribute('aria-selected', selected ? 'true' : 'false');
       item.tabIndex = selected ? 0 : -1;
-      item.classList.toggle('ring-2', selected);
-      item.classList.toggle('ring-sky-500', selected);
+      item.classList.toggle('command-menu__item--selected', selected);
     };
 
-    var resetActive = function () {
-      getItems().forEach(function (item) {
-        setAriaSelected(item, false);
-      });
+    const resetActive = () => {
+      getItems().forEach((item) => setAriaSelected(item, false));
       activeIndex = -1;
     };
 
-    var focusItem = function (index) {
-      var visible = getVisibleItems();
+    const focusItem = (index: number) => {
+      const visible = getVisibleItems();
       if (!visible.length) return;
-      var clamped = Math.max(0, Math.min(index, visible.length - 1));
-      visible.forEach(function (item, idx) {
-        setAriaSelected(item, idx === clamped);
-      });
+      const clamped = Math.max(0, Math.min(index, visible.length - 1));
+      visible.forEach((item, idx) => setAriaSelected(item, idx === clamped));
       visible[clamped].focus({ preventScroll: true });
       activeIndex = clamped;
     };
 
-    var filterCommands = function (query) {
-      var normalized = (query || '').trim().toLowerCase();
-      getItems().forEach(function (item) {
-        var labelEl = item.querySelector('.text-sm');
-        var label =
-          labelEl && labelEl.textContent
-            ? labelEl.textContent.toLowerCase()
-            : '';
-        var keywords = (
-          item.getAttribute('data-command-keywords') || ''
-        ).toLowerCase();
-        var matches =
+    const filterCommands = (query: string) => {
+      const normalized = (query || '').trim().toLowerCase();
+      getItems().forEach((item) => {
+        const labelEl = item.querySelector('.command-menu__item-label');
+        const label = labelEl?.textContent?.toLowerCase() || '';
+        const keywords = (item.getAttribute('data-command-keywords') || '').toLowerCase();
+        const matches =
           !normalized ||
-          label.indexOf(normalized) !== -1 ||
-          keywords.indexOf(normalized) !== -1;
+          label.includes(normalized) ||
+          keywords.includes(normalized);
         item.classList.toggle('hidden', !matches);
       });
       resetActive();
-      var visible = getVisibleItems();
+      const visible = getVisibleItems();
       if (visible.length) visible[0].tabIndex = 0;
     };
 
-    var open = function () {
+    const open = () => {
       if (isOpen) return;
       isOpen = true;
-      lastFocused =
-        document.activeElement instanceof HTMLElement
-          ? document.activeElement
-          : null;
-      menu.classList.remove('invisible');
-      requestAnimationFrame(function () {
-        menu.classList.remove('opacity-0');
-      });
+      lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      menu.classList.add('command-menu--open');
       menu.setAttribute('aria-hidden', 'false');
       input.setAttribute('aria-expanded', 'true');
       document.body.style.setProperty('overflow', 'hidden');
-      setTimeout(function () {
-        input.focus({ preventScroll: true });
-      }, 20);
+      window.setTimeout(() => input.focus({ preventScroll: true }), 20);
     };
 
-    var close = function () {
+    const close = () => {
       if (!isOpen) return;
       isOpen = false;
-      menu.classList.add('opacity-0');
+      menu.classList.remove('command-menu--open');
       menu.setAttribute('aria-hidden', 'true');
       input.setAttribute('aria-expanded', 'false');
       input.value = '';
       filterCommands('');
       document.body.style.removeProperty('overflow');
-      setTimeout(function () {
-        menu.classList.add('invisible');
-      }, 150);
-      if (lastFocused && typeof lastFocused.focus === 'function')
+      if (lastFocused && typeof lastFocused.focus === 'function') {
         lastFocused.focus({ preventScroll: true });
+      }
     };
 
-    input.addEventListener('input', function () {
-      filterCommands(input.value);
-    });
+    input.addEventListener('input', () => filterCommands(input.value));
 
-    input.addEventListener('keydown', function (event) {
-      var visible = getVisibleItems();
+    input.addEventListener('keydown', (event) => {
+      const visible = getVisibleItems();
       if (!visible.length) return;
       if (event.key === 'ArrowDown') {
         event.preventDefault();
@@ -235,8 +189,8 @@ const {
       }
     });
 
-    list.addEventListener('keydown', function (event) {
-      var visible = getVisibleItems();
+    list.addEventListener('keydown', (event) => {
+      const visible = getVisibleItems();
       if (!visible.length) return;
       if (event.key === 'ArrowDown') {
         event.preventDefault();
@@ -255,31 +209,25 @@ const {
         close();
       } else if (event.key === 'Enter') {
         event.preventDefault();
-        var current = visible[activeIndex];
+        const current = visible[activeIndex];
         if (current && typeof current.click === 'function') current.click();
       }
     });
 
-    list.addEventListener('click', function (event) {
-      var el = event.target;
-      var item =
-        el instanceof HTMLElement ? el.closest('[data-command-item]') : null;
-      if (!(item instanceof HTMLElement)) return;
-      var action = item.getAttribute('data-command-action');
+    list.addEventListener('click', (event) => {
+      const target = event.target instanceof HTMLElement ? event.target.closest('[data-command-item]') : null;
+      if (!(target instanceof HTMLElement)) return;
+      const action = target.getAttribute('data-command-action');
       if (action) window.location.assign(action);
       close();
     });
 
-    menu.addEventListener('click', function (event) {
+    menu.addEventListener('click', (event) => {
       if (event.target === menu) close();
     });
 
-    document.addEventListener('keydown', function (event) {
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key &&
-        event.key.toLowerCase() === 'k'
-      ) {
+    document.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         open();
       } else if (event.key === 'Escape') {
@@ -290,3 +238,170 @@ const {
     filterCommands('');
   })();
 </script>
+
+<style is:inline>
+  .command-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 4rem;
+    background: rgba(2, 6, 23, 0.7);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .command-menu--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .command-menu__dialog {
+    width: min(42rem, calc(100% - 2rem));
+    border-radius: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 25px 65px rgba(15, 23, 42, 0.3);
+    overflow: hidden;
+  }
+
+  :where(.dark) .command-menu__dialog {
+    background: #020617;
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+
+  .command-menu__input-wrap {
+    position: relative;
+    padding: 1rem 1.25rem;
+  }
+
+  .command-menu__input {
+    width: 100%;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background: rgba(248, 250, 252, 0.9);
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  :where(.dark) .command-menu__input {
+    background: rgba(15, 23, 42, 0.9);
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.5);
+  }
+
+  .command-menu__shortcut {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    display: none;
+    gap: 0.25rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 640px) {
+    .command-menu__shortcut {
+      display: inline-flex;
+    }
+  }
+
+  .command-menu__shortcut-key {
+    border-radius: 0.4rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    padding: 0.25rem 0.5rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.7);
+    color: #334155;
+  }
+
+  :where(.dark) .command-menu__shortcut-key {
+    background: rgba(15, 23, 42, 0.8);
+    color: #cbd5f5;
+  }
+
+  .command-menu__shortcut-key--secondary {
+    opacity: 0.65;
+  }
+
+  .command-menu__list {
+    max-height: 18rem;
+    overflow-y: auto;
+    padding: 0.5rem;
+  }
+
+  .command-menu__item {
+    width: 100%;
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.85rem;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .command-menu__item:hover,
+  .command-menu__item--selected {
+    background: rgba(14, 165, 233, 0.12);
+  }
+
+  :where(.dark) .command-menu__item:hover,
+  :where(.dark) .command-menu__item--selected {
+    background: rgba(14, 165, 233, 0.2);
+  }
+
+  .command-menu__item-icon {
+    font-size: 1.25rem;
+    color: #0ea5e9;
+  }
+
+  .command-menu__item-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .command-menu__item-description {
+    margin: 0.2rem 0 0;
+    font-size: 0.78rem;
+    color: rgba(15, 23, 42, 0.7);
+  }
+
+  :where(.dark) .command-menu__item-description {
+    color: rgba(248, 250, 252, 0.7);
+  }
+
+  .command-menu__empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(15, 23, 42, 0.7);
+  }
+
+  :where(.dark) .command-menu__empty {
+    color: rgba(248, 250, 252, 0.7);
+  }
+
+  .command-menu__footer {
+    border-top: 1px solid rgba(148, 163, 184, 0.35);
+    padding: 0.85rem 1.25rem;
+    font-size: 0.75rem;
+    color: rgba(15, 23, 42, 0.7);
+    background: rgba(248, 250, 252, 0.65);
+  }
+
+  :where(.dark) .command-menu__footer {
+    background: rgba(15, 23, 42, 0.9);
+    color: rgba(248, 250, 252, 0.6);
+  }
+</style>

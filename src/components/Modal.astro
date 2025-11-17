@@ -53,72 +53,32 @@ const titleId = title ? `${modalId}-title` : undefined;
 const descriptionId =
   ariaDescribedBy || (hasFooter ? `${modalId}-footer` : undefined);
 
-// Variant styles with WCAG AAA contrast
-const variantClasses = {
-  default: {
-    dialog: 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900',
-    header: 'border-gray-200 dark:border-gray-700',
-    title: 'text-gray-900 dark:text-gray-50',
-    content: 'text-gray-700 dark:text-gray-300',
-    footer:
-      'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300',
-  },
-  danger: {
-    dialog:
-      'border-red-200 dark:border-red-800 bg-white dark:bg-gray-900 ring-1 ring-red-100 dark:ring-red-900',
-    header: 'border-red-200 dark:border-red-800',
-    title: 'text-red-900 dark:text-red-100',
-    content: 'text-gray-700 dark:text-gray-300',
-    footer:
-      'border-red-200 dark:border-red-800 text-gray-700 dark:text-gray-300',
-  },
-  success: {
-    dialog:
-      'border-green-200 dark:border-green-800 bg-white dark:bg-gray-900 ring-1 ring-green-100 dark:ring-green-900',
-    header: 'border-green-200 dark:border-green-800',
-    title: 'text-green-900 dark:text-green-100',
-    content: 'text-gray-700 dark:text-gray-300',
-    footer:
-      'border-green-200 dark:border-green-800 text-gray-700 dark:text-gray-300',
-  },
-  warning: {
-    dialog:
-      'border-yellow-200 dark:border-yellow-800 bg-white dark:bg-gray-900 ring-1 ring-yellow-100 dark:ring-yellow-900',
-    header: 'border-yellow-200 dark:border-yellow-800',
-    title: 'text-yellow-900 dark:text-yellow-100',
-    content: 'text-gray-700 dark:text-gray-300',
-    footer:
-      'border-yellow-200 dark:border-yellow-800 text-gray-700 dark:text-gray-300',
-  },
-};
+const sizeTokens = {
+  sm: { maxWidth: '28rem' },
+  md: { maxWidth: '36rem' },
+  lg: { maxWidth: '48rem' },
+  xl: { maxWidth: '64rem' },
+  fullscreen: { maxWidth: '100%', maxHeight: '100%' },
+} as const;
 
-// Size styles with responsive design
-const sizeClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-md sm:max-w-lg',
-  lg: 'max-w-lg sm:max-w-2xl',
-  xl: 'max-w-xl sm:max-w-4xl',
-  fullscreen:
-    'max-w-full h-full m-0 sm:max-w-[calc(100vw-2rem)] sm:max-h-[calc(100vh-2rem)] sm:m-4',
-};
+const inlineStyles = Object.entries({
+  '--modal-max-width': sizeTokens[size]?.maxWidth ?? '36rem',
+  '--modal-max-height': size === 'fullscreen' ? '100%' : '90vh',
+}).reduce((acc, [k, v]) => `${acc}${k}: ${v}; `, '');
 
-// Position styles
-const positionClasses = {
-  center: 'items-center justify-center',
-  top: 'items-start justify-center pt-16 sm:pt-20',
-  bottom: 'items-end justify-center pb-16 sm:pb-20',
-};
+const userClasses = [className, legacyClassName].filter(Boolean).join(' ');
 
-// Backdrop styles with WCAG AAA transparency
-const backdropClasses = {
-  default: 'bg-gray-900/80',
-  blur: 'bg-gray-900/80 backdrop-blur-sm',
-  dark: 'bg-black/90',
-  none: 'bg-transparent pointer-events-none',
-};
-
-const currentVariant = variantClasses[variant];
-const finalClassName = className || legacyClassName || '';
+const rootClasses = [
+  'modal',
+  `modal--variant-${variant}`,
+  `modal--size-${size}`,
+  `modal--position-${position}`,
+  `modal--backdrop-${backdrop}`,
+  open ? 'modal--open' : 'modal--closed',
+  userClasses,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div
@@ -128,45 +88,32 @@ const finalClassName = className || legacyClassName || '';
   aria-labelledby={titleId}
   aria-describedby={descriptionId}
   aria-label={ariaLabel || (title ? undefined : 'Modal dialog')}
-  class={`fixed inset-0 z-50 ${open ? '' : 'hidden'} flex px-4 py-8 sm:py-12 ${positionClasses[position]}`.trim()}
-  data-open={open}
+  class={rootClasses}
+  data-open={open ? 'true' : 'false'}
   data-modal-root
-  data-prevent-body-scroll={preventBodyScroll}
+  data-prevent-body-scroll={preventBodyScroll ? 'true' : 'false'}
   data-variant={variant}
   data-size={size}
 >
-  <!-- Backdrop -->
   <div
-    class={`absolute inset-0 transition-opacity duration-300 ${backdropClasses[backdrop]}`}
+    class="modal__backdrop"
     data-modal-backdrop={backdrop !== 'none' && closable ? 'true' : undefined}
     aria-hidden="true"
-  >
-  </div>
+  />
 
-  <!-- Dialog -->
   <div
-    class={`
-      relative z-10 w-full rounded-2xl border shadow-2xl outline-none transition-all duration-300
-      ${sizeClasses[size]}
-      ${currentVariant.dialog}
-      ${size === 'fullscreen' ? 'rounded-none sm:rounded-2xl' : ''}
-      ${finalClassName}
-    `
-      .trim()
-      .replace(/\s+/g, ' ')}
+    class="modal__dialog"
     data-modal-dialog
     role="document"
     tabindex="-1"
+    style={inlineStyles}
   >
-    <!-- Header -->
-    <header
-      class={`flex items-start justify-between gap-4 p-6 ${title || closable ? `border-b ${currentVariant.header}` : ''}`}
-    >
+    <header class="modal__header">
       {
         title && (
           <h2
             id={titleId}
-            class={`text-xl font-semibold ${currentVariant.title}`}
+            class="modal__title"
           >
             {title}
           </h2>
@@ -177,23 +124,11 @@ const finalClassName = className || legacyClassName || '';
         closable && (
           <button
             type="button"
-            class={`
-            inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border 
-            text-sm font-semibold transition-all duration-200
-            border-gray-300 dark:border-gray-600 
-            bg-white dark:bg-gray-800 
-            text-gray-700 dark:text-gray-300
-            hover:bg-gray-50 dark:hover:bg-gray-700
-            hover:border-gray-400 dark:hover:border-gray-500
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            dark:focus:ring-offset-gray-900
-          `
-              .trim()
-              .replace(/\s+/g, ' ')}
+            class="modal__close-button"
             data-modal-close
             aria-label={closeLabel}
           >
-            <span aria-hidden="true" class="text-lg leading-none">
+            <span aria-hidden="true" class="modal__close-icon">
               ×
             </span>
           </button>
@@ -201,25 +136,17 @@ const finalClassName = className || legacyClassName || '';
       }
     </header>
 
-    <!-- Content -->
     <div
-      class={`
-        px-6 ${title || closable ? 'pt-0' : 'pt-6'} ${hasFooter ? 'pb-0' : 'pb-6'}
-        ${size === 'fullscreen' ? 'max-h-none overflow-auto' : 'max-h-[65vh] overflow-auto'}
-        ${currentVariant.content}
-      `
-        .trim()
-        .replace(/\s+/g, ' ')}
+      class="modal__content"
     >
       <slot />
     </div>
 
-    <!-- Footer -->
     {
       hasFooter && (
         <footer
           id={ariaDescribedBy ? undefined : `${modalId}-footer`}
-          class={`border-t p-6 ${currentVariant.footer}`}
+          class="modal__footer"
         >
           <slot name="footer" />
         </footer>
@@ -230,65 +157,252 @@ const finalClassName = className || legacyClassName || '';
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    // Handle all click events
-    document.addEventListener('click', (e) => {
-      const target = e.target;
+    const SELECTOR_MODAL = '[data-modal-root]';
+    const SELECTOR_OPEN = '[data-modal-open]';
+    const SELECTOR_CLOSE = '[data-modal-close]';
+    const SELECTOR_BACKDROP = '[data-modal-backdrop]';
 
-      // Open modal
-      if (target.hasAttribute('data-modal-open')) {
-        e.preventDefault();
-        const modalId = target.getAttribute('data-modal-open');
-        const modal = document.getElementById(modalId);
-        console.log('Opening modal:', modalId, modal); // Debug
-        if (modal) {
-          modal.classList.remove('hidden');
-          modal.setAttribute('data-open', 'true');
-          document.body.style.overflow = 'hidden';
-        }
+    const updateScrollLock = () => {
+      const lockTarget = document.querySelector(
+        `${SELECTOR_MODAL}[data-open="true"][data-prevent-body-scroll="true"]`
+      );
+      document.body.style.overflow = lockTarget ? 'hidden' : '';
+    };
+
+    const closeModal = (modal) => {
+      if (!(modal instanceof HTMLElement)) return;
+      modal.classList.remove('modal--open');
+      modal.classList.add('modal--closed');
+      modal.setAttribute('data-open', 'false');
+      updateScrollLock();
+    };
+
+    const openModal = (modal) => {
+      if (!(modal instanceof HTMLElement)) return;
+      modal.classList.add('modal--open');
+      modal.classList.remove('modal--closed');
+      modal.setAttribute('data-open', 'true');
+      updateScrollLock();
+    };
+
+    document.addEventListener('click', (event) => {
+      const targetNode = event.target;
+      if (!(targetNode instanceof HTMLElement)) return;
+
+      const openTrigger = targetNode.closest(SELECTOR_OPEN);
+      if (openTrigger) {
+        event.preventDefault();
+        const modalId = openTrigger.getAttribute('data-modal-open');
+        const modal = modalId ? document.getElementById(modalId) : null;
+        if (modal) openModal(modal);
         return;
       }
 
-      // Close modal
-      if (
-        target.hasAttribute('data-modal-close') ||
-        target.closest('[data-modal-close]')
-      ) {
-        e.preventDefault();
-        const modal = target.closest('[data-modal-root]');
-        console.log('Closing modal:', modal); // Debug
-        if (modal) {
-          modal.classList.add('hidden');
-          modal.setAttribute('data-open', 'false');
-          document.body.style.overflow = '';
-        }
+      const closeButton = targetNode.closest(SELECTOR_CLOSE);
+      if (closeButton) {
+        event.preventDefault();
+        const modal = closeButton.closest(SELECTOR_MODAL);
+        closeModal(modal);
         return;
       }
 
-      // Close on backdrop click
-      if (target.hasAttribute('data-modal-backdrop')) {
-        e.preventDefault();
-        const modal = target.closest('[data-modal-root]');
-        if (modal) {
-          modal.classList.add('hidden');
-          modal.setAttribute('data-open', 'false');
-          document.body.style.overflow = '';
-        }
-        return;
+      if (targetNode.matches(SELECTOR_BACKDROP)) {
+        event.preventDefault();
+        const modal = targetNode.closest(SELECTOR_MODAL);
+        closeModal(modal);
       }
     });
 
-    // Handle Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const openModal = document.querySelector(
-          '[data-modal-root][data-open="true"]'
-        );
-        if (openModal) {
-          openModal.classList.add('hidden');
-          openModal.setAttribute('data-open', 'false');
-          document.body.style.overflow = '';
-        }
-      }
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const openModalElement = document.querySelector(
+        `${SELECTOR_MODAL}[data-open="true"]`
+      );
+      closeModal(openModalElement);
     });
   });
 </script>
+
+<style>
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    padding: 2rem 1rem;
+  }
+
+  .modal--position-center {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal--position-top {
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 5rem;
+  }
+
+  .modal--position-bottom {
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 5rem;
+  }
+
+  .modal--closed {
+    display: none;
+  }
+
+  .modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.75);
+    transition: opacity 0.2s ease;
+  }
+
+  .modal--backdrop-blur .modal__backdrop {
+    backdrop-filter: blur(4px);
+  }
+
+  .modal--backdrop-dark .modal__backdrop {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .modal--backdrop-none .modal__backdrop {
+    background-color: transparent;
+    pointer-events: none;
+  }
+
+  .modal__dialog {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: var(--modal-max-width, 36rem);
+    max-height: var(--modal-max-height, 90vh);
+    border-radius: 1.5rem;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 30px 90px rgba(15, 23, 42, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal--size-fullscreen .modal__dialog {
+    border-radius: 0;
+  }
+
+  .modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .modal__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: inherit;
+    margin: 0;
+  }
+
+  .modal__close-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid #cbd5f5;
+    background-color: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .modal__close-button:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .modal__close-button:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .modal__close-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .modal__content {
+    padding: 1.5rem;
+    flex: 1;
+    overflow-y: auto;
+    color: #475569;
+  }
+
+  .modal__footer {
+    border-top: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    color: #475569;
+  }
+
+  .modal--variant-danger .modal__dialog {
+    border-color: #fecdd3;
+  }
+
+  .modal--variant-danger .modal__title {
+    color: #be123c;
+  }
+
+  .modal--variant-success .modal__dialog {
+    border-color: #bbf7d0;
+  }
+
+  .modal--variant-success .modal__title {
+    color: #16a34a;
+  }
+
+  .modal--variant-warning .modal__dialog {
+    border-color: #fde68a;
+  }
+
+  .modal--variant-warning .modal__title {
+    color: #b45309;
+  }
+
+  :where(.dark) .modal__backdrop {
+    background-color: rgba(2, 6, 23, 0.85);
+  }
+
+  :where(.dark) .modal__dialog {
+    background-color: #0f172a;
+    border-color: #1e293b;
+    color: #f8fafc;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.4);
+  }
+
+  :where(.dark) .modal__header,
+  :where(.dark) .modal__footer {
+    border-color: #1f2937;
+  }
+
+  :where(.dark) .modal__content,
+  :where(.dark) .modal__footer {
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .modal__close-button {
+    border-color: #334155;
+    background-color: #1e293b;
+    color: #cbd5f5;
+  }
+
+  :where(.dark) .modal__close-button:hover {
+    background-color: #334155;
+  }
+</style>

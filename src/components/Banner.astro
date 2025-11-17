@@ -31,98 +31,50 @@ const {
   className = '',
 } = Astro.props as Props;
 
-const styles: Record<
-  Variant,
-  {
-    wrap: string;
-    text: string;
-    border: string;
-    accent: string;
-    ring: string;
-    cta: string;
-    dismiss: string;
-  }
-> = {
-  default: {
-    wrap: 'bg-slate-900 text-slate-100 dark:bg-slate-950 dark:text-slate-100',
-    text: 'text-slate-100 dark:text-slate-100',
-    border: 'border-slate-500/60 dark:border-slate-400/60',
-    accent: 'text-slate-200 dark:text-slate-200',
-    ring: 'focus-visible:ring-slate-100/70 focus-visible:ring-offset-slate-900 dark:focus-visible:ring-slate-200/70 dark:focus-visible:ring-offset-slate-950',
-    cta: 'text-slate-950 hover:bg-slate-100 dark:hover:bg-slate-200',
-    dismiss:
-      'border-slate-300/70 text-slate-100 hover:bg-slate-800/70 dark:border-slate-200/60',
-  },
-  success: {
-    wrap: 'bg-emerald-950 text-emerald-50',
-    text: 'text-emerald-50',
-    border: 'border-emerald-700/60',
-    accent: 'text-emerald-200',
-    ring: 'focus-visible:ring-emerald-200/70 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-emerald-100/80 dark:focus-visible:ring-offset-emerald-950',
-    cta: 'text-emerald-950 hover:bg-emerald-50 dark:hover:bg-emerald-100',
-    dismiss:
-      'border-emerald-300/70 text-emerald-100 hover:bg-emerald-900/40 dark:border-emerald-200/60',
-  },
-  warning: {
-    wrap: 'bg-amber-950 text-amber-50',
-    text: 'text-amber-50',
-    border: 'border-amber-700/70',
-    accent: 'text-amber-200',
-    ring: 'focus-visible:ring-amber-200/70 focus-visible:ring-offset-amber-950 dark:focus-visible:ring-amber-100/80 dark:focus-visible:ring-offset-amber-950',
-    cta: 'text-amber-950 hover:bg-amber-50 dark:hover:bg-amber-100',
-    dismiss:
-      'border-amber-300/70 text-amber-100 hover:bg-amber-900/40 dark:border-amber-200/60',
-  },
-  danger: {
-    wrap: 'bg-rose-950 text-rose-50',
-    text: 'text-rose-50',
-    border: 'border-rose-700/70',
-    accent: 'text-rose-200',
-    ring: 'focus-visible:ring-rose-200/70 focus-visible:ring-offset-rose-950 dark:focus-visible:ring-rose-100/80 dark:focus-visible:ring-offset-rose-950',
-    cta: 'text-rose-950 hover:bg-rose-50 dark:hover:bg-rose-100',
-    dismiss:
-      'border-rose-300/70 text-rose-100 hover:bg-rose-900/40 dark:border-rose-200/60',
-  },
-};
+const variants: Variant[] = ['default', 'success', 'warning', 'danger'];
+const variantKey = variants.includes(variant) ? variant : 'default';
 
 const id = `banner-${Math.random().toString(36).slice(2, 10)}`;
-
-const ctaBase =
-  'inline-flex items-center gap-2 rounded-full border border-transparent bg-white px-4 py-2 text-sm font-semibold text-center shadow-sm transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 dark:bg-white';
-const dismissBase =
-  'ml-2 inline-flex h-9 w-9 items-center justify-center rounded-full border bg-transparent p-2 text-base leading-none transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2';
+const rootClasses = [
+  'banner',
+  `banner--${variantKey}`,
+  sticky ? 'banner--sticky' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <section
   id={id}
-  class={`${sticky ? 'sticky top-0 z-40' : ''} ${styles[variant].wrap} border-b ${styles[variant].border} shadow-lg shadow-black/30 backdrop-blur ${className}`}
+  class={rootClasses}
   data-banner
   role="status"
 >
-  <div class="mx-auto flex max-w-5xl items-center gap-4 px-6 py-4">
-    <span class={`text-2xl ${styles[variant].accent}`} aria-hidden="true">
+  <div class="banner__inner">
+    <span class="banner__icon" aria-hidden="true">
       {
         icon ||
-          (variant === 'success'
+          (variantKey === 'success'
             ? '✅'
-            : variant === 'warning'
+            : variantKey === 'warning'
               ? '⚠️'
-              : variant === 'danger'
+              : variantKey === 'danger'
                 ? '⛔'
                 : '🔔')
       }
     </span>
-    <div class="flex-1 space-y-1">
+    <div class="banner__body">
       {
         title && (
-          <h2 class={`text-base font-semibold ${styles[variant].text}`}>
+          <h2 class="banner__title">
             {title}
           </h2>
         )
       }
       {
         description && (
-          <p class={`text-sm ${styles[variant].text}`}>{description}</p>
+          <p class="banner__description">{description}</p>
         )
       }
       <slot />
@@ -131,7 +83,7 @@ const dismissBase =
       action && (
         <a
           href={action.href}
-          class={`${ctaBase} ${styles[variant].cta} ${styles[variant].ring}`}
+          class="banner__action"
         >
           {action.label}
           <span aria-hidden="true">→</span>
@@ -142,7 +94,7 @@ const dismissBase =
       dismissible && (
         <button
           type="button"
-          class={`${dismissBase} ${styles[variant].dismiss} ${styles[variant].ring}`}
+          class="banner__dismiss"
           data-banner-close
           aria-label="Close banner"
         >
@@ -176,6 +128,182 @@ const dismissBase =
 </script>
 
 <style is:inline>
+  .banner {
+    --banner-bg: #0f172a;
+    --banner-border: rgba(148, 163, 184, 0.35);
+    --banner-text: #f8fafc;
+    --banner-icon: #cbd5f5;
+    --banner-action-bg: #f8fafc;
+    --banner-action-text: #0f172a;
+    --banner-action-border: transparent;
+    --banner-dismiss-border: rgba(148, 163, 184, 0.5);
+    --banner-dismiss-text: #f8fafc;
+    --banner-dismiss-hover: rgba(248, 250, 252, 0.15);
+    position: relative;
+    width: 100%;
+    border-bottom: 1px solid var(--banner-border);
+    background: var(--banner-bg);
+    color: var(--banner-text);
+    box-shadow: 0 20px 50px rgba(2, 6, 23, 0.35);
+    backdrop-filter: blur(12px);
+    isolation: isolate;
+  }
+
+  .banner--sticky {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .banner__inner {
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    max-width: 72rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .banner__icon {
+    font-size: 2rem;
+    color: var(--banner-icon);
+  }
+
+  .banner__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .banner__title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--banner-text);
+  }
+
+  .banner__description {
+    margin: 0;
+    font-size: 0.925rem;
+    color: var(--banner-text);
+    opacity: 0.9;
+  }
+
+  .banner__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.5rem 1.2rem;
+    background: var(--banner-action-bg);
+    color: var(--banner-action-text);
+    border: 1px solid var(--banner-action-border);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .banner__action:focus-visible,
+  .banner__dismiss:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.7);
+    outline-offset: 2px;
+  }
+
+  .banner__action:hover {
+    transform: translateY(-1px);
+  }
+
+  .banner__dismiss {
+    margin-left: 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--banner-dismiss-border);
+    background: transparent;
+    color: var(--banner-dismiss-text);
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .banner__dismiss:hover {
+    background: var(--banner-dismiss-hover);
+  }
+
+  @media (max-width: 768px) {
+    .banner__inner {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .banner__action {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .banner__dismiss {
+      align-self: flex-end;
+      margin-left: 0;
+    }
+  }
+
+  .banner--default {
+    --banner-bg: #0f172a;
+    --banner-border: rgba(148, 163, 184, 0.35);
+    --banner-text: #f8fafc;
+    --banner-icon: #cbd5f5;
+    --banner-action-bg: #f8fafc;
+    --banner-action-text: #0f172a;
+    --banner-dismiss-border: rgba(148, 163, 184, 0.5);
+    --banner-dismiss-text: #f8fafc;
+    --banner-dismiss-hover: rgba(148, 163, 184, 0.2);
+  }
+
+  .banner--success {
+    --banner-bg: #022c22;
+    --banner-border: rgba(16, 185, 129, 0.4);
+    --banner-text: #d1fae5;
+    --banner-icon: #6ee7b7;
+    --banner-action-bg: #d1fae5;
+    --banner-action-text: #064e3b;
+    --banner-dismiss-border: rgba(16, 185, 129, 0.45);
+    --banner-dismiss-text: #d1fae5;
+    --banner-dismiss-hover: rgba(20, 83, 45, 0.55);
+  }
+
+  .banner--warning {
+    --banner-bg: #451a03;
+    --banner-border: rgba(251, 191, 36, 0.45);
+    --banner-text: #fde68a;
+    --banner-icon: #fcd34d;
+    --banner-action-bg: #fef3c7;
+    --banner-action-text: #78350f;
+    --banner-dismiss-border: rgba(251, 191, 36, 0.45);
+    --banner-dismiss-text: #fde68a;
+    --banner-dismiss-hover: rgba(120, 53, 15, 0.45);
+  }
+
+  .banner--danger {
+    --banner-bg: #450a0a;
+    --banner-border: rgba(248, 113, 113, 0.4);
+    --banner-text: #fee2e2;
+    --banner-icon: #fca5a5;
+    --banner-action-bg: #fee2e2;
+    --banner-action-text: #7f1d1d;
+    --banner-dismiss-border: rgba(248, 113, 113, 0.45);
+    --banner-dismiss-text: #fee2e2;
+    --banner-dismiss-hover: rgba(127, 29, 29, 0.45);
+  }
+
   @keyframes fadeOut {
     to {
       opacity: 0;

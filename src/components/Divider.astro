@@ -15,51 +15,195 @@ const {
   className = '',
 } = Astro.props;
 
-const orientationClasses =
-  orientation === 'horizontal' ? 'h-px w-full' : 'inline-block h-full w-px';
-
-const variantClasses = {
-  solid: 'bg-slate-400/90 dark:bg-slate-500/90',
-  dashed: 'border-slate-400/90 border-dashed dark:border-slate-500/90',
-  dotted: 'border-slate-400/90 border-dotted dark:border-slate-500/90',
-  gradient:
-    'bg-gradient-to-r from-transparent via-slate-400/90 to-transparent dark:via-slate-500/90',
-};
-
-const spacingClasses = {
-  none: orientation === 'horizontal' ? 'my-0' : 'mx-0',
-  sm: orientation === 'horizontal' ? 'my-3 sm:my-2' : 'mx-3 sm:mx-2',
-  md: orientation === 'horizontal' ? 'my-5 sm:my-4' : 'mx-5 sm:mx-4',
-  lg: orientation === 'horizontal' ? 'my-7 sm:my-6' : 'mx-7 sm:mx-6',
-};
-
-const borderClass = ['dashed', 'dotted'].includes(variant)
-  ? orientation === 'horizontal'
-    ? 'border-t'
-    : 'border-l'
-  : '';
+const baseClasses = [
+  'divider',
+  `divider--${orientation}`,
+  `divider--variant-${variant}`,
+  `divider--spacing-${spacing}`,
+  label ? 'divider--labeled' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 {
   label && orientation === 'horizontal' ? (
-    <div
-      class={`relative ${spacingClasses[spacing]}`}
-      role="separator"
-      aria-label={label}
-    >
-      <div class="absolute inset-0 flex items-center" aria-hidden="true">
-        <div class={`w-full h-px ${variantClasses[variant]} ${borderClass}`} />
-      </div>
-      <div class="relative flex justify-center">
-        <span class="bg-white px-3 text-sm font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">
-          {label}
-        </span>
-      </div>
+    <div class={baseClasses} role="separator" aria-label={label}>
+      <span class="divider__line" aria-hidden="true"></span>
+      <span class="divider__label">{label}</span>
+      <span class="divider__line" aria-hidden="true"></span>
     </div>
   ) : (
-    <hr
-      class={`${orientationClasses} ${variantClasses[variant]} ${spacingClasses[spacing]} ${borderClass} ${className}`}
-      aria-hidden="true"
-    />
+    <hr class={baseClasses} role="separator" aria-hidden="true" />
   )
 }
+
+<style is:inline>
+  .divider {
+    --divider-line: var(--divider-line-light, rgba(100, 116, 139, 0.6));
+    --divider-label-bg: var(--divider-label-bg-light, #ffffff);
+    --divider-label-color: var(--divider-label-color-light, #0f172a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: var(--divider-label-color);
+  }
+  :where(.dark) .divider {
+    --divider-line: var(--divider-line-dark, rgba(148, 163, 184, 0.7));
+    --divider-label-bg: var(--divider-label-bg-dark, #0f172a);
+    --divider-label-color: var(--divider-label-color-dark, #f8fafc);
+  }
+  .divider--horizontal {
+    width: 100%;
+  }
+  .divider--vertical {
+    width: auto;
+    height: 100%;
+    min-height: 1rem;
+  }
+  .divider--spacing-none {
+    margin: 0;
+  }
+  .divider--spacing-sm.divider--horizontal {
+    margin: 0.5rem 0;
+  }
+  .divider--spacing-sm.divider--vertical {
+    margin: 0 0.5rem;
+  }
+  .divider--spacing-md.divider--horizontal {
+    margin: 1rem 0;
+  }
+  .divider--spacing-md.divider--vertical {
+    margin: 0 1rem;
+  }
+  .divider--spacing-lg.divider--horizontal {
+    margin: 1.5rem 0;
+  }
+  .divider--spacing-lg.divider--vertical {
+    margin: 0 1.5rem;
+  }
+  .divider__line {
+    flex: 1;
+    height: 1px;
+    background: var(--divider-line);
+  }
+  .divider--variant-dashed .divider__line,
+  .divider--variant-dotted .divider__line,
+  hr.divider--variant-dashed,
+  hr.divider--variant-dotted {
+    background: none;
+    border: 0;
+    border-color: var(--divider-line);
+  }
+  .divider--variant-dashed .divider__line,
+  hr.divider--variant-dashed {
+    border-top: 1px dashed var(--divider-line);
+    width: 100%;
+  }
+  .divider--variant-dotted .divider__line,
+  hr.divider--variant-dotted {
+    border-top: 1px dotted var(--divider-line);
+    width: 100%;
+  }
+  .divider--variant-gradient .divider__line,
+  hr.divider--variant-gradient {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--divider-line),
+      transparent
+    );
+  }
+  .divider--vertical .divider__line {
+    width: 1px;
+    height: 100%;
+  }
+  .divider--vertical.divider--variant-dashed .divider__line,
+  .divider--vertical.divider--variant-dotted .divider__line,
+  hr.divider--vertical.divider--variant-dashed,
+  hr.divider--vertical.divider--variant-dotted {
+    border-left-width: 1px;
+    border-left-style: inherit;
+    border-top: 0;
+    height: 100%;
+  }
+  .divider--vertical.divider--variant-gradient .divider__line,
+  hr.divider--vertical.divider--variant-gradient {
+    background: linear-gradient(
+      180deg,
+      transparent,
+      var(--divider-line),
+      transparent
+    );
+  }
+  .divider--horizontal.divider--variant-solid hr,
+  .divider--horizontal.divider--variant-solid .divider__line,
+  .divider--vertical.divider--variant-solid hr,
+  .divider--vertical.divider--variant-solid .divider__line {
+    background: var(--divider-line);
+  }
+  .divider--labeled {
+    gap: 0.75rem;
+  }
+  .divider__label {
+    padding: 0.1rem 0.75rem;
+    border-radius: 999px;
+    background: var(--divider-label-bg);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--divider-label-color);
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+  hr.divider {
+    border: 0;
+    padding: 0;
+    background: var(--divider-line);
+    display: inline-block;
+  }
+  hr.divider.divider--horizontal {
+    width: 100%;
+    height: 1px;
+  }
+  hr.divider.divider--vertical {
+    width: 1px;
+    height: 100%;
+  }
+  hr.divider.divider--variant-dashed,
+  hr.divider.divider--variant-dotted {
+    background: none;
+    border-color: var(--divider-line);
+    border-style: dashed;
+  }
+  hr.divider.divider--variant-dotted {
+    border-style: dotted;
+  }
+  hr.divider.divider--variant-gradient {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--divider-line),
+      transparent
+    );
+  }
+  hr.divider.divider--vertical.divider--variant-dashed,
+  hr.divider.divider--vertical.divider--variant-dotted {
+    border-left-width: 1px;
+    border-top: 0;
+  }
+  hr.divider.divider--vertical.divider--variant-gradient {
+    background: linear-gradient(
+      180deg,
+      transparent,
+      var(--divider-line),
+      transparent
+    );
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .divider {
+      transition: none;
+    }
+  }
+</style>

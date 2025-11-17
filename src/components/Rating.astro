@@ -1,43 +1,21 @@
 ---
-import { cn } from '../utils/cn';
-
-/**
- * Rating - Accessible star rating component with WCAG AAA compliance
- */
 interface Props {
-  /** Current rating value */
   value: number;
-  /** Maximum rating value */
   max?: number;
-  /** Whether the rating is read-only */
   readonly?: boolean;
-  /** Size of the rating stars */
   size?: 'sm' | 'md' | 'lg';
-  /** Show numeric value alongside stars */
   showValue?: boolean;
-  /** Form name attribute for interactive ratings */
   name?: string;
-  /** Label text for the rating */
   label?: string;
-  /** Help text displayed below the rating */
   helpText?: string;
-  /** Whether the rating is disabled */
   disabled?: boolean;
-  /** Whether the rating is required */
   required?: boolean;
-  /** Whether the rating has an error state */
   error?: boolean | string;
-  /** Visual variant of the rating */
   variant?: 'default' | 'minimal' | 'colored' | 'outlined';
-  /** Custom ID for the rating */
   id?: string;
-  /** Custom aria-label for accessibility */
   ariaLabel?: string;
-  /** ID of element that describes the rating */
   ariaDescribedBy?: string;
-  /** Additional CSS classes */
   class?: string;
-  /** Allow half-star ratings */
   allowHalf?: boolean;
 }
 
@@ -67,61 +45,7 @@ const errorId = error ? `${id}-error` : undefined;
 const finalAriaDescribedBy =
   [ariaDescribedBy, helpId, errorId].filter(Boolean).join(' ') || undefined;
 
-// Size configurations
-const sizeClasses = {
-  sm: {
-    star: 'text-base',
-    label: 'text-sm',
-    value: 'text-xs',
-    help: 'text-xs',
-    gap: 'gap-0.5',
-  },
-  md: {
-    star: 'text-xl',
-    label: 'text-sm',
-    value: 'text-sm',
-    help: 'text-xs',
-    gap: 'gap-1',
-  },
-  lg: {
-    star: 'text-3xl',
-    label: 'text-base',
-    value: 'text-base',
-    help: 'text-sm',
-    gap: 'gap-1.5',
-  },
-};
-
-// Variant styles with WCAG AAA compliance
-const variantClasses = {
-  default: {
-    filled: 'text-amber-600 dark:text-amber-400',
-    empty: 'text-gray-300 dark:text-gray-600',
-    hover: 'hover:text-amber-700 dark:hover:text-amber-300',
-    focus: 'focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400',
-  },
-  minimal: {
-    filled: 'text-gray-700 dark:text-gray-300',
-    empty: 'text-gray-300 dark:text-gray-600',
-    hover: 'hover:text-gray-800 dark:hover:text-gray-200',
-    focus: 'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400',
-  },
-  colored: {
-    filled: 'text-yellow-500 dark:text-yellow-400',
-    empty: 'text-gray-300 dark:text-gray-600',
-    hover: 'hover:text-yellow-600 dark:hover:text-yellow-300',
-    focus: 'focus-visible:ring-yellow-600 dark:focus-visible:ring-yellow-400',
-  },
-  outlined: {
-    filled: 'text-amber-600 dark:text-amber-400 drop-shadow-sm',
-    empty: 'text-transparent stroke-gray-400 dark:stroke-gray-500',
-    hover: 'hover:text-amber-700 dark:hover:text-amber-300',
-    focus: 'focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400',
-  },
-};
-
 const stars = Array.from({ length: max }, (_, i) => i + 1);
-
 const getStarFillState = (starIndex: number, ratingValue: number) => {
   const starNumber = starIndex + 1;
   if (
@@ -134,55 +58,33 @@ const getStarFillState = (starIndex: number, ratingValue: number) => {
   return starNumber <= ratingValue ? 'filled' : 'empty';
 };
 
-const starClasses = cn(
-  'leading-none transition-all duration-200 ease-in-out',
-  sizeClasses[size].star,
-  disabled && 'opacity-50 cursor-not-allowed'
-);
-
-const containerClasses = cn(
-  'inline-flex items-center',
-  sizeClasses[size].gap,
-  className
-);
-
-const labelClasses = cn(
-  'block font-medium text-gray-900 dark:text-gray-100',
-  sizeClasses[size].label,
-  disabled && 'opacity-50',
-  required &&
-    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
-);
-
-const helpClasses = cn(
-  'text-gray-600 dark:text-gray-300',
-  sizeClasses[size].help,
-  error && 'text-red-600 dark:text-red-300'
-);
-
-const valueClasses = cn(
-  'font-medium text-gray-900 dark:text-gray-100 tabular-nums',
-  sizeClasses[size].value,
-  disabled && 'opacity-50'
-);
+const rootClasses = [
+  'rating',
+  `rating--variant-${variant}`,
+  `rating--size-${size}`,
+  readonly ? 'rating--readonly' : '',
+  disabled ? 'rating--disabled' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 const escapeAttribute = (val: string | number) =>
   String(val).replace(/"/g, '&quot;');
 ---
 
-<div class="space-y-2">
-  {
-    label && (
-      <label class={labelClasses} for={readonly ? undefined : `${id}-group`}>
-        {label}
-      </label>
-    )
-  }
+<div class={rootClasses}>
+  {label && (
+    <label class="rating__label" for={readonly ? undefined : `${id}-group`}>
+      {label}
+      {required && <span class="rating__required">*</span>}
+    </label>
+  )}
 
-  <div class={containerClasses}>
+  <div class="rating__body">
     <div
       id={readonly ? undefined : `${id}-group`}
-      class={cn('inline-flex', sizeClasses[size].gap)}
+      class="rating__stars"
       role={readonly ? 'img' : 'radiogroup'}
       aria-label={ariaLabel || `Rating: ${value} out of ${max} stars`}
       aria-describedby={finalAriaDescribedBy}
@@ -191,250 +93,160 @@ const escapeAttribute = (val: string | number) =>
       aria-required={required ? 'true' : 'false'}
       aria-invalid={error ? 'true' : 'false'}
       data-rating={readonly ? undefined : 'interactive'}
-      data-readonly={readonly}
       data-variant={variant}
-      data-max={max}
       data-value={value}
     >
-      {
-        stars.map((star, index) => {
-          const fillState = getStarFillState(index, value);
-          const starValue = allowHalf ? index + 0.5 : star;
+      {stars.map((star, index) => {
+        const fillState = getStarFillState(index, value);
+        const starValue = allowHalf ? index + 0.5 : star;
 
-          if (readonly) {
-            const starClass = cn(
-              starClasses,
-              fillState === 'filled'
-                ? variantClasses[variant].filled
-                : fillState === 'half'
-                  ? variantClasses[variant].filled
-                  : variantClasses[variant].empty
-            );
+        if (readonly) {
+          return (
+            <span
+              class={`rating__star rating__star--${fillState}`}
+              aria-hidden="true"
+            >
+              {fillState === 'half' ? '☆' : '★'}
+            </span>
+          );
+        }
 
-            return (
-              <span
-                class={starClass}
-                aria-hidden="true"
-                data-star={star}
-                data-fill={fillState}
-              >
-                {fillState === 'half' ? '☆' : '★'}
-              </span>
-            );
-          } else {
-            const isChecked = allowHalf
-              ? Math.round(value * 2) / 2 === starValue
-              : Math.round(value) === star;
+        const isChecked = allowHalf
+          ? Math.round(value * 2) / 2 === starValue
+          : Math.round(value) === star;
 
-            return (
-              <label
-                class={cn(
-                  'cursor-pointer transition-transform duration-200',
-                  'focus-within:ring-2 focus-within:ring-offset-2',
-                  'focus-within:ring-offset-white dark:focus-within:ring-offset-gray-900',
-                  variantClasses[variant].focus,
-                  'hover:scale-105',
-                  disabled && 'cursor-not-allowed hover:scale-100'
-                )}
-              >
-                <input
-                  type="radio"
-                  name={escapeAttribute(name)}
-                  value={allowHalf ? starValue : star}
-                  class="sr-only"
-                  aria-label={`Rate ${allowHalf ? starValue : star} out of ${max} stars`}
-                  checked={isChecked}
-                  disabled={disabled}
-                  required={required}
-                />
-                <span
-                  class={cn(
-                    starClasses,
-                    variantClasses[variant].empty,
-                    variantClasses[variant].hover,
-                    fillState === 'filled' && variantClasses[variant].filled
-                  )}
-                  data-rating-star={allowHalf ? starValue : star}
-                  aria-hidden="true"
-                >
-                  ★
-                </span>
-              </label>
-            );
-          }
-        })
-      }
-
-      {
-        allowHalf &&
-          !readonly &&
-          stars.map((star, index) => {
-            const halfValue = index + 0.5;
-            const isChecked = Math.round(value * 2) / 2 === halfValue;
-
-            return (
-              <label
-                class={cn(
-                  'cursor-pointer transition-transform duration-200 -ml-3',
-                  'focus-within:ring-2 focus-within:ring-offset-2',
-                  'focus-within:ring-offset-white dark:focus-within:ring-offset-gray-900',
-                  variantClasses[variant].focus,
-                  'hover:scale-105',
-                  disabled && 'cursor-not-allowed hover:scale-100'
-                )}
-                style="z-index: 1"
-              >
-                <input
-                  type="radio"
-                  name={escapeAttribute(name)}
-                  value={halfValue}
-                  class="sr-only"
-                  aria-label={`Rate ${halfValue} out of ${max} stars`}
-                  checked={isChecked}
-                  disabled={disabled}
-                  required={required}
-                />
-                <span
-                  class={cn(
-                    starClasses,
-                    'w-1/2 overflow-hidden',
-                    variantClasses[variant].empty,
-                    variantClasses[variant].hover
-                  )}
-                  data-rating-star={halfValue}
-                  aria-hidden="true"
-                >
-                  ★
-                </span>
-              </label>
-            );
-          })
-      }
+        return (
+          <label class="rating__option">
+            <input
+              type="radio"
+              name={escapeAttribute(name)}
+              value={allowHalf ? starValue : star}
+              class="rating__input"
+              aria-label={`Rate ${allowHalf ? starValue : star} out of ${max} stars`}
+              checked={isChecked}
+              disabled={disabled}
+              required={required}
+            />
+            <span class={`rating__star rating__star--${fillState}`}>
+              ★
+            </span>
+          </label>
+        );
+      })}
     </div>
 
-    {
-      showValue && (
-        <span class={valueClasses}>
-          {value.toFixed(allowHalf ? 1 : 0)} / {max}
-        </span>
-      )
-    }
+    {showValue && (
+      <span class="rating__value">
+        {value.toFixed(allowHalf ? 1 : 0)} / {max}
+      </span>
+    )}
   </div>
 
-  <div class="space-y-1">
-    {
-      helpText && (
-        <p id={helpId} class={helpClasses}>
+  {(helpText || error) && (
+    <div class="rating__messages">
+      {helpText && (
+        <p id={helpId} class="rating__help">
           {helpText}
         </p>
-      )
-    }
-    {
-      error && (
-        <p id={errorId} class={cn(helpClasses, 'mt-1')} role="alert">
+      )}
+      {error && (
+        <p id={errorId} class="rating__error" role="alert">
           {typeof error === 'string' ? error : 'Please select a rating.'}
         </p>
-      )
-    }
-  </div>
+      )}
+    </div>
+  )}
 </div>
 
-<style is:inline>
-  [data-fill='half'] {
-    background: linear-gradient(to right, currentColor 50%, transparent 50%);
-    background-clip: text;
-    -webkit-background-clip: text;
+<style>
+  .rating {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  [data-variant='outlined'] [data-fill='empty'] {
-    -webkit-text-stroke: 1px;
-    -webkit-text-stroke-color: currentColor;
+  .rating__label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .rating__body {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .rating__stars {
+    display: inline-flex;
+    gap: 0.35rem;
+  }
+
+  .rating__option {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .rating__input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .rating__star {
+    font-size: 1.5rem;
+    transition: transform 0.2s ease, color 0.2s ease;
+    color: #d1d5db;
+  }
+
+  .rating--size-sm .rating__star {
+    font-size: 1.25rem;
+  }
+
+  .rating--size-lg .rating__star {
+    font-size: 1.85rem;
+  }
+
+  .rating__star--filled {
+    color: #f59e0b;
+  }
+
+  .rating__star--half {
+    color: #f59e0b;
+    position: relative;
+  }
+
+  .rating__option:hover .rating__star {
+    transform: scale(1.05);
+  }
+
+  .rating__value {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #0f172a;
+  }
+
+  .rating__help,
+  .rating__error {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  .rating__help {
+    color: #475569;
+  }
+
+  .rating__error {
+    color: #dc2626;
+  }
+
+  :where(.dark) .rating__label,
+  :where(.dark) .rating__value {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .rating__help {
+    color: #cbd5f5;
   }
 </style>
-
-<script is:inline>
-  (function setupRating() {
-    const highlightStars = (container, activeValue) => {
-      const stars = container.querySelectorAll('[data-rating-star]');
-      stars.forEach((star) => {
-        const starValue = parseFloat(
-          star.getAttribute('data-rating-star') || '0'
-        );
-        const shouldHighlight = starValue <= activeValue;
-
-        const filledClasses =
-          container.getAttribute('data-variant') === 'minimal'
-            ? ['text-gray-700', 'dark:text-gray-300']
-            : container.getAttribute('data-variant') === 'colored'
-              ? ['text-yellow-500', 'dark:text-yellow-400']
-              : ['text-amber-600', 'dark:text-amber-400'];
-
-        const emptyClasses = ['text-gray-300', 'dark:text-gray-600'];
-
-        if (shouldHighlight) {
-          star.classList.add(...filledClasses);
-          star.classList.remove(...emptyClasses);
-        } else {
-          star.classList.remove(...filledClasses);
-          star.classList.add(...emptyClasses);
-        }
-      });
-    };
-
-    const initRatings = () => {
-      const ratings = document.querySelectorAll('[data-rating="interactive"]');
-
-      ratings.forEach((rating) => {
-        const stars = rating.querySelectorAll('[data-rating-star]');
-
-        stars.forEach((star) => {
-          star.addEventListener('mouseenter', () => {
-            const starValue = parseFloat(
-              star.getAttribute('data-rating-star') || '0'
-            );
-            highlightStars(rating, starValue);
-          });
-        });
-
-        rating.addEventListener('mouseleave', () => {
-          const checkedInput = rating.querySelector('input:checked');
-          const currentValue = checkedInput
-            ? parseFloat(checkedInput.value)
-            : 0;
-          highlightStars(rating, currentValue);
-        });
-
-        // Keyboard navigation
-        rating.addEventListener('keydown', (event) => {
-          if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-            event.preventDefault();
-            const inputs = Array.from(
-              rating.querySelectorAll('input[type="radio"]')
-            );
-            const currentIndex = inputs.findIndex(
-              (input) => input === document.activeElement
-            );
-
-            let nextIndex;
-            if (event.key === 'ArrowRight') {
-              nextIndex =
-                currentIndex < inputs.length - 1 ? currentIndex + 1 : 0;
-            } else {
-              nextIndex =
-                currentIndex > 0 ? currentIndex - 1 : inputs.length - 1;
-            }
-
-            inputs[nextIndex]?.focus();
-            inputs[nextIndex]?.click();
-          }
-        });
-      });
-    };
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initRatings);
-    } else {
-      initRatings();
-    }
-  })();
-</script>

@@ -1,6 +1,4 @@
 ---
-import { cn } from '../utils/cn';
-
 interface Props {
   // Content and behavior
   content?: string;
@@ -55,73 +53,12 @@ const popoverId = `popover-${Math.random().toString(36).slice(2, 10)}`;
 const contentId = `${popoverId}-content`;
 const triggerId = `${popoverId}-trigger`;
 
-// Variant styles with WCAG AAA contrast ratios
-const variantStyles = {
-  default: {
-    content:
-      'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg',
-    trigger:
-      'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800',
-  },
-  minimal: {
-    content: 'border-0 bg-white dark:bg-gray-900 shadow-md',
-    trigger: 'border-0 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800',
-  },
-  bordered: {
-    content:
-      'border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 shadow-sm',
-    trigger:
-      'border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:border-gray-400 dark:hover:border-gray-500',
-  },
-  elevated: {
-    content:
-      'border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-xl ring-1 ring-black/5 dark:ring-white/10',
-    trigger:
-      'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md',
-  },
-};
-
-// Size styles
-const sizeStyles = {
-  sm: {
-    content: 'min-w-[160px] max-w-[240px] p-3 text-xs',
-    trigger: 'px-2 py-1 text-xs',
-  },
-  md: {
-    content: 'min-w-[200px] max-w-[320px] p-4 text-sm',
-    trigger: 'px-3 py-1.5 text-sm',
-  },
-  lg: {
-    content: 'min-w-[240px] max-w-[400px] p-6 text-base',
-    trigger: 'px-4 py-2 text-base',
-  },
-};
-
-// Build classes
-const containerClasses = cn('relative inline-flex', className);
-
-const triggerClasses = cn(
-  'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
-  // WCAG AAA contrast ratios
-  'text-gray-900 dark:text-gray-100',
-  variantStyles[variant].trigger,
-  sizeStyles[size].trigger
-);
-
-const contentClasses = cn(
-  'absolute z-50 rounded-lg leading-relaxed',
-  // WCAG AAA contrast ratios
-  'text-gray-900 dark:text-gray-100',
-  variantStyles[variant].content,
-  sizeStyles[size].content,
-  contentClass
-);
+const rootClasses = ['popover', className].filter(Boolean).join(' ');
 ---
 
 <div
   id={popoverId}
-  class={containerClasses}
+  class={rootClasses}
   data-popover-root
   data-popover-placement={placement}
   data-popover-trigger-mode={trigger}
@@ -137,7 +74,7 @@ const contentClasses = cn(
         <button
           id={triggerId}
           type="button"
-          class={triggerClasses}
+          class={`popover__trigger popover__trigger--variant-${variant} popover__trigger--size-${size}`}
           aria-expanded={defaultOpen ? 'true' : 'false'}
           aria-haspopup="dialog"
           aria-controls={contentId}
@@ -153,7 +90,7 @@ const contentClasses = cn(
   <!-- Popover Content -->
   <div
     id={contentId}
-    class={contentClasses}
+    class={`popover__content popover__content--variant-${variant} popover__content--size-${size} ${contentClass || ''}`.trim()}
     data-popover-content
     hidden={!defaultOpen}
     role={role}
@@ -394,3 +331,108 @@ const contentClasses = cn(
     }
   })();
 </script>
+
+<style>
+  .popover {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .popover__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background-color: #ffffff;
+    color: #0f172a;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .popover__trigger:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .popover__trigger--variant-minimal {
+    border: none;
+    background-color: transparent;
+  }
+
+  .popover__trigger--variant-bordered {
+    border-width: 2px;
+  }
+
+  .popover__trigger--variant-elevated {
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  }
+
+  .popover__trigger--size-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .popover__trigger--size-md {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .popover__trigger--size-lg {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .popover__content {
+    position: absolute;
+    z-index: 50;
+    border-radius: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background-color: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 25px 80px rgba(15, 23, 42, 0.15);
+    min-width: 200px;
+    max-width: 320px;
+    padding: 1rem;
+  }
+
+  .popover__content--variant-minimal {
+    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.1);
+    border: none;
+  }
+
+  .popover__content--variant-bordered {
+    border-width: 2px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+  }
+
+  .popover__content--variant-elevated {
+    box-shadow: 0 30px 90px rgba(15, 23, 42, 0.2);
+  }
+
+  .popover__content--size-sm {
+    min-width: 160px;
+    max-width: 240px;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .popover__content--size-lg {
+    min-width: 240px;
+    max-width: 400px;
+    padding: 1.25rem;
+    font-size: 1rem;
+  }
+
+  :where(.dark) .popover__trigger {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-color: rgba(148, 163, 184, 0.4);
+    color: #f8fafc;
+  }
+
+  :where(.dark) .popover__content {
+    background-color: #0f172a;
+    border-color: rgba(148, 163, 184, 0.3);
+    color: #f8fafc;
+  }
+</style>

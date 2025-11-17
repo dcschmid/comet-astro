@@ -1,36 +1,20 @@
 ---
-import { cn } from '../utils/cn';
 
 interface Props {
-  /** Name attribute for radio group */
   name: string;
-  /** Value of this radio option */
   value: string;
-  /** Label text for the radio button */
   label?: string;
-  /** Whether the radio is checked */
   checked?: boolean;
-  /** Whether the radio is disabled */
   disabled?: boolean;
-  /** Whether the radio is required */
   required?: boolean;
-  /** Whether the radio has an error state */
   error?: boolean;
-  /** Visual variant of the radio button */
   variant?: 'default' | 'success' | 'warning' | 'error' | 'minimal';
-  /** Size of the radio button */
   size?: 'sm' | 'md' | 'lg';
-  /** Position of the label relative to radio */
   labelPosition?: 'right' | 'left';
-  /** Description text for additional context */
   description?: string;
-  /** Custom ID for the input element */
   id?: string;
-  /** Custom aria-label for accessibility */
   ariaLabel?: string;
-  /** ID of element that describes the radio */
   ariaDescribedBy?: string;
-  /** Additional CSS classes */
   class?: string;
 }
 
@@ -52,132 +36,24 @@ const {
   class: className = '',
 } = Astro.props;
 
-// Size classes for radio button
-const sizeClasses = {
-  sm: 'h-4 w-4',
-  md: 'h-5 w-5',
-  lg: 'h-6 w-6',
-};
-
-// Label text size classes
-const labelSizeClasses = {
-  sm: 'text-sm',
-  md: 'text-sm',
-  lg: 'text-base',
-};
-
-// Description text size classes
-const descriptionSizeClasses = {
-  sm: 'text-xs',
-  md: 'text-xs',
-  lg: 'text-sm',
-};
-
-// Variant color schemes with WCAG AAA compliance
-const variantClasses = {
-  default: {
-    radio: cn(
-      'border-gray-400 dark:border-gray-500',
-      'text-blue-600 dark:text-blue-400',
-      'checked:border-blue-600 dark:checked:border-blue-400',
-      'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
-      error &&
-        'border-red-500 dark:border-red-400 checked:border-red-600 dark:checked:border-red-400 focus-visible:ring-red-500 dark:focus-visible:ring-red-400'
-    ),
-    label: 'text-gray-900 dark:text-gray-100',
-    description: 'text-gray-600 dark:text-gray-300',
-  },
-  success: {
-    radio: cn(
-      'border-emerald-500 dark:border-emerald-400',
-      'text-emerald-600 dark:text-emerald-400',
-      'checked:border-emerald-600 dark:checked:border-emerald-400',
-      'focus-visible:ring-emerald-600 dark:focus-visible:ring-emerald-400'
-    ),
-    label: 'text-gray-900 dark:text-gray-100',
-    description: 'text-emerald-600 dark:text-emerald-300',
-  },
-  warning: {
-    radio: cn(
-      'border-amber-500 dark:border-amber-400',
-      'text-amber-600 dark:text-amber-400',
-      'checked:border-amber-600 dark:checked:border-amber-400',
-      'focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400'
-    ),
-    label: 'text-gray-900 dark:text-gray-100',
-    description: 'text-amber-600 dark:text-amber-300',
-  },
-  error: {
-    radio: cn(
-      'border-red-500 dark:border-red-400',
-      'text-red-600 dark:text-red-400',
-      'checked:border-red-600 dark:checked:border-red-400',
-      'focus-visible:ring-red-600 dark:focus-visible:ring-red-400'
-    ),
-    label: 'text-gray-900 dark:text-gray-100',
-    description: 'text-red-600 dark:text-red-300',
-  },
-  minimal: {
-    radio: cn(
-      'border-gray-300 dark:border-gray-600',
-      'text-gray-700 dark:text-gray-300',
-      'checked:border-gray-700 dark:checked:border-gray-300',
-      'focus-visible:ring-gray-600 dark:focus-visible:ring-gray-400',
-      error &&
-        'border-red-500 dark:border-red-400 checked:border-red-600 dark:checked:border-red-400 focus-visible:ring-red-500 dark:focus-visible:ring-red-400'
-    ),
-    label: 'text-gray-700 dark:text-gray-300',
-    description: 'text-gray-500 dark:text-gray-400',
-  },
-};
-
-// Radio button classes
-const radioClasses = cn(
-  'rounded-full border-2 bg-white dark:bg-gray-900',
-  'transition-all duration-200 ease-in-out',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-  'focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900',
-  sizeClasses[size],
-  variantClasses[variant].radio,
-  disabled
-    ? 'cursor-not-allowed opacity-50'
-    : 'cursor-pointer hover:border-opacity-80',
-  labelPosition === 'right' ? 'mt-0.5' : 'mt-0.5'
-);
-
-// Label classes
-const labelClasses = cn(
-  'font-medium leading-tight',
-  labelSizeClasses[size],
-  variantClasses[variant].label,
-  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-  required &&
-    'after:content-["*"] after:ml-1 after:text-red-500 dark:after:text-red-400'
-);
-
-// Description classes
-const descriptionClasses = cn(
-  'mt-1 leading-tight',
-  descriptionSizeClasses[size],
-  variantClasses[variant].description,
-  disabled && 'opacity-50'
-);
-
-// Container classes
-const containerClasses = cn(
-  'flex items-start gap-3',
-  labelPosition === 'left' && 'flex-row-reverse',
-  size === 'sm' && 'gap-2',
-  size === 'lg' && 'gap-4',
-  className
-);
+const rootClasses = [
+  'radio',
+  `radio--variant-${variant}`,
+  `radio--size-${size}`,
+  labelPosition === 'left' ? 'radio--reverse' : '',
+  error ? 'radio--error' : '',
+  disabled ? 'radio--disabled' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 const descriptionId = description ? `${id}-description` : undefined;
 const finalAriaDescribedBy =
   [ariaDescribedBy, descriptionId].filter(Boolean).join(' ') || undefined;
 ---
 
-<div class={containerClasses}>
+<div class={rootClasses}>
   <input
     type="radio"
     {id}
@@ -189,20 +65,21 @@ const finalAriaDescribedBy =
     aria-label={ariaLabel}
     aria-describedby={finalAriaDescribedBy}
     aria-invalid={error ? 'true' : undefined}
-    class={radioClasses}
+    class="radio__input"
   />
 
   {
     (label || description) && (
-      <div class="flex-1 min-w-0">
+      <div class="radio__text">
         {label && (
-          <label for={id} class={labelClasses}>
+          <label for={id} class="radio__label">
             {label}
+            {required && <span class="radio__required">*</span>}
           </label>
         )}
 
         {description && (
-          <div id={descriptionId} class={descriptionClasses}>
+          <div id={descriptionId} class="radio__description">
             {description}
           </div>
         )}
@@ -210,3 +87,115 @@ const finalAriaDescribedBy =
     )
   }
 </div>
+
+<style>
+  .radio {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .radio--reverse {
+    flex-direction: row-reverse;
+  }
+
+  .radio__input {
+    margin-top: 0.25rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid rgba(148, 163, 184, 0.8);
+    border-radius: 999px;
+    background-color: #ffffff;
+    accent-color: #2563eb;
+    cursor: pointer;
+  }
+
+  .radio--size-sm .radio__input {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .radio--size-lg .radio__input {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .radio--variant-success .radio__input {
+    accent-color: #16a34a;
+    border-color: rgba(16, 185, 129, 0.7);
+  }
+
+  .radio--variant-warning .radio__input {
+    accent-color: #d97706;
+    border-color: rgba(234, 179, 8, 0.8);
+  }
+
+  .radio--variant-error .radio__input {
+    accent-color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.8);
+  }
+
+  .radio--variant-minimal .radio__input {
+    border-color: rgba(148, 163, 184, 0.5);
+  }
+
+  .radio__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .radio__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+    color: #0f172a;
+    cursor: pointer;
+  }
+
+  .radio__required {
+    color: #dc2626;
+  }
+
+  .radio__description {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+    color: #475569;
+  }
+
+  .radio--size-sm .radio__label {
+    font-size: 0.9rem;
+  }
+
+  .radio--size-lg .radio__label {
+    font-size: 1rem;
+  }
+
+  .radio--disabled .radio__label,
+  .radio--disabled .radio__description {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .radio--disabled .radio__input {
+    cursor: not-allowed;
+  }
+
+  .radio--error .radio__label,
+  .radio--error .radio__description {
+    color: #dc2626;
+  }
+
+  :where(.dark) .radio__input {
+    background-color: #0f172a;
+    border-color: rgba(148, 163, 184, 0.5);
+  }
+
+  :where(.dark) .radio__label {
+    color: #f8fafc;
+  }
+
+  :where(.dark) .radio__description {
+    color: #cbd5f5;
+  }
+</style>
