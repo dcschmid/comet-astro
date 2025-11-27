@@ -1,6 +1,4 @@
 ---
-import { tv } from 'tailwind-variants';
-
 /**
  * Accordion - collapsible sections (Disclosure)
  */
@@ -15,20 +13,6 @@ interface Props {
   multiple?: boolean;
   openIds?: string[];
   className?: string;
-  color?:
-    | 'classicBlue'
-    | 'natureGreen'
-    | 'warmPurple'
-    | 'skyCyan'
-    | 'orangeAccent';
-  /** Optional per-slot class overrides. Values will be merged with the tv output. */
-  classOverrides?: {
-    wrapper?: string;
-    section?: string;
-    trigger?: string;
-    icon?: string;
-    panelContent?: string;
-  };
 }
 
 const {
@@ -36,104 +20,21 @@ const {
   multiple = false,
   openIds = [],
   className = '',
-  color = 'classicBlue',
-  classOverrides = {},
 } = Astro.props as Props;
-
-const section = tv({
-  base: 'rounded-xl shadow-sm transition-colors motion-reduce:transition-none',
-  variants: {
-    color: {
-      // Palette 1: Classic Blue
-      classicBlue:
-        'border-gray-200 bg-white text-gray-900 focus-within:border-gray-300 dark:border-gray-800 dark:bg-gray-900 dark:text-white',
-      // Palette 2: Nature Green
-      natureGreen:
-        'border-stone-100 bg-stone-50 text-stone-900 focus-within:border-stone-200 dark:border-stone-900 dark:bg-stone-950 dark:text-stone-100',
-      // Palette 3: Warm Purple
-      warmPurple:
-        'border-gray-100 bg-gray-50 text-gray-900 focus-within:border-gray-200 dark:border-gray-900 dark:bg-gray-950 dark:text-gray-50',
-      // Palette 4: Sky Cyan
-      skyCyan:
-        'border-slate-100 bg-slate-50 text-slate-900 focus-within:border-slate-200 dark:border-slate-900 dark:bg-slate-900 dark:text-slate-50',
-      // Palette 5: Orange Accent
-      orangeAccent:
-        'border-zinc-100 bg-zinc-50 text-zinc-900 focus-within:border-zinc-200 dark:border-zinc-900 dark:bg-zinc-950 dark:text-zinc-100',
-    },
-  },
-  defaultVariants: { color: 'slate' },
-});
-
-const trigger = tv({
-  base: 'flex w-full min-h-12 items-center justify-between gap-3 rounded-lg px-4 py-3 text-left text-base font-medium transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:px-6 sm:py-4 sm:text-lg',
-  variants: {
-    open: {
-      true: '',
-      false: '',
-    },
-    color: {
-      classicBlue: 'hover:bg-white dark:hover:bg-gray-900',
-      natureGreen: 'hover:bg-stone-50 dark:hover:bg-stone-950',
-      warmPurple: 'hover:bg-gray-50 dark:hover:bg-gray-950',
-      skyCyan: 'hover:bg-slate-50 dark:hover:bg-slate-900',
-      orangeAccent: 'hover:bg-zinc-50 dark:hover:bg-zinc-950',
-    },
-  },
-  defaultVariants: { color: 'slate' },
-});
-
-const icon = tv({
-  base: 'text-xl transition-transform motion-reduce:rotate-0 motion-reduce:transition-none',
-  variants: {
-    open: { true: 'rotate-180', false: '' },
-    color: {
-      classicBlue: 'text-blue-600 dark:text-blue-400',
-      natureGreen: 'text-emerald-600 dark:text-emerald-400',
-      warmPurple: 'text-violet-600 dark:text-violet-400',
-      skyCyan: 'text-cyan-600 dark:text-cyan-300',
-      orangeAccent: 'text-orange-500 dark:text-orange-300',
-    },
-  },
-  defaultVariants: { color: 'slate' },
-});
-
-const panelContent = tv({
-  base: 'px-4 pt-4 pb-5 text-base sm:px-6 sm:pt-5 sm:pb-6',
-  variants: {
-    color: {
-      classicBlue: 'text-gray-900 dark:text-white',
-      natureGreen: 'text-stone-900 dark:text-stone-100',
-      warmPurple: 'text-gray-900 dark:text-gray-50',
-      skyCyan: 'text-slate-900 dark:text-slate-50',
-      orangeAccent: 'text-zinc-900 dark:text-zinc-100',
-    },
-  },
-  defaultVariants: { color: 'slate' },
-});
 ---
 
 <div
-  class={`space-y-4 sm:space-y-5 ${className} ${classOverrides.wrapper || ''}`}
+  class={`space-y-4 sm:space-y-5 Accordion ${className}`}
   data-multiple={multiple}
   data-open={openIds.join(',')}
-  data-color={color}
 >
   {
     items.map((it) => (
-      <section
-        class={section({ color }, { class: classOverrides.section || '' })}
-      >
-        <h3>
+      <section class="rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition-colors motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50 Accordion__Section">
+        <h3 class="m-0! p-0!">
           <button
             id={`acc-trigger-${it.id}`}
-            class={
-              trigger(
-                { color, open: String(openIds.includes(it.id)) },
-                { class: classOverrides.trigger || '' }
-              ) +
-              ' ' +
-              (openIds.includes(it.id) ? '' : '')
-            }
+            class={`flex w-full min-h-12 items-center justify-between gap-3 rounded-lg px-4 py-3 text-left text-base font-semibold transition-colors motion-reduce:transition-none hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-800 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:bg-slate-800/80 dark:focus-visible:ring-sky-300 dark:focus-visible:ring-offset-slate-900 sm:px-6 sm:py-4 sm:text-lg Accordion__Trigger ${openIds.includes(it.id) ? 'bg-slate-100/90 dark:bg-slate-800/80' : ''}`}
             data-acc-trigger
             data-id={it.id}
             aria-expanded={openIds.includes(it.id)}
@@ -142,10 +43,7 @@ const panelContent = tv({
             <span>{it.title}</span>
             <span
               aria-hidden="true"
-              class={icon(
-                { color, open: String(openIds.includes(it.id)) },
-                { class: classOverrides.icon || '' }
-              )}
+              class="text-xl text-slate-800 transition-transform motion-reduce:rotate-0 motion-reduce:transition-none dark:text-slate-100 Accordion__Icon"
               data-acc-icon
             >
               ▾
@@ -160,14 +58,9 @@ const panelContent = tv({
           aria-labelledby={`acc-trigger-${it.id}`}
           aria-hidden={openIds.includes(it.id) ? 'false' : 'true'}
           hidden={!openIds.includes(it.id)}
-          class={openIds.includes(it.id) ? '' : 'hidden'}
+          class={`${openIds.includes(it.id) ? '' : 'hidden'} Accordion__Panel`}
         >
-          <div
-            class={panelContent(
-              { color },
-              { class: classOverrides.panelContent || '' }
-            )}
-          >
+          <div class="px-4 pt-4 pb-5 text-base text-slate-900 dark:text-slate-50 sm:px-6 sm:pt-5 sm:pb-6 Accordion__PanelContent">
             {it.content ? <div set:html={it.content} /> : null}
           </div>
         </div>
@@ -220,18 +113,6 @@ const panelContent = tv({
         if (icon instanceof HTMLElement) {
           icon.classList.toggle('rotate-180', isOpen);
         }
-        // color-aware open state classes
-        const color = root.getAttribute('data-color') || 'slate';
-        const openBgMap = {
-          classicBlue: ['bg-white', 'dark:bg-gray-900'],
-          natureGreen: ['bg-stone-50', 'dark:bg-stone-950'],
-          warmPurple: ['bg-gray-50', 'dark:bg-gray-950'],
-          skyCyan: ['bg-slate-50', 'dark:bg-slate-900'],
-          orangeAccent: ['bg-zinc-50', 'dark:bg-zinc-950'],
-        };
-        const classes = openBgMap[color] || openBgMap.slate;
-        trigger.classList.toggle(classes[0], isOpen);
-        trigger.classList.toggle(classes[1], isOpen);
       });
     };
 

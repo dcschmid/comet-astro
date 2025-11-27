@@ -87,18 +87,6 @@ const htmlItems = [
   },
 ];
 
-const brandClassName = [
-  'space-y-4',
-  '[&_section]:border-amber-500',
-  '[&_section]:bg-slate-950',
-  '[&_section]:shadow-lg',
-  '[&_[data-acc-trigger]]:bg-transparent',
-  '[&_[data-acc-trigger]]:text-amber-100',
-  '[&_[data-acc-trigger]]:hover:bg-slate-900',
-  '[&_[data-acc-trigger]]:focus-visible:ring-amber-300',
-  '[&_[data-acc-icon]]:text-amber-200',
-].join(' ');
-
 const usageSnippet = `---
 import { Accordion } from 'comet-astro';
 
@@ -110,42 +98,6 @@ const items = [
 ---
 
 <Accordion items={items} multiple />`;
-const colorVariants = [
-  'classicBlue',
-  'natureGreen',
-  'warmPurple',
-  'skyCyan',
-  'orangeAccent',
-];
-
-const paletteMeta = {
-  classicBlue: {
-    label: 'Classic Blue',
-    light: 'bg-white text-gray-900 accent-blue-600',
-    dark: 'dark:bg-gray-900 dark:text-white accent-blue-400',
-  },
-  natureGreen: {
-    label: 'Nature Green',
-    light: 'bg-stone-50 text-stone-900 accent-emerald-600',
-    dark: 'dark:bg-stone-950 dark:text-stone-100 accent-emerald-400',
-  },
-  warmPurple: {
-    label: 'Warm Purple',
-    light: 'bg-gray-50 text-gray-900 accent-violet-600',
-    dark: 'dark:bg-gray-950 dark:text-gray-50 accent-violet-400',
-  },
-  skyCyan: {
-    label: 'Sky Cyan',
-    light: 'bg-slate-50 text-slate-900 accent-cyan-600',
-    dark: 'dark:bg-slate-900 dark:text-slate-50 accent-cyan-300',
-  },
-  orangeAccent: {
-    label: 'Orange Accent',
-    light: 'bg-zinc-50 text-zinc-900 accent-orange-500',
-    dark: 'dark:bg-zinc-950 dark:text-zinc-100 accent-orange-300',
-  },
-};
-
 const propsColumns = [
   { key: 'name', label: 'Prop' },
   { key: 'type', label: 'Type' },
@@ -179,21 +131,7 @@ const propsData = [
     type: 'string',
     default: "''",
     description:
-      'Additional Tailwind utility classes to merge onto the wrapper.',
-  },
-  {
-    name: 'color',
-    type: '"classicBlue" | "natureGreen" | "warmPurple" | "skyCyan" | "orangeAccent"',
-    default: 'classicBlue',
-    description:
-      'Choose a built-in accessible palette for light and dark mode.',
-  },
-  {
-    name: 'classOverrides',
-    type: '{ wrapper?: string; section?: string; trigger?: string; icon?: string; panelContent?: string }',
-    default: '{}',
-    description:
-      'Optional per-slot Tailwind utility overrides merged with the component variants. Use to tweak internal spacing, backgrounds or text styles without copying the component.',
+      'Additional Tailwind utility classes to merge onto the wrapper. Internal elements expose BEM classes: Accordion, Accordion__Section, Accordion__Trigger, Accordion__Icon, Accordion__Panel, Accordion__PanelContent.',
   },
 ];
 ---
@@ -210,8 +148,8 @@ const propsData = [
       state with
       <InlineCode>aria-expanded</InlineCode>, panels are hidden with
       <InlineCode>aria-hidden</InlineCode>, and reduced-motion preferences are
-      respected. The component offers single- and multi-open modes, color
-      palettes tuned for high contrast, and a small API for styling overrides.
+      respected. The component offers single- and multi-open modes plus simple
+      styling hooks via BEM classes for brand overrides.
     </Paragraph>
     <Paragraph class="text-base text-slate-200">
       Typical use cases include FAQs, progressive disclosure in forms, compact
@@ -273,61 +211,6 @@ const safe = sanitize(userProvidedHtml);
     />
   </section>
 
-  <section class="mt-10 space-y-6">
-    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
-      >Overriding styles (tailwind-variants)</Headline
-    >
-    <Paragraph class="text-base text-slate-200">
-      You can fine-tune internal styles by using <InlineCode
-        >classOverrides</InlineCode
-      > for per-slot tweaks or <InlineCode>className</InlineCode> for larger brand-level
-      surfaces. This example shows a self-contained <InlineCode
-        >tailwind-variants</InlineCode
-      > (tv) pattern inline in an Astro page — no external helper file required.
-      For more options and advanced overrides see
-      <a
-        class="underline text-sky-400"
-        href="https://www.tailwind-variants.org/docs/overriding-styles"
-        target="_blank"
-        rel="noopener noreferrer">the tailwind-variants guide</a
-      >.
-    </Paragraph>
-    <pre
-      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-      <code class="language-astro">{`---
-import Accordion from '../../components/Accordion.astro';
-import { tv } from 'tailwind-variants';
-
-// minimal tv config defined inline
-const accordionTv = tv({
-  base: 'space-y-2',
-  slots: {
-    wrapper: 'space-y-2',
-    section: 'border rounded',
-    trigger: 'flex items-center justify-between px-4 py-3',
-    icon: 'ml-2',
-    panelContent: 'px-4 py-2'
-  },
-  variants: {
-    color: {
-      classicBlue: { section: 'bg-white text-gray-900' },
-      natureGreen: { section: 'bg-stone-50 text-stone-900' }
-    }
-  },
-  defaultVariants: { color: 'classicBlue' }
-});
-
-// get slot classes and patch the panel content at runtime
-const slots = accordionTv({ color: 'classicBlue' });
-const patchedPanel = slots.panelContent.replace('px-4', 'px-8');
-const classOverrides = { panelContent: patchedPanel, trigger: 'hover:bg-rose-50 dark:hover:bg-rose-900' };
-const brandClassName = '[&_section]:bg-slate-950 [&_[data-acc-trigger]]:text-amber-100';
----
-
-<Accordion items={overviewItems} classOverrides={classOverrides} className={brandClassName} />`}</code>
-    </pre>
-  </section>
-
   <section class="mt-10 space-y-8">
     <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
       >Examples</Headline
@@ -356,59 +239,12 @@ const brandClassName = '[&_section]:bg-slate-950 [&_[data-acc-trigger]]:text-amb
           level="h3"
           textSize="lg"
           weight="semibold"
-          className="text-slate-100">Color variants</Headline
-        >
-        <Paragraph class="text-base text-slate-200">
-          The component ships with five accessible color palettes that work in
-          both light and dark themes. Use the <InlineCode>color</InlineCode> prop
-          to switch the palette applied to each section. The palettes are tuned for
-          WCAG AAA contrast across surface, text and accent colors.
-        </Paragraph>
-      </div>
-
-      <div class="grid gap-6 sm:grid-cols-2">
-        {
-          colorVariants.map((c) => (
-            <div class="space-y-3">
-              <Headline
-                level="h4"
-                textSize="sm"
-                weight="semibold"
-                className="text-slate-100"
-              >
-                {paletteMeta[c].label}{' '}
-                <span class="text-xs text-slate-400">({c})</span>
-              </Headline>
-              <Accordion items={brandItems} color={c} />
-              <pre class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-2 text-xs text-slate-50">
-                <>
-                  <InlineCode className="leading-tight">
-                    {paletteMeta[c].light}
-                  </InlineCode>
-                  <br />
-                </>
-                <InlineCode className="leading-tight">
-                  {paletteMeta[c].dark}
-                </InlineCode>
-              </pre>
-            </div>
-          ))
-        }
-      </div>
-    </article>
-
-    <article class="space-y-4">
-      <div>
-        <Headline
-          level="h3"
-          textSize="lg"
-          weight="semibold"
           className="text-slate-100">Allow multiple panels</Headline
         >
         <Paragraph class="text-base text-slate-200">
-          Set <InlineCode>multiple</InlineCode> when readers may want to compare
-          answers or keep a checklist of steps open simultaneously. This is useful
-          for longer forms, multi-step instructions, or side-by-side comparisons.
+          Set <InlineCode>multiple</InlineCode> when readers may want to compare answers
+          or keep a checklist of steps open simultaneously. This is useful for longer
+          forms, multi-step instructions, or side-by-side comparisons.
         </Paragraph>
       </div>
       <Accordion
@@ -445,182 +281,72 @@ const brandClassName = '[&_section]:bg-slate-950 [&_[data-acc-trigger]]:text-amb
           className="text-slate-100">Styling &amp; overrides</Headline
         >
         <Paragraph class="text-base text-slate-200">
-          If you need fine-grained control over internal slot styles (for
-          example to tweak padding or the open-state background), pass a <InlineCode
-            >classOverrides</InlineCode
-          >
-          object to the component. Each key merges with the internal styles produced
-          by the component's variants.
+          Use <InlineCode>className</InlineCode> with the exposed BEM classes to apply
+          brand surfaces or spacing tweaks. The example below targets the root BEM
+          classes from outside the component, leaving the default Tailwind utilities
+          in place.
         </Paragraph>
         <Paragraph class="text-sm text-slate-400">
-          Note: <InlineCode>classOverrides</InlineCode> values are merged into the
-          final class string produced by the component (they are appended to the
-          variant output), so they can be used to tweak or override particular utility
-          classes. They do not change the component's internal variant logic (for
-          example open-state behaviour or the defined color variants) — use them
-          for styling adjustments only.
+          Available targets: <InlineCode>Accordion</InlineCode>, <InlineCode
+            >Accordion__Section</InlineCode
+          >, <InlineCode>Accordion__Trigger</InlineCode>, <InlineCode
+            >Accordion__Icon</InlineCode
+          >, <InlineCode>Accordion__Panel</InlineCode> und <InlineCode
+            >Accordion__PanelContent</InlineCode
+          >. Sie werden zwischen den Built-in-Utilities und deinem
+          <InlineCode>className</InlineCode> gerendert, sodass deine Styles sauber
+          überschreiben können.
         </Paragraph>
       </div>
 
       <div class="space-y-4">
-        <Headline
-          level="h4"
-          textSize="sm"
-          weight="semibold"
-          className="text-slate-100"
-          >Overriding styles (tailwind-variants)</Headline
-        >
-        <Paragraph class="text-base text-slate-200">
-          You can use <InlineCode>tailwind-variants</InlineCode> to produce the internal
-          slot class strings and either supply per-slot overrides via
-          <InlineCode>classOverrides</InlineCode> or apply a brand surface with
-          <InlineCode>className</InlineCode>. The example below is
-          self-contained and shows how to define a minimal TV config inline and
-          then patch the returned slot classes at runtime — no external helper
-          file required. See <a
-            class="underline text-sky-400"
-            href="https://www.tailwind-variants.org/docs/overriding-styles"
-            target="_blank"
-            rel="noopener noreferrer"
-            >the tailwind-variants overriding-styles guide</a
-          > for more details.
-        </Paragraph>
-        <pre
-          class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-          <code class="language-astro">{`---
-import Accordion from '../../components/Accordion.astro';
-import { tv } from 'tailwind-variants';
+        <Accordion items={brandItems} className="BrandAccordion" />
 
-// minimal tv config defined inline
-const accordionTv = tv({
-  base: 'space-y-2',
-  slots: {
-    wrapper: 'space-y-2',
-    section: 'border rounded',
-    trigger: 'flex items-center justify-between px-4 py-3',
-    icon: 'ml-2',
-    panelContent: 'px-4 py-2'
-  },
-  variants: {
-    color: {
-      classicBlue: { section: 'bg-white text-gray-900' },
-      natureGreen: { section: 'bg-stone-50 text-stone-900' }
-    }
-  },
-  defaultVariants: { color: 'classicBlue' }
-});
-
-// get slot classes and patch the panel content at runtime
-const slots = accordionTv({ color: 'classicBlue' });
-const patchedPanel = slots.panelContent.replace('px-4', 'px-8');
-const classOverrides = { panelContent: patchedPanel, trigger: 'hover:bg-rose-50 dark:hover:bg-rose-900' };
-const brandClassName = '[&_section]:bg-slate-950 [&_[data-acc-trigger]]:text-amber-100';
----
-
-<Accordion items={overviewItems} classOverrides={classOverrides} className={brandClassName} />`}</code>
-        </pre>
-        <Headline
-          level="h4"
-          textSize="sm"
-          weight="semibold"
-          className="text-slate-100"
-          >Example: change trigger background &amp; panel padding</Headline
-        >
-        <Accordion
-          items={overviewItems}
-          classOverrides={{
-            trigger: 'hover:bg-rose-50 dark:hover:bg-rose-900',
-            panelContent: 'px-8',
-          }}
-        />
-
-        <CodeBlock
-          code={`<Accordion
-  items={items}
-  classOverrides={{
-    trigger: 'hover:bg-rose-50 dark:hover:bg-rose-900',
-    panelContent: 'px-8'
-  }}
-/>`}
-          language="astro"
-        />
-
-        <Paragraph class="text-base text-slate-200">
-          The example above shows a simple override. The component appends the
-          provided <InlineCode>classOverrides</InlineCode> values to the classes
-          generated by the internal variants. In most cases this is sufficient to
-          tweak spacing, colors or hover states. If you need to override a utility
-          that the component already sets (for example the same
-          <InlineCode>padding</InlineCode> utility), prefer the Tailwind important
-          modifier (prefix with <InlineCode>!</InlineCode>) so the final rule
-          wins.
-        </Paragraph>
-
-        <Headline
-          level="h4"
-          textSize="sm"
-          weight="semibold"
-          className="text-slate-100"
-          >Detailed: forcing precedence with classOverrides</Headline
-        >
-        <Paragraph class="text-sm text-slate-400">
-          Because classes are appended, the last occurrence usually wins. To be
-          explicit, use the <InlineCode>!</InlineCode> prefix to make a utility important
-          (Tailwind uses this to emit <code>!important</code>). Example:
-        </Paragraph>
-        <CodeBlock
-          code={`<Accordion
-  items={items}
-  classOverrides={{
-    panelContent: '!px-8', // will render as !padding and win over earlier px- classes
-    trigger: 'bg-rose-50 dark:bg-rose-900 !text-white'
-  }}
-/>`}
-          language="astro"
-        />
-
-        <Paragraph class="text-sm text-slate-400">
-          Note: use <InlineCode>!</InlineCode> sparingly — it increases CSS specificity
-          and can make future overrides harder.
-        </Paragraph>
-
-        <Headline
-          level="h4"
-          textSize="sm"
-          weight="semibold"
-          className="text-slate-100">When to use className</Headline
-        >
-        <Paragraph class="text-base text-slate-200">
-          For larger brand-level changes (many internal tweaks or multiple slot
-          changes at once), use the <InlineCode>className</InlineCode> prop together
-          with Tailwind's arbitrary selector syntax. This is useful when you want
-          to apply a consistent brand surface across many sections.
-        </Paragraph>
-        <Accordion items={brandItems} className={brandClassName} />
-
-        <Headline
-          level="h4"
-          textSize="sm"
-          weight="semibold"
-          className="text-slate-100"
-          >Detailed: brand-level styling with className</Headline
-        >
-        <Paragraph class="text-sm text-slate-400">
-          Use <InlineCode>className</InlineCode> when you want to scope a group of
-          utility changes as a single theme or brand surface. Combine it with Tailwind's
-          arbitrary selector shortcuts to target internal elements without touching
-          component internals.
-        </Paragraph>
         <CodeBlock
           code={`const brandClassName = [
-  '[&_section]:border-amber-500',
-  '[&_section]:bg-slate-950',
-  '[&_[data-acc-trigger]]:bg-transparent',
-  '[&_[data-acc-trigger]]:text-amber-100',
-  '[&_[data-acc-trigger]]:hover:bg-slate-900',
+  'BrandAccordion',
 ].join(' ');
 
 <Accordion items={items} className={brandClassName} />
+
+<style>
+  :global(.BrandAccordion.Accordion) {
+    border-radius: 18px;
+    padding: 1.25rem;
+    background: radial-gradient(circle at 10% 20%, rgba(255, 191, 105, 0.12), transparent 35%),
+      radial-gradient(circle at 80% 0%, rgba(73, 131, 255, 0.16), transparent 30%),
+      linear-gradient(135deg, #0b1020 0%, #050710 100%);
+    box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.7);
+  }
+  :global(.BrandAccordion .Accordion__Section) {
+    border: 1px solid rgba(245, 196, 110, 0.6);
+    background: rgba(9, 10, 17, 0.82);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 50px -24px rgba(0, 0, 0, 0.65);
+  }
+  :global(.BrandAccordion .Accordion__Trigger) {
+    background: transparent;
+    color: #fef3c7;
+    font-weight: 600;
+  }
+  :global(.BrandAccordion .Accordion__Trigger:hover) {
+    background: rgba(15, 23, 42, 0.72);
+  }
+  :global(.BrandAccordion .Accordion__Trigger:focus-visible) {
+    outline: 2px solid rgba(245, 196, 110, 0.75);
+    outline-offset: 3px;
+  }
+  :global(.BrandAccordion .Accordion__Icon) {
+    color: #fbbf24;
+  }
+  :global(.BrandAccordion .Accordion__Panel) {
+    border-top: 1px solid rgba(245, 196, 110, 0.35);
+  }
+  :global(.BrandAccordion .Accordion__PanelContent) {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+</style>
 `}
           language="astro"
         />
@@ -628,3 +354,51 @@ const brandClassName = '[&_section]:bg-slate-950 [&_[data-acc-trigger]]:text-amb
     </article>
   </section>
 </DocsLayout>
+
+<style>
+  :global(.BrandAccordion.Accordion) {
+    border-radius: 18px;
+    padding: 1.25rem;
+    background:
+      radial-gradient(
+        circle at 10% 20%,
+        rgba(255, 191, 105, 0.12),
+        transparent 35%
+      ),
+      radial-gradient(
+        circle at 80% 0%,
+        rgba(73, 131, 255, 0.16),
+        transparent 30%
+      ),
+      linear-gradient(135deg, #0b1020 0%, #050710 100%);
+    box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.7);
+  }
+  :global(.BrandAccordion .Accordion__Section) {
+    border: 1px solid rgba(245, 196, 110, 0.6);
+    background: rgba(9, 10, 17, 0.82);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 50px -24px rgba(0, 0, 0, 0.65);
+  }
+  :global(.BrandAccordion .Accordion__Trigger) {
+    background: transparent;
+    color: #fef3c7;
+    font-weight: 600;
+  }
+  :global(.BrandAccordion .Accordion__Trigger:hover) {
+    background: rgba(15, 23, 42, 0.72);
+  }
+  :global(.BrandAccordion .Accordion__Trigger:focus-visible) {
+    outline: 2px solid rgba(245, 196, 110, 0.75);
+    outline-offset: 3px;
+  }
+  :global(.BrandAccordion .Accordion__Icon) {
+    color: #fbbf24;
+  }
+  :global(.BrandAccordion .Accordion__Panel) {
+    border-top: 1px solid rgba(245, 196, 110, 0.35);
+  }
+  :global(.BrandAccordion .Accordion__PanelContent) {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+</style>
