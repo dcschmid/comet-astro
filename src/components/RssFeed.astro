@@ -1,0 +1,283 @@
+---
+/**
+ * RssFeed - RSS-Feed als Liste
+ *
+ * Zeigt Artikel aus einem RSS-Feed als ansprechende Liste.
+ *
+ * API: https://api.rss2json.com/
+ */
+import { cn } from '../utils/cn';
+
+interface FeedItem {
+  title: string;
+  pubDate: string;
+  link: string;
+  guid: string;
+  author: string;
+  thumbnail?: string;
+  description?: string;
+  content?: string;
+}
+
+interface Feed {
+  status: string;
+  feed: {
+    url: string;
+    title: string;
+    link: string;
+    author: string;
+    description: string;
+    image?: string;
+  };
+  items: FeedItem[];
+}
+
+interface Props {
+  url: string;
+  apiKey?: string; // Optional für mehr Requests
+  maxItems?: number;
+  showDescription?: boolean;
+  showThumbnail?: boolean;
+  showAuthor?: boolean;
+  showDate?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  url,
+  apiKey,
+  maxItems = 5,
+  showDescription = true,
+  showThumbnail = true,
+  showAuthor = true,
+  showDate = true,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+let feed: Feed | null = null;
+let error: string | null = null;
+
+try {
+  // count parameter requires API key, so we slice items manually instead
+  const apiUrl = apiKey
+    ? `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&api_key=${apiKey}&count=${maxItems}`
+    : `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+
+  const res = await fetch(apiUrl);
+  if (res.ok) {
+    const data: Feed = await res.json();
+    if (data.status === 'ok') {
+      feed = data;
+    } else {
+      error = 'Feed konnte nicht geladen werden';
+    }
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffHours < 24) return `vor ${diffHours}h`;
+  if (diffDays < 7) return `vor ${diffDays}d`;
+  return date.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' });
+}
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, '').trim();
+}
+
+function truncate(str: string, len: number): string {
+  const clean = stripHtml(str);
+  return clean.length > len ? clean.slice(0, len) + '…' : clean;
+}
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  <header class="px-5 py-4 border-b border-slate-700/50 bg-orange-500/5">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div
+          class="p-2.5 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 shadow-lg shadow-orange-500/25"
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-100 text-lg">
+            {feed?.feed.title || 'RSS Feed'}
+          </h3>
+          {
+            feed?.feed.description && (
+              <p class="text-xs text-slate-400 truncate max-w-xs">
+                {truncate(feed.feed.description, 50)}
+              </p>
+            )
+          }
+        </div>
+      </div>
+
+      {
+        feed?.feed.image && showThumbnail && (
+          <img
+            src={feed.feed.image}
+            alt=""
+            class="w-8 h-8 rounded object-cover"
+          />
+        )
+      }
+    </div>
+  </header>
+
+  <div class={cn('divide-y divide-slate-700/30', compact && 'divide-y-0')}>
+    {
+      error ? (
+        <div class="p-4">
+          <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+            <svg
+              class="w-5 h-5 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            {error}
+          </div>
+        </div>
+      ) : !feed || feed.items.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"
+              />
+            </svg>
+          </div>
+          <p class="text-slate-400 font-medium">Keine Artikel</p>
+        </div>
+      ) : (
+        feed.items.slice(0, maxItems).map((item) => (
+          <a
+            href={item.link}
+            target="_blank"
+            rel="noopener"
+            class={cn(
+              'block p-4 hover:bg-slate-800/50 transition-colors',
+              compact && 'py-3'
+            )}
+          >
+            <div class="flex gap-4">
+              {/* Thumbnail */}
+              {showThumbnail && item.thumbnail && (
+                <div class="shrink-0">
+                  <img
+                    src={item.thumbnail}
+                    alt=""
+                    class="w-20 h-14 rounded-lg object-cover bg-slate-700"
+                  />
+                </div>
+              )}
+
+              {/* Content */}
+              <div class="flex-1 min-w-0">
+                <h4 class="font-semibold text-slate-100 line-clamp-2 mb-1">
+                  {item.title}
+                </h4>
+
+                {showDescription && item.description && !compact && (
+                  <p class="text-sm text-slate-400 line-clamp-2 mb-2">
+                    {truncate(item.description, 120)}
+                  </p>
+                )}
+
+                <div class="flex items-center gap-3 text-xs text-slate-500">
+                  {showDate && item.pubDate && (
+                    <span>{formatDate(item.pubDate)}</span>
+                  )}
+                  {showAuthor && item.author && (
+                    <>
+                      {showDate && <span>•</span>}
+                      <span class="truncate">{item.author}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div class="shrink-0 self-center">
+                <svg
+                  class="w-4 h-4 text-slate-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))
+      )
+    }
+  </div>
+
+  {
+    feed && (
+      <footer class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500">
+        <span>{feed.items.length} Artikel</span>
+        <a
+          href={feed.feed.link}
+          target="_blank"
+          rel="noopener"
+          class="text-orange-400 hover:text-orange-300 transition-colors"
+        >
+          Quelle →
+        </a>
+      </footer>
+    )
+  }
+</div>

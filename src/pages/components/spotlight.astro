@@ -1,0 +1,324 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Spotlight from '../../components/Spotlight.astro';
+import Button from '../../components/Button.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const demoSteps = [
+  {
+    target: '#demo-btn-1',
+    title: 'Welcome!',
+    description: 'This is the first step of your tour.',
+    position: 'bottom',
+  },
+  {
+    target: '#demo-btn-2',
+    title: 'Second Step',
+    description: 'Navigate through features with ease.',
+    position: 'bottom',
+  },
+  {
+    target: '#demo-btn-3',
+    title: 'All Done!',
+    description: 'You have completed the tour.',
+    position: 'bottom',
+  },
+];
+
+const usageSnippet = `---
+import { Spotlight } from 'comet-astro';
+
+const steps = [
+  { 
+    target: '#welcome-btn', 
+    title: 'Welcome!', 
+    description: 'Click here to get started.',
+    position: 'bottom'
+  },
+  { 
+    target: '#settings', 
+    title: 'Settings', 
+    description: 'Customize your experience here.' 
+  },
+];
+---
+
+<Spotlight steps={steps} autoStart />
+
+<!-- Start programmatically -->
+<button onclick="Spotlight.start()">Start Tour</button>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'steps',
+    type: 'SpotlightStep[]',
+    default: '-',
+    description: 'Array of tour steps (required).',
+  },
+  {
+    name: 'autoStart',
+    type: 'boolean',
+    default: 'false',
+    description: 'Start tour automatically on page load.',
+  },
+  {
+    name: 'showProgress',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show step counter (1/3).',
+  },
+  {
+    name: 'closeOnBackdrop',
+    type: 'boolean',
+    default: 'true',
+    description: 'Close tour when clicking backdrop.',
+  },
+  {
+    name: 'keyboardNav',
+    type: 'boolean',
+    default: 'true',
+    description: 'Enable arrow keys and Escape navigation.',
+  },
+  {
+    name: 'padding',
+    type: 'number',
+    default: '8',
+    description: 'Padding around highlighted element (px).',
+  },
+  {
+    name: 'labels',
+    type: 'object',
+    default: '-',
+    description: 'Custom button labels { next, prev, finish, skip }.',
+  },
+];
+
+const stepPropsData = [
+  {
+    name: 'target',
+    type: 'string',
+    default: '-',
+    description: 'CSS selector for target element (required).',
+  },
+  {
+    name: 'title',
+    type: 'string',
+    default: '-',
+    description: 'Step title (required).',
+  },
+  {
+    name: 'description',
+    type: 'string',
+    default: '-',
+    description: 'Step description text.',
+  },
+  {
+    name: 'position',
+    type: "'top' | 'bottom' | 'left' | 'right'",
+    default: "'bottom'",
+    description: 'Tooltip position relative to target.',
+  },
+];
+
+const eventsData = [
+  {
+    name: 'spotlight:start',
+    type: 'CustomEvent',
+    default: '-',
+    description: 'Fired when tour starts.',
+  },
+  {
+    name: 'spotlight:end',
+    type: 'CustomEvent',
+    default: '-',
+    description: 'Fired when tour ends.',
+  },
+  {
+    name: 'spotlight:step',
+    type: 'CustomEvent',
+    default: '-',
+    description: 'Fired on each step. detail: { step, total }',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="Spotlight"
+  seoDescription="Onboarding highlight overlay for product tours."
+>
+  <Headline level="h1" textSize="2xl">Spotlight</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The Spotlight component creates guided product tours by highlighting
+      elements on the page with an overlay and tooltip. Perfect for onboarding
+      flows and feature introductions.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Supports multi-step tours, keyboard navigation, and smooth transitions.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Step Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={stepPropsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Events</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={eventsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Interactive demo
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Click the button to start the tour. Use arrow keys or buttons to
+        navigate.
+      </Paragraph>
+
+      <div class="p-8 bg-slate-800 rounded-xl space-y-4">
+        <div class="flex flex-wrap gap-4">
+          <Button id="demo-btn-1" variant="primary">First Target</Button>
+          <Button id="demo-btn-2" variant="secondary">Second Target</Button>
+          <Button id="demo-btn-3" variant="ghost">Third Target</Button>
+        </div>
+
+        <Button
+          variant="primary"
+          onclick="document.querySelector('#demo-spotlight')._spotlight.start()"
+        >
+          Start Tour
+        </Button>
+      </div>
+
+      <Spotlight id="demo-spotlight" steps={demoSteps} />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        JavaScript API
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Control the tour programmatically using the global <InlineCode
+          >Spotlight</InlineCode
+        > object.
+      </Paragraph>
+      <CodeBlock
+        code={`// Start the tour
+Spotlight.start();
+
+// Start a specific tour by ID
+Spotlight.start('#my-tour');
+
+// End the tour
+Spotlight.end();
+
+// Listen to events
+document.querySelector('[data-spotlight]').addEventListener('spotlight:step', (e) => {
+  console.log(\`Step \${e.detail.step + 1} of \${e.detail.total}\`);
+});`}
+        language="javascript"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Custom labels
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Localize button labels for different languages.
+      </Paragraph>
+      <CodeBlock
+        code={`<Spotlight
+  steps={steps}
+  labels={{
+    next: 'Weiter',
+    prev: 'Zurück',
+    finish: 'Fertig',
+    skip: 'Überspringen',
+  }}
+/>`}
+        language="astro"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Tooltip positions
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Position the tooltip relative to the highlighted element.
+      </Paragraph>
+      <CodeBlock
+        code={`const steps = [
+  { target: '#el-1', title: 'Top', position: 'top' },
+  { target: '#el-2', title: 'Bottom', position: 'bottom' },
+  { target: '#el-3', title: 'Left', position: 'left' },
+  { target: '#el-4', title: 'Right', position: 'right' },
+];`}
+        language="javascript"
+      />
+    </article>
+  </section>
+</DocsLayout>

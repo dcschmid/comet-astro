@@ -1,4 +1,19 @@
 ---
+/**
+ * Callout - Informational callout box
+ *
+ * @deprecated This component is now a wrapper around Alert.
+ * Consider using Alert directly with variant="note" for new code.
+ *
+ * @example
+ * // Old usage (still works):
+ * <Callout variant="info" title="Note">Content</Callout>
+ *
+ * // New recommended usage:
+ * <Alert variant="note" title="Note" icon="📝">Content</Alert>
+ */
+import Alert from './Alert.astro';
+
 interface Props {
   variant?: 'info' | 'success' | 'warning' | 'error' | 'note';
   title?: string;
@@ -6,67 +21,35 @@ interface Props {
   className?: string;
 }
 
-const { variant = 'info', title, icon, className = '' } = Astro.props;
+const { variant = 'note', title, icon, className = '' } = Astro.props;
 
-const variantStyles = {
-  info: {
-    wrap: 'border-blue-900 bg-blue-950 text-blue-50 dark:border-blue-200 dark:bg-blue-100 dark:text-blue-950',
-    title: 'text-blue-50 dark:text-blue-950',
-    body: 'text-blue-100 dark:text-blue-950',
-    icon: icon || 'ℹ️',
-  },
-  success: {
-    wrap: 'border-emerald-900 bg-emerald-950 text-emerald-50 dark:border-emerald-200 dark:bg-emerald-100 dark:text-emerald-950',
-    title: 'text-emerald-50 dark:text-emerald-950',
-    body: 'text-emerald-100 dark:text-emerald-950',
-    icon: icon || '✅',
-  },
-  warning: {
-    wrap: 'border-amber-900 bg-amber-950 text-amber-50 dark:border-amber-200 dark:bg-amber-100 dark:text-amber-950',
-    title: 'text-amber-50 dark:text-amber-950',
-    body: 'text-amber-100 dark:text-amber-950',
-    icon: icon || '⚠️',
-  },
-  error: {
-    wrap: 'border-rose-900 bg-rose-950 text-rose-50 dark:border-rose-200 dark:bg-rose-100 dark:text-rose-950',
-    title: 'text-rose-50 dark:text-rose-950',
-    body: 'text-rose-100 dark:text-rose-950',
-    icon: icon || '❌',
-  },
-  note: {
-    wrap: 'border-indigo-900 bg-indigo-950 text-indigo-50 dark:border-indigo-200 dark:bg-indigo-100 dark:text-indigo-950',
-    title: 'text-indigo-50 dark:text-indigo-950',
-    body: 'text-indigo-100 dark:text-indigo-950',
-    icon: icon || '📝',
-  },
+// Map Callout variants to Alert variants
+const variantMap: Record<string, string> = {
+  info: 'info',
+  success: 'success',
+  warning: 'warning',
+  error: 'error',
+  note: 'note',
 };
 
-const styles = variantStyles[variant];
+// Default emoji icons for Callout compatibility
+const defaultIcons: Record<string, string> = {
+  info: 'ℹ️',
+  success: '✅',
+  warning: '⚠️',
+  error: '❌',
+  note: '📝',
+};
+
+const alertVariant = variantMap[variant] || 'note';
+const displayIcon = icon ?? defaultIcons[variant];
 ---
 
-<div
-  class={`rounded-xl border p-5 shadow-sm transition-colors ${styles.wrap} ${className}`}
-  role="note"
+<Alert
+  variant={alertVariant as any}
+  title={title}
+  icon={displayIcon}
+  className={className}
 >
-  <div class="flex gap-3">
-    {
-      styles.icon && (
-        <div class="flex-shrink-0 text-2xl" aria-hidden="true">
-          {styles.icon}
-        </div>
-      )
-    }
-    <div class="flex-1">
-      {
-        title && (
-          <p class={`mb-1 text-base font-semibold ${styles.title}`}>{title}</p>
-        )
-      }
-      <div
-        class={`text-sm leading-relaxed ${styles.body} [&>p]:mb-2 [&>p:last-child]:mb-0`}
-      >
-        <slot />
-      </div>
-    </div>
-  </div>
-</div>
+  <slot />
+</Alert>

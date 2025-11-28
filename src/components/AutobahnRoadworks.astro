@@ -1,0 +1,348 @@
+---
+/**
+ * AutobahnRoadworks - Baustellen auf deutschen Autobahnen
+ *
+ * Zeigt aktuelle und geplante Baustellen mit Details wie
+ * Zeitraum, Länge, Geschwindigkeitsbegrenzung und mehr.
+ *
+ * API: https://autobahn.api.bund.dev/
+ */
+import { cn } from '../utils/cn';
+
+interface Roadwork {
+  identifier: string;
+  title: string;
+  subtitle: string;
+  description: string[];
+  coordinate: { lat: number; long: number };
+  isBlocked: string;
+  future: boolean;
+  display_type: string;
+  impact?: { lower: string; upper: string };
+}
+
+interface Props {
+  road: string;
+  maxItems?: number;
+  compact?: boolean;
+  showFuture?: boolean;
+  showTitle?: boolean;
+  showMapLinks?: boolean;
+  className?: string;
+}
+
+const {
+  road,
+  maxItems = 10,
+  compact = false,
+  showFuture = true,
+  showTitle = true,
+  showMapLinks = true,
+  className = '',
+} = Astro.props;
+
+let roadworks: Roadwork[] = [];
+let error: string | null = null;
+
+try {
+  const res = await fetch(
+    `https://verkehr.autobahn.de/o/autobahn/${road}/services/roadworks`
+  );
+  if (res.ok) {
+    const data = await res.json();
+    roadworks = (data.roadworks || [])
+      .filter((r: Roadwork) => showFuture || !r.future)
+      .slice(0, maxItems);
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+function parseInfo(desc: string[]) {
+  const info: Record<string, string> = {};
+  for (const line of desc) {
+    if (line.match(/\d{2}\.\d{2}\.\d{2}.*Uhr/)) info.date = line;
+    const len = line.match(/Länge:\s*([\d.,]+\s*km)/);
+    if (len) info.length = len[1];
+    const spd = line.match(/Max\.\s*(\d+)\s*km\/h/);
+    if (spd) info.speed = spd[1];
+    const wid = line.match(/Durchfahrtbreite:\s*([\d.,]+\s*m)/);
+    if (wid) info.width = wid[1];
+  }
+  return info;
+}
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  {
+    showTitle && (
+      <header class="px-5 py-4 border-b border-slate-700/50 bg-orange-500/5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="p-2.5 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 shadow-lg shadow-orange-500/25">
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-100 text-lg">
+                Baustellen {road}
+              </h3>
+              <p class="text-xs text-slate-400">
+                {roadworks.length} Meldung{roadworks.length !== 1 ? 'en' : ''}
+              </p>
+            </div>
+          </div>
+          {roadworks.filter((r) => !r.future).length > 0 && (
+            <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30 animate-pulse">
+              {roadworks.filter((r) => !r.future).length} AKTIV
+            </span>
+          )}
+        </div>
+      </header>
+    )
+  }
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : roadworks.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-emerald-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <p class="text-emerald-300 font-semibold text-lg">Freie Fahrt!</p>
+          <p class="text-slate-400 text-sm mt-1">
+            Keine Baustellen auf der {road}
+          </p>
+        </div>
+      ) : (
+        <div class={cn('space-y-3', compact && 'space-y-2')}>
+          {roadworks.map((item) => {
+            const info = parseInfo(item.description);
+            return (
+              <article
+                class={cn(
+                  'group rounded-xl border p-4 transition-all',
+                  item.future
+                    ? 'bg-slate-800/50 border-slate-700/50 hover:border-slate-600'
+                    : 'bg-orange-950/30 border-orange-500/30 hover:border-orange-500/50'
+                )}
+              >
+                <div class="flex items-start gap-3">
+                  <div
+                    class={cn(
+                      'mt-1.5 w-2.5 h-2.5 rounded-full shrink-0',
+                      item.future
+                        ? 'bg-slate-500'
+                        : 'bg-orange-500 shadow-lg shadow-orange-500/50'
+                    )}
+                  />
+
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <h4 class="font-semibold text-slate-100">
+                          {item.title}
+                        </h4>
+                        {item.subtitle && (
+                          <p class="text-sm text-slate-400 mt-0.5">
+                            {item.subtitle}
+                          </p>
+                        )}
+                      </div>
+
+                      <div class="flex items-center gap-2 shrink-0">
+                        {item.future ? (
+                          <span class="px-2 py-0.5 text-xs bg-slate-700 text-slate-300 rounded-full">
+                            Geplant
+                          </span>
+                        ) : (
+                          <span class="px-2 py-0.5 text-xs bg-orange-500/30 text-orange-200 rounded-full font-semibold">
+                            Aktiv
+                          </span>
+                        )}
+
+                        {showMapLinks && item.coordinate && (
+                          <a
+                            href={`https://www.google.com/maps?q=${item.coordinate.lat},${item.coordinate.long}`}
+                            target="_blank"
+                            rel="noopener"
+                            class="p-1.5 rounded-lg bg-slate-700/50 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition-colors"
+                            title="Auf Karte zeigen"
+                          >
+                            <svg
+                              class="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                              />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                    {!compact && Object.keys(info).length > 0 && (
+                      <div class="mt-3 flex flex-wrap gap-2">
+                        {info.date && (
+                          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-700/60 text-slate-200 text-xs rounded-lg">
+                            <svg
+                              class="w-3.5 h-3.5 text-blue-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                            {info.date}
+                          </span>
+                        )}
+                        {info.length && (
+                          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-700/60 text-slate-200 text-xs rounded-lg">
+                            <svg
+                              class="w-3.5 h-3.5 text-purple-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                              />
+                            </svg>
+                            {info.length}
+                          </span>
+                        )}
+                        {info.speed && (
+                          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/20 text-amber-200 text-xs rounded-lg border border-amber-500/30">
+                            <svg
+                              class="w-3.5 h-3.5"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                            Max. {info.speed} km/h
+                          </span>
+                        )}
+                        {info.width && (
+                          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-700/60 text-slate-200 text-xs rounded-lg">
+                            ↔️ {info.width}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {item.impact && (
+                      <p class="mt-2 text-xs text-slate-500">
+                        📍 {item.impact.upper} → {item.impact.lower}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Daten: Autobahn GmbH</span>
+    <a
+      href="https://autobahn.de"
+      target="_blank"
+      rel="noopener"
+      class="text-blue-400 hover:text-blue-300"
+    >
+      autobahn.de →
+    </a>
+  </footer>
+</div>
+
+<style>
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+  .animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+  }
+</style>

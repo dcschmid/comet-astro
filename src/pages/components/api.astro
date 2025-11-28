@@ -1,0 +1,2443 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import WaterLevel from '../../components/WaterLevel.astro';
+import FuelPrices from '../../components/FuelPrices.astro';
+import CurrencyConverter from '../../components/CurrencyConverter.astro';
+import GitHubRepo from '../../components/GitHubRepo.astro';
+import NasaApod from '../../components/NasaApod.astro';
+import PublicHolidays from '../../components/PublicHolidays.astro';
+import QrCode from '../../components/QrCode.astro';
+import RandomQuote from '../../components/RandomQuote.astro';
+import CryptoPrice from '../../components/CryptoPrice.astro';
+import Trivia from '../../components/Trivia.astro';
+import OnThisDay from '../../components/OnThisDay.astro';
+import TrainDepartures from '../../components/TrainDepartures.astro';
+import SpeedCameras from '../../components/SpeedCameras.astro';
+import RecentEarthquakes from '../../components/RecentEarthquakes.astro';
+import CountryInfo from '../../components/CountryInfo.astro';
+import MovieCard from '../../components/MovieCard.astro';
+import NpmPackage from '../../components/NpmPackage.astro';
+import RustCrate from '../../components/RustCrate.astro';
+import PypiPackage from '../../components/PypiPackage.astro';
+import RssFeed from '../../components/RssFeed.astro';
+import WikiSummary from '../../components/WikiSummary.astro';
+import PollenForecast from '../../components/PollenForecast.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+// import InlineCode from '../../components/InlineCode.astro';
+
+const usageWaterLevel = `---
+import { WaterLevel } from 'comet-astro';
+---
+
+<WaterLevel water="RHEIN" />
+<WaterLevel water="ELBE" maxStations={3} compact />
+<WaterLevel station="KÖLN" />`;
+
+const usageFuelPrices = `---
+import { FuelPrices } from 'comet-astro';
+---
+
+<!-- Berlin Mitte -->
+<FuelPrices lat={52.521} lng={13.38} />
+
+<!-- Mit eigenem API-Key (kostenlos) -->
+<FuelPrices 
+  apiKey="your-api-key"
+  lat={50.937} 
+  lng={6.96}
+  fuelType="diesel"
+  radius={10}
+/>`;
+
+const usageCurrency = `---
+import { CurrencyConverter } from 'comet-astro';
+---
+
+<CurrencyConverter />
+<CurrencyConverter 
+  base="USD"
+  targets={['EUR', 'GBP', 'JPY', 'CHF']}
+  amount={100}
+/>`;
+
+const usageGitHub = `---
+import { GitHubRepo } from 'comet-astro';
+---
+
+<GitHubRepo repo="withastro/astro" />
+<GitHubRepo repo="facebook/react" variant="compact" />
+<GitHubRepo repo="microsoft/typescript" variant="minimal" />`;
+
+const usageNasa = `---
+import { NasaApod } from 'comet-astro';
+---
+
+<NasaApod />
+<NasaApod variant="hero" />
+<NasaApod variant="compact" date="2024-01-01" />`;
+
+const usageHolidays = `---
+import { PublicHolidays } from 'comet-astro';
+---
+
+<PublicHolidays country="DE" />
+<PublicHolidays country="AT" region="9" showCountdown />
+<PublicHolidays country="CH" maxHolidays={5} />`;
+
+const usageQrCode = `---
+import { QrCode } from 'comet-astro';
+---
+
+<QrCode data="https://astro.build" />
+<QrCode data="Hello World" size={200} />
+<QrCode data="WIFI:T:WPA;S:MyNetwork;P:password;;" downloadable />`;
+
+const usageQuote = `---
+import { RandomQuote } from 'comet-astro';
+---
+
+<RandomQuote />
+<RandomQuote variant="minimal" />
+<RandomQuote variant="card" />`;
+
+const usageCrypto = `---
+import { CryptoPrice } from 'comet-astro';
+---
+
+<CryptoPrice coin="bitcoin" />
+<CryptoPrice coin="ethereum" variant="compact" />
+<CryptoPrice coins={['bitcoin', 'ethereum', 'solana']} variant="list" />`;
+
+const usageTrivia = `---
+import { Trivia } from 'comet-astro';
+---
+
+<Trivia />
+<Trivia category="science" difficulty="hard" />
+<Trivia questions={3} showScore />`;
+
+const usageOnThisDay = `---
+import { OnThisDay } from 'comet-astro';
+---
+
+<OnThisDay />
+<OnThisDay type="births" maxItems={3} />
+<OnThisDay type="deaths" />`;
+
+const usageTrainDepartures = `---
+import { TrainDepartures } from 'comet-astro';
+---
+
+<TrainDepartures station="8011160" /> <!-- Berlin Hbf -->
+<TrainDepartures station="8000105" maxDepartures={5} /> <!-- Frankfurt Hbf -->
+<TrainDepartures station="8000261" showPlatform />  <!-- München Hbf -->`;
+
+const usageSpeedCameras = `---
+import { SpeedCameras } from 'comet-astro';
+---
+
+<SpeedCameras />
+<SpeedCameras region="berlin" maxItems={5} />
+<SpeedCameras showMap compact />`;
+
+const usageEarthquakes = `---
+import { RecentEarthquakes } from 'comet-astro';
+---
+
+<RecentEarthquakes />
+<RecentEarthquakes minMagnitude={4.5} maxItems={5} />
+<RecentEarthquakes showMap compact />`;
+
+const usageCountry = `---
+import { CountryInfo } from 'comet-astro';
+---
+
+<CountryInfo code="DE" />
+<CountryInfo code="JP" variant="compact" />
+<CountryInfo code="US" variant="minimal" />`;
+
+const usageMovie = `---
+import { MovieCard } from 'comet-astro';
+---
+
+<MovieCard title="Inception" />
+<MovieCard title="Breaking Bad" variant="compact" />
+<MovieCard imdbId="tt0111161" variant="poster" />`;
+
+const usageNpm = `---
+import { NpmPackage } from 'comet-astro';
+---
+
+<NpmPackage package="astro" />
+<NpmPackage package="react" variant="compact" />
+<NpmPackage package="typescript" variant="minimal" />`;
+
+const usageRustCrate = `---
+import { RustCrate } from 'comet-astro';
+---
+
+<RustCrate crate="serde" />
+<RustCrate crate="tokio" variant="compact" />
+<RustCrate crate="reqwest" variant="minimal" />`;
+
+const usagePypi = `---
+import { PypiPackage } from 'comet-astro';
+---
+
+<PypiPackage package="requests" />
+<PypiPackage package="django" variant="compact" />
+<PypiPackage package="numpy" variant="minimal" />`;
+
+const usageRss = `---
+import { RssFeed } from 'comet-astro';
+---
+
+<RssFeed url="https://blog.astro.build/rss.xml" />
+<RssFeed url="https://example.com/feed.xml" maxItems={5} showThumbnails />`;
+
+const usageWiki = `---
+import { WikiSummary } from 'comet-astro';
+---
+
+<WikiSummary article="Berlin" />
+<WikiSummary article="TypeScript" lang="en" variant="compact" />
+<WikiSummary article="Quantenphysik" variant="card" />`;
+
+const usagePollen = `---
+import { PollenForecast } from 'comet-astro';
+---
+
+<PollenForecast />
+<PollenForecast region="49" compact />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Typ' },
+  { key: 'default', label: 'Standard' },
+  { key: 'description', label: 'Beschreibung' },
+];
+
+const waterLevelProps = [
+  {
+    name: 'water',
+    type: 'string',
+    default: "'RHEIN'",
+    description: 'Gewässername (z.B. RHEIN, ELBE, DONAU).',
+  },
+  {
+    name: 'station',
+    type: 'string',
+    default: '—',
+    description: 'Einzelne Station nach Name.',
+  },
+  {
+    name: 'stations',
+    type: 'string[]',
+    default: '—',
+    description: 'Mehrere Stationen.',
+  },
+  {
+    name: 'maxStations',
+    type: 'number',
+    default: '5',
+    description: 'Max. angezeigte Stationen.',
+  },
+  {
+    name: 'showTrend',
+    type: 'boolean',
+    default: 'true',
+    description: 'Trend-Pfeile anzeigen.',
+  },
+  {
+    name: 'showMap',
+    type: 'boolean',
+    default: 'true',
+    description: 'Karten-Links anzeigen.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung.',
+  },
+];
+
+const fuelPricesProps = [
+  {
+    name: 'apiKey',
+    type: 'string',
+    default: 'Demo-Key',
+    description: 'Tankerkönig API-Key (kostenlos).',
+  },
+  {
+    name: 'lat',
+    type: 'number',
+    default: '—',
+    description: 'Breitengrad (required).',
+  },
+  {
+    name: 'lng',
+    type: 'number',
+    default: '—',
+    description: 'Längengrad (required).',
+  },
+  {
+    name: 'radius',
+    type: 'number',
+    default: '5',
+    description: 'Suchradius in km (max 25).',
+  },
+  {
+    name: 'fuelType',
+    type: "'e5' | 'e10' | 'diesel'",
+    default: "'e5'",
+    description: 'Kraftstoffart.',
+  },
+  {
+    name: 'sortBy',
+    type: "'price' | 'dist'",
+    default: "'price'",
+    description: 'Sortierung.',
+  },
+  {
+    name: 'maxStations',
+    type: 'number',
+    default: '5',
+    description: 'Max. angezeigte Tankstellen.',
+  },
+  {
+    name: 'showClosed',
+    type: 'boolean',
+    default: 'false',
+    description: 'Geschlossene anzeigen.',
+  },
+];
+
+const currencyProps = [
+  {
+    name: 'base',
+    type: 'string',
+    default: "'EUR'",
+    description: 'Basiswährung.',
+  },
+  {
+    name: 'targets',
+    type: 'string[]',
+    default: "['USD','GBP','CHF','JPY','CNY']",
+    description: 'Zielwährungen.',
+  },
+  { name: 'amount', type: 'number', default: '1', description: 'Startbetrag.' },
+  {
+    name: 'showConverter',
+    type: 'boolean',
+    default: 'true',
+    description: 'Umrechner anzeigen.',
+  },
+  {
+    name: 'showRates',
+    type: 'boolean',
+    default: 'true',
+    description: 'Kursliste anzeigen.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung.',
+  },
+];
+
+const gitHubProps = [
+  {
+    name: 'repo',
+    type: 'string',
+    default: '—',
+    description: 'Repository im Format "owner/repo".',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'minimal'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showDescription',
+    type: 'boolean',
+    default: 'true',
+    description: 'Beschreibung anzeigen.',
+  },
+  {
+    name: 'showTopics',
+    type: 'boolean',
+    default: 'true',
+    description: 'Topics anzeigen.',
+  },
+  {
+    name: 'showStats',
+    type: 'boolean',
+    default: 'true',
+    description: 'Footer-Statistiken anzeigen.',
+  },
+  {
+    name: 'showOwner',
+    type: 'boolean',
+    default: 'true',
+    description: 'Owner-Avatar anzeigen.',
+  },
+  {
+    name: 'showLicense',
+    type: 'boolean',
+    default: 'true',
+    description: 'Lizenz anzeigen.',
+  },
+];
+
+const nasaProps = [
+  {
+    name: 'apiKey',
+    type: 'string',
+    default: "'DEMO_KEY'",
+    description: 'NASA API-Key (DEMO_KEY ist begrenzt).',
+  },
+  {
+    name: 'date',
+    type: 'string',
+    default: 'heute',
+    description: 'Datum im Format YYYY-MM-DD.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'hero'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showExplanation',
+    type: 'boolean',
+    default: 'true',
+    description: 'Erklärungstext anzeigen.',
+  },
+  {
+    name: 'showDate',
+    type: 'boolean',
+    default: 'true',
+    description: 'Datum anzeigen.',
+  },
+  {
+    name: 'showCopyright',
+    type: 'boolean',
+    default: 'true',
+    description: 'Copyright anzeigen.',
+  },
+  {
+    name: 'maxExplanationLength',
+    type: 'number',
+    default: '300',
+    description: 'Max. Textlänge.',
+  },
+];
+
+const holidaysProps = [
+  {
+    name: 'country',
+    type: 'string',
+    default: "'DE'",
+    description: 'Ländercode (DE, AT, CH, etc.).',
+  },
+  {
+    name: 'year',
+    type: 'number',
+    default: 'aktuelles Jahr',
+    description: 'Jahr für Feiertage.',
+  },
+  {
+    name: 'region',
+    type: 'string',
+    default: '—',
+    description: 'Regionale Feiertage (z.B. BY, NW).',
+  },
+  {
+    name: 'maxHolidays',
+    type: 'number',
+    default: '10',
+    description: 'Max. angezeigte Feiertage.',
+  },
+  {
+    name: 'showCountdown',
+    type: 'boolean',
+    default: 'false',
+    description: 'Countdown zum nächsten Feiertag.',
+  },
+  {
+    name: 'showPast',
+    type: 'boolean',
+    default: 'false',
+    description: 'Vergangene Feiertage anzeigen.',
+  },
+];
+
+const qrCodeProps = [
+  {
+    name: 'data',
+    type: 'string',
+    default: '—',
+    description: 'Inhalt des QR-Codes (URL, Text, WiFi, etc.).',
+  },
+  {
+    name: 'size',
+    type: 'number',
+    default: '200',
+    description: 'Größe in Pixeln.',
+  },
+  {
+    name: 'bgColor',
+    type: 'string',
+    default: "'ffffff'",
+    description: 'Hintergrundfarbe (hex ohne #).',
+  },
+  {
+    name: 'fgColor',
+    type: 'string',
+    default: "'000000'",
+    description: 'Vordergrundfarbe (hex ohne #).',
+  },
+  {
+    name: 'downloadable',
+    type: 'boolean',
+    default: 'false',
+    description: 'Download-Button anzeigen.',
+  },
+  {
+    name: 'showLabel',
+    type: 'boolean',
+    default: 'true',
+    description: 'Label unter QR-Code anzeigen.',
+  },
+];
+
+const quoteProps = [
+  {
+    name: 'variant',
+    type: "'default' | 'minimal' | 'card'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showAuthor',
+    type: 'boolean',
+    default: 'true',
+    description: 'Autor anzeigen.',
+  },
+  {
+    name: 'maxLength',
+    type: 'number',
+    default: '—',
+    description: 'Max. Zeichenlänge des Zitats.',
+  },
+];
+
+const cryptoProps = [
+  {
+    name: 'coin',
+    type: 'string',
+    default: "'bitcoin'",
+    description: 'Einzelne Kryptowährung (ID von CoinGecko).',
+  },
+  {
+    name: 'coins',
+    type: 'string[]',
+    default: '—',
+    description: 'Mehrere Kryptowährungen.',
+  },
+  {
+    name: 'currency',
+    type: 'string',
+    default: "'eur'",
+    description: 'Anzeige-Währung (eur, usd, etc.).',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'list'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showChange',
+    type: 'boolean',
+    default: 'true',
+    description: '24h-Änderung anzeigen.',
+  },
+  {
+    name: 'showMarketCap',
+    type: 'boolean',
+    default: 'false',
+    description: 'Marktkapitalisierung anzeigen.',
+  },
+];
+
+const triviaProps = [
+  {
+    name: 'category',
+    type: 'string',
+    default: '—',
+    description: 'Kategorie (science, history, etc.).',
+  },
+  {
+    name: 'difficulty',
+    type: "'easy' | 'medium' | 'hard'",
+    default: '—',
+    description: 'Schwierigkeitsgrad.',
+  },
+  {
+    name: 'questions',
+    type: 'number',
+    default: '1',
+    description: 'Anzahl der Fragen.',
+  },
+  {
+    name: 'showScore',
+    type: 'boolean',
+    default: 'true',
+    description: 'Punktestand anzeigen.',
+  },
+  {
+    name: 'showHint',
+    type: 'boolean',
+    default: 'false',
+    description: 'Hinweise aktivieren.',
+  },
+];
+
+const onThisDayProps = [
+  {
+    name: 'type',
+    type: "'events' | 'births' | 'deaths'",
+    default: "'events'",
+    description: 'Art der Ereignisse.',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '5',
+    description: 'Max. angezeigte Einträge.',
+  },
+  {
+    name: 'showYear',
+    type: 'boolean',
+    default: 'true',
+    description: 'Jahr anzeigen.',
+  },
+  {
+    name: 'showLinks',
+    type: 'boolean',
+    default: 'true',
+    description: 'Wikipedia-Links anzeigen.',
+  },
+];
+
+const trainDeparturesProps = [
+  {
+    name: 'station',
+    type: 'string',
+    default: '—',
+    description: 'Stations-ID (z.B. 8011160 für Berlin Hbf).',
+  },
+  {
+    name: 'maxDepartures',
+    type: 'number',
+    default: '10',
+    description: 'Max. angezeigte Abfahrten.',
+  },
+  {
+    name: 'duration',
+    type: 'number',
+    default: '60',
+    description: 'Zeitfenster in Minuten.',
+  },
+  {
+    name: 'showPlatform',
+    type: 'boolean',
+    default: 'true',
+    description: 'Gleis anzeigen.',
+  },
+  {
+    name: 'showDelay',
+    type: 'boolean',
+    default: 'true',
+    description: 'Verspätung anzeigen.',
+  },
+  {
+    name: 'products',
+    type: 'object',
+    default: 'alle',
+    description: 'Verkehrsmittel filtern.',
+  },
+];
+
+const speedCamerasProps = [
+  {
+    name: 'region',
+    type: 'string',
+    default: '—',
+    description: 'Region/Stadt filtern.',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '10',
+    description: 'Max. angezeigte Blitzer.',
+  },
+  {
+    name: 'showMap',
+    type: 'boolean',
+    default: 'false',
+    description: 'Karten-Links anzeigen.',
+  },
+  {
+    name: 'showSpeed',
+    type: 'boolean',
+    default: 'true',
+    description: 'Tempolimit anzeigen.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung.',
+  },
+];
+
+const earthquakesProps = [
+  {
+    name: 'minMagnitude',
+    type: 'number',
+    default: '2.5',
+    description: 'Minimale Magnitude.',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '10',
+    description: 'Max. angezeigte Erdbeben.',
+  },
+  {
+    name: 'timeRange',
+    type: "'hour' | 'day' | 'week' | 'month'",
+    default: "'day'",
+    description: 'Zeitraum.',
+  },
+  {
+    name: 'showMap',
+    type: 'boolean',
+    default: 'true',
+    description: 'Karten-Links anzeigen.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung.',
+  },
+];
+
+const countryProps = [
+  {
+    name: 'code',
+    type: 'string',
+    default: '—',
+    description: 'ISO 3166-1 alpha-2 Ländercode.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'minimal'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showFlag',
+    type: 'boolean',
+    default: 'true',
+    description: 'Flagge anzeigen.',
+  },
+  {
+    name: 'showCurrencies',
+    type: 'boolean',
+    default: 'true',
+    description: 'Währungen anzeigen.',
+  },
+  {
+    name: 'showLanguages',
+    type: 'boolean',
+    default: 'true',
+    description: 'Sprachen anzeigen.',
+  },
+];
+
+const movieProps = [
+  {
+    name: 'title',
+    type: 'string',
+    default: '—',
+    description: 'Filmtitel für Suche.',
+  },
+  {
+    name: 'imdbId',
+    type: 'string',
+    default: '—',
+    description: 'IMDB-ID (alternativ zu title).',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'poster'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showRatings',
+    type: 'boolean',
+    default: 'true',
+    description: 'Bewertungen anzeigen.',
+  },
+  {
+    name: 'showPlot',
+    type: 'boolean',
+    default: 'true',
+    description: 'Handlung anzeigen.',
+  },
+];
+
+const npmProps = [
+  {
+    name: 'package',
+    type: 'string',
+    default: '—',
+    description: 'NPM-Paketname.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'minimal'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showDownloads',
+    type: 'boolean',
+    default: 'true',
+    description: 'Download-Statistiken anzeigen.',
+  },
+  {
+    name: 'showDependencies',
+    type: 'boolean',
+    default: 'false',
+    description: 'Dependencies anzeigen.',
+  },
+];
+
+const rustCrateProps = [
+  { name: 'crate', type: 'string', default: '—', description: 'Crate-Name.' },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'minimal'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showDownloads',
+    type: 'boolean',
+    default: 'true',
+    description: 'Download-Statistiken anzeigen.',
+  },
+  {
+    name: 'showDocs',
+    type: 'boolean',
+    default: 'true',
+    description: 'Docs.rs Link anzeigen.',
+  },
+];
+
+const pypiProps = [
+  {
+    name: 'package',
+    type: 'string',
+    default: '—',
+    description: 'PyPI-Paketname.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'minimal'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showAuthor',
+    type: 'boolean',
+    default: 'true',
+    description: 'Autor anzeigen.',
+  },
+  {
+    name: 'showRequiresPython',
+    type: 'boolean',
+    default: 'true',
+    description: 'Python-Version anzeigen.',
+  },
+];
+
+const rssProps = [
+  { name: 'url', type: 'string', default: '—', description: 'RSS-Feed URL.' },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '5',
+    description: 'Max. angezeigte Artikel.',
+  },
+  {
+    name: 'showThumbnails',
+    type: 'boolean',
+    default: 'true',
+    description: 'Thumbnails anzeigen.',
+  },
+  {
+    name: 'showDate',
+    type: 'boolean',
+    default: 'true',
+    description: 'Datum anzeigen.',
+  },
+];
+
+const wikiProps = [
+  {
+    name: 'article',
+    type: 'string',
+    default: '—',
+    description: 'Wikipedia-Artikeltitel oder URL.',
+  },
+  {
+    name: 'lang',
+    type: 'string',
+    default: "'de'",
+    description: 'Sprache (de, en, etc.).',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'minimal'",
+    default: "'default'",
+    description: 'Darstellungsvariante.',
+  },
+  {
+    name: 'showImage',
+    type: 'boolean',
+    default: 'true',
+    description: 'Bild anzeigen.',
+  },
+];
+
+const pollenProps = [
+  {
+    name: 'region',
+    type: 'string',
+    default: '—',
+    description: 'Region-ID (siehe DWD).',
+  },
+  {
+    name: 'showLegend',
+    type: 'boolean',
+    default: 'true',
+    description: 'Legende anzeigen.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="API-Komponenten"
+  seoDescription="Live-Daten von öffentlichen APIs - Pegelstände, Spritpreise, Währungen, GitHub und NASA."
+>
+  <!-- Hero Section -->
+  <div
+    class="relative mb-12 -mt-4 rounded-2xl overflow-hidden bg-gradient-to-br from-violet-950/50 via-slate-900 to-slate-950 border border-slate-700/50"
+  >
+    <div
+      class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMDI0MmIiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnYyaDR2MmgtdnptLTE0LTRoMnY0aC0ydi0ySDZoLTJ2LTJoMnYtMmgydjJoMnYyaDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"
+    >
+    </div>
+    <div class="relative px-8 py-10">
+      <div class="flex items-center gap-4 mb-4">
+        <div
+          class="p-3 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25"
+        >
+          <svg
+            class="w-8 h-8 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white">API-Komponenten</h1>
+          <p class="text-slate-400 text-sm">Live-Daten aus öffentlichen APIs</p>
+        </div>
+      </div>
+      <p class="text-slate-300 max-w-2xl mb-6">
+        Fertige Komponenten für Echtzeit-Daten aus kostenlosen APIs:
+        Pegelstände, Spritpreise, Krypto, Zugverkehr, Feiertage und vieles mehr.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-full"
+        >
+          🌊 Pegelstände
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full"
+        >
+          ⛽ Spritpreise
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full"
+        >
+          💱 Währungen
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-orange-500/20 text-orange-300 border border-orange-500/30 rounded-full"
+        >
+          ₿ Krypto
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30 rounded-full"
+        >
+          🚂 Züge
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-pink-500/20 text-pink-300 border border-pink-500/30 rounded-full"
+        >
+          🎉 Feiertage
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded-full"
+        >
+          📱 QR-Codes
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full"
+        >
+          🎯 Trivia
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Components Overview -->
+  <section class="mb-12">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-6">Übersicht</Headline
+    >
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <a
+        href="#water-level"
+        class="group p-5 rounded-xl bg-blue-500/10 border border-blue-500/30 hover:border-blue-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🌊</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-blue-300 transition-colors"
+            >WaterLevel</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Pegelstände deutscher Flüsse mit Hochwasser-Warnung.
+        </p>
+      </a>
+
+      <a
+        href="#fuel-prices"
+        class="group p-5 rounded-xl bg-amber-500/10 border border-amber-500/30 hover:border-amber-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">⛽</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-amber-300 transition-colors"
+            >FuelPrices</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Aktuelle Spritpreise von Tankstellen in der Nähe.
+        </p>
+      </a>
+
+      <a
+        href="#currency"
+        class="group p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 hover:border-emerald-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">💱</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-emerald-300 transition-colors"
+            >CurrencyConverter</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Wechselkurse und Währungsrechner.</p>
+      </a>
+
+      <a
+        href="#github"
+        class="group p-5 rounded-xl bg-slate-500/10 border border-slate-500/30 hover:border-slate-400/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🐙</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-slate-200 transition-colors"
+            >GitHubRepo</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Repository-Karten mit Stars, Forks und mehr.
+        </p>
+      </a>
+
+      <a
+        href="#nasa"
+        class="group p-5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 hover:border-indigo-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🚀</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-indigo-300 transition-colors"
+            >NasaApod</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">NASA Astronomie-Bild des Tages.</p>
+      </a>
+
+      <a
+        href="#holidays"
+        class="group p-5 rounded-xl bg-pink-500/10 border border-pink-500/30 hover:border-pink-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🎉</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-pink-300 transition-colors"
+            >PublicHolidays</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Feiertage mit Countdown nach Ländern.
+        </p>
+      </a>
+
+      <a
+        href="#qrcode"
+        class="group p-5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 hover:border-cyan-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">📱</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-cyan-300 transition-colors"
+            >QrCode</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">QR-Code Generator mit Download.</p>
+      </a>
+
+      <a
+        href="#quote"
+        class="group p-5 rounded-xl bg-violet-500/10 border border-violet-500/30 hover:border-violet-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">💬</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-violet-300 transition-colors"
+            >RandomQuote</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Inspirierende Zitate mit Autor.</p>
+      </a>
+
+      <a
+        href="#crypto"
+        class="group p-5 rounded-xl bg-orange-500/10 border border-orange-500/30 hover:border-orange-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">₿</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-orange-300 transition-colors"
+            >CryptoPrice</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Kryptowährungen mit 24h-Änderung.</p>
+      </a>
+
+      <a
+        href="#trivia"
+        class="group p-5 rounded-xl bg-purple-500/10 border border-purple-500/30 hover:border-purple-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🎯</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-purple-300 transition-colors"
+            >Trivia</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Interaktives Quiz mit Punktestand.</p>
+      </a>
+
+      <a
+        href="#onthisday"
+        class="group p-5 rounded-xl bg-teal-500/10 border border-teal-500/30 hover:border-teal-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">📅</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-teal-300 transition-colors"
+            >OnThisDay</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Historische Ereignisse am heutigen Tag.
+        </p>
+      </a>
+
+      <a
+        href="#trains"
+        class="group p-5 rounded-xl bg-red-500/10 border border-red-500/30 hover:border-red-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🚂</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-red-300 transition-colors"
+            >TrainDepartures</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Deutsche Bahn Abfahrten mit Verspätungen.
+        </p>
+      </a>
+
+      <a
+        href="#speedcameras"
+        class="group p-5 rounded-xl bg-yellow-500/10 border border-yellow-500/30 hover:border-yellow-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🚨</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-yellow-300 transition-colors"
+            >SpeedCameras</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Blitzer-Standorte mit Tempolimit.</p>
+      </a>
+
+      <a
+        href="#earthquakes"
+        class="group p-5 rounded-xl bg-rose-500/10 border border-rose-500/30 hover:border-rose-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🌍</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-rose-300 transition-colors"
+            >RecentEarthquakes</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Aktuelle Erdbeben weltweit (USGS).</p>
+      </a>
+
+      <a
+        href="#country"
+        class="group p-5 rounded-xl bg-sky-500/10 border border-sky-500/30 hover:border-sky-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🏳️</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-sky-300 transition-colors"
+            >CountryInfo</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Länder-Karten mit Flagge und Fakten.
+        </p>
+      </a>
+
+      <a
+        href="#movie"
+        class="group p-5 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/30 hover:border-fuchsia-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🎬</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-fuchsia-300 transition-colors"
+            >MovieCard</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Film/Serien-Infos mit Poster (OMDB).
+        </p>
+      </a>
+
+      <a
+        href="#npm"
+        class="group p-5 rounded-xl bg-red-500/10 border border-red-500/30 hover:border-red-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">📦</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-red-300 transition-colors"
+            >NpmPackage</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">NPM Paket-Info mit Downloads.</p>
+      </a>
+
+      <a
+        href="#rust"
+        class="group p-5 rounded-xl bg-orange-500/10 border border-orange-500/30 hover:border-orange-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🦀</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-orange-300 transition-colors"
+            >RustCrate</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Rust Crate-Info von crates.io.</p>
+      </a>
+
+      <a
+        href="#pypi"
+        class="group p-5 rounded-xl bg-blue-500/10 border border-blue-500/30 hover:border-blue-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🐍</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-blue-300 transition-colors"
+            >PypiPackage</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Python Paket-Info von PyPI.</p>
+      </a>
+
+      <a
+        href="#rss"
+        class="group p-5 rounded-xl bg-amber-500/10 border border-amber-500/30 hover:border-amber-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">📰</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-amber-300 transition-colors"
+            >RssFeed</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">RSS-Feeds als schöne Liste.</p>
+      </a>
+
+      <a
+        href="#wiki"
+        class="group p-5 rounded-xl bg-slate-500/10 border border-slate-500/30 hover:border-slate-400/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">📖</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-slate-200 transition-colors"
+            >WikiSummary</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Wikipedia Artikel-Zusammenfassungen.
+        </p>
+      </a>
+
+      <a
+        href="#pollen"
+        class="group p-5 rounded-xl bg-lime-500/10 border border-lime-500/30 hover:border-lime-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">🌸</span>
+          <span
+            class="font-bold text-slate-100 group-hover:text-lime-300 transition-colors"
+            >PollenForecast</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">Pollenbelastung vom DWD.</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- WaterLevel -->
+  <section id="water-level" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">WaterLevel</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Zeigt aktuelle Pegelstände von deutschen Flüssen mit Hochwasser-Warnung.
+      Nutzt die kostenlose PegelOnline-API der Wasserstraßen- und
+      Schifffahrtsverwaltung.
+    </Paragraph>
+
+    <div class="mb-6">
+      <WaterLevel water="RHEIN" maxStations={4} />
+    </div>
+
+    <CodeBlock code={usageWaterLevel} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={waterLevelProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-blue-300">API:</strong>
+        <a
+          href="https://www.pegelonline.wsv.de/webservices/rest-api/v2/"
+          target="_blank"
+          rel="noopener"
+          class="text-blue-400 hover:underline ml-1"
+        >
+          pegelonline.wsv.de
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- FuelPrices -->
+  <section id="fuel-prices" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">FuelPrices</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Aktuelle Spritpreise von Tankstellen in der Nähe. Sortiert nach Preis oder
+      Entfernung. Zeigt günstigste und teuerste Tankstellen farblich
+      hervorgehoben.
+    </Paragraph>
+
+    <div class="mb-6">
+      <FuelPrices lat={52.521} lng={13.38} radius={5} maxStations={4} />
+    </div>
+
+    <CodeBlock code={usageFuelPrices} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={fuelPricesProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-amber-300">API:</strong>
+        <a
+          href="https://creativecommons.tankerkoenig.de/"
+          target="_blank"
+          rel="noopener"
+          class="text-amber-400 hover:underline ml-1"
+        >
+          tankerkoenig.de
+        </a>
+        – Kostenloser API-Key erforderlich (Demo-Key für Tests enthalten).
+      </p>
+    </div>
+  </section>
+
+  <!-- CurrencyConverter -->
+  <section id="currency" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">CurrencyConverter</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Aktuelle Wechselkurse mit interaktivem Währungsrechner. Unterstützt über
+      150 Währungen.
+    </Paragraph>
+
+    <div class="mb-6">
+      <CurrencyConverter targets={['USD', 'GBP', 'CHF', 'JPY']} />
+    </div>
+
+    <CodeBlock code={usageCurrency} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={currencyProps} responsive={true} />
+    </div>
+
+    <div
+      class="mt-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30"
+    >
+      <p class="text-sm text-slate-300">
+        <strong class="text-emerald-300">API:</strong>
+        <a
+          href="https://www.exchangerate-api.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-emerald-400 hover:underline ml-1"
+        >
+          exchangerate-api.com
+        </a>
+        – Kostenlos, kein API-Key erforderlich. Täglich aktualisiert.
+      </p>
+    </div>
+  </section>
+
+  <!-- GitHubRepo -->
+  <section id="github" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">GitHubRepo</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Repository-Karten mit Stars, Forks, Sprache, Topics und mehr. Perfekt für
+      Open-Source-Projekte und Portfolio-Seiten.
+    </Paragraph>
+
+    <div class="mb-6 grid md:grid-cols-2 gap-4">
+      <GitHubRepo repo="withastro/astro" />
+      <GitHubRepo repo="tailwindlabs/tailwindcss" variant="compact" />
+    </div>
+
+    <div class="mb-6 space-y-2">
+      <GitHubRepo repo="vercel/next.js" variant="minimal" />
+      <GitHubRepo repo="facebook/react" variant="minimal" />
+    </div>
+
+    <CodeBlock code={usageGitHub} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={gitHubProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-slate-700/30 border border-slate-600/50">
+      <p class="text-sm text-slate-300">
+        <strong class="text-slate-200">API:</strong>
+        <a
+          href="https://docs.github.com/en/rest"
+          target="_blank"
+          rel="noopener"
+          class="text-blue-400 hover:underline ml-1"
+        >
+          api.github.com
+        </a>
+        – Kostenlos mit Rate Limiting (60 req/h ohne Auth, 5000 mit Token).
+      </p>
+    </div>
+  </section>
+
+  <!-- NasaApod -->
+  <section id="nasa" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">NasaApod</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      NASA Astronomy Picture of the Day – das tägliche Weltraumbild mit
+      wissenschaftlicher Erklärung.
+    </Paragraph>
+
+    <div class="mb-6">
+      <NasaApod />
+    </div>
+
+    <div class="mb-6">
+      <NasaApod variant="compact" />
+    </div>
+
+    <CodeBlock code={usageNasa} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={nasaProps} responsive={true} />
+    </div>
+
+    <div
+      class="mt-4 p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30"
+    >
+      <p class="text-sm text-slate-300">
+        <strong class="text-indigo-300">API:</strong>
+        <a
+          href="https://api.nasa.gov/"
+          target="_blank"
+          rel="noopener"
+          class="text-indigo-400 hover:underline ml-1"
+        >
+          api.nasa.gov
+        </a>
+        – DEMO_KEY enthalten (30 req/h). Eigenen Key für mehr Requests.
+      </p>
+    </div>
+  </section>
+
+  <!-- PublicHolidays -->
+  <section id="holidays" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">PublicHolidays</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Zeigt Feiertage nach Land mit optionalem Countdown zum nächsten Feiertag.
+      Unterstützt regionale Feiertage für Deutschland, Österreich und Schweiz.
+    </Paragraph>
+
+    <div class="mb-6">
+      <PublicHolidays country="DE" maxHolidays={5} showCountdown />
+    </div>
+
+    <CodeBlock code={usageHolidays} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={holidaysProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-pink-500/10 border border-pink-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-pink-300">API:</strong>
+        <a
+          href="https://date.nager.at/Api"
+          target="_blank"
+          rel="noopener"
+          class="text-pink-400 hover:underline ml-1"
+        >
+          date.nager.at
+        </a>
+        – Kostenlos, kein API-Key erforderlich. Über 100 Länder.
+      </p>
+    </div>
+  </section>
+
+  <!-- QrCode -->
+  <section id="qrcode" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">QrCode</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Generiert QR-Codes für URLs, Text, WiFi-Zugangsdaten und mehr. Mit
+      optionalem Download-Button und automatischer Typerkennung.
+    </Paragraph>
+
+    <div class="mb-6 flex flex-wrap gap-6">
+      <QrCode data="https://astro.build" />
+      <QrCode
+        data="WIFI:T:WPA;S:GuestWiFi;P:welcome123;;"
+        size={150}
+        downloadable
+      />
+    </div>
+
+    <CodeBlock code={usageQrCode} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={qrCodeProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-cyan-300">API:</strong>
+        <a
+          href="https://goqr.me/api/"
+          target="_blank"
+          rel="noopener"
+          class="text-cyan-400 hover:underline ml-1"
+        >
+          api.qrserver.com
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- RandomQuote -->
+  <section id="quote" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">RandomQuote</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Zeigt inspirierende Zitate mit Autor. Drei Varianten für unterschiedliche
+      Layouts.
+    </Paragraph>
+
+    <div class="mb-6 space-y-4">
+      <RandomQuote />
+      <RandomQuote variant="minimal" />
+    </div>
+
+    <CodeBlock code={usageQuote} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={quoteProps} responsive={true} />
+    </div>
+
+    <div
+      class="mt-4 p-4 rounded-xl bg-violet-500/10 border border-violet-500/30"
+    >
+      <p class="text-sm text-slate-300">
+        <strong class="text-violet-300">API:</strong>
+        <a
+          href="https://zenquotes.io/"
+          target="_blank"
+          rel="noopener"
+          class="text-violet-400 hover:underline ml-1"
+        >
+          zenquotes.io
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- CryptoPrice -->
+  <section id="crypto" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">CryptoPrice</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Aktuelle Kryptowährungspreise mit 24h-Änderung. Unterstützt Bitcoin,
+      Ethereum und viele mehr.
+    </Paragraph>
+
+    <div class="mb-6 grid md:grid-cols-2 gap-4">
+      <CryptoPrice coin="bitcoin" />
+      <CryptoPrice coin="ethereum" variant="compact" />
+    </div>
+
+    <CodeBlock code={usageCrypto} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={cryptoProps} responsive={true} />
+    </div>
+
+    <div
+      class="mt-4 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30"
+    >
+      <p class="text-sm text-slate-300">
+        <strong class="text-orange-300">API:</strong>
+        <a
+          href="https://www.coingecko.com/en/api"
+          target="_blank"
+          rel="noopener"
+          class="text-orange-400 hover:underline ml-1"
+        >
+          coingecko.com
+        </a>
+        – Kostenlos, Rate Limiting (10-30 req/min).
+      </p>
+    </div>
+  </section>
+
+  <!-- Trivia -->
+  <section id="trivia" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">Trivia</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Interaktives Quiz mit Punktestand. Verschiedene Kategorien und
+      Schwierigkeitsgrade. Antworten werden client-seitig überprüft.
+    </Paragraph>
+
+    <div class="mb-6">
+      <Trivia />
+    </div>
+
+    <CodeBlock code={usageTrivia} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={triviaProps} responsive={true} />
+    </div>
+
+    <div
+      class="mt-4 p-4 rounded-xl bg-purple-500/10 border border-purple-500/30"
+    >
+      <p class="text-sm text-slate-300">
+        <strong class="text-purple-300">API:</strong>
+        <a
+          href="https://the-trivia-api.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-purple-400 hover:underline ml-1"
+        >
+          the-trivia-api.com
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- OnThisDay -->
+  <section id="onthisday" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">OnThisDay</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Historische Ereignisse, Geburtstage und Todesfälle am heutigen Tag. Mit
+      Wikipedia-Links für mehr Details.
+    </Paragraph>
+
+    <div class="mb-6">
+      <OnThisDay maxItems={4} />
+    </div>
+
+    <CodeBlock code={usageOnThisDay} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={onThisDayProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-teal-500/10 border border-teal-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-teal-300">API:</strong>
+        <a
+          href="https://history.muffinlabs.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-teal-400 hover:underline ml-1"
+        >
+          history.muffinlabs.com
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- TrainDepartures -->
+  <section id="trains" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">TrainDepartures</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Live-Abfahrten von deutschen Bahnhöfen mit Verspätungsanzeige. Zeigt ICE,
+      IC, RE, RB und S-Bahnen.
+    </Paragraph>
+
+    <div class="mb-6">
+      <TrainDepartures station="8011160" maxDepartures={5} />
+    </div>
+
+    <CodeBlock code={usageTrainDepartures} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table
+        columns={propsColumns}
+        data={trainDeparturesProps}
+        responsive={true}
+      />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-red-300">API:</strong>
+        <a
+          href="https://v6.db.transport.rest/"
+          target="_blank"
+          rel="noopener"
+          class="text-red-400 hover:underline ml-1"
+        >
+          db.transport.rest
+        </a>
+        – Kostenlos, kein API-Key erforderlich. Inoffizielle DB-API.
+      </p>
+    </div>
+
+    <div class="mt-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700">
+      <p class="text-xs text-slate-400">
+        <strong>Stations-IDs:</strong> Berlin Hbf: 8011160, Frankfurt Hbf: 8000105,
+        München Hbf: 8000261, Hamburg Hbf: 8002549, Köln Hbf: 8000207
+      </p>
+    </div>
+  </section>
+
+  <!-- SpeedCameras -->
+  <section id="speedcameras" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">SpeedCameras</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Übersicht von Blitzer-Standorten mit Tempolimit und Karten-Links. Basiert
+      auf Beispieldaten (keine Live-API verfügbar).
+    </Paragraph>
+
+    <div class="mb-6">
+      <SpeedCameras maxItems={5} showMap />
+    </div>
+
+    <CodeBlock code={usageSpeedCameras} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table
+        columns={propsColumns}
+        data={speedCamerasProps}
+        responsive={true}
+      />
+    </div>
+
+    <div
+      class="mt-4 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30"
+    >
+      <p class="text-sm text-slate-300">
+        <strong class="text-yellow-300">Hinweis:</strong>
+        Diese Komponente verwendet Beispieldaten, da keine kostenlose öffentliche
+        Blitzer-API verfügbar ist. Für Live-Daten können eigene Datenquellen integriert
+        werden.
+      </p>
+    </div>
+  </section>
+
+  <!-- RecentEarthquakes -->
+  <section id="earthquakes" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">RecentEarthquakes</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Aktuelle Erdbeben weltweit mit Magnitude und Tiefe. Nutzt die USGS
+      Earthquake API für Live-Daten.
+    </Paragraph>
+
+    <div class="mb-6">
+      <RecentEarthquakes maxItems={5} />
+    </div>
+
+    <CodeBlock code={usageEarthquakes} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={earthquakesProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-rose-300">API:</strong>
+        <a
+          href="https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php"
+          target="_blank"
+          rel="noopener"
+          class="text-rose-400 hover:underline ml-1"
+        >
+          earthquake.usgs.gov
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- CountryInfo -->
+  <section id="country" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">CountryInfo</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Länder-Karten mit Flagge, Hauptstadt, Währung und Sprachen. Drei Varianten
+      für unterschiedliche Layouts.
+    </Paragraph>
+
+    <div class="mb-6 grid md:grid-cols-2 gap-4">
+      <CountryInfo code="DE" />
+      <CountryInfo code="JP" variant="compact" />
+    </div>
+
+    <CodeBlock code={usageCountry} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={countryProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-sky-500/10 border border-sky-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-sky-300">API:</strong>
+        <a
+          href="https://restcountries.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-sky-400 hover:underline ml-1"
+        >
+          restcountries.com
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- MovieCard -->
+  <section id="movie" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">MovieCard</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Film- und Serien-Infos mit Poster, Bewertungen und Handlung. Nutzt die
+      OMDB API (Demo-Key enthalten).
+    </Paragraph>
+
+    <div class="mb-6 grid md:grid-cols-2 gap-4">
+      <MovieCard title="Inception" />
+      <MovieCard title="Breaking Bad" variant="compact" />
+    </div>
+
+    <CodeBlock code={usageMovie} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={movieProps} responsive={true} />
+    </div>
+
+    <div
+      class="mt-4 p-4 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/30"
+    >
+      <p class="text-sm text-slate-300">
+        <strong class="text-fuchsia-300">API:</strong>
+        <a
+          href="https://www.omdbapi.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-fuchsia-400 hover:underline ml-1"
+        >
+          omdbapi.com
+        </a>
+        – Kostenloser API-Key erforderlich (Demo-Key für Tests enthalten).
+      </p>
+    </div>
+  </section>
+
+  <!-- NpmPackage -->
+  <section id="npm" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">NpmPackage</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      NPM Paket-Infos mit Version, Downloads und Install-Command. Perfekt für
+      Dokumentation und Portfolio-Seiten.
+    </Paragraph>
+
+    <div class="mb-6 grid md:grid-cols-2 gap-4">
+      <NpmPackage package="astro" />
+      <NpmPackage package="react" variant="compact" />
+    </div>
+
+    <CodeBlock code={usageNpm} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={npmProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-red-300">API:</strong>
+        <a
+          href="https://registry.npmjs.org/"
+          target="_blank"
+          rel="noopener"
+          class="text-red-400 hover:underline ml-1"
+        >
+          registry.npmjs.org
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- RustCrate -->
+  <section id="rust" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">RustCrate</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Rust Crate-Infos mit Version, Downloads und Cargo.toml Syntax. Zeigt auch
+      Links zu docs.rs und Repository.
+    </Paragraph>
+
+    <div class="mb-6 grid md:grid-cols-2 gap-4">
+      <RustCrate crate="serde" />
+      <RustCrate crate="tokio" variant="compact" />
+    </div>
+
+    <CodeBlock code={usageRustCrate} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={rustCrateProps} responsive={true} />
+    </div>
+
+    <div
+      class="mt-4 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30"
+    >
+      <p class="text-sm text-slate-300">
+        <strong class="text-orange-300">API:</strong>
+        <a
+          href="https://crates.io/"
+          target="_blank"
+          rel="noopener"
+          class="text-orange-400 hover:underline ml-1"
+        >
+          crates.io
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- PypiPackage -->
+  <section id="pypi" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">PypiPackage</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Python Paket-Infos mit Version, Autor und pip install Command. Zeigt auch
+      Python-Version und Lizenz.
+    </Paragraph>
+
+    <div class="mb-6 grid md:grid-cols-2 gap-4">
+      <PypiPackage package="requests" />
+      <PypiPackage package="django" variant="compact" />
+    </div>
+
+    <CodeBlock code={usagePypi} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={pypiProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-blue-300">API:</strong>
+        <a
+          href="https://pypi.org/"
+          target="_blank"
+          rel="noopener"
+          class="text-blue-400 hover:underline ml-1"
+        >
+          pypi.org
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- RssFeed -->
+  <section id="rss" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">RssFeed</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      RSS-Feeds als schöne Artikel-Liste mit Thumbnails. Nutzt RSS2JSON für
+      einfache Integration.
+    </Paragraph>
+
+    <div class="mb-6">
+      <RssFeed url="https://blog.astro.build/rss.xml" maxItems={3} />
+    </div>
+
+    <CodeBlock code={usageRss} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={rssProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-amber-300">API:</strong>
+        <a
+          href="https://rss2json.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-amber-400 hover:underline ml-1"
+        >
+          rss2json.com
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- WikiSummary -->
+  <section id="wiki" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">WikiSummary</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Wikipedia Artikel-Zusammenfassungen mit Bild. Unterstützt alle Sprachen
+      der Wikipedia.
+    </Paragraph>
+
+    <div class="mb-6 grid md:grid-cols-2 gap-4">
+      <WikiSummary article="Berlin" />
+      <WikiSummary article="TypeScript" lang="en" variant="compact" />
+    </div>
+
+    <CodeBlock code={usageWiki} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={wikiProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-slate-700/30 border border-slate-600/50">
+      <p class="text-sm text-slate-300">
+        <strong class="text-slate-200">API:</strong>
+        <a
+          href="https://www.mediawiki.org/wiki/API:REST_API"
+          target="_blank"
+          rel="noopener"
+          class="text-blue-400 hover:underline ml-1"
+        >
+          wikipedia.org REST API
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- PollenForecast -->
+  <section id="pollen" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">PollenForecast</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Aktuelle Pollenbelastung vom Deutschen Wetterdienst. Zeigt
+      Belastungsstufen für verschiedene Pollenarten.
+    </Paragraph>
+
+    <div class="mb-6">
+      <PollenForecast />
+    </div>
+
+    <CodeBlock code={usagePollen} language="astro" />
+
+    <div class="mt-6">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table columns={propsColumns} data={pollenProps} responsive={true} />
+    </div>
+
+    <div class="mt-4 p-4 rounded-xl bg-lime-500/10 border border-lime-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-lime-300">API:</strong>
+        <a
+          href="https://opendata.dwd.de/"
+          target="_blank"
+          rel="noopener"
+          class="text-lime-400 hover:underline ml-1"
+        >
+          opendata.dwd.de
+        </a>
+        – Kostenlos, kein API-Key erforderlich.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer Note -->
+  <section class="mt-16 pt-8 border-t border-slate-700/50">
+    <div class="flex items-start gap-3 text-sm text-slate-500">
+      <svg
+        class="w-5 h-5 shrink-0 mt-0.5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <p>
+        Alle API-Daten werden zur Build-Zeit abgerufen. Für Echtzeit-Updates
+        empfiehlt sich ein kurzes Build-Intervall oder eine
+        Client-Side-Implementierung mit JavaScript.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

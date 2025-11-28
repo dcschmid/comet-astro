@@ -1,0 +1,306 @@
+---
+/**
+ * Trivia - Quiz-Karte mit Frage und Antworten
+ *
+ * Zeigt eine zufällige Quiz-Frage mit Multiple-Choice-Antworten.
+ *
+ * API: https://the-trivia-api.com/
+ */
+import { cn } from '../utils/cn';
+
+interface TriviaQuestion {
+  category: string;
+  id: string;
+  correctAnswer: string;
+  incorrectAnswers: string[];
+  question: { text: string };
+  difficulty: 'easy' | 'medium' | 'hard';
+  tags: string[];
+}
+
+interface Props {
+  category?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  showCategory?: boolean;
+  showDifficulty?: boolean;
+  showHint?: boolean;
+  className?: string;
+}
+
+const {
+  category,
+  difficulty,
+  showCategory = true,
+  showDifficulty = true,
+  showHint = false,
+  className = '',
+} = Astro.props;
+
+let question: TriviaQuestion | null = null;
+let error: string | null = null;
+
+try {
+  const params = new URLSearchParams({ limit: '1' });
+  if (category) params.append('categories', category);
+  if (difficulty) params.append('difficulties', difficulty);
+
+  const res = await fetch(`https://the-trivia-api.com/v2/questions?${params}`);
+  if (res.ok) {
+    const data = await res.json();
+    if (data && data[0]) {
+      question = data[0];
+    }
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+// Shuffle answers
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+const allAnswers = question
+  ? shuffleArray([question.correctAnswer, ...question.incorrectAnswers])
+  : [];
+
+const categoryLabels: Record<string, { label: string; icon: string }> = {
+  arts_and_literature: { label: 'Kunst & Literatur', icon: '🎨' },
+  film_and_tv: { label: 'Film & TV', icon: '🎬' },
+  food_and_drink: { label: 'Essen & Trinken', icon: '🍽️' },
+  general_knowledge: { label: 'Allgemeinwissen', icon: '🧠' },
+  geography: { label: 'Geografie', icon: '🌍' },
+  history: { label: 'Geschichte', icon: '📜' },
+  music: { label: 'Musik', icon: '🎵' },
+  science: { label: 'Wissenschaft', icon: '🔬' },
+  society_and_culture: { label: 'Gesellschaft', icon: '🏛️' },
+  sport_and_leisure: { label: 'Sport', icon: '⚽' },
+};
+
+const difficultyInfo: Record<string, { label: string; color: string }> = {
+  easy: {
+    label: 'Leicht',
+    color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  },
+  medium: {
+    label: 'Mittel',
+    color: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+  },
+  hard: {
+    label: 'Schwer',
+    color: 'bg-red-500/20 text-red-300 border-red-500/30',
+  },
+};
+
+const categoryInfo = question
+  ? categoryLabels[question.category] || {
+      label: question.category,
+      icon: '❓',
+    }
+  : null;
+const diffInfo = question ? difficultyInfo[question.difficulty] : null;
+
+const uniqueId = `trivia-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+{
+  error ? (
+    <div
+      class={cn(
+        'p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm',
+        className
+      )}
+    >
+      {error}
+    </div>
+  ) : (
+    question && (
+      <div
+        class={cn(
+          'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+          className
+        )}
+        data-trivia={uniqueId}
+      >
+        <header class="px-5 py-4 border-b border-slate-700/50 bg-indigo-500/5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/25">
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-100 text-lg">Quiz</h3>
+                {showCategory && categoryInfo && (
+                  <p class="text-xs text-slate-400">
+                    {categoryInfo.icon} {categoryInfo.label}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {showDifficulty && diffInfo && (
+              <span
+                class={cn(
+                  'px-3 py-1.5 rounded-full text-xs font-semibold border',
+                  diffInfo.color
+                )}
+              >
+                {diffInfo.label}
+              </span>
+            )}
+          </div>
+        </header>
+
+        <div class="p-5">
+          <p class="text-lg text-slate-100 font-medium mb-6">
+            {question.question.text}
+          </p>
+
+          <div class="space-y-3" id={`answers-${uniqueId}`}>
+            {allAnswers.map((answer, idx) => {
+              const isCorrect = answer === question.correctAnswer;
+              const _letter = String.fromCharCode(65 + idx); // A, B, C, D
+
+              return (
+                <button
+                  type="button"
+                  class={cn(
+                    'w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all',
+                    'bg-slate-800/50 border-slate-700/50 hover:border-indigo-500/50 hover:bg-indigo-500/10'
+                  )}
+                  data-answer={answer}
+                  data-correct={isCorrect.toString()}
+                >
+                  <span class="shrink-0 w-8 h-8 rounded-lg bg-slate-700/50 flex items-center justify-center text-sm font-bold text-slate-400">
+                    {_letter}
+                  </span>
+                  <span class="text-slate-200">{answer}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {showHint && (
+            <button
+              type="button"
+              class="mt-4 text-xs text-slate-500 hover:text-slate-400 transition-colors"
+              id={`hint-btn-${uniqueId}`}
+            >
+              💡 Hinweis anzeigen
+            </button>
+          )}
+
+          <div id={`result-${uniqueId}`} class="hidden mt-4 p-4 rounded-xl">
+            <p class="font-semibold" />
+            <p class="text-sm mt-1 text-slate-400">
+              Richtige Antwort:{' '}
+              <span class="text-emerald-400">{question.correctAnswer}</span>
+            </p>
+          </div>
+        </div>
+
+        <footer class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500">
+          <span>Quiz-Frage</span>
+          <a
+            href="https://the-trivia-api.com"
+            target="_blank"
+            rel="noopener"
+            class="text-blue-400 hover:text-blue-300"
+          >
+            the-trivia-api.com
+          </a>
+        </footer>
+      </div>
+    )
+  )
+}
+
+<script>
+  document.querySelectorAll('[data-trivia]').forEach((container) => {
+    const id = container.getAttribute('data-trivia');
+    const answersContainer = document.getElementById(`answers-${id}`);
+    const resultEl = document.getElementById(`result-${id}`);
+
+    if (!answersContainer || !resultEl) return;
+
+    const buttons = answersContainer.querySelectorAll('button');
+    let answered = false;
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+
+        const isCorrect = btn.getAttribute('data-correct') === 'true';
+
+        // Disable all buttons and show correct/wrong
+        buttons.forEach((b) => {
+          const bCorrect = b.getAttribute('data-correct') === 'true';
+          const bLetter = b.querySelector('.shrink-0');
+
+          if (bCorrect) {
+            b.classList.remove('bg-slate-800/50', 'border-slate-700/50');
+            b.classList.add('bg-emerald-500/20', 'border-emerald-500/50');
+            if (bLetter) {
+              bLetter.classList.remove('bg-slate-700/50', 'text-slate-400');
+              bLetter.classList.add('bg-emerald-500', 'text-white');
+            }
+          } else if (b === btn) {
+            b.classList.remove('bg-slate-800/50', 'border-slate-700/50');
+            b.classList.add('bg-red-500/20', 'border-red-500/50');
+            if (bLetter) {
+              bLetter.classList.remove('bg-slate-700/50', 'text-slate-400');
+              bLetter.classList.add('bg-red-500', 'text-white');
+            }
+          }
+
+          b.classList.add('pointer-events-none');
+        });
+
+        // Show result
+        resultEl.classList.remove('hidden');
+        const resultP = resultEl.querySelector('p');
+        if (isCorrect) {
+          resultEl.classList.add(
+            'bg-emerald-500/10',
+            'border',
+            'border-emerald-500/30'
+          );
+          if (resultP) {
+            resultP.textContent = '✓ Richtig!';
+            resultP.classList.add('text-emerald-400');
+          }
+        } else {
+          resultEl.classList.add(
+            'bg-red-500/10',
+            'border',
+            'border-red-500/30'
+          );
+          if (resultP) {
+            resultP.textContent = '✗ Leider falsch';
+            resultP.classList.add('text-red-400');
+          }
+        }
+      });
+    });
+  });
+</script>

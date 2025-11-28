@@ -14,6 +14,8 @@ import { AirQuality } from 'comet-astro';
 
 <AirQuality latitude={52.52} longitude={13.405} location="Berlin" />`;
 
+const brandClassName = 'BrandAirQuality';
+
 const propsColumns = [
   { key: 'name', label: 'Prop' },
   { key: 'type', label: 'Type' },
@@ -112,10 +114,10 @@ import { AirQuality } from 'comet-astro';
   <section class="mt-6 space-y-4">
     <Paragraph>
       The <InlineCode>AirQuality</InlineCode> component fetches and displays up-to-date
-      air quality information for a given location. It presents system-level AQI
-      values (European and/or US scales), per-pollutant concentration badges (PM2.5,
-      PM10, NO2, O3, SO2, CO), and short health recommendations tuned to the reported
-      AQI band.
+      air quality information for a given location. It presents system-level AQI values
+      (European and/or US scales), per-pollutant concentration badges (PM2.5, PM10,
+      NO2, O3, SO2, CO), and short health recommendations tuned to the reported AQI
+      band.
     </Paragraph>
 
     <Paragraph>
@@ -130,9 +132,9 @@ import { AirQuality } from 'comet-astro';
     </Paragraph>
 
     <Paragraph>
-      Features include: selectable <InlineCode>aqiSystem</InlineCode> (EU, US or
-      both), responsive size variants, an optional lightweight "minimal" presentation
-      for compact layouts, accessible ARIA attributes for screen readers, and a health-advice
+      Features include: selectable <InlineCode>aqiSystem</InlineCode> (EU, US or both),
+      responsive size variants, an optional lightweight "minimal" presentation for
+      compact layouts, accessible ARIA attributes for screen readers, and a health-advice
       panel with recommendations for the general population and sensitive groups.
       The component is SSR-friendly and can accept server-provided coordinates for
       deterministic rendering.
@@ -153,11 +155,12 @@ import { AirQuality } from 'comet-astro';
 
   <section class="mt-10 space-y-6">
     <Headline level="h2">Examples</Headline>
-    <Paragraph class="text-base text-slate-200"
-      >Basic examples showing common configurations and how to use the <InlineCode
+    <Paragraph class="text-base text-slate-200">
+      Basic examples showing common configurations and how to use the <InlineCode
         >size</InlineCode
-      > and <InlineCode>variant</InlineCode> props.</Paragraph
-    >
+      >
+      and <InlineCode>variant</InlineCode> props.
+    </Paragraph>
 
     <div class="grid gap-6 sm:grid-cols-2 mt-4">
       <div class="space-y-3">
@@ -262,4 +265,134 @@ import { AirQuality } from 'comet-astro';
     >
     <CodeBlock code={examplesSnippet} language="astro" />
   </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2">Styling &amp; overrides</Headline>
+    <Paragraph class="text-base text-slate-200">
+      Internal parts expose BEM classes so you can target them from outside
+      without touching component internals. Available targets: <InlineCode
+        >AirQuality</InlineCode
+      >,
+      <InlineCode>AirQuality__Header</InlineCode>, <InlineCode
+        >AirQuality__Title</InlineCode
+      >,
+      <InlineCode>AirQuality__Meta</InlineCode>, <InlineCode
+        >AirQuality__Loading</InlineCode
+      >,
+      <InlineCode>AirQuality__Error</InlineCode>, <InlineCode
+        >AirQuality__Retry</InlineCode
+      >,
+      <InlineCode>AirQuality__Content</InlineCode>, <InlineCode
+        >AirQuality__AQIGrid</InlineCode
+      >,
+      <InlineCode>AirQuality__AQICard</InlineCode>, <InlineCode
+        >AirQuality__AQIValue</InlineCode
+      >,
+      <InlineCode>AirQuality__AQIDescription</InlineCode>, <InlineCode
+        >AirQuality__AQIIndicator</InlineCode
+      >. Combine them with <InlineCode>class</InlineCode> and CSS (or Tailwind arbitrary
+      selectors) to apply brand styling.
+    </Paragraph>
+    <Paragraph class="text-sm text-slate-400">
+      BEM classes are injected after built-in utilities and before your custom <InlineCode
+        >class</InlineCode
+      >, so your selectors can override defaults without <InlineCode
+        >!important</InlineCode
+      > in most cases.
+    </Paragraph>
+
+    <div class="space-y-4">
+      <AirQuality
+        latitude={52.52}
+        longitude={13.405}
+        location="Berlin"
+        language="de"
+        class={brandClassName}
+      />
+
+      <CodeBlock
+        code={`const brandClassName = 'BrandAirQuality';
+
+<AirQuality
+  latitude={52.52}
+  longitude={13.405}
+  location="Berlin"
+  language="de"
+  class={brandClassName}
+/>
+
+<style>
+  :global(.BrandAirQuality.AirQuality) {
+    background: radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.12), transparent 32%),
+      radial-gradient(circle at 90% 0%, rgba(16, 185, 129, 0.14), transparent 30%),
+      linear-gradient(135deg, #0b172a 0%, #050b16 100%);
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #e2e8f0;
+  }
+  :global(.BrandAirQuality .AirQuality__AQICard) {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(56, 189, 248, 0.45);
+    backdrop-filter: blur(10px);
+  }
+  :global(.BrandAirQuality .AirQuality__Title) {
+    color: #e0f2fe;
+  }
+  :global(.BrandAirQuality .AirQuality__Meta) {
+    color: #cbd5e1;
+  }
+  :global(.BrandAirQuality .AirQuality__AQIValue) {
+    color: #7dd3fc;
+  }
+  :global(.BrandAirQuality .AirQuality__AQIDescription) {
+    color: #cbd5e1;
+  }
+  :global(.BrandAirQuality .AirQuality__AQIIndicator) {
+    border-color: #22d3ee;
+    box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.4);
+  }
+</style>`}
+        language="astro"
+      />
+    </div>
+  </section>
 </DocsLayout>
+
+<style>
+  :global(.BrandAirQuality.AirQuality) {
+    background:
+      radial-gradient(
+        circle at 10% 10%,
+        rgba(56, 189, 248, 0.12),
+        transparent 32%
+      ),
+      radial-gradient(
+        circle at 90% 0%,
+        rgba(16, 185, 129, 0.14),
+        transparent 30%
+      ),
+      linear-gradient(135deg, #0b172a 0%, #050b16 100%);
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #e2e8f0;
+  }
+  :global(.BrandAirQuality .AirQuality__AQICard) {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(56, 189, 248, 0.45);
+    backdrop-filter: blur(10px);
+  }
+  :global(.BrandAirQuality .AirQuality__Title) {
+    color: #e0f2fe;
+  }
+  :global(.BrandAirQuality .AirQuality__Meta) {
+    color: #cbd5e1;
+  }
+  :global(.BrandAirQuality .AirQuality__AQIValue) {
+    color: #7dd3fc;
+  }
+  :global(.BrandAirQuality .AirQuality__AQIDescription) {
+    color: #cbd5e1;
+  }
+  :global(.BrandAirQuality .AirQuality__AQIIndicator) {
+    border-color: #22d3ee;
+    box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.4);
+  }
+</style>

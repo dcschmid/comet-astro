@@ -1,0 +1,207 @@
+---
+/**
+ * PricingTable - Pricing comparison cards
+ *
+ * Features:
+ * - Multiple plan display
+ * - Highlight recommended plan
+ * - Feature lists with check/x icons
+ * - Monthly/yearly toggle support
+ * - CTA buttons
+ * - Responsive grid
+ *
+ * @example
+ * <PricingTable plans={[
+ *   { name: 'Free', price: 0, features: ['5 projects', '1GB storage'] },
+ *   { name: 'Pro', price: 29, features: ['Unlimited projects', '100GB storage'], highlighted: true },
+ * ]} />
+ */
+import { cn } from '../utils/cn';
+
+interface PlanFeature {
+  text: string;
+  included: boolean;
+}
+
+interface Plan {
+  /** Plan name */
+  name: string;
+  /** Plan description */
+  description?: string;
+  /** Price (number for monthly, or custom string) */
+  price: number | string;
+  /** Price suffix (e.g. "/mo", "/year") */
+  priceSuffix?: string;
+  /** Features list */
+  features: (string | PlanFeature)[];
+  /** CTA button text */
+  ctaText?: string;
+  /** CTA button URL */
+  ctaUrl?: string;
+  /** Highlight this plan as recommended */
+  highlighted?: boolean;
+  /** Badge text (e.g. "Popular", "Best Value") */
+  badge?: string;
+}
+
+interface Props {
+  /** Array of pricing plans */
+  plans: Plan[];
+  /** Currency symbol */
+  currency?: string;
+  /** Billing period label */
+  billingPeriod?: string;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  plans,
+  currency = '$',
+  billingPeriod = '/month',
+  className = '',
+} = Astro.props;
+---
+
+<div
+  class={cn(
+    'grid gap-6',
+    plans.length === 2 && 'md:grid-cols-2 max-w-3xl mx-auto',
+    plans.length === 3 && 'md:grid-cols-3 max-w-5xl mx-auto',
+    plans.length >= 4 && 'md:grid-cols-2 lg:grid-cols-4',
+    className
+  )}
+  data-pricing-table
+>
+  {
+    plans.map((plan) => (
+      <article
+        class={cn(
+          'relative flex flex-col rounded-2xl border p-6',
+          plan.highlighted
+            ? 'border-blue-500 bg-blue-950/30 shadow-xl shadow-blue-500/10 scale-105 z-10'
+            : 'border-slate-700 bg-slate-800/50'
+        )}
+      >
+        {/* Badge */}
+        {plan.badge && (
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+            <span class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
+              {plan.badge}
+            </span>
+          </div>
+        )}
+
+        {/* Header */}
+        <header class="text-center mb-6">
+          <h3 class="text-lg font-semibold text-slate-100 mb-1">{plan.name}</h3>
+          {plan.description && (
+            <p class="text-sm text-slate-400">{plan.description}</p>
+          )}
+        </header>
+
+        {/* Price */}
+        <div class="text-center mb-6">
+          {typeof plan.price === 'number' ? (
+            <div class="flex items-baseline justify-center gap-1">
+              <span class="text-slate-400 text-xl">{currency}</span>
+              <span class="text-5xl font-bold text-slate-100">
+                {plan.price}
+              </span>
+              <span class="text-slate-400">
+                {plan.priceSuffix || billingPeriod}
+              </span>
+            </div>
+          ) : (
+            <span class="text-4xl font-bold text-slate-100">{plan.price}</span>
+          )}
+        </div>
+
+        {/* Features */}
+        <ul class="flex-1 space-y-3 mb-6">
+          {plan.features.map((feature) => {
+            const text = typeof feature === 'string' ? feature : feature.text;
+            const included =
+              typeof feature === 'string' ? true : feature.included;
+
+            return (
+              <li class="flex items-start gap-3">
+                {included ? (
+                  <svg
+                    class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                )}
+                <span
+                  class={cn(
+                    'text-sm',
+                    included ? 'text-slate-300' : 'text-slate-500'
+                  )}
+                >
+                  {text}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* CTA */}
+        {(plan.ctaText || plan.ctaUrl) && (
+          <a
+            href={plan.ctaUrl || '#'}
+            class={cn(
+              'block w-full py-3 px-4 rounded-lg text-center font-medium transition-colors',
+              plan.highlighted
+                ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                : 'bg-slate-700 hover:bg-slate-600 text-slate-100'
+            )}
+          >
+            {plan.ctaText || 'Get Started'}
+          </a>
+        )}
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  [data-pricing-table] article {
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  [data-pricing-table] article:not([class*='scale-105']):hover {
+    transform: translateY(-4px);
+  }
+
+  /* High contrast support */
+  @media (prefers-contrast: high) {
+    [data-pricing-table] article {
+      border-width: 2px;
+    }
+  }
+</style>

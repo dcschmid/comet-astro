@@ -1,0 +1,159 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import RssFeed from '../../components/RssFeed.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const usageSnippet = `---
+import { RssFeed } from 'comet-astro';
+---
+
+<RssFeed url="https://www.heise.de/rss/heise-atom.xml" />
+<RssFeed url="https://example.com/feed.xml" maxItems={5} />
+<RssFeed url="https://example.com/rss" showThumbnail={false} />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'url',
+    type: 'string',
+    default: '—',
+    description: 'RSS feed URL to fetch and display.',
+  },
+  {
+    name: 'apiKey',
+    type: 'string',
+    default: '—',
+    description: 'Optional RSS2JSON API key for more requests.',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '5',
+    description: 'Maximum number of articles to show.',
+  },
+  {
+    name: 'showThumbnail',
+    type: 'boolean',
+    default: 'true',
+    description: 'Display article thumbnails if available.',
+  },
+  {
+    name: 'showDescription',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show article description/excerpt.',
+  },
+  {
+    name: 'showAuthor',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show article author.',
+  },
+  {
+    name: 'showDate',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show publication date for each article.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Use compact layout.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="RssFeed"
+  seoDescription="Display RSS feed articles with thumbnails using RSS2JSON API."
+>
+  <Headline level="h1" textSize="2xl">RssFeed</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The RssFeed component fetches and displays articles from any RSS feed with
+      optional thumbnails, dates, and descriptions.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Uses RSS2JSON as a proxy to convert RSS/Atom feeds to JSON. Great for
+      displaying blog posts, news, or podcast episodes.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <Table columns={propsColumns} data={propsData} responsive={true} />
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Heise News Feed</Headline
+      >
+      <RssFeed url="https://www.heise.de/rss/heise-atom.xml" maxItems={4} />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Compact Mode</Headline
+      >
+      <RssFeed
+        url="https://www.heise.de/rss/heise-atom.xml"
+        maxItems={3}
+        compact={true}
+      />
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >API Reference</Headline
+    >
+    <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-amber-300">API:</strong>
+        <a
+          href="https://rss2json.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-amber-400 hover:underline ml-1">rss2json.com</a
+        >
+        – Free tier available, no API key required for basic use.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

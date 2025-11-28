@@ -1,0 +1,378 @@
+---
+/**
+ * CurrencyConverter - Währungsrechner mit Live-Kursen
+ *
+ * Zeigt Wechselkurse und ermöglicht Umrechnung zwischen Währungen.
+ *
+ * API: https://api.exchangerate-api.com/v4/latest/{base}
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  base?: string;
+  targets?: string[];
+  amount?: number;
+  showConverter?: boolean;
+  showRates?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  base = 'EUR',
+  targets = ['USD', 'GBP', 'CHF', 'JPY', 'CNY'],
+  amount = 1,
+  showConverter = true,
+  showRates = true,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+interface RatesData {
+  base: string;
+  date: string;
+  rates: Record<string, number>;
+}
+
+let data: RatesData | null = null;
+let error: string | null = null;
+
+try {
+  const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${base}`);
+  if (res.ok) {
+    data = await res.json();
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+const currencyInfo: Record<
+  string,
+  { name: string; symbol: string; flag: string }
+> = {
+  EUR: { name: 'Euro', symbol: '€', flag: '🇪🇺' },
+  USD: { name: 'US-Dollar', symbol: '$', flag: '🇺🇸' },
+  GBP: { name: 'Brit. Pfund', symbol: '£', flag: '🇬🇧' },
+  CHF: { name: 'Schweizer Fr.', symbol: 'Fr.', flag: '🇨🇭' },
+  JPY: { name: 'Yen', symbol: '¥', flag: '🇯🇵' },
+  CNY: { name: 'Yuan', symbol: '¥', flag: '🇨🇳' },
+  CAD: { name: 'Kanad. Dollar', symbol: 'C$', flag: '🇨🇦' },
+  AUD: { name: 'Austr. Dollar', symbol: 'A$', flag: '🇦🇺' },
+  INR: { name: 'Ind. Rupie', symbol: '₹', flag: '🇮🇳' },
+  KRW: { name: 'Won', symbol: '₩', flag: '🇰🇷' },
+  BRL: { name: 'Real', symbol: 'R$', flag: '🇧🇷' },
+  MXN: { name: 'Mex. Peso', symbol: '$', flag: '🇲🇽' },
+  SEK: { name: 'Schwed. Krone', symbol: 'kr', flag: '🇸🇪' },
+  NOK: { name: 'Norw. Krone', symbol: 'kr', flag: '🇳🇴' },
+  DKK: { name: 'Dän. Krone', symbol: 'kr', flag: '🇩🇰' },
+  PLN: { name: 'Zloty', symbol: 'zł', flag: '🇵🇱' },
+  CZK: { name: 'Tsch. Krone', symbol: 'Kč', flag: '🇨🇿' },
+  HUF: { name: 'Forint', symbol: 'Ft', flag: '🇭🇺' },
+  TRY: { name: 'Türk. Lira', symbol: '₺', flag: '🇹🇷' },
+  RUB: { name: 'Rubel', symbol: '₽', flag: '🇷🇺' },
+  ZAR: { name: 'Rand', symbol: 'R', flag: '🇿🇦' },
+  SGD: { name: 'Sing. Dollar', symbol: 'S$', flag: '🇸🇬' },
+  HKD: { name: 'HK-Dollar', symbol: 'HK$', flag: '🇭🇰' },
+  THB: { name: 'Baht', symbol: '฿', flag: '🇹🇭' },
+  NZD: { name: 'NZ-Dollar', symbol: 'NZ$', flag: '🇳🇿' },
+};
+
+function formatRate(rate: number): string {
+  if (rate >= 1000) return rate.toFixed(0);
+  if (rate >= 100) return rate.toFixed(2);
+  if (rate >= 1) return rate.toFixed(4);
+  return rate.toFixed(6);
+}
+
+function formatAmount(value: number, currency: string): string {
+  const info = currencyInfo[currency];
+  const formatted =
+    value >= 1000
+      ? value.toLocaleString('de-DE', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      : value.toFixed(2);
+  return `${info?.symbol || ''}${formatted}`;
+}
+
+const baseInfo = currencyInfo[base] || { name: base, symbol: '', flag: '💱' };
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+  data-currency-converter
+>
+  <header class="px-5 py-4 border-b border-slate-700/50 bg-emerald-500/5">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div
+          class="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/25"
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-100 text-lg">Wechselkurse</h3>
+          <p class="text-xs text-slate-400">Basis: {baseInfo.flag} {base}</p>
+        </div>
+      </div>
+      {
+        data && (
+          <span class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-300">
+            Stand: {new Date(data.date).toLocaleDateString('de-DE')}
+          </span>
+        )
+      }
+    </div>
+  </header>
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : (
+        data && (
+          <>
+            {/* Converter */}
+            {showConverter && (
+              <div class="mb-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1">
+                    <label class="text-xs text-slate-400 mb-1 block">
+                      Betrag
+                    </label>
+                    <div class="relative">
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        {baseInfo.symbol}
+                      </span>
+                      <input
+                        type="number"
+                        value={amount}
+                        min="0"
+                        step="0.01"
+                        class="w-full pl-8 pr-4 py-2.5 bg-slate-700/50 border border-slate-600/50 rounded-lg text-slate-100 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/25"
+                        data-amount-input
+                      />
+                    </div>
+                  </div>
+                  <div class="pt-5">
+                    <svg
+                      class="w-5 h-5 text-slate-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                      />
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <label class="text-xs text-slate-400 mb-1 block">
+                      Währung
+                    </label>
+                    <select
+                      class="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600/50 rounded-lg text-slate-100 focus:outline-none focus:border-emerald-500/50"
+                      data-currency-select
+                    >
+                      {targets.map((t) => (
+                        <option value={t}>
+                          {currencyInfo[t]?.flag || ''} {t}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div class="mt-3 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-400">Ergebnis:</span>
+                    <span
+                      class="text-xl font-bold text-emerald-400"
+                      data-result
+                    >
+                      {formatAmount(
+                        amount * (data.rates[targets[0]] || 1),
+                        targets[0]
+                      )}{' '}
+                      {targets[0]}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Rates Table */}
+            {showRates && (
+              <div class={cn('space-y-2', compact && 'space-y-1.5')}>
+                {targets.map((currency) => {
+                  const rate = data.rates[currency];
+                  const info = currencyInfo[currency] || {
+                    name: currency,
+                    symbol: '',
+                    flag: '💱',
+                  };
+                  if (!rate) return null;
+
+                  return (
+                    <div
+                      class={cn(
+                        'flex items-center justify-between p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-slate-600/50 transition-colors',
+                        compact && 'p-2'
+                      )}
+                    >
+                      <div class="flex items-center gap-3">
+                        <span class="text-xl">{info.flag}</span>
+                        <div>
+                          <span class="font-semibold text-slate-100">
+                            {currency}
+                          </span>
+                          {!compact && (
+                            <span class="text-xs text-slate-500 ml-2">
+                              {info.name}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div class="text-right">
+                        <div class="font-mono font-bold text-slate-100">
+                          {info.symbol}
+                          {formatRate(rate)}
+                        </div>
+                        {!compact && (
+                          <div class="text-xs text-slate-500">
+                            1 {base} = {formatRate(rate)} {currency}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Daten: exchangerate-api.com</span>
+    <span>Aktualisiert täglich</span>
+  </footer>
+</div>
+
+<script>
+  document
+    .querySelectorAll('[data-currency-converter]')
+    .forEach((container) => {
+      const amountInput = container.querySelector(
+        '[data-amount-input]'
+      ) as HTMLInputElement;
+      const currencySelect = container.querySelector(
+        '[data-currency-select]'
+      ) as HTMLSelectElement;
+      const resultEl = container.querySelector('[data-result]');
+
+      if (!amountInput || !currencySelect || !resultEl) return;
+
+      // Get rates from the rendered content
+      const rateElements = container.querySelectorAll('[data-rate]');
+      const rates: Record<string, number> = {};
+      rateElements.forEach((el) => {
+        const currency = el.getAttribute('data-currency');
+        const rate = parseFloat(el.getAttribute('data-rate') || '0');
+        if (currency) rates[currency] = rate;
+      });
+
+      // Parse initial rates from the UI
+      container.querySelectorAll('.font-mono').forEach((el) => {
+        const text = el.textContent || '';
+        const parent = el.closest('[class*="rounded-xl"]');
+        if (parent) {
+          const currencyMatch =
+            parent.querySelector('.font-semibold')?.textContent;
+          if (currencyMatch) {
+            const rate = parseFloat(text.replace(/[^0-9.]/g, ''));
+            if (!isNaN(rate)) rates[currencyMatch] = rate;
+          }
+        }
+      });
+
+      const currencySymbols: Record<string, string> = {
+        EUR: '€',
+        USD: '$',
+        GBP: '£',
+        CHF: 'Fr.',
+        JPY: '¥',
+        CNY: '¥',
+        CAD: 'C$',
+        AUD: 'A$',
+        INR: '₹',
+        KRW: '₩',
+        BRL: 'R$',
+        MXN: '$',
+        SEK: 'kr',
+        NOK: 'kr',
+        DKK: 'kr',
+        PLN: 'zł',
+        CZK: 'Kč',
+        HUF: 'Ft',
+        TRY: '₺',
+        RUB: '₽',
+        ZAR: 'R',
+        SGD: 'S$',
+        HKD: 'HK$',
+        THB: '฿',
+        NZD: 'NZ$',
+      };
+
+      function updateResult() {
+        const amount = parseFloat(amountInput.value) || 0;
+        const currency = currencySelect.value;
+        const rate = rates[currency] || 1;
+        const result = amount * rate;
+        const symbol = currencySymbols[currency] || '';
+        resultEl!.textContent = `${symbol}${result.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+      }
+
+      amountInput.addEventListener('input', updateResult);
+      currencySelect.addEventListener('change', updateResult);
+    });
+</script>

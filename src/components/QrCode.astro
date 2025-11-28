@@ -1,0 +1,161 @@
+---
+/**
+ * QrCode - QR-Code Generator
+ *
+ * Generiert QR-Codes für URLs, Text, vCards, WiFi und mehr.
+ *
+ * API: https://goqr.me/api/
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  data: string;
+  size?: number;
+  format?: 'png' | 'svg' | 'jpg' | 'gif';
+  margin?: number;
+  color?: string;
+  bgColor?: string;
+  errorCorrection?: 'L' | 'M' | 'Q' | 'H';
+  label?: string;
+  showDownload?: boolean;
+  className?: string;
+}
+
+const {
+  data,
+  size = 200,
+  format = 'svg',
+  margin = 1,
+  color = '000000',
+  bgColor = 'ffffff',
+  errorCorrection = 'M',
+  label,
+  showDownload = true,
+  className = '',
+} = Astro.props;
+
+// Build QR code URL
+const params = new URLSearchParams({
+  data: data,
+  size: `${size}x${size}`,
+  format: format,
+  margin: margin.toString(),
+  color: color.replace('#', ''),
+  bgcolor: bgColor.replace('#', ''),
+  ecc: errorCorrection,
+});
+
+const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?${params}`;
+
+// Detect data type
+function getDataType(str: string): { type: string; icon: string } {
+  if (str.startsWith('http://') || str.startsWith('https://')) {
+    return { type: 'URL', icon: '🔗' };
+  }
+  if (str.startsWith('mailto:')) {
+    return { type: 'E-Mail', icon: '📧' };
+  }
+  if (str.startsWith('tel:')) {
+    return { type: 'Telefon', icon: '📞' };
+  }
+  if (str.startsWith('WIFI:')) {
+    return { type: 'WiFi', icon: '📶' };
+  }
+  if (str.startsWith('BEGIN:VCARD')) {
+    return { type: 'Kontakt', icon: '👤' };
+  }
+  if (str.startsWith('geo:')) {
+    return { type: 'Standort', icon: '📍' };
+  }
+  if (str.startsWith('sms:') || str.startsWith('smsto:')) {
+    return { type: 'SMS', icon: '💬' };
+  }
+  return { type: 'Text', icon: '📝' };
+}
+
+const dataType = getDataType(data);
+---
+
+<div
+  class={cn(
+    'inline-block rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  {/* QR Code Image */}
+  <div class="p-4 bg-white">
+    <img
+      src={qrUrl}
+      alt={`QR-Code für ${label || data.slice(0, 30)}`}
+      width={size}
+      height={size}
+      class="block"
+      loading="lazy"
+    />
+  </div>
+
+  {/* Info & Actions */}
+  <div class="p-4">
+    {label && <h4 class="font-semibold text-slate-100 mb-2">{label}</h4>}
+
+    <div class="flex items-center gap-2 text-sm">
+      <span
+        class="px-2 py-1 bg-slate-700/50 text-slate-300 rounded text-xs flex items-center gap-1"
+      >
+        <span>{dataType.icon}</span>
+        {dataType.type}
+      </span>
+      <span class="text-slate-500 truncate max-w-[150px]" title={data}>
+        {data.length > 25 ? data.slice(0, 25) + '...' : data}
+      </span>
+    </div>
+
+    {
+      showDownload && (
+        <div class="flex gap-2 mt-3">
+          <a
+            href={qrUrl}
+            download={`qr-code.${format}`}
+            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+            Download
+          </a>
+          <a
+            href={`https://api.qrserver.com/v1/create-qr-code/?${new URLSearchParams({ ...Object.fromEntries(params), size: '400x400' })}`}
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded-lg transition-colors"
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+              />
+            </svg>
+            Groß
+          </a>
+        </div>
+      )
+    }
+  </div>
+</div>

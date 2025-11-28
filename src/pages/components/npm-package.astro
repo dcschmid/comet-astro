@@ -1,0 +1,156 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import NpmPackage from '../../components/NpmPackage.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+// import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { NpmPackage } from 'comet-astro';
+---
+
+<NpmPackage package="astro" />
+<NpmPackage package="react" variant="compact" />
+<NpmPackage package="typescript" variant="badge" />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'package',
+    type: 'string',
+    default: '—',
+    description: 'NPM package name to display.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'badge'",
+    default: "'default'",
+    description: 'Display variant.',
+  },
+  {
+    name: 'showDownloads',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show weekly download count.',
+  },
+  {
+    name: 'showKeywords',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show package keywords.',
+  },
+  {
+    name: 'showLinks',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show npm, repository and homepage links.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="NpmPackage"
+  seoDescription="Display NPM package information with version, downloads and install command."
+>
+  <Headline level="h1" textSize="2xl">NpmPackage</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The NpmPackage component displays information about NPM packages including
+      version, description, downloads, license, and a copy-ready install
+      command.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Perfect for documentation sites, package comparisons, or portfolio pages
+      showcasing your published packages.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <Table columns={propsColumns} data={propsData} responsive={true} />
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Default variant</Headline
+      >
+      <NpmPackage package="astro" />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Compact variant</Headline
+      >
+      <div class="space-y-2">
+        <NpmPackage package="react" variant="compact" />
+        <NpmPackage package="vue" variant="compact" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Badge variant</Headline
+      >
+      <div class="flex flex-wrap gap-2">
+        <NpmPackage package="typescript" variant="badge" />
+        <NpmPackage package="eslint" variant="badge" />
+        <NpmPackage package="prettier" variant="badge" />
+      </div>
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >API Reference</Headline
+    >
+    <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-red-300">API:</strong>
+        <a
+          href="https://registry.npmjs.org/"
+          target="_blank"
+          rel="noopener"
+          class="text-red-400 hover:underline ml-1">registry.npmjs.org</a
+        >
+        – Free, no API key required.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

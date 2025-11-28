@@ -1,0 +1,279 @@
+---
+/**
+ * RecentEarthquakes - Aktuelle Erdbeben weltweit
+ *
+ * Zeigt die neuesten Erdbeben von USGS mit Magnitude, Ort und Zeit.
+ *
+ * API: https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php
+ */
+import { cn } from '../utils/cn';
+
+interface Earthquake {
+  id: string;
+  properties: {
+    mag: number;
+    place: string;
+    time: number;
+    url: string;
+    title: string;
+    alert: string | null;
+    tsunami: number;
+  };
+  geometry: {
+    coordinates: [number, number, number];
+  };
+}
+
+interface Props {
+  minMagnitude?: '2.5' | '4.5' | 'significant' | 'all';
+  timeframe?: 'hour' | 'day' | 'week' | 'month';
+  maxItems?: number;
+  showMap?: boolean;
+  showTsunami?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  minMagnitude = '2.5',
+  timeframe = 'day',
+  maxItems = 10,
+  showMap = true,
+  showTsunami = true,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+let earthquakes: Earthquake[] = [];
+let error: string | null = null;
+let metadata: { title: string; count: number } | null = null;
+
+const feedUrl = `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/${minMagnitude}_${timeframe}.geojson`;
+
+try {
+  const res = await fetch(feedUrl);
+  if (res.ok) {
+    const data = await res.json();
+    metadata = { title: data.metadata.title, count: data.metadata.count };
+    earthquakes = data.features.slice(0, maxItems);
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+function getMagnitudeColor(mag: number): string {
+  if (mag >= 7) return 'bg-red-500 text-white';
+  if (mag >= 6) return 'bg-orange-500 text-white';
+  if (mag >= 5) return 'bg-amber-500 text-white';
+  if (mag >= 4) return 'bg-yellow-500 text-slate-900';
+  return 'bg-emerald-500 text-white';
+}
+
+function getMagnitudeRing(mag: number): string {
+  if (mag >= 7) return 'ring-red-500/50';
+  if (mag >= 6) return 'ring-orange-500/50';
+  if (mag >= 5) return 'ring-amber-500/50';
+  if (mag >= 4) return 'ring-yellow-500/50';
+  return 'ring-emerald-500/50';
+}
+
+function formatTime(timestamp: number): string {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+
+  if (diffMins < 60) return `vor ${diffMins} Min`;
+  if (diffHours < 24) return `vor ${diffHours} Std`;
+  return date.toLocaleDateString('de-DE', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function getDepthLabel(depth: number): string {
+  if (depth < 70) return 'flach';
+  if (depth < 300) return 'mittel';
+  return 'tief';
+}
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  <header class="px-5 py-4 border-b border-slate-700/50 bg-red-500/5">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div
+          class="p-2.5 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 shadow-lg shadow-red-500/25"
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-100 text-lg">Erdbeben</h3>
+          <p class="text-xs text-slate-400">
+            {metadata?.title || 'Weltweit'}
+          </p>
+        </div>
+      </div>
+
+      {
+        metadata && (
+          <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30">
+            {metadata.count} gesamt
+          </span>
+        )
+      }
+    </div>
+  </header>
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : earthquakes.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <p class="text-slate-400 font-medium">Keine Erdbeben</p>
+          <p class="text-slate-500 text-sm mt-1">Im gewählten Zeitraum</p>
+        </div>
+      ) : (
+        <div class={cn('space-y-2', compact && 'space-y-1.5')}>
+          {earthquakes.map((eq) => (
+            <a
+              href={eq.properties.url}
+              target="_blank"
+              rel="noopener"
+              class={cn(
+                'flex items-center gap-4 p-3 rounded-xl border transition-all',
+                'bg-slate-800/30 border-slate-700/30 hover:border-slate-600/50 hover:bg-slate-800/50',
+                eq.properties.alert === 'red' &&
+                  'border-red-500/50 bg-red-950/20'
+              )}
+            >
+              {/* Magnitude Badge */}
+              <div
+                class={cn(
+                  'shrink-0 w-14 h-14 rounded-xl flex flex-col items-center justify-center ring-2',
+                  getMagnitudeColor(eq.properties.mag),
+                  getMagnitudeRing(eq.properties.mag)
+                )}
+              >
+                <span class="text-lg font-bold">
+                  {eq.properties.mag.toFixed(1)}
+                </span>
+                <span class="text-[10px] opacity-75 uppercase">Mag</span>
+              </div>
+
+              {/* Info */}
+              <div class="flex-1 min-w-0">
+                <h4 class="font-semibold text-slate-100 truncate">
+                  {eq.properties.place || 'Unbekannter Ort'}
+                </h4>
+                <div class="flex items-center gap-3 mt-1 text-xs text-slate-500">
+                  <span>{formatTime(eq.properties.time)}</span>
+                  <span>•</span>
+                  <span>
+                    {getDepthLabel(eq.geometry.coordinates[2])} (
+                    {Math.round(eq.geometry.coordinates[2])} km)
+                  </span>
+                  {showTsunami && eq.properties.tsunami === 1 && (
+                    <>
+                      <span>•</span>
+                      <span class="text-cyan-400 font-semibold">
+                        🌊 Tsunami
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Map Link */}
+              {showMap && (
+                <div class="shrink-0">
+                  <span class="text-slate-500 hover:text-slate-300 transition-colors">
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </span>
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Daten: U.S. Geological Survey</span>
+    <a
+      href="https://earthquake.usgs.gov/earthquakes/map/"
+      target="_blank"
+      rel="noopener"
+      class="text-blue-400 hover:text-blue-300"
+    >
+      Karte →
+    </a>
+  </footer>
+</div>

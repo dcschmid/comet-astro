@@ -1,0 +1,643 @@
+---
+/**
+ * TagInput - Input field for entering multiple tags/chips
+ *
+ * Features:
+ * - Add tags by typing and pressing Enter or comma
+ * - Remove tags with backspace or click
+ * - Duplicate prevention
+ * - Max tags limit
+ * - Suggestions/autocomplete support
+ * - Full keyboard navigation
+ * - WCAG AAA compliant
+ *
+ * @example
+ * <TagInput
+ *   name="skills"
+ *   placeholder="Add skills..."
+ *   defaultTags={["JavaScript", "TypeScript"]}
+ *   maxTags={10}
+ *   suggestions={["React", "Vue", "Angular", "Svelte"]}
+ * />
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** Unique name for the input */
+  name: string;
+  /** Placeholder text */
+  placeholder?: string;
+  /** Default tags */
+  defaultTags?: string[];
+  /** Maximum number of tags allowed */
+  maxTags?: number;
+  /** Minimum tag length */
+  minLength?: number;
+  /** Maximum tag length */
+  maxLength?: number;
+  /** Suggestion list for autocomplete */
+  suggestions?: string[];
+  /** Allow duplicates */
+  allowDuplicates?: boolean;
+  /** Characters that trigger tag creation */
+  delimiters?: string[];
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Visual variant */
+  variant?: 'default' | 'outline' | 'filled';
+  /** Disable the input */
+  disabled?: boolean;
+  /** Read-only mode (can't add/remove) */
+  readOnly?: boolean;
+  /** Show clear all button */
+  showClearAll?: boolean;
+  /** ARIA label */
+  ariaLabel?: string;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  name,
+  placeholder = 'Add tag...',
+  defaultTags = [],
+  maxTags,
+  minLength = 1,
+  maxLength = 50,
+  suggestions = [],
+  allowDuplicates = false,
+  delimiters = ['Enter', ','],
+  size = 'md',
+  variant = 'default',
+  disabled = false,
+  readOnly = false,
+  showClearAll = true,
+  ariaLabel,
+  className = '',
+} = Astro.props;
+
+const inputId = `tag-input-${name}-${Math.random().toString(36).slice(2, 9)}`;
+
+// Size configurations
+const sizeClasses = {
+  sm: {
+    container: 'min-h-[36px] px-2 py-1 gap-1',
+    tag: 'px-2 py-0.5 text-xs gap-1',
+    input: 'text-xs',
+    removeBtn: 'w-3.5 h-3.5',
+  },
+  md: {
+    container: 'min-h-[44px] px-3 py-1.5 gap-1.5',
+    tag: 'px-2.5 py-1 text-sm gap-1.5',
+    input: 'text-sm',
+    removeBtn: 'w-4 h-4',
+  },
+  lg: {
+    container: 'min-h-[52px] px-3 py-2 gap-2',
+    tag: 'px-3 py-1.5 text-base gap-2',
+    input: 'text-base',
+    removeBtn: 'w-5 h-5',
+  },
+};
+
+// Variant styles
+const variantStyles = {
+  default: {
+    container: cn(
+      'bg-white dark:bg-slate-900',
+      'border border-slate-300 dark:border-slate-600',
+      'focus-within:border-blue-500 dark:focus-within:border-blue-400',
+      'focus-within:ring-2 focus-within:ring-blue-500/20 dark:focus-within:ring-blue-400/20'
+    ),
+    tag: cn(
+      'bg-blue-100 dark:bg-blue-900/50',
+      'text-blue-800 dark:text-blue-200',
+      'border border-blue-200 dark:border-blue-800'
+    ),
+  },
+  outline: {
+    container: cn(
+      'bg-transparent',
+      'border-2 border-slate-300 dark:border-slate-600',
+      'focus-within:border-blue-500 dark:focus-within:border-blue-400'
+    ),
+    tag: cn(
+      'bg-transparent',
+      'text-slate-700 dark:text-slate-300',
+      'border border-slate-400 dark:border-slate-500'
+    ),
+  },
+  filled: {
+    container: cn(
+      'bg-slate-100 dark:bg-slate-800',
+      'border border-transparent',
+      'focus-within:bg-white dark:focus-within:bg-slate-900',
+      'focus-within:border-blue-500 dark:focus-within:border-blue-400'
+    ),
+    tag: cn(
+      'bg-slate-200 dark:bg-slate-700',
+      'text-slate-700 dark:text-slate-300',
+      'border border-transparent'
+    ),
+  },
+};
+
+const config = sizeClasses[size];
+const styles = variantStyles[variant];
+---
+
+<div
+  class={cn(
+    'relative w-full',
+    disabled && 'opacity-50 cursor-not-allowed',
+    className
+  )}
+  data-tag-input
+  data-name={name}
+  data-max-tags={maxTags}
+  data-min-length={minLength}
+  data-max-length={maxLength}
+  data-allow-duplicates={allowDuplicates}
+  data-delimiters={JSON.stringify(delimiters)}
+  data-suggestions={JSON.stringify(suggestions)}
+  data-tags={JSON.stringify(defaultTags)}
+>
+  <div
+    class={cn(
+      'flex flex-wrap items-center rounded-lg transition-all duration-150',
+      config.container,
+      styles.container,
+      disabled && 'pointer-events-none'
+    )}
+    data-tag-container
+  >
+    <!-- Tags -->
+    <div class="flex flex-wrap items-center gap-1.5" data-tags-wrapper>
+      {
+        defaultTags.map((tag) => (
+          <span
+            class={cn(
+              'inline-flex items-center rounded-md font-medium',
+              'transition-all duration-150',
+              config.tag,
+              styles.tag
+            )}
+            data-tag
+            data-value={tag}
+          >
+            <span class="truncate max-w-[150px]">{tag}</span>
+            {!readOnly && (
+              <button
+                type="button"
+                class={cn(
+                  'inline-flex items-center justify-center rounded-full',
+                  'hover:bg-black/10 dark:hover:bg-white/10',
+                  'focus:outline-none focus:ring-2 focus:ring-current',
+                  'transition-colors duration-150',
+                  config.removeBtn
+                )}
+                aria-label={`Remove ${tag}`}
+                data-remove-tag={tag}
+              >
+                <svg
+                  class="w-full h-full"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
+          </span>
+        ))
+      }
+    </div>
+
+    <!-- Input -->
+    {
+      !readOnly && (
+        <input
+          type="text"
+          id={inputId}
+          class={cn(
+            'flex-1 min-w-[120px] bg-transparent border-none outline-none',
+            'placeholder:text-slate-400 dark:placeholder:text-slate-500',
+            'text-slate-900 dark:text-slate-100',
+            config.input
+          )}
+          placeholder={defaultTags.length === 0 ? placeholder : ''}
+          disabled={disabled}
+          aria-label={ariaLabel || `Add ${name}`}
+          aria-describedby={`${inputId}-hint`}
+          autocomplete="off"
+          data-tag-input-field
+        />
+      )
+    }
+
+    <!-- Clear all button -->
+    {
+      showClearAll && defaultTags.length > 1 && !readOnly && (
+        <button
+          type="button"
+          class={cn(
+            'ml-auto p-1 rounded',
+            'text-slate-400 dark:text-slate-500',
+            'hover:text-slate-600 dark:hover:text-slate-300',
+            'hover:bg-slate-100 dark:hover:bg-slate-800',
+            'focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'transition-colors duration-150'
+          )}
+          aria-label="Clear all tags"
+          data-clear-all
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+        </button>
+      )
+    }
+  </div>
+
+  <!-- Suggestions dropdown -->
+  {
+    suggestions.length > 0 && (
+      <div
+        class={cn(
+          'absolute z-50 w-full mt-1 py-1 rounded-lg shadow-lg',
+          'bg-white dark:bg-slate-800',
+          'border border-slate-200 dark:border-slate-700',
+          'max-h-48 overflow-y-auto',
+          'hidden'
+        )}
+        role="listbox"
+        data-suggestions-list
+      >
+        {suggestions.map((suggestion) => (
+          <button
+            type="button"
+            class={cn(
+              'w-full px-3 py-2 text-left',
+              'text-slate-700 dark:text-slate-300',
+              'hover:bg-slate-100 dark:hover:bg-slate-700',
+              'focus:bg-slate-100 dark:focus:bg-slate-700',
+              'focus:outline-none',
+              'transition-colors duration-100',
+              config.input
+            )}
+            role="option"
+            data-suggestion={suggestion}
+            tabindex="-1"
+          >
+            {suggestion}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  <!-- Hidden input for form submission -->
+  <input
+    type="hidden"
+    name={name}
+    value={JSON.stringify(defaultTags)}
+    data-hidden-input
+  />
+
+  <!-- Screen reader hint -->
+  <span id={`${inputId}-hint`} class="sr-only">
+    Press Enter or comma to add a tag. Press Backspace to remove the last tag.
+    {maxTags && `Maximum ${maxTags} tags allowed.`}
+  </span>
+</div>
+
+<script is:inline>
+  (function () {
+    const containers = document.querySelectorAll('[data-tag-input]');
+
+    containers.forEach((container) => {
+      const input = container.querySelector('[data-tag-input-field]');
+      const tagsWrapper = container.querySelector('[data-tags-wrapper]');
+      const hiddenInput = container.querySelector('[data-hidden-input]');
+      const suggestionsList = container.querySelector(
+        '[data-suggestions-list]'
+      );
+      const clearAllBtn = container.querySelector('[data-clear-all]');
+
+      const name = container.getAttribute('data-name');
+      const maxTags =
+        parseInt(container.getAttribute('data-max-tags')) || Infinity;
+      const minLength =
+        parseInt(container.getAttribute('data-min-length')) || 1;
+      const maxLength =
+        parseInt(container.getAttribute('data-max-length')) || 50;
+      const allowDuplicates =
+        container.getAttribute('data-allow-duplicates') === 'true';
+
+      let delimiters = ['Enter', ','];
+      let suggestions = [];
+      let tags = [];
+
+      try {
+        delimiters = JSON.parse(
+          container.getAttribute('data-delimiters') || '["Enter", ","]'
+        );
+        suggestions = JSON.parse(
+          container.getAttribute('data-suggestions') || '[]'
+        );
+        tags = JSON.parse(container.getAttribute('data-tags') || '[]');
+      } catch {
+        // Ignore parse errors
+      }
+
+      const updateHiddenInput = () => {
+        if (hiddenInput) {
+          hiddenInput.value = JSON.stringify(tags);
+        }
+        container.setAttribute('data-tags', JSON.stringify(tags));
+      };
+
+      const dispatchChange = () => {
+        container.dispatchEvent(
+          new CustomEvent('change', {
+            bubbles: true,
+            detail: { name, tags: [...tags] },
+          })
+        );
+      };
+
+      const createTagElement = (tag) => {
+        const existingTag = tagsWrapper?.querySelector('[data-tag]');
+        if (!existingTag) return null;
+
+        const newTag = existingTag.cloneNode(true);
+        newTag.setAttribute('data-value', tag);
+        newTag.querySelector('span')?.replaceChildren(tag);
+
+        const removeBtn = newTag.querySelector('[data-remove-tag]');
+        if (removeBtn) {
+          removeBtn.setAttribute('data-remove-tag', tag);
+          removeBtn.setAttribute('aria-label', `Remove ${tag}`);
+        }
+
+        return newTag;
+      };
+
+      const addTag = (value) => {
+        const trimmed = value.trim();
+
+        if (trimmed.length < minLength || trimmed.length > maxLength)
+          return false;
+        if (tags.length >= maxTags) return false;
+        if (!allowDuplicates && tags.includes(trimmed)) return false;
+
+        tags.push(trimmed);
+
+        // Create visual tag
+        const tagEl = createTagElement(trimmed);
+        if (tagEl && tagsWrapper) {
+          tagsWrapper.appendChild(tagEl);
+          bindTagRemove(tagEl);
+        }
+
+        updateHiddenInput();
+        dispatchChange();
+        updatePlaceholder();
+        updateClearButton();
+
+        return true;
+      };
+
+      const removeTag = (value) => {
+        const index = tags.indexOf(value);
+        if (index === -1) return;
+
+        tags.splice(index, 1);
+
+        const tagEl = tagsWrapper?.querySelector(
+          `[data-tag][data-value="${CSS.escape(value)}"]`
+        );
+        tagEl?.remove();
+
+        updateHiddenInput();
+        dispatchChange();
+        updatePlaceholder();
+        updateClearButton();
+      };
+
+      const clearAll = () => {
+        tags = [];
+        tagsWrapper
+          ?.querySelectorAll('[data-tag]')
+          .forEach((el) => el.remove());
+        updateHiddenInput();
+        dispatchChange();
+        updatePlaceholder();
+        updateClearButton();
+        input?.focus();
+      };
+
+      const updatePlaceholder = () => {
+        if (input) {
+          const placeholder = input.getAttribute('placeholder') || '';
+          if (tags.length === 0 && !placeholder) {
+            // Restore original placeholder if available
+          }
+        }
+      };
+
+      const updateClearButton = () => {
+        if (clearAllBtn) {
+          clearAllBtn.style.display = tags.length > 1 ? '' : 'none';
+        }
+      };
+
+      const bindTagRemove = (tagEl) => {
+        const removeBtn = tagEl.querySelector('[data-remove-tag]');
+        removeBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const value = removeBtn.getAttribute('data-remove-tag');
+          if (value) removeTag(value);
+        });
+      };
+
+      // Bind existing tags
+      tagsWrapper?.querySelectorAll('[data-tag]').forEach(bindTagRemove);
+
+      // Clear all button
+      clearAllBtn?.addEventListener('click', clearAll);
+
+      // Input handling
+      if (input) {
+        input.addEventListener('keydown', (e) => {
+          const value = input.value;
+
+          // Handle delimiter keys
+          if (delimiters.includes(e.key)) {
+            if (e.key !== 'Enter' || value.trim()) {
+              e.preventDefault();
+            }
+            if (value.trim()) {
+              if (addTag(value)) {
+                input.value = '';
+                hideSuggestions();
+              }
+            }
+            return;
+          }
+
+          // Handle comma in value
+          if (delimiters.includes(',') && value.includes(',')) {
+            e.preventDefault();
+            const parts = value.split(',').filter((p) => p.trim());
+            parts.forEach((part) => addTag(part));
+            input.value = '';
+            hideSuggestions();
+            return;
+          }
+
+          // Backspace to remove last tag
+          if (e.key === 'Backspace' && value === '' && tags.length > 0) {
+            removeTag(tags[tags.length - 1]);
+            return;
+          }
+
+          // Arrow navigation in suggestions
+          if (
+            suggestionsList &&
+            !suggestionsList.classList.contains('hidden')
+          ) {
+            const items = suggestionsList.querySelectorAll(
+              '[data-suggestion]:not([style*="display: none"])'
+            );
+            const focused = suggestionsList.querySelector(
+              '[data-suggestion]:focus'
+            );
+            const focusedIndex = Array.from(items).indexOf(focused);
+
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              const next = items[focusedIndex + 1] || items[0];
+              next?.focus();
+            } else if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              const prev = items[focusedIndex - 1] || items[items.length - 1];
+              prev?.focus();
+            } else if (e.key === 'Escape') {
+              hideSuggestions();
+              input.focus();
+            }
+          }
+        });
+
+        // Filter suggestions on input
+        input.addEventListener('input', () => {
+          const value = input.value.toLowerCase().trim();
+
+          if (value && suggestions.length > 0) {
+            let hasVisible = false;
+
+            suggestionsList
+              ?.querySelectorAll('[data-suggestion]')
+              .forEach((item) => {
+                const suggestion =
+                  item.getAttribute('data-suggestion')?.toLowerCase() || '';
+                const matches =
+                  suggestion.includes(value) &&
+                  (allowDuplicates ||
+                    !tags.includes(item.getAttribute('data-suggestion')));
+
+                item.style.display = matches ? '' : 'none';
+                if (matches) hasVisible = true;
+              });
+
+            if (hasVisible) {
+              showSuggestions();
+            } else {
+              hideSuggestions();
+            }
+          } else {
+            hideSuggestions();
+          }
+        });
+
+        // Hide suggestions on blur (with delay for click)
+        input.addEventListener('blur', () => {
+          setTimeout(hideSuggestions, 150);
+        });
+      }
+
+      // Suggestion click handling
+      suggestionsList?.querySelectorAll('[data-suggestion]').forEach((item) => {
+        item.addEventListener('click', () => {
+          const value = item.getAttribute('data-suggestion');
+          if (value && addTag(value)) {
+            if (input) input.value = '';
+            hideSuggestions();
+            input?.focus();
+          }
+        });
+      });
+
+      function showSuggestions() {
+        suggestionsList?.classList.remove('hidden');
+      }
+
+      function hideSuggestions() {
+        suggestionsList?.classList.add('hidden');
+      }
+
+      // Initialize
+      updateClearButton();
+    });
+  })();
+</script>
+
+<style>
+  /* Smooth tag animations */
+  [data-tag] {
+    animation: tagIn 150ms ease-out;
+  }
+
+  @keyframes tagIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [data-tag] {
+      border-width: 2px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    [data-tag] {
+      animation: none;
+    }
+  }
+</style>

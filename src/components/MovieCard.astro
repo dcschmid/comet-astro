@@ -1,0 +1,331 @@
+---
+/**
+ * MovieCard - Film/Serien-Informationen
+ *
+ * Zeigt Poster, Bewertung, Jahr und mehr für Filme und Serien.
+ *
+ * API: https://www.omdbapi.com/ (API-Key erforderlich)
+ */
+import { cn } from '../utils/cn';
+
+interface Movie {
+  Title: string;
+  Year: string;
+  Rated: string;
+  Released: string;
+  Runtime: string;
+  Genre: string;
+  Director: string;
+  Writer: string;
+  Actors: string;
+  Plot: string;
+  Language: string;
+  Country: string;
+  Awards: string;
+  Poster: string;
+  Ratings: Array<{ Source: string; Value: string }>;
+  Metascore: string;
+  imdbRating: string;
+  imdbVotes: string;
+  imdbID: string;
+  Type: string;
+  DVD?: string;
+  BoxOffice?: string;
+  Production?: string;
+  Website?: string;
+  Response: string;
+  Error?: string;
+}
+
+interface Props {
+  title?: string;
+  imdbId?: string;
+  apiKey?: string;
+  variant?: 'default' | 'compact' | 'poster';
+  showPlot?: boolean;
+  showCast?: boolean;
+  showRatings?: boolean;
+  className?: string;
+}
+
+const {
+  title,
+  imdbId,
+  apiKey = 'trilogy', // Demo key for testing
+  variant = 'default',
+  showPlot = true,
+  showCast = true,
+  showRatings = true,
+  className = '',
+} = Astro.props;
+
+let movie: Movie | null = null;
+let error: string | null = null;
+
+if (!title && !imdbId) {
+  error = 'Titel oder IMDB-ID erforderlich';
+} else {
+  try {
+    const params = imdbId ? `i=${imdbId}` : `t=${encodeURIComponent(title!)}`;
+    const res = await fetch(
+      `https://www.omdbapi.com/?${params}&apikey=${apiKey}&plot=short`
+    );
+    if (res.ok) {
+      const data: Movie = await res.json();
+      if (data.Response === 'True') {
+        movie = data;
+      } else {
+        error = data.Error || 'Film nicht gefunden';
+      }
+    } else {
+      error = `Fehler (${res.status})`;
+    }
+  } catch {
+    error = 'Verbindungsfehler';
+  }
+}
+
+function getTypeIcon(type: string): string {
+  switch (type) {
+    case 'series':
+      return '📺';
+    case 'movie':
+      return '🎬';
+    case 'episode':
+      return '📹';
+    default:
+      return '🎞️';
+  }
+}
+
+function getRatingColor(rating: string): string {
+  const num = parseFloat(rating);
+  if (num >= 8) return 'text-emerald-400';
+  if (num >= 6) return 'text-yellow-400';
+  if (num >= 4) return 'text-orange-400';
+  return 'text-red-400';
+}
+---
+
+{
+  error ? (
+    <div
+      class={cn(
+        'p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm',
+        className
+      )}
+    >
+      <div class="flex items-center gap-2">
+        <svg
+          class="w-5 h-5 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        {error}
+      </div>
+    </div>
+  ) : movie && variant === 'poster' ? (
+    <a
+      href={`https://www.imdb.com/title/${movie.imdbID}`}
+      target="_blank"
+      rel="noopener"
+      class={cn(
+        'block group relative rounded-xl overflow-hidden aspect-[2/3] bg-slate-800',
+        className
+      )}
+    >
+      {movie.Poster !== 'N/A' ? (
+        <img
+          src={movie.Poster}
+          alt={movie.Title}
+          class="w-full h-full object-cover transition-transform group-hover:scale-105"
+        />
+      ) : (
+        <div class="w-full h-full flex items-center justify-center bg-slate-700 text-4xl">
+          🎬
+        </div>
+      )}
+      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+        <div class="absolute bottom-0 left-0 right-0 p-4">
+          <h3 class="font-bold text-white text-lg">{movie.Title}</h3>
+          <p class="text-sm text-slate-300">
+            {movie.Year} • {movie.Runtime}
+          </p>
+          {movie.imdbRating !== 'N/A' && (
+            <div class="flex items-center gap-1 mt-2">
+              <span class="text-yellow-400">⭐</span>
+              <span class="font-bold text-white">{movie.imdbRating}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </a>
+  ) : movie && variant === 'compact' ? (
+    <a
+      href={`https://www.imdb.com/title/${movie.imdbID}`}
+      target="_blank"
+      rel="noopener"
+      class={cn(
+        'flex gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-slate-600/50 transition-colors',
+        className
+      )}
+    >
+      {movie.Poster !== 'N/A' ? (
+        <img
+          src={movie.Poster}
+          alt={movie.Title}
+          class="w-16 h-24 object-cover rounded-lg shrink-0"
+        />
+      ) : (
+        <div class="w-16 h-24 rounded-lg bg-slate-700 flex items-center justify-center text-2xl shrink-0">
+          🎬
+        </div>
+      )}
+      <div class="flex-1 min-w-0">
+        <h3 class="font-bold text-slate-100 truncate">{movie.Title}</h3>
+        <p class="text-sm text-slate-400">
+          {movie.Year} • {movie.Runtime}
+        </p>
+        <p class="text-xs text-slate-500 mt-1">{movie.Genre}</p>
+        {movie.imdbRating !== 'N/A' && (
+          <div class="flex items-center gap-1 mt-2">
+            <span class="text-yellow-400 text-sm">⭐</span>
+            <span class={cn('font-bold', getRatingColor(movie.imdbRating))}>
+              {movie.imdbRating}
+            </span>
+          </div>
+        )}
+      </div>
+    </a>
+  ) : (
+    movie && (
+      <div
+        class={cn(
+          'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+          className
+        )}
+      >
+        {/* Header */}
+        <div class="flex gap-5 p-5">
+          {/* Poster */}
+          {movie.Poster !== 'N/A' ? (
+            <img
+              src={movie.Poster}
+              alt={movie.Title}
+              class="w-32 h-48 object-cover rounded-xl shrink-0 shadow-lg"
+            />
+          ) : (
+            <div class="w-32 h-48 rounded-xl bg-slate-700 flex items-center justify-center text-5xl shrink-0">
+              🎬
+            </div>
+          )}
+
+          {/* Info */}
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start gap-2 mb-2">
+              <span class="text-xl">{getTypeIcon(movie.Type)}</span>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-slate-100 text-xl leading-tight">
+                  {movie.Title}
+                </h3>
+                <p class="text-slate-400 text-sm">{movie.Year}</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-3">
+              {movie.Genre.split(', ').map((genre) => (
+                <span class="px-2 py-0.5 rounded-full text-xs bg-slate-700/50 text-slate-300">
+                  {genre}
+                </span>
+              ))}
+            </div>
+
+            <div class="flex items-center gap-4 text-sm text-slate-400">
+              <span>{movie.Runtime}</span>
+              {movie.Rated !== 'N/A' && (
+                <>
+                  <span>•</span>
+                  <span class="px-1.5 py-0.5 rounded text-xs border border-slate-600 text-slate-300">
+                    {movie.Rated}
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* Ratings */}
+            {showRatings && movie.imdbRating !== 'N/A' && (
+              <div class="flex items-center gap-4 mt-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-yellow-400">⭐</span>
+                  <span
+                    class={cn(
+                      'text-lg font-bold',
+                      getRatingColor(movie.imdbRating)
+                    )}
+                  >
+                    {movie.imdbRating}
+                  </span>
+                  <span class="text-slate-500 text-xs">/10</span>
+                </div>
+                {movie.Metascore !== 'N/A' && (
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-6 h-6 rounded bg-emerald-500 flex items-center justify-center text-xs font-bold text-white">
+                      {movie.Metascore}
+                    </span>
+                    <span class="text-slate-500 text-xs">Metascore</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Plot */}
+        {showPlot && movie.Plot !== 'N/A' && (
+          <div class="px-5 pb-4">
+            <p class="text-sm text-slate-300 leading-relaxed">{movie.Plot}</p>
+          </div>
+        )}
+
+        {/* Cast & Crew */}
+        {showCast && (
+          <div class="px-5 pb-5 space-y-2">
+            {movie.Director !== 'N/A' && (
+              <div class="flex gap-2 text-sm">
+                <span class="text-slate-500 shrink-0">Regie:</span>
+                <span class="text-slate-300">{movie.Director}</span>
+              </div>
+            )}
+            {movie.Actors !== 'N/A' && (
+              <div class="flex gap-2 text-sm">
+                <span class="text-slate-500 shrink-0">Cast:</span>
+                <span class="text-slate-300">{movie.Actors}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Footer */}
+        <footer class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between">
+          <span class="text-xs text-slate-500">IMDB: {movie.imdbID}</span>
+          <a
+            href={`https://www.imdb.com/title/${movie.imdbID}`}
+            target="_blank"
+            rel="noopener"
+            class="text-sm text-yellow-400 hover:text-yellow-300 transition-colors"
+          >
+            Auf IMDB →
+          </a>
+        </footer>
+      </div>
+    )
+  )
+}

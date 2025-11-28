@@ -1,0 +1,208 @@
+---
+/**
+ * Testimonial - Quote/review card with attribution
+ *
+ * Features:
+ * - Multiple visual variants
+ * - Avatar support
+ * - Star rating display
+ * - Company logo/name
+ * - Responsive design
+ *
+ * @example
+ * <Testimonial
+ *   quote="This product changed everything for our team."
+ *   author="Jane Doe"
+ *   role="CEO"
+ *   company="Acme Corp"
+ *   avatarUrl="/avatars/jane.jpg"
+ *   rating={5}
+ * />
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** The testimonial quote text */
+  quote: string;
+  /** Author name */
+  author: string;
+  /** Author's role/title */
+  role?: string;
+  /** Company name */
+  company?: string;
+  /** Company logo URL */
+  companyLogo?: string;
+  /** Author avatar URL */
+  avatarUrl?: string;
+  /** Star rating (1-5) */
+  rating?: 1 | 2 | 3 | 4 | 5;
+  /** Visual variant */
+  variant?: 'default' | 'card' | 'minimal' | 'featured';
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  quote,
+  author,
+  role,
+  company,
+  companyLogo,
+  avatarUrl,
+  rating,
+  variant = 'default',
+  size = 'md',
+  className = '',
+} = Astro.props;
+
+const sizeClasses = {
+  sm: {
+    container: 'p-4',
+    quote: 'text-sm',
+    avatar: 'w-8 h-8',
+    author: 'text-sm',
+    role: 'text-xs',
+    star: 'w-3 h-3',
+  },
+  md: {
+    container: 'p-6',
+    quote: 'text-base',
+    avatar: 'w-10 h-10',
+    author: 'text-base',
+    role: 'text-sm',
+    star: 'w-4 h-4',
+  },
+  lg: {
+    container: 'p-8',
+    quote: 'text-lg',
+    avatar: 'w-12 h-12',
+    author: 'text-lg',
+    role: 'text-base',
+    star: 'w-5 h-5',
+  },
+};
+
+const variantClasses = {
+  default: 'bg-slate-800/50 border border-slate-700 rounded-xl',
+  card: 'bg-slate-800 border border-slate-700 rounded-2xl shadow-xl',
+  minimal: 'border-l-4 border-blue-500 pl-4',
+  featured:
+    'bg-gradient-to-br from-blue-900/50 to-purple-900/50 border border-blue-500/30 rounded-2xl',
+};
+
+const s = sizeClasses[size];
+---
+
+<article
+  class={cn(
+    variantClasses[variant],
+    variant !== 'minimal' && s.container,
+    className
+  )}
+  data-testimonial
+>
+  {/* Rating stars */}
+  {
+    rating && (
+      <div
+        class="flex gap-1 mb-3"
+        role="img"
+        aria-label={`${rating} out of 5 stars`}
+      >
+        {Array.from({ length: 5 }, (_, i) => (
+          <svg
+            class={cn(
+              s.star,
+              i < rating ? 'text-yellow-400' : 'text-slate-600'
+            )}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+    )
+  }
+
+  {/* Quote */}
+  <blockquote class={cn(s.quote, 'text-slate-100 leading-relaxed')}>
+    {
+      variant === 'featured' && (
+        <svg
+          class="w-8 h-8 text-blue-400/50 mb-2"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+        </svg>
+      )
+    }
+    <p class={variant === 'minimal' ? 'italic' : ''}>
+      {variant !== 'featured' && '"'}{quote}{variant !== 'featured' && '"'}
+    </p>
+  </blockquote>
+
+  {/* Attribution */}
+  <footer class="mt-4 flex items-center gap-3">
+    {
+      avatarUrl && (
+        <img
+          src={avatarUrl}
+          alt={`${author} avatar`}
+          class={cn(s.avatar, 'rounded-full object-cover')}
+          loading="lazy"
+        />
+      )
+    }
+
+    <div class="flex-1">
+      <cite class={cn(s.author, 'text-slate-100 font-medium not-italic')}>
+        {author}
+      </cite>
+
+      {
+        (role || company) && (
+          <p class={cn(s.role, 'text-slate-400')}>
+            {role}
+            {role && company && ' at '}
+            {company}
+          </p>
+        )
+      }
+    </div>
+
+    {
+      companyLogo && (
+        <img
+          src={companyLogo}
+          alt={`${company} logo`}
+          class="h-6 w-auto opacity-70"
+          loading="lazy"
+        />
+      )
+    }
+  </footer>
+</article>
+
+<style>
+  [data-testimonial] {
+    /* Smooth transitions */
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  [data-testimonial]:hover {
+    transform: translateY(-2px);
+  }
+
+  /* High contrast support */
+  @media (prefers-contrast: high) {
+    [data-testimonial] {
+      border-width: 2px;
+    }
+  }
+</style>

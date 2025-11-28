@@ -1,0 +1,200 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import MovieCard from '../../components/MovieCard.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+// import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { MovieCard } from 'comet-astro';
+---
+
+<MovieCard title="Inception" />
+<MovieCard title="Breaking Bad" variant="compact" />
+<MovieCard imdbId="tt0111161" variant="poster" />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'title',
+    type: 'string',
+    default: '—',
+    description: 'Movie or TV show title to search for.',
+  },
+  {
+    name: 'imdbId',
+    type: 'string',
+    default: '—',
+    description:
+      'IMDB ID (tt0111161) for exact lookup. Takes precedence over title.',
+  },
+  {
+    name: 'apiKey',
+    type: 'string',
+    default: "'trilogy'",
+    description: 'OMDB API key. A demo key is included for testing.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'poster'",
+    default: "'default'",
+    description:
+      'Display variant. Poster shows only the movie poster with hover info.',
+  },
+  {
+    name: 'showPlot',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show the plot summary in default variant.',
+  },
+  {
+    name: 'showCast',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show the main cast members.',
+  },
+  {
+    name: 'showRatings',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show IMDB and other ratings.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes for the wrapper element.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="MovieCard"
+  seoDescription="Display movie and TV show information with poster and ratings from OMDB."
+>
+  <Headline level="h1" textSize="2xl">MovieCard</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The MovieCard component displays information about movies and TV shows
+      including poster, ratings, cast, and plot summary using the OMDB API.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Search by title or use an exact IMDB ID for precise lookups. Three display
+      variants are available: a full card, compact list item, or poster-only
+      with hover overlay.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and provide a title or IMDB ID. A demo API key is
+      included but has limited requests. Get your free key at omdbapi.com.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Default variant
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          Full card with poster, info, genres, ratings, and cast.
+        </Paragraph>
+      </div>
+      <MovieCard title="Inception" />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Compact variant
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          Horizontal layout for list views with thumbnail and key info.
+        </Paragraph>
+      </div>
+      <div class="space-y-2">
+        <MovieCard title="The Matrix" variant="compact" />
+        <MovieCard title="Interstellar" variant="compact" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Poster variant
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          Shows only the poster with info on hover. Perfect for galleries.
+        </Paragraph>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MovieCard title="Pulp Fiction" variant="poster" />
+        <MovieCard title="The Dark Knight" variant="poster" />
+        <MovieCard title="Fight Club" variant="poster" />
+        <MovieCard title="Forrest Gump" variant="poster" />
+      </div>
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >API Reference</Headline
+    >
+    <div class="p-4 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-fuchsia-300">API:</strong>
+        <a
+          href="https://www.omdbapi.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-fuchsia-400 hover:underline ml-1"
+        >
+          omdbapi.com
+        </a>
+        – Free API key required (demo key included for testing).
+      </p>
+    </div>
+  </section>
+</DocsLayout>

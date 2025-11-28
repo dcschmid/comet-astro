@@ -1,0 +1,220 @@
+---
+/**
+ * CountUp - Animated number counter
+ *
+ * Features:
+ * - Smooth easing animation
+ * - Configurable duration
+ * - Number formatting (thousands separators)
+ * - Prefix/suffix support
+ * - Decimal places
+ * - Intersection Observer trigger
+ * - Reduced motion support
+ *
+ * @example
+ * <CountUp end={1500} duration={2} prefix="$" />
+ * <CountUp end={99.9} decimals={1} suffix="%" />
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** Starting number */
+  start?: number;
+  /** Ending number (required) */
+  end: number;
+  /** Animation duration in seconds */
+  duration?: number;
+  /** Number of decimal places */
+  decimals?: number;
+  /** Prefix text (e.g. "$") */
+  prefix?: string;
+  /** Suffix text (e.g. "%", "k") */
+  suffix?: string;
+  /** Use thousands separator */
+  separator?: boolean;
+  /** Thousands separator character */
+  separatorChar?: string;
+  /** Decimal separator character */
+  decimalChar?: string;
+  /** Delay before animation starts (ms) */
+  delay?: number;
+  /** Only animate when in viewport */
+  triggerOnView?: boolean;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  start = 0,
+  end,
+  duration = 2,
+  decimals = 0,
+  prefix = '',
+  suffix = '',
+  separator = true,
+  separatorChar = ',',
+  decimalChar = '.',
+  delay = 0,
+  triggerOnView = true,
+  size = 'lg',
+  className = '',
+} = Astro.props;
+
+const sizeClasses = {
+  sm: 'text-xl font-semibold',
+  md: 'text-3xl font-bold',
+  lg: 'text-5xl font-bold',
+  xl: 'text-7xl font-black',
+};
+
+const id = `countup-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<span
+  id={id}
+  class={cn(sizeClasses[size], 'tabular-nums', className)}
+  data-countup
+  data-start={start}
+  data-end={end}
+  data-duration={duration}
+  data-decimals={decimals}
+  data-prefix={prefix}
+  data-suffix={suffix}
+  data-separator={separator}
+  data-separator-char={separatorChar}
+  data-decimal-char={decimalChar}
+  data-delay={delay}
+  data-trigger-on-view={triggerOnView}
+  aria-label={`${prefix}${end}${suffix}`}
+>
+  {prefix}{start.toFixed(decimals)}{suffix}
+</span>
+
+<script is:inline>
+  (function () {
+    function formatNumber(
+      num,
+      decimals,
+      separator,
+      separatorChar,
+      decimalChar
+    ) {
+      const fixed = num.toFixed(decimals);
+      if (!separator) return fixed.replace('.', decimalChar);
+
+      const parts = fixed.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, separatorChar);
+      return parts.join(decimalChar);
+    }
+
+    function easeOutQuart(t) {
+      return 1 - Math.pow(1 - t, 4);
+    }
+
+    function animateCount(element) {
+      const start = parseFloat(element.dataset.start) || 0;
+      const end = parseFloat(element.dataset.end) || 0;
+      const duration = (parseFloat(element.dataset.duration) || 2) * 1000;
+      const decimals = parseInt(element.dataset.decimals) || 0;
+      const prefix = element.dataset.prefix || '';
+      const suffix = element.dataset.suffix || '';
+      const separator = element.dataset.separator === 'true';
+      const separatorChar = element.dataset.separatorChar || ',';
+      const decimalChar = element.dataset.decimalChar || '.';
+      const delay = parseInt(element.dataset.delay) || 0;
+
+      // Check for reduced motion
+      const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
+      if (prefersReducedMotion) {
+        element.textContent =
+          prefix +
+          formatNumber(end, decimals, separator, separatorChar, decimalChar) +
+          suffix;
+        element.dataset.animated = 'true';
+        return;
+      }
+
+      setTimeout(() => {
+        let startTime = null;
+
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easedProgress = easeOutQuart(progress);
+          const current = start + (end - start) * easedProgress;
+
+          element.textContent =
+            prefix +
+            formatNumber(
+              current,
+              decimals,
+              separator,
+              separatorChar,
+              decimalChar
+            ) +
+            suffix;
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            element.dataset.animated = 'true';
+          }
+        }
+
+        requestAnimationFrame(step);
+      }, delay);
+    }
+
+    function initCountUp() {
+      const elements = document.querySelectorAll(
+        '[data-countup]:not([data-animated="true"])'
+      );
+
+      elements.forEach((element) => {
+        const triggerOnView = element.dataset.triggerOnView === 'true';
+
+        if (triggerOnView && 'IntersectionObserver' in window) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  animateCount(element);
+                  observer.unobserve(element);
+                }
+              });
+            },
+            {
+              threshold: 0.5,
+            }
+          );
+
+          observer.observe(element);
+        } else {
+          animateCount(element);
+        }
+      });
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCountUp);
+    } else {
+      initCountUp();
+    }
+  })();
+</script>
+
+<style>
+  [data-countup] {
+    /* Prevent layout shift with tabular numbers */
+    font-variant-numeric: tabular-nums;
+    display: inline-block;
+    min-width: 1ch;
+  }
+</style>

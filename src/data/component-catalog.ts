@@ -24,6 +24,7 @@ export const componentCategories: ComponentCategory[] = [
   { id: 'Media', icon: '🎬', color: 'from-rose-500 to-pink-500' },
   { id: 'Utilities', icon: '🛠️', color: 'from-red-500 to-rose-500' },
   { id: 'Weather', icon: '🌦️', color: 'from-sky-500 to-blue-600' },
+  { id: 'API', icon: '🌐', color: 'from-violet-500 to-purple-600' },
 ];
 
 export const componentCatalog: ComponentDoc[] = [
@@ -806,5 +807,143 @@ export const componentCatalog: ComponentDoc[] = [
     name: 'YouTubeEmbed',
     description: 'Responsive YouTube iframe with privacy-enhanced mode.',
     category: 'Media',
+  },
+  // API Components
+  {
+    slug: 'water-level',
+    name: 'WaterLevel',
+    description:
+      'Live water levels from German rivers with flood warnings (PegelOnline API).',
+    category: 'API',
+  },
+  {
+    slug: 'fuel-prices',
+    name: 'FuelPrices',
+    description:
+      'Current fuel prices from nearby gas stations (Tankerkönig API).',
+    category: 'API',
+  },
+  {
+    slug: 'currency-converter',
+    name: 'CurrencyConverter',
+    description: 'Exchange rates and currency calculator with 150+ currencies.',
+    category: 'API',
+  },
+  {
+    slug: 'github-repo',
+    name: 'GitHubRepo',
+    description: 'Repository cards with stars, forks, language and topics.',
+    category: 'API',
+  },
+  {
+    slug: 'nasa-apod',
+    name: 'NasaApod',
+    description: 'NASA Astronomy Picture of the Day with explanation.',
+    category: 'API',
+  },
+  {
+    slug: 'public-holidays',
+    name: 'PublicHolidays',
+    description: 'Public holidays by country with countdown (Nager.Date API).',
+    category: 'API',
+  },
+  {
+    slug: 'qr-code',
+    name: 'QrCode',
+    description: 'QR code generator for URLs, text, WiFi and more.',
+    category: 'API',
+  },
+  {
+    slug: 'random-quote',
+    name: 'RandomQuote',
+    description: 'Inspirational quotes with author (ZenQuotes API).',
+    category: 'API',
+  },
+  {
+    slug: 'crypto-price',
+    name: 'CryptoPrice',
+    description: 'Cryptocurrency prices with 24h change (CoinGecko API).',
+    category: 'API',
+  },
+  {
+    slug: 'trivia',
+    name: 'Trivia',
+    description: 'Interactive quiz with categories and difficulty levels.',
+    category: 'API',
+  },
+  {
+    slug: 'on-this-day',
+    name: 'OnThisDay',
+    description: "Historical events, births and deaths on today's date.",
+    category: 'API',
+  },
+  {
+    slug: 'train-departures',
+    name: 'TrainDepartures',
+    description: 'Live train departures from German stations with delays.',
+    category: 'API',
+  },
+  {
+    slug: 'speed-cameras',
+    name: 'SpeedCameras',
+    description: 'Speed camera locations with speed limits.',
+    category: 'API',
+  },
+  {
+    slug: 'recent-earthquakes',
+    name: 'RecentEarthquakes',
+    description:
+      'Recent earthquakes worldwide with magnitude and location (USGS API).',
+    category: 'API',
+  },
+  {
+    slug: 'country-info',
+    name: 'CountryInfo',
+    description: 'Country cards with flag, capital, currencies and languages.',
+    category: 'API',
+  },
+  {
+    slug: 'movie-card',
+    name: 'MovieCard',
+    description: 'Movie and TV show info with poster and ratings (OMDB API).',
+    category: 'API',
+  },
+  {
+    slug: 'npm-package',
+    name: 'NpmPackage',
+    description:
+      'NPM package info with version, downloads and install command.',
+    category: 'API',
+  },
+  {
+    slug: 'rust-crate',
+    name: 'RustCrate',
+    description:
+      'Rust crate info with downloads and Cargo.toml syntax (crates.io).',
+    category: 'API',
+  },
+  {
+    slug: 'pypi-package',
+    name: 'PypiPackage',
+    description: 'Python package info with version and pip install command.',
+    category: 'API',
+  },
+  {
+    slug: 'rss-feed',
+    name: 'RssFeed',
+    description: 'RSS feed reader with thumbnails (RSS2JSON API).',
+    category: 'API',
+  },
+  {
+    slug: 'wiki-summary',
+    name: 'WikiSummary',
+    description: 'Wikipedia article summaries with images (REST API).',
+    category: 'API',
+  },
+  {
+    slug: 'pollen-forecast',
+    name: 'PollenForecast',
+    description: 'Pollen load levels from German Weather Service (DWD).',
+    category: 'API',
   },
 ];

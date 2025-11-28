@@ -1,0 +1,261 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ColorPicker from '../../components/ColorPicker.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const brandColors = [
+  '#3b82f6',
+  '#8b5cf6',
+  '#ec4899',
+  '#f43f5e',
+  '#f97316',
+  '#eab308',
+];
+
+const usageSnippet = `---
+import { ColorPicker } from 'comet-astro';
+---
+
+<ColorPicker
+  name="brandColor"
+  defaultValue="#3b82f6"
+/>
+
+<!-- With custom presets -->
+<ColorPicker
+  name="theme"
+  presets={['#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e']}
+  defaultValue="#3b82f6"
+/>
+
+<!-- With opacity slider -->
+<ColorPicker
+  name="overlay"
+  defaultValue="#000000"
+  showAlpha
+/>
+
+<script>
+  document.querySelector('[data-color-picker]')
+    .addEventListener('change', (e) => {
+      console.log('Color:', e.detail.color);
+      console.log('RGBA:', e.detail.rgba);
+    });
+</script>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'name',
+    type: 'string',
+    default: '-',
+    description: 'Input name for form submission. Required.',
+  },
+  {
+    name: 'defaultValue',
+    type: 'string',
+    default: "'#3b82f6'",
+    description: 'Initial color value (hex format).',
+  },
+  {
+    name: 'presets',
+    type: 'string[]',
+    default: '20 colors',
+    description: 'Preset color swatches to display.',
+  },
+  {
+    name: 'allowCustom',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show native color picker for custom colors.',
+  },
+  {
+    name: 'showAlpha',
+    type: 'boolean',
+    default: 'false',
+    description: 'Show opacity/alpha slider.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size of swatches and preview.',
+  },
+  {
+    name: 'showValue',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show hex value input field.',
+  },
+  {
+    name: 'copyable',
+    type: 'boolean',
+    default: 'true',
+    description: 'Enable copy to clipboard button.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="ColorPicker"
+  seoDescription="Visual color selection with presets and custom input."
+>
+  <Headline level="h1" textSize="2xl">ColorPicker</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The ColorPicker component provides an intuitive color selection interface
+      with preset swatches, hex input, native color picker integration, and
+      optional opacity control. Perfect for theme customization, brand color
+      selection, or design tools.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Click presets to quickly select, type hex values directly, or use the
+      native picker for fine-grained control. Copy colors to clipboard with one
+      click. Emits <InlineCode>change</InlineCode> events with color data.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and set a <InlineCode>name</InlineCode> for form submission.
+      The selected color is stored as hex in a hidden input.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Default with all presets
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Full color picker with 20 preset colors, hex input, and native picker.
+      </Paragraph>
+      <ColorPicker name="demo1" defaultValue="#3b82f6" />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Custom preset palette
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Limit choices to your brand colors.
+      </Paragraph>
+      <ColorPicker name="demo2" presets={brandColors} defaultValue="#3b82f6" />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With opacity slider
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Enable alpha channel for transparency control.
+      </Paragraph>
+      <ColorPicker name="demo3" defaultValue="#3b82f6" showAlpha />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three sizes for different contexts.
+      </Paragraph>
+      <div class="flex flex-col gap-8">
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Small:</span>
+          <ColorPicker
+            name="sm"
+            presets={brandColors}
+            defaultValue="#8b5cf6"
+            size="sm"
+          />
+        </div>
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Medium:</span>
+          <ColorPicker
+            name="md"
+            presets={brandColors}
+            defaultValue="#ec4899"
+            size="md"
+          />
+        </div>
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Large:</span>
+          <ColorPicker
+            name="lg"
+            presets={brandColors}
+            defaultValue="#f43f5e"
+            size="lg"
+          />
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Minimal (no custom picker)
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Presets only, without the native color picker option.
+      </Paragraph>
+      <ColorPicker
+        name="minimal"
+        presets={brandColors}
+        defaultValue="#f97316"
+        allowCustom={false}
+      />
+    </article>
+  </section>
+</DocsLayout>

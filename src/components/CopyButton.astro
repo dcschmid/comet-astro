@@ -1,0 +1,306 @@
+---
+/**
+ * CopyButton - Standalone copy-to-clipboard button with visual feedback
+ *
+ * Features:
+ * - One-click copy to clipboard
+ * - Visual success/error feedback
+ * - Customizable icons and text
+ * - Multiple style variants
+ * - WCAG AAA compliant
+ *
+ * @example
+ * <CopyButton text="npm install comet-astro" />
+ *
+ * @example
+ * <CopyButton text={apiKey} label="Copy API Key" variant="outline" />
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** Text to copy to clipboard */
+  text: string;
+  /** Button label (optional, shows icon only if not provided) */
+  label?: string;
+  /** Show the text being copied */
+  showText?: boolean;
+  /** Truncate shown text after N characters */
+  truncate?: number;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Visual variant */
+  variant?: 'default' | 'outline' | 'ghost' | 'solid';
+  /** Success message duration (ms) */
+  feedbackDuration?: number;
+  /** Custom success text */
+  successText?: string;
+  /** Custom error text */
+  errorText?: string;
+  /** Disable the button */
+  disabled?: boolean;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  text,
+  label,
+  showText = false,
+  truncate = 50,
+  size = 'md',
+  variant = 'default',
+  feedbackDuration = 2000,
+  successText = 'Copied!',
+  errorText = 'Failed',
+  disabled = false,
+  className = '',
+} = Astro.props;
+
+// Size configurations
+const sizeClasses = {
+  sm: {
+    button: 'px-2 py-1 text-xs gap-1.5',
+    icon: 'w-3.5 h-3.5',
+  },
+  md: {
+    button: 'px-3 py-1.5 text-sm gap-2',
+    icon: 'w-4 h-4',
+  },
+  lg: {
+    button: 'px-4 py-2 text-base gap-2',
+    icon: 'w-5 h-5',
+  },
+};
+
+// Variant styles
+const variantStyles = {
+  default: cn(
+    'bg-slate-100 dark:bg-slate-800',
+    'text-slate-700 dark:text-slate-300',
+    'hover:bg-slate-200 dark:hover:bg-slate-700',
+    'border border-slate-200 dark:border-slate-700'
+  ),
+  outline: cn(
+    'bg-transparent',
+    'text-slate-700 dark:text-slate-300',
+    'hover:bg-slate-100 dark:hover:bg-slate-800',
+    'border border-slate-300 dark:border-slate-600'
+  ),
+  ghost: cn(
+    'bg-transparent',
+    'text-slate-600 dark:text-slate-400',
+    'hover:bg-slate-100 dark:hover:bg-slate-800',
+    'hover:text-slate-900 dark:hover:text-slate-100'
+  ),
+  solid: cn(
+    'bg-blue-600 dark:bg-blue-500',
+    'text-white',
+    'hover:bg-blue-700 dark:hover:bg-blue-600',
+    'border border-transparent'
+  ),
+};
+
+const config = sizeClasses[size];
+const displayText = showText
+  ? text.length > truncate
+    ? text.slice(0, truncate) + '...'
+    : text
+  : null;
+---
+
+<button
+  type="button"
+  class={cn(
+    'inline-flex items-center justify-center rounded-md font-medium',
+    'transition-all duration-150',
+    'focus-visible:outline-none focus-visible:ring-2',
+    'focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400',
+    'focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
+    'disabled:opacity-50 disabled:cursor-not-allowed',
+    config.button,
+    variantStyles[variant],
+    className
+  )}
+  disabled={disabled}
+  data-copy-button
+  data-text={text}
+  data-success-text={successText}
+  data-error-text={errorText}
+  data-feedback-duration={feedbackDuration}
+  aria-label={label ||
+    `Copy: ${text.slice(0, 30)}${text.length > 30 ? '...' : ''}`}
+>
+  <!-- Copy icon -->
+  <span class={cn(config.icon, 'flex-shrink-0')} data-icon="copy">
+    <svg
+      class="w-full h-full"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+      ></path>
+    </svg>
+  </span>
+
+  <!-- Success icon (hidden by default) -->
+  <span
+    class={cn(config.icon, 'flex-shrink-0 hidden text-emerald-500')}
+    data-icon="success"
+  >
+    <svg
+      class="w-full h-full"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M5 13l4 4L19 7"></path>
+    </svg>
+  </span>
+
+  <!-- Error icon (hidden by default) -->
+  <span
+    class={cn(config.icon, 'flex-shrink-0 hidden text-red-500')}
+    data-icon="error"
+  >
+    <svg
+      class="w-full h-full"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+  </span>
+
+  <!-- Label/Text -->
+  <span data-label>
+    {
+      displayText && (
+        <code class="font-mono text-xs opacity-70 mr-1">{displayText}</code>
+      )
+    }
+    {label || (showText ? '' : '')}
+  </span>
+</button>
+
+<script is:inline>
+  (function () {
+    const buttons = document.querySelectorAll('[data-copy-button]');
+
+    buttons.forEach((button) => {
+      const text = button.getAttribute('data-text');
+      const successText = button.getAttribute('data-success-text') || 'Copied!';
+      const errorText = button.getAttribute('data-error-text') || 'Failed';
+      const duration =
+        parseInt(button.getAttribute('data-feedback-duration')) || 2000;
+
+      const copyIcon = button.querySelector('[data-icon="copy"]');
+      const successIcon = button.querySelector('[data-icon="success"]');
+      const errorIcon = button.querySelector('[data-icon="error"]');
+      const label = button.querySelector('[data-label]');
+
+      let originalLabel = label?.innerHTML || '';
+      let timeout = null;
+
+      const showFeedback = (success) => {
+        // Clear any existing timeout
+        if (timeout) clearTimeout(timeout);
+
+        // Hide copy icon
+        copyIcon?.classList.add('hidden');
+
+        if (success) {
+          successIcon?.classList.remove('hidden');
+          errorIcon?.classList.add('hidden');
+          if (label) label.innerHTML = successText;
+          button.classList.add('ring-2', 'ring-emerald-500/30');
+        } else {
+          errorIcon?.classList.remove('hidden');
+          successIcon?.classList.add('hidden');
+          if (label) label.innerHTML = errorText;
+          button.classList.add('ring-2', 'ring-red-500/30');
+        }
+
+        // Reset after duration
+        timeout = setTimeout(() => {
+          copyIcon?.classList.remove('hidden');
+          successIcon?.classList.add('hidden');
+          errorIcon?.classList.add('hidden');
+          if (label) label.innerHTML = originalLabel;
+          button.classList.remove(
+            'ring-2',
+            'ring-emerald-500/30',
+            'ring-red-500/30'
+          );
+        }, duration);
+      };
+
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
+
+        try {
+          await navigator.clipboard.writeText(text);
+          showFeedback(true);
+
+          // Dispatch success event
+          button.dispatchEvent(
+            new CustomEvent('copy', {
+              bubbles: true,
+              detail: { text, success: true },
+            })
+          );
+        } catch (err) {
+          console.error('Failed to copy:', err);
+          showFeedback(false);
+
+          // Dispatch error event
+          button.dispatchEvent(
+            new CustomEvent('copy', {
+              bubbles: true,
+              detail: { text, success: false, error: err },
+            })
+          );
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  /* Smooth transitions */
+  [data-copy-button] {
+    transition: all 150ms ease;
+  }
+
+  [data-copy-button] [data-icon] {
+    transition: opacity 150ms ease;
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [data-copy-button] {
+      border-width: 2px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    [data-copy-button],
+    [data-copy-button] [data-icon] {
+      transition: none;
+    }
+  }
+</style>

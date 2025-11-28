@@ -1,6 +1,24 @@
 ---
 /**
  * Modal - Enhanced with WCAG AAA compliance, multiple variants, and responsive design
+ *
+ * @deprecated Consider using Dialog.astro instead for new implementations.
+ * Dialog uses the native HTML <dialog> element which provides:
+ * - Better browser accessibility support
+ * - Native keyboard handling (Escape to close)
+ * - Native focus trapping
+ * - Proper modal behavior without custom JavaScript
+ *
+ * This Modal component is maintained for backward compatibility but
+ * new code should prefer the Dialog component.
+ *
+ * @example
+ * // Instead of:
+ * <Modal title="Title" open={true}>Content</Modal>
+ *
+ * // Use:
+ * <Dialog id="my-dialog" title="Title">Content</Dialog>
+ * // Then trigger with: document.getElementById('my-dialog').showModal()
  */
 
 interface Props {

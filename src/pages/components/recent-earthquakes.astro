@@ -1,0 +1,197 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import RecentEarthquakes from '../../components/RecentEarthquakes.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { RecentEarthquakes } from 'comet-astro';
+---
+
+<RecentEarthquakes />
+<RecentEarthquakes minMagnitude="4.5" timeframe="week" maxItems={5} />
+<RecentEarthquakes compact showTsunami={false} />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'minMagnitude',
+    type: "'2.5' | '4.5' | 'significant' | 'all'",
+    default: "'2.5'",
+    description:
+      'Minimum magnitude to display. "significant" shows only major earthquakes.',
+  },
+  {
+    name: 'timeframe',
+    type: "'hour' | 'day' | 'week' | 'month'",
+    default: "'day'",
+    description: 'Time range for earthquake data.',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '10',
+    description: 'Maximum number of earthquakes to display.',
+  },
+  {
+    name: 'showMap',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show external link icon to USGS detail page.',
+  },
+  {
+    name: 'showTsunami',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show tsunami warning indicator when applicable.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Use compact spacing for denser layouts.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes for the wrapper element.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="RecentEarthquakes"
+  seoDescription="Display recent earthquakes worldwide using USGS earthquake feed API."
+>
+  <Headline level="h1" textSize="2xl">RecentEarthquakes</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The RecentEarthquakes component displays live earthquake data from the
+      U.S. Geological Survey (USGS). It shows magnitude, location, time, depth,
+      and tsunami warnings with color-coded severity indicators.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Data is fetched at build time from the USGS GeoJSON feed. Magnitude colors
+      range from green (below 4.0) through yellow, amber, orange to red (7.0+).
+      Each earthquake links to its detail page on the USGS website.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and optionally configure the magnitude threshold,
+      timeframe, and display options. The API is free and requires no API key.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Default (M2.5+ last 24 hours)
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          Shows earthquakes with magnitude 2.5 or higher from the past day. This
+          is a good balance between relevance and noise.
+        </Paragraph>
+      </div>
+      <RecentEarthquakes maxItems={5} />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Significant earthquakes (last week)
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          Use <InlineCode>minMagnitude="significant"</InlineCode> to show only major
+          seismic events that made headlines.
+        </Paragraph>
+      </div>
+      <RecentEarthquakes
+        minMagnitude="significant"
+        timeframe="week"
+        maxItems={5}
+      />
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Compact variant
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          The <InlineCode>compact</InlineCode> prop reduces spacing for dashboard-style
+          layouts where space is limited.
+        </Paragraph>
+      </div>
+      <RecentEarthquakes compact maxItems={4} />
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >API Reference</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      This component uses the USGS Earthquake Hazards Program API which is free
+      and requires no authentication. Data is updated every few minutes.
+    </Paragraph>
+    <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-rose-300">API:</strong>
+        <a
+          href="https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php"
+          target="_blank"
+          rel="noopener"
+          class="text-rose-400 hover:underline ml-1"
+        >
+          earthquake.usgs.gov
+        </a>
+        – Free, no API key required.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

@@ -1,0 +1,256 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { CopyButton } from 'comet-astro';
+---
+
+<!-- Simple copy button -->
+<CopyButton text="npm install comet-astro" />
+
+<!-- With label -->
+<CopyButton text="sk-1234567890" label="Copy API Key" />
+
+<!-- Show the text being copied -->
+<CopyButton text="https://example.com/share/abc123" showText />
+
+<script>
+  document.querySelector('[data-copy-button]')
+    .addEventListener('copy', (e) => {
+      console.log('Copied:', e.detail.text);
+    });
+</script>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'text',
+    type: 'string',
+    default: '-',
+    description: 'Text to copy to clipboard. Required.',
+  },
+  {
+    name: 'label',
+    type: 'string',
+    default: "''",
+    description: 'Button label text.',
+  },
+  {
+    name: 'showText',
+    type: 'boolean',
+    default: 'false',
+    description: 'Show the text being copied in the button.',
+  },
+  {
+    name: 'truncate',
+    type: 'number',
+    default: '50',
+    description: 'Max characters to show when showText is true.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size variant.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'outline' | 'ghost' | 'solid'",
+    default: "'default'",
+    description: 'Visual style variant.',
+  },
+  {
+    name: 'feedbackDuration',
+    type: 'number',
+    default: '2000',
+    description: 'How long to show success/error feedback (ms).',
+  },
+  {
+    name: 'successText',
+    type: 'string',
+    default: "'Copied!'",
+    description: 'Text shown on successful copy.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="CopyButton"
+  seoDescription="One-click copy to clipboard with visual feedback."
+>
+  <Headline level="h1" textSize="2xl">CopyButton</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The CopyButton component provides a simple way to copy text to the
+      clipboard with visual feedback. Shows a checkmark on success or an X on
+      failure, then reverts to the original state.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Emits a <InlineCode>copy</InlineCode> custom event with success/failure status.
+      Works with any text—API keys, URLs, code snippets, etc.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and pass the <InlineCode>text</InlineCode> to copy. Click
+      the button to copy and see the feedback animation.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Basic usage
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Icon-only button. Click to copy and see the success feedback.
+      </Paragraph>
+      <div class="flex items-center gap-4">
+        <CopyButton text="npm install comet-astro" />
+        <span class="text-slate-400 text-sm">← Click me!</span>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With label
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Add descriptive text to the button.
+      </Paragraph>
+      <div class="flex flex-wrap gap-4">
+        <CopyButton text="npm install comet-astro" label="Copy command" />
+        <CopyButton text="sk-abc123xyz789" label="Copy API Key" />
+        <CopyButton text="hello@example.com" label="Copy email" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Show copied text
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Display the text that will be copied. Long text is truncated.
+      </Paragraph>
+      <div class="flex flex-col gap-4">
+        <CopyButton
+          text="https://example.com/share/abc123"
+          showText
+          label="Copy"
+        />
+        <CopyButton
+          text="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0"
+          showText
+          label="Copy"
+          truncate={40}
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Style variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Four visual styles to match your design.
+      </Paragraph>
+      <div class="flex flex-wrap gap-4">
+        <CopyButton text="default" label="Default" variant="default" />
+        <CopyButton text="outline" label="Outline" variant="outline" />
+        <CopyButton text="ghost" label="Ghost" variant="ghost" />
+        <CopyButton text="solid" label="Solid" variant="solid" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three sizes for different contexts.
+      </Paragraph>
+      <div class="flex flex-wrap items-center gap-4">
+        <CopyButton text="small" label="Small" size="sm" />
+        <CopyButton text="medium" label="Medium" size="md" />
+        <CopyButton text="large" label="Large" size="lg" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Custom feedback text
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Customize the success message.
+      </Paragraph>
+      <div class="flex flex-wrap gap-4">
+        <CopyButton
+          text="https://..."
+          label="Copy Link"
+          successText="Link copied!"
+        />
+        <CopyButton text="code123" label="Copy Code" successText="✓ Got it!" />
+      </div>
+    </article>
+  </section>
+</DocsLayout>

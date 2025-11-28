@@ -1,0 +1,304 @@
+---
+/**
+ * PollenForecast - Pollenflug-Vorhersage
+ *
+ * Zeigt die Pollenbelastung für verschiedene Regionen in Deutschland.
+ *
+ * API: https://opendata.dwd.de/climate_environment/health/alerts/
+ */
+import { cn } from '../utils/cn';
+
+interface PollenData {
+  today: string;
+  tomorrow: string;
+  dayafter_to: string;
+}
+
+interface RegionData {
+  region_id: number;
+  region_name: string;
+  partregion_id: number;
+  partregion_name: string;
+  Pollen: Record<string, PollenData>;
+}
+
+interface Props {
+  regionId?: number; // z.B. 50 für Baden-Württemberg
+  showAllPollen?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  regionId,
+  showAllPollen = false,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+let regions: RegionData[] = [];
+let error: string | null = null;
+
+const pollenNames: Record<string, string> = {
+  Hasel: 'Hasel',
+  Erle: 'Erle',
+  Birke: 'Birke',
+  Graeser: 'Gräser',
+  Roggen: 'Roggen',
+  Beifuss: 'Beifuß',
+  Ambrosia: 'Ambrosia',
+  Esche: 'Esche',
+};
+
+const pollenIcons: Record<string, string> = {
+  Hasel: '🌰',
+  Erle: '🌳',
+  Birke: '🌿',
+  Graeser: '🌾',
+  Roggen: '🌾',
+  Beifuss: '🌻',
+  Ambrosia: '🌼',
+  Esche: '🌳',
+};
+
+try {
+  const res = await fetch(
+    'https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json'
+  );
+  if (res.ok) {
+    const data = await res.json();
+    regions = data.content || [];
+    if (regionId) {
+      regions = regions.filter(
+        (r) => r.region_id === regionId || r.partregion_id === regionId
+      );
+    }
+    // Take first region if multiple
+    if (regions.length > 1) {
+      regions = [regions[0]];
+    }
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+function getLoadLevel(value: string): {
+  level: number;
+  label: string;
+  color: string;
+} {
+  const num = parseFloat(value) || 0;
+  if (num === 0) return { level: 0, label: 'keine', color: 'bg-slate-600' };
+  if (num <= 0.5) return { level: 1, label: 'gering', color: 'bg-emerald-500' };
+  if (num <= 1)
+    return { level: 2, label: 'gering-mittel', color: 'bg-lime-500' };
+  if (num <= 1.5) return { level: 3, label: 'mittel', color: 'bg-yellow-500' };
+  if (num <= 2)
+    return { level: 4, label: 'mittel-hoch', color: 'bg-orange-500' };
+  if (num <= 2.5) return { level: 5, label: 'hoch', color: 'bg-red-500' };
+  return { level: 6, label: 'sehr hoch', color: 'bg-purple-500' };
+}
+
+// Utility function to check for any active pollen
+// const _hasAnyPollen = (pollen: Record<string, PollenData>): boolean => {
+//   return Object.values(pollen).some(p =>
+//     parseFloat(p.today) > 0 || parseFloat(p.tomorrow) > 0
+//   );
+// };
+
+const region = regions[0];
+const activePollen = region?.Pollen
+  ? Object.entries(region.Pollen).filter(
+      ([, data]) =>
+        showAllPollen ||
+        parseFloat(data.today) > 0 ||
+        parseFloat(data.tomorrow) > 0
+    )
+  : [];
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  <header class="px-5 py-4 border-b border-slate-700/50 bg-lime-500/5">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div
+          class="p-2.5 rounded-xl bg-gradient-to-br from-lime-500 to-emerald-600 shadow-lg shadow-lime-500/25"
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-100 text-lg">Pollenflug</h3>
+          <p class="text-xs text-slate-400">
+            {
+              region
+                ? region.partregion_name || region.region_name
+                : 'Deutschland'
+            }
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : !region ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <p class="text-slate-400 font-medium">Region nicht gefunden</p>
+        </div>
+      ) : activePollen.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
+            <span class="text-2xl">✓</span>
+          </div>
+          <p class="text-emerald-400 font-medium">Keine Pollenbelastung</p>
+          <p class="text-slate-500 text-sm mt-1">
+            Aktuell keine aktiven Pollen
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Legend */}
+          <div class="flex items-center justify-center gap-2 mb-4 text-xs">
+            <span class="text-slate-500">Belastung:</span>
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500" />
+              gering
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-yellow-500" />
+              mittel
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-red-500" />
+              hoch
+            </span>
+          </div>
+
+          {/* Table Header */}
+          <div class="grid grid-cols-4 gap-2 text-xs text-slate-500 uppercase tracking-wide mb-2 px-2">
+            <span>Pollen</span>
+            <span class="text-center">Heute</span>
+            <span class="text-center">Morgen</span>
+            <span class="text-center">Übermorgen</span>
+          </div>
+
+          {/* Pollen Rows */}
+          <div class="space-y-2">
+            {activePollen.map(([key, data]) => {
+              const today = getLoadLevel(data.today);
+              const tomorrow = getLoadLevel(data.tomorrow);
+              const dayafter = getLoadLevel(data.dayafter_to);
+
+              return (
+                <div class="grid grid-cols-4 gap-2 items-center p-2 rounded-lg bg-slate-800/30 border border-slate-700/30">
+                  <div class="flex items-center gap-2">
+                    <span class="text-lg">{pollenIcons[key] || '🌿'}</span>
+                    <span class="text-sm font-medium text-slate-200">
+                      {pollenNames[key] || key}
+                    </span>
+                  </div>
+                  <div class="flex justify-center">
+                    <span
+                      class={cn(
+                        'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white',
+                        today.color
+                      )}
+                    >
+                      {today.level}
+                    </span>
+                  </div>
+                  <div class="flex justify-center">
+                    <span
+                      class={cn(
+                        'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white',
+                        tomorrow.color
+                      )}
+                    >
+                      {tomorrow.level}
+                    </span>
+                  </div>
+                  <div class="flex justify-center">
+                    <span
+                      class={cn(
+                        'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white',
+                        dayafter.color
+                      )}
+                    >
+                      {dayafter.level}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Daten: Deutscher Wetterdienst</span>
+    <a
+      href="https://www.dwd.de/DE/leistungen/gefahrenindizespollen/gefahrenindexpollen.html"
+      target="_blank"
+      rel="noopener"
+      class="text-blue-400 hover:text-blue-300"
+    >
+      dwd.de →
+    </a>
+  </footer>
+</div>

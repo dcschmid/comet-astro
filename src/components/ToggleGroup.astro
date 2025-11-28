@@ -1,0 +1,385 @@
+---
+/**
+ * ToggleGroup - Group of toggle buttons for multi or single selection
+ *
+ * Features:
+ * - Single or multi-selection mode
+ * - Icon and text support
+ * - Multiple size and style variants
+ * - Full keyboard navigation
+ * - WCAG AAA compliant
+ *
+ * @example
+ * <ToggleGroup
+ *   name="alignment"
+ *   options={[
+ *     { value: "left", label: "Left", icon: "⬅️" },
+ *     { value: "center", label: "Center", icon: "↔️" },
+ *     { value: "right", label: "Right", icon: "➡️" },
+ *   ]}
+ *   defaultValue={["center"]}
+ *   multiple={false}
+ * />
+ */
+import { cn } from '../utils/cn';
+
+export interface ToggleOption {
+  /** Unique value for this option */
+  value: string;
+  /** Display label (can be hidden with iconOnly) */
+  label: string;
+  /** Optional icon */
+  icon?: string;
+  /** Disable this option */
+  disabled?: boolean;
+}
+
+interface Props {
+  /** Unique name for the control */
+  name: string;
+  /** Array of toggle options */
+  options: ToggleOption[];
+  /** Default selected value(s) */
+  defaultValue?: string[];
+  /** Allow multiple selections */
+  multiple?: boolean;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Visual variant */
+  variant?: 'default' | 'outline' | 'solid';
+  /** Show only icons (labels become sr-only) */
+  iconOnly?: boolean;
+  /** Orientation */
+  orientation?: 'horizontal' | 'vertical';
+  /** Full width mode */
+  fullWidth?: boolean;
+  /** Disable the entire group */
+  disabled?: boolean;
+  /** Allow deselecting all (only for single mode) */
+  allowEmpty?: boolean;
+  /** ARIA label */
+  ariaLabel?: string;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  name,
+  options = [],
+  defaultValue = [],
+  multiple = true,
+  size = 'md',
+  variant = 'default',
+  iconOnly = false,
+  orientation = 'horizontal',
+  fullWidth = false,
+  disabled = false,
+  allowEmpty = true,
+  ariaLabel,
+  className = '',
+} = Astro.props;
+
+const groupId = `toggle-group-${name}-${Math.random().toString(36).slice(2, 9)}`;
+
+// Size configurations
+const sizeClasses = {
+  sm: {
+    button: 'px-2.5 py-1.5 text-xs gap-1.5',
+    icon: 'text-sm',
+    iconOnly: 'w-8 h-8',
+  },
+  md: {
+    button: 'px-3.5 py-2 text-sm gap-2',
+    icon: 'text-base',
+    iconOnly: 'w-10 h-10',
+  },
+  lg: {
+    button: 'px-4 py-2.5 text-base gap-2',
+    icon: 'text-lg',
+    iconOnly: 'w-12 h-12',
+  },
+};
+
+// Variant styles
+const variantStyles = {
+  default: {
+    container: cn(
+      'bg-slate-100 dark:bg-slate-800',
+      'border border-slate-200 dark:border-slate-700',
+      'rounded-lg p-1'
+    ),
+    button: cn(
+      'rounded-md',
+      'text-slate-600 dark:text-slate-400',
+      'hover:text-slate-900 dark:hover:text-slate-100',
+      'hover:bg-slate-200/50 dark:hover:bg-slate-700/50'
+    ),
+    selected: cn(
+      'bg-white dark:bg-slate-900',
+      'text-slate-900 dark:text-slate-100',
+      'shadow-sm'
+    ),
+  },
+  outline: {
+    container: cn('bg-transparent', 'gap-1'),
+    button: cn(
+      'rounded-lg',
+      'border border-slate-300 dark:border-slate-600',
+      'text-slate-600 dark:text-slate-400',
+      'hover:border-slate-400 dark:hover:border-slate-500',
+      'hover:text-slate-900 dark:hover:text-slate-100'
+    ),
+    selected: cn(
+      'bg-blue-50 dark:bg-blue-900/30',
+      'border-blue-500 dark:border-blue-400',
+      'text-blue-700 dark:text-blue-300'
+    ),
+  },
+  solid: {
+    container: cn('bg-transparent', 'gap-1'),
+    button: cn(
+      'rounded-lg',
+      'bg-slate-100 dark:bg-slate-800',
+      'text-slate-600 dark:text-slate-400',
+      'hover:bg-slate-200 dark:hover:bg-slate-700',
+      'hover:text-slate-900 dark:hover:text-slate-100'
+    ),
+    selected: cn(
+      'bg-blue-600 dark:bg-blue-500',
+      'text-white dark:text-white',
+      'hover:bg-blue-700 dark:hover:bg-blue-600'
+    ),
+  },
+};
+
+const config = sizeClasses[size];
+const styles = variantStyles[variant];
+---
+
+<div
+  class={cn(
+    'inline-flex',
+    orientation === 'vertical' ? 'flex-col' : 'flex-row',
+    styles.container,
+    fullWidth && 'w-full',
+    disabled && 'opacity-50 cursor-not-allowed',
+    className
+  )}
+  role={multiple ? 'group' : 'radiogroup'}
+  aria-label={ariaLabel || `${name} options`}
+  data-toggle-group
+  data-name={name}
+  data-multiple={multiple}
+  data-allow-empty={allowEmpty}
+  data-selected={JSON.stringify(defaultValue)}
+>
+  {
+    options.map((option) => {
+      const isSelected = defaultValue.includes(option.value);
+      const isDisabled = disabled || option.disabled;
+      const optionId = `${groupId}-${option.value}`;
+
+      return (
+        <button
+          type="button"
+          id={optionId}
+          class={cn(
+            'inline-flex items-center justify-center font-medium',
+            'transition-all duration-150',
+            'focus-visible:outline-none focus-visible:ring-2',
+            'focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400',
+            'focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            iconOnly ? config.iconOnly : config.button,
+            styles.button,
+            isSelected && styles.selected,
+            fullWidth && 'flex-1'
+          )}
+          role={multiple ? 'checkbox' : 'radio'}
+          aria-checked={isSelected}
+          aria-pressed={isSelected}
+          disabled={isDisabled}
+          data-toggle-option
+          data-value={option.value}
+        >
+          {option.icon && (
+            <span class={cn(config.icon)} aria-hidden="true">
+              {option.icon}
+            </span>
+          )}
+          <span class={cn(iconOnly && 'sr-only')}>{option.label}</span>
+        </button>
+      );
+    })
+  }
+</div>
+
+<script is:inline>
+  (function () {
+    const groups = document.querySelectorAll('[data-toggle-group]');
+
+    groups.forEach((group) => {
+      const buttons = group.querySelectorAll('[data-toggle-option]');
+      const name = group.getAttribute('data-name');
+      const isMultiple = group.getAttribute('data-multiple') === 'true';
+      const allowEmpty = group.getAttribute('data-allow-empty') === 'true';
+
+      // Parse initial selected state
+      let selected = new Set();
+      try {
+        const initial = JSON.parse(group.getAttribute('data-selected') || '[]');
+        selected = new Set(Array.isArray(initial) ? initial : []);
+      } catch {
+        selected = new Set();
+      }
+
+      // Get variant classes from first selected button for toggling
+
+      const updateVisuals = () => {
+        buttons.forEach((button) => {
+          if (!(button instanceof HTMLElement)) return;
+          const value = button.getAttribute('data-value');
+          const isSelected = selected.has(value);
+
+          button.setAttribute('aria-checked', String(isSelected));
+          button.setAttribute('aria-pressed', String(isSelected));
+
+          // Toggle selected appearance
+          if (isSelected) {
+            button.classList.add('text-slate-900', 'dark:text-slate-100');
+          }
+        });
+
+        // Update data attribute
+        group.setAttribute(
+          'data-selected',
+          JSON.stringify(Array.from(selected))
+        );
+      };
+
+      const toggleOption = (value) => {
+        if (isMultiple) {
+          // Multi-select: toggle the value
+          if (selected.has(value)) {
+            if (allowEmpty || selected.size > 1) {
+              selected.delete(value);
+            }
+          } else {
+            selected.add(value);
+          }
+        } else {
+          // Single-select: radio behavior
+          if (selected.has(value)) {
+            if (allowEmpty) {
+              selected.clear();
+            }
+          } else {
+            selected.clear();
+            selected.add(value);
+          }
+        }
+
+        updateVisuals();
+
+        // Dispatch change event
+        group.dispatchEvent(
+          new CustomEvent('change', {
+            bubbles: true,
+            detail: {
+              name,
+              value: isMultiple
+                ? Array.from(selected)
+                : selected.size > 0
+                  ? Array.from(selected)[0]
+                  : null,
+              selected: Array.from(selected),
+            },
+          })
+        );
+      };
+
+      // Click handlers
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          if (button.disabled) return;
+          const value = button.getAttribute('data-value');
+          if (value) toggleOption(value);
+        });
+      });
+
+      // Keyboard navigation
+      group.addEventListener('keydown', (e) => {
+        const buttonArray = Array.from(buttons).filter(
+          (btn) => btn instanceof HTMLElement && !btn.hasAttribute('disabled')
+        );
+
+        if (!buttonArray.length) return;
+
+        const currentIndex = buttonArray.findIndex(
+          (btn) => btn === document.activeElement
+        );
+
+        if (currentIndex === -1) return;
+
+        const isVertical = group.classList.contains('flex-col');
+        const prevKey = isVertical ? 'ArrowUp' : 'ArrowLeft';
+        const nextKey = isVertical ? 'ArrowDown' : 'ArrowRight';
+
+        let nextIndex = currentIndex;
+
+        if (e.key === prevKey) {
+          e.preventDefault();
+          nextIndex =
+            currentIndex > 0 ? currentIndex - 1 : buttonArray.length - 1;
+        } else if (e.key === nextKey) {
+          e.preventDefault();
+          nextIndex =
+            currentIndex < buttonArray.length - 1 ? currentIndex + 1 : 0;
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          nextIndex = 0;
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          nextIndex = buttonArray.length - 1;
+        } else if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          const value = buttonArray[currentIndex]?.getAttribute('data-value');
+          if (value) toggleOption(value);
+          return;
+        } else {
+          return;
+        }
+
+        const nextButton = buttonArray[nextIndex];
+        if (nextButton instanceof HTMLElement) {
+          nextButton.focus();
+        }
+      });
+
+      // Initialize visuals
+      updateVisuals();
+    });
+  })();
+</script>
+
+<style>
+  /* Ensure smooth transitions */
+  [data-toggle-option] {
+    transition: all 150ms ease-in-out;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    [data-toggle-option][aria-checked='true'] {
+      outline: 2px solid currentColor;
+      outline-offset: -2px;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    [data-toggle-option] {
+      transition: none;
+    }
+  }
+</style>

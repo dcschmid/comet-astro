@@ -1,0 +1,262 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import InfoIcon from '../../components/InfoIcon.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { InfoIcon } from 'comet-astro';
+---
+
+<!-- Basic usage -->
+<InfoIcon tooltip="This field is required for registration" />
+
+<!-- Different variants -->
+<InfoIcon variant="help" tooltip="Click here for more information" />
+<InfoIcon variant="warning" tooltip="This action cannot be undone" />
+<InfoIcon variant="tip" tooltip="Pro tip: Use keyboard shortcuts" />
+
+<!-- Custom position -->
+<InfoIcon tooltip="Appears on the right" position="right" />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'tooltip',
+    type: 'string',
+    default: '-',
+    description: 'Tooltip text content. Required.',
+  },
+  {
+    name: 'variant',
+    type: "'info' | 'help' | 'warning' | 'tip'",
+    default: "'info'",
+    description: 'Icon style and color variant.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size of the icon.',
+  },
+  {
+    name: 'position',
+    type: "'top' | 'bottom' | 'left' | 'right'",
+    default: "'top'",
+    description: 'Tooltip position relative to icon.',
+  },
+  {
+    name: 'maxWidth',
+    type: 'number',
+    default: '250',
+    description: 'Maximum tooltip width in pixels.',
+  },
+  {
+    name: 'delay',
+    type: 'number',
+    default: '200',
+    description: 'Delay before showing tooltip (ms).',
+  },
+  {
+    name: 'icon',
+    type: 'string',
+    default: "''",
+    description: 'Custom icon (emoji or text) instead of default.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="InfoIcon"
+  seoDescription="Accessible tooltip icon for help text and explanations."
+>
+  <Headline level="h1" textSize="2xl">InfoIcon</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The InfoIcon component provides an accessible tooltip triggered by
+      hovering or focusing a small icon. Perfect for inline help text, field
+      explanations, or contextual tips without cluttering the interface.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Four icon variants (info, help, warning, tip) with distinct colors. Full
+      keyboard accessibility—focus the icon and the tooltip appears. Touch
+      devices can tap to toggle.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and provide the <InlineCode>tooltip</InlineCode> text.
+      Choose a <InlineCode>variant</InlineCode> that matches the context.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Icon variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Four semantic variants for different contexts.
+      </Paragraph>
+      <div class="flex flex-wrap items-center gap-8">
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Info:</span>
+          <InfoIcon
+            variant="info"
+            tooltip="General information about this feature"
+          />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Help:</span>
+          <InfoIcon
+            variant="help"
+            tooltip="Need help? Contact support at help@example.com"
+          />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Warning:</span>
+          <InfoIcon variant="warning" tooltip="This action cannot be undone" />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Tip:</span>
+          <InfoIcon
+            variant="tip"
+            tooltip="Pro tip: Press Ctrl+S to save quickly"
+          />
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Tooltip positions
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Position the tooltip on any side of the icon.
+      </Paragraph>
+      <div class="flex flex-wrap items-center gap-8 py-8">
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Top:</span>
+          <InfoIcon tooltip="Tooltip on top" position="top" />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Bottom:</span>
+          <InfoIcon tooltip="Tooltip on bottom" position="bottom" />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Left:</span>
+          <InfoIcon tooltip="Tooltip on left" position="left" />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Right:</span>
+          <InfoIcon tooltip="Tooltip on right" position="right" />
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three sizes for different contexts.
+      </Paragraph>
+      <div class="flex items-center gap-8">
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Small:</span>
+          <InfoIcon tooltip="Small icon" size="sm" />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Medium:</span>
+          <InfoIcon tooltip="Medium icon" size="md" />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Large:</span>
+          <InfoIcon tooltip="Large icon" size="lg" />
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Inline with form labels
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Common use case: explain a form field.
+      </Paragraph>
+      <div class="flex items-center gap-2">
+        <span class="text-slate-100 font-medium">Email address</span>
+        <InfoIcon
+          tooltip="We'll never share your email with third parties"
+          size="sm"
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Custom icon
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Use a custom emoji or text instead of the default icon.
+      </Paragraph>
+      <div class="flex items-center gap-8">
+        <InfoIcon tooltip="Custom sparkle icon" icon="✨" />
+        <InfoIcon tooltip="Custom rocket icon" icon="🚀" />
+        <InfoIcon tooltip="Custom heart icon" icon="❤️" />
+      </div>
+    </article>
+  </section>
+</DocsLayout>

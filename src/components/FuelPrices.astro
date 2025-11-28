@@ -1,0 +1,341 @@
+---
+/**
+ * FuelPrices - Spritpreise in der Nähe
+ *
+ * Zeigt aktuelle Benzin- und Dieselpreise von Tankstellen.
+ * Benötigt einen kostenlosen API-Key von tankerkoenig.de
+ *
+ * API: https://creativecommons.tankerkoenig.de/
+ */
+import { cn } from '../utils/cn';
+
+interface Station {
+  id: string;
+  name: string;
+  brand: string;
+  street: string;
+  houseNumber: string;
+  postCode: number;
+  place: string;
+  lat: number;
+  lng: number;
+  dist: number;
+  price: number | null;
+  isOpen: boolean;
+}
+
+interface Props {
+  apiKey?: string;
+  lat: number;
+  lng: number;
+  radius?: number; // km, max 25
+  fuelType?: 'e5' | 'e10' | 'diesel' | 'all';
+  sortBy?: 'price' | 'dist';
+  maxStations?: number;
+  showClosed?: boolean;
+  showMap?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  apiKey = '00000000-0000-0000-0000-000000000002', // Demo key
+  lat,
+  lng,
+  radius = 5,
+  fuelType = 'e5',
+  sortBy = 'price',
+  maxStations = 5,
+  showClosed = false,
+  showMap = true,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+let stations: Station[] = [];
+let error: string | null = null;
+
+const fuelLabels: Record<string, string> = {
+  e5: 'Super E5',
+  e10: 'Super E10',
+  diesel: 'Diesel',
+  all: 'Alle Kraftstoffe',
+};
+
+try {
+  const params = new URLSearchParams({
+    lat: lat.toString(),
+    lng: lng.toString(),
+    rad: Math.min(radius, 25).toString(),
+    sort: sortBy,
+    type: fuelType === 'all' ? 'e5' : fuelType,
+    apikey: apiKey,
+  });
+
+  const res = await fetch(
+    `https://creativecommons.tankerkoenig.de/json/list.php?${params}`
+  );
+  if (res.ok) {
+    const data = await res.json();
+    if (data.ok) {
+      stations = data.stations || [];
+      if (!showClosed) {
+        stations = stations.filter((s) => s.isOpen);
+      }
+      stations = stations.slice(0, maxStations);
+    } else {
+      error = data.message || 'API-Fehler';
+    }
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+// Find min/max prices for highlighting
+const prices = stations.filter((s) => s.price).map((s) => s.price!);
+const minPrice = Math.min(...prices);
+const maxPrice = Math.max(...prices);
+
+function formatPrice(price: number | null): string {
+  if (!price) return '–';
+  return price.toFixed(3).replace('.', ',') + ' €';
+}
+
+const brandColors: Record<string, { bg: string; text: string }> = {
+  Shell: { bg: 'bg-yellow-500/20', text: 'text-yellow-400' },
+  Aral: { bg: 'bg-blue-500/20', text: 'text-blue-400' },
+  Esso: { bg: 'bg-red-500/20', text: 'text-red-400' },
+  Total: { bg: 'bg-red-600/20', text: 'text-red-400' },
+  Jet: { bg: 'bg-yellow-400/20', text: 'text-yellow-300' },
+  OMV: { bg: 'bg-blue-600/20', text: 'text-blue-300' },
+  Sprint: { bg: 'bg-green-500/20', text: 'text-green-400' },
+  Star: { bg: 'bg-orange-500/20', text: 'text-orange-400' },
+  HEM: { bg: 'bg-purple-500/20', text: 'text-purple-400' },
+  Agip: { bg: 'bg-yellow-600/20', text: 'text-yellow-400' },
+  Avia: { bg: 'bg-blue-400/20', text: 'text-blue-300' },
+};
+
+function getBrandStyle(brand: string) {
+  return (
+    brandColors[brand] || { bg: 'bg-slate-700/50', text: 'text-slate-300' }
+  );
+}
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  <header class="px-5 py-4 border-b border-slate-700/50 bg-amber-500/5">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div
+          class="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/25"
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-100 text-lg">Spritpreise</h3>
+          <p class="text-xs text-slate-400">
+            {fuelLabels[fuelType]} • {radius} km Umkreis
+          </p>
+        </div>
+      </div>
+
+      {
+        stations.length > 0 && minPrice && (
+          <div class="text-right">
+            <div class="text-xs text-slate-500">ab</div>
+            <div class="text-xl font-black text-emerald-400">
+              {formatPrice(minPrice)}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </header>
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : stations.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
+            </svg>
+          </div>
+          <p class="text-slate-400 font-medium">Keine Tankstellen gefunden</p>
+          <p class="text-slate-500 text-sm mt-1">Im Umkreis von {radius} km</p>
+        </div>
+      ) : (
+        <div class={cn('space-y-3', compact && 'space-y-2')}>
+          {stations.map((station, idx) => {
+            const brandStyle = getBrandStyle(station.brand);
+            const isCheapest = station.price === minPrice;
+            const isMostExpensive =
+              station.price === maxPrice && prices.length > 2;
+
+            return (
+              <article
+                class={cn(
+                  'group rounded-xl border p-4 transition-all',
+                  isCheapest
+                    ? 'bg-emerald-950/30 border-emerald-500/30 hover:border-emerald-500/50'
+                    : 'bg-slate-800/50 border-slate-700/50 hover:border-slate-600'
+                )}
+              >
+                <div class="flex items-center gap-4">
+                  {/* Rank */}
+                  <div
+                    class={cn(
+                      'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0',
+                      isCheapest
+                        ? 'bg-emerald-500/30 text-emerald-300'
+                        : 'bg-slate-700/50 text-slate-400'
+                    )}
+                  >
+                    {idx + 1}
+                  </div>
+
+                  {/* Station Info */}
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span
+                        class={cn(
+                          'px-2 py-0.5 text-xs font-semibold rounded',
+                          brandStyle.bg,
+                          brandStyle.text
+                        )}
+                      >
+                        {station.brand}
+                      </span>
+                      {!station.isOpen && (
+                        <span class="px-2 py-0.5 text-xs bg-red-500/20 text-red-400 rounded">
+                          Geschlossen
+                        </span>
+                      )}
+                      {isCheapest && (
+                        <span class="px-2 py-0.5 text-xs bg-emerald-500/30 text-emerald-300 rounded font-semibold">
+                          Günstigster
+                        </span>
+                      )}
+                    </div>
+                    <h4 class="font-semibold text-slate-100 truncate mt-1">
+                      {station.name}
+                    </h4>
+                    {!compact && (
+                      <p class="text-xs text-slate-500 mt-0.5">
+                        {station.street} {station.houseNumber},{' '}
+                        {station.postCode} {station.place}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Price & Distance */}
+                  <div class="text-right shrink-0">
+                    <div
+                      class={cn(
+                        'text-2xl font-black',
+                        isCheapest
+                          ? 'text-emerald-400'
+                          : isMostExpensive
+                            ? 'text-red-400'
+                            : 'text-slate-100'
+                      )}
+                    >
+                      {formatPrice(station.price)}
+                    </div>
+                    <div class="text-xs text-slate-500">
+                      {station.dist.toFixed(1)} km
+                    </div>
+                  </div>
+
+                  {/* Map Link */}
+                  {showMap && (
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`}
+                      target="_blank"
+                      rel="noopener"
+                      class="p-2 rounded-lg bg-slate-700/50 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition-colors shrink-0"
+                      title="Route planen"
+                    >
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                        />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Daten: Tankerkönig (CC BY 4.0)</span>
+    <a
+      href="https://tankerkoenig.de"
+      target="_blank"
+      rel="noopener"
+      class="text-blue-400 hover:text-blue-300"
+    >
+      tankerkoenig.de →
+    </a>
+  </footer>
+</div>

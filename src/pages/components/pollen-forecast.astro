@@ -1,0 +1,154 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import PollenForecast from '../../components/PollenForecast.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const usageSnippet = `---
+import { PollenForecast } from 'comet-astro';
+---
+
+<PollenForecast region={11} />
+<PollenForecast region={50} showLegend={true} />
+<PollenForecast region={11} compact={true} />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'region',
+    type: 'number',
+    default: '—',
+    description: 'German DWD region code (e.g. 11 for Schleswig-Holstein).',
+  },
+  {
+    name: 'showLegend',
+    type: 'boolean',
+    default: 'false',
+    description: 'Show the pollen intensity legend.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Use compact display mode.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="PollenForecast"
+  seoDescription="Display pollen forecast for German regions using DWD Open Data."
+>
+  <Headline level="h1" textSize="2xl">PollenForecast</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The PollenForecast component displays pollen forecasts for German regions
+      using data from the DWD (Deutscher Wetterdienst).
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Shows forecasts for various pollen types including grasses, birch, hazel,
+      alder, ash, mugwort, ragweed, and rye.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <Table columns={propsColumns} data={propsData} responsive={true} />
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Schleswig-Holstein</Headline
+      >
+      <PollenForecast region={11} />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">With Legend</Headline
+      >
+      <PollenForecast region={50} showLegend={true} />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Compact Mode</Headline
+      >
+      <PollenForecast region={11} compact={true} />
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Region Codes</Headline
+    >
+    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+      <p class="text-sm text-slate-300 mb-2">Common German region codes:</p>
+      <ul class="text-sm text-slate-400 grid grid-cols-2 gap-1">
+        <li>11 – Schleswig-Holstein</li>
+        <li>12 – Hamburg</li>
+        <li>20 – Niedersachsen</li>
+        <li>31 – Brandenburg/Berlin</li>
+        <li>50 – NRW</li>
+        <li>61 – Hessen</li>
+        <li>71 – Baden-Württemberg</li>
+        <li>81 – Bayern Nord</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >API Reference</Headline
+    >
+    <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-amber-300">API:</strong>
+        <a
+          href="https://opendata.dwd.de/"
+          target="_blank"
+          rel="noopener"
+          class="text-amber-400 hover:underline ml-1">DWD Open Data</a
+        >
+        – Free, no API key required.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

@@ -1,0 +1,302 @@
+---
+/**
+ * RustCrate - Rust Crate-Informationen
+ *
+ * Zeigt Downloads, Version, Lizenz und mehr für Rust-Crates.
+ *
+ * API: https://crates.io/api/v1/crates
+ */
+import { cn } from '../utils/cn';
+
+interface CrateInfo {
+  crate: {
+    id: string;
+    name: string;
+    description?: string;
+    downloads: number;
+    recent_downloads?: number;
+    max_version: string;
+    homepage?: string;
+    repository?: string;
+    documentation?: string;
+    created_at: string;
+    updated_at: string;
+  };
+  versions: Array<{
+    num: string;
+    license?: string;
+    created_at: string;
+    downloads: number;
+  }>;
+  keywords: Array<{ id: string; keyword: string }>;
+  categories: Array<{ id: string; category: string }>;
+}
+
+interface Props {
+  crate: string;
+  variant?: 'default' | 'compact' | 'badge';
+  showDownloads?: boolean;
+  showKeywords?: boolean;
+  showLinks?: boolean;
+  className?: string;
+}
+
+const {
+  crate: crateName,
+  variant = 'default',
+  showDownloads = true,
+  showKeywords = true,
+  showLinks = true,
+  className = '',
+} = Astro.props;
+
+let data: CrateInfo | null = null;
+let error: string | null = null;
+
+try {
+  const res = await fetch(`https://crates.io/api/v1/crates/${crateName}`, {
+    headers: {
+      'User-Agent': 'comet-astro/1.0 (component library)',
+    },
+  });
+  if (res.ok) {
+    data = await res.json();
+  } else {
+    error = 'Crate nicht gefunden';
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+function formatDownloads(num: number): string {
+  if (num >= 1_000_000_000) return `${(num / 1_000_000_000).toFixed(1)}B`;
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(0)}K`;
+  return num.toString();
+}
+
+// Date formatting utility
+// const _formatDate = (dateStr: string): string => {
+//   return new Date(dateStr).toLocaleDateString('de-DE', {
+//     day: 'numeric',
+//     month: 'short',
+//     year: 'numeric'
+//   });
+// };
+
+const crate = data?.crate;
+const latestVersion = data?.versions?.[0];
+---
+
+{
+  error ? (
+    <div
+      class={cn(
+        'p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm',
+        className
+      )}
+    >
+      <div class="flex items-center gap-2">
+        <svg
+          class="w-5 h-5 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        {error}: {crateName}
+      </div>
+    </div>
+  ) : crate && variant === 'badge' ? (
+    <a
+      href={`https://crates.io/crates/${crateName}`}
+      target="_blank"
+      rel="noopener"
+      class={cn(
+        'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-500/20 border border-orange-500/30 text-orange-300 hover:bg-orange-500/30 transition-colors text-sm font-medium',
+        className
+      )}
+    >
+      <svg class="w-4 h-4" viewBox="0 0 512 512" fill="currentColor">
+        <path d="M239.1 6.3l-208 78c-18.7 7-31.1 25-31.1 45v225.1c0 18.2 10.3 34.8 26.5 42.9l208 104c13.5 6.8 29.4 6.8 42.9 0l208-104c16.3-8.1 26.5-24.8 26.5-42.9V129.3c0-20-12.4-37.9-31.1-44.9l-208-78C262 2.2 250 2.2 239.1 6.3z" />
+      </svg>
+      {crateName}
+      <span class="text-orange-400">v{crate.max_version}</span>
+    </a>
+  ) : crate && variant === 'compact' ? (
+    <a
+      href={`https://crates.io/crates/${crateName}`}
+      target="_blank"
+      rel="noopener"
+      class={cn(
+        'flex items-center gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-orange-500/30 transition-colors',
+        className
+      )}
+    >
+      <div class="p-2.5 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg shadow-orange-500/25">
+        <svg
+          class="w-5 h-5 text-white"
+          viewBox="0 0 512 512"
+          fill="currentColor"
+        >
+          <path d="M239.1 6.3l-208 78c-18.7 7-31.1 25-31.1 45v225.1c0 18.2 10.3 34.8 26.5 42.9l208 104c13.5 6.8 29.4 6.8 42.9 0l208-104c16.3-8.1 26.5-24.8 26.5-42.9V129.3c0-20-12.4-37.9-31.1-44.9l-208-78C262 2.2 250 2.2 239.1 6.3z" />
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-bold text-slate-100">{crateName}</h3>
+        <p class="text-sm text-slate-400 truncate">
+          {crate.description || 'Keine Beschreibung'}
+        </p>
+      </div>
+      <div class="text-right shrink-0">
+        <p class="font-semibold text-slate-200">v{crate.max_version}</p>
+        {showDownloads && (
+          <p class="text-xs text-slate-500">
+            {formatDownloads(crate.downloads)} total
+          </p>
+        )}
+      </div>
+    </a>
+  ) : (
+    crate && (
+      <div
+        class={cn(
+          'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+          className
+        )}
+      >
+        <header class="px-5 py-4 border-b border-slate-700/50 bg-orange-500/5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2.5 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg shadow-orange-500/25">
+                <svg
+                  class="w-5 h-5 text-white"
+                  viewBox="0 0 512 512"
+                  fill="currentColor"
+                >
+                  <path d="M239.1 6.3l-208 78c-18.7 7-31.1 25-31.1 45v225.1c0 18.2 10.3 34.8 26.5 42.9l208 104c13.5 6.8 29.4 6.8 42.9 0l208-104c16.3-8.1 26.5-24.8 26.5-42.9V129.3c0-20-12.4-37.9-31.1-44.9l-208-78C262 2.2 250 2.2 239.1 6.3z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-100 text-lg">{crateName}</h3>
+                <p class="text-xs text-slate-400">Rust Crate</p>
+              </div>
+            </div>
+
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-orange-500/20 text-orange-300 border border-orange-500/30">
+              v{crate.max_version}
+            </span>
+          </div>
+        </header>
+
+        <div class="p-5">
+          {crate.description && (
+            <p class="text-slate-300 mb-4">{crate.description}</p>
+          )}
+
+          {/* Stats Grid */}
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            {showDownloads && (
+              <>
+                <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30 text-center">
+                  <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                    Downloads
+                  </p>
+                  <p class="font-bold text-slate-200 text-lg">
+                    {formatDownloads(crate.downloads)}
+                  </p>
+                  <p class="text-xs text-slate-500">gesamt</p>
+                </div>
+                {crate.recent_downloads && (
+                  <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30 text-center">
+                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                      Letzte 90 Tage
+                    </p>
+                    <p class="font-bold text-slate-200 text-lg">
+                      {formatDownloads(crate.recent_downloads)}
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+            {latestVersion?.license && (
+              <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30 text-center">
+                <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                  Lizenz
+                </p>
+                <p class="font-semibold text-slate-200 text-sm">
+                  {latestVersion.license}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Keywords */}
+          {showKeywords && data?.keywords && data.keywords.length > 0 && (
+            <div class="mb-4">
+              <p class="text-xs text-slate-500 uppercase tracking-wide mb-2">
+                Keywords
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {data.keywords.slice(0, 6).map((kw) => (
+                  <span class="px-2 py-0.5 rounded-full text-xs bg-slate-700/50 text-slate-400">
+                    {kw.keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Install Command */}
+          <div class="p-3 rounded-lg bg-slate-950/50 border border-slate-700/30 font-mono text-sm">
+            <span class="text-slate-500">[dependencies]</span>
+            <br />
+            <span class="text-orange-400">{crateName}</span>
+            <span class="text-slate-300"> = </span>
+            <span class="text-emerald-400">"{crate.max_version}"</span>
+          </div>
+        </div>
+
+        {/* Footer with Links */}
+        {showLinks && (
+          <footer class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between gap-4">
+            <a
+              href={`https://crates.io/crates/${crateName}`}
+              target="_blank"
+              rel="noopener"
+              class="text-sm text-orange-400 hover:text-orange-300 transition-colors"
+            >
+              crates.io →
+            </a>
+            {crate.documentation && (
+              <a
+                href={crate.documentation}
+                target="_blank"
+                rel="noopener"
+                class="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Docs →
+              </a>
+            )}
+            {crate.repository && (
+              <a
+                href={crate.repository}
+                target="_blank"
+                rel="noopener"
+                class="text-sm text-slate-400 hover:text-slate-300 transition-colors"
+              >
+                Repository →
+              </a>
+            )}
+          </footer>
+        )}
+      </div>
+    )
+  )
+}

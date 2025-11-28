@@ -1,0 +1,153 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import WikiSummary from '../../components/WikiSummary.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const usageSnippet = `---
+import { WikiSummary } from 'comet-astro';
+---
+
+<WikiSummary article="JavaScript" />
+<WikiSummary article="Berlin" lang="de" />
+<WikiSummary article="Python_(programming_language)" showImage={false} />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'article',
+    type: 'string',
+    default: '—',
+    description: 'Wikipedia article title (use underscores for spaces).',
+  },
+  {
+    name: 'lang',
+    type: 'string',
+    default: "'en'",
+    description: 'Wikipedia language code (en, de, fr, es, etc.).',
+  },
+  {
+    name: 'variant',
+    type: "'card' | 'inline' | 'minimal'",
+    default: "'card'",
+    description: 'Display variant.',
+  },
+  {
+    name: 'showImage',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show article thumbnail if available.',
+  },
+  {
+    name: 'showDescription',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show article extract/summary.',
+  },
+  {
+    name: 'maxLength',
+    type: 'number',
+    default: '200',
+    description: 'Maximum characters for the summary.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="WikiSummary"
+  seoDescription="Display Wikipedia article summaries with images using the Wikipedia API."
+>
+  <Headline level="h1" textSize="2xl">WikiSummary</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The WikiSummary component fetches and displays Wikipedia article summaries
+      with optional images in various display variants.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Uses the Wikipedia REST API to fetch article summaries. Supports multiple
+      languages and configurable summary length.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <Table columns={propsColumns} data={propsData} responsive={true} />
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Default Card</Headline
+      >
+      <WikiSummary article="JavaScript" />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">German Wikipedia</Headline
+      >
+      <WikiSummary article="Berlin" lang="de" />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Minimal Variant</Headline
+      >
+      <WikiSummary article="Astro_(web_framework)" variant="minimal" />
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >API Reference</Headline
+    >
+    <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-amber-300">API:</strong>
+        <a
+          href="https://www.mediawiki.org/wiki/REST_API"
+          target="_blank"
+          rel="noopener"
+          class="text-amber-400 hover:underline ml-1">Wikipedia REST API</a
+        >
+        – Free, no API key required.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

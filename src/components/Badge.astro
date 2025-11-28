@@ -1,18 +1,58 @@
 ---
 /**
  * Badge - small label indicator
+ *
+ * Supports automatic color selection based on label content using `autoColor` prop.
+ * This is useful for category badges where the color should match the content.
  */
+
+export type BadgeVariant =
+  | 'neutral'
+  | 'primary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'purple'
+  | 'blue'
+  | 'emerald'
+  | 'amber'
+  | 'rose'
+  | 'sky'
+  | 'indigo'
+  | 'slate';
+
 interface Props {
   label: string;
-  variant?: 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
+  variant?: BadgeVariant;
+  /** Automatically determine color based on label content */
+  autoColor?: boolean;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Make the badge a link */
+  href?: string;
   className?: string;
 }
 
-const { label, variant = 'neutral', className = '' } = Astro.props as Props;
+const {
+  label,
+  variant: propVariant,
+  autoColor = false,
+  size = 'md',
+  href,
+  className = '',
+} = Astro.props as Props;
 
 const base =
-  'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold tracking-wide';
-const variantMap: Record<NonNullable<Props['variant']>, string> = {
+  'inline-flex items-center rounded-full font-semibold tracking-wide';
+
+const sizeClasses = {
+  sm: 'px-2 py-0.5 text-[10px]',
+  md: 'px-2.5 py-1 text-xs',
+  lg: 'px-3 py-1.5 text-sm',
+};
+
+// Extended variant map with more colors for autoColor feature
+const variantMap: Record<BadgeVariant, string> = {
   neutral:
     'border border-slate-800 bg-slate-900 text-slate-50 shadow-sm dark:border-slate-300 dark:bg-slate-100 dark:text-slate-950',
   primary:
@@ -23,8 +63,64 @@ const variantMap: Record<NonNullable<Props['variant']>, string> = {
     'border border-amber-700 bg-amber-950 text-white shadow-sm dark:border-amber-300 dark:bg-amber-100 dark:text-amber-950',
   danger:
     'border border-rose-800 bg-rose-950 text-white shadow-sm dark:border-rose-200 dark:bg-rose-100 dark:text-rose-950',
+  // Additional color variants for autoColor
+  purple:
+    'border border-purple-700 bg-purple-700 text-white dark:border-purple-500 dark:bg-purple-500 dark:text-white',
+  blue: 'border border-blue-700 bg-blue-700 text-white dark:border-blue-500 dark:bg-blue-500 dark:text-white',
+  emerald:
+    'border border-emerald-700 bg-emerald-700 text-white dark:border-emerald-600 dark:bg-emerald-600 dark:text-white',
+  amber:
+    'border border-amber-600 bg-amber-500 text-slate-900 dark:border-amber-500 dark:bg-amber-400 dark:text-slate-900',
+  rose: 'border border-rose-700 bg-rose-600 text-white dark:border-rose-500 dark:bg-rose-500 dark:text-white',
+  sky: 'border border-sky-700 bg-sky-700 text-white dark:border-sky-600 dark:bg-sky-600 dark:text-white',
+  indigo:
+    'border border-indigo-700 bg-indigo-700 text-white dark:border-indigo-500 dark:bg-indigo-500 dark:text-white',
+  slate:
+    'border border-slate-600 bg-slate-600 text-white dark:border-slate-500 dark:bg-slate-500 dark:text-white',
 };
+
+// Heuristic color detection based on label content (for autoColor)
+function getAutoColor(text: string): BadgeVariant {
+  const key = text.toLowerCase().trim();
+
+  // Music genre mappings
+  if (key.includes('rock')) return 'purple';
+  if (key.includes('pop')) return 'sky';
+  if (key.includes('jazz')) return 'amber';
+  if (key.includes('hip') || key.includes('rap')) return 'emerald';
+  if (key.includes('classical')) return 'indigo';
+  if (key.includes('electronic') || key.includes('edm')) return 'blue';
+  if (key.includes('r&b') || key.includes('soul')) return 'rose';
+  if (key.includes('country')) return 'amber';
+  if (key.includes('metal')) return 'slate';
+  if (key.includes('folk')) return 'emerald';
+
+  // Status/semantic mappings
+  if (key.includes('new') || key.includes('featured')) return 'primary';
+  if (
+    key.includes('success') ||
+    key.includes('complete') ||
+    key.includes('done')
+  )
+    return 'success';
+  if (key.includes('warning') || key.includes('pending')) return 'warning';
+  if (key.includes('error') || key.includes('failed') || key.includes('danger'))
+    return 'danger';
+
+  return 'slate';
+}
+
+const variant: BadgeVariant =
+  propVariant ?? (autoColor ? getAutoColor(label) : 'neutral');
+const Tag = href ? 'a' : 'span';
+const interactiveClasses = href
+  ? 'transition-colors hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400'
+  : '';
 ---
 
-<span class={`${base} ${variantMap[variant]} ${className}`.trim()}>{label}</span
+<Tag
+  class={`${base} ${sizeClasses[size]} ${variantMap[variant]} ${interactiveClasses} ${className}`.trim()}
+  href={href}
 >
+  {label}
+</Tag>

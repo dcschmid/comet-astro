@@ -1,0 +1,148 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import PypiPackage from '../../components/PypiPackage.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const usageSnippet = `---
+import { PypiPackage } from 'comet-astro';
+---
+
+<PypiPackage package="requests" />
+<PypiPackage package="django" variant="compact" />
+<PypiPackage package="numpy" variant="badge" />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'package',
+    type: 'string',
+    default: '—',
+    description: 'PyPI package name to display.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'badge'",
+    default: "'default'",
+    description: 'Display variant.',
+  },
+  {
+    name: 'showRequirements',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show required Python version.',
+  },
+  {
+    name: 'showLinks',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show PyPI, docs and repository links.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="PypiPackage"
+  seoDescription="Display Python package information with version and pip install command."
+>
+  <Headline level="h1" textSize="2xl">PypiPackage</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The PypiPackage component displays information about Python packages from
+      PyPI including version, author, license, and a pip install command.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Perfect for Python documentation, library comparisons, or showcasing
+      dependencies.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <Table columns={propsColumns} data={propsData} responsive={true} />
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Default variant</Headline
+      >
+      <PypiPackage package="requests" />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Compact variant</Headline
+      >
+      <div class="space-y-2">
+        <PypiPackage package="django" variant="compact" />
+        <PypiPackage package="flask" variant="compact" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100">Badge variant</Headline
+      >
+      <div class="flex flex-wrap gap-2">
+        <PypiPackage package="numpy" variant="badge" />
+        <PypiPackage package="pandas" variant="badge" />
+        <PypiPackage package="pytest" variant="badge" />
+      </div>
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >API Reference</Headline
+    >
+    <div class="p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-blue-300">API:</strong>
+        <a
+          href="https://pypi.org/"
+          target="_blank"
+          rel="noopener"
+          class="text-blue-400 hover:underline ml-1">pypi.org</a
+        >
+        – Free, no API key required.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

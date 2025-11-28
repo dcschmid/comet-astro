@@ -1,0 +1,171 @@
+---
+/**
+ * Marquee - Infinite scrolling content strip
+ *
+ * Features:
+ * - Smooth infinite scroll animation
+ * - Customizable speed and direction
+ * - Pause on hover
+ * - Responsive gap control
+ * - Reduced motion support
+ *
+ * @example
+ * <Marquee>
+ *   <img src="/logo1.svg" alt="Partner 1" />
+ *   <img src="/logo2.svg" alt="Partner 2" />
+ *   <img src="/logo3.svg" alt="Partner 3" />
+ * </Marquee>
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** Animation speed in seconds */
+  speed?: number;
+  /** Scroll direction */
+  direction?: 'left' | 'right';
+  /** Pause animation on hover */
+  pauseOnHover?: boolean;
+  /** Gap between items (Tailwind spacing) */
+  gap?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Gradient fade on edges */
+  fade?: boolean;
+  /** Fade width */
+  fadeWidth?: string;
+  /** Vertical alignment */
+  align?: 'start' | 'center' | 'end';
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  speed = 30,
+  direction = 'left',
+  pauseOnHover = true,
+  gap = 'lg',
+  fade = true,
+  fadeWidth = '100px',
+  align = 'center',
+  className = '',
+} = Astro.props;
+
+const gapClasses = {
+  sm: 'gap-4',
+  md: 'gap-8',
+  lg: 'gap-12',
+  xl: 'gap-16',
+};
+
+const alignClasses = {
+  start: 'items-start',
+  center: 'items-center',
+  end: 'items-end',
+};
+---
+
+<div
+  class={cn('relative overflow-hidden w-full', className)}
+  data-marquee
+  data-pause-on-hover={pauseOnHover}
+>
+  <!-- Fade edges -->
+  {
+    fade && (
+      <>
+        <div
+          class="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+          style={`width: ${fadeWidth}; background: linear-gradient(to right, var(--marquee-bg, rgb(15 23 42)), transparent);`}
+        />
+        <div
+          class="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+          style={`width: ${fadeWidth}; background: linear-gradient(to left, var(--marquee-bg, rgb(15 23 42)), transparent);`}
+        />
+      </>
+    )
+  }
+
+  <!-- Scrolling container -->
+  <div
+    class={cn('flex w-max', alignClasses[align], gapClasses[gap])}
+    style={`
+      animation: marquee-scroll ${speed}s linear infinite;
+      animation-direction: ${direction === 'right' ? 'reverse' : 'normal'};
+    `}
+    data-marquee-track
+  >
+    <!-- Original content -->
+    <div
+      class={cn('flex shrink-0', alignClasses[align], gapClasses[gap])}
+      data-marquee-content
+    >
+      <slot />
+    </div>
+
+    <!-- Duplicated content for seamless loop -->
+    <div
+      class={cn('flex shrink-0', alignClasses[align], gapClasses[gap])}
+      aria-hidden="true"
+      data-marquee-content
+    >
+      <slot />
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const marquees = document.querySelectorAll('[data-marquee]');
+
+    marquees.forEach((marquee) => {
+      const track = marquee.querySelector('[data-marquee-track]');
+      const pauseOnHover =
+        marquee.getAttribute('data-pause-on-hover') === 'true';
+
+      if (pauseOnHover && track) {
+        marquee.addEventListener('mouseenter', () => {
+          track.style.animationPlayState = 'paused';
+        });
+
+        marquee.addEventListener('mouseleave', () => {
+          track.style.animationPlayState = 'running';
+        });
+      }
+    });
+  })();
+</script>
+
+<style>
+  @keyframes marquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    [data-marquee-track] {
+      animation: none !important;
+    }
+  }
+
+  /* Custom property for background color */
+  [data-marquee] {
+    --marquee-bg: rgb(15 23 42);
+  }
+
+  @media (prefers-color-scheme: light) {
+    [data-marquee] {
+      --marquee-bg: rgb(255 255 255);
+    }
+  }
+
+  :global(.dark) [data-marquee] {
+    --marquee-bg: rgb(15 23 42);
+  }
+
+  :global(.light) [data-marquee] {
+    --marquee-bg: rgb(255 255 255);
+  }
+</style>

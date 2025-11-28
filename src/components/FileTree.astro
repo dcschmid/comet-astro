@@ -1,0 +1,574 @@
+---
+import { cn } from '../utils/cn';
+
+export interface FileTreeItem {
+  /** File or folder name */
+  name: string;
+  /** Type of item */
+  type: 'file' | 'folder';
+  /** Child items (for folders) */
+  children?: FileTreeItem[];
+  /** File extension for icon selection */
+  extension?: string;
+  /** Custom icon */
+  icon?: string;
+  /** Whether folder is expanded by default */
+  expanded?: boolean;
+  /** Disabled state */
+  disabled?: boolean;
+  /** Additional metadata */
+  meta?: Record<string, unknown>;
+}
+
+interface Props {
+  /** Tree items */
+  items: FileTreeItem[];
+  /** Allow selection */
+  selectable?: boolean;
+  /** Allow multiple selection */
+  multiple?: boolean;
+  /** Default selected paths */
+  defaultSelected?: string[];
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Show file icons */
+  showIcons?: boolean;
+  /** Show file extensions */
+  showExtensions?: boolean;
+  /** Indent size (in rem) */
+  indentSize?: number;
+  /** ARIA label */
+  ariaLabel?: string;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  items = [],
+  selectable = false,
+  multiple = false,
+  defaultSelected = [],
+  size = 'md',
+  showIcons = true,
+  showExtensions = true,
+  indentSize = 1.25,
+  ariaLabel = 'File tree',
+  className = '',
+} = Astro.props;
+
+// Unique tree ID for accessibility
+// const _treeId = `file-tree-${Math.random().toString(36).slice(2, 9)}`;
+
+// Size configurations
+const sizeClasses = {
+  sm: {
+    item: 'py-0.5 px-1.5 text-xs',
+    icon: 'w-3.5 h-3.5',
+    gap: 'gap-1.5',
+  },
+  md: {
+    item: 'py-1 px-2 text-sm',
+    icon: 'w-4 h-4',
+    gap: 'gap-2',
+  },
+  lg: {
+    item: 'py-1.5 px-2.5 text-base',
+    icon: 'w-5 h-5',
+    gap: 'gap-2.5',
+  },
+};
+
+const config = sizeClasses[size];
+
+// File extension to icon mapping
+const extensionIcons: Record<string, string> = {
+  // JavaScript/TypeScript
+  js: '📜',
+  ts: '📘',
+  jsx: '⚛️',
+  tsx: '⚛️',
+  // Web
+  html: '🌐',
+  css: '🎨',
+  scss: '🎨',
+  less: '🎨',
+  // Data
+  json: '📋',
+  yaml: '📋',
+  yml: '📋',
+  xml: '📋',
+  csv: '📊',
+  // Docs
+  md: '📝',
+  mdx: '📝',
+  txt: '📄',
+  pdf: '📕',
+  // Images
+  png: '🖼️',
+  jpg: '🖼️',
+  jpeg: '🖼️',
+  gif: '🖼️',
+  svg: '🎨',
+  webp: '🖼️',
+  // Config
+  env: '🔐',
+  gitignore: '🙈',
+  dockerignore: '🐳',
+  // Other
+  py: '🐍',
+  rb: '💎',
+  go: '🔵',
+  rs: '🦀',
+  java: '☕',
+  php: '🐘',
+  sh: '💻',
+  bash: '💻',
+  zsh: '💻',
+};
+
+const getFileIcon = (item: FileTreeItem): string => {
+  if (item.icon) return item.icon;
+  if (item.type === 'folder') return '';
+
+  const ext = item.extension || item.name.split('.').pop()?.toLowerCase() || '';
+  return extensionIcons[ext] || '📄';
+};
+
+// Build path for each item (utility function)
+// const _buildPath = (item: FileTreeItem, parentPath: string = ''): string => {
+//   return parentPath ? `${parentPath}/${item.name}` : item.name;
+// };
+---
+
+<!--
+/**
+ * FileTree - Hierarchical file and folder tree display
+ *
+ * Features:
+ * - Expandable/collapsible folders
+ * - File type icons
+ * - Selection support (single/multi)
+ * - Keyboard navigation
+ * - WCAG AAA compliant
+ *
+ * @example
+ * ```astro
+ * <FileTree
+ *   items={[
+ *     { name: "src", type: "folder", children: [
+ *       { name: "index.ts", type: "file" },
+ *       { name: "utils.ts", type: "file" },
+ *     ]},
+ *     { name: "package.json", type: "file" },
+ *   ]}
+ * />
+ * ```
+ */
+-->
+<div
+  class={cn('w-full', className)}
+  role="tree"
+  aria-label={ariaLabel}
+  data-file-tree
+  data-selectable={selectable}
+  data-multiple={multiple}
+  data-selected={JSON.stringify(defaultSelected)}
+>
+  <ul class="list-none m-0 p-0" role="group">
+    {
+      items.map((item) => (
+        <Astro.self.TreeItem
+          item={item}
+          path={item.name}
+          depth={0}
+          config={config}
+          showIcons={showIcons}
+          showExtensions={showExtensions}
+          indentSize={indentSize}
+          selectable={selectable}
+          defaultSelected={defaultSelected}
+          getFileIcon={getFileIcon}
+        />
+      ))
+    }
+  </ul>
+</div>
+
+{/* Recursive TreeItem component */}
+<Fragment>
+  {
+    Astro.props.item && (
+      <li
+        class="list-none"
+        role="treeitem"
+        aria-expanded={
+          Astro.props.item.type === 'folder'
+            ? String(Astro.props.item.expanded ?? false)
+            : undefined
+        }
+        aria-selected={
+          Astro.props.selectable
+            ? String(Astro.props.defaultSelected.includes(Astro.props.path))
+            : undefined
+        }
+        data-tree-item
+        data-type={Astro.props.item.type}
+        data-path={Astro.props.path}
+        data-expanded={
+          Astro.props.item.type === 'folder'
+            ? String(Astro.props.item.expanded ?? false)
+            : undefined
+        }
+      >
+        <div
+          class={cn(
+            'flex items-center rounded-md cursor-pointer',
+            'hover:bg-slate-100 dark:hover:bg-slate-800',
+            'focus-within:bg-slate-100 dark:focus-within:bg-slate-800',
+            'transition-colors duration-100',
+            Astro.props.config.item,
+            Astro.props.config.gap,
+            Astro.props.item.disabled && 'opacity-50 cursor-not-allowed'
+          )}
+          style={`padding-left: ${Astro.props.depth * Astro.props.indentSize}rem;`}
+          tabindex={Astro.props.item.disabled ? -1 : 0}
+          data-item-content
+        >
+          {Astro.props.item.type === 'folder' && (
+            <button
+              type="button"
+              class={cn(
+                'inline-flex items-center justify-center',
+                'text-slate-400 dark:text-slate-500',
+                'hover:text-slate-600 dark:hover:text-slate-300',
+                'focus:outline-none',
+                'transition-transform duration-150',
+                Astro.props.config.icon
+              )}
+              aria-label={
+                Astro.props.item.expanded ? 'Collapse folder' : 'Expand folder'
+              }
+              data-toggle-folder
+            >
+              <svg
+                class={cn(
+                  'w-full h-full transition-transform duration-150',
+                  Astro.props.item.expanded && 'rotate-90'
+                )}
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+          )}
+
+          {/* Spacer for files to align with folders */}
+          {Astro.props.item.type === 'file' && (
+            <span class={Astro.props.config.icon} />
+          )}
+
+          {/* Icon */}
+          {Astro.props.showIcons && (
+            <span
+              class={cn(Astro.props.config.icon, 'flex-shrink-0')}
+              aria-hidden="true"
+            >
+              {Astro.props.item.type === 'folder'
+                ? Astro.props.item.expanded
+                  ? '📂'
+                  : '📁'
+                : Astro.props.getFileIcon(Astro.props.item)}
+            </span>
+          )}
+
+          {/* Name */}
+          <span
+            class={cn(
+              'truncate',
+              'text-slate-700 dark:text-slate-300',
+              Astro.props.item.type === 'folder' && 'font-medium'
+            )}
+          >
+            {Astro.props.showExtensions
+              ? Astro.props.item.name
+              : Astro.props.item.name.replace(/\.[^/.]+$/, '')}
+          </span>
+
+          {/* Selection indicator */}
+          {Astro.props.selectable &&
+            Astro.props.defaultSelected.includes(Astro.props.path) && (
+              <span class="ml-auto text-blue-500 dark:text-blue-400">
+                <svg
+                  class={Astro.props.config.icon}
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </span>
+            )}
+        </div>
+
+        {/* Children */}
+        {Astro.props.item.type === 'folder' &&
+          Astro.props.item.children &&
+          Astro.props.item.children.length > 0 && (
+            <ul
+              class={cn(
+                'list-none m-0 p-0',
+                !Astro.props.item.expanded && 'hidden'
+              )}
+              role="group"
+              data-children
+            >
+              {Astro.props.item.children.map((child: FileTreeItem) => (
+                <Astro.self.TreeItem
+                  item={child}
+                  path={`${Astro.props.path}/${child.name}`}
+                  depth={Astro.props.depth + 1}
+                  config={Astro.props.config}
+                  showIcons={Astro.props.showIcons}
+                  showExtensions={Astro.props.showExtensions}
+                  indentSize={Astro.props.indentSize}
+                  selectable={Astro.props.selectable}
+                  defaultSelected={Astro.props.defaultSelected}
+                  getFileIcon={Astro.props.getFileIcon}
+                />
+              ))}
+            </ul>
+          )}
+      </li>
+    )
+  }
+</Fragment>
+
+<script is:inline>
+  (function () {
+    const trees = document.querySelectorAll('[data-file-tree]');
+
+    trees.forEach((tree) => {
+      const isSelectable = tree.getAttribute('data-selectable') === 'true';
+      const isMultiple = tree.getAttribute('data-multiple') === 'true';
+
+      let selected = new Set();
+      try {
+        const initial = JSON.parse(tree.getAttribute('data-selected') || '[]');
+        selected = new Set(Array.isArray(initial) ? initial : []);
+      } catch {
+        // Ignore parse errors
+      }
+
+      // Toggle folder expansion
+      const toggleFolder = (item) => {
+        const isExpanded = item.getAttribute('data-expanded') === 'true';
+        const newExpanded = !isExpanded;
+
+        item.setAttribute('data-expanded', String(newExpanded));
+        item.setAttribute('aria-expanded', String(newExpanded));
+
+        // Update icon
+        const iconSpan = item.querySelector(
+          '[data-item-content] span:nth-child(2)'
+        );
+        if (iconSpan && iconSpan.textContent) {
+          iconSpan.textContent = newExpanded ? '📂' : '📁';
+        }
+
+        // Toggle chevron rotation
+        const chevron = item.querySelector('[data-toggle-folder] svg');
+        if (chevron) {
+          if (newExpanded) {
+            chevron.classList.add('rotate-90');
+          } else {
+            chevron.classList.remove('rotate-90');
+          }
+        }
+
+        // Show/hide children
+        const children = item.querySelector('[data-children]');
+        if (children) {
+          if (newExpanded) {
+            children.classList.remove('hidden');
+          } else {
+            children.classList.add('hidden');
+          }
+        }
+      };
+
+      // Toggle selection
+      const toggleSelection = (item) => {
+        if (!isSelectable) return;
+
+        const path = item.getAttribute('data-path');
+        if (!path) return;
+
+        if (isMultiple) {
+          if (selected.has(path)) {
+            selected.delete(path);
+          } else {
+            selected.add(path);
+          }
+        } else {
+          if (selected.has(path)) {
+            selected.clear();
+          } else {
+            selected.clear();
+            selected.add(path);
+          }
+        }
+
+        // Update visuals
+        tree.querySelectorAll('[data-tree-item]').forEach((treeItem) => {
+          const itemPath = treeItem.getAttribute('data-path');
+          const isSelected = selected.has(itemPath);
+          treeItem.setAttribute('aria-selected', String(isSelected));
+
+          const checkmark = treeItem.querySelector(
+            '[data-item-content] .ml-auto'
+          );
+          if (checkmark) {
+            checkmark.style.display = isSelected ? '' : 'none';
+          }
+        });
+
+        // Update data and dispatch event
+        tree.setAttribute(
+          'data-selected',
+          JSON.stringify(Array.from(selected))
+        );
+        tree.dispatchEvent(
+          new CustomEvent('change', {
+            bubbles: true,
+            detail: { selected: Array.from(selected) },
+          })
+        );
+      };
+
+      // Click handlers
+      tree.querySelectorAll('[data-tree-item]').forEach((item) => {
+        const content = item.querySelector('[data-item-content]');
+        const toggleBtn = item.querySelector('[data-toggle-folder]');
+        const type = item.getAttribute('data-type');
+
+        // Folder toggle button
+        if (toggleBtn) {
+          toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFolder(item);
+          });
+        }
+
+        // Item click
+        if (content) {
+          content.addEventListener('click', (e) => {
+            if (e.target.closest('[data-toggle-folder]')) return;
+
+            if (type === 'folder') {
+              toggleFolder(item);
+            } else if (isSelectable) {
+              toggleSelection(item);
+            }
+
+            // Dispatch item click event
+            tree.dispatchEvent(
+              new CustomEvent('itemclick', {
+                bubbles: true,
+                detail: {
+                  path: item.getAttribute('data-path'),
+                  type,
+                  item,
+                },
+              })
+            );
+          });
+
+          // Keyboard handling
+          content.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              if (type === 'folder') {
+                toggleFolder(item);
+              } else if (isSelectable) {
+                toggleSelection(item);
+              }
+            } else if (e.key === 'ArrowRight' && type === 'folder') {
+              e.preventDefault();
+              if (item.getAttribute('data-expanded') !== 'true') {
+                toggleFolder(item);
+              } else {
+                // Focus first child
+                const firstChild = item.querySelector(
+                  '[data-children] [data-item-content]'
+                );
+                firstChild?.focus();
+              }
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              if (
+                type === 'folder' &&
+                item.getAttribute('data-expanded') === 'true'
+              ) {
+                toggleFolder(item);
+              } else {
+                // Focus parent
+                const parent = item.parentElement?.closest('[data-tree-item]');
+                parent?.querySelector('[data-item-content]')?.focus();
+              }
+            } else if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              const allItems = Array.from(
+                tree.querySelectorAll(
+                  '[data-item-content]:not([tabindex="-1"])'
+                )
+              );
+              const currentIndex = allItems.indexOf(content);
+              allItems[currentIndex + 1]?.focus();
+            } else if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              const allItems = Array.from(
+                tree.querySelectorAll(
+                  '[data-item-content]:not([tabindex="-1"])'
+                )
+              );
+              const currentIndex = allItems.indexOf(content);
+              allItems[currentIndex - 1]?.focus();
+            }
+          });
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  /* Tree item hover effect */
+  [data-item-content]:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5);
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [data-item-content]:focus {
+      outline: 2px solid currentColor;
+      box-shadow: none;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    [data-toggle-folder] svg,
+    [data-item-content] {
+      transition: none;
+    }
+  }
+</style>

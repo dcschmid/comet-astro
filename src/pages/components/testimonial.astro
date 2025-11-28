@@ -1,0 +1,281 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Testimonial from '../../components/Testimonial.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const usageSnippet = `---
+import { Testimonial } from 'comet-astro';
+---
+
+<Testimonial
+  quote="This changed everything for our team. We're now 10x more productive."
+  author="Jane Doe"
+  role="CEO"
+  company="Acme Corp"
+  avatarUrl="/avatars/jane.jpg"
+  rating={5}
+  variant="card"
+/>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'quote',
+    type: 'string',
+    default: '-',
+    description: 'The testimonial quote text (required).',
+  },
+  {
+    name: 'author',
+    type: 'string',
+    default: '-',
+    description: 'Author name (required).',
+  },
+  {
+    name: 'role',
+    type: 'string',
+    default: '-',
+    description: "Author's role or job title.",
+  },
+  {
+    name: 'company',
+    type: 'string',
+    default: '-',
+    description: 'Company name.',
+  },
+  {
+    name: 'companyLogo',
+    type: 'string',
+    default: '-',
+    description: 'URL to company logo image.',
+  },
+  {
+    name: 'avatarUrl',
+    type: 'string',
+    default: '-',
+    description: 'URL to author avatar image.',
+  },
+  {
+    name: 'rating',
+    type: '1 | 2 | 3 | 4 | 5',
+    default: '-',
+    description: 'Optional star rating display.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'card' | 'minimal' | 'featured'",
+    default: "'default'",
+    description: 'Visual style variant.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size preset.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="Testimonial"
+  seoDescription="Display customer quotes and reviews with avatars and ratings."
+>
+  <Headline level="h1" textSize="2xl">Testimonial</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The Testimonial component displays customer quotes, reviews, or
+      endorsements with attribution. Perfect for landing pages and social proof
+      sections.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Supports avatars, star ratings, company logos, and multiple visual
+      variants.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Default variant
+      </Headline>
+      <Testimonial
+        quote="The team delivered beyond our expectations. Highly recommend their services."
+        author="Sarah Johnson"
+        role="Product Manager"
+        company="TechStart"
+        rating={5}
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Card variant
+      </Headline>
+      <div class="grid md:grid-cols-2 gap-6">
+        <Testimonial
+          quote="Incredible experience. The support team is always there when you need them."
+          author="Michael Chen"
+          role="Developer"
+          company="CodeLab"
+          variant="card"
+          rating={5}
+        />
+        <Testimonial
+          quote="Best investment we've made this year. ROI was visible within weeks."
+          author="Emily Roberts"
+          role="Marketing Lead"
+          company="GrowthCo"
+          variant="card"
+          rating={4}
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Minimal variant
+      </Headline>
+      <Testimonial
+        quote="Simple, elegant, and effective. Exactly what we were looking for."
+        author="David Park"
+        role="CTO"
+        company="Innovate Inc"
+        variant="minimal"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Featured variant
+      </Headline>
+      <Testimonial
+        quote="This platform transformed how we work. Our productivity has increased by 300% and our team loves using it every day. I can't imagine going back to our old workflow."
+        author="Amanda Torres"
+        role="Operations Director"
+        company="Enterprise Solutions"
+        variant="featured"
+        size="lg"
+        rating={5}
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <div class="space-y-4">
+        <Testimonial
+          quote="Quick and easy setup."
+          author="Small User"
+          role="Freelancer"
+          variant="card"
+          size="sm"
+        />
+        <Testimonial
+          quote="Perfect for our growing team's needs."
+          author="Medium User"
+          role="Team Lead"
+          company="MidSize Co"
+          variant="card"
+          size="md"
+        />
+        <Testimonial
+          quote="Enterprise-grade features at a startup price point."
+          author="Large User"
+          role="VP Engineering"
+          company="BigCorp Inc"
+          variant="card"
+          size="lg"
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With different ratings
+      </Headline>
+      <div class="grid md:grid-cols-3 gap-4">
+        <Testimonial
+          quote="Outstanding!"
+          author="Happy Customer"
+          variant="card"
+          size="sm"
+          rating={5}
+        />
+        <Testimonial
+          quote="Very good overall."
+          author="Satisfied User"
+          variant="card"
+          size="sm"
+          rating={4}
+        />
+        <Testimonial
+          quote="Good but room to improve."
+          author="Honest Reviewer"
+          variant="card"
+          size="sm"
+          rating={3}
+        />
+      </div>
+    </article>
+  </section>
+</DocsLayout>

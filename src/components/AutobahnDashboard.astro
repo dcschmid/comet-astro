@@ -1,0 +1,436 @@
+---
+/**
+ * AutobahnDashboard - Komplettes Verkehrsinfo-Dashboard
+ *
+ * Kombiniert alle Autobahn-Komponenten in einer Übersicht
+ * mit Live-Statistiken und detaillierten Informationen.
+ *
+ * API: https://autobahn.api.bund.dev/
+ */
+import { cn } from '../utils/cn';
+import AutobahnRoadworks from './AutobahnRoadworks.astro';
+import AutobahnClosures from './AutobahnClosures.astro';
+import AutobahnCharging from './AutobahnCharging.astro';
+
+interface Props {
+  road: string;
+  sections?: ('closures' | 'roadworks' | 'charging')[];
+  maxItems?: number;
+  compact?: boolean;
+  layout?: 'grid' | 'stack';
+  className?: string;
+}
+
+const {
+  road,
+  sections = ['closures', 'roadworks', 'charging'],
+  maxItems = 5,
+  compact = false,
+  layout = 'stack',
+  className = '',
+} = Astro.props;
+
+const API_BASE = 'https://verkehr.autobahn.de/o/autobahn';
+
+// Fetch counts and data
+let closureCount = 0;
+let roadworkCount = 0;
+let chargingCount = 0;
+let activeClosures = 0;
+let activeRoadworks = 0;
+
+try {
+  const [closuresRes, roadworksRes, chargingRes] = await Promise.all([
+    fetch(`${API_BASE}/${road}/services/closure`),
+    fetch(`${API_BASE}/${road}/services/roadworks`),
+    fetch(`${API_BASE}/${road}/services/electric_charging_station`),
+  ]);
+
+  if (closuresRes.ok) {
+    const data = await closuresRes.json();
+    closureCount = data.closure?.length || 0;
+    activeClosures = data.closure?.filter((c: any) => !c.future).length || 0;
+  }
+  if (roadworksRes.ok) {
+    const data = await roadworksRes.json();
+    roadworkCount = data.roadworks?.length || 0;
+    activeRoadworks = data.roadworks?.filter((r: any) => !r.future).length || 0;
+  }
+  if (chargingRes.ok) {
+    const data = await chargingRes.json();
+    chargingCount = data.electric_charging_station?.length || 0;
+  }
+} catch {
+  // Ignore API errors
+}
+
+const hasIssues = activeClosures > 0 || activeRoadworks > 0;
+---
+
+<div
+  class={cn('autobahn-dashboard', className)}
+  data-autobahn-dashboard
+  data-road={road}
+>
+  <!-- Hero Header -->
+  <header
+    class={cn(
+      'relative rounded-2xl overflow-hidden mb-6',
+      hasIssues
+        ? 'bg-gradient-to-br from-red-950/50 via-orange-950/30 to-slate-900'
+        : 'bg-gradient-to-br from-emerald-950/50 via-teal-950/30 to-slate-900'
+    )}
+  >
+    <div
+      class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMDI0MmIiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnYyaDR2MmgtdnptLTE0LTRoMnY0aC0ydi0ySDZoLTJ2LTJoMnYtMmgydjJoMnYyaDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"
+    >
+    </div>
+
+    <div class="relative px-6 py-8">
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-6"
+      >
+        <!-- Title -->
+        <div class="flex items-center gap-4">
+          <div
+            class={cn(
+              'p-4 rounded-2xl shadow-2xl',
+              hasIssues
+                ? 'bg-gradient-to-br from-orange-500 to-red-600 shadow-orange-500/30'
+                : 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/30'
+            )}
+          >
+            <svg
+              class="w-10 h-10 text-white"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-3xl font-black text-white tracking-tight">
+              {road}
+            </h2>
+            <p class="text-slate-400 text-sm mt-1">
+              Verkehrsinformationen • Live
+            </p>
+          </div>
+        </div>
+
+        <!-- Status Badge -->
+        <div
+          class={cn(
+            'inline-flex items-center gap-3 px-4 py-2.5 rounded-xl',
+            hasIssues
+              ? 'bg-orange-500/20 border border-orange-500/30'
+              : 'bg-emerald-500/20 border border-emerald-500/30'
+          )}
+        >
+          {
+            hasIssues ? (
+              <>
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500" />
+                </span>
+                <span class="text-orange-200 font-semibold">
+                  {activeClosures > 0
+                    ? `${activeClosures} Sperrung${activeClosures > 1 ? 'en' : ''}`
+                    : ''}
+                  {activeClosures > 0 && activeRoadworks > 0 ? ' • ' : ''}
+                  {activeRoadworks > 0
+                    ? `${activeRoadworks} Baustelle${activeRoadworks > 1 ? 'n' : ''}`
+                    : ''}
+                </span>
+              </>
+            ) : (
+              <>
+                <svg
+                  class="w-5 h-5 text-emerald-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span class="text-emerald-200 font-semibold">Freie Fahrt</span>
+              </>
+            )
+          }
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-3 gap-4 mt-8">
+        {
+          sections.includes('closures') && (
+            <div
+              class={cn(
+                'p-4 rounded-xl border backdrop-blur-sm',
+                activeClosures > 0
+                  ? 'bg-red-500/10 border-red-500/30'
+                  : 'bg-slate-800/50 border-slate-700/50'
+              )}
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-slate-400 text-xs uppercase tracking-wider">
+                    Sperrungen
+                  </p>
+                  <p
+                    class={cn(
+                      'text-3xl font-black mt-1',
+                      activeClosures > 0 ? 'text-red-400' : 'text-slate-300'
+                    )}
+                  >
+                    {closureCount}
+                  </p>
+                </div>
+                <div
+                  class={cn(
+                    'p-2 rounded-lg',
+                    activeClosures > 0 ? 'bg-red-500/20' : 'bg-slate-700/50'
+                  )}
+                >
+                  <svg
+                    class={cn(
+                      'w-5 h-5',
+                      activeClosures > 0 ? 'text-red-400' : 'text-slate-500'
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                    />
+                  </svg>
+                </div>
+              </div>
+              {activeClosures > 0 && (
+                <p class="text-red-400/80 text-xs mt-2">
+                  {activeClosures} aktiv
+                </p>
+              )}
+            </div>
+          )
+        }
+
+        {
+          sections.includes('roadworks') && (
+            <div
+              class={cn(
+                'p-4 rounded-xl border backdrop-blur-sm',
+                activeRoadworks > 0
+                  ? 'bg-orange-500/10 border-orange-500/30'
+                  : 'bg-slate-800/50 border-slate-700/50'
+              )}
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-slate-400 text-xs uppercase tracking-wider">
+                    Baustellen
+                  </p>
+                  <p
+                    class={cn(
+                      'text-3xl font-black mt-1',
+                      activeRoadworks > 0 ? 'text-orange-400' : 'text-slate-300'
+                    )}
+                  >
+                    {roadworkCount}
+                  </p>
+                </div>
+                <div
+                  class={cn(
+                    'p-2 rounded-lg',
+                    activeRoadworks > 0 ? 'bg-orange-500/20' : 'bg-slate-700/50'
+                  )}
+                >
+                  <svg
+                    class={cn(
+                      'w-5 h-5',
+                      activeRoadworks > 0 ? 'text-orange-400' : 'text-slate-500'
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              {activeRoadworks > 0 && (
+                <p class="text-orange-400/80 text-xs mt-2">
+                  {activeRoadworks} aktiv
+                </p>
+              )}
+            </div>
+          )
+        }
+
+        {
+          sections.includes('charging') && (
+            <div class="p-4 rounded-xl border backdrop-blur-sm bg-emerald-500/10 border-emerald-500/30">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-slate-400 text-xs uppercase tracking-wider">
+                    Ladestationen
+                  </p>
+                  <p class="text-3xl font-black mt-1 text-emerald-400">
+                    {chargingCount}
+                  </p>
+                </div>
+                <div class="p-2 rounded-lg bg-emerald-500/20">
+                  <svg
+                    class="w-5 h-5 text-emerald-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <p class="text-emerald-400/80 text-xs mt-2">E-Mobilität</p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Content Sections -->
+  <div
+    class={cn(
+      layout === 'grid'
+        ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6'
+        : 'space-y-6'
+    )}
+  >
+    {
+      sections.includes('closures') && (
+        <AutobahnClosures
+          road={road}
+          maxItems={maxItems}
+          compact={compact}
+          showTitle={true}
+        />
+      )
+    }
+
+    {
+      sections.includes('roadworks') && (
+        <AutobahnRoadworks
+          road={road}
+          maxItems={maxItems}
+          compact={compact}
+          showTitle={true}
+        />
+      )
+    }
+
+    {
+      sections.includes('charging') && (
+        <AutobahnCharging
+          road={road}
+          maxItems={maxItems}
+          compact={compact}
+          showTitle={true}
+        />
+      )
+    }
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-8 pt-6 border-t border-slate-700/50">
+    <div
+      class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
+    >
+      <div class="flex items-center gap-2 text-slate-500">
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <span>Datenquelle: Autobahn GmbH des Bundes</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a
+          href="https://autobahn.api.bund.dev/"
+          target="_blank"
+          rel="noopener"
+          class="text-slate-400 hover:text-slate-200 transition-colors"
+        >
+          API-Dokumentation
+        </a>
+        <a
+          href="https://www.autobahn.de/betrieb-verkehr/aktuelle-verkehrslage"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded-lg transition-colors"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            ></path>
+          </svg>
+          Verkehrslage
+        </a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<style>
+  @keyframes ping {
+    75%,
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  .animate-ping {
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+</style>

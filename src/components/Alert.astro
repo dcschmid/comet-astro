@@ -5,11 +5,14 @@
 interface Props {
   title?: string;
   message?: string;
+  /** Custom icon (emoji or text) - overrides default icon */
+  icon?: string;
   variant?:
     | 'info'
     | 'success'
     | 'warning'
     | 'error'
+    | 'note'
     | 'classic'
     | 'nature'
     | 'warm'
@@ -23,6 +26,7 @@ interface Props {
 const {
   title,
   message,
+  icon: customIcon,
   variant = 'info',
   dismissible = false,
   dismissLabel = 'Dismiss alert',
@@ -56,6 +60,8 @@ export const alertVariants = tv({
         'bg-gray-50 text-gray-900 accent-violet-600 border-gray-300 hover:border-violet-400 hover:bg-violet-50 dark:bg-gray-950 dark:text-gray-50 dark:accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 focus-visible:ring-violet-300 dark:focus-visible:ring-violet-200',
       error:
         'bg-zinc-50 text-zinc-900 accent-orange-500 border-zinc-200 hover:border-orange-400 hover:bg-orange-50 dark:bg-zinc-950 dark:text-zinc-100 dark:accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 focus-visible:ring-orange-300 dark:focus-visible:ring-orange-200',
+      // Note variant for callout-style usage
+      note: 'bg-indigo-50 text-indigo-900 accent-indigo-600 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-100 dark:accent-indigo-400 dark:border-indigo-800 dark:hover:border-indigo-500 dark:hover:bg-indigo-900 focus-visible:ring-indigo-300 dark:focus-visible:ring-indigo-200',
     },
   },
   defaultVariants: {
@@ -69,6 +75,7 @@ const iconColor = {
   warm: 'text-violet-600 dark:text-violet-400',
   sky: 'text-cyan-600 dark:text-cyan-300',
   orange: 'text-orange-500 dark:text-orange-300',
+  note: 'text-indigo-600 dark:text-indigo-400',
   // aliases
   info: 'text-blue-600 dark:text-blue-400',
   success: 'text-emerald-600 dark:text-emerald-400',
@@ -82,6 +89,7 @@ const roleMap = {
   warm: { role: 'alert', ariaLive: 'assertive', label: 'Warning' },
   sky: { role: 'status', ariaLive: 'polite', label: 'Information' },
   orange: { role: 'alert', ariaLive: 'assertive', label: 'Error' },
+  note: { role: 'note', ariaLive: 'polite', label: 'Note' },
   // aliases
   info: { role: 'status', ariaLive: 'polite', label: 'Information' },
   success: { role: 'status', ariaLive: 'polite', label: 'Success' },
@@ -95,12 +103,30 @@ const iconName = {
   warm: 'exclamation',
   sky: 'info',
   orange: 'x-circle',
+  note: 'pencil',
   // aliases
   info: 'info',
   success: 'check-circle',
   warning: 'exclamation',
   error: 'x-circle',
 } as const;
+
+// Default emoji icons for custom icon usage (Callout compatibility)
+const defaultEmoji = {
+  classic: 'ℹ️',
+  nature: '✅',
+  warm: '⚠️',
+  sky: 'ℹ️',
+  orange: '❌',
+  note: '📝',
+  info: 'ℹ️',
+  success: '✅',
+  warning: '⚠️',
+  error: '❌',
+} as const;
+
+const useCustomIcon = customIcon !== undefined;
+const displayIcon = customIcon ?? defaultEmoji[variant];
 ---
 
 <div
@@ -117,13 +143,21 @@ const iconName = {
       class={`mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-lg font-semibold shadow-inner ${iconColor[variant]} dark:bg-white/10`}
       aria-hidden="true"
     >
-      <Icon
-        name={iconName[variant]}
-        size="md"
-        decorative={false}
-        ariaLabel={roleMap[variant].label}
-        className="h-5 w-5"
-      />
+      {
+        useCustomIcon ? (
+          <span class="text-2xl" aria-hidden="true">
+            {displayIcon}
+          </span>
+        ) : (
+          <Icon
+            name={iconName[variant]}
+            size="md"
+            decorative={false}
+            ariaLabel={roleMap[variant].label}
+            className="h-5 w-5"
+          />
+        )
+      }
     </div>
     <div class="min-w-0 space-y-2 text-slate-800 dark:text-slate-200">
       <span class="sr-only">{roleMap[variant].label}</span>

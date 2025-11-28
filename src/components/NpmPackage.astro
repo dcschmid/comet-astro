@@ -1,0 +1,323 @@
+---
+/**
+ * NpmPackage - NPM Paket-Informationen
+ *
+ * Zeigt Downloads, Version, Lizenz und mehr für NPM-Pakete.
+ *
+ * API: https://registry.npmjs.org/ + https://api.npmjs.org/
+ */
+import { cn } from '../utils/cn';
+
+interface PackageInfo {
+  name: string;
+  description?: string;
+  'dist-tags': { latest: string };
+  license?: string;
+  repository?: { type: string; url: string };
+  homepage?: string;
+  author?: { name: string } | string;
+  keywords?: string[];
+  time: Record<string, string>;
+}
+
+interface DownloadInfo {
+  downloads: number;
+  start: string;
+  end: string;
+  package: string;
+}
+
+interface Props {
+  package: string;
+  variant?: 'default' | 'compact' | 'badge';
+  showDownloads?: boolean;
+  showKeywords?: boolean;
+  showLinks?: boolean;
+  className?: string;
+}
+
+const {
+  package: packageName,
+  variant = 'default',
+  showDownloads = true,
+  showKeywords = true,
+  showLinks = true,
+  className = '',
+} = Astro.props;
+
+let pkg: PackageInfo | null = null;
+let downloads: number | null = null;
+let error: string | null = null;
+
+try {
+  // Fetch package info
+  const pkgRes = await fetch(`https://registry.npmjs.org/${packageName}`);
+  if (pkgRes.ok) {
+    pkg = await pkgRes.json();
+  } else {
+    error = 'Paket nicht gefunden';
+  }
+
+  // Fetch download stats
+  if (showDownloads && !error) {
+    const dlRes = await fetch(
+      `https://api.npmjs.org/downloads/point/last-week/${packageName}`
+    );
+    if (dlRes.ok) {
+      const dlData: DownloadInfo = await dlRes.json();
+      downloads = dlData.downloads;
+    }
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+function formatDownloads(num: number): string {
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(0)}K`;
+  return num.toString();
+}
+
+function getRepoUrl(repo: PackageInfo['repository']): string | null {
+  if (!repo?.url) return null;
+  let url = repo.url.replace(/^git\+/, '').replace(/\.git$/, '');
+  if (url.startsWith('git://')) url = url.replace('git://', 'https://');
+  if (url.startsWith('ssh://git@')) url = url.replace('ssh://git@', 'https://');
+  return url;
+}
+
+function getAuthorName(author: PackageInfo['author']): string {
+  if (!author) return 'Unbekannt';
+  if (typeof author === 'string') return author;
+  return author.name || 'Unbekannt';
+}
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('de-DE', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+const latestVersion = pkg?.['dist-tags']?.latest;
+const lastPublished =
+  latestVersion && pkg?.time?.[latestVersion]
+    ? formatDate(pkg.time[latestVersion])
+    : null;
+const repoUrl = pkg?.repository ? getRepoUrl(pkg.repository) : null;
+---
+
+{
+  error ? (
+    <div
+      class={cn(
+        'p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm',
+        className
+      )}
+    >
+      <div class="flex items-center gap-2">
+        <svg
+          class="w-5 h-5 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        {error}: {packageName}
+      </div>
+    </div>
+  ) : pkg && variant === 'badge' ? (
+    <a
+      href={`https://www.npmjs.com/package/${packageName}`}
+      target="_blank"
+      rel="noopener"
+      class={cn(
+        'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 hover:bg-red-500/30 transition-colors text-sm font-medium',
+        className
+      )}
+    >
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M0 0v24h24V0H0zm6.168 18.168v-12h5.832v9.84h3.168v-9.84h2.664v12H6.168z" />
+      </svg>
+      {packageName}
+      <span class="text-red-400">v{latestVersion}</span>
+      {downloads && (
+        <span class="text-xs text-red-400/70">
+          {formatDownloads(downloads)}/w
+        </span>
+      )}
+    </a>
+  ) : pkg && variant === 'compact' ? (
+    <a
+      href={`https://www.npmjs.com/package/${packageName}`}
+      target="_blank"
+      rel="noopener"
+      class={cn(
+        'flex items-center gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-red-500/30 transition-colors',
+        className
+      )}
+    >
+      <div class="p-2.5 rounded-xl bg-gradient-to-br from-red-500 to-red-600 shadow-lg shadow-red-500/25">
+        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M0 0v24h24V0H0zm6.168 18.168v-12h5.832v9.84h3.168v-9.84h2.664v12H6.168z" />
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-bold text-slate-100">{packageName}</h3>
+        <p class="text-sm text-slate-400 truncate">
+          {pkg.description || 'Keine Beschreibung'}
+        </p>
+      </div>
+      <div class="text-right shrink-0">
+        <p class="font-semibold text-slate-200">v{latestVersion}</p>
+        {downloads && (
+          <p class="text-xs text-slate-500">
+            {formatDownloads(downloads)}/Woche
+          </p>
+        )}
+      </div>
+    </a>
+  ) : (
+    pkg && (
+      <div
+        class={cn(
+          'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+          className
+        )}
+      >
+        <header class="px-5 py-4 border-b border-slate-700/50 bg-red-500/5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2.5 rounded-xl bg-gradient-to-br from-red-500 to-red-600 shadow-lg shadow-red-500/25">
+                <svg
+                  class="w-5 h-5 text-white"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M0 0v24h24V0H0zm6.168 18.168v-12h5.832v9.84h3.168v-9.84h2.664v12H6.168z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-100 text-lg">{packageName}</h3>
+                <p class="text-xs text-slate-400">
+                  von {getAuthorName(pkg.author)}
+                </p>
+              </div>
+            </div>
+
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30">
+              v{latestVersion}
+            </span>
+          </div>
+        </header>
+
+        <div class="p-5">
+          {pkg.description && (
+            <p class="text-slate-300 mb-4">{pkg.description}</p>
+          )}
+
+          {/* Stats Grid */}
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            {downloads && (
+              <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30 text-center">
+                <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                  Downloads
+                </p>
+                <p class="font-bold text-slate-200 text-lg">
+                  {formatDownloads(downloads)}
+                </p>
+                <p class="text-xs text-slate-500">/Woche</p>
+              </div>
+            )}
+            <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30 text-center">
+              <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                Lizenz
+              </p>
+              <p class="font-semibold text-slate-200">{pkg.license || 'N/A'}</p>
+            </div>
+            {lastPublished && (
+              <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30 text-center">
+                <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                  Aktualisiert
+                </p>
+                <p class="font-semibold text-slate-200 text-sm">
+                  {lastPublished}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Keywords */}
+          {showKeywords && pkg.keywords && pkg.keywords.length > 0 && (
+            <div class="mb-4">
+              <p class="text-xs text-slate-500 uppercase tracking-wide mb-2">
+                Keywords
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {pkg.keywords.slice(0, 8).map((keyword) => (
+                  <span class="px-2 py-0.5 rounded-full text-xs bg-slate-700/50 text-slate-400">
+                    {keyword}
+                  </span>
+                ))}
+                {pkg.keywords.length > 8 && (
+                  <span class="px-2 py-0.5 rounded-full text-xs bg-slate-700/50 text-slate-500">
+                    +{pkg.keywords.length - 8}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Install Command */}
+          <div class="p-3 rounded-lg bg-slate-950/50 border border-slate-700/30 font-mono text-sm">
+            <span class="text-slate-500">$</span>
+            <span class="text-emerald-400 ml-2">npm</span>
+            <span class="text-slate-300"> install </span>
+            <span class="text-cyan-400">{packageName}</span>
+          </div>
+        </div>
+
+        {/* Footer with Links */}
+        {showLinks && (
+          <footer class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between gap-4">
+            <a
+              href={`https://www.npmjs.com/package/${packageName}`}
+              target="_blank"
+              rel="noopener"
+              class="text-sm text-red-400 hover:text-red-300 transition-colors"
+            >
+              npm →
+            </a>
+            {repoUrl && (
+              <a
+                href={repoUrl}
+                target="_blank"
+                rel="noopener"
+                class="text-sm text-slate-400 hover:text-slate-300 transition-colors"
+              >
+                Repository →
+              </a>
+            )}
+            {pkg.homepage && (
+              <a
+                href={pkg.homepage}
+                target="_blank"
+                rel="noopener"
+                class="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Homepage →
+              </a>
+            )}
+          </footer>
+        )}
+      </div>
+    )
+  )
+}

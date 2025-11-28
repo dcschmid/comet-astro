@@ -1,0 +1,463 @@
+---
+/**
+ * Terminal - Command-line/code output display component
+ *
+ * Features:
+ * - Syntax highlighting for common outputs
+ * - Copy to clipboard
+ * - Line numbers (optional)
+ * - Multiple themes
+ * - Animated typing effect
+ * - WCAG AAA compliant
+ *
+ * @example
+ * <Terminal
+ *   title="Installation"
+ *   lines={[
+ *     { type: "command", content: "npm install @comet/ui" },
+ *     { type: "output", content: "added 42 packages in 2.3s" },
+ *     { type: "success", content: "✓ Installation complete" },
+ *   ]}
+ * />
+ */
+import { cn } from '../utils/cn';
+
+export interface TerminalLine {
+  /** Line type for styling */
+  type?:
+    | 'command'
+    | 'output'
+    | 'error'
+    | 'warning'
+    | 'success'
+    | 'comment'
+    | 'info';
+  /** Line content */
+  content: string;
+  /** Custom prompt (for command type) */
+  prompt?: string;
+  /** Delay before showing this line (for typing effect, in ms) */
+  delay?: number;
+}
+
+interface Props {
+  /** Terminal lines */
+  lines: TerminalLine[];
+  /** Window title */
+  title?: string;
+  /** Show window controls (close, minimize, maximize) */
+  showControls?: boolean;
+  /** Show line numbers */
+  showLineNumbers?: boolean;
+  /** Default prompt symbol */
+  prompt?: string;
+  /** Theme variant */
+  theme?: 'dark' | 'light' | 'matrix' | 'dracula';
+  /** Enable copy button */
+  copyable?: boolean;
+  /** Enable typing animation */
+  animated?: boolean;
+  /** Max height with scroll */
+  maxHeight?: string;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  lines = [],
+  title = 'Terminal',
+  showControls = true,
+  showLineNumbers = false,
+  prompt = '$',
+  theme = 'dark',
+  copyable = true,
+  animated = false,
+  maxHeight,
+  className = '',
+} = Astro.props;
+
+// Unique terminal ID
+// const _terminalId = `terminal-${Math.random().toString(36).slice(2, 9)}`;
+
+// Theme configurations
+const themes = {
+  dark: {
+    bg: 'bg-slate-900',
+    header: 'bg-slate-800',
+    text: 'text-slate-100',
+    border: 'border-slate-700',
+    prompt: 'text-emerald-400',
+    command: 'text-slate-100',
+    output: 'text-slate-400',
+    error: 'text-red-400',
+    warning: 'text-amber-400',
+    success: 'text-emerald-400',
+    comment: 'text-slate-500',
+    info: 'text-blue-400',
+    lineNumber: 'text-slate-600',
+  },
+  light: {
+    bg: 'bg-white',
+    header: 'bg-slate-100',
+    text: 'text-slate-900',
+    border: 'border-slate-200',
+    prompt: 'text-emerald-600',
+    command: 'text-slate-900',
+    output: 'text-slate-600',
+    error: 'text-red-600',
+    warning: 'text-amber-600',
+    success: 'text-emerald-600',
+    comment: 'text-slate-400',
+    info: 'text-blue-600',
+    lineNumber: 'text-slate-400',
+  },
+  matrix: {
+    bg: 'bg-black',
+    header: 'bg-black',
+    text: 'text-green-400',
+    border: 'border-green-900',
+    prompt: 'text-green-300',
+    command: 'text-green-400',
+    output: 'text-green-500',
+    error: 'text-red-500',
+    warning: 'text-yellow-400',
+    success: 'text-green-300',
+    comment: 'text-green-800',
+    info: 'text-green-400',
+    lineNumber: 'text-green-900',
+  },
+  dracula: {
+    bg: 'bg-[#282a36]',
+    header: 'bg-[#21222c]',
+    text: 'text-[#f8f8f2]',
+    border: 'border-[#44475a]',
+    prompt: 'text-[#50fa7b]',
+    command: 'text-[#f8f8f2]',
+    output: 'text-[#6272a4]',
+    error: 'text-[#ff5555]',
+    warning: 'text-[#ffb86c]',
+    success: 'text-[#50fa7b]',
+    comment: 'text-[#6272a4]',
+    info: 'text-[#8be9fd]',
+    lineNumber: 'text-[#44475a]',
+  },
+};
+
+const themeConfig = themes[theme];
+
+// Get all text content for copy
+const getAllText = () => {
+  return lines
+    .map((line) => {
+      if (line.type === 'command') {
+        return `${line.prompt || prompt} ${line.content}`;
+      }
+      return line.content;
+    })
+    .join('\n');
+};
+---
+
+<div
+  class={cn(
+    'rounded-lg overflow-hidden shadow-lg',
+    'border',
+    themeConfig.bg,
+    themeConfig.border,
+    className
+  )}
+  data-terminal
+  data-theme={theme}
+  data-animated={animated}
+>
+  {/* Header */}
+  <div
+    class={cn(
+      'flex items-center px-4 py-2',
+      themeConfig.header,
+      'border-b',
+      themeConfig.border
+    )}
+  >
+    {/* Window controls */}
+    {
+      showControls && (
+        <div class="flex items-center gap-2 mr-4">
+          <span class="w-3 h-3 rounded-full bg-red-500" />
+          <span class="w-3 h-3 rounded-full bg-amber-500" />
+          <span class="w-3 h-3 rounded-full bg-emerald-500" />
+        </div>
+      )
+    }
+
+    {/* Title */}
+    <span
+      class={cn(
+        'text-sm font-medium flex-1 text-center',
+        themeConfig.text,
+        'opacity-70'
+      )}
+    >
+      {title}
+    </span>
+
+    {/* Copy button */}
+    {
+      copyable && (
+        <button
+          type="button"
+          class={cn(
+            'p-1.5 rounded-md ml-4',
+            'opacity-50 hover:opacity-100',
+            'focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'transition-opacity duration-150',
+            themeConfig.text
+          )}
+          aria-label="Copy to clipboard"
+          data-copy-terminal
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+            />
+          </svg>
+        </button>
+      )
+    }
+  </div>
+
+  {/* Content */}
+  <div
+    class={cn(
+      'p-4 font-mono text-sm overflow-x-auto',
+      maxHeight && 'overflow-y-auto'
+    )}
+    style={maxHeight ? `max-height: ${maxHeight};` : undefined}
+    data-terminal-content
+  >
+    <div class="space-y-1" data-lines>
+      {
+        lines.map((line, index) => (
+          <div
+            class={cn('flex items-start', animated && 'opacity-0')}
+            data-line
+            data-delay={animated ? line.delay || index * 100 : 0}
+          >
+            {/* Line number */}
+            {showLineNumbers && (
+              <span
+                class={cn(
+                  'select-none w-8 text-right pr-4 flex-shrink-0',
+                  themeConfig.lineNumber
+                )}
+              >
+                {index + 1}
+              </span>
+            )}
+
+            {/* Prompt (for commands) */}
+            {line.type === 'command' && (
+              <span
+                class={cn('select-none mr-2 flex-shrink-0', themeConfig.prompt)}
+              >
+                {line.prompt || prompt}
+              </span>
+            )}
+
+            {/* Content */}
+            <span
+              class={cn(
+                'whitespace-pre-wrap break-all',
+                line.type === 'command' && themeConfig.command,
+                line.type === 'output' && themeConfig.output,
+                line.type === 'error' && themeConfig.error,
+                line.type === 'warning' && themeConfig.warning,
+                line.type === 'success' && themeConfig.success,
+                line.type === 'comment' && themeConfig.comment,
+                line.type === 'info' && themeConfig.info,
+                !line.type && themeConfig.output
+              )}
+            >
+              {line.content}
+            </span>
+          </div>
+        ))
+      }
+
+      {/* Cursor (for animated) */}
+      {
+        animated && (
+          <span
+            class={cn(
+              'inline-block w-2 h-4 ml-1',
+              themeConfig.prompt,
+              'animate-pulse'
+            )}
+            style="background-color: currentColor;"
+            data-cursor
+          />
+        )
+      }
+    </div>
+  </div>
+
+  {/* Hidden content for copy */}
+  <textarea class="sr-only" aria-hidden="true" data-copy-content
+    >{getAllText()}</textarea
+  >
+</div>
+
+<script is:inline>
+  (function () {
+    const terminals = document.querySelectorAll('[data-terminal]');
+
+    terminals.forEach((terminal) => {
+      const copyBtn = terminal.querySelector('[data-copy-terminal]');
+      const copyContent = terminal.querySelector('[data-copy-content]');
+      const isAnimated = terminal.getAttribute('data-animated') === 'true';
+      const lines = terminal.querySelectorAll('[data-line]');
+      const cursor = terminal.querySelector('[data-cursor]');
+
+      // Copy functionality
+      if (copyBtn && copyContent) {
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(copyContent.value);
+
+            // Visual feedback
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML =
+              '<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
+
+            setTimeout(() => {
+              copyBtn.innerHTML = originalHTML;
+            }, 1500);
+          } catch (err) {
+            console.error('Failed to copy:', err);
+          }
+        });
+      }
+
+      // Typing animation
+      if (isAnimated && lines.length > 0) {
+        let totalDelay = 0;
+
+        lines.forEach((line, index) => {
+          const delay =
+            parseInt(line.getAttribute('data-delay')) || index * 100;
+          totalDelay = Math.max(totalDelay, delay);
+
+          setTimeout(() => {
+            line.classList.remove('opacity-0');
+            line.classList.add('animate-fadeIn');
+          }, delay);
+        });
+
+        // Hide cursor after all lines are shown
+        if (cursor) {
+          setTimeout(() => {
+            cursor.style.display = 'none';
+          }, totalDelay + 500);
+        }
+      }
+    });
+  })();
+</script>
+
+<style>
+  /* Typing animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 150ms ease-out forwards;
+  }
+
+  /* Blinking cursor */
+  [data-cursor] {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Custom scrollbar for dark themes */
+  [data-terminal][data-theme='dark'] [data-terminal-content]::-webkit-scrollbar,
+  [data-terminal][data-theme='matrix']
+    [data-terminal-content]::-webkit-scrollbar,
+  [data-terminal][data-theme='dracula']
+    [data-terminal-content]::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  [data-terminal][data-theme='dark']
+    [data-terminal-content]::-webkit-scrollbar-track,
+  [data-terminal][data-theme='matrix']
+    [data-terminal-content]::-webkit-scrollbar-track,
+  [data-terminal][data-theme='dracula']
+    [data-terminal-content]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  [data-terminal][data-theme='dark']
+    [data-terminal-content]::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+  }
+
+  [data-terminal][data-theme='matrix']
+    [data-terminal-content]::-webkit-scrollbar-thumb {
+    background: #166534;
+    border-radius: 4px;
+  }
+
+  [data-terminal][data-theme='dracula']
+    [data-terminal-content]::-webkit-scrollbar-thumb {
+    background: #44475a;
+    border-radius: 4px;
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [data-terminal] {
+      border-width: 2px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fadeIn {
+      animation: none;
+      opacity: 1;
+    }
+
+    [data-cursor] {
+      animation: none;
+      opacity: 1;
+    }
+  }
+</style>

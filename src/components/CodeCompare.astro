@@ -1,0 +1,324 @@
+---
+/**
+ * CodeCompare - Side-by-side code comparison
+ *
+ * Features:
+ * - Split or unified view
+ * - Line highlighting
+ * - Syntax highlighting support
+ * - Line numbers
+ * - Custom headers
+ *
+ * @example
+ * <CodeCompare
+ *   before={`const x = 1;`}
+ *   after={`const x = 2;`}
+ *   beforeLabel="Before"
+ *   afterLabel="After"
+ * />
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** Code before changes */
+  before: string;
+  /** Code after changes */
+  after: string;
+  /** Label for before panel */
+  beforeLabel?: string;
+  /** Label for after panel */
+  afterLabel?: string;
+  /** Programming language */
+  language?: string;
+  /** Show line numbers */
+  lineNumbers?: boolean;
+  /** View mode */
+  mode?: 'split' | 'unified';
+  /** Highlight additions */
+  highlightAdditions?: boolean;
+  /** Highlight deletions */
+  highlightDeletions?: boolean;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  before,
+  after,
+  beforeLabel = 'Before',
+  afterLabel = 'After',
+  language = '',
+  lineNumbers = true,
+  mode = 'split',
+  highlightAdditions = true,
+  highlightDeletions = true,
+  className = '',
+} = Astro.props;
+
+const beforeLines = before.split('\n');
+const afterLines = after.split('\n');
+
+// Simple diff: find changed lines
+function computeDiff(oldLines: string[], newLines: string[]) {
+  const maxLen = Math.max(oldLines.length, newLines.length);
+  const result = [];
+
+  for (let i = 0; i < maxLen; i++) {
+    const oldLine = oldLines[i];
+    const newLine = newLines[i];
+
+    if (oldLine === undefined) {
+      result.push({ type: 'add', old: '', new: newLine, lineNum: i + 1 });
+    } else if (newLine === undefined) {
+      result.push({ type: 'remove', old: oldLine, new: '', lineNum: i + 1 });
+    } else if (oldLine !== newLine) {
+      result.push({
+        type: 'change',
+        old: oldLine,
+        new: newLine,
+        lineNum: i + 1,
+      });
+    } else {
+      result.push({ type: 'same', old: oldLine, new: newLine, lineNum: i + 1 });
+    }
+  }
+
+  return result;
+}
+
+const diff = computeDiff(beforeLines, afterLines);
+---
+
+<div
+  class={cn(
+    'code-compare rounded-xl overflow-hidden border border-slate-700 bg-slate-900',
+    className
+  )}
+  data-code-compare
+  data-mode={mode}
+>
+  {
+    mode === 'split' ? (
+      <div class="grid grid-cols-2 divide-x divide-slate-700">
+        {/* Before panel */}
+        <div class="flex flex-col">
+          <div class="px-4 py-2 bg-slate-800 border-b border-slate-700 flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-red-500" />
+            <span class="text-sm font-medium text-slate-300">
+              {beforeLabel}
+            </span>
+          </div>
+          <div class="overflow-auto">
+            <pre class="text-sm leading-relaxed">
+              <code>
+                {diff.map((line) => (
+                  <div
+                    class={cn(
+                      'flex',
+                      line.type === 'remove' &&
+                        highlightDeletions &&
+                        'bg-red-950/50',
+                      line.type === 'change' &&
+                        highlightDeletions &&
+                        'bg-red-950/30'
+                    )}
+                  >
+                    {lineNumbers && (
+                      <span class="select-none w-12 px-3 py-0.5 text-right text-slate-500 bg-slate-800/50 border-r border-slate-700">
+                        {line.type !== 'add' ? line.lineNum : ''}
+                      </span>
+                    )}
+                    <span class="flex-1 px-4 py-0.5 text-slate-300 whitespace-pre">
+                      {line.type === 'remove' && (
+                        <span class="text-red-400 mr-2">-</span>
+                      )}
+                      {line.type === 'change' && (
+                        <span class="text-red-400 mr-2">-</span>
+                      )}
+                      {line.type === 'same' && (
+                        <span class="text-slate-500 mr-2"> </span>
+                      )}
+                      {line.type === 'add' && (
+                        <span class="text-slate-500 mr-2"> </span>
+                      )}
+                      {line.old}
+                    </span>
+                  </div>
+                ))}
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        {/* After panel */}
+        <div class="flex flex-col">
+          <div class="px-4 py-2 bg-slate-800 border-b border-slate-700 flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500" />
+            <span class="text-sm font-medium text-slate-300">{afterLabel}</span>
+          </div>
+          <div class="overflow-auto">
+            <pre class="text-sm leading-relaxed">
+              <code>
+                {diff.map((line) => (
+                  <div
+                    class={cn(
+                      'flex',
+                      line.type === 'add' &&
+                        highlightAdditions &&
+                        'bg-emerald-950/50',
+                      line.type === 'change' &&
+                        highlightAdditions &&
+                        'bg-emerald-950/30'
+                    )}
+                  >
+                    {lineNumbers && (
+                      <span class="select-none w-12 px-3 py-0.5 text-right text-slate-500 bg-slate-800/50 border-r border-slate-700">
+                        {line.type !== 'remove' ? line.lineNum : ''}
+                      </span>
+                    )}
+                    <span class="flex-1 px-4 py-0.5 text-slate-300 whitespace-pre">
+                      {line.type === 'add' && (
+                        <span class="text-emerald-400 mr-2">+</span>
+                      )}
+                      {line.type === 'change' && (
+                        <span class="text-emerald-400 mr-2">+</span>
+                      )}
+                      {line.type === 'same' && (
+                        <span class="text-slate-500 mr-2"> </span>
+                      )}
+                      {line.type === 'remove' && (
+                        <span class="text-slate-500 mr-2"> </span>
+                      )}
+                      {line.new}
+                    </span>
+                  </div>
+                ))}
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+    ) : (
+      /* Unified view */
+      <div class="flex flex-col">
+        <div class="px-4 py-2 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <span class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-red-500" />
+              <span class="text-sm text-slate-400">{beforeLabel}</span>
+            </span>
+            <span class="text-slate-600">→</span>
+            <span class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500" />
+              <span class="text-sm text-slate-400">{afterLabel}</span>
+            </span>
+          </div>
+          {language && (
+            <span class="text-xs text-slate-500 uppercase tracking-wider">
+              {language}
+            </span>
+          )}
+        </div>
+        <div class="overflow-auto">
+          <pre class="text-sm leading-relaxed">
+            <code>
+              {diff.flatMap((line) => {
+                const lines = [];
+
+                if (line.type === 'remove' || line.type === 'change') {
+                  lines.push(
+                    <div
+                      class={cn('flex', highlightDeletions && 'bg-red-950/40')}
+                    >
+                      {lineNumbers && (
+                        <span class="select-none w-12 px-3 py-0.5 text-right text-slate-500 bg-slate-800/50 border-r border-slate-700">
+                          {line.lineNum}
+                        </span>
+                      )}
+                      <span class="flex-1 px-4 py-0.5 text-red-300 whitespace-pre">
+                        <span class="text-red-400 mr-2">-</span>
+                        {line.old}
+                      </span>
+                    </div>
+                  );
+                }
+
+                if (line.type === 'add' || line.type === 'change') {
+                  lines.push(
+                    <div
+                      class={cn(
+                        'flex',
+                        highlightAdditions && 'bg-emerald-950/40'
+                      )}
+                    >
+                      {lineNumbers && (
+                        <span class="select-none w-12 px-3 py-0.5 text-right text-slate-500 bg-slate-800/50 border-r border-slate-700">
+                          {line.lineNum}
+                        </span>
+                      )}
+                      <span class="flex-1 px-4 py-0.5 text-emerald-300 whitespace-pre">
+                        <span class="text-emerald-400 mr-2">+</span>
+                        {line.new}
+                      </span>
+                    </div>
+                  );
+                }
+
+                if (line.type === 'same') {
+                  lines.push(
+                    <div class="flex">
+                      {lineNumbers && (
+                        <span class="select-none w-12 px-3 py-0.5 text-right text-slate-500 bg-slate-800/50 border-r border-slate-700">
+                          {line.lineNum}
+                        </span>
+                      )}
+                      <span class="flex-1 px-4 py-0.5 text-slate-400 whitespace-pre">
+                        <span class="text-slate-600 mr-2"> </span>
+                        {line.old}
+                      </span>
+                    </div>
+                  );
+                }
+
+                return lines;
+              })}
+            </code>
+          </pre>
+        </div>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .code-compare {
+    font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+  }
+
+  .code-compare pre {
+    margin: 0;
+    background: transparent;
+  }
+
+  .code-compare code {
+    display: block;
+  }
+
+  /* Responsive: stack on mobile */
+  @media (max-width: 768px) {
+    [data-mode='split'] .grid {
+      grid-template-columns: 1fr;
+    }
+
+    [data-mode='split'] .grid > div:first-child {
+      border-bottom: 1px solid rgb(51 65 85);
+    }
+  }
+
+  /* High contrast */
+  @media (prefers-contrast: high) {
+    .code-compare {
+      border-width: 2px;
+    }
+  }
+</style>

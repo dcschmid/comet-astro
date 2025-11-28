@@ -1,0 +1,459 @@
+---
+/**
+ * NumberInput - Numeric input with increment/decrement buttons
+ *
+ * Features:
+ * - +/- buttons for easy adjustment
+ * - Configurable min, max, and step values
+ * - Keyboard support (Arrow Up/Down)
+ * - Hold-to-repeat for continuous adjustment
+ * - Multiple size and style variants
+ * - WCAG AAA compliant
+ *
+ * @example
+ * <NumberInput
+ *   name="quantity"
+ *   label="Quantity"
+ *   value={1}
+ *   min={0}
+ *   max={100}
+ *   step={1}
+ * />
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** Input name for form submission */
+  name: string;
+  /** Current value */
+  value?: number;
+  /** Minimum allowed value */
+  min?: number;
+  /** Maximum allowed value */
+  max?: number;
+  /** Step increment */
+  step?: number;
+  /** Label text */
+  label?: string;
+  /** Placeholder text */
+  placeholder?: string;
+  /** Help text below the input */
+  helpText?: string;
+  /** Error message */
+  error?: string | boolean;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Visual variant */
+  variant?: 'default' | 'filled' | 'borderless';
+  /** Disable the input */
+  disabled?: boolean;
+  /** Make the input read-only */
+  readonly?: boolean;
+  /** Hide the +/- buttons */
+  hideButtons?: boolean;
+  /** Show the value as a formatted string (e.g., with unit) */
+  suffix?: string;
+  /** Prefix before the value */
+  prefix?: string;
+  /** Full width mode */
+  fullWidth?: boolean;
+  /** Additional CSS classes */
+  className?: string;
+  /** ARIA label */
+  ariaLabel?: string;
+}
+
+const {
+  name,
+  value = 0,
+  min,
+  max,
+  step = 1,
+  label,
+  placeholder = '0',
+  helpText,
+  error,
+  size = 'md',
+  variant = 'default',
+  disabled = false,
+  readonly = false,
+  hideButtons = false,
+  suffix,
+  prefix,
+  fullWidth = false,
+  className = '',
+  ariaLabel,
+} = Astro.props;
+
+const inputId = `number-input-${name}-${Math.random().toString(36).slice(2, 9)}`;
+const helpId = helpText ? `${inputId}-help` : undefined;
+const errorId = error ? `${inputId}-error` : undefined;
+
+// Size configurations
+const sizeClasses = {
+  sm: {
+    container: 'h-9',
+    input: 'text-sm px-3',
+    button: 'w-8 text-sm',
+    label: 'text-xs',
+    help: 'text-xs',
+  },
+  md: {
+    container: 'h-11',
+    input: 'text-sm px-4',
+    button: 'w-10 text-base',
+    label: 'text-sm',
+    help: 'text-xs',
+  },
+  lg: {
+    container: 'h-13',
+    input: 'text-base px-5',
+    button: 'w-12 text-lg',
+    label: 'text-sm',
+    help: 'text-sm',
+  },
+};
+
+// Variant styles
+const variantStyles = {
+  default: {
+    container: cn(
+      'border border-slate-300 dark:border-slate-600',
+      'bg-white dark:bg-slate-900',
+      'rounded-lg',
+      'focus-within:border-blue-500 dark:focus-within:border-blue-400',
+      'focus-within:ring-2 focus-within:ring-blue-500/20 dark:focus-within:ring-blue-400/20'
+    ),
+    input: 'bg-transparent',
+    button: cn(
+      'bg-slate-100 dark:bg-slate-800',
+      'hover:bg-slate-200 dark:hover:bg-slate-700',
+      'text-slate-700 dark:text-slate-300',
+      'border-slate-300 dark:border-slate-600'
+    ),
+  },
+  filled: {
+    container: cn(
+      'border-0',
+      'bg-slate-100 dark:bg-slate-800',
+      'rounded-lg',
+      'focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400'
+    ),
+    input: 'bg-transparent',
+    button: cn(
+      'bg-slate-200 dark:bg-slate-700',
+      'hover:bg-slate-300 dark:hover:bg-slate-600',
+      'text-slate-700 dark:text-slate-300',
+      'border-slate-300 dark:border-slate-600'
+    ),
+  },
+  borderless: {
+    container: cn(
+      'border-0',
+      'bg-transparent',
+      'focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400',
+      'rounded-lg'
+    ),
+    input: 'bg-transparent',
+    button: cn(
+      'bg-slate-100 dark:bg-slate-800',
+      'hover:bg-slate-200 dark:hover:bg-slate-700',
+      'text-slate-700 dark:text-slate-300',
+      'border-slate-200 dark:border-slate-700'
+    ),
+  },
+};
+
+const config = sizeClasses[size];
+const styles = variantStyles[variant];
+const hasError = Boolean(error);
+---
+
+<div class={cn('space-y-1.5', fullWidth && 'w-full', className)}>
+  {
+    label && (
+      <label
+        for={inputId}
+        class={cn(
+          'block font-medium text-slate-900 dark:text-slate-100',
+          config.label,
+          disabled && 'opacity-50'
+        )}
+      >
+        {label}
+      </label>
+    )
+  }
+
+  <div
+    class={cn(
+      'inline-flex items-center overflow-hidden',
+      styles.container,
+      config.container,
+      hasError &&
+        'border-red-500 dark:border-red-400 focus-within:border-red-500 dark:focus-within:border-red-400',
+      disabled && 'opacity-50 cursor-not-allowed',
+      fullWidth && 'w-full'
+    )}
+    data-number-input
+    data-min={min}
+    data-max={max}
+    data-step={step}
+  >
+    {
+      !hideButtons && (
+        <button
+          type="button"
+          class={cn(
+            'flex-shrink-0 flex items-center justify-center',
+            'border-r transition-colors duration-150',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset',
+            'focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            styles.button,
+            config.button,
+            config.container
+          )}
+          data-decrement
+          disabled={disabled || readonly}
+          aria-label="Decrease value"
+          tabindex="-1"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+          </svg>
+        </button>
+      )
+    }
+
+    <div class="flex-1 flex items-center justify-center">
+      {
+        prefix && (
+          <span class="text-slate-500 dark:text-slate-400 pl-2 select-none">
+            {prefix}
+          </span>
+        )
+      }
+
+      <input
+        type="number"
+        id={inputId}
+        name={name}
+        value={value}
+        min={min}
+        max={max}
+        step={step}
+        placeholder={placeholder}
+        disabled={disabled}
+        readonly={readonly}
+        aria-label={ariaLabel || label}
+        aria-describedby={[helpId, errorId].filter(Boolean).join(' ') ||
+          undefined}
+        aria-invalid={hasError ? 'true' : undefined}
+        class={cn(
+          'w-full text-center font-medium',
+          'text-slate-900 dark:text-slate-100',
+          'placeholder:text-slate-400 dark:placeholder:text-slate-500',
+          'focus:outline-none',
+          'disabled:cursor-not-allowed',
+          '[appearance:textfield]',
+          '[&::-webkit-outer-spin-button]:appearance-none',
+          '[&::-webkit-inner-spin-button]:appearance-none',
+          styles.input,
+          config.input,
+          config.container
+        )}
+        data-number-input-field
+      />
+
+      {
+        suffix && (
+          <span class="text-slate-500 dark:text-slate-400 pr-2 select-none">
+            {suffix}
+          </span>
+        )
+      }
+    </div>
+
+    {
+      !hideButtons && (
+        <button
+          type="button"
+          class={cn(
+            'flex-shrink-0 flex items-center justify-center',
+            'border-l transition-colors duration-150',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset',
+            'focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            styles.button,
+            config.button,
+            config.container
+          )}
+          data-increment
+          disabled={disabled || readonly}
+          aria-label="Increase value"
+          tabindex="-1"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+        </button>
+      )
+    }
+  </div>
+
+  {
+    helpText && !hasError && (
+      <p
+        id={helpId}
+        class={cn('text-slate-600 dark:text-slate-400', config.help)}
+      >
+        {helpText}
+      </p>
+    )
+  }
+
+  {
+    hasError && (
+      <p
+        id={errorId}
+        class={cn('text-red-600 dark:text-red-400', config.help)}
+        role="alert"
+      >
+        {typeof error === 'string' ? error : 'Invalid value'}
+      </p>
+    )
+  }
+</div>
+
+<script is:inline>
+  (function () {
+    const containers = document.querySelectorAll('[data-number-input]');
+
+    containers.forEach((container) => {
+      const input = container.querySelector('[data-number-input-field]');
+      const decrementBtn = container.querySelector('[data-decrement]');
+      const incrementBtn = container.querySelector('[data-increment]');
+
+      if (!(input instanceof HTMLInputElement)) return;
+
+      const min = container.hasAttribute('data-min')
+        ? parseFloat(container.getAttribute('data-min') || '0')
+        : -Infinity;
+      const max = container.hasAttribute('data-max')
+        ? parseFloat(container.getAttribute('data-max') || '0')
+        : Infinity;
+      const step = parseFloat(container.getAttribute('data-step') || '1');
+
+      const updateValue = (delta) => {
+        const currentValue = parseFloat(input.value) || 0;
+        const newValue = Math.round((currentValue + delta) * 1000000) / 1000000; // Fix floating point
+        const clampedValue = Math.max(min, Math.min(max, newValue));
+
+        if (clampedValue !== currentValue) {
+          input.value = String(clampedValue);
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      };
+
+      // Button click handlers with hold-to-repeat
+      const setupButton = (button, delta) => {
+        if (!button) return;
+
+        let intervalId = null;
+        let timeoutId = null;
+
+        const startRepeat = () => {
+          updateValue(delta);
+          timeoutId = setTimeout(() => {
+            intervalId = setInterval(() => updateValue(delta), 75);
+          }, 400);
+        };
+
+        const stopRepeat = () => {
+          if (timeoutId) clearTimeout(timeoutId);
+          if (intervalId) clearInterval(intervalId);
+          timeoutId = null;
+          intervalId = null;
+        };
+
+        button.addEventListener('mousedown', startRepeat);
+        button.addEventListener('mouseup', stopRepeat);
+        button.addEventListener('mouseleave', stopRepeat);
+        button.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          startRepeat();
+        });
+        button.addEventListener('touchend', stopRepeat);
+      };
+
+      setupButton(decrementBtn, -step);
+      setupButton(incrementBtn, step);
+
+      // Keyboard navigation
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          updateValue(step);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          updateValue(-step);
+        }
+      });
+
+      // Validate on blur
+      input.addEventListener('blur', () => {
+        const value = parseFloat(input.value);
+        if (isNaN(value)) {
+          input.value = String(min !== -Infinity ? min : 0);
+        } else {
+          input.value = String(Math.max(min, Math.min(max, value)));
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  /* Hide native number input spinners */
+  [data-number-input-field] {
+    -moz-appearance: textfield;
+  }
+
+  [data-number-input-field]::-webkit-outer-spin-button,
+  [data-number-input-field]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    [data-number-input] {
+      border-width: 2px;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    [data-number-input] button {
+      transition: none;
+    }
+  }
+</style>

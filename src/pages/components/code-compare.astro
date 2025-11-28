@@ -1,0 +1,252 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeCompare from '../../components/CodeCompare.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const beforeCode = `function greet(name) {
+  console.log("Hello, " + name);
+  return name;
+}`;
+
+const afterCode = `function greet(name: string): string {
+  console.log(\`Hello, \${name}!\`);
+  return name.toUpperCase();
+}`;
+
+const configBefore = `{
+  "name": "my-app",
+  "version": "1.0.0",
+  "main": "index.js"
+}`;
+
+const configAfter = `{
+  "name": "my-app",
+  "version": "2.0.0",
+  "main": "dist/index.js",
+  "type": "module"
+}`;
+
+const usageSnippet = `---
+import { CodeCompare } from 'comet-astro';
+
+const before = \`const x = 1;\`;
+const after = \`const x = 2;\`;
+---
+
+<CodeCompare
+  before={before}
+  after={after}
+  beforeLabel="v1.0"
+  afterLabel="v2.0"
+  language="javascript"
+/>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'before',
+    type: 'string',
+    default: '-',
+    description: 'Code before changes (required).',
+  },
+  {
+    name: 'after',
+    type: 'string',
+    default: '-',
+    description: 'Code after changes (required).',
+  },
+  {
+    name: 'beforeLabel',
+    type: 'string',
+    default: "'Before'",
+    description: 'Label for the before panel.',
+  },
+  {
+    name: 'afterLabel',
+    type: 'string',
+    default: "'After'",
+    description: 'Label for the after panel.',
+  },
+  {
+    name: 'language',
+    type: 'string',
+    default: "''",
+    description: 'Programming language (for display).',
+  },
+  {
+    name: 'lineNumbers',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show line numbers.',
+  },
+  {
+    name: 'mode',
+    type: "'split' | 'unified'",
+    default: "'split'",
+    description: 'View mode.',
+  },
+  {
+    name: 'highlightAdditions',
+    type: 'boolean',
+    default: 'true',
+    description: 'Highlight added lines in green.',
+  },
+  {
+    name: 'highlightDeletions',
+    type: 'boolean',
+    default: 'true',
+    description: 'Highlight removed lines in red.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="CodeCompare"
+  seoDescription="Side-by-side code comparison for diffs and changes."
+>
+  <Headline level="h1" textSize="2xl">CodeCompare</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The CodeCompare component displays code changes in a visual diff format,
+      showing additions and deletions side-by-side or in a unified view.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Perfect for documentation, changelogs, code reviews, and tutorials.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Split view (default)
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Side-by-side comparison of code changes.
+      </Paragraph>
+      <CodeCompare
+        before={beforeCode}
+        after={afterCode}
+        beforeLabel="JavaScript"
+        afterLabel="TypeScript"
+        language="typescript"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Unified view
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Single column with additions and deletions inline.
+      </Paragraph>
+      <CodeCompare
+        before={beforeCode}
+        after={afterCode}
+        beforeLabel="Old"
+        afterLabel="New"
+        mode="unified"
+        language="typescript"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Config file changes
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Show configuration updates.
+      </Paragraph>
+      <CodeCompare
+        before={configBefore}
+        after={configAfter}
+        beforeLabel="package.json (v1)"
+        afterLabel="package.json (v2)"
+        language="json"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Without line numbers
+      </Headline>
+      <CodeCompare
+        before={`import React from 'react';
+export default App;`}
+        after={`import { useState } from 'react';
+export default App;`}
+        lineNumbers={false}
+        beforeLabel="Before"
+        afterLabel="After"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Without highlighting
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Disable color highlighting for a minimal look.
+      </Paragraph>
+      <CodeCompare
+        before={`const a = 1;`}
+        after={`const a = 2;`}
+        highlightAdditions={false}
+        highlightDeletions={false}
+      />
+    </article>
+  </section>
+</DocsLayout>

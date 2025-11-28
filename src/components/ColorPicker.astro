@@ -1,0 +1,556 @@
+---
+/**
+ * ColorPicker - Visual color selection component
+ *
+ * Features:
+ * - Preset color swatches
+ * - Custom color input (hex)
+ * - Optional opacity/alpha support
+ * - Color preview
+ * - Copy to clipboard
+ * - WCAG AAA compliant
+ *
+ * @example
+ * <ColorPicker
+ *   name="brandColor"
+ *   defaultValue="#3b82f6"
+ *   presets={["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6"]}
+ * />
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** Unique name for the input */
+  name: string;
+  /** Default color value (hex) */
+  defaultValue?: string;
+  /** Preset color swatches */
+  presets?: string[];
+  /** Allow custom color input */
+  allowCustom?: boolean;
+  /** Show alpha/opacity slider */
+  showAlpha?: boolean;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Show color format (hex value) */
+  showValue?: boolean;
+  /** Enable copy to clipboard */
+  copyable?: boolean;
+  /** Disable the picker */
+  disabled?: boolean;
+  /** ARIA label */
+  ariaLabel?: string;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  name,
+  defaultValue = '#3b82f6',
+  presets = [
+    '#ef4444',
+    '#f97316',
+    '#f59e0b',
+    '#eab308',
+    '#84cc16',
+    '#22c55e',
+    '#10b981',
+    '#14b8a6',
+    '#06b6d4',
+    '#0ea5e9',
+    '#3b82f6',
+    '#6366f1',
+    '#8b5cf6',
+    '#a855f7',
+    '#d946ef',
+    '#ec4899',
+    '#f43f5e',
+    '#64748b',
+    '#000000',
+    '#ffffff',
+  ],
+  allowCustom = true,
+  showAlpha = false,
+  size = 'md',
+  showValue = true,
+  copyable = true,
+  disabled = false,
+  ariaLabel,
+  className = '',
+} = Astro.props;
+
+// Size configurations
+const sizeClasses = {
+  sm: {
+    swatch: 'w-5 h-5',
+    preview: 'w-8 h-8',
+    input: 'text-xs px-2 py-1',
+    container: 'gap-2',
+  },
+  md: {
+    swatch: 'w-6 h-6',
+    preview: 'w-10 h-10',
+    input: 'text-sm px-3 py-1.5',
+    container: 'gap-3',
+  },
+  lg: {
+    swatch: 'w-8 h-8',
+    preview: 'w-12 h-12',
+    input: 'text-base px-3 py-2',
+    container: 'gap-4',
+  },
+};
+
+const config = sizeClasses[size];
+
+// Validate hex color
+const isValidHex = (hex: string) =>
+  /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8}|[A-Fa-f0-9]{3})$/.test(hex);
+const normalizedDefault = isValidHex(defaultValue) ? defaultValue : '#3b82f6';
+---
+
+<div
+  class={cn(
+    'inline-flex flex-col',
+    config.container,
+    disabled && 'opacity-50 pointer-events-none',
+    className
+  )}
+  data-color-picker
+  data-name={name}
+  data-value={normalizedDefault}
+  data-show-alpha={showAlpha}
+  aria-label={ariaLabel}
+>
+  <!-- Preview and Value -->
+  <div class="flex items-center gap-3">
+    <!-- Color Preview -->
+    <div
+      class={cn(
+        'rounded-lg border-2 border-slate-300 dark:border-slate-600',
+        'shadow-sm cursor-pointer relative overflow-hidden',
+        config.preview
+      )}
+      data-preview
+      style={`background-color: ${normalizedDefault};`}
+      role="button"
+      aria-label="Current color preview"
+      tabindex="0"
+    >
+      <!-- Checkerboard for transparency -->
+      <div
+        class="absolute inset-0 -z-10"
+        style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill-opacity=%22.1%22%3E%3Crect x=%228%22 width=%228%22 height=%228%22/%3E%3Crect y=%228%22 width=%228%22 height=%228%22/%3E%3C/svg%3E');"
+      >
+      </div>
+    </div>
+
+    <!-- Hex Input -->
+    {
+      showValue && (
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            class={cn(
+              'font-mono uppercase rounded-md',
+              'bg-white dark:bg-slate-900',
+              'border border-slate-300 dark:border-slate-600',
+              'text-slate-900 dark:text-slate-100',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500',
+              'transition-colors duration-150',
+              config.input
+            )}
+            value={normalizedDefault}
+            maxlength={showAlpha ? 9 : 7}
+            placeholder="#000000"
+            aria-label="Color hex value"
+            data-hex-input
+          />
+
+          {copyable && (
+            <button
+              type="button"
+              class={cn(
+                'p-1.5 rounded-md',
+                'text-slate-500 dark:text-slate-400',
+                'hover:bg-slate-100 dark:hover:bg-slate-800',
+                'hover:text-slate-700 dark:hover:text-slate-200',
+                'focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'transition-colors duration-150'
+              )}
+              aria-label="Copy color to clipboard"
+              data-copy-btn
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
+      )
+    }
+  </div>
+
+  <!-- Color Swatches -->
+  {
+    presets.length > 0 && (
+      <div
+        class="flex flex-wrap gap-1.5"
+        role="listbox"
+        aria-label="Color presets"
+        data-swatches
+      >
+        {presets.map((color) => (
+          <button
+            type="button"
+            class={cn(
+              'rounded-md border-2 transition-all duration-150',
+              'hover:scale-110 focus:scale-110',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+              color === normalizedDefault
+                ? 'border-blue-500 dark:border-blue-400 ring-2 ring-blue-500/30'
+                : 'border-transparent hover:border-slate-400 dark:hover:border-slate-500',
+              config.swatch
+            )}
+            style={`background-color: ${color};`}
+            role="option"
+            aria-selected={color === normalizedDefault}
+            aria-label={`Select color ${color}`}
+            data-swatch={color}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  <!-- Custom Color Input (native picker) -->
+  {
+    allowCustom && (
+      <div class="flex items-center gap-2">
+        <label
+          class={cn(
+            'flex items-center gap-2 cursor-pointer',
+            'text-slate-600 dark:text-slate-400',
+            'hover:text-slate-900 dark:hover:text-slate-100',
+            'transition-colors duration-150',
+            size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-sm'
+          )}
+        >
+          <input
+            type="color"
+            class="sr-only"
+            value={normalizedDefault.slice(0, 7)}
+            data-native-picker
+          />
+          <span
+            class={cn(
+              'inline-flex items-center justify-center rounded-md',
+              'bg-slate-100 dark:bg-slate-800',
+              'hover:bg-slate-200 dark:hover:bg-slate-700',
+              config.swatch
+            )}
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              />
+            </svg>
+          </span>
+          <span>Custom</span>
+        </label>
+      </div>
+    )
+  }
+
+  <!-- Alpha Slider -->
+  {
+    showAlpha && (
+      <div class="flex items-center gap-3">
+        <label
+          class={cn(
+            'text-slate-600 dark:text-slate-400',
+            size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-sm'
+          )}
+        >
+          Opacity
+        </label>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value="100"
+          class={cn(
+            'flex-1 h-2 rounded-full appearance-none cursor-pointer',
+            'bg-slate-200 dark:bg-slate-700',
+            '[&::-webkit-slider-thumb]:appearance-none',
+            '[&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4',
+            '[&::-webkit-slider-thumb]:rounded-full',
+            '[&::-webkit-slider-thumb]:bg-white',
+            '[&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-500',
+            '[&::-webkit-slider-thumb]:shadow-md'
+          )}
+          aria-label="Color opacity"
+          data-alpha-slider
+        />
+        <span
+          class={cn(
+            'w-10 text-right font-mono',
+            'text-slate-600 dark:text-slate-400',
+            size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-sm'
+          )}
+          data-alpha-value
+        >
+          100%
+        </span>
+      </div>
+    )
+  }
+
+  <!-- Hidden input for form submission -->
+  <input
+    type="hidden"
+    name={name}
+    value={normalizedDefault}
+    data-hidden-input
+  />
+</div>
+
+<script is:inline>
+  (function () {
+    const pickers = document.querySelectorAll('[data-color-picker]');
+
+    pickers.forEach((picker) => {
+      const preview = picker.querySelector('[data-preview]');
+      const hexInput = picker.querySelector('[data-hex-input]');
+      const hiddenInput = picker.querySelector('[data-hidden-input]');
+      const swatches = picker.querySelectorAll('[data-swatch]');
+      const nativePicker = picker.querySelector('[data-native-picker]');
+      const copyBtn = picker.querySelector('[data-copy-btn]');
+      const alphaSlider = picker.querySelector('[data-alpha-slider]');
+      const alphaValue = picker.querySelector('[data-alpha-value]');
+
+      const name = picker.getAttribute('data-name');
+      const showAlpha = picker.getAttribute('data-show-alpha') === 'true';
+
+      let currentColor = picker.getAttribute('data-value') || '#3b82f6';
+      let currentAlpha = 100;
+
+      const isValidHex = (hex) =>
+        /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8}|[A-Fa-f0-9]{3})$/.test(hex);
+
+      const hexToRgba = (hex, alpha = 1) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        if (!result) return hex;
+        return `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${alpha})`;
+      };
+
+      const updateColor = (color, alpha = currentAlpha) => {
+        if (!isValidHex(color)) return;
+
+        currentColor = color.toUpperCase();
+        currentAlpha = alpha;
+
+        // Update preview
+        if (preview) {
+          const displayColor = showAlpha
+            ? hexToRgba(currentColor, currentAlpha / 100)
+            : currentColor;
+          preview.style.backgroundColor = displayColor;
+        }
+
+        // Update hex input
+        if (hexInput) {
+          hexInput.value = currentColor;
+        }
+
+        // Update hidden input
+        if (hiddenInput) {
+          hiddenInput.value = currentColor;
+        }
+
+        // Update swatch selection
+        swatches.forEach((swatch) => {
+          const swatchColor = swatch.getAttribute('data-swatch')?.toUpperCase();
+          const isSelected = swatchColor === currentColor;
+          swatch.setAttribute('aria-selected', String(isSelected));
+
+          if (isSelected) {
+            swatch.classList.add(
+              'border-blue-500',
+              'dark:border-blue-400',
+              'ring-2',
+              'ring-blue-500/30'
+            );
+            swatch.classList.remove('border-transparent');
+          } else {
+            swatch.classList.remove(
+              'border-blue-500',
+              'dark:border-blue-400',
+              'ring-2',
+              'ring-blue-500/30'
+            );
+            swatch.classList.add('border-transparent');
+          }
+        });
+
+        // Update native picker
+        if (nativePicker) {
+          nativePicker.value = currentColor.slice(0, 7);
+        }
+
+        // Update data attribute
+        picker.setAttribute('data-value', currentColor);
+
+        // Dispatch change event
+        picker.dispatchEvent(
+          new CustomEvent('change', {
+            bubbles: true,
+            detail: {
+              name,
+              color: currentColor,
+              alpha: currentAlpha,
+              rgba: hexToRgba(currentColor, currentAlpha / 100),
+            },
+          })
+        );
+      };
+
+      // Swatch click handlers
+      swatches.forEach((swatch) => {
+        swatch.addEventListener('click', () => {
+          const color = swatch.getAttribute('data-swatch');
+          if (color) updateColor(color);
+        });
+      });
+
+      // Hex input handler
+      if (hexInput) {
+        hexInput.addEventListener('input', (e) => {
+          let value = e.target.value;
+          if (!value.startsWith('#')) {
+            value = '#' + value;
+          }
+          if (isValidHex(value)) {
+            updateColor(value);
+          }
+        });
+
+        hexInput.addEventListener('blur', () => {
+          // Reset to current valid color if invalid
+          hexInput.value = currentColor;
+        });
+      }
+
+      // Native color picker handler
+      if (nativePicker) {
+        nativePicker.addEventListener('input', (e) => {
+          updateColor(e.target.value);
+        });
+      }
+
+      // Copy to clipboard
+      if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(currentColor);
+
+            // Visual feedback
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML =
+              '<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
+
+            setTimeout(() => {
+              copyBtn.innerHTML = originalHTML;
+            }, 1500);
+          } catch (err) {
+            console.error('Failed to copy color:', err);
+          }
+        });
+      }
+
+      // Alpha slider handler
+      if (alphaSlider && alphaValue) {
+        alphaSlider.addEventListener('input', (e) => {
+          const alpha = parseInt(e.target.value);
+          alphaValue.textContent = `${alpha}%`;
+          updateColor(currentColor, alpha);
+        });
+      }
+
+      // Keyboard navigation for swatches
+      picker.addEventListener('keydown', (e) => {
+        if (e.target.hasAttribute('data-swatch')) {
+          const swatchArray = Array.from(swatches);
+          const currentIndex = swatchArray.indexOf(e.target);
+          let nextIndex = currentIndex;
+
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            nextIndex = (currentIndex + 1) % swatchArray.length;
+          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            nextIndex =
+              (currentIndex - 1 + swatchArray.length) % swatchArray.length;
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const color = e.target.getAttribute('data-swatch');
+            if (color) updateColor(color);
+            return;
+          }
+
+          swatchArray[nextIndex]?.focus();
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  /* Smooth swatch transitions */
+  [data-swatch] {
+    transition:
+      transform 150ms ease,
+      border-color 150ms ease;
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [data-swatch] {
+      border-width: 3px;
+    }
+
+    [data-preview] {
+      border-width: 3px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    [data-swatch] {
+      transition: none;
+    }
+
+    [data-swatch]:hover,
+    [data-swatch]:focus {
+      transform: none;
+    }
+  }
+</style>

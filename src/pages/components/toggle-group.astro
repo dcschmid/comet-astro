@@ -1,0 +1,290 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ToggleGroup from '../../components/ToggleGroup.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const alignOptions = [
+  { value: 'left', label: 'Left', icon: '⬅️' },
+  { value: 'center', label: 'Center', icon: '↔️' },
+  { value: 'right', label: 'Right', icon: '➡️' },
+];
+
+const formatOptions = [
+  { value: 'bold', label: 'Bold', icon: 'B' },
+  { value: 'italic', label: 'Italic', icon: 'I' },
+  { value: 'underline', label: 'Underline', icon: 'U' },
+  { value: 'strike', label: 'Strike', icon: 'S' },
+];
+
+const dayOptions = [
+  { value: 'mon', label: 'Mo' },
+  { value: 'tue', label: 'Tu' },
+  { value: 'wed', label: 'We' },
+  { value: 'thu', label: 'Th' },
+  { value: 'fri', label: 'Fr' },
+  { value: 'sat', label: 'Sa' },
+  { value: 'sun', label: 'Su' },
+];
+
+const usageSnippet = `---
+import { ToggleGroup } from 'comet-astro';
+
+const options = [
+  { value: 'bold', label: 'Bold', icon: 'B' },
+  { value: 'italic', label: 'Italic', icon: 'I' },
+  { value: 'underline', label: 'Underline', icon: 'U' },
+];
+---
+
+<!-- Multi-select (default) -->
+<ToggleGroup
+  name="formatting"
+  options={options}
+  defaultValue={['bold']}
+  multiple
+/>
+
+<!-- Single-select (radio behavior) -->
+<ToggleGroup
+  name="alignment"
+  options={alignOptions}
+  defaultValue={['center']}
+  multiple={false}
+/>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'name',
+    type: 'string',
+    default: '-',
+    description: 'Unique name for the control. Required.',
+  },
+  {
+    name: 'options',
+    type: 'ToggleOption[]',
+    default: '[]',
+    description: 'Array of options with value, label, optional icon.',
+  },
+  {
+    name: 'defaultValue',
+    type: 'string[]',
+    default: '[]',
+    description: 'Initially selected values.',
+  },
+  {
+    name: 'multiple',
+    type: 'boolean',
+    default: 'true',
+    description: 'Allow multiple selections (checkbox vs radio behavior).',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'outline' | 'solid'",
+    default: "'default'",
+    description: 'Visual style variant.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size of the buttons.',
+  },
+  {
+    name: 'iconOnly',
+    type: 'boolean',
+    default: 'false',
+    description: 'Show only icons (labels become screen-reader only).',
+  },
+  {
+    name: 'orientation',
+    type: "'horizontal' | 'vertical'",
+    default: "'horizontal'",
+    description: 'Layout direction.',
+  },
+  {
+    name: 'allowEmpty',
+    type: 'boolean',
+    default: 'true',
+    description: 'Allow deselecting all options.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="ToggleGroup"
+  seoDescription="Group of toggle buttons for single or multi-selection."
+>
+  <Headline level="h1" textSize="2xl">ToggleGroup</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The ToggleGroup component provides a group of toggle buttons that can work
+      as checkboxes (multi-select) or radio buttons (single-select). Ideal for
+      text formatting toolbars, day selection, or any scenario with toggleable
+      options.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Supports icons, full keyboard navigation, and emits
+      <InlineCode>change</InlineCode> events with the current selection state.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and pass your options array. Set
+      <InlineCode>multiple={false}</InlineCode> for radio-like behavior.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Multi-select (formatting toolbar)
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Multiple options can be active simultaneously, like text formatting.
+      </Paragraph>
+      <ToggleGroup
+        name="format"
+        options={formatOptions}
+        defaultValue={['bold', 'italic']}
+        iconOnly
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Single-select (alignment)
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Set <InlineCode>multiple={false}</InlineCode> for radio-like behavior.
+      </Paragraph>
+      <ToggleGroup
+        name="align"
+        options={alignOptions}
+        defaultValue={['center']}
+        multiple={false}
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Style variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three visual styles available.
+      </Paragraph>
+      <div class="flex flex-col gap-4">
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Default:</span>
+          <ToggleGroup
+            name="v1"
+            options={alignOptions}
+            defaultValue={['left']}
+            variant="default"
+          />
+        </div>
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Outline:</span>
+          <ToggleGroup
+            name="v2"
+            options={alignOptions}
+            defaultValue={['center']}
+            variant="outline"
+          />
+        </div>
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Solid:</span>
+          <ToggleGroup
+            name="v3"
+            options={alignOptions}
+            defaultValue={['right']}
+            variant="solid"
+          />
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Day selection
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Common use case for scheduling or recurring events.
+      </Paragraph>
+      <ToggleGroup
+        name="days"
+        options={dayOptions}
+        defaultValue={['mon', 'wed', 'fri']}
+        size="sm"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Vertical orientation
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Stack buttons vertically for sidebar placement.
+      </Paragraph>
+      <ToggleGroup
+        name="vert"
+        options={alignOptions}
+        defaultValue={['left']}
+        orientation="vertical"
+      />
+    </article>
+  </section>
+</DocsLayout>

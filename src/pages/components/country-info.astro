@@ -1,0 +1,184 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CountryInfo from '../../components/CountryInfo.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+// import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { CountryInfo } from 'comet-astro';
+---
+
+<CountryInfo country="DE" />
+<CountryInfo country="Japan" variant="compact" />
+<CountryInfo country="US" variant="detailed" showCoatOfArms />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'country',
+    type: 'string',
+    default: '—',
+    description:
+      'ISO 3166-1 alpha-2/alpha-3 code (DE, USA) or full country name.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'compact' | 'detailed'",
+    default: "'default'",
+    description:
+      'Display variant. Detailed includes currencies, languages, and extra info.',
+  },
+  {
+    name: 'showMap',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show link to Google Maps.',
+  },
+  {
+    name: 'showCoatOfArms',
+    type: 'boolean',
+    default: 'false',
+    description: 'Display the coat of arms if available.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes for the wrapper element.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="CountryInfo"
+  seoDescription="Display country information with flag, capital, currencies and languages."
+>
+  <Headline level="h1" textSize="2xl">CountryInfo</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The CountryInfo component displays detailed information about any country
+      including its flag, capital, population, area, currencies, and languages.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Data comes from the REST Countries API. You can look up countries by their
+      ISO code (DE, US, JP) or by their full name. Three display variants are
+      available for different use cases.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and provide a country code or name. The API is free
+      and requires no API key.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Default variant
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          Shows flag, name, capital, region, population, and area in a card
+          layout.
+        </Paragraph>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <CountryInfo country="DE" />
+        <CountryInfo country="JP" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Compact variant
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          A minimal inline display showing just flag, name, capital, and
+          population.
+        </Paragraph>
+      </div>
+      <div class="space-y-2">
+        <CountryInfo country="US" variant="compact" />
+        <CountryInfo country="FR" variant="compact" />
+        <CountryInfo country="BR" variant="compact" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <div>
+        <Headline
+          level="h3"
+          textSize="lg"
+          weight="semibold"
+          className="text-slate-100"
+        >
+          Detailed variant
+        </Headline>
+        <Paragraph class="text-base text-slate-200">
+          Full information including currencies, languages, domain, and driving
+          side.
+        </Paragraph>
+      </div>
+      <CountryInfo country="CH" variant="detailed" showCoatOfArms />
+    </article>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >API Reference</Headline
+    >
+    <div class="p-4 rounded-xl bg-sky-500/10 border border-sky-500/30">
+      <p class="text-sm text-slate-300">
+        <strong class="text-sky-300">API:</strong>
+        <a
+          href="https://restcountries.com/"
+          target="_blank"
+          rel="noopener"
+          class="text-sky-400 hover:underline ml-1"
+        >
+          restcountries.com
+        </a>
+        – Free, no API key required.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

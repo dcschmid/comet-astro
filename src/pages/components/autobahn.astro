@@ -1,0 +1,693 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import AutobahnRoadworks from '../../components/AutobahnRoadworks.astro';
+import AutobahnClosures from '../../components/AutobahnClosures.astro';
+import AutobahnCharging from '../../components/AutobahnCharging.astro';
+import AutobahnDashboard from '../../components/AutobahnDashboard.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const usageRoadworks = `---
+import { AutobahnRoadworks } from 'comet-astro';
+---
+
+<AutobahnRoadworks road="A1" />
+<AutobahnRoadworks road="A5" maxItems={5} compact />`;
+
+const usageClosures = `---
+import { AutobahnClosures } from 'comet-astro';
+---
+
+<AutobahnClosures road="A3" />
+<AutobahnClosures road="A7" maxItems={3} showMapLinks={false} />`;
+
+const usageCharging = `---
+import { AutobahnCharging } from 'comet-astro';
+---
+
+<AutobahnCharging road="A9" />
+<AutobahnCharging road="A2" maxItems={8} compact />`;
+
+const usageDashboard = `---
+import { AutobahnDashboard } from 'comet-astro';
+---
+
+<!-- Full dashboard -->
+<AutobahnDashboard road="A1" />
+
+<!-- Only specific sections -->
+<AutobahnDashboard 
+  road="A5" 
+  sections={['closures', 'roadworks']} 
+  maxItems={3}
+/>
+
+<!-- Grid layout -->
+<AutobahnDashboard road="A9" layout="grid" />`;
+
+const roadworksPropsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Typ' },
+  { key: 'default', label: 'Standard' },
+  { key: 'description', label: 'Beschreibung' },
+];
+
+const roadworksPropsData = [
+  {
+    name: 'road',
+    type: 'string',
+    default: '—',
+    description: 'Autobahn-Kennung (z.B. "A1", "A5", "A9").',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '10',
+    description: 'Maximale Anzahl angezeigter Baustellen.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung ohne Details.',
+  },
+  {
+    name: 'showTitle',
+    type: 'boolean',
+    default: 'true',
+    description: 'Header mit Titel anzeigen.',
+  },
+  {
+    name: 'showMapLinks',
+    type: 'boolean',
+    default: 'true',
+    description: 'Links zu Google Maps anzeigen.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Zusätzliche CSS-Klassen.',
+  },
+];
+
+const closuresPropsData = [
+  {
+    name: 'road',
+    type: 'string',
+    default: '—',
+    description: 'Autobahn-Kennung (z.B. "A1", "A5", "A9").',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '10',
+    description: 'Maximale Anzahl angezeigter Sperrungen.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung ohne Details.',
+  },
+  {
+    name: 'showTitle',
+    type: 'boolean',
+    default: 'true',
+    description: 'Header mit Titel anzeigen.',
+  },
+  {
+    name: 'showMapLinks',
+    type: 'boolean',
+    default: 'true',
+    description: 'Links zu Google Maps anzeigen.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Zusätzliche CSS-Klassen.',
+  },
+];
+
+const chargingPropsData = [
+  {
+    name: 'road',
+    type: 'string',
+    default: '—',
+    description: 'Autobahn-Kennung (z.B. "A1", "A5", "A9").',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '10',
+    description: 'Maximale Anzahl angezeigter Ladestationen.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung ohne Details.',
+  },
+  {
+    name: 'showTitle',
+    type: 'boolean',
+    default: 'true',
+    description: 'Header mit Titel anzeigen.',
+  },
+  {
+    name: 'showMapLinks',
+    type: 'boolean',
+    default: 'true',
+    description: 'Links zu Google Maps anzeigen.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Zusätzliche CSS-Klassen.',
+  },
+];
+
+const dashboardPropsData = [
+  {
+    name: 'road',
+    type: 'string',
+    default: '—',
+    description: 'Autobahn-Kennung (z.B. "A1", "A5", "A9").',
+  },
+  {
+    name: 'sections',
+    type: 'array',
+    default: "['closures', 'roadworks', 'charging']",
+    description: 'Welche Sektionen angezeigt werden.',
+  },
+  {
+    name: 'maxItems',
+    type: 'number',
+    default: '5',
+    description: 'Max. Einträge pro Sektion.',
+  },
+  {
+    name: 'compact',
+    type: 'boolean',
+    default: 'false',
+    description: 'Kompakte Darstellung.',
+  },
+  {
+    name: 'layout',
+    type: "'grid' | 'stack'",
+    default: "'stack'",
+    description: 'Layout der Sektionen.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Zusätzliche CSS-Klassen.',
+  },
+];
+
+const autobahns = [
+  'A1',
+  'A2',
+  'A3',
+  'A4',
+  'A5',
+  'A6',
+  'A7',
+  'A8',
+  'A9',
+  'A10',
+  'A40',
+  'A44',
+  'A45',
+  'A61',
+  'A81',
+];
+---
+
+<DocsLayout
+  seoTitle="Autobahn"
+  seoDescription="Live-Verkehrsinformationen von deutschen Autobahnen - Baustellen, Sperrungen und E-Ladestationen."
+>
+  <!-- Hero Section -->
+  <div
+    class="relative mb-12 -mt-4 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-950/50 via-slate-900 to-slate-950 border border-slate-700/50"
+  >
+    <div
+      class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMDI0MmIiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnYyaDR2MmgtdnptLTE0LTRoMnY0aC0ydi0ySDZoLTJ2LTJoMnYtMmgydjJoMnYyaDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"
+    >
+    </div>
+    <div class="relative px-8 py-10">
+      <div class="flex items-center gap-4 mb-4">
+        <div
+          class="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25"
+        >
+          <svg
+            class="w-8 h-8 text-white"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white">Autobahn</h1>
+          <p class="text-slate-400 text-sm">
+            Verkehrsinformationen & E-Mobilität
+          </p>
+        </div>
+      </div>
+      <p class="text-slate-300 max-w-2xl mb-6">
+        Live-Daten von deutschen Autobahnen: Baustellen, Sperrungen und
+        E-Ladestationen. Basierend auf der kostenlosen, offiziellen API der
+        Autobahn GmbH des Bundes.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-orange-500/20 text-orange-300 border border-orange-500/30 rounded-full"
+        >
+          🚧 Baustellen
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30 rounded-full"
+        >
+          ⛔ Sperrungen
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full"
+        >
+          ⚡ Ladestationen
+        </span>
+        <span
+          class="px-3 py-1.5 text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-full"
+        >
+          📍 Navigation
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Info -->
+  <section class="mb-10">
+    <div class="rounded-xl bg-slate-800/50 border border-slate-700/50 p-5">
+      <div class="flex items-start gap-3">
+        <div class="p-2 rounded-lg bg-blue-500/20 shrink-0">
+          <svg
+            class="w-5 h-5 text-blue-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-100 mb-1">Kostenlose API</h3>
+          <p class="text-slate-400 text-sm">
+            Diese Komponenten nutzen die öffentliche REST-API der <strong
+              >Autobahn GmbH des Bundes</strong
+            >. Kein API-Key erforderlich, komplett kostenlos und offen für alle
+            Anwendungen.
+          </p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <a
+              href="https://autobahn.api.bund.dev/"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+            >
+              📚 API-Dokumentation
+            </a>
+            <a
+              href="https://www.autobahn.de"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+            >
+              🛣️ autobahn.de
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Components Overview -->
+  <section class="mb-12">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-6">Komponenten</Headline
+    >
+    <div class="grid md:grid-cols-2 gap-4">
+      <a
+        href="#roadworks"
+        class="group p-5 rounded-xl bg-orange-500/10 border border-orange-500/30 hover:border-orange-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <div class="p-2 rounded-lg bg-orange-500/20">
+            <svg
+              class="w-5 h-5 text-orange-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
+          </div>
+          <span
+            class="font-bold text-slate-100 group-hover:text-orange-300 transition-colors"
+            >AutobahnRoadworks</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Aktuelle Baustellen mit Dauer, Länge und
+          Geschwindigkeitsbeschränkungen.
+        </p>
+      </a>
+
+      <a
+        href="#closures"
+        class="group p-5 rounded-xl bg-red-500/10 border border-red-500/30 hover:border-red-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <div class="p-2 rounded-lg bg-red-500/20">
+            <svg
+              class="w-5 h-5 text-red-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+              ></path>
+            </svg>
+          </div>
+          <span
+            class="font-bold text-slate-100 group-hover:text-red-300 transition-colors"
+            >AutobahnClosures</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Vollsperrungen und Teilsperrungen mit Status-Anzeige.
+        </p>
+      </a>
+
+      <a
+        href="#charging"
+        class="group p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 hover:border-emerald-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <div class="p-2 rounded-lg bg-emerald-500/20">
+            <svg
+              class="w-5 h-5 text-emerald-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <span
+            class="font-bold text-slate-100 group-hover:text-emerald-300 transition-colors"
+            >AutobahnCharging</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          E-Ladestationen mit Ladeleistung (AC/DC) und Schnelllader-Info.
+        </p>
+      </a>
+
+      <a
+        href="#dashboard"
+        class="group p-5 rounded-xl bg-blue-500/10 border border-blue-500/30 hover:border-blue-500/50 transition-all"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <div class="p-2 rounded-lg bg-blue-500/20">
+            <svg
+              class="w-5 h-5 text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              ></path>
+            </svg>
+          </div>
+          <span
+            class="font-bold text-slate-100 group-hover:text-blue-300 transition-colors"
+            >AutobahnDashboard</span
+          >
+        </div>
+        <p class="text-slate-400 text-sm">
+          Komplettes Dashboard mit Statistiken und allen Informationen.
+        </p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Dashboard Component -->
+  <section id="dashboard" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">AutobahnDashboard</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Das Dashboard kombiniert alle Verkehrsinformationen in einer
+      übersichtlichen Ansicht mit Live-Statistiken und Status-Anzeige.
+    </Paragraph>
+
+    <div class="mb-6">
+      <AutobahnDashboard road="A9" maxItems={3} />
+    </div>
+
+    <div class="mb-6">
+      <CodeBlock code={usageDashboard} language="astro" />
+    </div>
+
+    <div class="mb-8">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table
+        columns={roadworksPropsColumns}
+        data={dashboardPropsData}
+        responsive={true}
+      />
+    </div>
+  </section>
+
+  <!-- Roadworks Component -->
+  <section id="roadworks" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">AutobahnRoadworks</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Zeigt aktuelle Baustellen mit Details zu Zeitraum, Länge,
+      Geschwindigkeitsbeschränkungen und Fahrbahnbreite. Mit direkten Links zur
+      Navigation.
+    </Paragraph>
+
+    <div class="mb-6">
+      <AutobahnRoadworks road="A3" maxItems={3} />
+    </div>
+
+    <div class="mb-6">
+      <CodeBlock code={usageRoadworks} language="astro" />
+    </div>
+
+    <div class="mb-8">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table
+        columns={roadworksPropsColumns}
+        data={roadworksPropsData}
+        responsive={true}
+      />
+    </div>
+  </section>
+
+  <!-- Closures Component -->
+  <section id="closures" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">AutobahnClosures</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Aktuelle Sperrungen mit animierter Status-Anzeige für aktive Sperrungen.
+      Unterscheidet zwischen Vollsperrungen und Teilsperrungen.
+    </Paragraph>
+
+    <div class="mb-6">
+      <AutobahnClosures road="A3" maxItems={3} />
+    </div>
+
+    <div class="mb-6">
+      <CodeBlock code={usageClosures} language="astro" />
+    </div>
+
+    <div class="mb-8">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table
+        columns={roadworksPropsColumns}
+        data={closuresPropsData}
+        responsive={true}
+      />
+    </div>
+  </section>
+
+  <!-- Charging Component -->
+  <section id="charging" class="mt-16 scroll-mt-8">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">AutobahnCharging</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      E-Ladestationen entlang der Autobahn mit Informationen zu Ladeleistung
+      (kW), Anschlusstyp (AC/DC) und Schnelllader-Verfügbarkeit.
+    </Paragraph>
+
+    <div class="mb-6">
+      <AutobahnCharging road="A9" maxItems={3} />
+    </div>
+
+    <div class="mb-6">
+      <CodeBlock code={usageCharging} language="astro" />
+    </div>
+
+    <div class="mb-8">
+      <Headline
+        level="h3"
+        textSize="md"
+        weight="semibold"
+        className="text-slate-100 mb-3">Props</Headline
+      >
+      <Table
+        columns={roadworksPropsColumns}
+        data={chargingPropsData}
+        responsive={true}
+      />
+    </div>
+  </section>
+
+  <!-- Compact Mode Example -->
+  <section class="mt-16">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">Kompakte Darstellung</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Mit <InlineCode>compact={true}</InlineCode> werden die Komponenten platzsparender
+      dargestellt.
+    </Paragraph>
+
+    <div class="grid md:grid-cols-3 gap-4">
+      <AutobahnClosures road="A1" maxItems={3} compact />
+      <AutobahnRoadworks road="A1" maxItems={3} compact />
+      <AutobahnCharging road="A1" maxItems={3} compact />
+    </div>
+  </section>
+
+  <!-- Available Roads -->
+  <section class="mt-16">
+    <Headline
+      level="h2"
+      textSize="lg"
+      weight="bold"
+      className="text-slate-100 mb-4">Verfügbare Autobahnen</Headline
+    >
+    <Paragraph class="text-base text-slate-300 mb-6">
+      Die API unterstützt alle deutschen Autobahnen. Hier einige Beispiele:
+    </Paragraph>
+
+    <div class="flex flex-wrap gap-2">
+      {
+        autobahns.map((road) => (
+          <span class="px-3 py-1.5 bg-slate-800/50 border border-slate-700/50 rounded-lg text-sm font-mono text-slate-300 hover:border-blue-500/50 hover:text-blue-300 transition-colors cursor-default">
+            {road}
+          </span>
+        ))
+      }
+      <span class="px-3 py-1.5 text-sm text-slate-500">... und viele mehr</span>
+    </div>
+  </section>
+
+  <!-- Footer Note -->
+  <section class="mt-16 pt-8 border-t border-slate-700/50">
+    <div class="flex items-start gap-3 text-sm text-slate-500">
+      <svg
+        class="w-5 h-5 shrink-0 mt-0.5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <p>
+        Die Daten werden zur Build-Zeit von der API abgerufen. Für
+        Echtzeit-Updates empfiehlt sich ein kurzes Revalidierungs-Intervall oder
+        eine Client-Side-Implementierung.
+      </p>
+    </div>
+  </section>
+</DocsLayout>

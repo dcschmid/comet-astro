@@ -1,0 +1,213 @@
+---
+/**
+ * AvatarGroup - Stacked avatar display for teams, collaborators, etc.
+ *
+ * Features:
+ * - Overlapping avatar stack
+ * - Configurable max visible count with "+N" overflow indicator
+ * - Multiple size variants
+ * - Hover expansion animation
+ * - WCAG AAA compliant
+ *
+ * @example
+ * <AvatarGroup
+ *   avatars={[
+ *     { src: "/user1.jpg", name: "Alice" },
+ *     { src: "/user2.jpg", name: "Bob" },
+ *     { name: "Charlie" }, // fallback to initials
+ *   ]}
+ *   max={3}
+ * />
+ */
+import Avatar from './Avatar.astro';
+import { cn } from '../utils/cn';
+
+export interface AvatarItem {
+  /** Image source URL */
+  src?: string;
+  /** Alt text for the image */
+  alt?: string;
+  /** Name (used for initials fallback and tooltip) */
+  name?: string;
+  /** Link URL when clicking the avatar */
+  href?: string;
+}
+
+interface Props {
+  /** Array of avatar items */
+  avatars: AvatarItem[];
+  /** Maximum number of avatars to display before showing "+N" */
+  max?: number;
+  /** Size of avatars */
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  /** Stack direction */
+  direction?: 'left' | 'right';
+  /** Expand on hover */
+  expandOnHover?: boolean;
+  /** Show tooltip with names on hover */
+  showTooltip?: boolean;
+  /** Custom label for the group */
+  ariaLabel?: string;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  avatars = [],
+  max = 4,
+  size = 'md',
+  direction = 'left',
+  expandOnHover = true,
+  showTooltip = true,
+  ariaLabel,
+  className = '',
+} = Astro.props;
+
+// Size configurations
+const sizeConfig = {
+  xs: {
+    avatar: 'xs',
+    overlap: '-ml-2',
+    overlapRight: '-mr-2',
+    ring: 'ring-2',
+    counter: 'h-8 w-8 text-xs',
+  },
+  sm: {
+    avatar: 'sm',
+    overlap: '-ml-3',
+    overlapRight: '-mr-3',
+    ring: 'ring-2',
+    counter: 'h-10 w-10 text-sm',
+  },
+  md: {
+    avatar: 'md',
+    overlap: '-ml-4',
+    overlapRight: '-mr-4',
+    ring: 'ring-[3px]',
+    counter: 'h-12 w-12 text-base',
+  },
+  lg: {
+    avatar: 'lg',
+    overlap: '-ml-5',
+    overlapRight: '-mr-5',
+    ring: 'ring-[3px]',
+    counter: 'h-16 w-16 text-lg',
+  },
+} as const;
+
+const config = sizeConfig[size];
+const visibleAvatars = avatars.slice(0, max);
+const overflowCount = Math.max(0, avatars.length - max);
+const hasOverflow = overflowCount > 0;
+
+// Build names list for aria-label
+const allNames = avatars.map((a) => a.name || a.alt || 'User').join(', ');
+const groupLabel = ariaLabel || `Group of ${avatars.length} users: ${allNames}`;
+
+const overlapClass =
+  direction === 'right' ? config.overlapRight : config.overlap;
+const flexDirection = direction === 'right' ? 'flex-row-reverse' : 'flex-row';
+---
+
+<div
+  class={cn(
+    'inline-flex items-center',
+    flexDirection,
+    expandOnHover && 'group',
+    className
+  )}
+  role="group"
+  aria-label={groupLabel}
+>
+  {
+    visibleAvatars.map((avatar, index) => {
+      const isFirst = index === 0;
+      const zIndex = visibleAvatars.length - index;
+
+      const avatarWrapper = cn(
+        'relative transition-all duration-200',
+        !isFirst && overlapClass,
+        expandOnHover && 'group-hover:ml-0 group-hover:mr-0',
+        config.ring,
+        'ring-white dark:ring-slate-950',
+        'rounded-full'
+      );
+
+      const content = (
+        <div
+          class={avatarWrapper}
+          style={`z-index: ${zIndex}`}
+          title={showTooltip ? avatar.name || avatar.alt : undefined}
+        >
+          <Avatar
+            src={avatar.src}
+            alt={avatar.alt || avatar.name || ''}
+            name={avatar.name}
+            size={config.avatar}
+            variant="circle"
+          />
+        </div>
+      );
+
+      if (avatar.href) {
+        return (
+          <a
+            href={avatar.href}
+            class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-full"
+            aria-label={`View ${avatar.name || avatar.alt || 'user'}'s profile`}
+          >
+            {content}
+          </a>
+        );
+      }
+
+      return content;
+    })
+  }
+
+  {
+    hasOverflow && (
+      <div
+        class={cn(
+          'relative flex items-center justify-center rounded-full',
+          'bg-slate-200 dark:bg-slate-700',
+          'text-slate-700 dark:text-slate-200',
+          'font-semibold',
+          config.counter,
+          !visibleAvatars.length ? '' : overlapClass,
+          config.ring,
+          'ring-white dark:ring-slate-950',
+          expandOnHover && 'group-hover:ml-0 group-hover:mr-0',
+          'transition-all duration-200'
+        )}
+        style={`z-index: 0`}
+        title={`${overflowCount} more users`}
+        aria-label={`and ${overflowCount} more users`}
+      >
+        +{overflowCount}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  /* Smooth expansion animation */
+  .group:hover > * {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    [role='group'] > * {
+      ring-width: 3px;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .transition-all {
+      transition: none;
+    }
+  }
+</style>

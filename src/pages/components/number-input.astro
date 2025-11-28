@@ -1,0 +1,251 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import NumberInput from '../../components/NumberInput.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { NumberInput } from 'comet-astro';
+---
+
+<NumberInput
+  name="quantity"
+  label="Quantity"
+  defaultValue={1}
+  min={0}
+  max={100}
+  step={1}
+/>
+
+<NumberInput
+  name="price"
+  label="Price"
+  defaultValue={19.99}
+  min={0}
+  step={0.01}
+  prefix="€"
+/>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'name',
+    type: 'string',
+    default: '-',
+    description: 'Input name attribute. Required.',
+  },
+  {
+    name: 'defaultValue',
+    type: 'number',
+    default: '0',
+    description: 'Initial value.',
+  },
+  {
+    name: 'min',
+    type: 'number',
+    default: '-Infinity',
+    description: 'Minimum allowed value.',
+  },
+  {
+    name: 'max',
+    type: 'number',
+    default: 'Infinity',
+    description: 'Maximum allowed value.',
+  },
+  {
+    name: 'step',
+    type: 'number',
+    default: '1',
+    description: 'Increment/decrement step.',
+  },
+  {
+    name: 'prefix',
+    type: 'string',
+    default: "''",
+    description: 'Prefix text (e.g., currency symbol).',
+  },
+  {
+    name: 'suffix',
+    type: 'string',
+    default: "''",
+    description: 'Suffix text (e.g., unit).',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size variant.',
+  },
+  {
+    name: 'label',
+    type: 'string',
+    default: "''",
+    description: 'Accessible label text.',
+  },
+  {
+    name: 'disabled',
+    type: 'boolean',
+    default: 'false',
+    description: 'Disable the input.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="NumberInput"
+  seoDescription="Numeric input with increment/decrement buttons."
+>
+  <Headline level="h1" textSize="2xl">NumberInput</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The NumberInput component provides a numeric input field with plus/minus
+      buttons for easy value adjustment. Supports min/max constraints, custom
+      step values, and optional prefix/suffix text for units or currency.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Hold-to-repeat acceleration on the buttons allows quick value changes. The
+      component emits <InlineCode>change</InlineCode> events and includes full keyboard
+      support (arrow keys, direct typing).
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and set <InlineCode>min</InlineCode>,
+      <InlineCode>max</InlineCode>, and <InlineCode>step</InlineCode> to control the
+      allowed range.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Basic quantity input
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Simple integer input with min/max constraints.
+      </Paragraph>
+      <div class="max-w-xs">
+        <NumberInput
+          name="qty"
+          label="Quantity"
+          defaultValue={1}
+          min={0}
+          max={10}
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With prefix and suffix
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Add currency symbols, units, or other contextual text.
+      </Paragraph>
+      <div class="flex flex-col gap-4 max-w-xs">
+        <NumberInput
+          name="price"
+          label="Price"
+          defaultValue={29.99}
+          step={0.01}
+          prefix="€"
+        />
+        <NumberInput
+          name="weight"
+          label="Weight"
+          defaultValue={5}
+          min={0}
+          suffix="kg"
+        />
+        <NumberInput
+          name="percent"
+          label="Discount"
+          defaultValue={10}
+          min={0}
+          max={100}
+          suffix="%"
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three sizes available.
+      </Paragraph>
+      <div class="flex flex-col gap-4 max-w-xs">
+        <NumberInput name="sm" label="Small" defaultValue={5} size="sm" />
+        <NumberInput name="md" label="Medium" defaultValue={10} size="md" />
+        <NumberInput name="lg" label="Large" defaultValue={15} size="lg" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Decimal steps
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Use decimal step values for precise control.
+      </Paragraph>
+      <div class="max-w-xs">
+        <NumberInput
+          name="rating"
+          label="Rating"
+          defaultValue={4.5}
+          min={0}
+          max={5}
+          step={0.5}
+        />
+      </div>
+    </article>
+  </section>
+</DocsLayout>

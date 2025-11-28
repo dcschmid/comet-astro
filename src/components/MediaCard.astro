@@ -1,7 +1,20 @@
 ---
 /**
- * MediaCard - Enhanced with WCAG AAA compliance, multiple variants, and responsive design
+ * MediaCard - Card component with media support
+ *
+ * @deprecated This component is now a wrapper around UniversalCard.
+ * Consider using UniversalCard directly for new code, which offers more features.
+ *
+ * @example
+ * // Old usage (still works):
+ * <MediaCard image="/img.jpg" title="Title" description="Desc" />
+ *
+ * // New recommended usage:
+ * <UniversalCard imageSrc="/img.jpg" title="Title" description="Desc" />
  */
+import UniversalCard, {
+  type Action as UniversalAction,
+} from './UniversalCard.astro';
 
 interface Action {
   label: string;
@@ -24,7 +37,7 @@ interface Props {
   variant?: 'default' | 'horizontal' | 'minimal' | 'featured';
   size?: 'sm' | 'md' | 'lg';
 
-  // Actions (using Astro array syntax instead of React .map)
+  // Actions
   actions?: Action[];
 
   // States
@@ -60,257 +73,56 @@ const {
   showActions = true,
   role = 'article',
   ariaLabel,
-  ariaDescribedBy,
   class: className,
   className: legacyClassName,
 } = Astro.props;
 
-// Generate unique IDs for accessibility
-const cardId = `media-card-${Math.random().toString(36).substr(2, 9)}`;
-const titleId = `${cardId}-title`;
-const descId = `${cardId}-desc`;
-
-// Variant styles
-const variantClasses = {
-  default: 'flex-col',
-  horizontal: 'flex-row md:flex-row',
-  minimal: 'flex-col border-0 shadow-none bg-transparent dark:bg-transparent',
-  featured: 'flex-col border-2',
+// Map MediaCard variant to UniversalCard variant
+const variantMap: Record<
+  string,
+  'vertical' | 'horizontal' | 'compact' | 'featured'
+> = {
+  default: 'vertical',
+  horizontal: 'horizontal',
+  minimal: 'compact',
+  featured: 'featured',
 };
 
-// Size styles for different variants
-const sizeClasses = {
-  sm: {
-    card: 'max-w-sm',
-    image: variant === 'horizontal' ? 'w-32 h-24' : 'h-32',
-    padding: 'p-3',
-    title: 'text-base',
-    text: 'text-sm',
-  },
-  md: {
-    card: 'max-w-md',
-    image: variant === 'horizontal' ? 'w-48 h-36' : 'h-48',
-    padding: 'p-4',
-    title: 'text-lg',
-    text: 'text-base',
-  },
-  lg: {
-    card: 'max-w-lg',
-    image: variant === 'horizontal' ? 'w-64 h-48' : 'h-64',
-    padding: 'p-6',
-    title: 'text-xl',
-    text: 'text-lg',
-  },
-};
+// Map MediaCard actions to UniversalCard actions
+const mappedActions: UniversalAction[] =
+  showActions && actions.length > 0
+    ? actions
+        .filter((a): a is Action & { href: string } => !!a.href)
+        .map((action) => ({
+          href: action.href,
+          label: action.label,
+          variant:
+            action.variant === 'danger'
+              ? 'secondary'
+              : action.variant || 'primary',
+          target: action.target,
+        }))
+    : [];
 
-const currentSize = sizeClasses[size];
-
-// Base card classes with WCAG AAA contrast
-const baseClasses = `
-  group relative
-  ${variantClasses[variant]}
-  ${currentSize.card}
-  ${variant !== 'minimal' ? 'bg-white dark:bg-gray-900' : ''}
-  ${variant !== 'minimal' ? 'border border-gray-200 dark:border-gray-700' : ''}
-  ${variant === 'featured' ? 'border-blue-200 dark:border-blue-800' : ''}
-  ${variant !== 'minimal' ? 'rounded-lg shadow-sm' : ''}
-  ${variant !== 'minimal' ? 'hover:shadow-md' : ''}
-  transition-all duration-200 ease-in-out
-  ${disabled ? 'opacity-50 pointer-events-none' : ''}
-  ${loading ? 'animate-pulse' : ''}
-  overflow-hidden
-`
-  .trim()
-  .replace(/\s+/g, ' ');
-
-// Image container classes
-const imageContainerClasses = `
-  ${variant === 'horizontal' ? 'flex-shrink-0' : ''}
-  ${variant === 'horizontal' ? currentSize.image : 'w-full ' + currentSize.image}
-  relative overflow-hidden
-  ${variant !== 'minimal' ? 'bg-gray-100 dark:bg-gray-800' : ''}
-`
-  .trim()
-  .replace(/\s+/g, ' ');
-
-// Content container classes
-const contentClasses = `
-  ${currentSize.padding}
-  ${variant === 'horizontal' ? 'flex-1' : ''}
-  flex flex-col justify-between
-`
-  .trim()
-  .replace(/\s+/g, ' ');
+// Determine elevation based on variant
+const elevation = variant === 'minimal' ? 'none' : 'sm';
 
 const finalClassName = className || legacyClassName || '';
 ---
 
-<article
-  id={cardId}
+<UniversalCard
+  variant={variantMap[variant] || 'vertical'}
+  size={size}
+  elevation={elevation}
+  href={href}
+  imageSrc={showImage ? image : undefined}
+  imageAlt={alt || title}
+  title={title}
+  description={description}
+  actions={mappedActions}
+  loading={loading}
+  disabled={disabled}
   role={role}
-  aria-label={ariaLabel}
-  aria-describedby={ariaDescribedBy || (description ? descId : undefined)}
-  class={`${baseClasses} ${finalClassName}`}
->
-  {
-    showImage && image && (
-      <div class={imageContainerClasses}>
-        <img
-          src={image}
-          alt={alt || title}
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
-          loading="lazy"
-          decoding="async"
-          aria-describedby={alt ? undefined : titleId}
-        />
-        {loading && (
-          <div
-            class="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse"
-            aria-label="Loading image..."
-          />
-        )}
-      </div>
-    )
-  }
-
-  <div class={contentClasses}>
-    <div class="flex-1">
-      <div class="mb-2">
-        {
-          href ? (
-            <a
-              href={href}
-              id={titleId}
-              class={`
-              ${currentSize.title} font-semibold
-              text-gray-900 dark:text-gray-50
-              hover:text-blue-700 dark:hover:text-blue-300
-              focus:text-blue-700 dark:focus:text-blue-300
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-              dark:focus:ring-offset-gray-900
-              transition-colors duration-200
-              underline-offset-4 hover:underline focus:underline
-              no-underline
-            `
-                .trim()
-                .replace(/\s+/g, ' ')}
-              aria-describedby={description ? descId : undefined}
-            >
-              {title}
-            </a>
-          ) : (
-            <h3
-              id={titleId}
-              class={`
-              ${currentSize.title} font-semibold
-              text-gray-900 dark:text-gray-50
-            `
-                .trim()
-                .replace(/\s+/g, ' ')}
-            >
-              {title}
-            </h3>
-          )
-        }
-      </div>
-
-      {
-        description && (
-          <p
-            id={descId}
-            class={`
-            ${currentSize.text}
-            text-gray-700 dark:text-gray-300
-            leading-relaxed
-            ${showActions && actions.length > 0 ? 'mb-4' : ''}
-          `
-              .trim()
-              .replace(/\s+/g, ' ')}
-          >
-            {description}
-          </p>
-        )
-      }
-    </div>
-
-    {
-      showActions && actions.length > 0 && (
-        <div
-          class="flex flex-wrap gap-2 mt-auto"
-          role="group"
-          aria-label="Card actions"
-        >
-          {actions.map((action, index) => {
-            const actionId = `${cardId}-action-${index}`;
-            const buttonClasses = `
-            px-3 py-1.5 rounded-md font-medium text-sm
-            transition-all duration-200 ease-in-out
-            focus:outline-none focus:ring-2 focus:ring-offset-2
-            dark:focus:ring-offset-gray-900
-            disabled:opacity-50 disabled:cursor-not-allowed
-            no-underline
-            ${
-              action.variant === 'primary'
-                ? `bg-blue-700 dark:bg-blue-600 text-white
-                 hover:bg-blue-800 dark:hover:bg-blue-700
-                 focus:ring-blue-500`
-                : action.variant === 'danger'
-                  ? `bg-red-700 dark:bg-red-600 text-white
-                 hover:bg-red-800 dark:hover:bg-red-700
-                 focus:ring-red-500`
-                  : `bg-gray-200 dark:bg-gray-700 
-                 text-gray-900 dark:text-gray-100
-                 hover:bg-gray-300 dark:hover:bg-gray-600
-                 focus:ring-gray-500`
-            }
-          `
-              .trim()
-              .replace(/\s+/g, ' ');
-
-            if (action.href) {
-              return (
-                <a
-                  id={actionId}
-                  href={action.href}
-                  target={action.target || '_self'}
-                  rel={
-                    action.target === '_blank'
-                      ? 'noopener noreferrer'
-                      : undefined
-                  }
-                  class={buttonClasses}
-                  role="button"
-                  tabindex="0"
-                >
-                  {action.icon && (
-                    <span class="mr-1.5" aria-hidden="true">
-                      {action.icon}
-                    </span>
-                  )}
-                  {action.label}
-                </a>
-              );
-            } else {
-              return (
-                <button
-                  id={actionId}
-                  type="button"
-                  onclick={action.onClick}
-                  class={buttonClasses}
-                  disabled={disabled}
-                >
-                  {action.icon && (
-                    <span class="mr-1.5" aria-hidden="true">
-                      {action.icon}
-                    </span>
-                  )}
-                  {action.label}
-                </button>
-              );
-            }
-          })}
-        </div>
-      )
-    }
-  </div>
-</article>
+  ariaLabel={ariaLabel}
+  className={finalClassName}
+/>

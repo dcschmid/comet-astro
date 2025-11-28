@@ -1,0 +1,357 @@
+---
+/**
+ * TrainDepartures - Deutsche Bahn Abfahrten
+ *
+ * Zeigt Live-Abfahrten von deutschen Bahnhöfen mit Verspätungen.
+ *
+ * API: https://v6.db.transport.rest/
+ */
+import { cn } from '../utils/cn';
+
+interface Departure {
+  tripId: string;
+  stop: {
+    id: string;
+    name: string;
+  };
+  when: string | null;
+  plannedWhen: string;
+  delay: number | null;
+  platform: string | null;
+  plannedPlatform: string | null;
+  direction: string;
+  line: {
+    id: string;
+    name: string;
+    productName: string;
+    product: string;
+  };
+  remarks: { text: string }[];
+}
+
+interface Props {
+  stationId: string; // e.g. "8011160" for Berlin Hbf
+  stationName?: string;
+  duration?: number; // minutes
+  maxDepartures?: number;
+  products?: (
+    | 'nationalExpress'
+    | 'national'
+    | 'regionalExpress'
+    | 'regional'
+    | 'suburban'
+  )[];
+  showPlatform?: boolean;
+  showDelay?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  stationId,
+  stationName,
+  duration = 60,
+  maxDepartures = 10,
+  products,
+  showPlatform = true,
+  showDelay = true,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+interface DeparturesResponse {
+  departures: Departure[];
+}
+
+let departures: Departure[] = [];
+let fetchedStationName = stationName || '';
+let error: string | null = null;
+
+try {
+  const params = new URLSearchParams({ duration: duration.toString() });
+  if (products) {
+    products.forEach((p) => params.append('products', p));
+  }
+
+  const res = await fetch(
+    `https://v6.db.transport.rest/stops/${stationId}/departures?${params}`
+  );
+  if (res.ok) {
+    const data: DeparturesResponse = await res.json();
+    departures = (data.departures || []).slice(0, maxDepartures);
+
+    // Get station name from first departure if not provided
+    if (!stationName && departures.length > 0) {
+      fetchedStationName = departures[0].stop.name;
+    }
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+const productStyles: Record<
+  string,
+  { bg: string; text: string; label: string }
+> = {
+  nationalExpress: { bg: 'bg-red-500', text: 'text-white', label: 'ICE' },
+  national: { bg: 'bg-red-600', text: 'text-white', label: 'IC' },
+  regionalExpress: { bg: 'bg-slate-600', text: 'text-white', label: 'RE' },
+  regional: { bg: 'bg-slate-500', text: 'text-white', label: 'RB' },
+  suburban: { bg: 'bg-emerald-600', text: 'text-white', label: 'S' },
+  subway: { bg: 'bg-blue-600', text: 'text-white', label: 'U' },
+  tram: { bg: 'bg-red-400', text: 'text-white', label: 'Tram' },
+  bus: { bg: 'bg-purple-600', text: 'text-white', label: 'Bus' },
+};
+
+function formatTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleTimeString('de-DE', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function formatDelay(delaySeconds: number | null): {
+  text: string;
+  isDelayed: boolean;
+} {
+  if (delaySeconds === null || delaySeconds === 0) {
+    return { text: '', isDelayed: false };
+  }
+  const minutes = Math.round(delaySeconds / 60);
+  if (minutes > 0) {
+    return { text: `+${minutes}`, isDelayed: true };
+  }
+  return { text: `${minutes}`, isDelayed: false };
+}
+
+const hasDelays = departures.some((d) => d.delay && d.delay > 60);
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  <header
+    class={cn(
+      'px-5 py-4 border-b border-slate-700/50',
+      hasDelays ? 'bg-red-500/5' : 'bg-blue-500/5'
+    )}
+  >
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div
+          class={cn(
+            'p-2.5 rounded-xl shadow-lg bg-gradient-to-br',
+            hasDelays
+              ? 'from-red-500 to-rose-600 shadow-red-500/25'
+              : 'from-blue-500 to-indigo-600 shadow-blue-500/25'
+          )}
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-100 text-lg">Abfahrten</h3>
+          <p class="text-xs text-slate-400">
+            {fetchedStationName || `Station ${stationId}`}
+          </p>
+        </div>
+      </div>
+
+      {
+        hasDelays ? (
+          <span class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+            </span>
+            Verspätungen
+          </span>
+        ) : (
+          <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            ✓ Pünktlich
+          </span>
+        )
+      }
+    </div>
+  </header>
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : departures.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
+          </div>
+          <p class="text-slate-400 font-medium">Keine Abfahrten</p>
+          <p class="text-slate-500 text-sm mt-1">
+            In den nächsten {duration} Minuten
+          </p>
+        </div>
+      ) : (
+        <div class={cn('space-y-2', compact && 'space-y-1.5')}>
+          {departures.map((dep) => {
+            const productStyle =
+              productStyles[dep.line.product] || productStyles.regional;
+            const delay = formatDelay(dep.delay);
+            const actualTime = dep.when
+              ? formatTime(dep.when)
+              : formatTime(dep.plannedWhen);
+            const platformChanged =
+              dep.platform !== dep.plannedPlatform && dep.plannedPlatform;
+
+            return (
+              <article
+                class={cn(
+                  'flex items-center gap-3 p-3 rounded-xl border transition-all',
+                  delay.isDelayed
+                    ? 'bg-red-950/20 border-red-500/30'
+                    : 'bg-slate-800/30 border-slate-700/30 hover:border-slate-600/50',
+                  compact && 'p-2'
+                )}
+              >
+                {/* Time */}
+                <div class={cn('shrink-0 w-14 text-center', compact && 'w-12')}>
+                  <div
+                    class={cn(
+                      'font-bold',
+                      delay.isDelayed ? 'text-red-400' : 'text-slate-100',
+                      compact ? 'text-sm' : 'text-lg'
+                    )}
+                  >
+                    {actualTime}
+                  </div>
+                  {showDelay && delay.text && (
+                    <div
+                      class={cn(
+                        'text-xs font-semibold',
+                        delay.isDelayed ? 'text-red-400' : 'text-emerald-400'
+                      )}
+                    >
+                      {delay.text}
+                    </div>
+                  )}
+                </div>
+
+                {/* Line Badge */}
+                <div
+                  class={cn(
+                    'shrink-0 px-2 py-1 rounded font-bold text-center min-w-[50px]',
+                    productStyle.bg,
+                    productStyle.text,
+                    compact ? 'text-xs' : 'text-sm'
+                  )}
+                >
+                  {dep.line.name}
+                </div>
+
+                {/* Direction */}
+                <div class="flex-1 min-w-0">
+                  <p
+                    class={cn(
+                      'font-medium text-slate-100 truncate',
+                      compact && 'text-sm'
+                    )}
+                  >
+                    {dep.direction}
+                  </p>
+                  {dep.remarks && dep.remarks.length > 0 && !compact && (
+                    <p class="text-xs text-amber-400 truncate mt-0.5">
+                      ⚠ {dep.remarks[0].text}
+                    </p>
+                  )}
+                </div>
+
+                {/* Platform */}
+                {showPlatform && dep.platform && (
+                  <div
+                    class={cn(
+                      'shrink-0 text-center px-2 py-1 rounded',
+                      platformChanged
+                        ? 'bg-red-500/20 text-red-300'
+                        : 'bg-slate-700/50 text-slate-300',
+                      compact && 'text-xs'
+                    )}
+                  >
+                    <div class="text-xs text-slate-500">Gl.</div>
+                    <div class="font-bold">{dep.platform}</div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Daten: Deutsche Bahn</span>
+    <a
+      href="https://www.bahn.de"
+      target="_blank"
+      rel="noopener"
+      class="text-blue-400 hover:text-blue-300"
+    >
+      bahn.de →
+    </a>
+  </footer>
+</div>
+
+<style>
+  @keyframes ping {
+    75%,
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  .animate-ping {
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+</style>

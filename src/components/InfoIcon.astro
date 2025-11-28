@@ -1,0 +1,331 @@
+---
+/**
+ * InfoIcon - Accessible tooltip icon for help text and explanations
+ *
+ * Features:
+ * - Multiple icon styles (info, help, warning, tip)
+ * - Hover and focus-triggered tooltip
+ * - Configurable tooltip position
+ * - WCAG AAA compliant
+ * - Keyboard accessible
+ *
+ * @example
+ * <InfoIcon tooltip="This field is required for registration" />
+ *
+ * @example
+ * <InfoIcon
+ *   variant="help"
+ *   tooltip="Click here for more information"
+ *   position="right"
+ * />
+ */
+import { cn } from '../utils/cn';
+
+interface Props {
+  /** Tooltip text content */
+  tooltip: string;
+  /** Icon variant */
+  variant?: 'info' | 'help' | 'warning' | 'tip';
+  /** Size of the icon */
+  size?: 'sm' | 'md' | 'lg';
+  /** Tooltip position */
+  position?: 'top' | 'bottom' | 'left' | 'right';
+  /** Max width of tooltip */
+  maxWidth?: number;
+  /** Delay before showing tooltip (ms) */
+  delay?: number;
+  /** Custom icon (emoji or text) */
+  icon?: string;
+  /** ARIA label override */
+  ariaLabel?: string;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+const {
+  tooltip,
+  variant = 'info',
+  size = 'md',
+  position = 'top',
+  maxWidth = 250,
+  delay = 200,
+  icon,
+  ariaLabel,
+  className = '',
+} = Astro.props;
+
+const tooltipId = `tooltip-${Math.random().toString(36).slice(2, 9)}`;
+
+// Size configurations
+const sizeClasses = {
+  sm: {
+    icon: 'w-3.5 h-3.5',
+    button: 'p-0.5',
+    text: 'text-xs',
+  },
+  md: {
+    icon: 'w-4 h-4',
+    button: 'p-1',
+    text: 'text-sm',
+  },
+  lg: {
+    icon: 'w-5 h-5',
+    button: 'p-1.5',
+    text: 'text-base',
+  },
+};
+
+// Variant styles and icons
+const variantConfig = {
+  info: {
+    color: 'text-blue-500 dark:text-blue-400',
+    hoverColor: 'hover:text-blue-600 dark:hover:text-blue-300',
+    bgColor: 'hover:bg-blue-50 dark:hover:bg-blue-900/30',
+    defaultIcon: null, // SVG
+    label: 'Information',
+  },
+  help: {
+    color: 'text-slate-500 dark:text-slate-400',
+    hoverColor: 'hover:text-slate-700 dark:hover:text-slate-200',
+    bgColor: 'hover:bg-slate-100 dark:hover:bg-slate-800',
+    defaultIcon: null, // SVG
+    label: 'Help',
+  },
+  warning: {
+    color: 'text-amber-500 dark:text-amber-400',
+    hoverColor: 'hover:text-amber-600 dark:hover:text-amber-300',
+    bgColor: 'hover:bg-amber-50 dark:hover:bg-amber-900/30',
+    defaultIcon: null, // SVG
+    label: 'Warning',
+  },
+  tip: {
+    color: 'text-emerald-500 dark:text-emerald-400',
+    hoverColor: 'hover:text-emerald-600 dark:hover:text-emerald-300',
+    bgColor: 'hover:bg-emerald-50 dark:hover:bg-emerald-900/30',
+    defaultIcon: null, // SVG
+    label: 'Tip',
+  },
+};
+
+// Tooltip position classes
+const positionClasses = {
+  top: {
+    tooltip: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+    arrow:
+      'top-full left-1/2 -translate-x-1/2 border-t-slate-800 dark:border-t-slate-200 border-x-transparent border-b-transparent',
+  },
+  bottom: {
+    tooltip: 'top-full left-1/2 -translate-x-1/2 mt-2',
+    arrow:
+      'bottom-full left-1/2 -translate-x-1/2 border-b-slate-800 dark:border-b-slate-200 border-x-transparent border-t-transparent',
+  },
+  left: {
+    tooltip: 'right-full top-1/2 -translate-y-1/2 mr-2',
+    arrow:
+      'left-full top-1/2 -translate-y-1/2 border-l-slate-800 dark:border-l-slate-200 border-y-transparent border-r-transparent',
+  },
+  right: {
+    tooltip: 'left-full top-1/2 -translate-y-1/2 ml-2',
+    arrow:
+      'right-full top-1/2 -translate-y-1/2 border-r-slate-800 dark:border-r-slate-200 border-y-transparent border-l-transparent',
+  },
+};
+
+const config = sizeClasses[size];
+const variantStyle = variantConfig[variant];
+const positionStyle = positionClasses[position];
+---
+
+<span
+  class={cn('relative inline-flex', className)}
+  data-info-icon
+  data-delay={delay}
+>
+  <button
+    type="button"
+    class={cn(
+      'inline-flex items-center justify-center rounded-full',
+      'transition-colors duration-150',
+      'focus:outline-none focus-visible:ring-2',
+      'focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400',
+      'focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
+      config.button,
+      variantStyle.color,
+      variantStyle.hoverColor,
+      variantStyle.bgColor
+    )}
+    aria-label={ariaLabel || `${variantStyle.label}: ${tooltip}`}
+    aria-describedby={tooltipId}
+    data-tooltip-trigger
+  >
+    {
+      icon ? (
+        <span class={config.icon} aria-hidden="true">
+          {icon}
+        </span>
+      ) : variant === 'info' ? (
+        <svg
+          class={config.icon}
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      ) : variant === 'help' ? (
+        <svg
+          class={config.icon}
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.94 6.94a.75.75 0 11-1.061-1.061 3 3 0 112.871 5.026v.345a.75.75 0 01-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 108.94 6.94zM10 15a1 1 0 100-2 1 1 0 000 2z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      ) : variant === 'warning' ? (
+        <svg
+          class={config.icon}
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      ) : (
+        <svg
+          class={config.icon}
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <path d="M10 1a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 1zM5.05 3.05a.75.75 0 011.06 0l1.062 1.06A.75.75 0 116.11 5.173L5.05 4.11a.75.75 0 010-1.06zm9.9 0a.75.75 0 010 1.06l-1.06 1.062a.75.75 0 01-1.062-1.061l1.061-1.06a.75.75 0 011.06 0zM10 7a3 3 0 100 6 3 3 0 000-6zm-6.25 3a.75.75 0 01-.75-.75h-1.5a.75.75 0 010 1.5h1.5a.75.75 0 01.75-.75zm12.5 0a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75zM6.11 14.828a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm7.78 0a.75.75 0 011.06 0l1.06 1.06a.75.75 0 11-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zM10 16a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 16z" />
+        </svg>
+      )
+    }
+  </button>
+
+  <!-- Tooltip -->
+  <span
+    id={tooltipId}
+    role="tooltip"
+    class={cn(
+      'absolute z-50 px-3 py-2 rounded-lg shadow-lg',
+      'bg-slate-800 dark:bg-slate-200',
+      'text-white dark:text-slate-900',
+      'pointer-events-none',
+      'opacity-0 invisible',
+      'transition-all duration-150',
+      config.text,
+      positionStyle.tooltip
+    )}
+    style={`max-width: ${maxWidth}px;`}
+    data-tooltip
+  >
+    {tooltip}
+    <!-- Arrow -->
+    <span
+      class={cn('absolute w-0 h-0', 'border-4', positionStyle.arrow)}
+      aria-hidden="true"></span>
+  </span>
+</span>
+
+<script is:inline>
+  (function () {
+    const infoIcons = document.querySelectorAll('[data-info-icon]');
+
+    infoIcons.forEach((container) => {
+      const trigger = container.querySelector('[data-tooltip-trigger]');
+      const tooltip = container.querySelector('[data-tooltip]');
+      const delay = parseInt(container.getAttribute('data-delay')) || 200;
+
+      if (!trigger || !tooltip) return;
+
+      let showTimeout = null;
+      let hideTimeout = null;
+
+      const show = () => {
+        clearTimeout(hideTimeout);
+        showTimeout = setTimeout(() => {
+          tooltip.classList.remove('opacity-0', 'invisible');
+          tooltip.classList.add('opacity-100', 'visible');
+        }, delay);
+      };
+
+      const hide = () => {
+        clearTimeout(showTimeout);
+        hideTimeout = setTimeout(() => {
+          tooltip.classList.remove('opacity-100', 'visible');
+          tooltip.classList.add('opacity-0', 'invisible');
+        }, 100);
+      };
+
+      // Mouse events
+      trigger.addEventListener('mouseenter', show);
+      trigger.addEventListener('mouseleave', hide);
+
+      // Focus events for keyboard accessibility
+      trigger.addEventListener('focus', show);
+      trigger.addEventListener('blur', hide);
+
+      // Touch support
+      trigger.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const isVisible = tooltip.classList.contains('visible');
+        if (isVisible) {
+          hide();
+        } else {
+          show();
+        }
+      });
+
+      // Escape to close
+      trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          hide();
+          trigger.blur();
+        }
+      });
+
+      // Close when clicking outside (for touch)
+      document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) {
+          tooltip.classList.remove('opacity-100', 'visible');
+          tooltip.classList.add('opacity-0', 'invisible');
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  /* Ensure tooltip stays on top */
+  [data-tooltip] {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [data-tooltip] {
+      border: 2px solid currentColor;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    [data-tooltip] {
+      transition: none;
+    }
+  }
+</style>

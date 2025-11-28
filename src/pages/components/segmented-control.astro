@@ -1,0 +1,263 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import SegmentedControl from '../../components/SegmentedControl.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const viewOptions = [
+  { value: 'grid', label: 'Grid', icon: '▦' },
+  { value: 'list', label: 'List', icon: '☰' },
+  { value: 'compact', label: 'Compact', icon: '▤' },
+];
+
+const timeOptions = [
+  { value: 'day', label: 'Day' },
+  { value: 'week', label: 'Week' },
+  { value: 'month', label: 'Month' },
+  { value: 'year', label: 'Year' },
+];
+
+const usageSnippet = `---
+import { SegmentedControl } from 'comet-astro';
+
+const options = [
+  { value: 'grid', label: 'Grid', icon: '▦' },
+  { value: 'list', label: 'List', icon: '☰' },
+];
+---
+
+<SegmentedControl
+  name="viewMode"
+  options={options}
+  defaultValue="grid"
+/>
+
+<script>
+  document.querySelector('[data-segmented-control]')
+    .addEventListener('change', (e) => {
+      console.log('Selected:', e.detail.value);
+    });
+</script>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'name',
+    type: 'string',
+    default: '-',
+    description: 'Unique name for the control. Required.',
+  },
+  {
+    name: 'options',
+    type: 'Option[]',
+    default: '[]',
+    description: 'Array of options with value, label, and optional icon.',
+  },
+  {
+    name: 'defaultValue',
+    type: 'string',
+    default: "''",
+    description: 'Initially selected value.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'pills' | 'underline'",
+    default: "'default'",
+    description: 'Visual style variant.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size of the control.',
+  },
+  {
+    name: 'fullWidth',
+    type: 'boolean',
+    default: 'false',
+    description: 'Expand to fill container width.',
+  },
+  {
+    name: 'disabled',
+    type: 'boolean',
+    default: 'false',
+    description: 'Disable the entire control.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="SegmentedControl"
+  seoDescription="Tab-like single-select control for compact option switching."
+>
+  <Headline level="h1" textSize="2xl">SegmentedControl</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The SegmentedControl component provides a compact, tab-like interface for
+      single-selection between a small set of options. It's ideal for view
+      toggles, filter modes, or any scenario with 2-5 mutually exclusive
+      choices.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Full keyboard navigation with arrow keys, Home/End support. The control
+      emits a <InlineCode>change</InlineCode> custom event when selection changes,
+      making it easy to integrate with any framework or vanilla JavaScript.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component, define your options array, and listen for the
+      <InlineCode>change</InlineCode> event. Each option needs a
+      <InlineCode>value</InlineCode> and <InlineCode>label</InlineCode>.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Style variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three visual styles available: default (pill background), pills
+        (separate buttons), and underline (minimal).
+      </Paragraph>
+      <div class="flex flex-col gap-6">
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Default:</span>
+          <SegmentedControl
+            name="demo1"
+            options={viewOptions}
+            defaultValue="grid"
+            variant="default"
+          />
+        </div>
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Pills:</span>
+          <SegmentedControl
+            name="demo2"
+            options={viewOptions}
+            defaultValue="list"
+            variant="pills"
+          />
+        </div>
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Underline:</span>
+          <SegmentedControl
+            name="demo3"
+            options={viewOptions}
+            defaultValue="compact"
+            variant="underline"
+          />
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Sizes
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three sizes for different contexts.
+      </Paragraph>
+      <div class="flex flex-col gap-4">
+        <SegmentedControl
+          name="size1"
+          options={timeOptions}
+          defaultValue="week"
+          size="sm"
+        />
+        <SegmentedControl
+          name="size2"
+          options={timeOptions}
+          defaultValue="week"
+          size="md"
+        />
+        <SegmentedControl
+          name="size3"
+          options={timeOptions}
+          defaultValue="week"
+          size="lg"
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Full width
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Expand to fill the container width with <InlineCode
+          >fullWidth</InlineCode
+        >.
+      </Paragraph>
+      <SegmentedControl
+        name="full"
+        options={timeOptions}
+        defaultValue="month"
+        fullWidth
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With icons
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Icons appear before the label text. Works with emojis or icon
+        components.
+      </Paragraph>
+      <SegmentedControl
+        name="icons"
+        options={viewOptions}
+        defaultValue="grid"
+      />
+    </article>
+  </section>
+</DocsLayout>

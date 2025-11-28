@@ -1,0 +1,348 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import PricingTable from '../../components/PricingTable.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const basicPlans = [
+  {
+    name: 'Starter',
+    price: 0,
+    features: ['5 projects', '1GB storage', 'Email support'],
+    ctaText: 'Get Started',
+    ctaUrl: '#',
+  },
+  {
+    name: 'Pro',
+    price: 29,
+    description: 'For growing teams',
+    features: [
+      'Unlimited projects',
+      '100GB storage',
+      'Priority support',
+      'API access',
+    ],
+    ctaText: 'Start Free Trial',
+    ctaUrl: '#',
+    highlighted: true,
+    badge: 'Popular',
+  },
+  {
+    name: 'Enterprise',
+    price: 'Custom',
+    features: [
+      'Everything in Pro',
+      'Dedicated support',
+      'SLA guarantee',
+      'Custom integrations',
+    ],
+    ctaText: 'Contact Sales',
+    ctaUrl: '#',
+  },
+];
+
+const detailedPlans = [
+  {
+    name: 'Free',
+    price: 0,
+    features: [
+      { text: '5 team members', included: true },
+      { text: '10 projects', included: true },
+      { text: 'Basic analytics', included: true },
+      { text: 'Priority support', included: false },
+      { text: 'Custom domain', included: false },
+    ],
+    ctaText: 'Sign Up Free',
+  },
+  {
+    name: 'Team',
+    price: 49,
+    badge: 'Best Value',
+    highlighted: true,
+    features: [
+      { text: '25 team members', included: true },
+      { text: 'Unlimited projects', included: true },
+      { text: 'Advanced analytics', included: true },
+      { text: 'Priority support', included: true },
+      { text: 'Custom domain', included: false },
+    ],
+    ctaText: 'Start Trial',
+  },
+  {
+    name: 'Business',
+    price: 99,
+    features: [
+      { text: 'Unlimited members', included: true },
+      { text: 'Unlimited projects', included: true },
+      { text: 'Advanced analytics', included: true },
+      { text: 'Priority support', included: true },
+      { text: 'Custom domain', included: true },
+    ],
+    ctaText: 'Start Trial',
+  },
+];
+
+const usageSnippet = `---
+import { PricingTable } from 'comet-astro';
+
+const plans = [
+  {
+    name: 'Free',
+    price: 0,
+    features: ['5 projects', '1GB storage'],
+    ctaText: 'Get Started',
+  },
+  {
+    name: 'Pro',
+    price: 29,
+    features: ['Unlimited projects', '100GB storage'],
+    highlighted: true,
+    badge: 'Popular',
+    ctaText: 'Start Trial',
+  },
+];
+---
+
+<PricingTable plans={plans} currency="$" />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'plans',
+    type: 'Plan[]',
+    default: '-',
+    description: 'Array of pricing plan objects (required).',
+  },
+  {
+    name: 'currency',
+    type: 'string',
+    default: "'$'",
+    description: 'Currency symbol to display.',
+  },
+  {
+    name: 'billingPeriod',
+    type: 'string',
+    default: "'/month'",
+    description: 'Default billing period suffix.',
+  },
+];
+
+const planPropsData = [
+  {
+    name: 'name',
+    type: 'string',
+    default: '-',
+    description: 'Plan name (required).',
+  },
+  {
+    name: 'description',
+    type: 'string',
+    default: '-',
+    description: 'Short plan description.',
+  },
+  {
+    name: 'price',
+    type: 'number | string',
+    default: '-',
+    description: "Price (number) or custom text ('Custom').",
+  },
+  {
+    name: 'priceSuffix',
+    type: 'string',
+    default: '-',
+    description: 'Override billing period for this plan.',
+  },
+  {
+    name: 'features',
+    type: '(string | PlanFeature)[]',
+    default: '-',
+    description: 'List of features (strings or objects with included flag).',
+  },
+  {
+    name: 'ctaText',
+    type: 'string',
+    default: '-',
+    description: 'Call-to-action button text.',
+  },
+  {
+    name: 'ctaUrl',
+    type: 'string',
+    default: '-',
+    description: 'Call-to-action button URL.',
+  },
+  {
+    name: 'highlighted',
+    type: 'boolean',
+    default: 'false',
+    description: 'Highlight as recommended plan.',
+  },
+  {
+    name: 'badge',
+    type: 'string',
+    default: '-',
+    description: "Badge text (e.g. 'Popular').",
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="PricingTable"
+  seoDescription="Pricing comparison cards for SaaS and subscription products."
+>
+  <Headline level="h1" textSize="2xl">PricingTable</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The PricingTable component displays pricing plans in a responsive grid,
+      perfect for SaaS products, subscription services, and membership sites.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Supports highlighting recommended plans, feature comparison with check/x
+      icons, badges, and customizable CTAs.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Component Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Plan Object Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={planPropsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Three-tier pricing
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Classic three-column layout with a highlighted middle plan.
+      </Paragraph>
+      <div class="py-8">
+        <PricingTable plans={basicPlans} />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With feature comparison
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Use objects in features array to show included/excluded features with
+        icons.
+      </Paragraph>
+      <div class="py-8">
+        <PricingTable plans={detailedPlans} />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Two plans
+      </Headline>
+      <div class="py-8">
+        <PricingTable
+          plans={[
+            {
+              name: 'Monthly',
+              price: 19,
+              priceSuffix: '/mo',
+              features: ['All features', 'Cancel anytime'],
+              ctaText: 'Subscribe Monthly',
+            },
+            {
+              name: 'Yearly',
+              price: 190,
+              priceSuffix: '/year',
+              features: ['All features', 'Save 17%', '2 months free'],
+              ctaText: 'Subscribe Yearly',
+              highlighted: true,
+              badge: 'Save 17%',
+            },
+          ]}
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Euro pricing
+      </Headline>
+      <div class="py-8">
+        <PricingTable
+          plans={[
+            {
+              name: 'Basic',
+              price: 9,
+              features: ['Feature A', 'Feature B'],
+              ctaText: 'Choose Basic',
+            },
+            {
+              name: 'Standard',
+              price: 19,
+              features: ['Feature A', 'Feature B', 'Feature C'],
+              ctaText: 'Choose Standard',
+              highlighted: true,
+            },
+            {
+              name: 'Premium',
+              price: 39,
+              features: ['All features', 'Priority support'],
+              ctaText: 'Choose Premium',
+            },
+          ]}
+          currency="€"
+          billingPeriod="/Monat"
+        />
+      </div>
+    </article>
+  </section>
+</DocsLayout>

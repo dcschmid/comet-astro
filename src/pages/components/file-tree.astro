@@ -1,0 +1,273 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import FileTree from '../../components/FileTree.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const projectTree = [
+  {
+    name: 'src',
+    type: 'folder',
+    expanded: true,
+    children: [
+      {
+        name: 'components',
+        type: 'folder',
+        children: [
+          { name: 'Button.astro', type: 'file' },
+          { name: 'Card.astro', type: 'file' },
+          { name: 'Input.astro', type: 'file' },
+        ],
+      },
+      {
+        name: 'pages',
+        type: 'folder',
+        expanded: true,
+        children: [
+          { name: 'index.astro', type: 'file' },
+          { name: 'about.astro', type: 'file' },
+        ],
+      },
+      { name: 'styles.css', type: 'file' },
+    ],
+  },
+  { name: 'package.json', type: 'file' },
+  { name: 'astro.config.mjs', type: 'file' },
+  { name: 'README.md', type: 'file' },
+];
+
+const simpleTree = [
+  { name: 'index.ts', type: 'file' },
+  { name: 'utils.ts', type: 'file' },
+  { name: 'types.ts', type: 'file' },
+];
+
+const usageSnippet = `---
+import { FileTree } from 'comet-astro';
+
+const items = [
+  {
+    name: 'src',
+    type: 'folder',
+    expanded: true,
+    children: [
+      { name: 'index.ts', type: 'file' },
+      { name: 'utils.ts', type: 'file' },
+    ],
+  },
+  { name: 'package.json', type: 'file' },
+];
+---
+
+<FileTree items={items} />
+
+<!-- With selection -->
+<FileTree items={items} selectable multiple />
+
+<script>
+  document.querySelector('[data-file-tree]')
+    .addEventListener('itemclick', (e) => {
+      console.log('Clicked:', e.detail.path);
+    });
+</script>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'items',
+    type: 'FileTreeItem[]',
+    default: '[]',
+    description: 'Hierarchical array of files and folders.',
+  },
+  {
+    name: 'selectable',
+    type: 'boolean',
+    default: 'false',
+    description: 'Enable file selection.',
+  },
+  {
+    name: 'multiple',
+    type: 'boolean',
+    default: 'false',
+    description: 'Allow multiple file selection.',
+  },
+  {
+    name: 'defaultSelected',
+    type: 'string[]',
+    default: '[]',
+    description: 'Initially selected file paths.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size of the tree items.',
+  },
+  {
+    name: 'showIcons',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show file type icons.',
+  },
+  {
+    name: 'showExtensions',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show file extensions.',
+  },
+  {
+    name: 'indentSize',
+    type: 'number',
+    default: '1.25',
+    description: 'Indent size per level (in rem).',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="FileTree"
+  seoDescription="Hierarchical file and folder tree display."
+>
+  <Headline level="h1" textSize="2xl">FileTree</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The FileTree component displays files and folders in an expandable tree
+      structure. Perfect for documentation sites, file browsers, or project
+      structure visualization. Includes automatic file type icons based on
+      extension.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Full keyboard navigation with arrow keys to navigate and expand/collapse
+      folders. Optional selection mode for file picking. Emits
+      <InlineCode>itemclick</InlineCode> and <InlineCode>change</InlineCode> events.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and pass a hierarchical array of items. Each item
+      needs <InlineCode>name</InlineCode> and <InlineCode>type</InlineCode>
+      ('file' or 'folder'). Folders can have a <InlineCode>children</InlineCode> array.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Project structure
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Typical project file tree with expandable folders. Click folders to
+        expand/collapse or use arrow keys.
+      </Paragraph>
+      <div class="max-w-md bg-slate-900 rounded-lg p-4 border border-slate-700">
+        <FileTree items={projectTree} />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With selection
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Enable selection for file picking. Click files to select/deselect.
+      </Paragraph>
+      <div class="max-w-md bg-slate-900 rounded-lg p-4 border border-slate-700">
+        <FileTree items={projectTree} selectable multiple />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three sizes for different contexts.
+      </Paragraph>
+      <div class="flex flex-col gap-6">
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Small:</span>
+          <div
+            class="max-w-xs bg-slate-900 rounded-lg p-3 border border-slate-700"
+          >
+            <FileTree items={simpleTree} size="sm" />
+          </div>
+        </div>
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Medium:</span>
+          <div
+            class="max-w-xs bg-slate-900 rounded-lg p-3 border border-slate-700"
+          >
+            <FileTree items={simpleTree} size="md" />
+          </div>
+        </div>
+        <div class="space-y-2">
+          <span class="text-slate-400 text-sm">Large:</span>
+          <div
+            class="max-w-xs bg-slate-900 rounded-lg p-3 border border-slate-700"
+          >
+            <FileTree items={simpleTree} size="lg" />
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Without icons
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Disable icons for a minimal look.
+      </Paragraph>
+      <div class="max-w-md bg-slate-900 rounded-lg p-4 border border-slate-700">
+        <FileTree items={projectTree} showIcons={false} />
+      </div>
+    </article>
+  </section>
+</DocsLayout>

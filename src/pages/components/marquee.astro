@@ -1,0 +1,289 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Marquee from '../../components/Marquee.astro';
+import Table from '../../components/Table.astro';
+import { cn } from '../../utils/cn';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const logos = [
+  { name: 'Vercel', color: 'bg-white text-black' },
+  { name: 'Netlify', color: 'bg-teal-500 text-white' },
+  { name: 'AWS', color: 'bg-orange-500 text-white' },
+  { name: 'Google', color: 'bg-blue-500 text-white' },
+  { name: 'Microsoft', color: 'bg-blue-600 text-white' },
+  { name: 'Stripe', color: 'bg-purple-500 text-white' },
+];
+
+const usageSnippet = `---
+import { Marquee } from 'comet-astro';
+---
+
+<Marquee speed={30} pauseOnHover>
+  <img src="/logos/partner1.svg" alt="Partner 1" class="h-8" />
+  <img src="/logos/partner2.svg" alt="Partner 2" class="h-8" />
+  <img src="/logos/partner3.svg" alt="Partner 3" class="h-8" />
+  <img src="/logos/partner4.svg" alt="Partner 4" class="h-8" />
+</Marquee>
+
+<!-- Reverse direction -->
+<Marquee direction="right" speed={20}>
+  <span>★ New Feature</span>
+  <span>★ Sale 50% Off</span>
+  <span>★ Free Shipping</span>
+</Marquee>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'speed',
+    type: 'number',
+    default: '30',
+    description: 'Animation duration in seconds (lower = faster).',
+  },
+  {
+    name: 'direction',
+    type: "'left' | 'right'",
+    default: "'left'",
+    description: 'Scroll direction.',
+  },
+  {
+    name: 'pauseOnHover',
+    type: 'boolean',
+    default: 'true',
+    description: 'Pause animation when mouse hovers.',
+  },
+  {
+    name: 'gap',
+    type: "'sm' | 'md' | 'lg' | 'xl'",
+    default: "'lg'",
+    description: 'Gap between items.',
+  },
+  {
+    name: 'fade',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show gradient fade on edges.',
+  },
+  {
+    name: 'fadeWidth',
+    type: 'string',
+    default: "'100px'",
+    description: 'Width of the fade gradient.',
+  },
+  {
+    name: 'align',
+    type: "'start' | 'center' | 'end'",
+    default: "'center'",
+    description: 'Vertical alignment of items.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="Marquee"
+  seoDescription="Infinite scrolling content strip for logos and announcements."
+>
+  <Headline level="h1" textSize="2xl">Marquee</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The Marquee component creates an infinite scrolling strip of content,
+      perfect for displaying partner logos, testimonials, announcements, or any
+      repeating content that should draw attention.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Supports pause on hover, customizable speed and direction, and respects
+      <InlineCode>prefers-reduced-motion</InlineCode> for accessibility.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and add your content as children. The content is
+      automatically duplicated to create a seamless infinite scroll.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Logo parade
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Classic use case: scrolling partner or client logos. Hover to pause.
+      </Paragraph>
+      <div
+        class="rounded-lg overflow-hidden bg-slate-900 py-8"
+        style="--marquee-bg: rgb(15 23 42);"
+      >
+        <Marquee speed={25} pauseOnHover>
+          {
+            logos.map((logo) => (
+              <div
+                class={cn('px-6 py-3 rounded-lg font-bold text-sm', logo.color)}
+              >
+                {logo.name}
+              </div>
+            ))
+          }
+        </Marquee>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Reverse direction
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Scroll from left to right instead.
+      </Paragraph>
+      <div
+        class="rounded-lg overflow-hidden bg-slate-900 py-8"
+        style="--marquee-bg: rgb(15 23 42);"
+      >
+        <Marquee direction="right" speed={20}>
+          {
+            logos.map((logo) => (
+              <div
+                class={cn('px-6 py-3 rounded-lg font-bold text-sm', logo.color)}
+              >
+                {logo.name}
+              </div>
+            ))
+          }
+        </Marquee>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Announcement banner
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Use for promotional messages or announcements.
+      </Paragraph>
+      <div
+        class="rounded-lg overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 py-3"
+        style="--marquee-bg: transparent;"
+      >
+        <Marquee speed={15} gap="xl" fade={false}>
+          <span class="text-white font-semibold">🎉 New Release v2.0</span>
+          <span class="text-white font-semibold">⚡ 50% Faster</span>
+          <span class="text-white font-semibold">🚀 Try it now</span>
+          <span class="text-white font-semibold">💫 Free for open source</span>
+        </Marquee>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Different speeds
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Adjust the speed to match your content and design.
+      </Paragraph>
+      <div class="space-y-4">
+        <div class="space-y-1">
+          <span class="text-slate-400 text-sm">Fast (10s):</span>
+          <div
+            class="rounded-lg overflow-hidden bg-slate-800 py-4"
+            style="--marquee-bg: rgb(30 41 59);"
+          >
+            <Marquee speed={10} gap="md">
+              <span class="text-slate-300">Fast scrolling content</span>
+              <span class="text-blue-400">•</span>
+              <span class="text-slate-300">Fast scrolling content</span>
+              <span class="text-blue-400">•</span>
+            </Marquee>
+          </div>
+        </div>
+        <div class="space-y-1">
+          <span class="text-slate-400 text-sm">Slow (60s):</span>
+          <div
+            class="rounded-lg overflow-hidden bg-slate-800 py-4"
+            style="--marquee-bg: rgb(30 41 59);"
+          >
+            <Marquee speed={60} gap="md">
+              <span class="text-slate-300">Slow, relaxed scrolling</span>
+              <span class="text-emerald-400">•</span>
+              <span class="text-slate-300">Slow, relaxed scrolling</span>
+              <span class="text-emerald-400">•</span>
+            </Marquee>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Without fade
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Disable the edge fade for full-bleed content.
+      </Paragraph>
+      <div class="rounded-lg overflow-hidden bg-slate-900 py-8">
+        <Marquee fade={false}>
+          {
+            logos.map((logo) => (
+              <div
+                class={cn('px-6 py-3 rounded-lg font-bold text-sm', logo.color)}
+              >
+                {logo.name}
+              </div>
+            ))
+          }
+        </Marquee>
+      </div>
+    </article>
+  </section>
+</DocsLayout>

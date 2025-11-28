@@ -1,0 +1,179 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Link from '../../components/Link.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { Link } from 'comet-astro';
+---
+
+<!-- Internal link -->
+<Link href="/about">About us</Link>
+
+<!-- External link (auto-detected) -->
+<Link href="https://github.com">GitHub</Link>
+
+<!-- With variant -->
+<Link href="/docs" variant="nav">Documentation</Link>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'href',
+    type: 'string',
+    default: '-',
+    description: 'The URL the link points to. Required.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'subtle' | 'muted' | 'nav' | 'underline'",
+    default: "'default'",
+    description: 'Visual style variant of the link.',
+  },
+  {
+    name: 'external',
+    type: 'boolean',
+    default: 'auto',
+    description:
+      'Force external link behavior. Auto-detected from href if not set.',
+  },
+  {
+    name: 'showExternalIcon',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show arrow icon for external links.',
+  },
+  {
+    name: 'underline',
+    type: "'always' | 'hover' | 'none'",
+    default: "'hover'",
+    description: 'When to show underline decoration.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="Link"
+  seoDescription="Accessible styled anchor with automatic external link detection."
+>
+  <Headline level="h1" textSize="2xl">Link</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The Link component provides styled anchors with automatic external link
+      detection. External links automatically get <InlineCode
+        >target="_blank"</InlineCode
+      >,
+      <InlineCode>rel="noopener noreferrer"</InlineCode>, a visual icon
+      indicator, and screen reader text for accessibility.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Five style variants are available: default (blue), subtle (slate), muted
+      (gray), nav (navigation style), and underline (always underlined). All
+      variants meet WCAG AAA contrast requirements.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and pass an <InlineCode>href</InlineCode>. External
+      links are automatically detected from the URL pattern (http://, https://,
+      mailto:, tel:).
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Style variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Choose from five visual styles depending on context.
+      </Paragraph>
+      <div class="flex flex-wrap gap-6 items-center">
+        <Link href="#" variant="default">Default link</Link>
+        <Link href="#" variant="subtle">Subtle link</Link>
+        <Link href="#" variant="muted">Muted link</Link>
+        <Link href="#" variant="nav">Nav link</Link>
+        <Link href="#" variant="underline">Underline link</Link>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        External links
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        External links are auto-detected and display an icon. Screen readers
+        announce "opens in new tab".
+      </Paragraph>
+      <div class="flex flex-wrap gap-6 items-center">
+        <Link href="https://github.com">GitHub</Link>
+        <Link href="https://astro.build">Astro</Link>
+        <Link href="mailto:hello@example.com">Email us</Link>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Without external icon
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Hide the external icon when needed, while keeping the accessibility
+        benefits.
+      </Paragraph>
+      <div class="flex flex-wrap gap-6 items-center">
+        <Link href="https://example.com" showExternalIcon={false}
+          >Clean external link</Link
+        >
+      </div>
+    </article>
+  </section>
+</DocsLayout>

@@ -1,0 +1,310 @@
+---
+/**
+ * CountryInfo - Länder-Informationen
+ *
+ * Zeigt Flagge, Hauptstadt, Währung, Sprachen und mehr für ein Land.
+ *
+ * API: https://restcountries.com/
+ */
+import { cn } from '../utils/cn';
+
+interface Country {
+  name: {
+    common: string;
+    official: string;
+    nativeName?: Record<string, { common: string }>;
+  };
+  capital?: string[];
+  region: string;
+  subregion?: string;
+  population: number;
+  area: number;
+  currencies?: Record<string, { name: string; symbol: string }>;
+  languages?: Record<string, string>;
+  flags: { svg: string; png: string; alt?: string };
+  coatOfArms?: { svg?: string; png?: string };
+  maps?: { googleMaps: string; openStreetMaps: string };
+  borders?: string[];
+  timezones?: string[];
+  car?: { side: string };
+  tld?: string[];
+  cca2: string;
+  cca3: string;
+}
+
+interface Props {
+  country: string; // ISO code (DE, US, etc.) or country name
+  variant?: 'default' | 'compact' | 'detailed';
+  showMap?: boolean;
+  showCoatOfArms?: boolean;
+  className?: string;
+}
+
+const {
+  country,
+  variant = 'default',
+  showMap = true,
+  showCoatOfArms = false,
+  className = '',
+} = Astro.props;
+
+let data: Country | null = null;
+let error: string | null = null;
+
+try {
+  // Try by code first, then by name
+  const isCode = country.length <= 3;
+  const endpoint = isCode
+    ? `https://restcountries.com/v3.1/alpha/${country}`
+    : `https://restcountries.com/v3.1/name/${encodeURIComponent(country)}?fullText=true`;
+
+  const res = await fetch(endpoint);
+  if (res.ok) {
+    const json = await res.json();
+    data = Array.isArray(json) ? json[0] : json;
+  } else {
+    error = `Land nicht gefunden`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+function formatPopulation(pop: number): string {
+  if (pop >= 1_000_000_000) return `${(pop / 1_000_000_000).toFixed(1)} Mrd.`;
+  if (pop >= 1_000_000) return `${(pop / 1_000_000).toFixed(1)} Mio.`;
+  if (pop >= 1_000) return `${(pop / 1_000).toFixed(0)} Tsd.`;
+  return pop.toString();
+}
+
+function formatArea(area: number): string {
+  return area.toLocaleString('de-DE') + ' km²';
+}
+---
+
+{
+  error ? (
+    <div
+      class={cn(
+        'p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm',
+        className
+      )}
+    >
+      <div class="flex items-center gap-2">
+        <svg
+          class="w-5 h-5 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        {error}: {country}
+      </div>
+    </div>
+  ) : data && variant === 'compact' ? (
+    <div
+      class={cn(
+        'flex items-center gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50',
+        className
+      )}
+    >
+      <img
+        src={data.flags.svg}
+        alt={data.flags.alt || `Flagge von ${data.name.common}`}
+        class="w-16 h-auto rounded shadow-lg"
+      />
+      <div>
+        <h3 class="font-bold text-slate-100 text-lg">{data.name.common}</h3>
+        <p class="text-sm text-slate-400">
+          {data.capital?.[0] || '—'} • {formatPopulation(data.population)}
+        </p>
+      </div>
+    </div>
+  ) : (
+    data && (
+      <div
+        class={cn(
+          'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+          className
+        )}
+      >
+        {/* Header with Flag */}
+        <div class="relative">
+          <div class="h-24 bg-gradient-to-r from-slate-700/50 to-slate-800/50 flex items-center justify-center overflow-hidden">
+            <img
+              src={data.flags.svg}
+              alt={data.flags.alt || `Flagge von ${data.name.common}`}
+              class="w-full h-full object-cover opacity-30"
+            />
+          </div>
+          <div class="absolute -bottom-8 left-5">
+            <img
+              src={data.flags.svg}
+              alt={data.flags.alt || `Flagge von ${data.name.common}`}
+              class="w-20 h-auto rounded-lg shadow-xl border-4 border-slate-900"
+            />
+          </div>
+          {showCoatOfArms && data.coatOfArms?.svg && (
+            <div class="absolute -bottom-6 right-5">
+              <img
+                src={data.coatOfArms.svg}
+                alt={`Wappen von ${data.name.common}`}
+                class="h-16 w-auto drop-shadow-lg"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div class="pt-12 px-5 pb-5">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-slate-100 text-xl">
+                {data.name.common}
+              </h3>
+              <p class="text-sm text-slate-500">{data.name.official}</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-700/50 text-slate-300 border border-slate-600/50">
+              {data.cca2}
+            </span>
+          </div>
+
+          {/* Info Grid */}
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30">
+              <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                Hauptstadt
+              </p>
+              <p class="font-semibold text-slate-200">
+                {data.capital?.[0] || '—'}
+              </p>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30">
+              <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                Region
+              </p>
+              <p class="font-semibold text-slate-200">
+                {data.subregion || data.region}
+              </p>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30">
+              <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                Bevölkerung
+              </p>
+              <p class="font-semibold text-slate-200">
+                {formatPopulation(data.population)}
+              </p>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30">
+              <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                Fläche
+              </p>
+              <p class="font-semibold text-slate-200">
+                {formatArea(data.area)}
+              </p>
+            </div>
+          </div>
+
+          {variant === 'detailed' && (
+            <>
+              {/* Currency */}
+              {data.currencies && (
+                <div class="mb-3">
+                  <p class="text-xs text-slate-500 uppercase tracking-wide mb-2">
+                    Währung
+                  </p>
+                  <div class="flex flex-wrap gap-2">
+                    {Object.entries(data.currencies).map(([code, curr]) => (
+                      <span class="px-2.5 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {curr.symbol} {curr.name} ({code})
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Languages */}
+              {data.languages && (
+                <div class="mb-3">
+                  <p class="text-xs text-slate-500 uppercase tracking-wide mb-2">
+                    Sprachen
+                  </p>
+                  <div class="flex flex-wrap gap-2">
+                    {Object.values(data.languages).map((lang) => (
+                      <span class="px-2.5 py-1 rounded-full text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Additional Info */}
+              <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-700/50">
+                {data.tld && (
+                  <div>
+                    <p class="text-xs text-slate-500">Domain</p>
+                    <p class="text-sm text-slate-300">{data.tld.join(', ')}</p>
+                  </div>
+                )}
+                {data.car && (
+                  <div>
+                    <p class="text-xs text-slate-500">Verkehr</p>
+                    <p class="text-sm text-slate-300">
+                      {data.car.side === 'right'
+                        ? 'Rechtsverkehr'
+                        : 'Linksverkehr'}
+                    </p>
+                  </div>
+                )}
+                {data.timezones && (
+                  <div class="col-span-2">
+                    <p class="text-xs text-slate-500">Zeitzonen</p>
+                    <p class="text-sm text-slate-300">
+                      {data.timezones.slice(0, 3).join(', ')}
+                      {data.timezones.length > 3
+                        ? ` +${data.timezones.length - 3}`
+                        : ''}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        {showMap && data.maps && (
+          <footer class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30">
+            <a
+              href={data.maps.googleMaps}
+              target="_blank"
+              rel="noopener"
+              class="flex items-center justify-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                />
+              </svg>
+              Auf Karte anzeigen
+            </a>
+          </footer>
+        )}
+      </div>
+    )
+  )
+}

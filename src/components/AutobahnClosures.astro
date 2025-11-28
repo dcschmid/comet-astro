@@ -1,0 +1,355 @@
+---
+/**
+ * AutobahnClosures - Sperrungen auf deutschen Autobahnen
+ *
+ * Zeigt aktuelle und geplante Vollsperrungen mit
+ * Umleitungsinfos und Zeitangaben.
+ *
+ * API: https://autobahn.api.bund.dev/
+ */
+import { cn } from '../utils/cn';
+
+interface Closure {
+  identifier: string;
+  title: string;
+  subtitle: string;
+  description: string[];
+  coordinate: { lat: number; long: number };
+  isBlocked: string;
+  future: boolean;
+  display_type: string;
+  impact?: { lower: string; upper: string };
+}
+
+interface Props {
+  road: string;
+  maxItems?: number;
+  compact?: boolean;
+  showFuture?: boolean;
+  showTitle?: boolean;
+  showMapLinks?: boolean;
+  className?: string;
+}
+
+const {
+  road,
+  maxItems = 10,
+  compact = false,
+  showFuture = true,
+  showTitle = true,
+  showMapLinks = true,
+  className = '',
+} = Astro.props;
+
+let closures: Closure[] = [];
+let error: string | null = null;
+
+try {
+  const res = await fetch(
+    `https://verkehr.autobahn.de/o/autobahn/${road}/services/closure`
+  );
+  if (res.ok) {
+    const data = await res.json();
+    closures = (data.closure || [])
+      .filter((c: Closure) => showFuture || !c.future)
+      .slice(0, maxItems);
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+function parseInfo(desc: string[]) {
+  const info: Record<string, string> = {};
+  for (const line of desc) {
+    if (
+      line.match(/\d{2}\.\d{2}\.\d{2}.*Uhr/) ||
+      line.match(/\d{2}\.\d{2}\.\d{2}\s+\d{2}:\d{2}/)
+    ) {
+      info.date = line;
+    }
+    if (line.includes('Ende der Gesamtmaßnahme')) {
+      const match = line.match(/(\d{2}\.\d{2}\.\d{2})/);
+      if (match) info.endDate = match[1];
+    }
+  }
+  return info;
+}
+
+const activeCount = closures.filter((c) => !c.future).length;
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-linear-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  {
+    showTitle && (
+      <header
+        class={cn(
+          'px-5 py-4 border-b border-slate-700/50',
+          activeCount > 0 ? 'bg-red-500/10' : 'bg-slate-800/30'
+        )}
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class={cn(
+                'p-2.5 rounded-xl shadow-lg',
+                activeCount > 0
+                  ? 'bg-linear-to-br from-red-500 to-red-700 shadow-red-500/25'
+                  : 'bg-linear-to-br from-slate-600 to-slate-700 shadow-slate-500/25'
+              )}
+            >
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-100 text-lg">
+                Sperrungen {road}
+              </h3>
+              <p class="text-xs text-slate-400">
+                {closures.length} Meldung{closures.length !== 1 ? 'en' : ''}
+              </p>
+            </div>
+          </div>
+
+          {activeCount > 0 ? (
+            <div class="flex items-center gap-2">
+              <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+              </span>
+              <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-red-500/20 text-red-300 border border-red-500/30">
+                {activeCount} AKTIV
+              </span>
+            </div>
+          ) : (
+            closures.length > 0 && (
+              <span class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600/50">
+                {closures.length} geplant
+              </span>
+            )
+          )}
+        </div>
+      </header>
+    )
+  }
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : closures.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-emerald-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <p class="text-emerald-300 font-semibold text-lg">Alles frei!</p>
+          <p class="text-slate-400 text-sm mt-1">
+            Keine Sperrungen auf der {road}
+          </p>
+        </div>
+      ) : (
+        <div class={cn('space-y-3', compact && 'space-y-2')}>
+          {closures.map((item) => {
+            const info = parseInfo(item.description);
+            return (
+              <article
+                class={cn(
+                  'group rounded-xl border p-4 transition-all',
+                  item.future
+                    ? 'bg-slate-800/50 border-slate-700/50 hover:border-slate-600'
+                    : 'bg-red-950/40 border-red-500/40 hover:border-red-500/60 shadow-lg shadow-red-500/5'
+                )}
+              >
+                <div class="flex items-start gap-3">
+                  <div class={cn('mt-1 shrink-0', item.future ? '' : '')}>
+                    {item.future ? (
+                      <div class="w-3 h-3 rounded-full bg-slate-500" />
+                    ) : (
+                      <div class="relative">
+                        <div class="w-3 h-3 rounded-full bg-red-500 shadow-lg shadow-red-500/50" />
+                        <div class="absolute inset-0 w-3 h-3 rounded-full bg-red-500 animate-ping opacity-75" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <h4
+                          class={cn(
+                            'font-semibold',
+                            item.future ? 'text-slate-100' : 'text-red-200'
+                          )}
+                        >
+                          {item.title}
+                        </h4>
+                        {item.subtitle && (
+                          <p class="text-sm text-slate-400 mt-0.5">
+                            {item.subtitle}
+                          </p>
+                        )}
+                      </div>
+
+                      <div class="flex items-center gap-2 shrink-0">
+                        {item.future ? (
+                          <span class="px-2 py-0.5 text-xs bg-slate-700 text-slate-300 rounded-full">
+                            Geplant
+                          </span>
+                        ) : (
+                          <span class="px-2.5 py-1 text-xs bg-red-500/30 text-red-100 rounded-full font-bold border border-red-500/50 uppercase tracking-wide">
+                            Gesperrt
+                          </span>
+                        )}
+
+                        {showMapLinks && item.coordinate && (
+                          <a
+                            href={`https://www.google.com/maps?q=${item.coordinate.lat},${item.coordinate.long}`}
+                            target="_blank"
+                            rel="noopener"
+                            class="p-1.5 rounded-lg bg-slate-700/50 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition-colors"
+                            title="Auf Karte zeigen"
+                          >
+                            <svg
+                              class="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                              />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                    {!compact && info.date && (
+                      <div class="mt-3">
+                        <span
+                          class={cn(
+                            'inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg',
+                            item.future
+                              ? 'bg-slate-700/60 text-slate-200'
+                              : 'bg-red-500/20 text-red-200 border border-red-500/30'
+                          )}
+                        >
+                          <svg
+                            class="w-3.5 h-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          {info.date}
+                        </span>
+                      </div>
+                    )}
+
+                    {!compact && item.description.length > 3 && (
+                      <p class="mt-3 text-sm text-slate-300 bg-slate-700/30 rounded-lg px-3 py-2 leading-relaxed">
+                        {item.description[4] || item.description[3]}
+                      </p>
+                    )}
+
+                    {item.impact && (
+                      <p class="mt-2 text-xs text-slate-500">
+                        🚧 {item.impact.upper} → {item.impact.lower}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Daten: Autobahn GmbH</span>
+    <a
+      href="https://autobahn.de"
+      target="_blank"
+      rel="noopener"
+      class="text-blue-400 hover:text-blue-300"
+    >
+      autobahn.de →
+    </a>
+  </footer>
+</div>
+
+<style>
+  @keyframes ping {
+    75%,
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  .animate-ping {
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+</style>

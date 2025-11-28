@@ -1,0 +1,314 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Signature from '../../components/Signature.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+// import InlineCode from '../../components/InlineCode.astro';
+
+const usageSnippet = `---
+import { Signature } from 'comet-astro';
+---
+
+<Signature
+  width={400}
+  height={200}
+  strokeColor="#1e40af"
+  placeholder="Sign here"
+/>
+
+<!-- Listen to events -->
+<script>
+  document.querySelector('[data-signature]').addEventListener('signature:sign', (e) => {
+    console.log('Signature data:', e.detail.dataUrl);
+  });
+</script>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'width',
+    type: 'number',
+    default: '400',
+    description: 'Canvas width in pixels.',
+  },
+  {
+    name: 'height',
+    type: 'number',
+    default: '200',
+    description: 'Canvas height in pixels.',
+  },
+  {
+    name: 'strokeColor',
+    type: 'string',
+    default: "'#3b82f6'",
+    description: 'Stroke color for drawing.',
+  },
+  {
+    name: 'strokeWidth',
+    type: 'number',
+    default: '2',
+    description: 'Stroke width in pixels.',
+  },
+  {
+    name: 'backgroundColor',
+    type: 'string',
+    default: "'transparent'",
+    description: 'Canvas background color.',
+  },
+  {
+    name: 'showClear',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show clear button.',
+  },
+  {
+    name: 'showUndo',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show undo button.',
+  },
+  {
+    name: 'placeholder',
+    type: 'string',
+    default: "'Sign here'",
+    description: 'Placeholder text displayed before signing.',
+  },
+  {
+    name: 'bordered',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show dashed border around canvas.',
+  },
+];
+
+const eventsData = [
+  {
+    name: 'signature:sign',
+    type: 'CustomEvent',
+    default: '-',
+    description: 'Fired after each stroke. detail: { isEmpty, dataUrl }',
+  },
+  {
+    name: 'signature:clear',
+    type: 'CustomEvent',
+    default: '-',
+    description: 'Fired when canvas is cleared.',
+  },
+  {
+    name: 'signature:undo',
+    type: 'CustomEvent',
+    default: '-',
+    description: 'Fired when undo is performed.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="Signature"
+  seoDescription="Touch and mouse signature pad for capturing signatures."
+>
+  <Headline level="h1" textSize="2xl">Signature</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The Signature component provides a canvas-based signature pad that works
+      with both touch devices and mouse input. Perfect for forms, contracts, and
+      any document requiring a signature.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Supports undo, clear, and exports signatures as PNG/base64 data URLs.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Events</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={eventsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Default signature pad
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Draw with your mouse or touch. Use Undo and Clear buttons to modify.
+      </Paragraph>
+      <div class="p-6 bg-slate-800 rounded-xl">
+        <Signature />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Custom colors
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Use different stroke and background colors.
+      </Paragraph>
+      <div class="p-6 bg-slate-800 rounded-xl">
+        <Signature
+          strokeColor="#10b981"
+          strokeWidth={3}
+          backgroundColor="#1e293b"
+          placeholder="Sign in green"
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Large signature pad
+      </Headline>
+      <div class="p-6 bg-slate-800 rounded-xl overflow-x-auto">
+        <Signature
+          width={600}
+          height={300}
+          strokeColor="#8b5cf6"
+          strokeWidth={4}
+          placeholder="Sign with extra space"
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Minimal (no controls)
+      </Headline>
+      <div class="p-6 bg-slate-800 rounded-xl">
+        <Signature
+          width={300}
+          height={150}
+          showClear={false}
+          showUndo={false}
+          bordered={false}
+          backgroundColor="#334155"
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        JavaScript API
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Control the signature pad programmatically.
+      </Paragraph>
+      <CodeBlock
+        code={`// Get signature as base64 data URL
+const dataUrl = SignaturePad.getData('#my-signature');
+
+// Clear the signature
+SignaturePad.clear('#my-signature');
+
+// Check if empty
+const isEmpty = SignaturePad.isEmpty('#my-signature');
+
+// Access directly via element
+const el = document.querySelector('[data-signature]');
+const pad = el._signature;
+pad.toDataURL('image/png'); // Get as PNG
+pad.toBlob((blob) => {
+  // Upload blob to server
+  const formData = new FormData();
+  formData.append('signature', blob, 'signature.png');
+});`}
+        language="javascript"
+      />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Form integration
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Capture and submit signature with a form.
+      </Paragraph>
+      <CodeBlock
+        code={`<form id="contract-form">
+  <Signature id="contract-sig" />
+  <input type="hidden" name="signature" id="sig-input" />
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+  const form = document.getElementById('contract-form');
+  const sigPad = document.getElementById('contract-sig');
+  const sigInput = document.getElementById('sig-input');
+  
+  sigPad.addEventListener('signature:sign', (e) => {
+    sigInput.value = e.detail.dataUrl;
+  });
+  
+  form.addEventListener('submit', (e) => {
+    if (SignaturePad.isEmpty('#contract-sig')) {
+      e.preventDefault();
+      alert('Please sign before submitting');
+    }
+  });
+</script>`}
+        language="html"
+      />
+    </article>
+  </section>
+</DocsLayout>

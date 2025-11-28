@@ -1,0 +1,212 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import AvatarGroup from '../../components/AvatarGroup.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const teamAvatars = [
+  { src: 'https://i.pravatar.cc/150?img=1', alt: 'Anna Schmidt', href: '#' },
+  { src: 'https://i.pravatar.cc/150?img=2', alt: 'Max Müller', href: '#' },
+  { src: 'https://i.pravatar.cc/150?img=3', alt: 'Lisa Weber', href: '#' },
+  { src: 'https://i.pravatar.cc/150?img=4', alt: 'Tom Fischer' },
+  { src: 'https://i.pravatar.cc/150?img=5', alt: 'Sarah Koch' },
+];
+
+const manyAvatars = [
+  { src: 'https://i.pravatar.cc/150?img=10', alt: 'User 1' },
+  { src: 'https://i.pravatar.cc/150?img=11', alt: 'User 2' },
+  { src: 'https://i.pravatar.cc/150?img=12', alt: 'User 3' },
+  { src: 'https://i.pravatar.cc/150?img=13', alt: 'User 4' },
+  { src: 'https://i.pravatar.cc/150?img=14', alt: 'User 5' },
+  { src: 'https://i.pravatar.cc/150?img=15', alt: 'User 6' },
+  { src: 'https://i.pravatar.cc/150?img=16', alt: 'User 7' },
+  { src: 'https://i.pravatar.cc/150?img=17', alt: 'User 8' },
+];
+
+const usageSnippet = `---
+import { AvatarGroup } from 'comet-astro';
+
+const team = [
+  { src: '/avatars/anna.jpg', alt: 'Anna', href: '/team/anna' },
+  { src: '/avatars/max.jpg', alt: 'Max', href: '/team/max' },
+  { src: '/avatars/lisa.jpg', alt: 'Lisa' },
+];
+---
+
+<AvatarGroup avatars={team} max={3} size="md" />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'avatars',
+    type: 'Avatar[]',
+    default: '[]',
+    description: 'Array of avatar objects with src, alt, and optional href.',
+  },
+  {
+    name: 'max',
+    type: 'number',
+    default: '5',
+    description: 'Maximum visible avatars before showing +N overflow.',
+  },
+  {
+    name: 'size',
+    type: "'xs' | 'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size of the avatars.',
+  },
+  {
+    name: 'overlap',
+    type: 'number',
+    default: '0.3',
+    description: 'Overlap amount (0-1). Higher = more overlap.',
+  },
+  {
+    name: 'expandOnHover',
+    type: 'boolean',
+    default: 'true',
+    description: 'Expand avatars on hover to show all.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    default: "''",
+    description: 'Additional CSS classes.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="AvatarGroup"
+  seoDescription="Stacked avatar display with overflow indicator."
+>
+  <Headline level="h1" textSize="2xl">AvatarGroup</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The AvatarGroup component displays multiple avatars in an overlapping
+      stack, perfect for showing team members, collaborators, or social proof.
+      When there are more avatars than the maximum, a "+N" badge shows the
+      overflow count.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Hover expansion reveals all avatars in a smooth animation. Each avatar can
+      optionally be a link. The component is fully accessible with proper ARIA
+      labels for each avatar and the overflow indicator.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and pass an array of avatar objects. Each object
+      should have <InlineCode>src</InlineCode> and <InlineCode>alt</InlineCode>
+      properties, with an optional <InlineCode>href</InlineCode> to make the avatar
+      clickable.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Four sizes available from extra small to large.
+      </Paragraph>
+      <div class="flex flex-col gap-6">
+        <div class="flex items-center gap-4">
+          <span class="text-slate-400 w-12">xs:</span>
+          <AvatarGroup avatars={teamAvatars} size="xs" max={5} />
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-slate-400 w-12">sm:</span>
+          <AvatarGroup avatars={teamAvatars} size="sm" max={5} />
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-slate-400 w-12">md:</span>
+          <AvatarGroup avatars={teamAvatars} size="md" max={5} />
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-slate-400 w-12">lg:</span>
+          <AvatarGroup avatars={teamAvatars} size="lg" max={5} />
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Overflow indicator
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        When there are more avatars than <InlineCode>max</InlineCode>, a "+N"
+        badge appears. Hover to expand and see all avatars.
+      </Paragraph>
+      <div class="flex items-center gap-4">
+        <AvatarGroup avatars={manyAvatars} max={4} size="md" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Custom overlap
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Adjust the overlap amount for tighter or looser stacking.
+      </Paragraph>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-4">
+          <span class="text-slate-400 w-24">Tight (0.5):</span>
+          <AvatarGroup avatars={teamAvatars} overlap={0.5} max={5} />
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-slate-400 w-24">Default (0.3):</span>
+          <AvatarGroup avatars={teamAvatars} overlap={0.3} max={5} />
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-slate-400 w-24">Loose (0.1):</span>
+          <AvatarGroup avatars={teamAvatars} overlap={0.1} max={5} />
+        </div>
+      </div>
+    </article>
+  </section>
+</DocsLayout>

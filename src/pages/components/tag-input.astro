@@ -1,0 +1,265 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import TagInput from '../../components/TagInput.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const skillSuggestions = [
+  'JavaScript',
+  'TypeScript',
+  'React',
+  'Vue',
+  'Angular',
+  'Svelte',
+  'Node.js',
+  'Python',
+  'Go',
+  'Rust',
+  'CSS',
+  'Tailwind',
+];
+
+const usageSnippet = `---
+import { TagInput } from 'comet-astro';
+---
+
+<TagInput
+  name="tags"
+  placeholder="Add tags..."
+  defaultTags={['JavaScript', 'TypeScript']}
+  maxTags={10}
+/>
+
+<!-- With suggestions -->
+<TagInput
+  name="skills"
+  placeholder="Add skills..."
+  suggestions={['React', 'Vue', 'Angular', 'Svelte']}
+/>
+
+<script>
+  document.querySelector('[data-tag-input]')
+    .addEventListener('change', (e) => {
+      console.log('Tags:', e.detail.tags);
+    });
+</script>`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'name',
+    type: 'string',
+    default: '-',
+    description: 'Input name for form submission. Required.',
+  },
+  {
+    name: 'defaultTags',
+    type: 'string[]',
+    default: '[]',
+    description: 'Initial tags.',
+  },
+  {
+    name: 'placeholder',
+    type: 'string',
+    default: "'Add tag...'",
+    description: 'Input placeholder text.',
+  },
+  {
+    name: 'maxTags',
+    type: 'number',
+    default: 'undefined',
+    description: 'Maximum number of tags allowed.',
+  },
+  {
+    name: 'suggestions',
+    type: 'string[]',
+    default: '[]',
+    description: 'Autocomplete suggestions list.',
+  },
+  {
+    name: 'allowDuplicates',
+    type: 'boolean',
+    default: 'false',
+    description: 'Allow duplicate tags.',
+  },
+  {
+    name: 'delimiters',
+    type: 'string[]',
+    default: "['Enter', ',']",
+    description: 'Keys that trigger tag creation.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Size variant.',
+  },
+  {
+    name: 'variant',
+    type: "'default' | 'outline' | 'filled'",
+    default: "'default'",
+    description: 'Visual style variant.',
+  },
+  {
+    name: 'showClearAll',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show clear all button when multiple tags exist.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="TagInput"
+  seoDescription="Input field for creating and managing tags."
+>
+  <Headline level="h1" textSize="2xl">TagInput</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The TagInput component provides an input field for creating and managing
+      multiple tags or chips. Users can add tags by typing and pressing Enter or
+      comma, remove them with backspace or clicking the × button.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Supports autocomplete suggestions, duplicate prevention, max tag limits,
+      and form submission via a hidden input with JSON value. The component
+      emits <InlineCode>change</InlineCode> events when tags are added or removed.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and optionally provide suggestions for autocomplete.
+      Tags are stored as JSON in a hidden input for form submission.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Basic tag input
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Type and press Enter or comma to add tags. Backspace removes the last
+        tag.
+      </Paragraph>
+      <div class="max-w-md">
+        <TagInput name="basic" defaultTags={['Astro', 'Tailwind']} />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With suggestions
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Start typing to see matching suggestions. Arrow keys to navigate, Enter
+        to select.
+      </Paragraph>
+      <div class="max-w-md">
+        <TagInput
+          name="skills"
+          placeholder="Add skills..."
+          defaultTags={['JavaScript']}
+          suggestions={skillSuggestions}
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With max limit
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Limit the number of tags. The input is disabled when max is reached.
+      </Paragraph>
+      <div class="max-w-md">
+        <TagInput
+          name="limited"
+          defaultTags={['One', 'Two', 'Three']}
+          maxTags={5}
+          placeholder="Max 5 tags..."
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Style variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three visual styles to match your design.
+      </Paragraph>
+      <div class="flex flex-col gap-4 max-w-md">
+        <TagInput name="def" defaultTags={['Default']} variant="default" />
+        <TagInput name="out" defaultTags={['Outline']} variant="outline" />
+        <TagInput name="fill" defaultTags={['Filled']} variant="filled" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Three sizes for different contexts.
+      </Paragraph>
+      <div class="flex flex-col gap-4 max-w-md">
+        <TagInput name="sm" defaultTags={['Small']} size="sm" />
+        <TagInput name="md" defaultTags={['Medium']} size="md" />
+        <TagInput name="lg" defaultTags={['Large']} size="lg" />
+      </div>
+    </article>
+  </section>
+</DocsLayout>

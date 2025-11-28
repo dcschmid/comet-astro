@@ -1,0 +1,460 @@
+---
+/**
+ * WaterLevel - Pegelstände deutscher Flüsse
+ *
+ * Zeigt aktuelle Wasserstände von PegelOnline (WSV) mit
+ * Hochwasser-Warnung und Trend-Anzeige.
+ *
+ * API: https://www.pegelonline.wsv.de/webservices/rest-api/v2/
+ */
+import { cn } from '../utils/cn';
+
+interface Station {
+  uuid: string;
+  shortname: string;
+  longname: string;
+  km: number;
+  agency: string;
+  longitude: number;
+  latitude: number;
+  water: { shortname: string; longname: string };
+}
+
+interface Measurement {
+  timestamp: string;
+  value: number;
+  stateMnwMhw: string;
+  stateNswHsw: string;
+  trend?: number;
+}
+
+interface Props {
+  water?: string;
+  station?: string;
+  stations?: string[];
+  maxStations?: number;
+  showTrend?: boolean;
+  showMap?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  water = 'RHEIN',
+  station,
+  stations: stationList,
+  maxStations = 5,
+  showTrend = true,
+  showMap = true,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+const API_BASE = 'https://www.pegelonline.wsv.de/webservices/rest-api/v2';
+
+interface StationData extends Station {
+  measurement?: Measurement;
+  error?: string;
+}
+
+let stationsData: StationData[] = [];
+let error: string | null = null;
+
+try {
+  let targetStations: Station[] = [];
+
+  if (station) {
+    // Single station by name
+    const res = await fetch(
+      `${API_BASE}/stations/${encodeURIComponent(station)}.json`
+    );
+    if (res.ok) {
+      targetStations = [await res.json()];
+    }
+  } else if (stationList && stationList.length > 0) {
+    // Multiple specific stations
+    const promises = stationList.map((s) =>
+      fetch(`${API_BASE}/stations/${encodeURIComponent(s)}.json`).then((r) =>
+        r.ok ? r.json() : null
+      )
+    );
+    targetStations = (await Promise.all(promises)).filter(Boolean);
+  } else {
+    // All stations for a water body
+    const res = await fetch(
+      `${API_BASE}/stations.json?waters=${encodeURIComponent(water)}`
+    );
+    if (res.ok) {
+      targetStations = (await res.json()).slice(0, maxStations);
+    }
+  }
+
+  // Fetch measurements for each station
+  const measurementPromises = targetStations.map(async (s) => {
+    try {
+      const mRes = await fetch(
+        `${API_BASE}/stations/${s.uuid}/W/currentmeasurement.json`
+      );
+      if (mRes.ok) {
+        const measurement = await mRes.json();
+        return { ...s, measurement };
+      }
+      return { ...s, error: 'Keine Daten' };
+    } catch {
+      return { ...s, error: 'Fehler' };
+    }
+  });
+
+  stationsData = await Promise.all(measurementPromises);
+} catch {
+  error = 'Verbindungsfehler zur API';
+}
+
+function getStateInfo(state: string) {
+  switch (state) {
+    case 'low':
+      return {
+        label: 'Niedrig',
+        color: 'text-amber-400',
+        bg: 'bg-amber-500/20',
+        border: 'border-amber-500/30',
+      };
+    case 'normal':
+      return {
+        label: 'Normal',
+        color: 'text-emerald-400',
+        bg: 'bg-emerald-500/20',
+        border: 'border-emerald-500/30',
+      };
+    case 'high':
+      return {
+        label: 'Hoch',
+        color: 'text-orange-400',
+        bg: 'bg-orange-500/20',
+        border: 'border-orange-500/30',
+      };
+    case 'very high':
+      return {
+        label: 'Sehr hoch',
+        color: 'text-red-400',
+        bg: 'bg-red-500/20',
+        border: 'border-red-500/30',
+      };
+    default:
+      return {
+        label: 'Unbekannt',
+        color: 'text-slate-400',
+        bg: 'bg-slate-500/20',
+        border: 'border-slate-500/30',
+      };
+  }
+}
+
+function getOverallState(data: StationData[]) {
+  const states = data.map(
+    (s) => s.measurement?.stateMnwMhw || s.measurement?.stateNswHsw
+  );
+  if (states.includes('very high')) return 'very high';
+  if (states.includes('high')) return 'high';
+  if (states.includes('low')) return 'low';
+  return 'normal';
+}
+
+const overallState = getOverallState(stationsData);
+const overallInfo = getStateInfo(overallState);
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  <header class={cn('px-5 py-4 border-b border-slate-700/50', overallInfo.bg)}>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div
+          class={cn(
+            'p-2.5 rounded-xl shadow-lg',
+            overallState === 'very high' || overallState === 'high'
+              ? 'bg-gradient-to-br from-orange-500 to-red-600 shadow-red-500/25'
+              : 'bg-gradient-to-br from-blue-500 to-cyan-600 shadow-blue-500/25'
+          )}
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-100 text-lg">Pegelstände {water}</h3>
+          <p class="text-xs text-slate-400">
+            {stationsData.length} Messstation{
+              stationsData.length !== 1 ? 'en' : ''
+            }
+          </p>
+        </div>
+      </div>
+
+      <div
+        class={cn(
+          'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold',
+          overallInfo.bg,
+          overallInfo.border,
+          'border'
+        )}
+      >
+        {
+          (overallState === 'very high' || overallState === 'high') && (
+            <span class="relative flex h-2 w-2">
+              <span
+                class={cn(
+                  'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75',
+                  overallState === 'very high' ? 'bg-red-400' : 'bg-orange-400'
+                )}
+              />
+              <span
+                class={cn(
+                  'relative inline-flex rounded-full h-2 w-2',
+                  overallState === 'very high' ? 'bg-red-500' : 'bg-orange-500'
+                )}
+              />
+            </span>
+          )
+        }
+        <span class={overallInfo.color}>{overallInfo.label}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : stationsData.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+              />
+            </svg>
+          </div>
+          <p class="text-slate-400 font-medium">Keine Messstationen gefunden</p>
+        </div>
+      ) : (
+        <div class={cn('space-y-3', compact && 'space-y-2')}>
+          {stationsData.map((s) => {
+            const state =
+              s.measurement?.stateMnwMhw ||
+              s.measurement?.stateNswHsw ||
+              'unknown';
+            const info = getStateInfo(state);
+            const isWarning = state === 'high' || state === 'very high';
+
+            return (
+              <article
+                class={cn(
+                  'group rounded-xl border p-4 transition-all',
+                  isWarning
+                    ? `${info.bg} ${info.border} hover:border-opacity-70`
+                    : 'bg-slate-800/50 border-slate-700/50 hover:border-slate-600'
+                )}
+              >
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class={cn('p-2 rounded-lg shrink-0', info.bg)}>
+                      <svg
+                        class={cn('w-4 h-4', info.color)}
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                      </svg>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="font-semibold text-slate-100 truncate">
+                        {s.shortname}
+                      </h4>
+                      <p class="text-xs text-slate-400">
+                        km {s.km?.toFixed(1) || '–'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 shrink-0">
+                    {s.measurement ? (
+                      <>
+                        <div class="text-right">
+                          <div class={cn('text-2xl font-black', info.color)}>
+                            {s.measurement.value.toFixed(0)}
+                            <span class="text-sm font-normal text-slate-400 ml-1">
+                              cm
+                            </span>
+                          </div>
+                          {!compact && (
+                            <div class={cn('text-xs font-medium', info.color)}>
+                              {info.label}
+                            </div>
+                          )}
+                        </div>
+
+                        {showTrend && s.measurement.trend !== undefined && (
+                          <div
+                            class={cn(
+                              'p-1.5 rounded-lg',
+                              s.measurement.trend > 0
+                                ? 'bg-red-500/20'
+                                : s.measurement.trend < 0
+                                  ? 'bg-emerald-500/20'
+                                  : 'bg-slate-700/50'
+                            )}
+                          >
+                            <svg
+                              class={cn(
+                                'w-4 h-4',
+                                s.measurement.trend > 0
+                                  ? 'text-red-400'
+                                  : s.measurement.trend < 0
+                                    ? 'text-emerald-400 rotate-180'
+                                    : 'text-slate-400'
+                              )}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              {s.measurement.trend !== 0 ? (
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                                />
+                              ) : (
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M20 12H4"
+                                />
+                              )}
+                            </svg>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <span class="text-slate-500 text-sm">
+                        {s.error || 'Keine Daten'}
+                      </span>
+                    )}
+
+                    {showMap && s.longitude && s.latitude && (
+                      <a
+                        href={`https://www.google.com/maps?q=${s.latitude},${s.longitude}`}
+                        target="_blank"
+                        rel="noopener"
+                        class="p-1.5 rounded-lg bg-slate-700/50 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition-colors"
+                        title="Auf Karte anzeigen"
+                      >
+                        <svg
+                          class="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {!compact && s.measurement && (
+                  <div class="mt-3 text-xs text-slate-500">
+                    Aktualisiert:{' '}
+                    {new Date(s.measurement.timestamp).toLocaleString('de-DE', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Daten: PegelOnline (WSV)</span>
+    <a
+      href="https://www.pegelonline.wsv.de"
+      target="_blank"
+      rel="noopener"
+      class="text-blue-400 hover:text-blue-300"
+    >
+      pegelonline.wsv.de →
+    </a>
+  </footer>
+</div>
+
+<style>
+  @keyframes ping {
+    75%,
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  .animate-ping {
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+</style>

@@ -1,0 +1,262 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Terminal from '../../components/Terminal.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
+
+const installLines = [
+  { type: 'command', content: 'npm install comet-astro' },
+  { type: 'output', content: 'added 42 packages in 2.3s' },
+  { type: 'success', content: '✓ Installation complete' },
+];
+
+const buildLines = [
+  { type: 'command', content: 'npm run build' },
+  { type: 'output', content: 'Building for production...' },
+  { type: 'output', content: 'Compiling TypeScript...' },
+  { type: 'success', content: '✓ Build completed in 4.2s' },
+  { type: 'info', content: 'Output: dist/' },
+];
+
+const errorLines = [
+  { type: 'command', content: 'npm run test' },
+  { type: 'output', content: 'Running tests...' },
+  { type: 'error', content: 'Error: Test failed in Button.test.ts' },
+  { type: 'error', content: '  Expected: true' },
+  { type: 'error', content: '  Received: false' },
+  { type: 'warning', content: '1 test failed, 42 passed' },
+];
+
+const usageSnippet = `---
+import { Terminal } from 'comet-astro';
+
+const lines = [
+  { type: 'command', content: 'npm install comet-astro' },
+  { type: 'output', content: 'added 42 packages in 2.3s' },
+  { type: 'success', content: '✓ Installation complete' },
+];
+---
+
+<Terminal title="Installation" lines={lines} />
+
+<!-- With different theme -->
+<Terminal title="Build" lines={lines} theme="dracula" />
+
+<!-- With typing animation -->
+<Terminal title="Demo" lines={lines} animated />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'lines',
+    type: 'TerminalLine[]',
+    default: '[]',
+    description: 'Array of terminal lines with type and content.',
+  },
+  {
+    name: 'title',
+    type: 'string',
+    default: "'Terminal'",
+    description: 'Window title in the header.',
+  },
+  {
+    name: 'theme',
+    type: "'dark' | 'light' | 'matrix' | 'dracula'",
+    default: "'dark'",
+    description: 'Color theme.',
+  },
+  {
+    name: 'showControls',
+    type: 'boolean',
+    default: 'true',
+    description: 'Show macOS-style window controls.',
+  },
+  {
+    name: 'showLineNumbers',
+    type: 'boolean',
+    default: 'false',
+    description: 'Show line numbers.',
+  },
+  {
+    name: 'prompt',
+    type: 'string',
+    default: "'$'",
+    description: 'Default prompt symbol for commands.',
+  },
+  {
+    name: 'copyable',
+    type: 'boolean',
+    default: 'true',
+    description: 'Enable copy to clipboard button.',
+  },
+  {
+    name: 'animated',
+    type: 'boolean',
+    default: 'false',
+    description: 'Enable typing animation effect.',
+  },
+  {
+    name: 'maxHeight',
+    type: 'string',
+    default: "''",
+    description: 'Max height with scroll (e.g., "300px").',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="Terminal"
+  seoDescription="Command-line output display with syntax highlighting."
+>
+  <Headline level="h1" textSize="2xl">Terminal</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The Terminal component displays command-line output with syntax
+      highlighting for different line types (commands, output, errors, warnings,
+      success messages). Perfect for documentation, tutorials, or showcasing CLI
+      commands.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Four themes available: dark, light, matrix, and dracula. Optional typing
+      animation for demos. Copy to clipboard button for easy command sharing.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <Paragraph class="text-base text-slate-200">
+      Import the component and pass an array of lines. Each line has a
+      <InlineCode>type</InlineCode> (command, output, error, warning, success, comment,
+      info) and <InlineCode>content</InlineCode>.
+    </Paragraph>
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Installation example
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Typical package installation with success message.
+      </Paragraph>
+      <Terminal title="Installation" lines={installLines} />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Build output
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Multi-step build process with info messages.
+      </Paragraph>
+      <Terminal title="Build" lines={buildLines} />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Error output
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Test failure with error and warning messages.
+      </Paragraph>
+      <Terminal title="Tests" lines={errorLines} />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Theme variants
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Four color themes to match your site's aesthetic.
+      </Paragraph>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Terminal title="Dark (default)" lines={installLines} theme="dark" />
+        <Terminal title="Light" lines={installLines} theme="light" />
+        <Terminal title="Matrix" lines={installLines} theme="matrix" />
+        <Terminal title="Dracula" lines={installLines} theme="dracula" />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        With line numbers
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Enable line numbers for reference.
+      </Paragraph>
+      <Terminal title="With lines" lines={buildLines} showLineNumbers />
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Custom prompt
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Change the default prompt symbol.
+      </Paragraph>
+      <Terminal
+        title="Custom prompt"
+        lines={[
+          { type: 'command', content: 'echo "Hello World"', prompt: '>' },
+          { type: 'output', content: 'Hello World' },
+        ]}
+        prompt=">"
+      />
+    </article>
+  </section>
+</DocsLayout>

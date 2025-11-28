@@ -1,0 +1,347 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CountUp from '../../components/CountUp.astro';
+import Table from '../../components/Table.astro';
+import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const usageSnippet = `---
+import { CountUp } from 'comet-astro';
+---
+
+<!-- Basic usage -->
+<CountUp end={1000} />
+
+<!-- With formatting -->
+<CountUp end={45000} prefix="$" suffix=" USD" />
+
+<!-- Percentage with decimals -->
+<CountUp end={99.9} decimals={1} suffix="%" />
+
+<!-- Custom duration -->
+<CountUp end={500} duration={3} />`;
+
+const propsColumns = [
+  { key: 'name', label: 'Prop' },
+  { key: 'type', label: 'Type' },
+  { key: 'default', label: 'Default' },
+  { key: 'description', label: 'Description' },
+];
+
+const propsData = [
+  {
+    name: 'start',
+    type: 'number',
+    default: '0',
+    description: 'Starting number.',
+  },
+  {
+    name: 'end',
+    type: 'number',
+    default: '-',
+    description: 'Target number (required).',
+  },
+  {
+    name: 'duration',
+    type: 'number',
+    default: '2',
+    description: 'Animation duration in seconds.',
+  },
+  {
+    name: 'decimals',
+    type: 'number',
+    default: '0',
+    description: 'Number of decimal places.',
+  },
+  {
+    name: 'prefix',
+    type: 'string',
+    default: "''",
+    description: 'Text before the number (e.g. "$").',
+  },
+  {
+    name: 'suffix',
+    type: 'string',
+    default: "''",
+    description: 'Text after the number (e.g. "%").',
+  },
+  {
+    name: 'separator',
+    type: 'boolean',
+    default: 'true',
+    description: 'Use thousands separator.',
+  },
+  {
+    name: 'separatorChar',
+    type: 'string',
+    default: "','",
+    description: 'Thousands separator character.',
+  },
+  {
+    name: 'decimalChar',
+    type: 'string',
+    default: "'.'",
+    description: 'Decimal separator character.',
+  },
+  {
+    name: 'delay',
+    type: 'number',
+    default: '0',
+    description: 'Delay before animation starts (ms).',
+  },
+  {
+    name: 'triggerOnView',
+    type: 'boolean',
+    default: 'true',
+    description: 'Only animate when scrolled into view.',
+  },
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg' | 'xl'",
+    default: "'lg'",
+    description: 'Size preset.',
+  },
+];
+---
+
+<DocsLayout
+  seoTitle="CountUp"
+  seoDescription="Animated number counter for statistics and metrics."
+>
+  <Headline level="h1" textSize="2xl">CountUp</Headline>
+  <section class="space-y-4">
+    <Paragraph class="text-base text-slate-100">
+      The CountUp component animates numbers from a starting value to an end
+      value, perfect for statistics, metrics, and achievement displays.
+    </Paragraph>
+    <Paragraph class="text-base text-slate-200">
+      Features smooth easing, number formatting, and respects
+      prefers-reduced-motion. By default, animation triggers when the element
+      scrolls into view.
+    </Paragraph>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Props</Headline
+    >
+    <div>
+      <Table columns={propsColumns} data={propsData} responsive={true} />
+    </div>
+  </section>
+
+  <section class="mt-10 space-y-6">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Usage</Headline
+    >
+    <CodeBlock code={usageSnippet} language="astro" />
+  </section>
+
+  <section class="mt-10 space-y-8">
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
+      >Examples</Headline
+    >
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Basic counter
+      </Headline>
+      <div class="p-8 bg-slate-800 rounded-xl text-center">
+        <CountUp end={1234} triggerOnView={false} />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Statistics row
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Commonly used for displaying key metrics on landing pages.
+      </Paragraph>
+      <div
+        class="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 bg-slate-800 rounded-xl"
+      >
+        <div class="text-center">
+          <CountUp end={50000} suffix="+" size="md" triggerOnView={false} />
+          <p class="text-slate-400 mt-2">Users</p>
+        </div>
+        <div class="text-center">
+          <CountUp
+            end={99.9}
+            decimals={1}
+            suffix="%"
+            size="md"
+            triggerOnView={false}
+            delay={200}
+          />
+          <p class="text-slate-400 mt-2">Uptime</p>
+        </div>
+        <div class="text-center">
+          <CountUp
+            end={4.9}
+            decimals={1}
+            size="md"
+            triggerOnView={false}
+            delay={400}
+          />
+          <p class="text-slate-400 mt-2">Rating</p>
+        </div>
+        <div class="text-center">
+          <CountUp
+            end={24}
+            suffix="/7"
+            size="md"
+            triggerOnView={false}
+            delay={600}
+          />
+          <p class="text-slate-400 mt-2">Support</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Currency formatting
+      </Headline>
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 bg-slate-800 rounded-xl"
+      >
+        <div class="text-center">
+          <span class="text-slate-400 text-sm block mb-1">Revenue</span>
+          <CountUp end={1250000} prefix="$" size="md" triggerOnView={false} />
+        </div>
+        <div class="text-center">
+          <span class="text-slate-400 text-sm block mb-1">European</span>
+          <CountUp
+            end={9999}
+            suffix=" €"
+            separatorChar="."
+            decimalChar=","
+            size="md"
+            triggerOnView={false}
+          />
+        </div>
+        <div class="text-center">
+          <span class="text-slate-400 text-sm block mb-1">Precise</span>
+          <CountUp
+            end={1234.56}
+            decimals={2}
+            prefix="$"
+            size="md"
+            triggerOnView={false}
+          />
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Size variants
+      </Headline>
+      <div
+        class="flex flex-wrap items-end justify-center gap-8 p-8 bg-slate-800 rounded-xl"
+      >
+        <div class="text-center">
+          <CountUp end={100} size="sm" triggerOnView={false} />
+          <p class="text-slate-500 text-xs mt-1">Small</p>
+        </div>
+        <div class="text-center">
+          <CountUp end={100} size="md" triggerOnView={false} />
+          <p class="text-slate-500 text-xs mt-1">Medium</p>
+        </div>
+        <div class="text-center">
+          <CountUp end={100} size="lg" triggerOnView={false} />
+          <p class="text-slate-500 text-xs mt-1">Large</p>
+        </div>
+        <div class="text-center">
+          <CountUp end={100} size="xl" triggerOnView={false} />
+          <p class="text-slate-500 text-xs mt-1">X-Large</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Counting from a value
+      </Headline>
+      <Paragraph class="text-base text-slate-200">
+        Start from a custom number instead of zero.
+      </Paragraph>
+      <div class="p-8 bg-slate-800 rounded-xl text-center">
+        <CountUp
+          start={900}
+          end={1000}
+          suffix=" points"
+          triggerOnView={false}
+        />
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Different durations
+      </Headline>
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 bg-slate-800 rounded-xl"
+      >
+        <div class="text-center">
+          <CountUp end={100} duration={1} size="md" triggerOnView={false} />
+          <p class="text-slate-400 mt-2">1 second</p>
+        </div>
+        <div class="text-center">
+          <CountUp end={100} duration={2} size="md" triggerOnView={false} />
+          <p class="text-slate-400 mt-2">2 seconds</p>
+        </div>
+        <div class="text-center">
+          <CountUp end={100} duration={4} size="md" triggerOnView={false} />
+          <p class="text-slate-400 mt-2">4 seconds</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="space-y-4">
+      <Headline
+        level="h3"
+        textSize="lg"
+        weight="semibold"
+        className="text-slate-100"
+      >
+        Without separator
+      </Headline>
+      <div class="p-8 bg-slate-800 rounded-xl text-center">
+        <CountUp end={1000000} separator={false} triggerOnView={false} />
+      </div>
+    </article>
+  </section>
+</DocsLayout>

@@ -2,13 +2,20 @@
 import { cn } from '../utils/cn';
 
 /**
- * Accessible Card component.
- * WCAG AAA considerations:
- * - Uses semantic container (<article> default) for standalone content blocks.
- * - Provides configurable element via `as` prop (e.g. 'section', 'div') for layout contexts.
- * - Supports interactive variant via `href` / `on:click` (focus ring + role semantics).
- * - Ensures color contrast by relying on design-token CSS variables and fallback high-contrast values.
- * - Adds clear focus outline (2px) with sufficient contrast in both light and dark themes.
+ * Card - Simple container card component
+ *
+ * This is a lightweight wrapper that provides a styled container.
+ * For cards with media, titles, actions, etc., use UniversalCard directly.
+ *
+ * @example
+ * // Simple container usage:
+ * <Card>Content here</Card>
+ *
+ * // With link:
+ * <Card href="/page">Clickable card</Card>
+ *
+ * // For richer cards, use UniversalCard:
+ * <UniversalCard title="Title" description="Desc" imageSrc="/img.jpg" />
  */
 interface Props {
   /** Optional element tag name; defaults to 'article'. */
@@ -25,7 +32,10 @@ interface Props {
   elevation?: 0 | 1 | 2 | 3;
   /** Make card focusable even if not a link/button. */
   tabIndex?: number;
+  /** Padding size */
+  padding?: 'none' | 'sm' | 'md' | 'lg';
 }
+
 const {
   as = 'article',
   href,
@@ -34,49 +44,57 @@ const {
   flat = false,
   elevation = 1,
   tabIndex,
+  padding = 'md',
 } = Astro.props as Props;
 
-// Map elevation to shadow utility classes (assumes Tailwind style tokens present)
-const elevationShadow = (
-  {
-    0: 'shadow-none',
-    1: 'shadow-sm',
-    2: 'shadow-md',
-    3: 'shadow-lg',
-  } as const
-)[elevation];
+// Map elevation to shadow utility classes
+const elevationShadow = {
+  0: 'shadow-none',
+  1: 'shadow-sm',
+  2: 'shadow-md',
+  3: 'shadow-lg',
+} as const;
 
-// Base styling with CSS variables to enforce contrast; tokens can be themed externally.
-// --card-bg / --card-fg allow consuming app to adjust for AAA contrast.
+// Padding classes
+const paddingClasses = {
+  none: '',
+  sm: 'p-3',
+  md: 'p-4',
+  lg: 'p-6',
+} as const;
+
+// Base styling with WCAG AAA contrast
 const base = cn(
-  'group relative rounded-lg border bg-[var(--card-bg,theme(colors.white))] dark:bg-[var(--card-bg-dark,theme(colors.neutral.900))] border-neutral-200 dark:border-neutral-800',
-  flat ? 'shadow-none' : elevationShadow,
-  // Text color fallback ensures >= 7:1 contrast on both modes (e.g., neutral-900 vs white).
-  'text-[var(--card-fg,theme(colors.neutral.900))] dark:text-[var(--card-fg-dark,theme(colors.neutral.50))]'
+  'group relative rounded-lg border',
+  'bg-white dark:bg-slate-950',
+  'border-slate-200 dark:border-slate-700',
+  'text-slate-900 dark:text-slate-50',
+  flat ? 'shadow-none' : elevationShadow[elevation],
+  paddingClasses[padding]
 );
 
-// Focus ring (AA/AAA contrast) uses outline with offset for visibility.
+// Focus ring for accessibility
 const focusStyles = cn(
-  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-  'focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400'
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
+  'focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+  'dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-950'
 );
 
-// Interactive styles if href provided.
+// Interactive styles if href provided
 const interactive = href
-  ? 'cursor-pointer transition-colors hover:bg-[var(--card-bg-hover,theme(colors.neutral.50))] dark:hover:bg-[var(--card-bg-dark-hover,theme(colors.neutral.800))]'
+  ? cn(
+      'cursor-pointer transition-all duration-200',
+      'hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600',
+      'hover:-translate-y-0.5'
+    )
   : '';
 
-// Decide which element to render; anchor if href, else chosen semantic tag.
+// Decide which element to render
 const Tag = href ? 'a' : as;
 
-// Accessibility attributes.
-const ariaAttrs: Record<string, string> = {};
+// Accessibility attributes
+const ariaAttrs: Record<string, string | undefined> = {};
 if (ariaLabel) ariaAttrs['aria-label'] = ariaLabel;
-
-// If interactive and not naturally focusable (anchor handles itself), ensure role and tabindex.
-if (!href && tabIndex !== undefined) {
-  // no extra role needed unless click handler is added externally.
-}
 ---
 
 <Tag

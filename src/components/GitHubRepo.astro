@@ -1,0 +1,361 @@
+---
+/**
+ * GitHubRepo - Repository-Statistiken von GitHub
+ *
+ * Zeigt Stars, Forks, Sprache und Beschreibung eines Repositories.
+ *
+ * API: https://api.github.com/repos/{owner}/{repo}
+ */
+import { cn } from '../utils/cn';
+
+interface RepoData {
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  homepage: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  watchers_count: number;
+  open_issues_count: number;
+  language: string | null;
+  topics: string[];
+  license: { name: string } | null;
+  pushed_at: string;
+  created_at: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+    html_url: string;
+  };
+}
+
+interface Props {
+  repo: string; // format: "owner/repo"
+  showDescription?: boolean;
+  showTopics?: boolean;
+  showStats?: boolean;
+  showOwner?: boolean;
+  showLicense?: boolean;
+  variant?: 'default' | 'compact' | 'minimal';
+  className?: string;
+}
+
+const {
+  repo,
+  showDescription = true,
+  showTopics = true,
+  showStats = true,
+  showOwner = true,
+  showLicense = true,
+  variant = 'default',
+  className = '',
+} = Astro.props;
+
+let data: RepoData | null = null;
+let error: string | null = null;
+
+try {
+  const res = await fetch(`https://api.github.com/repos/${repo}`, {
+    headers: { Accept: 'application/vnd.github.v3+json' },
+  });
+  if (res.ok) {
+    data = await res.json();
+  } else if (res.status === 404) {
+    error = 'Repository nicht gefunden';
+  } else if (res.status === 403) {
+    error = 'Rate Limit erreicht';
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+const languageColors: Record<string, string> = {
+  TypeScript: 'bg-blue-500',
+  JavaScript: 'bg-yellow-400',
+  Python: 'bg-blue-400',
+  Rust: 'bg-orange-500',
+  Go: 'bg-cyan-400',
+  Java: 'bg-red-500',
+  'C++': 'bg-pink-500',
+  C: 'bg-gray-500',
+  Ruby: 'bg-red-600',
+  PHP: 'bg-purple-500',
+  Swift: 'bg-orange-400',
+  Kotlin: 'bg-purple-400',
+  Dart: 'bg-blue-300',
+  HTML: 'bg-orange-600',
+  CSS: 'bg-purple-600',
+  Shell: 'bg-green-500',
+  Vue: 'bg-emerald-500',
+  Svelte: 'bg-orange-500',
+  Astro: 'bg-purple-500',
+};
+
+function formatNumber(num: number): string {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+  return num.toString();
+}
+
+function timeAgo(date: string): string {
+  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+  if (seconds < 60) return 'gerade eben';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `vor ${minutes} Min.`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `vor ${hours} Std.`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `vor ${days} Tag${days > 1 ? 'en' : ''}`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `vor ${months} Monat${months > 1 ? 'en' : ''}`;
+  const years = Math.floor(months / 12);
+  return `vor ${years} Jahr${years > 1 ? 'en' : ''}`;
+}
+
+const isCompact = variant === 'compact';
+const isMinimal = variant === 'minimal';
+---
+
+{
+  error ? (
+    <div
+      class={cn(
+        'rounded-xl bg-slate-800/50 border border-slate-700/50 p-4',
+        className
+      )}
+    >
+      <div class="flex items-center gap-2 text-red-400">
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <span class="text-sm">{error}</span>
+      </div>
+      <p class="text-slate-500 text-xs mt-1">Repository: {repo}</p>
+    </div>
+  ) : (
+    data && (
+      <a
+        href={data.html_url}
+        target="_blank"
+        rel="noopener"
+        class={cn(
+          'group block rounded-xl border transition-all',
+          isMinimal
+            ? 'bg-transparent border-transparent hover:bg-slate-800/30'
+            : 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-slate-700/50 hover:border-slate-600 hover:shadow-lg hover:shadow-slate-900/50',
+          isCompact || isMinimal ? 'p-3' : 'p-5',
+          className
+        )}
+      >
+        {/* Header */}
+        <div class="flex items-start gap-3">
+          {showOwner && !isMinimal && (
+            <img
+              src={data.owner.avatar_url}
+              alt={data.owner.login}
+              class={cn(
+                'rounded-lg bg-slate-700',
+                isCompact ? 'w-8 h-8' : 'w-10 h-10'
+              )}
+              loading="lazy"
+            />
+          )}
+
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              {isMinimal && (
+                <svg
+                  class="w-4 h-4 text-slate-400"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              )}
+              <h3
+                class={cn(
+                  'font-bold text-slate-100 group-hover:text-blue-400 transition-colors truncate',
+                  isCompact || isMinimal ? 'text-sm' : 'text-base'
+                )}
+              >
+                {isMinimal ? data.full_name : data.name}
+              </h3>
+
+              {data.language && (
+                <span class="flex items-center gap-1.5 shrink-0">
+                  <span
+                    class={cn(
+                      'w-2.5 h-2.5 rounded-full',
+                      languageColors[data.language] || 'bg-slate-500'
+                    )}
+                  />
+                  <span class="text-xs text-slate-400">{data.language}</span>
+                </span>
+              )}
+            </div>
+
+            {showOwner && !isMinimal && (
+              <p class="text-xs text-slate-500">{data.owner.login}</p>
+            )}
+          </div>
+
+          {/* Quick Stats (always visible) */}
+          <div class="flex items-center gap-3 shrink-0">
+            <span class="flex items-center gap-1 text-slate-400">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              <span class="text-sm font-semibold">
+                {formatNumber(data.stargazers_count)}
+              </span>
+            </span>
+
+            {!isMinimal && (
+              <span class="flex items-center gap-1 text-slate-400">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M7 5C7 3.89543 7.89543 3 9 3C10.1046 3 11 3.89543 11 5C11 5.74028 10.5978 6.38663 10 6.73244V8H14V6.73244C13.4022 6.38663 13 5.74028 13 5C13 3.89543 13.8954 3 15 3C16.1046 3 17 3.89543 17 5C17 5.74028 16.5978 6.38663 16 6.73244V8H18C19.1046 8 20 8.89543 20 10V12H21C21.5523 12 22 12.4477 22 13V17C22 17.5523 21.5523 18 21 18H19V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V18H3C2.44772 18 2 17.5523 2 17V13C2 12.4477 2.44772 12 3 12H4V10C4 8.89543 4.89543 8 6 8H8V6.73244C7.40221 6.38663 7 5.74028 7 5Z" />
+                </svg>
+                <span class="text-sm font-semibold">
+                  {formatNumber(data.forks_count)}
+                </span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Description */}
+        {showDescription && data.description && !isMinimal && (
+          <p
+            class={cn(
+              'text-slate-400 mt-3 line-clamp-2',
+              isCompact ? 'text-xs' : 'text-sm'
+            )}
+          >
+            {data.description}
+          </p>
+        )}
+
+        {/* Topics */}
+        {showTopics &&
+          data.topics &&
+          data.topics.length > 0 &&
+          !isCompact &&
+          !isMinimal && (
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              {data.topics.slice(0, 5).map((topic) => (
+                <span class="px-2 py-0.5 text-xs bg-blue-500/20 text-blue-300 rounded-full">
+                  {topic}
+                </span>
+              ))}
+              {data.topics.length > 5 && (
+                <span class="px-2 py-0.5 text-xs bg-slate-700/50 text-slate-400 rounded-full">
+                  +{data.topics.length - 5}
+                </span>
+              )}
+            </div>
+          )}
+
+        {/* Footer Stats */}
+        {showStats && !isMinimal && (
+          <div
+            class={cn(
+              'flex items-center gap-4 text-xs text-slate-500',
+              isCompact ? 'mt-2' : 'mt-4 pt-3 border-t border-slate-700/50'
+            )}
+          >
+            {showLicense && data.license && (
+              <span class="flex items-center gap-1">
+                <svg
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+                  />
+                </svg>
+                {data.license.name}
+              </span>
+            )}
+
+            <span class="flex items-center gap-1">
+              <svg
+                class="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              {timeAgo(data.pushed_at)}
+            </span>
+
+            {data.open_issues_count > 0 && (
+              <span class="flex items-center gap-1">
+                <svg
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                {data.open_issues_count} Issues
+              </span>
+            )}
+
+            {data.homepage && (
+              <span class="flex items-center gap-1 text-blue-400">
+                <svg
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+                Website
+              </span>
+            )}
+          </div>
+        )}
+      </a>
+    )
+  )
+}

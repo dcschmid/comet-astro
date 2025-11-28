@@ -1,0 +1,305 @@
+---
+/**
+ * OnThisDay - Historische Ereignisse an diesem Tag
+ *
+ * Zeigt historische Ereignisse, Geburtstage und Todesfälle vom aktuellen Datum.
+ *
+ * API: https://history.muffinlabs.com/
+ */
+import { cn } from '../utils/cn';
+
+interface HistoryEvent {
+  year: string;
+  text: string;
+  links: { title: string; link: string }[];
+}
+
+interface HistoryData {
+  date: string;
+  url: string;
+  data: {
+    Events: HistoryEvent[];
+    Births: HistoryEvent[];
+    Deaths: HistoryEvent[];
+  };
+}
+
+interface Props {
+  section?: 'events' | 'births' | 'deaths' | 'all';
+  maxItems?: number;
+  showLinks?: boolean;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  section = 'events',
+  maxItems = 5,
+  showLinks = true,
+  compact = false,
+  className = '',
+} = Astro.props;
+
+let data: HistoryData | null = null;
+let error: string | null = null;
+
+try {
+  const res = await fetch('https://history.muffinlabs.com/date');
+  if (res.ok) {
+    data = await res.json();
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+const sectionInfo: Record<
+  string,
+  { label: string; icon: string; color: string; items: HistoryEvent[] }
+> = {
+  events: {
+    label: 'Ereignisse',
+    icon: '📜',
+    color: 'from-amber-500 to-orange-600',
+    items: data?.data.Events.slice(0, maxItems) || [],
+  },
+  births: {
+    label: 'Geburtstage',
+    icon: '🎂',
+    color: 'from-emerald-500 to-teal-600',
+    items: data?.data.Births.slice(0, maxItems) || [],
+  },
+  deaths: {
+    label: 'Todesfälle',
+    icon: '🕯️',
+    color: 'from-slate-500 to-slate-600',
+    items: data?.data.Deaths.slice(0, maxItems) || [],
+  },
+};
+
+const currentSection = sectionInfo[section] || sectionInfo.events;
+const showAllSections = section === 'all';
+
+// Parse year to calculate "years ago"
+function getYearsAgo(year: string): number {
+  const yearNum = parseInt(year);
+  if (isNaN(yearNum)) return 0;
+  return new Date().getFullYear() - yearNum;
+}
+---
+
+<div
+  class={cn(
+    'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+    className
+  )}
+>
+  <header class="px-5 py-4 border-b border-slate-700/50 bg-amber-500/5">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div
+          class={cn(
+            'p-2.5 rounded-xl shadow-lg bg-gradient-to-br',
+            currentSection.color
+          )}
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-100 text-lg">
+            Heute in der Geschichte
+          </h3>
+          {data && <p class="text-xs text-slate-400">{data.date}</p>}
+        </div>
+      </div>
+
+      {
+        !showAllSections && (
+          <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            {currentSection.icon} {currentSection.label}
+          </span>
+        )
+      }
+    </div>
+  </header>
+
+  <div class={cn('p-4', compact && 'p-3')}>
+    {
+      error ? (
+        <div class="p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+          <svg
+            class="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {error}
+        </div>
+      ) : showAllSections ? (
+        <div class="space-y-6">
+          {(['events', 'births', 'deaths'] as const).map((sec) => {
+            const info = sectionInfo[sec];
+            const items = info.items.slice(0, 3);
+
+            return (
+              items.length > 0 && (
+                <div>
+                  <h4 class="text-sm font-semibold text-slate-400 mb-3 flex items-center gap-2">
+                    <span>{info.icon}</span>
+                    {info.label}
+                  </h4>
+                  <div class="space-y-2">
+                    {items.map((event) => {
+                      const yearsAgo = getYearsAgo(event.year);
+                      return (
+                        <article class="flex gap-3 p-2 rounded-lg bg-slate-800/30">
+                          <div class="shrink-0 w-16 text-center">
+                            <div class="text-sm font-bold text-slate-200">
+                              {event.year}
+                            </div>
+                            {yearsAgo > 0 && (
+                              <div class="text-xs text-slate-500">
+                                {yearsAgo} J.
+                              </div>
+                            )}
+                          </div>
+                          <p class="text-sm text-slate-300 line-clamp-2">
+                            {event.text}
+                          </p>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
+              )
+            );
+          })}
+        </div>
+      ) : currentSection.items.length === 0 ? (
+        <div class="py-8 text-center">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
+            <svg
+              class="w-7 h-7 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <p class="text-slate-400 font-medium">Keine Einträge</p>
+        </div>
+      ) : (
+        <div class={cn('space-y-3', compact && 'space-y-2')}>
+          {currentSection.items.map((event) => {
+            const yearsAgo = getYearsAgo(event.year);
+
+            return (
+              <article
+                class={cn(
+                  'flex gap-4 p-3 rounded-xl border transition-all bg-slate-800/30 border-slate-700/30 hover:border-slate-600/50',
+                  compact && 'p-2 gap-3'
+                )}
+              >
+                <div
+                  class={cn(
+                    'shrink-0 w-16 text-center p-2 rounded-lg bg-slate-700/50',
+                    compact && 'w-14 p-1.5'
+                  )}
+                >
+                  <div
+                    class={cn(
+                      'font-bold text-slate-200',
+                      compact ? 'text-sm' : 'text-base'
+                    )}
+                  >
+                    {event.year}
+                  </div>
+                  {yearsAgo > 0 && (
+                    <div class="text-xs text-slate-500">
+                      vor {yearsAgo} {yearsAgo === 1 ? 'Jahr' : 'Jahren'}
+                    </div>
+                  )}
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <p
+                    class={cn(
+                      'text-slate-200',
+                      compact ? 'text-sm line-clamp-2' : 'text-base'
+                    )}
+                  >
+                    {event.text}
+                  </p>
+
+                  {showLinks &&
+                    event.links &&
+                    event.links.length > 0 &&
+                    !compact && (
+                      <div class="flex flex-wrap gap-2 mt-2">
+                        {event.links.slice(0, 2).map((link) => (
+                          <a
+                            href={link.link}
+                            target="_blank"
+                            rel="noopener"
+                            class="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
+                          >
+                            <span>📖</span>
+                            {link.title.length > 30
+                              ? link.title.slice(0, 30) + '...'
+                              : link.title}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+
+  <footer
+    class="px-5 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500"
+  >
+    <span>Quelle: Wikipedia</span>
+    {
+      data && (
+        <a
+          href={data.url}
+          target="_blank"
+          rel="noopener"
+          class="text-blue-400 hover:text-blue-300"
+        >
+          Mehr auf Wikipedia →
+        </a>
+      )
+    }
+  </footer>
+</div>

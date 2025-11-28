@@ -1,0 +1,159 @@
+---
+/**
+ * RandomQuote - Inspirierendes Zitat Widget
+ *
+ * Zeigt zufällige inspirierende Zitate.
+ *
+ * API: https://zenquotes.io/
+ */
+import { cn } from '../utils/cn';
+
+interface Quote {
+  q: string;
+  a: string;
+  h: string;
+}
+
+interface Props {
+  variant?: 'default' | 'minimal' | 'card';
+  showAuthor?: boolean;
+  showQuoteMarks?: boolean;
+  className?: string;
+}
+
+const {
+  variant = 'default',
+  showAuthor = true,
+  showQuoteMarks = true,
+  className = '',
+} = Astro.props;
+
+let quote: Quote | null = null;
+let error: string | null = null;
+
+try {
+  const res = await fetch('https://zenquotes.io/api/random');
+  if (res.ok) {
+    const data = await res.json();
+    if (data && data[0]) {
+      quote = data[0];
+    }
+  } else {
+    error = `Fehler (${res.status})`;
+  }
+} catch {
+  error = 'Verbindungsfehler';
+}
+
+const isMinimal = variant === 'minimal';
+const isCard = variant === 'card';
+---
+
+{
+  error ? (
+    <div
+      class={cn(
+        'p-4 rounded-xl bg-red-950/50 border border-red-500/30 text-red-300 text-sm',
+        className
+      )}
+    >
+      {error}
+    </div>
+  ) : (
+    quote && (
+      <>
+        {isMinimal ? (
+          <blockquote class={cn('text-slate-300', className)}>
+            {showQuoteMarks && <span class="text-slate-600">"</span>}
+            <span class="italic">{quote.q}</span>
+            {showQuoteMarks && <span class="text-slate-600">"</span>}
+            {showAuthor && (
+              <footer class="mt-2 text-sm text-slate-500">— {quote.a}</footer>
+            )}
+          </blockquote>
+        ) : isCard ? (
+          <div
+            class={cn(
+              'relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-950/50 via-slate-900 to-slate-950 border border-slate-700/50 p-6',
+              className
+            )}
+          >
+            <div class="absolute top-4 left-4 text-6xl text-violet-500/20 font-serif leading-none">
+              "
+            </div>
+            <div class="relative">
+              <blockquote class="text-lg text-slate-200 leading-relaxed pl-8">
+                {quote.q}
+              </blockquote>
+              {showAuthor && (
+                <footer class="mt-4 pl-8 flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                    {quote.a.charAt(0)}
+                  </div>
+                  <div>
+                    <cite class="not-italic font-semibold text-slate-100">
+                      {quote.a}
+                    </cite>
+                  </div>
+                </footer>
+              )}
+            </div>
+            <div class="absolute bottom-4 right-4 text-6xl text-violet-500/20 font-serif leading-none rotate-180">
+              "
+            </div>
+          </div>
+        ) : (
+          <div
+            class={cn(
+              'rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/50 overflow-hidden',
+              className
+            )}
+          >
+            <div class="p-6">
+              <div class="flex items-start gap-4">
+                <div class="shrink-0 p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25">
+                  <svg
+                    class="w-5 h-5 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                  </svg>
+                </div>
+
+                <div class="flex-1">
+                  <blockquote class="text-slate-200 text-lg leading-relaxed">
+                    {quote.q}
+                  </blockquote>
+
+                  {showAuthor && (
+                    <footer class="mt-4 pt-4 border-t border-slate-700/50">
+                      <cite class="not-italic flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-violet-500" />
+                        <span class="font-semibold text-slate-100">
+                          {quote.a}
+                        </span>
+                      </cite>
+                    </footer>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <footer class="px-6 py-3 border-t border-slate-700/50 bg-slate-800/30 flex items-center justify-between text-xs text-slate-500">
+              <span>Inspirierendes Zitat</span>
+              <a
+                href="https://zenquotes.io"
+                target="_blank"
+                rel="noopener"
+                class="text-blue-400 hover:text-blue-300"
+              >
+                zenquotes.io
+              </a>
+            </footer>
+          </div>
+        )}
+      </>
+    )
+  )
+}

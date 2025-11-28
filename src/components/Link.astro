@@ -1,0 +1,163 @@
+---
+/**
+ * Link - Styled anchor component with automatic external link detection
+ *
+ * Features:
+ * - Automatic external link detection (adds target="_blank" and rel="noopener noreferrer")
+ * - Visual indicator for external links
+ * - Screen reader text for external links
+ * - Multiple style variants
+ * - WCAG AAA compliant contrast
+ *
+ * @example
+ * // Internal link
+ * <Link href="/about">About us</Link>
+ *
+ * // External link (automatically detected)
+ * <Link href="https://example.com">Example</Link>
+ *
+ * // Force external behavior
+ * <Link href="/api/download" external>Download</Link>
+ */
+import { cn } from '../utils/cn';
+
+export type LinkVariant = 'default' | 'subtle' | 'muted' | 'nav' | 'underline';
+
+interface Props {
+  /** Link URL (required) */
+  href: string;
+  /** Visual style variant */
+  variant?: LinkVariant;
+  /** Force external link behavior */
+  external?: boolean;
+  /** Show external link icon */
+  showExternalIcon?: boolean;
+  /** Screen reader text for external links */
+  externalLabel?: string;
+  /** Link target */
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  /** Link rel attribute */
+  rel?: string;
+  /** Disable the link */
+  disabled?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+  /** ARIA label for accessibility */
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  variant = 'default',
+  external,
+  showExternalIcon = true,
+  externalLabel = 'opens in new window',
+  target,
+  rel,
+  disabled = false,
+  class: className,
+  ariaLabel,
+} = Astro.props;
+
+// Detect external links by URL pattern
+const isExternalByUrl = /^https?:\/\//i.test(href);
+const isExternal =
+  external !== undefined ? external : target === '_blank' || isExternalByUrl;
+
+// Set target and rel for external links
+const finalTarget = isExternal ? '_blank' : target || '_self';
+const finalRel = isExternal
+  ? `noopener noreferrer${rel ? ` ${rel}` : ''}`
+  : rel;
+
+// Variant styles with WCAG AAA compliant colors
+const variantClasses: Record<LinkVariant, string> = {
+  default: cn(
+    'text-blue-700 dark:text-blue-400',
+    'hover:text-blue-800 dark:hover:text-blue-300',
+    'underline underline-offset-2',
+    'hover:underline-offset-4',
+    'transition-all duration-150'
+  ),
+  subtle: cn(
+    'text-slate-700 dark:text-slate-300',
+    'hover:text-blue-700 dark:hover:text-blue-400',
+    'no-underline hover:underline underline-offset-2',
+    'transition-colors duration-150'
+  ),
+  muted: cn(
+    'text-slate-500 dark:text-slate-400',
+    'hover:text-slate-700 dark:hover:text-slate-300',
+    'no-underline hover:underline underline-offset-2',
+    'transition-colors duration-150'
+  ),
+  nav: cn(
+    'text-slate-900 dark:text-slate-100',
+    'hover:text-blue-700 dark:hover:text-blue-400',
+    'no-underline',
+    'font-medium',
+    'transition-colors duration-150'
+  ),
+  underline: cn(
+    'text-inherit',
+    'underline decoration-slate-400 dark:decoration-slate-500',
+    'underline-offset-2',
+    'hover:decoration-blue-600 dark:hover:decoration-blue-400',
+    'hover:text-blue-700 dark:hover:text-blue-400',
+    'transition-colors duration-150'
+  ),
+};
+
+// Focus styles for accessibility
+const focusStyles = cn(
+  'focus-visible:outline-none focus-visible:ring-2',
+  'focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400',
+  'focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950',
+  'rounded-sm'
+);
+
+// Disabled styles
+const disabledStyles = disabled
+  ? 'opacity-50 cursor-not-allowed pointer-events-none'
+  : '';
+
+const linkClasses = cn(
+  'inline-flex items-center gap-1',
+  variantClasses[variant],
+  focusStyles,
+  disabledStyles,
+  className
+);
+---
+
+<a
+  href={disabled ? undefined : href}
+  class={linkClasses}
+  target={finalTarget}
+  rel={finalRel}
+  aria-label={ariaLabel}
+  aria-disabled={disabled ? 'true' : undefined}
+>
+  <slot />
+  {
+    isExternal && showExternalIcon && (
+      <>
+        <span class="sr-only"> ({externalLabel})</span>
+        <svg
+          aria-hidden="true"
+          class="h-3.5 w-3.5 shrink-0 opacity-70"
+          viewBox="0 0 20 20"
+          fill="none"
+        >
+          <path
+            d="M5 5h4m0 0h6m-6 0v6m6-6-9.5 9.5"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </>
+    )
+  }
+</a>
