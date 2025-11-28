@@ -78,7 +78,10 @@ const getAppleContentType = (): string => {
 
     // Check for podcasts domain
     if (target.hostname.includes('podcasts.apple.com')) {
-      return target.pathname.includes('/episode/') ? 'episode' : 'podcast';
+      const hasEpisodeId = target.searchParams.has('i');
+      return target.pathname.includes('/episode/') || hasEpisodeId
+        ? 'episode'
+        : 'podcast';
     }
 
     // Check for music domain patterns

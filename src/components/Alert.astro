@@ -7,17 +7,7 @@ interface Props {
   message?: string;
   /** Custom icon (emoji or text) - overrides default icon */
   icon?: string;
-  variant?:
-    | 'info'
-    | 'success'
-    | 'warning'
-    | 'error'
-    | 'note'
-    | 'classic'
-    | 'nature'
-    | 'warm'
-    | 'sky'
-    | 'orange';
+  variant?: 'info' | 'success' | 'warning' | 'error';
   dismissible?: boolean;
   dismissLabel?: string;
   className?: string;
@@ -43,54 +33,28 @@ export const alertVariants = tv({
   base: baseWrap,
   variants: {
     variant: {
-      // Palettes (new) — include border + hover states for light & dark
-      classic:
-        'bg-white text-gray-900 accent-blue-600 border-gray-200 hover:border-blue-400 hover:bg-blue-50 dark:bg-gray-900 dark:text-white dark:accent-blue-400 dark:border-gray-700 dark:hover:border-blue-500 dark:hover:bg-gray-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-200',
-      nature:
-        'bg-stone-50 text-stone-900 accent-emerald-600 border-stone-200 hover:border-emerald-400 hover:bg-stone-100 dark:bg-stone-950 dark:text-stone-100 dark:accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 focus-visible:ring-emerald-300 dark:focus-visible:ring-emerald-200',
-      warm: 'bg-gray-50 text-gray-900 accent-violet-600 border-gray-300 hover:border-violet-400 hover:bg-violet-50 dark:bg-gray-950 dark:text-gray-50 dark:accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 focus-visible:ring-violet-300 dark:focus-visible:ring-violet-200',
-      sky: 'bg-slate-50 text-slate-900 accent-cyan-600 border-slate-200 hover:border-cyan-400 hover:bg-cyan-50 dark:bg-slate-900 dark:text-slate-50 dark:accent-cyan-300 dark:border-slate-700 dark:hover:border-cyan-500 dark:hover:bg-slate-800 focus-visible:ring-cyan-300 dark:focus-visible:ring-cyan-200',
-      orange:
-        'bg-zinc-50 text-zinc-900 accent-orange-500 border-zinc-200 hover:border-orange-400 hover:bg-orange-50 dark:bg-zinc-950 dark:text-zinc-100 dark:accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 focus-visible:ring-orange-300 dark:focus-visible:ring-orange-200',
-      // Semantic aliases mapped to palettes for backward compatibility
-      info: 'bg-white text-gray-900 accent-blue-600 border-gray-200 hover:border-blue-400 hover:bg-blue-50 dark:bg-gray-900 dark:text-white dark:accent-blue-400 dark:border-gray-700 dark:hover:border-blue-500 dark:hover:bg-gray-800 focus-visible:ring-blue-300 dark:focus-visible:ring-blue-200',
+      info: 'bg-blue-50 text-blue-950 accent-blue-800 border-blue-200 hover:border-blue-400 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-50 dark:accent-blue-200 dark:border-blue-900 dark:hover:border-blue-400 dark:hover:bg-blue-900 focus-visible:ring-blue-200 dark:focus-visible:ring-blue-300',
       success:
-        'bg-stone-50 text-stone-900 accent-emerald-600 border-stone-200 hover:border-emerald-400 hover:bg-stone-100 dark:bg-stone-950 dark:text-stone-100 dark:accent-emerald-400 dark:border-stone-800 dark:hover:border-emerald-500 dark:hover:bg-stone-900 focus-visible:ring-emerald-300 dark:focus-visible:ring-emerald-200',
+        'bg-emerald-50 text-emerald-950 accent-emerald-800 border-emerald-200 hover:border-emerald-500 hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-50 dark:accent-emerald-200 dark:border-emerald-900 dark:hover:border-emerald-400 dark:hover:bg-emerald-900 focus-visible:ring-emerald-200 dark:focus-visible:ring-emerald-300',
       warning:
-        'bg-gray-50 text-gray-900 accent-violet-600 border-gray-300 hover:border-violet-400 hover:bg-violet-50 dark:bg-gray-950 dark:text-gray-50 dark:accent-violet-400 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-gray-900 focus-visible:ring-violet-300 dark:focus-visible:ring-violet-200',
+        'bg-amber-50 text-amber-950 accent-amber-800 border-amber-200 hover:border-amber-500 hover:bg-amber-100 dark:bg-amber-950 dark:text-amber-50 dark:accent-amber-200 dark:border-amber-900 dark:hover:border-amber-400 dark:hover:bg-amber-900 focus-visible:ring-amber-200 dark:focus-visible:ring-amber-300',
       error:
-        'bg-zinc-50 text-zinc-900 accent-orange-500 border-zinc-200 hover:border-orange-400 hover:bg-orange-50 dark:bg-zinc-950 dark:text-zinc-100 dark:accent-orange-300 dark:border-zinc-800 dark:hover:border-orange-500 dark:hover:bg-zinc-900 focus-visible:ring-orange-300 dark:focus-visible:ring-orange-200',
-      // Note variant for callout-style usage
-      note: 'bg-indigo-50 text-indigo-900 accent-indigo-600 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-100 dark:accent-indigo-400 dark:border-indigo-800 dark:hover:border-indigo-500 dark:hover:bg-indigo-900 focus-visible:ring-indigo-300 dark:focus-visible:ring-indigo-200',
+        'bg-rose-50 text-rose-950 accent-rose-800 border-rose-200 hover:border-rose-500 hover:bg-rose-100 dark:bg-rose-950 dark:text-rose-50 dark:accent-rose-200 dark:border-rose-900 dark:hover:border-rose-400 dark:hover:bg-rose-900 focus-visible:ring-rose-200 dark:focus-visible:ring-rose-300',
     },
   },
   defaultVariants: {
-    variant: 'classic',
+    variant: 'info',
   },
 });
 
 const iconColor = {
-  classic: 'text-blue-600 dark:text-blue-400',
-  nature: 'text-emerald-600 dark:text-emerald-400',
-  warm: 'text-violet-600 dark:text-violet-400',
-  sky: 'text-cyan-600 dark:text-cyan-300',
-  orange: 'text-orange-500 dark:text-orange-300',
-  note: 'text-indigo-600 dark:text-indigo-400',
-  // aliases
-  info: 'text-blue-600 dark:text-blue-400',
-  success: 'text-emerald-600 dark:text-emerald-400',
-  warning: 'text-violet-600 dark:text-violet-400',
-  error: 'text-orange-500 dark:text-orange-300',
+  info: 'text-blue-800 dark:text-blue-200',
+  success: 'text-emerald-800 dark:text-emerald-200',
+  warning: 'text-amber-800 dark:text-amber-200',
+  error: 'text-rose-800 dark:text-rose-200',
 } as const;
 
 const roleMap = {
-  classic: { role: 'status', ariaLive: 'polite', label: 'Information' },
-  nature: { role: 'status', ariaLive: 'polite', label: 'Success' },
-  warm: { role: 'alert', ariaLive: 'assertive', label: 'Warning' },
-  sky: { role: 'status', ariaLive: 'polite', label: 'Information' },
-  orange: { role: 'alert', ariaLive: 'assertive', label: 'Error' },
-  note: { role: 'note', ariaLive: 'polite', label: 'Note' },
-  // aliases
   info: { role: 'status', ariaLive: 'polite', label: 'Information' },
   success: { role: 'status', ariaLive: 'polite', label: 'Success' },
   warning: { role: 'alert', ariaLive: 'assertive', label: 'Warning' },
@@ -98,13 +62,6 @@ const roleMap = {
 } as const;
 
 const iconName = {
-  classic: 'info',
-  nature: 'check-circle',
-  warm: 'exclamation',
-  sky: 'info',
-  orange: 'x-circle',
-  note: 'pencil',
-  // aliases
   info: 'info',
   success: 'check-circle',
   warning: 'exclamation',
@@ -113,72 +70,81 @@ const iconName = {
 
 // Default emoji icons for custom icon usage (Callout compatibility)
 const defaultEmoji = {
-  classic: 'ℹ️',
-  nature: '✅',
-  warm: '⚠️',
-  sky: 'ℹ️',
-  orange: '❌',
-  note: '📝',
   info: 'ℹ️',
   success: '✅',
   warning: '⚠️',
   error: '❌',
 } as const;
 
+// Ensure we always map to a known variant even if input is unexpected
+const safeVariant =
+  variant in roleMap ? (variant as keyof typeof roleMap) : 'info';
 const useCustomIcon = customIcon !== undefined;
-const displayIcon = customIcon ?? defaultEmoji[variant];
+const displayIcon = customIcon ?? defaultEmoji[safeVariant];
+
+const variantClass = `Alert--${safeVariant}`;
 ---
 
 <div
-  class={`${alertVariants({ variant })} ${className}`.trim()}
-  role={roleMap[variant].role}
-  aria-live={roleMap[variant].ariaLive}
+  class={`${variantClass} ${alertVariants({ variant: safeVariant })} ${className} Alert`.trim()}
+  role={roleMap[safeVariant].role}
+  aria-live={roleMap[safeVariant].ariaLive}
   aria-atomic="true"
-  data-variant={variant}
+  data-variant={safeVariant}
   data-state="open"
   aria-hidden="false"
 >
-  <div class="flex w-full items-start gap-4 sm:gap-5">
+  <div class="flex w-full items-start gap-4 sm:gap-5 Alert__Inner">
     <div
-      class={`mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-lg font-semibold shadow-inner ${iconColor[variant]} dark:bg-white/10`}
+      class={`mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-lg font-semibold shadow-inner ${iconColor[safeVariant]} dark:bg-white/10 Alert__Icon`}
       aria-hidden="true"
     >
       {
         useCustomIcon ? (
-          <span class="text-2xl" aria-hidden="true">
+          <span class="text-2xl Alert__IconEmoji" aria-hidden="true">
             {displayIcon}
           </span>
         ) : (
           <Icon
-            name={iconName[variant]}
+            name={iconName[safeVariant]}
             size="md"
             decorative={false}
-            ariaLabel={roleMap[variant].label}
-            className="h-5 w-5"
+            ariaLabel={roleMap[safeVariant].label}
+            className="h-5 w-5 Alert__IconSvg"
           />
         )
       }
     </div>
-    <div class="min-w-0 space-y-2 text-slate-800 dark:text-slate-200">
-      <span class="sr-only">{roleMap[variant].label}</span>
-      {title && <div class="text-base font-semibold text-current">{title}</div>}
+    <div class="min-w-0 space-y-2 text-current Alert__Body">
+      <span class="sr-only Alert__Label">{roleMap[safeVariant].label}</span>
       {
-        message && (
-          <div class="text-sm leading-relaxed text-current">{message}</div>
+        title && (
+          <div class="text-base font-semibold text-current Alert__Title">
+            {title}
+          </div>
         )
       }
-      <slot />
+      {
+        message && (
+          <div class="text-sm leading-relaxed text-current Alert__Message">
+            {message}
+          </div>
+        )
+      }
+      <slot class="Alert__Slot" />
     </div>
     {
       dismissible && (
         <button
           type="button"
-          class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-sm font-semibold text-current transition-colors hover:border-current hover:bg-current/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 motion-reduce:transition-none"
+          class=" absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-sm font-semibold text-current transition-colors hover:border-current hover:bg-current/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 motion-reduce:transition-none Alert__CloseButton"
           data-close
           aria-label={dismissLabel}
         >
-          <span aria-hidden="true">×</span>
-          <span class="sr-only">{dismissLabel}</span>
+          <span class="Alert__CloseIcon" aria-hidden="true">
+            ×
+          </span>
+          <span class="sr-only Alert__CloseLabel">{dismissLabel}</span>
         </button>
       )
     }

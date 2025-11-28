@@ -1,13 +1,13 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Alert from '../../components/Alert.astro';
-import Paragraph from '../../components/Paragraph.astro';
-import InlineCode from '../../components/InlineCode.astro';
 import Table from '../../components/Table.astro';
 import Headline from '../../components/Headline.astro';
+import Paragraph from '../../components/Paragraph.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import InlineCode from '../../components/InlineCode.astro';
 
 const variantExamples = [
-  // semantic examples (aliases kept for compatibility)
   {
     variant: 'info',
     title: 'Heads up',
@@ -29,28 +29,6 @@ const variantExamples = [
     title: 'Sync failed',
     message: 'We could not reach the API. Try again in a few minutes.',
   },
-  // new palette examples
-  {
-    variant: 'classic',
-    title: 'Classic',
-    message: 'Classic Blue surface and accent.',
-  },
-  {
-    variant: 'nature',
-    title: 'Nature',
-    message: 'Nature Green surface and accent.',
-  },
-  {
-    variant: 'warm',
-    title: 'Warm',
-    message: 'Warm Purple surface and accent.',
-  },
-  { variant: 'sky', title: 'Sky', message: 'Sky Cyan surface and accent.' },
-  {
-    variant: 'orange',
-    title: 'Orange',
-    message: 'Orange Accent surface and accent.',
-  },
 ];
 
 const usageSnippet = `---
@@ -59,14 +37,44 @@ import { Alert } from 'comet-astro';
 ---
 
 <Alert
-  variant="classic"
+  variant="info"
   title="Profile updated"
   message="Changes are live for everyone on your team."
   dismissible
   dismissLabel="Hide success message"
 />`;
 
-// tint example removed to show palette variants consistently
+const brandSnippet = `const brandClassName = ['BrandAlert'].join(' ');
+
+<Alert
+  variant="warning"
+  title="Data refresh ongoing"
+  message="Live dashboards may be delayed for a few minutes."
+  className={brandClassName}
+/>
+
+<style>
+  :global(.BrandAlert.Alert) {
+    border-radius: 18px;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+    box-shadow: 0 20px 60px -28px rgba(0, 0, 0, 0.75);
+  }
+  :global(.BrandAlert .Alert__Icon) {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fbbf24;
+  }
+  :global(.BrandAlert .Alert__Title) {
+    color: #fef3c7;
+  }
+  :global(.BrandAlert .Alert__Message) {
+    color: #e2e8f0;
+  }
+  :global(.BrandAlert .Alert__Close) {
+    color: #fef3c7;
+  }
+</style>`;
+
 const propsColumns = [
   { key: 'name', label: 'Prop' },
   { key: 'type', label: 'Type' },
@@ -80,42 +88,49 @@ const propsData = [
     type: 'string',
     default: "''",
     description:
-      'Optional heading rendered above the message copy. Keep it short so screen readers announce the important words first.',
+      'Optional heading rendered above the message copy. Short titles are announced first by screen readers.',
   },
   {
     name: 'message',
     type: 'string',
     default: "''",
     description:
-      'Primary text content. Supports plain strings; use the default slot for additional rich content such as links.',
+      'Primary text content. Use the default slot for richer markup, lists, or inline links.',
+  },
+  {
+    name: 'icon',
+    type: 'string',
+    default: 'undefined',
+    description:
+      'Override the default icon with custom text or an emoji. When set, the component renders it as-is.',
   },
   {
     name: 'variant',
-    type: '"info" | "success" | "warning" | "error" | string',
+    type: '"info" | "success" | "warning" | "error"',
     default: 'info',
     description:
-      'One of the semantic variants or a theme palette. Controls icon, accent color and announced urgency.',
+      'Semantic intent controls accent, icon and aria-live role. Info/success use a polite live region; warning/error announce assertively.',
   },
   {
     name: 'dismissible',
     type: 'boolean',
     default: 'false',
     description:
-      'Adds a close button that hides the alert client-side. Useful for persistent notifications or inline reminders.',
+      'Adds a close button that hides the alert client-side. Hidden alerts set aria-hidden so they are not re-announced.',
   },
   {
     name: 'dismissLabel',
     type: 'string',
     default: '"Dismiss alert"',
     description:
-      'Accessible label for the dismiss button. Customize to localise the action or describe the message context.',
+      'Accessible label for the dismiss button. Localize this text or tailor it to the alert context.',
   },
   {
     name: 'className',
     type: 'string',
     default: "''",
     description:
-      'Extra classes merged onto the wrapper. Use arbitrary selectors to retheme the close button or tweak spacing.',
+      'Extra classes merged onto the wrapper. BEM hooks are exposed for overrides: Alert, Alert--info|success|warning|error, Alert__Inner, Alert__Icon, Alert__IconEmoji, Alert__IconSvg, Alert__Body, Alert__Label, Alert__Title, Alert__Message, Alert__Slot, Alert__Close, Alert__CloseIcon, Alert__CloseLabel.',
   },
 ];
 ---
@@ -140,7 +155,7 @@ const propsData = [
   </section>
 
   <section class="mt-10 space-y-6">
-    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
       >Props</Headline
     >
     <div>
@@ -149,39 +164,33 @@ const propsData = [
   </section>
 
   <section class="mt-10 space-y-6">
-    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
       >Usage</Headline
     >
     <Paragraph class="text-base text-slate-200">
-      Import the <InlineCode>Alert</InlineCode> component from the package entry
-      point and choose a <InlineCode>variant</InlineCode> that matches the message's
-      tone (for example, <InlineCode>info</InlineCode>,
-      <InlineCode>success</InlineCode>, <InlineCode>warning</InlineCode>, or
-      <InlineCode>error</InlineCode>). Set <InlineCode>dismissible</InlineCode> when
-      users should be able to close the alert. If you enable
-      <InlineCode>dismissible</InlineCode>, provide a descriptive
-      <InlineCode>dismissLabel</InlineCode> to localize the control and improve accessibility
-      for screen reader users.
+      Import the <InlineCode>Alert</InlineCode> component and select a semantic
+      <InlineCode>variant</InlineCode> matching the message tone:
+      <InlineCode>info</InlineCode>, <InlineCode>success</InlineCode>,
+      <InlineCode>warning</InlineCode>, or <InlineCode>error</InlineCode>.
+      Toggle
+      <InlineCode>dismissible</InlineCode> when the user can safely close the message,
+      and provide a localized <InlineCode>dismissLabel</InlineCode> for screen readers.
     </Paragraph>
-    <pre
-      class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-      <code class="language-astro">{usageSnippet}</code>
-    </pre>
+    <CodeBlock code={usageSnippet} language="astro" />
     <Paragraph class="text-sm text-slate-300">
-      The package also exports a helper named <InlineCode
-        >alertVariants</InlineCode
-      >
-      which returns the underlying Tailwind class strings for each palette. This
-      helper is useful when you need to apply the same palette programmatically across
-      multiple components or when composing custom UI fragments. Example (local import):
-      <InlineCode
-        >import &#123; alertVariants &#125; from '../../components/Alert.astro'</InlineCode
-      >.
+      BEM classes are rendered alongside Tailwind utilities so external styles
+      can override the surface: <InlineCode>Alert</InlineCode>, variant
+      modifiers like <InlineCode>Alert--warning</InlineCode>, plus sub-elements
+      such as
+      <InlineCode>Alert__Icon</InlineCode> and <InlineCode
+        >Alert__Close</InlineCode
+      >. Use <InlineCode>className</InlineCode> to add your own grouping class for
+      targeted overrides.
     </Paragraph>
   </section>
 
   <section class="mt-10 space-y-8">
-    <Headline level="h2" textSize="xl" className="font-semibold text-slate-100"
+    <Headline level="h2" textSize="lg" weight="bold" className="text-slate-100"
       >Examples</Headline
     >
 
@@ -195,8 +204,8 @@ const propsData = [
         >
         <Paragraph class="text-base text-slate-200">
           Pick the variant that matches the message urgency. Warnings and errors
-          announce using an assertive live region so assistive tech can
-          interrupt other output.
+          announce with an assertive live region so assistive tech can interrupt
+          other output when necessary.
         </Paragraph>
       </div>
       <div class="grid gap-4 sm:grid-cols-2">
@@ -217,8 +226,8 @@ const propsData = [
           >Dismissible reminder</Headline
         >
         <Paragraph class="text-base text-slate-200">
-          Toggle <InlineCode>dismissible</InlineCode> for alerts that can safely
-          disappear without a page reload. The component toggles <InlineCode
+          Toggle <InlineCode>dismissible</InlineCode> for alerts that can safely disappear
+          without a page reload. The component toggles <InlineCode
             >hidden</InlineCode
           > and <InlineCode>aria-hidden</InlineCode> so repeat announcements stop
           once dismissed.
@@ -233,107 +242,63 @@ const propsData = [
       />
     </article>
 
-    <article class="space-y-4">
+    <article class="space-y-6">
       <div>
         <Headline
           level="h3"
           textSize="lg"
           className="font-semibold text-slate-100"
-          >Custom surface styling</Headline
+          >Styling &amp; overrides</Headline
         >
         <Paragraph class="text-base text-slate-200">
-          Use <InlineCode>className</InlineCode> with arbitrary variants to match
-          your brand palette or a darker surface while keeping the accessibility
-          wiring intact.
+          Add a grouping class via <InlineCode>className</InlineCode> and target the
+          exposed BEM hooks to match your brand. The defaults stay in place, so your
+          overrides layer cleanly on top of the Tailwind utilities.
+        </Paragraph>
+        <Paragraph class="text-sm text-slate-400">
+          Available hooks: <InlineCode>Alert</InlineCode> (root) with modifiers like
+          <InlineCode>Alert--info</InlineCode>, plus <InlineCode
+            >Alert__Inner</InlineCode
+          >, <InlineCode>Alert__Icon</InlineCode>, <InlineCode
+            >Alert__Title</InlineCode
+          >, <InlineCode>Alert__Message</InlineCode>, <InlineCode
+            >Alert__Slot</InlineCode
+          >, and <InlineCode>Alert__Close</InlineCode> (including close icon and label).
         </Paragraph>
       </div>
-      <Alert
-        variant="classic"
-        title="Maintenance window"
-        message="Dashboards will be read-only on Saturday 22:00–23:00 CET."
-      />
-    </article>
 
-    <article class="space-y-4">
-      <div>
-        <Headline
-          level="h3"
-          textSize="lg"
-          className="font-semibold text-slate-100"
-          >Overriding styles (tailwind-variants)</Headline
-        >
-        <Paragraph class="text-base text-slate-200">
-          If you need to tweak the default classes, you can either use the
-          <InlineCode>alertVariants</InlineCode> helper or directly override the
-          underlying Tailwind class strings. This library uses
-          <InlineCode>tailwind-variants</InlineCode>, so the same overriding
-          techniques described in the official documentation apply.
-        </Paragraph>
-        <Paragraph class="text-base text-slate-200">
-          See the <a
-            class="underline text-sky-400"
-            href="https://www.tailwind-variants.org/docs/overriding-styles"
-            target="_blank"
-            rel="noopener noreferrer"
-            >"Overriding styles" guide on tailwind-variants</a
-          > for details.
-        </Paragraph>
-        <Paragraph class="text-sm text-slate-300">
-          Short example: import <InlineCode>alertVariants</InlineCode>, get the
-          classes for a variant and append or replace utility classes as needed.
-        </Paragraph>
-        <Paragraph class="text-sm text-slate-300">
-          The following two examples show (1) a minimal <InlineCode
-            >tailwind-variants</InlineCode
-          > config file you can add to your app and (2) an <InlineCode
-            >.astro</InlineCode
-          > example that imports the helper, patches the returned slot classes, and
-          passes them to the <InlineCode>Alert</InlineCode> component.
-        </Paragraph>
+      <div class="space-y-4">
+        <Alert
+          variant="warning"
+          title="Data refresh ongoing"
+          message="Live dashboards may be delayed for a few minutes."
+          className="BrandAlert"
+        />
 
-        <Paragraph class="text-sm text-slate-300"
-          >Self-contained Astro example (shows the tailwind-variants overriding
-          pattern inline).</Paragraph
-        >
-        <pre
-          class="overflow-x-auto rounded-lg border border-slate-700/70 bg-slate-950/80 p-4 text-sm text-slate-50 shadow-inner">
-          <code class="language-astro">{`---
-import Alert from '../../components/Alert.astro';
-import { tv } from 'tailwind-variants';
-
-// define a minimal tv config inline (you can move this to a shared file)
-const alertVariants = tv({
-  base: 'rounded-md p-4 flex gap-3 items-start',
-  slots: {
-    wrapper: 'rounded-md p-4 flex gap-3 items-start',
-    icon: 'flex-shrink-0',
-    title: 'font-semibold',
-    message: 'text-sm'
-  },
-  variants: {
-    variant: {
-      info: {
-        wrapper: 'bg-sky-50 text-sky-900',
-        icon: 'text-sky-600'
-      },
-      classic: {
-        wrapper: 'bg-classic-50 text-classic-900',
-        icon: 'text-classic-600'
-      }
-    }
-  },
-  defaultVariants: { variant: 'info' }
-});
-
-// get the slot classes for the 'classic' variant
-const slots = alertVariants({ variant: 'classic' });
-// patch the wrapper at runtime (replace background and add padding)
-const patched = slots.wrapper.replace('bg-classic-50', 'bg-brand-600').concat(' px-6');
----
-
-<Alert variant="classic" className={patched} title="TV Override" message="Example showing overriding styles inline in Astro." />`}</code>
-        </pre>
+        <CodeBlock code={brandSnippet} language="astro" />
       </div>
     </article>
   </section>
 </DocsLayout>
+
+<style>
+  :global(.BrandAlert.Alert) {
+    border-radius: 18px;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+    box-shadow: 0 20px 60px -28px rgba(0, 0, 0, 0.75);
+  }
+  :global(.BrandAlert .Alert__Icon) {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fbbf24;
+  }
+  :global(.BrandAlert .Alert__Title) {
+    color: #fef3c7;
+  }
+  :global(.BrandAlert .Alert__Message) {
+    color: #e2e8f0;
+  }
+  :global(.BrandAlert .Alert__Close) {
+    color: #fef3c7;
+  }
+</style>
