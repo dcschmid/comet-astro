@@ -29,17 +29,16 @@ const {
   className = '',
 } = Astro.props as Props;
 
-const stackGap = 'gap-4 sm:gap-5 md:gap-6';
+const stackGap = 'gap-3 sm:gap-4 md:gap-5';
 const shouldShowMetadata = variant === 'full' && (title || artist);
 const hasWideCover = variant === 'full' && cover && coverAspect === 'wide';
 const showMediaSection = variant === 'full' && (cover || shouldShowMetadata);
 const containerLayout = `flex flex-col ${stackGap}`;
-const mediaSectionClasses = [
-  'flex flex-col gap-3 sm:gap-4 rounded-2xl border border-slate-200/70 bg-white/40 p-4 shadow-sm dark:border-slate-800/70 dark:bg-slate-900/40',
-  hasWideCover ? 'sm:flex-col' : 'sm:flex-row sm:items-center',
-].join(' ');
+const mediaSectionClasses = hasWideCover
+  ? 'flex flex-col md:flex-row md:items-center gap-2.5 sm:gap-3 md:gap-4 w-full'
+  : 'flex flex-col gap-2.5 sm:gap-3 sm:flex-row sm:items-center';
 const mediaContentClasses = hasWideCover
-  ? 'flex flex-col gap-3'
+  ? 'flex flex-col gap-1.5 md:min-w-[14rem]'
   : 'min-w-0 flex-1 space-y-1';
 const controlsLayout =
   variant === 'compact'
@@ -54,7 +53,7 @@ const playerId = `audio-player-${Math.random().toString(36).slice(2, 9)}`;
 import Icon from './Icon.astro';
 
 const playerTv = tv({
-  base: 'relative overflow-hidden rounded-2xl border border-slate-300 bg-slate-50 text-slate-900 shadow-sm transition-colors motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 flex flex-col',
+  base: 'relative overflow-hidden rounded-2xl border shadow-sm transition-colors motion-reduce:transition-none flex flex-col',
   variants: {
     variant: {
       compact: 'p-3 sm:p-4 md:p-5 gap-4 sm:gap-5',
@@ -76,59 +75,78 @@ const playBtnTv = tv({
   variants: {
     variant: {
       compact:
-        'h-9 w-9 min-h-9 min-w-9 bg-blue-600 text-white dark:bg-blue-500 dark:text-slate-950 md:h-10 md:w-10 lg:h-12 lg:w-12',
-      full: 'h-10 w-10 min-h-10 min-w-10 bg-blue-600 text-lg text-white dark:bg-blue-500 dark:text-slate-950 md:h-12 md:w-12 lg:h-14 lg:w-14',
+        'h-9 w-9 min-h-9 min-w-9 bg-[#0f3ba8] text-white border border-[#0c2f87] dark:bg-[#cde2ff] dark:text-[#0b1220] dark:border-[#b7d4ff] md:h-10 md:w-10 lg:h-12 lg:w-12',
+      full: 'h-10 w-10 min-h-10 min-w-10 bg-[#0f3ba8] text-lg text-white border border-[#0c2f87] dark:bg-[#cde2ff] dark:text-[#0b1220] dark:border-[#b7d4ff] md:h-12 md:w-12 lg:h-14 lg:w-14',
     },
   },
   defaultVariants: {
     variant: 'full',
   },
 });
+
+const rootClasses = [
+  playerTv({ variant, layoutRow: variant === 'full' && !shouldShowMetadata }),
+  className,
+  'AudioPlayer',
+  variant === 'compact' ? 'AudioPlayer--Compact' : 'AudioPlayer--Full',
+  'bg-[#f8fafc] border-[#c2d4f5] text-[#0b152f]',
+  'dark:bg-[#0b1220] dark:border-[#243655] dark:text-[#e9eef5]',
+  hasWideCover ? 'p-0 sm:p-0 md:p-0' : '',
+]
+  .filter(Boolean)
+  .join(' ');
+const innerPadding = hasWideCover
+  ? 'px-4 sm:px-5 md:px-6 pb-4 sm:pb-5 md:pb-6'
+  : '';
 ---
 
 <div
   id={playerId}
-  class={`${playerTv({ variant, layoutRow: variant === 'full' && !shouldShowMetadata })} ${className}`.trim()}
+  class={rootClasses}
   data-audio-player
   data-variant={variant}
   data-transcript-src={transcriptSrcAttr}
   data-transcript-label={captionsLabel}
   aria-live="polite"
 >
-  <div class={containerLayout}>
+  <div class={`${containerLayout} AudioPlayer__Body`.trim()}>
     {
       showMediaSection && (
-        <div class={mediaSectionClasses}>
+        <div
+          class={`${mediaSectionClasses} AudioPlayer__MediaSection${hasWideCover ? ' AudioPlayer__MediaSection--Wide' : ''}`.trim()}
+        >
           {cover && (
             <div
-              class={
+              class={`${
                 hasWideCover
-                  ? 'overflow-hidden rounded-xl ring-1 ring-slate-200/70 dark:ring-slate-800/70'
-                  : 'shrink-0 overflow-hidden rounded-2xl ring-1 ring-slate-200/60 dark:ring-slate-700/60'
-              }
+                  ? 'overflow-hidden rounded-xl w-full'
+                  : 'shrink-0 overflow-hidden rounded-2xl'
+              } AudioPlayer__CoverWrapper${hasWideCover ? ' AudioPlayer__CoverWrapper--Wide' : ''}`}
             >
-              <div class={hasWideCover ? 'aspect-video w-full' : ''}>
+              <div
+                class={`${hasWideCover ? 'aspect-video w-full' : ''} AudioPlayer__CoverInner`.trim()}
+              >
                 <img
                   src={cover}
                   alt={title ? `${title} cover art` : 'Album cover'}
-                  class={
+                  class={`${
                     hasWideCover
                       ? 'h-full w-full object-cover'
                       : 'h-20 w-28 sm:h-24 sm:w-32 md:h-28 md:w-36 object-cover'
-                  }
+                  } AudioPlayer__CoverImage${variant === 'compact' ? ' AudioPlayer__CoverImage--Compact' : ' AudioPlayer__CoverImage--Full'}`}
                 />
               </div>
             </div>
           )}
           {shouldShowMetadata && (
-            <div class={mediaContentClasses}>
+            <div class={`${mediaContentClasses} AudioPlayer__Metadata`.trim()}>
               {title && (
-                <p class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                <p class="text-lg font-semibold tracking-tight text-[#0b152f] dark:text-[#e9eef5] AudioPlayer__Title">
                   {title}
                 </p>
               )}
               {artist && (
-                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                <p class="text-sm font-medium text-[#1a2f55] dark:text-[#d7e3ff] AudioPlayer__Artist">
                   {artist}
                 </p>
               )}
@@ -144,146 +162,161 @@ const playBtnTv = tv({
       loop={loop}
       autoplay={autoplay}
       data-audio
+      class="AudioPlayer__Audio"
       aria-label={title ? `Audio player for ${title}` : 'Audio player'}></audio>
 
-    <div class={controlsLayout}>
-      {
-        variant === 'compact' && cover && (
-          <img
-            src={cover}
-            alt={title ? `${title} cover art` : 'Album cover'}
-            class="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200/60 dark:ring-slate-700/60 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 self-center"
-          />
-        )
-      }
+    <div class={innerPadding}>
       <div
-        class={`${
-          variant === 'compact' ? 'flex-1 min-w-0' : 'w-full'
-        } space-y-4`.trim()}
+        class={`${controlsLayout} AudioPlayer__Controls${variant === 'compact' ? ' AudioPlayer__Controls--Compact' : ' AudioPlayer__Controls--Full'}`.trim()}
       >
-        <div class="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
-          <button
-            type="button"
-            class={`${playBtnTv({ variant })}`}
-            data-play-pause
-            aria-label="Play or pause audio"
-            aria-pressed="false"
-          >
-            <span data-play-icon>
-              <Icon name="play" size="xl" decorative />
-            </span>
-            <span data-pause-icon class="hidden">
-              <Icon name="pause" size="xl" decorative />
-            </span>
-          </button>
-
-          <button
-            type="button"
-            class={`inline-flex items-center justify-center rounded-full text-lg font-semibold shadow-sm transition motion-reduce:transition-none border border-slate-300 text-slate-600 bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:border-slate-600 dark:text-slate-300 dark:focus-visible:ring-offset-slate-950 ${variant === 'compact' ? 'h-9 w-9 md:h-10 lg:h-12 lg:w-12' : 'h-10 w-10 md:h-12 lg:h-12 lg:w-12'}`}
-            data-mute
-            aria-label="Mute or unmute audio"
-            aria-pressed="false"
-          >
-            <span
-              data-volume-icon
-              class="flex align-center items-center justify-center translate-x-px translate-y-px"
-            >
-              <Icon name="volume" size="xl" decorative />
-            </span>
-            <span data-mute-icon class="hidden translate-x-px translate-y-px">
-              <Icon name="mute" size="xl" decorative />
-            </span>
-          </button>
-        </div>
-
-        <div class="space-y-2 sm:space-y-3">
+        {
+          variant === 'compact' && cover && (
+            <img
+              src={cover}
+              alt={title ? `${title} cover art` : 'Album cover'}
+              class="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-sm sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 self-center AudioPlayer__CoverImage AudioPlayer__CoverImage--Compact"
+            />
+          )
+        }
+        <div
+          class={`${
+            variant === 'compact' ? 'flex-1 min-w-0' : 'w-full'
+          } space-y-4 AudioPlayer__ControlsBody`.trim()}
+        >
           <div
-            class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3"
-          >
-            <span
-              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-12 sm:w-14 text-left sm:text-center shrink-0"
-              data-current-time>0:00</span
-            >
-            <div class="flex-1 min-w-0">
-              <input
-                type="range"
-                min="0"
-                value="0"
-                step="0.1"
-                id="seek-label"
-                class="h-3.5 sm:h-4 w-full appearance-none rounded-full bg-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 motion-reduce:transition-none dark:focus-visible:ring-offset-slate-950"
-                data-seek
-                role="slider"
-                aria-label="Seek position"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow="0"
-              />
-            </div>
-            <span
-              class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200 w-12 sm:w-14 text-right sm:text-center shrink-0"
-              data-duration>0:00</span
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-    {
-      hasTranscript && (
-        <div class="w-full mt-4 md:mt-6">
-          <div
-            class="mx-0 overflow-hidden rounded-lg border border-slate-300/75 bg-slate-100/70 shadow-inner transition-colors motion-reduce:transition-none dark:border-slate-700/70 dark:bg-slate-900/60"
-            data-transcript-container
+            class="flex flex-wrap items-center justify-between gap-3 sm:gap-4 AudioPlayer__PrimaryActions"
           >
             <button
               type="button"
-              class="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 motion-reduce:transition-none dark:text-slate-100 dark:hover:bg-slate-800/60 dark:focus-visible:ring-offset-slate-950 min-h-10"
-              data-transcript-toggle
-              aria-expanded="true"
-              aria-controls={`${playerId}-transcript`}
-              aria-label={`${captionsLabel} (click to show or hide)`}
+              class={`${playBtnTv({ variant })} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8fafc] dark:focus-visible:ring-offset-[#0b1220] AudioPlayer__PlayPauseButton ${variant === 'compact' ? 'AudioPlayer__PlayPauseButton--Compact' : 'AudioPlayer__PlayPauseButton--Full'}`.trim()}
+              data-play-pause
+              aria-label="Play or pause audio"
+              aria-pressed="false"
             >
-              <span data-transcript-toggle-label>{captionsLabel}</span>
-              <span
-                aria-hidden="true"
-                class="text-lg transition-transform"
-                data-transcript-toggle-icon
-              >
-                <Icon
-                  name="chevron-down"
-                  size="lg"
-                  decorative
-                  aria-hidden="true"
-                />
+              <span data-play-icon>
+                <Icon name="play" size="xl" decorative />
+              </span>
+              <span data-pause-icon class="hidden">
+                <Icon name="pause" size="xl" decorative />
               </span>
             </button>
-            <div
-              id={`${playerId}-transcript`}
-              class="border-t border-slate-300/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-950/60"
-              data-transcript-panel
-              role="group"
+
+            <button
+              type="button"
+              class={`inline-flex items-center justify-center rounded-full text-lg font-semibold shadow-sm transition motion-reduce:transition-none border border-[#94b0e9] text-[#0b152f] bg-[#eef2fb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8fafc] dark:border-[#39507a] dark:text-[#d7e3ff] dark:bg-[#16233a] dark:focus-visible:ring-offset-[#0b1220] ${variant === 'compact' ? 'h-9 w-9 md:h-10 lg:h-12 lg:w-12' : 'h-10 w-10 md:h-12 lg:h-12 lg:w-12'} AudioPlayer__MuteButton ${variant === 'compact' ? 'AudioPlayer__MuteButton--Compact' : 'AudioPlayer__MuteButton--Full'}`.trim()}
+              data-mute
+              aria-label="Mute or unmute audio"
+              aria-pressed="false"
             >
-              <div
-                class="px-3 py-2 text-sm text-slate-500 dark:text-slate-300"
-                data-transcript-loading
+              <span
+                data-volume-icon
+                class="flex align-center items-center justify-center translate-x-px translate-y-px AudioPlayer__VolumeIcon"
               >
-                Loading transcript…
-              </div>
-              <div
-                class="hidden px-3 py-2 text-sm text-rose-600 dark:text-rose-300"
-                data-transcript-error
+                <Icon name="volume" size="xl" decorative />
+              </span>
+              <span
+                data-mute-icon
+                class="hidden translate-x-px translate-y-px AudioPlayer__MuteIcon"
               >
-                Unable to load transcript.
+                <Icon name="mute" size="xl" decorative />
+              </span>
+            </button>
+          </div>
+
+          <div class="space-y-2 sm:space-y-2.5 AudioPlayer__Timeline">
+            <div
+              class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-2.5 AudioPlayer__SeekRow"
+            >
+              <span
+                class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-[#1a2f55] dark:text-[#d7e3ff] w-12 sm:w-14 text-left sm:text-center shrink-0 AudioPlayer__CurrentTime"
+                data-current-time>0:00</span
+              >
+              <div class="flex-1 min-w-0 AudioPlayer__SeekTrack">
+                <input
+                  type="range"
+                  min="0"
+                  value="0"
+                  step="0.1"
+                  id="seek-label"
+                  class="h-3.5 sm:h-4 w-full appearance-none rounded-full bg-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8fafc] motion-reduce:transition-none dark:focus-visible:ring-offset-[#0b1220] AudioPlayer__SeekInput"
+                  data-seek
+                  role="slider"
+                  aria-label="Seek position"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                />
               </div>
-              <ol
-                class="hidden max-h-60 space-y-1 overflow-y-auto px-3 py-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
-                data-transcript-list
-              />
+              <span
+                class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-[#1a2f55] dark:text-[#d7e3ff] w-12 sm:w-14 text-right sm:text-center shrink-0 AudioPlayer__Duration"
+                data-duration>0:00</span
+              >
             </div>
           </div>
         </div>
-      )
-    }
+      </div>
+      {
+        hasTranscript && (
+          <div class="w-full mt-4 md:mt-6 AudioPlayer__Transcript">
+            <div
+              class="mx-0 overflow-hidden rounded-lg border shadow-inner transition-colors motion-reduce:transition-none border-[#94b0e9] bg-[#eef2fb] dark:border-[#39507a] dark:bg-[#111a2d] AudioPlayer__TranscriptContainer"
+              data-transcript-container
+            >
+              <button
+                type="button"
+                class="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm font-semibold text-[#0b152f] bg-[#f8fafc] transition-colors hover:bg-[#e2e8f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#eef2fb] motion-reduce:transition-none dark:text-[#e9eef5] dark:bg-[#111a2d] dark:hover:bg-[#16233a] dark:focus-visible:ring-offset-[#0b1220] min-h-10 AudioPlayer__TranscriptToggle"
+                data-transcript-toggle
+                aria-expanded="true"
+                aria-controls={`${playerId}-transcript`}
+                aria-label={`${captionsLabel} (click to show or hide)`}
+              >
+                <span
+                  data-transcript-toggle-label
+                  class="AudioPlayer__TranscriptToggleLabel"
+                >
+                  {captionsLabel}
+                </span>
+                <span
+                  aria-hidden="true"
+                  class="text-lg transition-transform AudioPlayer__TranscriptToggleIcon"
+                  data-transcript-toggle-icon
+                >
+                  <Icon
+                    name="chevron-down"
+                    size="lg"
+                    decorative
+                    aria-hidden="true"
+                  />
+                </span>
+              </button>
+              <div
+                id={`${playerId}-transcript`}
+                class="border-t border-[#94b0e9] bg-[#f8fafc] dark:border-[#39507a] dark:bg-[#0b1220] AudioPlayer__TranscriptPanel"
+                data-transcript-panel
+                role="group"
+              >
+                <div
+                  class="px-3 py-2 text-sm text-[#0b152f] dark:text-[#e9eef5] AudioPlayer__TranscriptLoading"
+                  data-transcript-loading
+                >
+                  Loading transcript…
+                </div>
+                <div
+                  class="hidden px-3 py-2 text-sm text-[#b42318] dark:text-[#f97066] AudioPlayer__TranscriptError"
+                  data-transcript-error
+                >
+                  Unable to load transcript.
+                </div>
+                <ol
+                  class="hidden max-h-[14rem] md:max-h-[16rem] lg:max-h-[18rem] space-y-1 overflow-y-auto px-3 py-2 text-sm leading-relaxed text-[#0b152f] dark:text-[#e9eef5] AudioPlayer__TranscriptList"
+                  data-transcript-list
+                />
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div>
   </div>
 </div>
 
@@ -296,6 +329,15 @@ const playBtnTv = tv({
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${String(mins)}:${String(secs).padStart(2, '0')}`;
+    };
+
+    const getDuration = (audioEl) => {
+      if (!(audioEl instanceof HTMLAudioElement)) return 0;
+      if (Number.isFinite(audioEl.duration)) return audioEl.duration;
+      if (audioEl.seekable?.length) {
+        return audioEl.seekable.end(audioEl.seekable.length - 1);
+      }
+      return 0;
     };
 
     const updateSeekVisual = (input, audio) => {
@@ -417,6 +459,22 @@ const playBtnTv = tv({
         updateSeekVisual(seekInput, audio);
       }
 
+      const updateDurationAndSeek = () => {
+        if (!(seekInput instanceof HTMLInputElement)) return;
+        const duration = getDuration(audio);
+        if (durationEl instanceof HTMLElement) {
+          durationEl.textContent = formatTime(duration);
+        }
+        seekInput.max = duration > 0 ? String(duration) : '0';
+        updateSeekVisual(seekInput, audio);
+      };
+
+      const updateCurrentTime = () => {
+        if (currentTimeEl instanceof HTMLElement) {
+          currentTimeEl.textContent = formatTime(audio.currentTime);
+        }
+      };
+
       playPauseBtn?.addEventListener('click', () => {
         if (audio.paused) {
           audio.play().catch(() => {
@@ -461,26 +519,12 @@ const playBtnTv = tv({
       });
 
       audio.addEventListener('loadedmetadata', () => {
-        if (durationEl instanceof HTMLElement) {
-          durationEl.textContent = formatTime(audio.duration);
-        }
-        if (seekInput instanceof HTMLInputElement) {
-          seekInput.max = Number.isFinite(audio.duration)
-            ? String(audio.duration)
-            : '0';
-          updateSeekVisual(seekInput, audio);
-        }
+        updateDurationAndSeek();
       });
 
       audio.addEventListener('timeupdate', () => {
-        if (currentTimeEl instanceof HTMLElement) {
-          currentTimeEl.textContent = formatTime(audio.currentTime);
-        }
-        if (
-          seekInput instanceof HTMLInputElement &&
-          Number.isFinite(audio.duration) &&
-          audio.duration > 0
-        ) {
+        updateCurrentTime();
+        if (seekInput instanceof HTMLInputElement) {
           seekInput.value = String(audio.currentTime);
           updateSeekVisual(seekInput, audio);
         }
@@ -503,6 +547,12 @@ const playBtnTv = tv({
         }
       });
 
+      audio.addEventListener('durationchange', updateDurationAndSeek);
+      audio.addEventListener('canplay', updateDurationAndSeek);
+      audio.addEventListener('loadeddata', updateDurationAndSeek);
+      audio.addEventListener('loadeddata', updateCurrentTime);
+      audio.addEventListener('canplay', updateCurrentTime);
+
       if (
         transcriptSrc &&
         transcriptToggle instanceof HTMLElement &&
@@ -513,6 +563,15 @@ const playBtnTv = tv({
         let activeCueIndex = -1;
         let transcriptLoaded = false;
         let transcriptLoadingState = false;
+        const activeTranscriptClasses = [
+          'bg-[#d2ddf7]',
+          'text-[#0f3ba8]',
+          'border-l-4',
+          'border-l-[#0f3ba8]',
+          'dark:bg-[#1c2b47]',
+          'dark:text-[#cde2ff]',
+          'dark:border-l-[#cde2ff]',
+        ];
 
         const setTranscriptExpanded = (expanded) => {
           transcriptPanel.classList.toggle('hidden', !expanded);
@@ -526,7 +585,14 @@ const playBtnTv = tv({
         const clearHighlights = () => {
           transcriptList
             .querySelectorAll('[data-transcript-entry]')
-            .forEach((entry) => entry.setAttribute('data-active', 'false'));
+            .forEach((entry) => {
+              entry.setAttribute('data-active', 'false');
+              if (entry instanceof HTMLElement) {
+                activeTranscriptClasses.forEach((cls) =>
+                  entry.classList.remove(cls)
+                );
+              }
+            });
         };
 
         const updateActiveCue = (time) => {
@@ -546,6 +612,9 @@ const playBtnTv = tv({
             );
             if (entry instanceof HTMLElement) {
               entry.setAttribute('data-active', 'true');
+              activeTranscriptClasses.forEach((cls) =>
+                entry.classList.add(cls)
+              );
               entry.scrollIntoView({ block: 'nearest' });
             }
           }
@@ -572,11 +641,11 @@ const playBtnTv = tv({
                 <li>
                   <button
                     type="button"
-                    class="w-full rounded-lg bg-slate-100/60 px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-blue-100/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900/40 dark:text-slate-200 dark:hover:bg-blue-500/20 dark:focus-visible:ring-offset-slate-950 min-h-11"
+                    class="w-full rounded-lg bg-[#eef2fb] px-3 py-2.5 text-left text-sm font-medium text-[#0b152f] transition hover:bg-[#e2e8f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8fafc] dark:bg-[#111a2d] dark:text-[#e9eef5] dark:hover:bg-[#16233a] dark:focus-visible:ring-offset-[#0b1220] min-h-11 AudioPlayer__TranscriptEntry"
                     data-transcript-entry="${index}"
-        data-cue-start="${cue.start}"
-        data-active="false"
-        aria-label="Jump to transcript at ${formatTime(cue.start)}"
+                    data-cue-start="${cue.start}"
+                    data-active="false"
+                    aria-label="Jump to transcript at ${formatTime(cue.start)}"
                   >
                     ${escapeHtml(cue.text)}
                   </button>
@@ -657,26 +726,25 @@ const playBtnTv = tv({
         // Load transcript immediately so it's available under the player
         loadTranscript();
       }
+
+      if (audio.readyState >= 1) {
+        updateDurationAndSeek();
+        updateCurrentTime();
+      }
     });
   });
-
-  // parseTime and parseVtt are defined above inside the inline script where they're used.
-  // No duplicated definitions required here.
 </script>
 
 <style is:inline>
   [data-audio-player] {
-    --seek-fill: rgb(29 78 216); /* Darker blue for better contrast */
-    --seek-bg: rgb(203 213 225);
+    --seek-fill: #0f3ba8;
+    --seek-bg: #d2ddf7;
     --seek-percent: 0%;
-    --focus-ring-color: rgb(30 64 175); /* WCAG AAA compliant focus */
-    --focus-ring-width: 3px;
   }
 
   :where(.dark) [data-audio-player] {
-    --seek-fill: rgb(59 130 246); /* Lighter blue for dark mode */
-    --seek-bg: rgb(30 41 59);
-    --focus-ring-color: rgb(96 165 250); /* WCAG AAA compliant focus */
+    --seek-fill: #cde2ff;
+    --seek-bg: #1c2b47;
   }
 
   [data-audio-player] [data-seek] {
@@ -693,16 +761,15 @@ const playBtnTv = tv({
   }
 
   [data-audio-player] [data-seek]:focus-visible {
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 2px;
+    outline: none;
   }
 
   [data-audio-player] [data-seek]::-webkit-slider-thumb,
   [data-audio-player] [data-seek]::-moz-range-thumb {
     -webkit-appearance: none;
     appearance: none;
-    height: 20px; /* Increased size for better touch targets */
-    width: 20px; /* Increased size for better touch targets */
+    height: 20px;
+    width: 20px;
     border-radius: 999px;
     background: var(--seek-fill);
     border: 2px solid color-mix(in srgb, white 80%, transparent);
@@ -727,68 +794,11 @@ const playBtnTv = tv({
     background: transparent;
   }
 
-  [data-audio-player] [data-transcript-entry][data-active='true'] {
-    background-color: color-mix(in srgb, var(--seek-fill) 10%, transparent);
-    color: var(--seek-fill);
-    border-left: 3px solid var(--seek-fill);
-  }
-
-  :where(.dark)
-    [data-audio-player]
-    [data-transcript-entry][data-active='true'] {
-    background-color: color-mix(in srgb, var(--seek-fill) 15%, transparent);
-    color: color-mix(in srgb, var(--seek-fill) 80%, white);
-  }
-
-  /* Better focus indicators for all interactive elements */
-  [data-audio-player] button:focus-visible,
-  [data-audio-player] [data-transcript-entry]:focus-visible {
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 2px;
-  }
-
-  /* Ensure proper contrast for text elements */
-  [data-audio-player] .text-slate-700 {
-    color: #334155; /* WCAG AAA compliant color */
-  }
-
-  [data-audio-player] .text-slate-600 {
-    color: #475569; /* WCAG AAA compliant color */
-  }
-
-  :where(.dark) [data-audio-player] .dark\:text-slate-200 {
-    color: #e2e8f0; /* WCAG AAA compliant color */
-  }
-
-  :where(.dark) [data-audio-player] .dark\:text-slate-300 {
-    color: #cbd5e1; /* WCAG AAA compliant color */
-  }
-
-  /* Responsive tweaks */
-  [data-audio-player] img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  [data-audio-player] [data-transcript-list] {
-    max-height: 14rem; /* ~224px on small screens */
-  }
-
   @media (min-width: 768px) {
     [data-audio-player] [data-seek]::-webkit-slider-thumb,
     [data-audio-player] [data-seek]::-moz-range-thumb {
       height: 22px;
       width: 22px;
-    }
-
-    [data-audio-player] [data-transcript-list] {
-      max-height: 16rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    [data-audio-player] [data-transcript-list] {
-      max-height: 18rem;
     }
   }
 </style>
