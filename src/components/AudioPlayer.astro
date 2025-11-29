@@ -29,21 +29,21 @@ const {
   className = '',
 } = Astro.props as Props;
 
-const stackGap = 'gap-3 sm:gap-4 md:gap-5';
+const stackGap = 'gap-2 sm:gap-2.5 md:gap-3.5';
 const shouldShowMetadata = variant === 'full' && (title || artist);
 const hasWideCover = variant === 'full' && cover && coverAspect === 'wide';
 const showMediaSection = variant === 'full' && (cover || shouldShowMetadata);
 const containerLayout = `flex flex-col ${stackGap}`;
 const mediaSectionClasses = hasWideCover
-  ? 'flex flex-col md:flex-row md:items-center gap-2.5 sm:gap-3 md:gap-4 w-full'
-  : 'flex flex-col gap-2.5 sm:gap-3 sm:flex-row sm:items-center';
+  ? 'flex flex-col md:flex-row md:items-center gap-2 sm:gap-2.5 md:gap-3.5 w-full'
+  : 'flex flex-col gap-2 sm:gap-2.5 sm:flex-row sm:items-center';
 const mediaContentClasses = hasWideCover
   ? 'flex flex-col gap-1.5 md:min-w-[14rem]'
   : 'min-w-0 flex-1 space-y-1';
 const controlsLayout =
   variant === 'compact'
-    ? 'flex flex-wrap items-center gap-4 sm:gap-5'
-    : 'flex flex-col gap-4 sm:gap-5';
+    ? 'flex flex-wrap items-center gap-3 sm:gap-4'
+    : 'flex flex-col gap-3 sm:gap-4';
 // Top offset for controls
 const hasTranscript = Boolean(captionsSrc);
 const transcriptSrcAttr = hasTranscript
@@ -56,8 +56,8 @@ const playerTv = tv({
   base: 'relative overflow-hidden rounded-2xl border shadow-sm transition-colors motion-reduce:transition-none flex flex-col',
   variants: {
     variant: {
-      compact: 'p-3 sm:p-4 md:p-5 gap-4 sm:gap-5',
-      full: 'p-5 sm:p-6 md:p-7 gap-5 sm:gap-6',
+      compact: 'px-2 sm:px-3 md:px-3.5 py-2 sm:py-2.5 md:py-3 gap-3 sm:gap-3.5',
+      full: 'px-3 sm:px-4 md:px-5 py-2.5 sm:py-3.5 md:py-4.5 gap-3.5 sm:gap-4.5',
     },
     layoutRow: {
       true: 'md:flex-row md:items-start md:gap-4 lg:gap-6',
@@ -96,7 +96,7 @@ const rootClasses = [
   .filter(Boolean)
   .join(' ');
 const innerPadding = hasWideCover
-  ? 'px-4 sm:px-5 md:px-6 pb-4 sm:pb-5 md:pb-6'
+  ? 'px-3 sm:px-4 md:px-5 pb-3 sm:pb-4 md:pb-5'
   : '';
 ---
 
@@ -181,10 +181,10 @@ const innerPadding = hasWideCover
         <div
           class={`${
             variant === 'compact' ? 'flex-1 min-w-0' : 'w-full'
-          } space-y-4 AudioPlayer__ControlsBody`.trim()}
+          } space-y-3 sm:space-y-3.5 AudioPlayer__ControlsBody`.trim()}
         >
           <div
-            class="flex flex-wrap items-center justify-between gap-3 sm:gap-4 AudioPlayer__PrimaryActions"
+            class="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 AudioPlayer__PrimaryActions"
           >
             <button
               type="button"
@@ -223,9 +223,9 @@ const innerPadding = hasWideCover
             </button>
           </div>
 
-          <div class="space-y-2 sm:space-y-2.5 AudioPlayer__Timeline">
+          <div class="space-y-1.5 sm:space-y-2 AudioPlayer__Timeline">
             <div
-              class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-2.5 AudioPlayer__SeekRow"
+              class="flex flex-col items-stretch gap-1.5 sm:flex-row sm:items-center sm:gap-2 AudioPlayer__SeekRow"
             >
               <span
                 class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-[#1a2f55] dark:text-[#d7e3ff] w-12 sm:w-14 text-left sm:text-center shrink-0 AudioPlayer__CurrentTime"
@@ -257,14 +257,14 @@ const innerPadding = hasWideCover
       </div>
       {
         hasTranscript && (
-          <div class="w-full mt-4 md:mt-6 AudioPlayer__Transcript">
+          <div class="w-full mt-3 md:mt-4 AudioPlayer__Transcript">
             <div
               class="mx-0 overflow-hidden rounded-lg border shadow-inner transition-colors motion-reduce:transition-none border-[#94b0e9] bg-[#eef2fb] dark:border-[#39507a] dark:bg-[#111a2d] AudioPlayer__TranscriptContainer"
               data-transcript-container
             >
               <button
                 type="button"
-                class="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm font-semibold text-[#0b152f] bg-[#f8fafc] transition-colors hover:bg-[#e2e8f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#eef2fb] motion-reduce:transition-none dark:text-[#e9eef5] dark:bg-[#111a2d] dark:hover:bg-[#16233a] dark:focus-visible:ring-offset-[#0b1220] min-h-10 AudioPlayer__TranscriptToggle"
+                class="flex w-full items-center justify-between gap-2 px-2.5 sm:px-3 py-2 text-left text-sm font-semibold text-[#0b152f] bg-[#f8fafc] transition-colors hover:bg-[#e2e8f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#eef2fb] motion-reduce:transition-none dark:text-[#e9eef5] dark:bg-[#111a2d] dark:hover:bg-[#16233a] dark:focus-visible:ring-offset-[#0b1220] min-h-10 AudioPlayer__TranscriptToggle"
                 data-transcript-toggle
                 aria-expanded="true"
                 aria-controls={`${playerId}-transcript`}
@@ -296,19 +296,19 @@ const innerPadding = hasWideCover
                 role="group"
               >
                 <div
-                  class="px-3 py-2 text-sm text-[#0b152f] dark:text-[#e9eef5] AudioPlayer__TranscriptLoading"
+                  class="px-2.5 sm:px-3 py-2 text-sm text-[#0b152f] dark:text-[#e9eef5] AudioPlayer__TranscriptLoading"
                   data-transcript-loading
                 >
                   Loading transcript…
                 </div>
                 <div
-                  class="hidden px-3 py-2 text-sm text-[#b42318] dark:text-[#f97066] AudioPlayer__TranscriptError"
+                  class="hidden px-2.5 sm:px-3 py-2 text-sm text-[#b42318] dark:text-[#f97066] AudioPlayer__TranscriptError"
                   data-transcript-error
                 >
                   Unable to load transcript.
                 </div>
                 <ol
-                  class="hidden max-h-[14rem] md:max-h-[16rem] lg:max-h-[18rem] space-y-1 overflow-y-auto px-3 py-2 text-sm leading-relaxed text-[#0b152f] dark:text-[#e9eef5] AudioPlayer__TranscriptList"
+                  class="hidden max-h-[14rem] md:max-h-[16rem] lg:max-h-[18rem] space-y-1.5 sm:space-y-2 overflow-y-auto px-2.5 sm:px-3 py-2.5 text-sm leading-relaxed text-[#0b152f] dark:text-[#e9eef5] list-none m-0 AudioPlayer__TranscriptList"
                   data-transcript-list
                 />
               </div>
@@ -641,7 +641,7 @@ const innerPadding = hasWideCover
                 <li>
                   <button
                     type="button"
-                    class="w-full rounded-lg bg-[#eef2fb] px-3 py-2.5 text-left text-sm font-medium text-[#0b152f] transition hover:bg-[#e2e8f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8fafc] dark:bg-[#111a2d] dark:text-[#e9eef5] dark:hover:bg-[#16233a] dark:focus-visible:ring-offset-[#0b1220] min-h-11 AudioPlayer__TranscriptEntry"
+                    class="w-full rounded-xl bg-[#eef2fb] px-3 py-2.5 text-left text-sm font-medium text-[#0b152f] transition hover:bg-[#e2e8f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2c73] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8fafc] dark:bg-[#111a2d] dark:text-[#e9eef5] dark:hover:bg-[#16233a] dark:focus-visible:ring-offset-[#0b1220] min-h-11 AudioPlayer__TranscriptEntry"
                     data-transcript-entry="${index}"
                     data-cue-start="${cue.start}"
                     data-active="false"
